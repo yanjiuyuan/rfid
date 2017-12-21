@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -141,7 +142,12 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -150,6 +156,23 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\display.css" />
+    <Content Include="Content\element.css" />
+    <Content Include="Content\gif\dt-5.gif" />
+    <Content Include="Content\gif\dt-6.gif" />
+    <Content Include="Content\gif\more.gif" />
+    <Content Include="Content\images\card1.jpg" />
+    <Content Include="Content\images\card2.jpg" />
+    <Content Include="Content\images\card3.jpg" />
+    <Content Include="Content\images\miaov.png" />
+    <Content Include="Content\images\portrait.png" />
+    <Content Include="Content\images\scoll1.jpg" />
+    <Content Include="Content\images\scoll2.jpg" />
+    <Content Include="Content\images\scoll3.JPG" />
+    <Content Include="Content\images\scoll4.jpg" />
+    <Content Include="Content\images\scoll5.jpg" />
+    <Content Include="Content\images\scoll6.jpg" />
+    <Content Include="Content\images\title.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -159,17 +182,24 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\fonts\element-icons.ttf" />
+    <Content Include="Content\fonts\element-icons.woff" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\echarts-all.js" />
+    <Content Include="Scripts\element.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\lib.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\vue.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -184,10 +214,29 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
+    <Content Include="Views\Main\Main1.cshtml" />
+    <Content Include="Views\Main\Main2.cshtml" />
+    <Content Include="Views\Main\Main3.cshtml" />
+    <Content Include="Views\Main\Main4.cshtml" />
+    <Content Include="Views\Main\Main5.cshtml" />
+    <Content Include="Views\Main\Main6.cshtml" />
+    <Content Include="Views\Main\Main7.cshtml" />
+    <Content Include="Views\Main\Main8.cshtml" />
+    <Content Include="Views\Register\Index.cshtml" />
+    <Content Include="Views\Shared\Footer.cshtml" />
+    <Content Include="Views\Shared\Head_login.cshtml" />
+    <Content Include="Views\Shared\Head_nologin.cshtml" />
+    <Content Include="Views\Shared\LeftAnother.cshtml" />
+    <Content Include="Views\Shared\LeftMenu.cshtml" />
+    <Content Include="Views\Shared\_Layout-noLogin.cshtml" />
+    <Content Include="Views\ShowDetail\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Account\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -203,6 +252,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

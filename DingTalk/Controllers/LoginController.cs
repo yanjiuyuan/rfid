@@ -6,10 +6,12 @@ using System.Web.Mvc;
 
 namespace WebZhongZhi.Controllers
 {
-    public class HomeController : Controller
+    public class LoginController : Controller
     {
+        // GET: Login
         public ActionResult Index()
         {
+            ViewBag.needLogin = false;
             return View();
         }
     }

@@ -48,5 +48,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Register\RegisterServer.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{5dce917e-8af8-48b1-9e3f-f549951c9e49}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

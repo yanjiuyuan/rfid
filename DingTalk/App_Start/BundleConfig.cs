@@ -2,6 +2,8 @@
 using System.Web.Optimization;
 
 namespace DingTalk
+
+
 {
     public class BundleConfig
     {

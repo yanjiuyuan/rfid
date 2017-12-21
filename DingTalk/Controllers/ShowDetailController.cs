@@ -6,8 +6,9 @@ using System.Web.Mvc;
 
 namespace WebZhongZhi.Controllers
 {
-    public class HomeController : Controller
+    public class ShowDetailController : Controller
     {
+        // GET: ShowDetail
         public ActionResult Index()
         {
             return View();

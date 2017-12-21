@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace WebZhongZhi.Controllers
+namespace DingTalk.Controllers
 {
-    public class HomeController : Controller
+    public class AccountController : Controller
     {
+        // GET: Account
         public ActionResult Index()
         {
             return View();

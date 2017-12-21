@@ -1,0 +1,35 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>泉州华中科技大学只能制造研究院</title>
+    <link rel="stylesheet" href="~/Content/element.css" />
+    <link rel="stylesheet" href="~/Content/display.css" />
+    <link rel="stylesheet" href="~/Content/site.css" />
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/element.js"></script>
+    <script src="~/Scripts/lib.js"></script>
+</head>
+<body>
+    <div>
+        <div id="app">
+            <el-container>
+                <el-header>
+                    @RenderPage("~/Views/Shared/Head_nologin.cshtml")
+                </el-header>
+                <el-main>
+                    @RenderBody()
+                </el-main>
+                <el-footer>Footer</el-footer>
+            </el-container>
+        </div>
+        @RenderSection("scripts", required: false)
+    </div>
+</body>
+</html>
