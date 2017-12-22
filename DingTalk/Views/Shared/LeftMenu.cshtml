@@ -4,37 +4,36 @@
 
 <div>
     <el-tabs type="border-card">
-        <el-tab-pane label="首页">
-            @RenderPage("~/Views/Home/Index.cshtml")
-        </el-tab-pane>
         <!--主分页-->
         <el-tab-pane label="在线办公">
-            <el-container style="height: 500px; border: 1px solid #eee">
+            <el-container style="border: 1px solid #eee">
                 <!--左侧导航栏-->
                 <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
                     <el-menu :default-openeds="['1']"
-                             :default-active="'1-1'">
-                        
-                        <el-submenu index="1">
+                             :default-active="'1'">
+                        <el-menu-item index="1" onclick="loadPage('/Home/partHome')">
+                            <i class="el-icon-menu"></i>首页
+                        </el-menu-item>
+                        <el-submenu index="2">
                             <template slot="title">
                                 <i class="el-icon-message"></i>我的业务
                             </template>
                             <el-menu-item-group>
-                                <el-menu-item index="1-1" onclick="loadPage('/Main/Main1')">待办业务</el-menu-item>
-                                <el-menu-item index="1-2" onclick="loadPage('/Main/Main2')">主要业务</el-menu-item>
-                                <el-menu-item index="1-3" onclick="loadPage('/Main/Main3')">超时业务</el-menu-item>
-                                <el-menu-item index="1-4" onclick="loadPage('/Main/Main4')">办结业务</el-menu-item>
+                                <el-menu-item index="2-1" onclick="loadPage('/Main/Main1')">待办业务</el-menu-item>
+                                <el-menu-item index="2-2" onclick="loadPage('/Main/Main2')">主要业务</el-menu-item>
+                                <el-menu-item index="2-3" onclick="loadPage('/Main/Main3')">超时业务</el-menu-item>
+                                <el-menu-item index="2-4" onclick="loadPage('/Main/Main4')">办结业务</el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
-                        <el-submenu index="2">
+                        <el-submenu index="3">
                             <template slot="title">
-                                <i class="el-icon-menu"></i>我的客户
+                                <i class="el-icon-phone"></i>我的客户
                             </template>
                             <el-menu-item-group>
-                                <el-menu-item index="2-1" onclick="loadPage('/Main/Main5')">张三</el-menu-item>
-                                <el-menu-item index="2-2" onclick="loadPage('/Main/Main6')">李四</el-menu-item>
-                                <el-menu-item index="2-3" onclick="loadPage('/Main/Main7')">王五</el-menu-item>
-                                <el-menu-item index="2-4" onclick="loadPage('/Main/Main8')">赵六</el-menu-item>
+                                <el-menu-item index="3-1" onclick="loadPage('/Main/Main5')">张三</el-menu-item>
+                                <el-menu-item index="3-2" onclick="loadPage('/Main/Main6')">李四</el-menu-item>
+                                <el-menu-item index="3-3" onclick="loadPage('/Main/Main7')">王五</el-menu-item>
+                                <el-menu-item index="3-4" onclick="loadPage('/Main/Main8')">赵六</el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
                         <el-menu-item index="3">
