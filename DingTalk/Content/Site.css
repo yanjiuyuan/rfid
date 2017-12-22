@@ -1,4 +1,14 @@
 ﻿
+/*通用*/
+
+.clearfix:before,
+.clearfix:after {
+    clear: both;
+    content: '';
+    display: block;
+}
+
+/*总体布局*/
 body {
     margin:0;
     padding:0;
@@ -10,6 +20,8 @@ body {
     margin: auto;
     margin-top:-60px;
 }
+
+/*顶部导航栏*/
 
 .head {
     max-width: 1280px;
@@ -52,12 +64,7 @@ a{
     font-size:24px;
 }
 
-.clearfix:before,
-.clearfix:after {
-    clear: both;
-    content: '';
-    display: block;
-}
+
 
 /*首页选项卡*/
 .card {
@@ -133,6 +140,15 @@ ol li {
     font-size: 12px;
     line-height: 28px;
     overflow: hidden;
+}
+
+/*审批列表*/
+.approval-box {
+    width: 170px;
+    height: 110px;
+    border: 1px solid;
+    float: left;
+    margin-right: 20px;
 }
 
 

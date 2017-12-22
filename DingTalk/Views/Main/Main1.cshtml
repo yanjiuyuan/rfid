@@ -3,100 +3,53 @@
 }
 
 <!--右侧实体内容-->
-<div id="partPage">
-    <!--查詢表單-->
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        
-        <el-form-item label="关键字">
-            <el-input v-model="formInline.user" placeholder="关键字"></el-input>
-        </el-form-item>
-        <el-form-item label="下拉选择">
-            <el-select v-model="formInline.region" placeholder="下拉选择">
-                <el-option label="上海" value="shanghai"></el-option>
-                <el-option label="北京" value="beijing"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onFilter">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-            <el-date-picker v-model="formInline.date"
-                            type="daterange"
-                            :picker-options="pickerOptions"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期">
-            </el-date-picker>
-        </el-form-item>
-        
-    </el-form>
-    <!--表格實體-->
-    <el-table :data="tableData" stripe border>
-        <el-table-column prop="date" label="日期" width="140">
-        </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120">
-        </el-table-column>
-        <el-table-column prop="address" label="地址">
-        </el-table-column>
-    </el-table>
-    <!--底部翻頁-->
-    <div style="text-align:right">
-        <el-pagination v-on:size-change="handleSizeChange"
-                       v-on:current-change="handleCurrentChange"
-                       :current-page="currentPage4"
-                       :page-sizes="[1, 3, 5, 10]"
-                       :page-size="5"
-                       layout="total, sizes, prev, pager, next, jumper"
-                       :total="10">
-        </el-pagination>
-    </div>
-</div>
+<script src="~/Scripts/echarts-all.js"></script>
+<el-main id="partPage">
+    <el-collapse v-model="activeNames">
+        <el-collapse-item name="1">
+            <template slot="title">
+                <span style="font-size:20px;">行政类（{{count}}）</span>
+            </template>
+            <div style="width:170px;height:110px;border:1px solid #d3d3d3;float:left;margin-right:20px;
+                    margin-bottom:20px;" class="approval-box">
 
+            </div>
+        </el-collapse-item>
+        <el-collapse-item title="反馈 Feedback" name="2">
+            <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+            <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
+        </el-collapse-item>
+        <el-collapse-item title="效率 Efficiency" name="3">
+            <div>简化流程：设计简洁直观的操作流程；</div>
+            <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
+            <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
+        </el-collapse-item>
+        <el-collapse-item title="可控 Controllability" name="4">
+            <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
+            <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
+        </el-collapse-item>
+    </el-collapse>
+</el-main>
 
 <script>
-    
-    new Vue({
+    var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                tableData: tableData,
-                currentPage4: 1,
-                formInline: {
-                    user: '',
-                    region: '',
-                    date:''
-                }
+                activeNames: ['1'],
+                count:2
             }
         },
         methods: {
-            //表格相關事件
 
-            //翻頁相關事件
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            //查詢相關頁面
-            onFilter() {
-                console.log(this.formInline)
-            }
         },
         created: function () {
-            loadHtml("mainPage","partPage")
+            loadHtml("mainPage", "partPage")
         }
     })
 
-    function formatQueryStr(object) {
-        var obj = _cloneObj(object)
-        var queryStr = ''
-        for (var o in obj) {
-            if (o == 'date') {
-
-            }
-        }
-    }
-    
 </script>
+
+
+

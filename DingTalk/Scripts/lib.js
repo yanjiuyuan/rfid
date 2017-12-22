@@ -104,3 +104,51 @@ var tableData = [{
     name: '小明',
     address: '浙江'
 }]
+
+var menbers = [
+    {
+        id: 1,
+        name:'黄龙贤'
+    },
+    {
+        id: 2,
+        name: '蔡兴桐'
+    },
+    {
+        id: 3,
+        name: '黄浩炜'
+    },
+    {
+        id: 4,
+        name: '肖民生'
+    },
+    {
+        id: 5,
+        name: '熊肖'
+    },
+    {
+        id: 6,
+        name: '袁观福'
+    }, {
+        id: 7,
+        name: '张鹏辉'
+    }, {
+        id: 8,
+        name: '石威'
+    }
+]
+
+var approval_list = []
+
+var approval_type = [
+    {
+        id: 1,
+        name: '办公用品',
+        approvers:'7|1'
+    },
+    {
+        id: 2,
+        name: '绩效报表',
+        approvers:'1'
+    }
+]
