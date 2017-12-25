@@ -12,7 +12,7 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
-        public ActionResult Main1()
+        public ActionResult Approval()
         {
             return View();
         }

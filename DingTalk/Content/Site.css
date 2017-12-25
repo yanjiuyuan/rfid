@@ -8,6 +8,12 @@
     display: block;
 }
 
+hr {
+    height: 1px;
+    border: none;
+    border-top: 1px solid #555555;
+}
+
 /*总体布局*/
 body {
     margin:0;
@@ -144,12 +150,43 @@ ol li {
 
 /*审批列表*/
 .approval-box {
-    width: 170px;
-    height: 110px;
-    border: 1px solid;
+    width: 130px;
+    height: 80px;
+    padding: 15px;
+    border: 1px solid #c1c1c1;
     float: left;
     margin-right: 20px;
+    margin-bottom:20px;
+    text-align: center;
 }
+
+.approval-box-img {
+    width: 60px;
+    height: 60px;
+    background: url(images/icon900-540.png) no-repeat;
+    background-position:-54px -47px;
+    margin:auto;
+}
+
+.approval-box p{
+    margin:5px;
+}
+
+/*审批报表*/
+.head-fixed {
+    height: 22px;
+    border-bottom: 1px solid #c1c1c1;
+    padding-bottom:10px;
+    vertical-align:central;
+    margin-bottom:26px;
+}
+
+.head-fixed i{
+    font-size:20px;
+    border:1px solid #c1c1c1;
+    border-radius:10px;
+}
+
 
 
 /*底部样式*/

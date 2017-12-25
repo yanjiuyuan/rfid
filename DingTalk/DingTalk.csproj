@@ -146,6 +146,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\ApprovalController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Global.asax.cs">
@@ -162,6 +163,8 @@
     <Content Include="Content\images\card1.jpg" />
     <Content Include="Content\images\card2.jpg" />
     <Content Include="Content\images\card3.jpg" />
+    <Content Include="Content\images\icon.png" />
+    <Content Include="Content\images\icon900-540.png" />
     <Content Include="Content\images\miaov.png" />
     <Content Include="Content\images\portrait.png" />
     <Content Include="Content\images\scoll1.jpg" />
@@ -204,7 +207,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\Main\Main1.cshtml" />
+    <Content Include="Views\Main\Approval.cshtml" />
     <Content Include="Views\Main\Main2.cshtml" />
     <Content Include="Views\Main\Main3.cshtml" />
     <Content Include="Views\Main\Main4.cshtml" />
@@ -240,6 +243,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\approval\OfficeSupplies.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
