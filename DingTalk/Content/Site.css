@@ -11,7 +11,11 @@
 hr {
     height: 1px;
     border: none;
-    border-top: 1px solid #555555;
+    border-top: 1px solid #b3b3b3;
+}
+
+.hint{
+    color:#808080;
 }
 
 /*总体布局*/

@@ -18,14 +18,10 @@
             }
         },
         methods: {
-            loadHtml: function () {
-                $("#mainPage").html('')
-                var div = $("#partPage")
-                $("#mainPage").append(div)
-            }
+  
         },
         created: function () {
-            this.loadHtml()
+            loadHtml("mainPage", "partPage")
         }
     })
 
