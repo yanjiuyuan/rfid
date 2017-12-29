@@ -6,29 +6,21 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        用车申请
+        加班申请
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         
-        <el-form-item label="用车人" prop="name">
+        <el-form-item label="加班人" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
 
-        <el-form-item label="用车事由" prop="reson">
+        <el-form-item label="加班事由" prop="reson">
             <el-input v-model="ruleForm.reson"></el-input>
         </el-form-item>
 
         <hr />
 
-        <el-form-item label="始发地点" prop="startAddress">
-            <el-input v-model="ruleForm.startAddress"></el-input>
-        </el-form-item>
-
-        <el-form-item label="返回地点" prop="endAddress">
-            <el-input v-model="ruleForm.endAddress"></el-input>
-        </el-form-item>
-
-        <el-form-item label="用车时间" prop="startTime">
+        <el-form-item label="开始时间" prop="startTime">
             <div class="block">
                 <span class="demonstration">带快捷选项</span>
                 <el-date-picker v-model="ruleForm.startTime"
@@ -40,7 +32,7 @@
             </div>
         </el-form-item>
 
-        <el-form-item label="返回时间" prop="endTime">
+        <el-form-item label="结束时间" prop="endTime">
             <div class="block">
                 <span class="demonstration">带快捷选项</span>
                 <el-date-picker v-model="ruleForm.endTime"
@@ -77,8 +69,6 @@
                 ruleForm: {
                     name: '',
                     reson: '',
-                    startAddress: '',
-                    endAddress: '',
                     startTime: '',
                     endTime: '',
                 },
@@ -87,10 +77,8 @@
                         { required: true, message: '申请人不能为空', trigger: 'blur' },
                         { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
                     ],
-                    startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
-                    endAddress: { required: true, message: '返回地点不能为空', trigger: 'blur' },
-                    startTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
-                    endTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
+                    startTime: { required: true, message: '开始时间不能为空', trigger: 'blur' },
+                    endTime: { required: true, message: '结束时间不能为空', trigger: 'blur' }
                 },
                 dayPickerOptions: {
                     shortcuts: [
