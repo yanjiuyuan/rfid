@@ -1,0 +1,835 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>fx.configuration</name>
+    </assembly>
+    <members>
+        <member name="T:FX.Configuration.AppConfiguration">
+            <summary>
+            The default configuration reading settings from app.config
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.BaseConfiguration">
+            <summary>
+            A base configuration class
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.BaseConfiguration.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BaseConfiguration" /> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+        </member>
+        <member name="M:FX.Configuration.BaseConfiguration.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider},System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BaseConfiguration" /> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+            <param name="deserializers">The deserializers</param>
+        </member>
+        <member name="M:FX.Configuration.BaseConfiguration.#ctor(FX.Configuration.ConfigurationPipeline)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.BaseConfiguration"/> class.
+            </summary>
+            <param name="configurationPipeline">The configuration pipeline</param>
+        </member>
+        <member name="M:FX.Configuration.BaseConfiguration.Fill">
+            <summary>
+            Fills this instance of configuration
+            </summary>
+        </member>
+        <member name="P:FX.Configuration.BaseConfiguration.Pipeline">
+            <summary>
+            Gets the configuration pipeline
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfiguration.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfiguration"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfiguration.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfiguration"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+        </member>
+        <member name="M:FX.Configuration.AppConfiguration.#ctor(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfiguration"/> class.
+            </summary>
+            <param name="deserializers">The deserializers</param>
+        </member>
+        <member name="M:FX.Configuration.AppConfiguration.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider},System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfiguration"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+            <param name="deserializers">The deserializers</param>
+        </member>
+        <member name="T:FX.Configuration.AppConfigurationProvider">
+            <summary>
+            A configuration provider reading settings from an app configuration file
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.BaseConfigurationProvider">
+            <summary>
+            A base configuration provider
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.IConfigurationProvider">
+            <summary>
+            A configuration provider
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.IConfigurationProvider.TryGetRawValue(System.Reflection.PropertyInfo,System.Object@)">
+            <summary>
+            Tries to get the raw value
+            </summary>
+            <param name="property">The property to get a value for</param>
+            <param name="rawValue">The raw value</param>
+            <returns>True if the value was found</returns>
+        </member>
+        <member name="M:FX.Configuration.BaseConfigurationProvider.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.BaseConfigurationProvider"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.BaseConfigurationProvider.#ctor(FX.Configuration.Resolvers.ISettingNameResolver)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.BaseConfigurationProvider"/> class.
+            </summary>
+            <param name="settingNameResolver">The setting name resolver</param>
+        </member>
+        <member name="M:FX.Configuration.BaseConfigurationProvider.TryGetRawValue(System.Reflection.PropertyInfo,System.Object@)">
+            <summary>
+            Tries to get the raw value
+            </summary>
+            <param name="property">The property to get a value for</param>
+            <param name="rawValue">The raw value</param>
+            <returns>True if the value was found</returns>
+        </member>
+        <member name="M:FX.Configuration.BaseConfigurationProvider.TryGetSettingValue(System.String,System.Object@)">
+            <summary>
+            Tries the get a value
+            </summary>
+            <param name="settingName">Name of the setting</param>
+            <param name="rawValue">The raw value</param>
+            <returns>True is the setting was found</returns>
+        </member>
+        <member name="P:FX.Configuration.BaseConfigurationProvider.SettingNameResolver">
+            <summary>
+            Gets the setting name resolver
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfigurationProvider.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfigurationProvider"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfigurationProvider.#ctor(FX.Configuration.Resolvers.ISettingNameResolver)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfigurationProvider"/> class.
+            </summary>
+            <param name="settingNameResolver">The setting name resolver.</param>
+        </member>
+        <member name="M:FX.Configuration.AppConfigurationProvider.TryGetSettingValue(System.String,System.Object@)">
+            <summary>
+            Tries the get a value
+            </summary>
+            <param name="settingName">Name of the setting</param>
+            <param name="rawValue">The raw value</param>
+            <returns>True is the setting was found</returns>
+        </member>
+        <member name="T:FX.Configuration.AppConfigurationProviderLongPropertyName">
+            <summary>
+            A configuration provider reading settings from an app configuration file resolving setting keys based on long property names
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.BaseConfigurationProviderLongPropertyName">
+            <summary>
+            The configuration provider resolving setting keys based on long property names
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.BaseConfigurationProviderLongPropertyName.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.BaseConfigurationProviderLongPropertyName"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfigurationProviderLongPropertyName.TryGetSettingValue(System.String,System.Object@)">
+            <summary>
+            Tries the get a value
+            </summary>
+            <param name="settingName">Name of the setting</param>
+            <param name="rawValue">The raw value</param>
+            <returns>True is the setting was found</returns>
+        </member>
+        <member name="T:FX.Configuration.AppConfigurationLongPropertyName">
+            <summary>
+            The default configuration reading settings from app.config resolving setting keys based on long property names
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfigurationLongPropertyName.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfiguration"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.AppConfigurationLongPropertyName.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.AppConfiguration"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers.</param>
+        </member>
+        <member name="T:FX.Configuration.Attributes.EnumerableSettingAttribute">
+            <summary>
+            A setting attribute to support enumerable values split by a delimiter.
+            The default delimiter is ';' and the default type of items is typeof(string)
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Attributes.DeserializerAttribute">
+            <summary>
+            Defines what type of deserializer to use
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.DeserializerAttribute.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.DeserializerAttribute"/> class.
+            </summary>
+            <param name="deserializerType">Type of the deserializer.</param>
+        </member>
+        <member name="M:FX.Configuration.Attributes.DeserializerAttribute.CreateSettingDeserializer">
+            <summary>
+            Creates the setting deserializer
+            </summary>
+            <returns>A deserializer</returns>
+        </member>
+        <member name="P:FX.Configuration.Attributes.DeserializerAttribute.DeserializerType">
+            <summary>
+            Gets the type of the deserializer
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.EnumerableSettingAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.EnumerableSettingAttribute"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.EnumerableSettingAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.EnumerableSettingAttribute"/> class.
+            </summary>
+            <param name="delimiter">The delimiter</param>
+        </member>
+        <member name="M:FX.Configuration.Attributes.EnumerableSettingAttribute.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.EnumerableSettingAttribute"/> class.
+            </summary>
+            <param name="typeOfItem">The type of item.</param>
+        </member>
+        <member name="M:FX.Configuration.Attributes.EnumerableSettingAttribute.#ctor(System.String,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.EnumerableSettingAttribute"/> class.
+            </summary>
+            <param name="delimiter">The delimiter</param>
+            <param name="typeOfItem">The type of item</param>
+        </member>
+        <member name="M:FX.Configuration.Attributes.EnumerableSettingAttribute.CreateSettingDeserializer">
+            <summary>
+            Creates the setting deserializer
+            </summary>
+            <returns>A deserializer</returns>
+        </member>
+        <member name="P:FX.Configuration.Attributes.EnumerableSettingAttribute.Delimiter">
+            <summary>
+            Gets the delimiter between items
+            </summary>
+        </member>
+        <member name="P:FX.Configuration.Attributes.EnumerableSettingAttribute.TypeOfItem">
+            <summary>
+            Gets the type of an item
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Attributes.PreprocessAttribute">
+            <summary>
+            Defines what preprocesses to use
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.PreprocessAttribute.Preprocess(System.Object)">
+            <summary>
+            Preprocesses the specified setting value
+            </summary>
+            <param name="settingValue">The original setting value</param>
+            <returns>A preprocessed value</returns>
+        </member>
+        <member name="T:FX.Configuration.Attributes.JsonSettingAttribute">
+            <summary>
+            An attribute to define that the Json Deserializer should be used to deserialize the value
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.JsonSettingAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.JsonSettingAttribute"/> class.
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.ConfigurationPipeline">
+            <summary>
+            A configuration pipeline
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.IConfigurationPipeline">
+            <summary>
+            A configuration pipeline interface
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.IConfigurationPipeline.Run``1(``0)">
+            <summary>
+            Runs a configuration pipeline to fill out the specified configuration
+            </summary>
+            <typeparam name="T">The type of configuration</typeparam>
+            <param name="config">The configuration to fill out</param>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.ConfigurationPipeline"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider},System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.ConfigurationPipeline"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+            <param name="ignoreMissingValues">if set to <c>true</c> then ignore missing values, otherwise throw an exception</param>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider},System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.ConfigurationPipeline"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+            <param name="deserializers">The deserializers used if no deserializer specified for a property</param>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.#ctor(System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider},System.Boolean,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.ConfigurationPipeline"/> class.
+            </summary>
+            <param name="configurationProviders">The configuration providers</param>
+            <param name="ignoreMissingValues">if set to <c>true</c> then ignore missing values, otherwise throw an exception</param>
+            <param name="deserializers">The deserializers used if no deserializer specified for a property</param>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.Run``1(``0)">
+            <summary>
+            Runs a configuration pipeline to fill out the specified configuration
+            </summary>
+            <typeparam name="T">The type of configuration</typeparam>
+            <param name="config">The configuration to fill out</param>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.PreprocessSetting(System.Reflection.PropertyInfo,System.Object)">
+            <summary>
+            Preprocesses the setting value (like decrypt the value before deserialization)
+            </summary>
+            <param name="property">The property</param>
+            <param name="rawSetting">The raw setting</param>
+            <returns>A preprocessed setting value</returns>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.GetDeserializers(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the list of deserializers for the given property
+            </summary>
+            <param name="property">The property</param>
+            <returns>A list of deserializers</returns>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.GetRawPropertyValue(System.Reflection.PropertyInfo,System.Collections.Generic.IEnumerable{FX.Configuration.IConfigurationProvider})">
+            <summary>
+            Gets the raw property value
+            </summary>
+            <param name="property">The property</param>
+            <param name="configurationProviders">The list of configuration providers</param>
+            <returns>The raw value</returns>
+            <exception cref="T:System.InvalidOperationException">Couldn't find a value for the property</exception>
+        </member>
+        <member name="M:FX.Configuration.ConfigurationPipeline.GetDeserializedValue(System.Collections.Generic.IEnumerable{System.Object},System.Reflection.PropertyInfo,System.Object)">
+            <summary>
+            Gets the deserialized value
+            </summary>
+            <param name="deserializers">The deserializers</param>
+            <param name="property">The property</param>
+            <param name="rawSetting">The raw setting</param>
+            <returns>The deserialized value</returns>
+        </member>
+        <member name="P:FX.Configuration.ConfigurationPipeline.ConfigurationProviders">
+            <summary>
+            Gets the configuration providers
+            </summary>
+        </member>
+        <member name="P:FX.Configuration.ConfigurationPipeline.IgnoreMissingValues">
+            <summary>
+            Gets a value indicating whether ignore missing values or not
+            </summary>
+        </member>
+        <member name="P:FX.Configuration.ConfigurationPipeline.Deserializers">
+            <summary>
+            Gets the fallback deserializers
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Deserializers.EnumerableSettingDeserializer`1">
+            <summary>
+            Enumerable setting deserializer
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Deserializers.ISettingDeserializer`1">
+            <summary>
+            Deserializes a raw setting to a typed value
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.ISettingDeserializer`1.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,`0@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.EnumerableSettingDeserializer`1.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Deserializers.EnumerableSettingDeserializer`1"/> class.
+            </summary>
+            <param name="delimiter">The delimiter</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.EnumerableSettingDeserializer`1.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Collections.Generic.IEnumerable{`0}@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.EnumerableSettingDeserializer`1.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Object@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="P:FX.Configuration.Deserializers.EnumerableSettingDeserializer`1.Delimiter">
+            <summary>
+            Gets the delimiter between items
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.JsonConfiguration">
+            <summary>
+            A configuration based on a JSON file
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.JsonConfiguration.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.JsonConfiguration"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.JsonConfiguration.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.JsonConfiguration"/> class.
+            </summary>
+            <param name="jsonConfigFileName">The json configuration file name</param>
+        </member>
+        <member name="T:FX.Configuration.JsonConfigurationProvider">
+            <summary>
+            A configuration provider based on a JSON file
+            </summary>
+        </member>
+        <member name="F:FX.Configuration.JsonConfigurationProvider.DefaultConfigFileName">
+            <summary>
+            The default configuration file name
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.JsonConfigurationProvider.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.JsonConfigurationProvider"/> class.
+            The default 'config.json' will be used
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.JsonConfigurationProvider.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.JsonConfigurationProvider"/> class.
+            </summary>
+            <param name="jsonConfigFilePath">The json configuration file path</param>
+        </member>
+        <member name="M:FX.Configuration.JsonConfigurationProvider.TryGetSettingValue(System.String,System.Object@)">
+            <summary>
+            Tries the get a value
+            </summary>
+            <param name="settingName">Name of the setting</param>
+            <param name="rawValue">The raw value</param>
+            <returns>True is the setting was found</returns>
+        </member>
+        <member name="P:FX.Configuration.JsonConfigurationProvider.JsonConfigFilePath">
+            <summary>
+            Gets the name of the json configuration file
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.MixedConfiguration">
+            <summary>
+            A mixed configuration to read settings from app.config and config.json
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.MixedConfiguration.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.MixedConfiguration"/> class.
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.MixedConfiguration.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.MixedConfiguration"/> class.
+            </summary>
+            <param name="jsonConfigFilePath">The json configuration file path.</param>
+        </member>
+        <member name="T:FX.Configuration.RootCompatibilityExtensions">
+            <summary>
+            Extension methods for .NET Framework compatibility
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.RootCompatibilityExtensions.Parse(System.String,System.Globalization.CultureInfo)">
+            <summary>
+            Parses the specified input
+            </summary>
+            <param name="input">The input string value</param>
+            <param name="cultureInfo">The culture information</param>
+            <returns>The TimeSpan value</returns>
+        </member>
+        <member name="T:FX.Configuration.CurrentConfigurationEnvironment">
+            <summary>
+            Current environment definition
+            </summary>
+        </member>
+        <member name="P:FX.Configuration.CurrentConfigurationEnvironment.Name">
+            <summary>
+            Gets or sets the name of the current environment
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Attributes.CustomCultureAttribute">
+            <summary>
+            A custom culture attribute
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.CustomCultureAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.CustomCultureAttribute"/> class.
+            </summary>
+            <param name="cultureCode">The culture code</param>
+        </member>
+        <member name="P:FX.Configuration.Attributes.CustomCultureAttribute.CultureCode">
+            <summary>
+            Gets the culture code
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Deserializers.DefaultDeserializer">
+            <summary>
+            The default deserializer
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.GetDefaultValue(System.Type)">
+            <summary>
+            Gets the default value
+            </summary>
+            <param name="outputType">Type of the output value</param>
+            <returns>A default value</returns>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.String@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Boolean@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Char@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.SByte@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Byte@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Int16@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.UInt16@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Int32@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.UInt32@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Int64@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.UInt64@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Single@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Double@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Decimal@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.DateTime@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.TimeSpan@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Guid@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.DefaultDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Uri@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="T:FX.Configuration.Attributes.ConfigurationEnvironmentAttribute">
+            <summary>
+            An attribute defines which environment the provider is applicable in
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Attributes.ConfigurationEnvironmentAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FX.Configuration.Attributes.ConfigurationEnvironmentAttribute"/> class.
+            </summary>
+            <param name="environmentName">Name of the environment</param>
+        </member>
+        <member name="P:FX.Configuration.Attributes.ConfigurationEnvironmentAttribute.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="T:FX.Configuration.Deserializers.JsonDeserializer">
+            <summary>
+            JSON deserializer
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.JsonDeserializer.GetSerializerSettings(System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Gets the serializer settings
+            </summary>
+            <param name="input">The input value</param>
+            <param name="cultureInfo">The culture information</param>
+            <returns>The JSON serializer settings</returns>
+        </member>
+        <member name="M:FX.Configuration.Deserializers.JsonDeserializer.Deserialize(System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Object@)">
+            <summary>
+            Deserializes the specified input value to a typed value
+            </summary>
+            <param name="input">The input value</param>
+            <param name="property">The property</param>
+            <param name="cultureInfo">The culture information</param>
+            <param name="result">The result value</param>
+        </member>
+        <member name="T:FX.Configuration.Extensions">
+            <summary>
+            Extention methods
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetProperties(System.Type)">
+            <summary>
+            Gets the properties of the given type
+            </summary>
+            <param name="configurationType">Type of the configuration.</param>
+            <returns>An array of property infos</returns>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetConfigurationEnvironmentAttributes(FX.Configuration.IConfigurationProvider)">
+            <summary>
+            Gets the configuration environment attributes.
+            </summary>
+            <param name="configurationProvider">The configuration provider.</param>
+            <returns>A list of ConfigurationEnvironmentAttribute</returns>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetDeserializerFromAttribute(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the deserializer from the property attribute
+            </summary>
+            <param name="property">The property</param>
+            <returns>The instance of a deserializer</returns>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetPreprocessAttributes(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the preprocess attributes.
+            </summary>
+            <param name="property">The property</param>
+            <returns>A list of preprocess attributes</returns>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetCustomCultureInfo(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the culture information
+            </summary>
+            <param name="property">The property</param>
+            <returns>A culture info</returns>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetInterfaceType(System.Object,System.Type)">
+            <summary>
+            Gets the type of the interface
+            </summary>
+            <param name="deserializer">The deserializer</param>
+            <param name="propertyType">A type of the property</param>
+            <returns></returns>
+        </member>
+        <member name="M:FX.Configuration.Extensions.GetValueFromInterface(System.Object,System.Object,System.Reflection.PropertyInfo,System.Globalization.CultureInfo,System.Type)">
+            <summary>
+            Gets the value from interface
+            </summary>
+            <param name="deserializer">The deserializer</param>
+            <param name="rawSetting">The raw setting</param>
+            <param name="property">The property</param>
+            <param name="customCultureInfo">The custom culture information</param>
+            <param name="interfaceType">Type of the interface</param>
+            <returns></returns>
+        </member>
+        <member name="T:FX.Configuration.Resolvers.ISettingNameResolver">
+            <summary>
+            A setting name resolver
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Resolvers.ISettingNameResolver.GetSettingName(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the name of the setting
+            </summary>
+            <param name="property">The property</param>
+            <returns>A setting name</returns>
+        </member>
+        <member name="T:FX.Configuration.Resolvers.LongPropertyNameSettingNameResolver">
+            <summary>
+            A setting name resolver which returns a setting name as a full name of a property
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Resolvers.LongPropertyNameSettingNameResolver.GetSettingName(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the name of the setting
+            </summary>
+            <param name="property">The property</param>
+            <returns>A setting name</returns>
+        </member>
+        <member name="T:FX.Configuration.Resolvers.ShortPropertyNameSettingNameResolver">
+            <summary>
+            A setting name resolver which returns a setting name as a name of a property
+            </summary>
+        </member>
+        <member name="M:FX.Configuration.Resolvers.ShortPropertyNameSettingNameResolver.GetSettingName(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the name of the setting
+            </summary>
+            <param name="property">The property</param>
+            <returns>A setting name</returns>
+        </member>
+    </members>
+</doc>

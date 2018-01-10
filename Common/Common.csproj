@@ -66,6 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="OtherDLL\MySql.Data.dll" />
+    <Content Include="OtherDLL\System.Web.Http.Cors.dll" />
+    <Content Include="OtherDLL\System.Web.Http.dll" />
+    <Content Include="OtherDLL\System.Web.Http.WebHost.dll" />
+    <Content Include="OtherDLL\System.Web.Http.WebHost.xml" />
+    <Content Include="OtherDLL\System.Web.Http.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

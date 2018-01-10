@@ -92,7 +92,7 @@ namespace Common.DbHelper
         /// </summary>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public  static int ExecuteSql(string sql)
+        public static int ExecuteSql(string sql)
         {
             using (MySqlConnection conn = new MySqlConnection(connstr))
             {
