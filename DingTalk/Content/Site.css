@@ -1,210 +1,24 @@
-﻿
-/*通用*/
-
-.clearfix:before,
-.clearfix:after {
-    clear: both;
-    content: '';
-    display: block;
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
 }
 
-hr {
-    height: 1px;
-    border: none;
-    border-top: 1px solid #b3b3b3;
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
-.hint{
-    color:#808080;
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
 }
 
-/*总体布局*/
-body {
-    margin:0;
-    padding:0;
-    background-color: #D5D5D7;
-}
-
-#app > section {
-    max-width: 1280px;
-    margin: auto;
-    margin-top:-60px;
-}
-
-/*顶部导航栏*/
-
-.head {
-    max-width: 1280px;
-    margin: auto;
-}
-
-header {
-    height: 140px !important;
-    background-color: #409EFF;
-    color:white;
-}
-
-header .el-menu{
-    border:none;
-    background-color:rgba(0,0,0,0);
-}
-
-.userBlock {
-    float: right !important;
-    height: 60px;
-    line-height: 60px;
-    margin: 0;
-    cursor: pointer;
-    position: relative;
-    box-sizing: border-box;
-    display: inline-block;
-}
-
-img, span {
-    vertical-align: middle !important;
-}
-
-a{
-    text-decoration:none;
-    color:black;
-}
-
-.title{
-    color:white;
-    font-size:24px;
-}
-
-
-
-/*首页选项卡*/
-.card {
-    border: 1px solid #409EFF;
-    margin-top: 30px;
-    height: 350px;
-    overflow:hidden;
-}
-
-.card p, .card h5{
-    margin-top: 5px;
-}
-
-.cardImage {
-    float: left;
-    width: 306px;
-    height: 182px;
-}
-
-.cardText {
-    line-height: 2;
-    text-indent: 25px;
-}
-
-.cardButtonTitle, .cardPannelTitle {
-    float: left;
-    background: url(gif/dt-5.gif) repeat-x;
-    height: 32px;
-    line-height: 32px;
-    padding: 0px 25px;
-    color: #fff;
-    font-weight: normal;
-    font-size: 14px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-.cardPannelTitle{
-    width:80%;
-}
-
-.card-box{
-    border-bottom:1px dashed;
-    padding-bottom:5px;
-    margin-bottom:10px;
-}
-
-.card-box h5{
-    margin-bottom:2px;
-}
-
-.card-box-text{
-    font-size:10px;
-}
-.card-box-image {
-    float: left;
-    width: 102px;
-    height: 60px;
-    padding-right:10px;
-}
-
-.card-time{
-    float:right;
-}
-
-ol {
-    list-style: none;
-    padding: 0px;
-    margin: 0px;
-    
-}
-ol li {
-    height: 28px;
-    font-size: 12px;
-    line-height: 28px;
-    overflow: hidden;
-}
-
-/*审批列表*/
-.approval-box {
-    width: 130px;
-    height: 80px;
-    padding: 15px;
-    border: 1px solid #c1c1c1;
-    float: left;
-    margin-right: 20px;
-    margin-bottom:20px;
-    text-align: center;
-}
-
-.approval-box-img {
-    width: 60px;
-    height: 60px;
-    background: url(images/icon900-540.png) no-repeat;
-    background-position:-54px -47px;
-    margin:auto;
-}
-
-.approval-box p{
-    margin:5px;
-}
-
-/*审批报表*/
-.head-fixed {
-    height: 22px;
-    border-bottom: 1px solid #c1c1c1;
-    padding-bottom:10px;
-    vertical-align:central;
-    margin-bottom:26px;
-}
-
-.head-fixed i{
-    font-size:20px;
-    border:1px solid #c1c1c1;
-    border-radius:10px;
-}
-
-
-
-/*底部样式*/
-.footer {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 10px;
-    color:dimgray;
-}
-
-/*element 样式微调*/
-.el-card__header {
-    padding-bottom: 0px;
-}
-.el-card__body {
-    padding-top: 5px;
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
 }

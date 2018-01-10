@@ -46,6 +46,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="fx.configuration">
+      <HintPath>..\Common\OtherDLL\fx.configuration.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
@@ -53,12 +56,40 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\OtherDLL\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors">
+      <HintPath>..\Common\OtherDLL\System.Web.Http.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\Common\OtherDLL\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -71,10 +102,6 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest">
     </Reference>
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -142,6 +169,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -149,12 +177,45 @@
     <Compile Include="Controllers\ApprovalController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
+    <Compile Include="Controllers\DingTalkServersController.cs" />
+    <Compile Include="DingTalkAddressConfig\DepartmentAddressConfig.cs" />
+    <Compile Include="DingTalkAddressConfig\DingTalkServerAddressConfig.cs" />
+    <Compile Include="DingTalkAddressConfig\UserAddressConfig.cs" />
+    <Compile Include="DingTalkConfig.cs" />
+    <Compile Include="DingTalkManager\DingTalkDepartmentManager.cs" />
+    <Compile Include="DingTalkManager\DingTalkMessageManager.cs" />
+    <Compile Include="DingTalkManager\DingTalkUserManager.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HttpsClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Models\AccessTokenResponseModel.cs" />
+    <Compile Include="Models\AddRepartmentModel.cs" />
+    <Compile Include="Models\AddUserRequestModel.cs" />
+    <Compile Include="Models\AttendanceRequestModel.cs" />
+    <Compile Include="Models\BatchDeleteUserModel.cs" />
+    <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\DepartmentResponseModel.cs" />
+    <Compile Include="Models\DepartmentUser.cs" />
+    <Compile Include="Models\DepartmentUserResponseModel.cs" />
+    <Compile Include="Models\DownloadFileModel.cs" />
+    <Compile Include="Models\FileMsgModel.cs" />
+    <Compile Include="Models\ImageMsgModel.cs" />
+    <Compile Include="Models\LinkMsgModel.cs" />
+    <Compile Include="Models\MessageRequestBaseModel.cs" />
+    <Compile Include="Models\RequestBaseModel.cs" />
+    <Compile Include="Models\ResponseBaseModel.cs" />
+    <Compile Include="Models\TextMsgModel.cs" />
+    <Compile Include="Models\UploadMediaRequestModel.cs" />
+    <Compile Include="Models\UploadMediaType.cs" />
+    <Compile Include="Models\VoiceMsgModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
     <Content Include="Content\gif\dt-5.gif" />
@@ -183,9 +244,13 @@
     </Content>
     <Content Include="Content\fonts\element-icons.ttf" />
     <Content Include="Content\fonts\element-icons.woff" />
+    <Content Include="Index.html" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
+    <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\lib.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
@@ -226,8 +291,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Account\" />
+    <Folder Include="Views\DingTalkServers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -252,6 +317,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\approval\WorkOvertime.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DingTalkAddressConfig.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
