@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@RenderPage("~/Views/Shared/LeftMenu.cshtml")
+                
+<!--右侧实体内容-->
+<el-main id="mainPage">
+</el-main>
+
+@RenderPage("~/Views/Shared/LeftAnother.cshtml")
+  
+
+@section scripts{
+    <script>
+        var index = new Vue({
+            el: '#app',
+            mixins: [mixin],
+            data: function () {
+                return {
+                    activeIndex: '1',
+                    scollImages: []
+                }
+            }
+        })
+        $("#tempPage").load('/Home/partHome')
+
+        //首页JS
+        var scollImages = []
+        for (let i = 1; i < 7; i++) {
+            scollImages.push("Content/images/scoll" + i + ".jpg")
+        }
+        index.scollImages = scollImages
+    </script>
+}

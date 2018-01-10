@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="clearFix">
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
+        <el-menu-item index="0" class="hidden-sm-and-down">
+            <img src="~/Content/images/miaov.png">
+        </el-menu-item>
+
+        <el-menu-item index="1">
+             网站首页
+        </el-menu-item>
+
+        <el-submenu index="2">
+            <template slot="title">
+                <i class="fa fa-code"></i>
+                相识华科
+            </template>
+            <el-menu-item index="2-1">
+                关于我们
+            </el-menu-item>
+            <el-menu-item index="2-2">新闻资讯</el-menu-item>
+            <el-menu-item index="2-3">应用案例</el-menu-item>
+        </el-submenu>
+
+        <el-menu-item index="3">
+            科研服务
+        </el-menu-item>
+
+        <el-menu-item index="4">
+            人才培养
+        </el-menu-item>
+
+        <el-menu-item index="6">
+            下载中心
+        </el-menu-item>
+    </el-menu>
+</div>

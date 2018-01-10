@@ -1,0 +1,91 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage">
+    <template>
+        <div>
+            @*关于我们和案例*@
+            <el-row :gutter="20">
+                <el-col :xs="24" :sm="17">
+                    <el-card class="card">
+                        <div slot="header" class="clearfix">
+                            <span class="cardButtonTitle">关于我们</span>
+                            @*<el-button style="float: right; padding: 3px 0" type="text">更多</el-button>*@
+                        </div>
+                        <div>
+                            <img src="~/Content/images/card1.jpg" class="cardImage" />
+                            <p class="cardText">
+                                泉州华中科技大学智能制造研究院（以下简称泉州研究院），是泉州市人民政府与华中科技大学
+                                合作共建，于2014年11月20日成立的事业单位，是以集聚国内外高校、科研院所和创新团队的科技创新资源，
+                                面向泉州市经济发展和“数控一代”机械产品升级创新工程以及“泉州制造2025”的需求，打造具有强大
+                                技术创新、成果转化和产业化的支撑与服务平台。
+                            </p>
+                        </div>
+                    </el-card>
+                </el-col>
+                <el-col :xs="24" :sm="7">
+                    <el-card class="card">
+                        <div slot="header" class="clearfix">
+                            <span class="cardPannelTitle">应用案例</span>
+                            @*<el-button style="float: right; padding: 3px 0" type="text">更多</el-button>*@
+                        </div>
+                        <div class="card-box clearfix">
+                            <img src="~/Content/images/card2.jpg" class="card-box-image" />
+                            <h5>基于并联多关节机器人的3D打印机</h5>
+                            <span class="card-box-text">
+                                这是一台3D打印机
+                            </span>
+                        </div>
+                        <div class="card-box clearfix">
+                            <img src="~/Content/images/card3.jpg" class="card-box-image" />
+                            <h5>瓷砖自动检测</h5>
+                            <span class="card-box-text">
+                                这是一台瓷砖检测机
+                            </span>
+                        </div>
+                        <div class="card-box clearfix">
+                            <img src="~/Content/images/card2.jpg" class="card-box-image" />
+                            <h5>基于并联多关节机器人的3D打印机</h5>
+                            <span class="card-box-text">
+                                这是一台3D打印机
+                            </span>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </div>
+    </template>
+</el-main>
+
+<script>
+    var index = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                scollImages: []
+            }
+        },
+        methods: {
+            loadHtml: function () {
+                $("#mainPage").html('')
+                var div = $("#partPage")
+                $("#mainPage").append(div)
+            }
+        },
+        created: function () {
+            this.loadHtml()
+        }
+    })
+    var scollImages = []
+    for (let i = 1; i < 7; i++) {
+        scollImages.push("Content/images/scoll" + i + ".jpg")
+    }
+    index.scollImages = scollImages
+
+</script>
+
+
+

@@ -1,0 +1,138 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--查詢表單-->
+    <el-form :inline="true" :model="formInline" class="demo-form-inline"
+             size="medium">
+        <el-form-item label="关键字">
+            <el-input v-model="formInline.user" style="width:500px;"
+                      placeholder="请输入搜索关键字，包括审批标题、正文内容、审批意见"></el-input>
+        </el-form-item>
+        
+        <template v-if="superSearch">
+            <el-form-item label="发起日期（提交审批日期）">
+                <el-date-picker v-model="formInline.startDate"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="完成日期（最终审批日期）">
+                <el-date-picker v-model="formInline.endDate"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+        </template>
+
+        <el-form-item>
+            <el-button type="primary" v-on:click="onFilter">搜索</el-button>
+            <span v-if="superSearch" v-on:click="changeSuperSearch" class="clickable-text">关闭高级搜索</span>
+            <span v-else v-on:click="changeSuperSearch" class="clickable-text">高级搜索</span>
+        </el-form-item>
+        
+        <el-form-item label="审批类型">
+            <el-select v-model="formInline.region">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="办公用品申领" value="1"></el-option>
+                <el-option label="用车申请" value="2"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-radio-group v-model="formInline.state">
+                <el-radio :label="0">全部</el-radio>
+                <el-radio :label="1">审批完成</el-radio>
+                <el-radio :label="2">审批中</el-radio>
+                <el-radio :label="3">已撤回</el-radio>
+            </el-radio-group>
+        </el-form-item>
+    </el-form>
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="name" label="审批标题" width="120">
+        </el-table-column>
+        <el-table-column prop="address" label="审批摘要">
+        </el-table-column>
+        <el-table-column prop="date" label="发起时间" width="140">
+        </el-table-column>
+        <el-table-column prop="date" label="完成时间" width="140">
+        </el-table-column>
+        <el-table-column prop="address" label="状态">
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage4"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="10">
+        </el-pagination>
+    </div>
+</div>
+
+
+<script>
+
+    new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                tableData: tableData,
+                currentPage4: 1,
+                superSearch: false,
+                formInline: {
+                    user: '',
+                    region: '',
+                    startDate: '',
+                    endDate: '',
+                    state:0
+                }
+            }
+        },
+        methods: {
+            //表格相關事件
+
+            //翻頁相關事件
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+            },
+            //查詢相關頁面
+            onFilter() {
+                console.log(this.formInline)
+            },
+            //切换高级搜索
+            changeSuperSearch() {
+                this.superSearch = !this.superSearch;
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+    function formatQueryStr(object) {
+        var obj = _cloneObj(object)
+        var queryStr = ''
+        for (var o in obj) {
+            if (o == 'date') {
+
+            }
+        }
+    }
+
+</script>

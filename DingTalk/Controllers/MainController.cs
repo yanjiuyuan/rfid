@@ -17,24 +17,23 @@ namespace WebZhongZhi.Controllers
             return View();
         }
 
-        public ActionResult Main2()
+        public ActionResult Approval_waitMe()
         {
-            ViewBag.Message = "Your application description page.";
             return View();
         }
 
-        public ActionResult Main3()
+        public ActionResult Approval_IDone()
         {
             ViewBag.Message = "Your contact page.";
             return View();
         }
 
-        public ActionResult Main4()
+        public ActionResult Approval_fromMe()
         {
             return View();
         }
 
-        public ActionResult Main5()
+        public ActionResult Approval_copyMe()
         {
             return View();
         }
