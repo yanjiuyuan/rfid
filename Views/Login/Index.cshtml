@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout-noLogin.cshtml";
+}
+
+<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+    <el-form-item label="账号" prop="username">
+        <el-input v-model="ruleForm.username"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" prop="password">
+        <el-input type="password" v-model="ruleForm.password"></el-input>
+    </el-form-item>
+
+    <el-form-item label="保持登录" prop="remenber">
+        <el-switch v-model="ruleForm.remenber"></el-switch>
+    </el-form-item>
+
+    <el-form-item>
+        <el-button type="primary" v-on:click="submitForm('ruleForm')">登录</el-button>
+        <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+    </el-form-item>
+</el-form>
+
+@section scripts{
+    <script>
+        new Vue({
+            el: '#app',
+            data: function () {
+                return {
+                    activeIndex:'0',
+                    ruleForm: {
+                        username: '',
+                        password:'',
+                        remenber:true
+                    },
+                    rules: {
+                        username: [
+                            { required: true, message: '请输入账号', trigger: 'blur' },
+                            { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' }
+                        ],
+                        password: [
+                            { required: true, message: '请输入密码', trigger: 'blur' },
+                            { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
+                        ]
+                    }
+                }
+            },
+            methods: {
+                submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            setLocalObj('user', this.ruleForm)
+                            location.href='/'
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                resetForm(formName) {
+                    this.$refs[formName].resetFields();
+                }
+            },
+            created: function () {
+                let info = localStorage.getItem("miaov")
+            }
+        })
+    </script>
+    <style>
+        form{
+            width:460px;
+            margin:80px auto;
+        }
+    </style>
+}

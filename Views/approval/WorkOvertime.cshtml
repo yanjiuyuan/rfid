@@ -1,0 +1,122 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        加班申请
+    </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        
+        <el-form-item label="加班人" prop="name">
+            <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+
+        <el-form-item label="加班事由" prop="reson">
+            <el-input v-model="ruleForm.reson"></el-input>
+        </el-form-item>
+
+        <hr />
+
+        <el-form-item label="开始时间" prop="startTime">
+            <div class="block">
+                <span class="demonstration">带快捷选项</span>
+                <el-date-picker v-model="ruleForm.startTime"
+                                type="datetime"
+                                placeholder="选择日期时间"
+                                align="right"
+                                :picker-options="dayPickerOptions">
+                </el-date-picker>
+            </div>
+        </el-form-item>
+
+        <el-form-item label="结束时间" prop="endTime">
+            <div class="block">
+                <span class="demonstration">带快捷选项</span>
+                <el-date-picker v-model="ruleForm.endTime"
+                                type="datetime"
+                                placeholder="选择日期时间"
+                                align="right"
+                                :picker-options="dayPickerOptions">
+                </el-date-picker>
+            </div>
+        </el-form-item>
+
+        <hr />
+
+        <el-form-item label="审批人">
+            <span class="hint">审批人已由管理员预置，并将自动去重</span>
+        </el-form-item>
+
+        <el-form-item label="抄送人">
+            <span class="hint">（审批通过后，通知抄送人）</span>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit()">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                ruleForm: {
+                    name: '',
+                    reson: '',
+                    startTime: '',
+                    endTime: '',
+                },
+                rules: {
+                    name: [
+                        { required: true, message: '申请人不能为空', trigger: 'blur' },
+                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                    ],
+                    startTime: { required: true, message: '开始时间不能为空', trigger: 'blur' },
+                    endTime: { required: true, message: '结束时间不能为空', trigger: 'blur' }
+                },
+                dayPickerOptions: {
+                    shortcuts: [
+                        {
+                            text: '昨天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        },{
+                        text: '今天',
+                        onClick(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '明天',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() + 3600 * 1000 * 24);
+                            picker.$emit('pick', date);
+                        }
+                    }]
+                }
+            }
+        },
+        methods: {
+            onSubmit() {
+                console.log('submit!');
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>
+
+
+

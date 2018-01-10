@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<template>
+    @*滚动图片*@
+    <el-carousel>
+        <el-carousel-item v-for="item in scollImages" :key="item">
+            <img :src="item" style="width:100%;height:300px;"/>
+        </el-carousel-item>
+    </el-carousel>
+    <div>
+        @*关于我们和案例*@
+        <el-row :gutter="20">
+            <el-col :xs="24" :sm="17" >
+                <el-card class="card">
+                    <div slot="header" class="clearfix">
+                        <span class="cardButtonTitle">关于我们</span>
+                        @*<el-button style="float: right; padding: 3px 0" type="text">更多</el-button>*@
+                    </div>
+                    <div>
+                        <img src="~/Content/images/card1.jpg" class="cardImage" />
+                        <p class="cardText">
+                            泉州华中科技大学智能制造研究院（以下简称泉州研究院），是泉州市人民政府与华中科技大学
+                            合作共建，于2014年11月20日成立的事业单位，是以集聚国内外高校、科研院所和创新团队的科技创新资源，
+                            面向泉州市经济发展和“数控一代”机械产品升级创新工程以及“泉州制造2025”的需求，打造具有强大
+                            技术创新、成果转化和产业化的支撑与服务平台。
+                        </p>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="7">
+                <el-card class="card">
+                    <div slot="header" class="clearfix">
+                        <span class="cardPannelTitle">应用案例</span>
+                        @*<el-button style="float: right; padding: 3px 0" type="text">更多</el-button>*@
+                    </div>
+                    <div class="card-box clearfix">
+                        <img src="~/Content/images/card2.jpg" class="card-box-image" />
+                        <h5>基于并联多关节机器人的3D打印机</h5>
+                        <span class="card-box-text">
+                            这是一台3D打印机
+                        </span>
+                    </div>
+                    <div class="card-box clearfix">
+                        <img src="~/Content/images/card3.jpg" class="card-box-image" />
+                        <h5>瓷砖自动检测</h5>
+                        <span class="card-box-text">
+                            这是一台瓷砖检测机
+                        </span>
+                    </div>
+                    <div class="card-box clearfix">
+                        <img src="~/Content/images/card2.jpg" class="card-box-image" />
+                        <h5>基于并联多关节机器人的3D打印机</h5>
+                        <span class="card-box-text">
+                            这是一台3D打印机
+                        </span>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
+        @*新闻资讯*@
+        <el-row :gutter="20">
+            <el-col :xs="24" :sm="9">
+                <el-card class="card">
+                    <div slot="header" class="clearfix">
+                        <span class="cardButtonTitle">研究院新闻</span>
+                    </div>
+                    <div>
+                        <ol>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span>泉州华科院与华宝智能联合召开正式订单</span>
+                                <span class="card-time">2017-12-08</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>热烈祝贺研究院党支部正式成立</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>热烈祝贺我院员工荣获 “2017年福建省</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>寻访红色足迹，传承红色圣火</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>周济抵闽调研智能制造产业发展情况并肯</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>福建工业学校林俊标校长一行莅临我院参</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>泉州华中科技大学智能制造研究院第一届</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>赣州市政府学习考察组莅临我院参观座</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>南平科技局考察组到我院参观并座谈</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>泉州市智能制造技术发展与人才培养研讨</span>
+                            </li>
+                        </ol>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="8">
+                <el-card class="card">
+                    <div slot="header" class="clearfix">
+                        <span class="cardButtonTitle">行业资讯</span>
+                    </div>
+                    <div>
+                        <ol>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-12-08</span>
+                                <span>泉州华数机器人协办“2017年福建省职工</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>武汉智能控制研究院落户武汉客厅 剑指千</span>       
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>全自动拉片上料系统研发取得突破性进</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>立嘉镜头：华数机器人笔记本壳及手机壳</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span>泉州华数机器人有限公司协办2017年福建</span>
+                                <span class="card-time">2017-11-25</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>关注 | 工业机器人职业技能标准出台 助力</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>人工智能AI技术正在大举入侵制造业</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>智能工厂|海尔：互联无边界</span>
+                            </li>
+                        </ol>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="7">
+                <el-card class="card">
+                    <div slot="header" class="clearfix">
+                        <span class="cardPannelTitle">下载中心</span>
+                    </div>
+                    <div>
+                        <ol>
+                            <li class="clearfix">
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-12-08</span>
+                                <span>华大ST系列伺服电机选型手册</span>
+                            </li>
+                            <li class="clearfix">
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>登奇电机选型手册</span>
+                            </li>
+                            <li class="clearfix">
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>HSV160U交流伺服驱动单元使用</span>
+                            </li>
+                            <li class="clearfix">
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>HSV-160B+驱动器使用说明书</span>
+                            </li>
+                            <li>
+                                <i class="el-icon-caret-right"></i>
+                                <span class="card-time">2017-11-25</span>
+                                <span>180UD驱动器说明书</span>
+                            </li>
+                        </ol>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
+    </div>
+</template>
