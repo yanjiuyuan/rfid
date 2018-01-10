@@ -19,10 +19,14 @@
             }
         },
         methods: {
-
+            loadHtml: function () {
+                $("#mainPage").html('')
+                var div = $("#partPage")
+                $("#mainPage").append(div)
+            }
         },
         created: function () {
-            loadHtml("mainPage", "partPage")
+            this.loadHtml()
         }
     })
     var myChart = echarts.init(document.getElementById('partPage'));
