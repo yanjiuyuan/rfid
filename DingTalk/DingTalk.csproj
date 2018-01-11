@@ -271,15 +271,6 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
-    <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\Main\Approval.cshtml" />
-    <Content Include="Views\Main\Main2.cshtml" />
-    <Content Include="Views\Main\Main3.cshtml" />
-    <Content Include="Views\Main\Main4.cshtml" />
-    <Content Include="Views\Main\Main5.cshtml" />
-    <Content Include="Views\Main\Main6.cshtml" />
-    <Content Include="Views\Main\Main7.cshtml" />
-    <Content Include="Views\Main\Main8.cshtml" />
     <Content Include="Views\Register\Index.cshtml" />
     <Content Include="Views\Shared\Footer.cshtml" />
     <Content Include="Views\Shared\Head_login.cshtml" />
@@ -320,6 +311,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DingTalkAddressConfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Main\Approval.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Main\Approval_copyMe.cshtml" />
+    <Content Include="Views\Main\Approval_fromMe.cshtml" />
+    <Content Include="Views\Main\Approval_IDone.cshtml" />
+    <Content Include="Views\Main\Approval_waitMe.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
+    <Content Include="Views\Main\Main6.cshtml" />
+    <Content Include="Views\Main\Main7.cshtml" />
+    <Content Include="Views\Main\Main8.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

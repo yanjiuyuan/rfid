@@ -14,8 +14,8 @@ hr {
     border-top: 1px solid #b3b3b3;
 }
 
-.hint{
-    color:#808080;
+.hint {
+    color: #808080;
 }
 
 .clickable-text {
@@ -25,15 +25,15 @@ hr {
 
 /*总体布局*/
 body {
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
     background-color: #D5D5D7;
 }
 
 #app > section {
     max-width: 1280px;
     margin: auto;
-    margin-top:-60px;
+    margin-top: -60px;
 }
 
 /*顶部导航栏*/
@@ -46,13 +46,13 @@ body {
 header {
     height: 140px !important;
     background-color: #409EFF;
-    color:white;
+    color: white;
 }
 
-header .el-menu{
-    border:none;
-    background-color:rgba(0,0,0,0);
-}
+    header .el-menu {
+        border: none;
+        background-color: rgba(0,0,0,0);
+    }
 
 .userBlock {
     float: right !important;
@@ -69,14 +69,14 @@ img, span {
     vertical-align: middle !important;
 }
 
-a{
-    text-decoration:none;
-    color:black;
+a {
+    text-decoration: none;
+    color: black;
 }
 
-.title{
-    color:white;
-    font-size:24px;
+.title {
+    color: white;
+    font-size: 24px;
 }
 
 
@@ -86,12 +86,12 @@ a{
     border: 1px solid #409EFF;
     margin-top: 30px;
     height: 350px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
-.card p, .card h5{
-    margin-top: 5px;
-}
+    .card p, .card h5 {
+        margin-top: 5px;
+    }
 
 .cardImage {
     float: left;
@@ -116,46 +116,48 @@ a{
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
-.cardPannelTitle{
-    width:80%;
+
+.cardPannelTitle {
+    width: 80%;
 }
 
-.card-box{
-    border-bottom:1px dashed;
-    padding-bottom:5px;
-    margin-bottom:10px;
+.card-box {
+    border-bottom: 1px dashed;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
 }
 
-.card-box h5{
-    margin-bottom:2px;
+    .card-box h5 {
+        margin-bottom: 2px;
+    }
+
+.card-box-text {
+    font-size: 10px;
 }
 
-.card-box-text{
-    font-size:10px;
-}
 .card-box-image {
     float: left;
     width: 102px;
     height: 60px;
-    padding-right:10px;
+    padding-right: 10px;
 }
 
-.card-time{
-    float:right;
+.card-time {
+    float: right;
 }
 
 ol {
     list-style: none;
     padding: 0px;
     margin: 0px;
-    
 }
-ol li {
-    height: 28px;
-    font-size: 12px;
-    line-height: 28px;
-    overflow: hidden;
-}
+
+    ol li {
+        height: 28px;
+        font-size: 12px;
+        line-height: 28px;
+        overflow: hidden;
+    }
 
 /*审批列表*/
 .approval-box {
@@ -165,7 +167,7 @@ ol li {
     border: 1px solid #c1c1c1;
     float: left;
     margin-right: 20px;
-    margin-bottom:20px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
@@ -173,28 +175,28 @@ ol li {
     width: 60px;
     height: 60px;
     background: url(images/icon900-540.png) no-repeat;
-    background-position:-54px -47px;
-    margin:auto;
+    background-position: -54px -47px;
+    margin: auto;
 }
 
-.approval-box p{
-    margin:5px;
+.approval-box p {
+    margin: 5px;
 }
 
 /*审批报表*/
 .head-fixed {
     height: 22px;
     border-bottom: 1px solid #c1c1c1;
-    padding-bottom:10px;
-    vertical-align:central;
-    margin-bottom:26px;
+    padding-bottom: 10px;
+    vertical-align: central;
+    margin-bottom: 26px;
 }
 
-.head-fixed i{
-    font-size:20px;
-    border:1px solid #c1c1c1;
-    border-radius:10px;
-}
+    .head-fixed i {
+        font-size: 20px;
+        border: 1px solid #c1c1c1;
+        border-radius: 10px;
+    }
 
 
 
@@ -203,16 +205,18 @@ ol li {
     text-align: center;
     font-size: 14px;
     margin-bottom: 10px;
-    color:dimgray;
+    color: dimgray;
 }
 
 /*element 样式微调*/
 .el-card__header {
     padding-bottom: 0px;
 }
+
 .el-card__body {
     padding-top: 5px;
 }
+
 .el-menu--horizontal .el-menu-item:focus, .el-menu--horizontal .el-menu-item:hover {
     background-color: rgba(0,0,0,0);
 }
