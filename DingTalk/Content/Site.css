@@ -192,12 +192,30 @@ ol {
     margin-bottom: 26px;
 }
 
-    .head-fixed i {
-        font-size: 20px;
-        border: 1px solid #c1c1c1;
-        border-radius: 10px;
-    }
+.head-fixed i {
+    font-size: 20px;
+    border: 1px solid #c1c1c1;
+    border-radius: 10px;
+}
 
+/*添加审批人*/
+.el-tag + .el-tag {
+    margin-left: 10px;
+}
+
+.button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+}
 
 
 /*底部样式*/
