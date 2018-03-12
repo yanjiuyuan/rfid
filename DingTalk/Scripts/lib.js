@@ -73,36 +73,36 @@ var mixin = {
 
 var tableData = [{
     date: '2017-05-03',
-    name: '王小虎',
-    address: '上海市'
+    name: '办公用品1',
+    address: '笔记本'
 }, {
     date: '2016-05-02',
-    name: '李小龍',
-    address: '美國'
+    name: '办公用品2',
+    address: '签字笔'
 }, {
     date: '2016-05-04',
-    name: '趙小剛',
-    address: '北京市'
+    name: '办公用品3',
+    address: 'A4纸，透明胶'
 }, {
     date: '2016-05-01',
-    name: '老王',
-    address: '上海'
+    name: '用车1',
+    address: '去基地'
 }, {
     date: '2016-05-08',
-    name: '小羅',
-    address: '荊州'
+    name: '用车2',
+    address: '去软件园'
 }, {
     date: '2016-05-06',
-    name: '朱迪',
-    address: '江蘇'
+    name: '办公用品4',
+    address: '垃圾桶'
 }, {
     date: '2018-05-07',
-    name: '小明',
-    address: '浙江'
+    name: '加班1',
+    address: '赶进度'
 }, {
     date: '2017-05-07',
-    name: '小明',
-    address: '浙江'
+    name: '办公用品5',
+    address: '尺子'
 }]
 
 var menbers = [

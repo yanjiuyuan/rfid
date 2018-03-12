@@ -4,6 +4,7 @@
 
 <!--右侧实体内容-->
 <el-main id="partPage" style="position:relative;">
+    <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
         办公用品申请
@@ -13,7 +14,7 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
-
+        <!--办公用品明细-->
         <template v-for="(good,index) in ruleForm.goods" >
             <hr />
             <el-form-item :label="'品名('+(index+1)+')'">
@@ -37,12 +38,10 @@
                 <el-input v-model="good.detail"></el-input>
             </el-form-item>
         </template>
-
         <p class="hint">如需添加申请项，请点击“添加明细”</p>
         <el-button v-on:click="addGoods" type="primary" plain> + 添加明细</el-button>
-
         <hr />
-
+        <!--添加审批人-->
         <el-form-item label="审批人" style="margin-bottom:0px;">
             <span v-if="preApprover" class="hint">审批人已由管理员预置,并将自动去重</span>
             <el-button v-else class="button-new-tag" size="small" v-on:click="showInput">+ 添加审批人</el-button>
@@ -72,7 +71,7 @@
             </el-input>
             
         </el-form-item>
-
+        <!--添加抄送人-->
         <el-form-item label="抄送人">
             <span class="hint">（审批通过后，通知抄送人）</span>
         </el-form-item>
@@ -108,7 +107,7 @@
                 },
                 inputVisible: false,
                 inputValue: '',
-                preApprover: true
+                preApprover: false
             }
         },
         methods: {
@@ -150,18 +149,18 @@
         }
     })
 
-    DingTalkPC.ready(function () {
-        DingTalkPC.biz.contact.choose({
-            multiple: true, //是否多选： true多选 false单选； 默认true
-            users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
-            corpId: 'dingb4ff1079f84f8d54', //企业id
-            max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
-            onSuccess: function (data) {
-                console.log(data)
-            },
-            onFail: function (err) { }
-        });
-    }
+    //DingTalkPC.ready(function () {
+    //    DingTalkPC.biz.contact.choose({
+    //        multiple: true, //是否多选： true多选 false单选； 默认true
+    //        users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+    //        corpId: 'dingb4ff1079f84f8d54', //企业id
+    //        max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
+    //        onSuccess: function (data) {
+    //            console.log(data)
+    //        },
+    //        onFail: function (err) { }
+    //    });
+    //}
 </script>
 
 
