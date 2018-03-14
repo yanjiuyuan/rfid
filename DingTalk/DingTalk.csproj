@@ -188,6 +188,16 @@
     <Compile Include="DingTalkAddressConfig\DingTalkServerAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\UserAddressConfig.cs" />
     <Compile Include="DingTalkConfig.cs" />
+    <Compile Include="DingTalkHelper\AccessTokenModel.cs" />
+    <Compile Include="DingTalkHelper\BaseModel.cs" />
+    <Compile Include="DingTalkHelper\DDApiService.cs" />
+    <Compile Include="DingTalkHelper\DDHelper.cs" />
+    <Compile Include="DingTalkHelper\DepartmentInfo.cs" />
+    <Compile Include="DingTalkHelper\GetDepartmentListModel.cs" />
+    <Compile Include="DingTalkHelper\GetUserInfoModel.cs" />
+    <Compile Include="DingTalkHelper\HttpRequestHelper.cs" />
+    <Compile Include="DingTalkHelper\JsApiTicketModel.cs" />
+    <Compile Include="DingTalkHelper\UserDetailInfo.cs" />
     <Compile Include="DingTalkManager\DingTalkDepartmentManager.cs" />
     <Compile Include="DingTalkManager\DingTalkMessageManager.cs" />
     <Compile Include="DingTalkManager\DingTalkUserManager.cs" />
@@ -333,6 +343,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <Content Include="Views\Login\LoginTest.cshtml" />
+    <Content Include="Views\Login\Login.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
