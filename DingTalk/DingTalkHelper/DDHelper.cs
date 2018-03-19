@@ -108,7 +108,6 @@ namespace DingTalk.DingTalkHelper
             {
                 throw;
             }
-            return null;
         }
 
         public static UserDetailInfo GetUserDetail(string accessToken, string userId)

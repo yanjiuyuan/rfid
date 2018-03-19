@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace WebZhongZhi.Controllers
 {
+    [ValidateInput(false)]
     public class LoginController : Controller
     {
         DingTalkConfig dtConfig = new DingTalkConfig();
@@ -32,7 +33,7 @@ namespace WebZhongZhi.Controllers
                     Session["AccessToken"] = accessToken;
                     Session["CurrentUser"] = userInfo;
                 }
-                return Content(jsonString);
+                return Content(userId);
             }
             catch (Exception ex)
             {
@@ -54,16 +55,16 @@ namespace WebZhongZhi.Controllers
             ViewBag.AccessToken = accessToken;
             string ticket = DDApiService.Instance.GetJsApiTicket(accessToken);
             long timeStamp = DDHelper.GetTimeStamp();
-            string url = Request.Url.ToString();
+            string url = "http://q202800o84.iask.in/login/login";
             string signature = DDApiService.Instance.GetSign(ticket, nonceStr, timeStamp, url);
-
+            ViewBag.Url = url;
             ViewBag.JsApiTicket = ticket;
             ViewBag.Signature = signature;
             ViewBag.NonceStr = nonceStr;
             ViewBag.TimeStamp = timeStamp;
             ViewBag.CorpId = dtConfig.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
-            //ViewBag.AgentId = DDApiService.Instance.AgentId;
+            ViewBag.AgentId = DDApiService.Instance.AgentId;
         }
     }
 }

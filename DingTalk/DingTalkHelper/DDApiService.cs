@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DingTalkServer;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -11,16 +12,16 @@ namespace DingTalk.DingTalkHelper
     public class DDApiService
     {
         public static readonly DDApiService Instance = new DDApiService();
-
+        DingTalkConfig dtConfig = new DingTalkConfig();
         public string CorpId { get; private set; }
         public string CorpSecret { get; private set; }
         public string AgentId { get; private set; }
 
         private DDApiService()
         {
-            CorpId = ConfigurationManager.AppSettings["CorpId"];
-            CorpSecret = ConfigurationManager.AppSettings["CorpSecret"];
-            //AgentId = ConfigurationManager.AppSettings["agentId"];
+            CorpId = dtConfig.CorpId;
+            CorpSecret = dtConfig.CorpSecret;
+            AgentId = dtConfig.AgentId;
         }
 
         /// <summary>
@@ -66,6 +67,8 @@ namespace DingTalk.DingTalkHelper
             }
             return null;
         }
+
+
 
         public string GetSign(string ticket, string nonceStr, long timeStamp, string url)
         {
