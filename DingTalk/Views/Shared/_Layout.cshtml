@@ -50,6 +50,7 @@
 </script>
 
 <script>
+    console.log('hello world')
     var needLogin = '@ViewBag.needLogin'
     var DingData = {}
     $.ajax({
@@ -58,9 +59,9 @@
         type:'GET',
         cache:false,
         success: function (data) {
-            DingData = data.data
+            DingData = data
             var configObj = {
-                jsticket: DingData.jsticket,
+                //jsticket: DingData.jsticket,
                 agentId: DingData.agentId,
                 corpId: DingData.corpId,
                 timeStamp: DingData.timeStamp,
@@ -78,6 +79,7 @@
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
+        console.log('i am ready')
         DingTalkPC.device.notification.alert({
             message: 'hello world',
             title: 'just say hello',
