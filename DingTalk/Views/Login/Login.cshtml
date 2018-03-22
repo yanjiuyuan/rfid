@@ -31,7 +31,7 @@
             timeStamp: _config.timeStamp, // 必填，生成签名的时间戳
             nonceStr: _config.nonceStr, // 必填，生成签名的随机串
             signature: _config.signature, // 必填，签名
-            jsApiList: ['device.notification.alert', 'device.notification.confirm','biz.user.get'] // 必填，需要使用的jsapi列表
+            jsApiList: ['device.notification.alert', 'device.notification.confirm', 'biz.user.get'] // 必填，需要使用的jsapi列表
         });
 
 
@@ -67,7 +67,10 @@
             DingTalkPC.biz.user.get({
                 onSuccess: function (info) {
                     $("#hOutput").html($("#hOutput").html() + "</BR><b> UserInfo : " + JSON.stringify(info) + "</b>");
+
                     $('#notice').text("欢迎您：" + info.nickName + "。浏览器正在自动跳转...");
+
+
                 },
                 onFail: function (err) {
                     $("#hOutput").html($("#hOutput").html() + "</BR><b> UserInfo 获取失败: " + JSON.stringify(err) + "</b>");

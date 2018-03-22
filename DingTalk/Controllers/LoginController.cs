@@ -1,10 +1,13 @@
 ﻿
+using Common.JsonHelper;
 using DingTalk.DingTalkHelper;
 using DingTalkServer;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -65,6 +68,39 @@ namespace WebZhongZhi.Controllers
             ViewBag.CorpId = dtConfig.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
             ViewBag.AgentId = DDApiService.Instance.AgentId;
+        }
+
+        /// <summary>
+        /// 载入用户数据
+        /// </summary>
+        /// <returns>errorCode  0 载入测试用户数据成功,1 载入当前用户数据成功, 2 其他原因 </returns>
+        /// 测试数据：Login/LoadUserInfo
+        public string LoadUserInfo(string UserInfoJson)
+        {
+            try
+            {
+                string filepath = Server.MapPath("~/UserInfoConfig.json");
+                if (string.IsNullOrEmpty(UserInfoJson))  //UserInfoJson为空时载入测试账号数据
+                {
+                    string json = JsonHelper.GetFileJson(filepath);
+                    if (!string.IsNullOrEmpty(json))  //数据不为空存储对象到Session
+                    {
+                        UserInfo userInfo = JsonHelper.JsonToObject<UserInfo>(json);
+                        Session["userInfo"] = userInfo;
+                    }
+                    return "{\"errorCode\":\"0\",\"errorMessage\":\"载入测试用户数据成功\"}";
+                }
+                else
+                {
+                    UserInfo userInfo = JsonHelper.JsonToObject<UserInfo>(UserInfoJson);
+                    Session["userInfo"] = userInfo;
+                    return "{\"errorCode\":\"1\",\"errorMessage\":\"载入用户数据成功\"}";
+                }
+            }
+            catch (Exception ex)
+            {
+                  return "{\"errorCode\":\"2\",\"errorMessage\":\""+ ex.Message+"\"}";
+            }
         }
     }
 }

@@ -198,6 +198,7 @@
     <Compile Include="DingTalkHelper\HttpRequestHelper.cs" />
     <Compile Include="DingTalkHelper\JsApiTicketModel.cs" />
     <Compile Include="DingTalkHelper\UserDetailInfo.cs" />
+    <Compile Include="DingTalkHelper\UserInfo.cs" />
     <Compile Include="DingTalkManager\DingTalkDepartmentManager.cs" />
     <Compile Include="DingTalkManager\DingTalkMessageManager.cs" />
     <Compile Include="DingTalkManager\DingTalkUserManager.cs" />
@@ -272,7 +273,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\vue.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -345,6 +348,13 @@
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Login\LoginTest.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
+    <Content Include="UserInfoConfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{5dce917e-8af8-48b1-9e3f-f549951c9e49}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

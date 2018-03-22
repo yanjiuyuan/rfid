@@ -46,6 +46,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -58,6 +60,7 @@
     <Compile Include="Code\ValidateCode.cs" />
     <Compile Include="Code\YzmClass.cs" />
     <Compile Include="DbHelper\MySqlHelper.cs" />
+    <Compile Include="JsonHelper\JsonHelper.cs" />
     <Compile Include="LogHelper\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,5 +75,6 @@
     <Content Include="OtherDLL\System.Web.Http.WebHost.xml" />
     <Content Include="OtherDLL\System.Web.Http.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
