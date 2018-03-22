@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <h2 id="notice">正在登录...</h2>
+    <div id="hOutput">输出数据：</div>
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
+    <script type="text/javascript">
+        var _config = [];
+        _config.agentId = "@ViewBag.AgentId";
+        _config.corpId = "@ViewBag.CorpId";
+        _config.timeStamp = "@ViewBag.TimeStamp";
+        _config.nonceStr = "@ViewBag.NonceStr";
+        _config.signature = "@ViewBag.Signature";
+
+
+        DingTalkPC.config({
+            agentId: _config.agentId, // 必填，微应用ID
+            corpId: _config.corpId,//必填，企业ID
+            timeStamp: _config.timeStamp, // 必填，生成签名的时间戳
+            nonceStr: _config.nonceStr, // 必填，生成签名的随机串
+            signature: _config.signature, // 必填，签名
+            jsApiList: ['device.notification.alert', 'device.notification.confirm', 'biz.user.get'] // 必填，需要使用的jsapi列表
+        });
+
+
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> AgentId: " + _config.agentId + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> corpId: " + _config.corpId + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> timeStamp: " + _config.timeStamp + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> nonceStr: " + _config.nonceStr + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> signature: " + _config.signature + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> JsApiTicket: " + "@ViewBag.JsApiTicket" + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> Url: " + "@ViewBag.Url" + "</b>");
+
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> CorpSecret: " + "@ViewBag.CorpSecret" + "</b>");
+        $("#hOutput").html($("#hOutput").html() + "</BR><b> AccessToken: " + "@ViewBag.AccessToken" + "</b>");
+
+        DingTalkPC.ready(function (res) {
+
+            $("#hOutput").html($("#hOutput").html() + "</BR><b> ready </b>");
+
+            DingTalkPC.runtime.permission.requestAuthCode({
+                corpId: "@ViewBag.CorpId", //企业ID
+                onSuccess: function (info) {
+
+                    $("#hOutput").html($("#hOutput").html() + "</BR><b> Code: " + info.code + "</b>");
+
+                },
+
+
+                onFail: function (err) {
+                    $("#hOutput").html($("#hOutput").html() + "</BR><b> Code 获取失败: " + err.code + "</b>");
+                }
+            })
+
+            DingTalkPC.biz.user.get({
+                onSuccess: function (info) {
+                    $("#hOutput").html($("#hOutput").html() + "</BR><b> UserInfo : " + JSON.stringify(info) + "</b>");
+
+                    $('#notice').text("欢迎您：" + info.nickName + "。浏览器正在自动跳转...");
+
+
+                },
+                onFail: function (err) {
+                    $("#hOutput").html($("#hOutput").html() + "</BR><b> UserInfo 获取失败: " + JSON.stringify(err) + "</b>");
+                    logger.e('userGet fail: ' + JSON.stringify(err));
+                }
+            });
+
+              //{
+              //    authorizedAPIList: ['device.notification.alert'], //已授权API列表
+              //    unauthorizedAPIList: [''], //未授权API列表
+              //}
+              // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+        });
+
+        //dd.ready(function () {
+        //    $("#hOutput").html($("#hOutput").html() + "</BR><b> ready </b>");
+        //})
+
+
+        @*dd.ready(function () {
+            $("#hOutput").html($("#hOutput").html() + "</BR><b> ready </b>");
+
+            dd.runtime.info({
+                onSuccess: function (info) {
+                    logger.e('runtime info: ' + JSON.stringify(info));
+                },
+                onFail: function (err) {
+                    logger.e('fail: ' + JSON.stringify(err));
+                }
+            });
+
+            dd.runtime.permission.requestAuthCode({
+                corpId: _config.corpId,
+                onSuccess: function (info) {//成功获得code值,code值在info中
+                    alert('authcode: ' + info.code);
+                    alert('token: @ViewBag.AccessToken');
+
+                    $.ajax({
+                        url: '@Url.Action("GetUserInfo", "Login")?code=' + info.code + '&accessToken=@ViewBag.AccessToken',//userinfo为本企业应用服务器后台处理程序
+                        type: 'GET',
+                        success: function (data, status, xhr) {
+                            //alert(data);
+                            var info = JSON.parse(data);
+                            if (info.errcode != 0) {
+                                alert(data);
+                            } else {
+                                //alert("当前用户:" + info.name);
+                                $('#notice').text("欢迎您：" + info.name + "。浏览器正在自动跳转...");
+                                location.href = "@Url.Action("Index", "Home")";
+                            }
+                        },
+                        error: function (xhr, errorType, error) {
+                            logger.e("尝试获取用户信息失败:" + info.code);
+                            alert(errorType + ', ' + error);
+                        }
+                    });
+
+                },
+                onFail: function (err) {//获得code值失败
+                    alert('fail: ' + JSON.stringify(err));
+                }
+            });
+        });
+        dd.error(function (err) {
+            alert('dd error: ' + JSON.stringify(err));
+        });*@
+
+
+                    //jsApiList: ['runtime.info', 'biz.conta ct.choose',
+            //        'device.notification.confirm', 'device.notification.alert',
+            //        'device.notification.prompt', 'biz.ding.post',
+            //        'biz.util.openLink']
+            //jsApiList: ['device.notification.alert', 'device.notification.confirm',
+            //    'device.notification.prompt', 'device.notification.toast',
+            //    'runtime.permission.requestAuthCode', 'runtime.permission.requestOperateAuthCode',
+            //    'biz.cspace.preview', 'biz.util.open',
+            //    'biz.util.openModal', 'biz.util.openSlidePanel',
+            //    'biz.util.previewImage', 'biz.util.openLink',
+            //    'biz.util.downloadFile', 'biz.util.openLocalFile',
+            //    'biz.util.ut', 'biz.util.uploadImage',
+            //    'biz.ding.post', 'biz.contact.choose',
+            //    'biz.customContact.choose', 'biz.customContact.multipleChoose',
+            //    'biz.contact.externalComplexPicker','biz.user.get'
+            //]
+
+    </script>
+</body>
+</html>
+
