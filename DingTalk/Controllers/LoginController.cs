@@ -75,10 +75,12 @@ namespace WebZhongZhi.Controllers
         /// </summary>
         /// <returns>errorCode  0 载入测试用户数据成功,1 载入当前用户数据成功, 2 其他原因 </returns>
         /// 测试数据：Login/LoadUserInfo
-        public string LoadUserInfo(string UserInfoJson)
+        [HttpPost]
+        public string LoadUserInfo()
         {
             try
             {
+                var UserInfoJson = Request.Form["UserInfoJson"].ToString();
                 string filepath = Server.MapPath("~/UserInfoConfig.json");
                 if (string.IsNullOrEmpty(UserInfoJson))  //UserInfoJson为空时载入测试账号数据
                 {
