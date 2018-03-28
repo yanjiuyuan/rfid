@@ -80,6 +80,8 @@
       <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -176,7 +178,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\FlowInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
@@ -198,7 +202,6 @@
     <Compile Include="DingTalkHelper\HttpRequestHelper.cs" />
     <Compile Include="DingTalkHelper\JsApiTicketModel.cs" />
     <Compile Include="DingTalkHelper\UserDetailInfo.cs" />
-    <Compile Include="DingTalkHelper\UserInfo.cs" />
     <Compile Include="DingTalkManager\DingTalkDepartmentManager.cs" />
     <Compile Include="DingTalkManager\DingTalkMessageManager.cs" />
     <Compile Include="DingTalkManager\DingTalkUserManager.cs" />
@@ -213,11 +216,22 @@
     <Compile Include="Models\AddUserRequestModel.cs" />
     <Compile Include="Models\AttendanceRequestModel.cs" />
     <Compile Include="Models\BatchDeleteUserModel.cs" />
+    <Compile Include="Models\DbModels\Approve.cs" />
+    <Compile Include="Models\DbModels\DDContext.cs" />
+    <Compile Include="Models\DbModels\FlowProgress.cs" />
+    <Compile Include="Models\DbModels\FlowQx.cs" />
+    <Compile Include="Models\DbModels\Flows.cs" />
+    <Compile Include="Models\DbModels\FlowSort.cs" />
+    <Compile Include="Models\DbModels\NodeInfo.cs" />
+    <Compile Include="Models\DbModels\Purchase.cs" />
+    <Compile Include="Models\DbModels\Tasks.cs" />
+    <Compile Include="Models\DbModels\UserInfo.cs" />
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DownloadFileModel.cs" />
+    <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\FileMsgModel.cs" />
     <Compile Include="Models\ImageMsgModel.cs" />
     <Compile Include="Models\LinkMsgModel.cs" />
@@ -303,6 +317,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\DingTalkServers\" />
+    <Folder Include="Views\FlowInfo\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -382,6 +397,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties UserInfoConfig_1json__JSONSchema="http://json.schemastore.org/circleciconfig" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
