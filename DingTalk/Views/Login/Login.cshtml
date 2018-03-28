@@ -14,6 +14,7 @@
 <body>
     <h2 id="notice">正在登录...</h2>
     <div id="hOutput">输出数据：</div>
+    <div><input id="btn"  type="button" class="btn btn-default"  value="载入数据" /></div>
     <script src="~/Scripts/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
     <script type="text/javascript">
@@ -46,16 +47,44 @@
         $("#hOutput").html($("#hOutput").html() + "</BR><b> CorpSecret: " + "@ViewBag.CorpSecret" + "</b>");
         $("#hOutput").html($("#hOutput").html() + "</BR><b> AccessToken: " + "@ViewBag.AccessToken" + "</b>");
 
+        var UserInfoTest = {
+            "nickName": "蔡兴桐",
+            "id": "99f00dfc7badd72b00da35f211060176ae044d8b3b420106bb6ef6345be1ba9b",
+            "corpId": "ding1238d49a88c92de535c2f4657eb6378f",
+            "emplId": "manager5312",
+            "isAuth": true,
+            "isManager": true,
+            "rightLevel": 0,
+            "avatar": ""
+        }
+
+        $("#btn").click(function () {
+            $.ajax({
+                url: "/Login/LoadUserInfo",
+                type: "POST",
+                dataType: "json",
+                     async:false,
+                     data: JSON.stringify(UserInfoTest),
+                     success: function (data) {
+                         console.log(data);
+                },
+                   error: function(XMLHttpRequest, textStatus, errorThrown) {
+                   alert(XMLHttpRequest.status);
+                   alert(XMLHttpRequest.readyState);
+                   alert(textStatus);
+                }
+            });
+        });
+
+
+
         DingTalkPC.ready(function (res) {
 
             $("#hOutput").html($("#hOutput").html() + "</BR><b> ready </b>");
-
             DingTalkPC.runtime.permission.requestAuthCode({
                 corpId: "@ViewBag.CorpId", //企业ID
                 onSuccess: function (info) {
-
                     $("#hOutput").html($("#hOutput").html() + "</BR><b> Code: " + info.code + "</b>");
-
                 },
 
 
@@ -64,12 +93,12 @@
                 }
             })
 
+
             DingTalkPC.biz.user.get({
                 onSuccess: function (info) {
                     $("#hOutput").html($("#hOutput").html() + "</BR><b> UserInfo : " + JSON.stringify(info) + "</b>");
 
                     $('#notice').text("欢迎您：" + info.nickName + "。浏览器正在自动跳转...");
-
 
                 },
                 onFail: function (err) {
@@ -88,6 +117,9 @@
         //dd.ready(function () {
         //    $("#hOutput").html($("#hOutput").html() + "</BR><b> ready </b>");
         //})
+
+
+
 
 
         @*dd.ready(function () {

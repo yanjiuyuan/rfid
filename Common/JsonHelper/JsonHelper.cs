@@ -153,7 +153,6 @@ namespace Common.JsonHelper
             {
                 serializer.WriteObject(ms, obj);
                 ms.Position = 0;
-
                 using (StreamReader read = new StreamReader(ms))
                 {
                     result = read.ReadToEnd();

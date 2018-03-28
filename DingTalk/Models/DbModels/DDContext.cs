@@ -1,0 +1,360 @@
+namespace DingTalk.Models.DbModels
+{
+    using System;
+    using System.Data.Entity;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+
+    public partial class DDContext : DbContext
+    {
+        public DDContext()
+            : base("name=DDContext")
+        {
+        }
+
+        public virtual DbSet<Approve> Approve { get; set; }
+        public virtual DbSet<FlowProgress> FlowProgress { get; set; }
+        public virtual DbSet<FlowQx> FlowQx { get; set; }
+        public virtual DbSet<Flows> Flows { get; set; }
+        public virtual DbSet<FlowSort> FlowSort { get; set; }
+        public virtual DbSet<NodeInfo> NodeInfo { get; set; }
+        public virtual DbSet<Purchase> Purchase { get; set; }
+        public virtual DbSet<Tasks> Tasks { get; set; }
+        public virtual DbSet<UserInfo> UserInfo { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.ApproveNo)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.HandleTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.ApproveTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.ApproveMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.ApproveView)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Approve>()
+                .Property(e => e.FJPath)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.TaskId)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.CurrentManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.CurrentMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.NextManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.NextMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.HandleTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowProgress>()
+                .Property(e => e.FlowNodes)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.ID)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.FlowId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.Qx_Range)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.User)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.Dept)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.Role)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowQx>()
+                .Property(e => e.CreateTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.FlowId)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.CreateMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.CreateManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.ApplyTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.FlowName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
+                .Property(e => e.ImageUrl)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowSort>()
+                .Property(e => e.SORT_ID)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<FlowSort>()
+                .Property(e => e.SORT_NO)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowSort>()
+                .Property(e => e.SORT_NAME)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowSort>()
+                .Property(e => e.DEPT_ID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowSort>()
+                .Property(e => e.SORT_PARENT)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowSort>()
+                .Property(e => e.CreateTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.FlowId)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.A)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.B)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.C)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.D)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.E)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.F)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.G)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.H)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.I)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.J)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.K)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.L)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.M)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.N)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.O)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.P)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.Q)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.R)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.S)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.T)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.U)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.V)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.W)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.X)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.Y)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.Z)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.FlowId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.DrawingNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.CodeNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Count)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.MaterialScience)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Unit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Brand)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Sorts)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.TaskId)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.ApplyTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.nickName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.id)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.corpId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.emplId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.rightLevel)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.avatar)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(e => e.FinnalLoginTime)
+                .IsUnicode(false);
+        }
+    }
+}
