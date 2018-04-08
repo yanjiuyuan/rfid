@@ -45,14 +45,16 @@ namespace DingTalk.Controllers
             {
                 //文件大小不为0
                 HttpPostedFileBase files = Request.Files[0];
-                string newFile = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-                files.SaveAs(Server.MapPath(@"~\UploadFile\Excel\"+ newFile));
+                string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                files.SaveAs(Server.MapPath(@"~\UploadFile\Excel\"+ newFileName));
+
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 0,
+                    errorMessage = "上传成功",
+                    Content= Server.MapPath(@"~\UploadFile\Excel\" + newFileName)
+                });
             }
-            return JsonConvert.SerializeObject(new ErrorModel
-            {
-                errorCode = 0,
-                errorMessage = "上传成功"
-            });
         }
 
     }
