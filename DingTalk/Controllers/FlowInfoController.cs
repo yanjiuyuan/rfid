@@ -28,7 +28,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(id))
+                if (!string.IsNullOrEmpty(id))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     return flowInfoServer.GetFlowSort();
