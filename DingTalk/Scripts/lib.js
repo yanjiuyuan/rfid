@@ -9,6 +9,7 @@ function setLocalObj(name, obj) {
 
 function logout() {
     localStorage.clear()
+    _delCookie('UserName')
     location.reload()
 }
 
@@ -28,6 +29,48 @@ function _cloneObj(obj) {
     }
     return newObj
 }
+
+function _cloneArr(arr) {
+    var newArr = []
+    for (var a = 0; a < arr.length; a++) {
+        if (typeof (arr[a]) == 'object') {
+            newArr.push($.extend(true, {}, arr[a]))
+        }
+        else newArr.push(arr[a])
+    }
+    return newArr
+}
+
+function _mergeObjectArr(arr1, arr2, prop) {
+    for (var a = 0; a < arr1.length; a++) {
+        for (var b = 0; b < arr2.length; b++) {
+            if (arr1[a][prop] == arr2[b][prop]) {
+                for (var p in arr2[b]) {
+                    arr1[a][p] = arr2[b][p]
+                }
+            }
+        }
+    }
+    return arr1
+}
+
+function _formatQueryStr(obj) {
+    var queryStr = '?'
+    for (var o in obj) {
+        queryStr = queryStr + o + '=' + obj[o] + '&'
+    }
+    return queryStr.substring(0, queryStr.length - 1)
+}
+
+function _delCookie(name) {
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval = _getCookie(name);
+    if (cval != null)
+        document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+}
+
+
 
 function isArray(o) {
     return Object.prototype.toString.call(o) == '[object Array]';
@@ -105,50 +148,5 @@ var tableData = [{
     address: '尺子'
 }]
 
-var menbers = [
-    {
-        id: 1,
-        name:'黄龙贤'
-    },
-    {
-        id: 2,
-        name: '蔡兴桐'
-    },
-    {
-        id: 3,
-        name: '黄浩炜'
-    },
-    {
-        id: 4,
-        name: '肖民生'
-    },
-    {
-        id: 5,
-        name: '熊肖'
-    },
-    {
-        id: 6,
-        name: '袁观福'
-    }, {
-        id: 7,
-        name: '张鹏辉'
-    }, {
-        id: 8,
-        name: '石威'
-    }
-]
 
-var approval_list = []
 
-var approval_type = [
-    {
-        id: 1,
-        name: '办公用品',
-        approvers:'7|1'
-    },
-    {
-        id: 2,
-        name: '绩效报表',
-        approvers:'1'
-    }
-]

@@ -241,4 +241,5 @@ ol {
 
 .el-main{
     padding:0px;
+    overflow:hidden;
 }
