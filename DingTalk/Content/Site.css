@@ -238,3 +238,8 @@ ol {
 .el-menu--horizontal .el-menu-item:focus, .el-menu--horizontal .el-menu-item:hover {
     background-color: rgba(0,0,0,0);
 }
+
+.el-main{
+    padding:0px;
+    overflow:hidden;
+}
