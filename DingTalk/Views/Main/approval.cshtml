@@ -42,7 +42,7 @@
             flowId: 4,
             sortId: 2,
             url: '/approval/UseCar',
-            position: ' -234px -317px'
+            position: '-234px -317px'
         },
         {
             flowId: 5,
@@ -83,9 +83,7 @@
                     type: 'GET',
                     cache: false,
                     success: function (data) {
-                        console.log('123')
                         console.log(data)
-                        console.log('123')
                         that.menu = data
                     }
                 })
@@ -102,11 +100,14 @@
                         console.log(that.list)
                     }
                 })
+            },
+            loadPage: function (url) {
+                $("#tempPage").load(url)
             }
         },
         created: function () {
             this.getMenu()
-            //this.getList()
+            this.getList()
             loadHtml("mainPage", "partPage")
         }
     })
