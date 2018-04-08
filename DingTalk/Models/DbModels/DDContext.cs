@@ -13,12 +13,14 @@ namespace DingTalk.Models.DbModels
         }
 
         public virtual DbSet<Approve> Approve { get; set; }
+        public virtual DbSet<FlowMan> FlowMan { get; set; }
         public virtual DbSet<FlowProgress> FlowProgress { get; set; }
         public virtual DbSet<FlowQx> FlowQx { get; set; }
         public virtual DbSet<Flows> Flows { get; set; }
         public virtual DbSet<FlowSort> FlowSort { get; set; }
         public virtual DbSet<NodeInfo> NodeInfo { get; set; }
         public virtual DbSet<Purchase> Purchase { get; set; }
+        public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
 
@@ -52,6 +54,22 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.FJPath)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<FlowMan>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<FlowMan>()
+                .Property(e => e.UserId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowMan>()
+                .Property(e => e.Node)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FlowMan>()
+                .Property(e => e.RoleId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<FlowProgress>()
                 .Property(e => e.TaskId)
                 .HasPrecision(18, 0);
@@ -65,19 +83,15 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<FlowProgress>()
-                .Property(e => e.NextManId)
+                .Property(e => e.ApprovedTime)
                 .IsUnicode(false);
 
             modelBuilder.Entity<FlowProgress>()
-                .Property(e => e.NextMan)
+                .Property(e => e.StartTime)
                 .IsUnicode(false);
 
             modelBuilder.Entity<FlowProgress>()
-                .Property(e => e.HandleTime)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<FlowProgress>()
-                .Property(e => e.FlowNodes)
+                .Property(e => e.Remaek)
                 .IsUnicode(false);
 
             modelBuilder.Entity<FlowQx>()
@@ -113,6 +127,10 @@ namespace DingTalk.Models.DbModels
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<Flows>()
+                .Property(e => e.FlowName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Flows>()
                 .Property(e => e.CreateMan)
                 .IsUnicode(false);
 
@@ -128,21 +146,9 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.ApplyMan)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Flows>()
-                .Property(e => e.FlowName)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Flows>()
-                .Property(e => e.ImageUrl)
-                .IsUnicode(false);
-
             modelBuilder.Entity<FlowSort>()
                 .Property(e => e.SORT_ID)
                 .HasPrecision(18, 0);
-
-            modelBuilder.Entity<FlowSort>()
-                .Property(e => e.SORT_NO)
-                .IsUnicode(false);
 
             modelBuilder.Entity<FlowSort>()
                 .Property(e => e.SORT_NAME)
@@ -161,111 +167,23 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.FlowId)
+                .Property(e => e.Id)
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.A)
+                .Property(e => e.FlowId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.B)
+                .Property(e => e.NodeName)
                 .IsUnicode(false);
 
             modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.C)
+                .Property(e => e.PreNodeId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.D)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.E)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.F)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.G)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.H)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.I)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.J)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.K)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.L)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.M)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.N)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.O)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.P)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.Q)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.R)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.S)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.T)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.U)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.V)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.W)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.X)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.Y)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<NodeInfo>()
-                .Property(e => e.Z)
+                .Property(e => e.Condition)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Purchase>()
@@ -314,6 +232,18 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<Purchase>()
                 .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Roles>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Roles>()
+                .Property(e => e.FlowId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Roles>()
+                .Property(e => e.NodeName)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Tasks>()

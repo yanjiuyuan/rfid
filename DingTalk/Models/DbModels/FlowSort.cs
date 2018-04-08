@@ -15,9 +15,6 @@ namespace DingTalk.Models.DbModels
         public decimal SORT_ID { get; set; }
 
         [StringLength(300)]
-        public string SORT_NO { get; set; }
-
-        [StringLength(300)]
         public string SORT_NAME { get; set; }
 
         [StringLength(300)]

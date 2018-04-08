@@ -24,11 +24,11 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         /// 测试数据： /FlowInfo/LoadFlowSort?id=123
         [HttpGet]
-        public string  LoadFlowSort(string id)
+        public string LoadFlowSort(string id)
         {
             try
             {
-                if (id != null)
+                if (string.IsNullOrEmpty(id))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     return flowInfoServer.GetFlowSort();
@@ -62,7 +62,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-                if (id != null)
+                if (!string.IsNullOrEmpty(id))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     return flowInfoServer.GetFlowInfo();
@@ -75,7 +75,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-              return  JsonConvert.SerializeObject(new ErrorModel
+                return JsonConvert.SerializeObject(new ErrorModel
                 {
                     errorCode = 2,
                     errorMessage = ex.Message

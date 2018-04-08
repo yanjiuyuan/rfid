@@ -13,28 +13,25 @@ namespace DingTalk.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal FlowId { get; set; }
 
-        [StringLength(30)]
+        [StringLength(200)]
+        public string FlowName { get; set; }
+
+        [StringLength(300)]
         public string CreateMan { get; set; }
 
-        [StringLength(100)]
+        [StringLength(300)]
         public string CreateManId { get; set; }
 
-        [StringLength(30)]
+        [StringLength(300)]
         public string ApplyTime { get; set; }
 
-        [StringLength(30)]
+        [StringLength(300)]
         public string ApplyMan { get; set; }
-
-        [StringLength(500)]
-        public string FlowName { get; set; }
 
         public int? State { get; set; }
 
         public int? IsEnable { get; set; }
 
         public int? SORT_ID { get; set; }
-
-        [StringLength(500)]
-        public string ImageUrl { get; set; }
     }
 }

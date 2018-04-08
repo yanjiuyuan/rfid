@@ -218,12 +218,14 @@
     <Compile Include="Models\BatchDeleteUserModel.cs" />
     <Compile Include="Models\DbModels\Approve.cs" />
     <Compile Include="Models\DbModels\DDContext.cs" />
+    <Compile Include="Models\DbModels\FlowMan.cs" />
     <Compile Include="Models\DbModels\FlowProgress.cs" />
     <Compile Include="Models\DbModels\FlowQx.cs" />
     <Compile Include="Models\DbModels\Flows.cs" />
     <Compile Include="Models\DbModels\FlowSort.cs" />
     <Compile Include="Models\DbModels\NodeInfo.cs" />
     <Compile Include="Models\DbModels\Purchase.cs" />
+    <Compile Include="Models\DbModels\Roles.cs" />
     <Compile Include="Models\DbModels\Tasks.cs" />
     <Compile Include="Models\DbModels\UserInfo.cs" />
     <Compile Include="Models\Department.cs" />

@@ -6,8 +6,7 @@ namespace DingTalk.Models.DbModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("NodeInfo")]
-    public partial class NodeInfo
+    public partial class Roles
     {
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,12 +18,6 @@ namespace DingTalk.Models.DbModels
         [StringLength(200)]
         public string NodeName { get; set; }
 
-        [StringLength(200)]
-        public string PreNodeId { get; set; }
-
-        public int? IsAllAllow { get; set; }
-
-        [StringLength(500)]
-        public string Condition { get; set; }
+        public int? IsEnable { get; set; }
     }
 }

@@ -14,26 +14,21 @@ namespace DingTalk.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal TaskId { get; set; }
 
-        [StringLength(100)]
+        [StringLength(200)]
         public string CurrentManId { get; set; }
 
-        [StringLength(30)]
-        public string CurrentMan { get; set; }
-
         [StringLength(100)]
-        public string NextManId { get; set; }
-
-        [StringLength(30)]
-        public string NextMan { get; set; }
-
-        [StringLength(30)]
-        public string HandleTime { get; set; }
-
-        [StringLength(500)]
-        public string FlowNodes { get; set; }
+        public string CurrentMan { get; set; }
 
         public int? State { get; set; }
 
-        public int? IsEnable { get; set; }
+        [StringLength(100)]
+        public string ApprovedTime { get; set; }
+
+        [StringLength(100)]
+        public string StartTime { get; set; }
+
+        [StringLength(1000)]
+        public string Remaek { get; set; }
     }
 }

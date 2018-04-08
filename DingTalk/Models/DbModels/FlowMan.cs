@@ -6,25 +6,20 @@ namespace DingTalk.Models.DbModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("NodeInfo")]
-    public partial class NodeInfo
+    [Table("FlowMan")]
+    public partial class FlowMan
     {
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
         [StringLength(100)]
-        public string FlowId { get; set; }
+        public string UserId { get; set; }
 
         [StringLength(200)]
-        public string NodeName { get; set; }
+        public string Node { get; set; }
 
         [StringLength(200)]
-        public string PreNodeId { get; set; }
-
-        public int? IsAllAllow { get; set; }
-
-        [StringLength(500)]
-        public string Condition { get; set; }
+        public string RoleId { get; set; }
     }
 }

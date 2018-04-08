@@ -17,16 +17,16 @@ namespace DingTalk.Bussiness.FlowInfo
                 var Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1);
                 var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
                 var Quary = from a in Flows
-                            join b in FlowSort on (int)a.SORT_ID equals (int)b.SORT_ID
+                            join b in FlowSort
+                            on (int)a.SORT_ID equals (int)b.SORT_ID
                             select new
                             {
-                                sortId=a.SORT_ID,
-                                sortName=b.SORT_NAME,
-                                flowId=a.FlowId,
-                                flowName=a.FlowName,
-                                flowCreateTime=b.CreateTime
+                                sortId = a.SORT_ID,
+                                sortName = b.SORT_NAME,
+                                flowId = a.FlowId,
+                                flowName = a.FlowName,
+                                flowCreateTime = b.CreateTime
                             };
-
                 strJson = JsonConvert.SerializeObject(Quary);
             }
             return strJson;
