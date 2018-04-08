@@ -180,6 +180,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\FlowInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -317,6 +318,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="UploadFile\Excel\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\DingTalkServers\" />
     <Folder Include="Views\FlowInfo\" />
@@ -366,6 +368,8 @@
     <Content Include="Views\Login\LoginTest.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
     <Content Include="UserInfoConfig.json" />
+    <Content Include="Views\DrawingUpload\Index.cshtml" />
+    <Content Include="Views\DrawingUpload\Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
