@@ -13,11 +13,19 @@ namespace DingTalk.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
+        public int? NodeId { get; set; }
+
         [StringLength(100)]
         public string FlowId { get; set; }
 
         [StringLength(200)]
         public string NodeName { get; set; }
+
+        [StringLength(500)]
+        public string NodePeople { get; set; }
+
+        [StringLength(500)]
+        public string PeopleId { get; set; }
 
         [StringLength(200)]
         public string PreNodeId { get; set; }
@@ -26,5 +34,7 @@ namespace DingTalk.Models.DbModels
 
         [StringLength(500)]
         public string Condition { get; set; }
+
+        public bool? IsBack { get; set; }
     }
 }

@@ -23,8 +23,7 @@ namespace WebZhongZhi.Controllers
             return View();
         }
 
-        public ActionResult WorkOvertime
-            ()
+        public ActionResult WorkOvertime()
         {
             return View();
         }

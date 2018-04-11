@@ -370,6 +370,7 @@
     <Content Include="UserInfoConfig.json" />
     <Content Include="Views\DrawingUpload\Index.cshtml" />
     <Content Include="Views\DrawingUpload\Upload.cshtml" />
+    <Content Include="Views\DrawingUpload\LoadFlowInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

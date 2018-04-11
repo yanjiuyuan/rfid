@@ -9,6 +9,10 @@ namespace DingTalk.Bussiness.FlowInfo
 {
     public class FlowInfoServer
     {
+        /// <summary>
+        /// 流程大类及小类读取
+        /// </summary>
+        /// <returns></returns>
         public string GetFlowInfo()
         {
             string strJson = string.Empty;
@@ -32,7 +36,10 @@ namespace DingTalk.Bussiness.FlowInfo
             return strJson;
         }
 
-
+        /// <summary>
+        /// 流程大类读取
+        /// </summary>
+        /// <returns></returns>
         public string GetFlowSort()
         {
             string strJson = string.Empty;
@@ -43,5 +50,16 @@ namespace DingTalk.Bussiness.FlowInfo
             }
             return strJson;
         }
+
+
+        public int FindMaxTaskId()
+        {
+            using (DDContext context = new DDContext())
+            {
+                int TaskId = (int)context.Tasks.Where(u => u.TaskId != null).Max(x => x.TaskId);
+                return TaskId + 1;
+            }
+        }
+
     }
 }
