@@ -78,6 +78,64 @@ namespace DingTalk.Controllers
 
         }
 
+
+        /// <summary>
+        /// 文件Excel并读取数据接口
+        /// </summary>
+        /// <param name="form"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public string UploadAndGetInfo(FormCollection form)
+        {
+            try
+            {
+                if (Request.Files.Count == 0)
+                {
+                    //Request.Files.Count 文件数为0上传不成功
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "文件数为0"
+                    });
+                }
+
+                var file = Request.Files[0];
+                if (file.ContentLength == 0)
+                {
+                    //文件大小大（以字节为单位）为0时，做一些操作
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 2,
+                        errorMessage = "文件大小大（以字节为单位）为0"
+                    });
+                }
+                else
+                {
+                    //文件大小不为0
+                    HttpPostedFileBase files = Request.Files[0];
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
+                    string Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
+                    files.SaveAs(Path);
+                    return LoadExcel(Path);
+                    //    JsonConvert.SerializeObject(new ErrorModel
+                    //{
+                    //    errorCode = 0,
+                    //    errorMessage = "上传成功",
+                    //    Content = Server.MapPath(@"~\UploadFile\Excel\" + newFileName)
+                    //});
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 3,
+                    errorMessage = ex.Message
+                });
+            }
+
+        }
+
         /// <summary>
         /// Excel读取
         /// </summary>
