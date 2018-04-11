@@ -8,10 +8,11 @@ namespace DingTalk.Models.DbModels
 
     public partial class Tasks
     {
-        [Key]
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public decimal TaskId { get; set; }
+        public decimal Id { get; set; }
+
+        public int? TaskId { get; set; }
 
         [StringLength(30)]
         public string ApplyMan { get; set; }
@@ -22,5 +23,7 @@ namespace DingTalk.Models.DbModels
         public int? IsEnable { get; set; }
 
         public int? FlowId { get; set; }
+
+        public int? NodeId { get; set; }
     }
 }

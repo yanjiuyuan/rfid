@@ -179,6 +179,14 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.NodePeople)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.PeopleId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<NodeInfo>()
                 .Property(e => e.PreNodeId)
                 .IsUnicode(false);
 
@@ -189,10 +197,6 @@ namespace DingTalk.Models.DbModels
             modelBuilder.Entity<Purchase>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
-
-            modelBuilder.Entity<Purchase>()
-                .Property(e => e.FlowId)
-                .IsUnicode(false);
 
             modelBuilder.Entity<Purchase>()
                 .Property(e => e.TaskId)
@@ -247,7 +251,7 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<Tasks>()
-                .Property(e => e.TaskId)
+                .Property(e => e.Id)
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<Tasks>()

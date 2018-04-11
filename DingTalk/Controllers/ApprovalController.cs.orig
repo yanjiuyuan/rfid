@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebZhongZhi.Controllers
+{
+    public class ApprovalController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult OfficeSupplies()
+        {
+            return View();
+        }
+
+        public ActionResult UseCar()
+        {
+            return View();
+        }
+
+        public ActionResult WorkOvertime()
+<<<<<<< HEAD
+        {
+            return View();
+        }
+        public ActionResult UploadPaper()
+        {
+            return View();
+        }
+        public ActionResult DownloadPaper()
+=======
+>>>>>>> ffbe4305ff1e4e1ef947144a2a0b48e6ecce1e2d
+        {
+            return View();
+        }
+    }
+}
