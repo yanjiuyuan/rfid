@@ -19,11 +19,20 @@
             data: function () {
                 return {
                     activeIndex: '1',
-                    scollImages: []
+                    scollImages: [],
+                    isCollapse: true
                 }
+            },
+            methods:{
+              handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+              },
+              handleClose(key, keyPath) {
+                console.log(key, keyPath);
+              }
             }
         })
-        $("#tempPage").load('/Home/partHome')
+        $("#tempPage").load('/Main/approval')
 
         //首页JS
         var scollImages = []
@@ -32,4 +41,10 @@
         }
         index.scollImages = scollImages
     </script>
+
+    <style>
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            z-index:666;
+        }
+    </style>
 }

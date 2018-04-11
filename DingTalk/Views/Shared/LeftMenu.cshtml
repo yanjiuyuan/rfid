@@ -6,17 +6,25 @@
     <el-tabs type="border-card">
         <!--主分页-->
         <el-tab-pane label="在线办公">
+            @*<el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
+                <el-radio-button :label="false">展开</el-radio-button>
+                <el-radio-button :label="true">收起</el-radio-button>
+            </el-radio-group>*@
             <el-container style="border: 1px solid #eee">
                 <!--左侧导航栏-->
-                <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-                    <el-menu :default-openeds="['2']"
-                             :default-active="'1'">
-                        <el-menu-item index="1" onclick="loadPage('/Home/partHome')">
+                
+                <el-aside width="auto" style="background-color: rgb(238, 241, 246)">
+                    
+                    <el-menu :default-openeds="['2']" :collapse="isCollapse" v-on:open="handleOpen" v-on:close="handleClose"
+                             :default-active="'2-1'" class="el-menu-vertical-demo"> 
+                        @*<el-menu-item index="1" onclick="loadPage('/Home/partHome')">
                             <i class="el-icon-menu"></i>首页
-                        </el-menu-item>
+                        </el-menu-item>*@
+                        <el-button v-on:click="isCollapse=!isCollapse" type="info" :icon="isCollapse?'el-icon-caret-bottom':'el-icon-caret-left'" circle></el-button>
                         <el-submenu index="2">
                             <template slot="title">
-                                <i class="el-icon-message"></i>审批管理
+                                <i class="el-icon-message"></i>
+                                <span slot="title">审批管理</span>
                             </template>
                             <el-menu-item-group>
                                 <el-menu-item index="2-1" onclick="loadPage('/Main/approval')">发起审批</el-menu-item>
@@ -32,7 +40,8 @@
                         </el-submenu>
                         <el-submenu index="3">
                             <template slot="title">
-                                <i class="el-icon-phone"></i>我的客户
+                                <i class="el-icon-phone"></i>
+                                <span slot="title">我的客户</span>
                             </template>
                             <el-menu-item-group>
                                 <el-menu-item index="3-1" onclick="loadPage('/Main/Main5')">张三</el-menu-item>
@@ -42,7 +51,8 @@
                             </el-menu-item-group>
                         </el-submenu>
                         <el-menu-item index="3">
-                            <i class="el-icon-bell"></i>处理中心
+                            <i class="el-icon-bell"></i>
+                            <span slot="title">处理中心</span>
                         </el-menu-item>
                     </el-menu>
                 </el-aside>
