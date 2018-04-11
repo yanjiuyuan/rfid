@@ -24,6 +24,7 @@ namespace WebZhongZhi.Controllers
         }
 
         public ActionResult WorkOvertime()
+<<<<<<< HEAD
         {
             return View();
         }
@@ -32,6 +33,8 @@ namespace WebZhongZhi.Controllers
             return View();
         }
         public ActionResult DownloadPaper()
+=======
+>>>>>>> ffbe4305ff1e4e1ef947144a2a0b48e6ecce1e2d
         {
             return View();
         }

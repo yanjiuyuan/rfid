@@ -53,30 +53,33 @@
     console.log('hello world')
     var needLogin = '@ViewBag.needLogin'
     var DingData = {}
-    //$.ajax({
-    //    url: 'http://17e245o364.imwork.net/signature/',
-    //    dataType: 'json',
-    //    type:'GET',
-    //    cache:false,
-    //    success: function (data) {
-    //        DingData = data
-    //        var configObj = {
-    //            //jsticket: DingData.jsticket,
-    //            agentId: DingData.agentId,
-    //            corpId: DingData.corpId,
-    //            timeStamp: DingData.timeStamp,
-    //            signature: DingData.signature,
-    //            nonceStr: DingData.nonceStr,
-    //            jsApiList: [
-    //                'runtime.info',
-    //                'device.notification.alert',
-    //                'device.notification.confirm',
-    //                'biz.user.get']
-    //        }
-    //        console.log(configObj)
-    //        DingTalkPC.config(configObj);
-    //    }
-    //})
+    $.ajax({
+        //url: 'http://17e245o364.imwork.net/signature/',
+        url: '/Login/BeginDDAutoLogin',
+        dataType: 'json',
+        type:'GET',
+        cache:false,
+        success: function (data) {
+            DingData = data
+            console.log(data)
+            return
+            var configObj = {
+                //jsticket: DingData.jsticket,
+                agentId: DingData.agentId,
+                corpId: DingData.corpId,
+                timeStamp: DingData.timeStamp,
+                signature: DingData.signature,
+                nonceStr: DingData.nonceStr,
+                jsApiList: [
+                    'runtime.info',
+                    'device.notification.alert',
+                    'device.notification.confirm',
+                    'biz.user.get']
+            }
+            console.log(configObj)
+            DingTalkPC.config(configObj);
+        }
+    })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
         console.log('i am ready')

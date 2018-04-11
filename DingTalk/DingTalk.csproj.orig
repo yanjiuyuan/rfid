@@ -370,8 +370,12 @@
     <Content Include="UserInfoConfig.json" />
     <Content Include="Views\DrawingUpload\Index.cshtml" />
     <Content Include="Views\DrawingUpload\Upload.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\approval\UploadPaper.cshtml" />
     <Content Include="Views\approval\DownloadPaper.cshtml" />
+=======
+    <Content Include="Views\DrawingUpload\LoadFlowInfo.cshtml" />
+>>>>>>> ffbe4305ff1e4e1ef947144a2a0b48e6ecce1e2d
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
