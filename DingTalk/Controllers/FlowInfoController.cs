@@ -196,12 +196,12 @@ namespace DingTalk.Controllers
         /// <param name="FlowId">流程Id</param>
         /// <param name="NodeId">节点Id</param>
         /// <returns></returns>
-        /// 测试数据: FlowInfo/GetNodeInfo?FlowId=6&NodeId=1
+        /// 测试数据: FlowInfo/GetNodeInfo?FlowId=6&NodeId=0
         public string GetNodeInfo(string FlowId, int NodeId = 0)
         {
             try
             {
-                if (FlowId != null && NodeId != 0)
+                if (FlowId != null)
                 {
                     using (DDContext context = new DDContext())
                     {
