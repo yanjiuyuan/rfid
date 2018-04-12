@@ -25,5 +25,7 @@ namespace DingTalk.Models.DbModels
         public int? FlowId { get; set; }
 
         public int? NodeId { get; set; }
+
+        public string Remark { get; set; }
     }
 }

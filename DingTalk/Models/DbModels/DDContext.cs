@@ -262,6 +262,10 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.ApplyTime)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.nickName)
                 .IsUnicode(false);

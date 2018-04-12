@@ -97,6 +97,7 @@ namespace DingTalk.Controllers
         //"ApplyTime": "2018-04-10 14:40",
         //"IsEnable": "1",
         //"FlowId": "6"
+        // "Remark":"意见"
         //}
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
