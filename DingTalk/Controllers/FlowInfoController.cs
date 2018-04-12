@@ -90,7 +90,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 流程创建接口(Post)
         /// </summary>
-        /// 测试数据：/DrawingUpload/LoadTaskInfo
+        /// 测试数据：/DrawingUpload/CreateTaskInfo
         //var FlowTest = {
         //"ApplyMan": "蔡兴桐",
         //"NodeId":"0",
@@ -101,7 +101,7 @@ namespace DingTalk.Controllers
         //}
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
-        public string LoadTaskInfo()
+        public string CreateTaskInfo()
         {
             try
             {
