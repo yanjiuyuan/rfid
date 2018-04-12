@@ -36,5 +36,7 @@ namespace DingTalk.Models.DbModels
         public string Condition { get; set; }
 
         public bool? IsBack { get; set; }
+
+        public bool? IsNeedChose { get; set; }
     }
 }

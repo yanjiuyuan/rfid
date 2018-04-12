@@ -52,6 +52,10 @@ namespace DingTalk.Bussiness.FlowInfo
         }
 
 
+        /// <summary>
+        /// 找到当前最大的TaskId并返还TaskId+1
+        /// </summary>
+        /// <returns></returns>
         public int FindMaxTaskId()
         {
             using (DDContext context = new DDContext())

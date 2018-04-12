@@ -147,15 +147,83 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 寻人接口
         /// </summary>
-        /// <param name="FlowId">FlowId</param>
-        /// <param name="NodeId">NodeId</param>
+        /// <param name="FlowId">流程Id</param>
+        /// <param name="NodeId">节点Id</param>
+        /// <param name="IsNext">是否找下一节点的人</param>
         /// <returns></returns>
-        public string FindNextPeople(string FlowId, int NodeId)
+        /// 测试数据: FlowInfo/FindNextPeople?IsNext=true&FlowId=6&NodeId=1
+        public string FindNextPeople(bool IsNext, string FlowId, int NodeId = 0)
         {
-            using (DDContext context = new DDContext ())
+            try
             {
-                context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == NodeId);
-                return "";
+                if (FlowId != null && NodeId != 0)
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
+                        string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
+                        Dictionary<string, string> dic = new Dictionary<string, string>();
+                        dic.Add("NodePeople", NodePeople);
+                        dic.Add("PeopleId", PeopleId);
+                        return JsonConvert.SerializeObject(dic);
+                    }
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "参数未传递"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message,
+                    Content = "未找到数据"
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// 流程节点信息获取接口
+        /// </summary>
+        /// <param name="FlowId">流程Id</param>
+        /// <param name="NodeId">节点Id</param>
+        /// <returns></returns>
+        /// 测试数据: FlowInfo/GetNodeInfo?FlowId=6&NodeId=1
+        public string GetNodeInfo(string FlowId, int NodeId = 0)
+        {
+            try
+            {
+                if (FlowId != null && NodeId != 0)
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        var NodeInfo = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId);
+                        return JsonConvert.SerializeObject(NodeInfo);
+                    }
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "参数未传递"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
             }
         }
     }
