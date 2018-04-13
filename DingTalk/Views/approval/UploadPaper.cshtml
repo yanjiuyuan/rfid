@@ -6,19 +6,11 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        上传图纸
+        上传图纸-发起审批
     </div>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
-        <el-table-column prop="name" label="审批标题" width="120">
-        </el-table-column>
-        <el-table-column prop="address" label="审批摘要">
-        </el-table-column>
-        <el-table-column prop="date" label="发起时间" width="140">
-        </el-table-column>
-        <el-table-column prop="date" label="完成时间" width="140">
-        </el-table-column>
-        <el-table-column prop="address" label="状态">
+        <el-table-column v-for="(value,key) in items" :prop="key" :label="value">
         </el-table-column>
     </el-table>
     <!--底部翻頁-->
@@ -34,7 +26,7 @@
     </div>
     <!--上传表單-->
     <el-upload class="upload-demo"
-                action="/drawingupload/Upload"
+                action="/drawingupload/UploadAndGetInfo"
                 :on-success="handleSuccess"
                 :before-remove="beforeRemove"
                 multiple
@@ -44,30 +36,76 @@
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
     </el-upload>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="意见" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
+        <!--添加审批人-->
+        <sam-addapprover :preApprover="preApprover" :approvers="ruleForm.approvers" :goods="ruleForm.goods"></sam-addapprover>
+        <!--添加抄送人-->
+        <el-form-item label="抄送人">
+            <span class="hint">（审批通过后，通知抄送人）</span>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
 </el-main>
 
 <script>
+    
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
+                ruleForm: {
+                    name: '',
+                    remark: '',
+                    approvers: ['小唐', '院长']
+                },
+                preApprover: false,
                 fileList: [],
-                tableData: tableData,
-                currentPage: 1,
-                pageSize: 5,
-                    user: '',
-                    region: '',
-                    startDate: '',
-                    endDate: '',
-                    state: 0
-                }
+                data: [],
+                items: [],
+                tableData: []
             }
         },
         methods: {
+            onSubmit(formName) {
+                var form = this.ruleForm
+                this.$refs[formName].validate((valid) => {
+                    if (valid && this.data.length > 0) {
+                        var paramObj = {
+                            "ApplyMan": form.name,
+                            "NodeId": "0",
+                            "ApplyTime": _getTime(),
+                            "IsEnable": "1",
+                            "FlowId": FlowId,
+                            "Remark": form.remark
+                        }
+                        console.log(paramObj)
+                        $.ajax({
+                            url: '/DrawingUpload/CreateTaskInfo',
+                            type: 'POST',
+                            data: paramObj,
+                            success: function (data) {
+                                console.log(data)
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
             //上传文件方法
             handleSuccess(response, file, fileList) {
-                console.log(response, file, fileList);
                 if (!(response && response.length > 0)) return
                 for (let i = 0; i < response.length; i++) {
                     let data = response[i]
@@ -85,8 +123,6 @@
                 }
                 this.totalRows = this.data.length
                 this.getTableData()
-                console.log(this.items)
-                console.log(this.tableData)
             },
             getTableData() {
                 var start = this.pageSize * (this.currentPage - 1)
@@ -97,17 +133,7 @@
             },
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
-            },
-            //翻頁相關事件
-            handleSizeChange: function (val) {
-                this.currentPage = 1
-                this.pageSize = val
-                this.getTableData()
-            },
-            handleCurrentChange: function (val) {
-                this.currentPage = val
-                this.getTableData()
-            },
+            }
         },
         created: function () {
             loadHtml("mainPage", "partPage")
