@@ -16,24 +16,73 @@
 }
 
 <h2>LoadFlowInfo</h2>
-<input id="btn" type="button" value="流程创建接口" />
+<input id="btn" type="button" value="流程创建接口(Post)" />
+<input id="btn2" type="button" value="流程载入接口(Approve)" />
 <input id="btn1" type="button" value="BOM表载入接口" />
+<input id="btn3" type="button" value="选人及抄送接口(多人Post)" />
 <script type="text/javascript">
     var FlowTest = {
         "ApplyMan": "蔡兴桐",
-        "NodeId":"0",
+        "NodeId": "0",
         "ApplyTime": "2018-04-10 14:40",
         "IsEnable": "1",
-        "FlowId": "6"
+        "FlowId": "6",
+        "Remark": "通过"
     }
+
+    var FlowTestApprove = {
+        "TaskId": "1",
+        "ApplyMan": "蔡兴桐",
+        "NodeId": "1",
+        "ApplyTime": "2018-04-12 14:40",
+        "IsEnable": "1",
+        "FlowId": "6",
+        "Remark": "审核通过"
+    }
+
+    var PeopleList = [{
+        "TaskId": "1",
+        "FlowId": "6",
+        "NodeId": "1",
+        "ApplyMan": "蔡兴桐",
+        "IsEnable": "1",
+        "IsSend": true,
+        "State": "0"
+    }, {
+        "TaskId": "1",
+        "FlowId": "6",
+        "NodeId": "1",
+        "ApplyMan": "龙贤",
+        "IsEnable": "1",
+        "IsSend": true,
+        "State": "0"
+    }]
 
     $("#btn").click(function () {
         $.ajax({
-            url: "/FlowInfo/LoadTaskInfo",
+            url: "/FlowInfo/CreateTaskInfo",
             type: "POST",
             dataType: "json",
             async: false,
             data: JSON.stringify(FlowTest),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn2").click(function () {
+        $.ajax({
+            url: "/FlowInfo/SubmitTaskInfo",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(FlowTestApprove),
             success: function (data) {
                 console.log(data);
             },
@@ -69,6 +118,24 @@
         })
     });
 
- 
+    $("#btn3").click(function () {
+        $.ajax({
+            url: "/FlowInfo/ChoseOrSend",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(PeopleList),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+
 
 </script>

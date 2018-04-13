@@ -27,5 +27,9 @@ namespace DingTalk.Models.DbModels
         public int? NodeId { get; set; }
 
         public string Remark { get; set; }
+
+        public bool? IsSend { get; set; }
+
+        public int? State { get; set; }
     }
 }
