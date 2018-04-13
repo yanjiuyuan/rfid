@@ -70,7 +70,28 @@ function _delCookie(name) {
         document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
 }
 
+function _dateToString(date, split) {
+    var d = new Date(date)
+    var year = d.getFullYear()
+    var month = d.getMonth() + 1
+    var day = d.getDate()
+    if (month < 10) month = '0' + month
+    if (day < 10) day = '0' + day
+    return year + split + month + split + day
+}
 
+function _getTime() {
+    var split = "-"
+    var d = new Date()
+    var year = d.getFullYear()
+    var month = d.getMonth() + 1
+    var day = d.getDate()
+    var hour = d.getHours()
+    var minute = d.getMinutes()
+    if (month < 10) month = '0' + month
+    if (day < 10) day = '0' + day
+    return year + split + month + split + day + ' ' + hour + ':' + minute
+}
 
 function isArray(o) {
     return Object.prototype.toString.call(o) == '[object Array]';
@@ -104,13 +125,34 @@ var pickerOptions = {
     }]
 }
 //实例总参数
+var FlowId = 0 //当前审批类别ID
 var mixin = {
     data: {
         user: {},
-        pickerOptions: pickerOptions
+        rules: {
+            name: [
+                { required: true, message: '名称不能为空', trigger: 'blur' },
+                { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+            ]
+        },
+        pickerOptions: pickerOptions,
+        currentPage: 1,
+        pageSize: 5
     },
     methods: {
-
+        resetForm(formName) {
+            this.$refs[formName].resetFields();
+        },
+        //翻頁相關事件
+        handleSizeChange: function (val) {
+            this.currentPage = 1
+            this.pageSize = val
+            this.getData()
+        },
+        handleCurrentChange: function (val) {
+            this.currentPage = val
+            this.getData()
+        }
     }
 }
 
@@ -150,3 +192,61 @@ var tableData = [{
 
 
 
+//注册组件
+Vue.component('sam-addapprover', {
+    props: ['preApprover', 'approvers', 'goods'],
+    template: `<div>
+                    <el-form-item label="审批人" style="margin-bottom:0px;">
+                        <span v-if="preApprover" class="hint">审批人已由管理员预置,并将自动去重</span>
+                        <el-button v-else class="button-new-tag" size="small" v-on:click="showInput">+ 添加审批人</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <template v-for="(tag,index) in approvers">
+                            <template v-if="index>0 && index< approvers.length+1">
+                                <span> -> </span>
+                            </template>
+                            <el-tag :key="tag"
+                                    :closable="!preApprover"
+                                    onclick=""
+                                    :disable-transitions="false"
+                                    v-on:close="handleClose(tag)">
+                                {{tag}}
+                            </el-tag>
+                        </template>
+                        <el-input class="input-new-tag"
+                                    v-if="inputVisible"
+                                    v-model="inputValue"
+                                    ref="saveTagInput"
+                                    size="small"
+                                    v-on:keyup.enter.native="handleInputConfirm"
+                                    v-on:blur="handleInputConfirm">
+                        </el-input>
+                    </el-form-item></div>`,
+    data: function () {
+        return {
+            inputValue: '',
+            inputVisible: false
+        }
+    },
+    methods: {
+        showInput() {
+            this.inputVisible = true;
+            this.$nextTick(_ => {
+                this.$refs.saveTagInput.$refs.input.focus();
+            });
+        },
+        handleClose(tag) {
+            this.approvers.splice(this.approvers.indexOf(tag), 1);
+        },
+        handleInputConfirm() {
+            let inputValue = this.inputValue;
+            if (inputValue) {
+                this.approvers.push(inputValue);
+            }
+            this.inputVisible = false;
+            this.inputValue = '';
+        }
+    },
+    computed: {
+    }
+})

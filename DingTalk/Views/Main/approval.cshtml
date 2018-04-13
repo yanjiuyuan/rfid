@@ -10,7 +10,7 @@
         <template slot="title">
             <span style="font-size:20px;">{{m.SORT_NAME}}</span>
         </template>
-        <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url"  class="approval-box" v-on:click="loadPage(l.url)">
+        <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url"  class="approval-box" v-on:click="toApprove(l.url,l.flowId)">
             <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
             <p>{{l.flowName}}</p>
         </div>
@@ -84,20 +84,21 @@
                     cache: false,
                     success: function (data) {
                         that.menu = data
+                        $.ajax({
+                            url: '/FlowInfo/LoadFlowInfo?id=123',
+                            dataType: 'json',
+                            type: 'GET',
+                            cache: false,
+                            success: function (data) {
+                                that.list = _mergeObjectArr(data, imgConfig, 'flowId')
+                            }
+                        })
                     }
                 })
             },
-            getList: function () {
-                var that = this
-                $.ajax({
-                    url: '/FlowInfo/LoadFlowInfo?id=123',
-                    dataType: 'json',
-                    type: 'GET',
-                    cache: false,
-                    success: function (data) {
-                        that.list = _mergeObjectArr(data, imgConfig, 'flowId')
-                    }
-                })
+            toApprove: function (url, id) {
+                FlowId = id
+                loadPage(url)
             },
             loadPage: function (url) {
                 $("#tempPage").load(url)
@@ -105,7 +106,6 @@
         },
         created: function () {
             this.getMenu()
-            this.getList()
             loadHtml("mainPage", "partPage")
         }
     })
