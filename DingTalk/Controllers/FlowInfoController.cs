@@ -388,27 +388,42 @@ namespace DingTalk.Controllers
         #region 左侧审批菜单栏状态读取
 
         /// <summary>
-        /// 
+        /// 左侧审批状态数据读取
         /// </summary>
         /// <param name="UserName">用户名</param>
-        /// <returns></returns>
+        /// <returns>返回待审批的、我发起的、抄送我的数量</returns>
+        /// 测试数据 /FlowInfo/GetFlowStateCounts?UserName=蔡兴桐
         [HttpGet]
-        public string GetFlowState(string UserName)
+        public string GetFlowStateCounts(string UserName)
         {
             try
             {
-                using (DDContext context=new DDContext ())
+                using (DDContext context = new DDContext())
                 {
-                    return "";
+                    //待审批的
+                    int iApprove = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).Count();
+                    //我发起的
+                    int iMyPost = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).Count();
+                    //抄送我的
+                    int iSendMy = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).Count();
+
+                    Dictionary<string, int> dic = new Dictionary<string, int>();
+                    dic.Add("ApproveCount",iApprove);
+                    dic.Add("MyPostCount", iMyPost);
+                    dic.Add("SendMyCount", iSendMy);
+                    return JsonConvert.SerializeObject(dic);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode=0,
+                    errorMessage=ex.Message
+                });
             }
         }
-
+        
         #endregion
     }
 }
