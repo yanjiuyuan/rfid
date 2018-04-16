@@ -275,7 +275,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-        
+
 
         #endregion
 
@@ -385,5 +385,30 @@ namespace DingTalk.Controllers
         }
         #endregion
 
+        #region 左侧审批菜单栏状态读取
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="UserName">用户名</param>
+        /// <returns></returns>
+        [HttpGet]
+        public string GetFlowState(string UserName)
+        {
+            try
+            {
+                using (DDContext context=new DDContext ())
+                {
+                    return "";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        #endregion
     }
 }
