@@ -140,6 +140,73 @@ namespace DingTalk.Controllers
 
         #endregion
 
+        #region 审批过程节点数据读取
+
+        /// <summary>
+        /// 审批过程节点数据读取接口
+        /// </summary>
+        /// <param name="TaskId">任务Id(审批页面无需传此字段)</param>
+        /// <param name="FlowId">流程Id</param>
+        /// <returns></returns>
+        /// 测试数据  /FlowInfo/GetFlowProgress?TaskId=1&FlowId=6
+        public string GetFlowProgress(string TaskId, string FlowId)
+        {
+            try
+            {
+
+                using (DDContext context = new DDContext())
+                {
+                    if(string.IsNullOrEmpty(FlowId))
+                    {
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 2,
+                            errorMessage = "FlowId不能为空！"
+                        });
+                    }
+                    if (string.IsNullOrEmpty(TaskId))
+                    {
+                        var QuaryList = context.NodeInfo.Where(u => u.FlowId == FlowId)
+                            .Select(T => new
+                        {
+                            NodeId = T.NodeId,
+                            NodeName = T.NodeName,
+                            NodePeople = T.NodePeople
+                        });
+                        return JsonConvert.SerializeObject(QuaryList);
+                    }
+                    else
+                    {
+                        var TasksList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.FlowId.ToString() == FlowId);
+                        var NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId);
+                        var QuaryList = from a in TasksList
+                                        join b in NodeInfoList
+                                        on a.NodeId equals b.NodeId
+                                        select new
+                                        {
+                                            NodeId = a.NodeId,
+                                            NodeName = b.NodeName,
+                                            NodePeople = b.NodePeople,
+                                            ApplyTime = a.ApplyTime,
+                                            ApplyMan = a.ApplyMan,
+                                            IsSend=a.IsSend
+                                        };
+                        return JsonConvert.SerializeObject(QuaryList);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
         #region 寻人、选人与抄送
         /// <summary>
         /// 寻人接口
@@ -408,7 +475,7 @@ namespace DingTalk.Controllers
                     int iSendMy = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).Count();
 
                     Dictionary<string, int> dic = new Dictionary<string, int>();
-                    dic.Add("ApproveCount",iApprove);
+                    dic.Add("ApproveCount", iApprove);
                     dic.Add("MyPostCount", iMyPost);
                     dic.Add("SendMyCount", iSendMy);
                     return JsonConvert.SerializeObject(dic);
@@ -418,12 +485,13 @@ namespace DingTalk.Controllers
             {
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    errorCode=0,
-                    errorMessage=ex.Message
+                    errorCode = 0,
+                    errorMessage = ex.Message
                 });
             }
         }
-        
+
         #endregion
+
     }
 }
