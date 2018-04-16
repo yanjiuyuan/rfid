@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        上传图纸-发起审批
+        上传图纸-{{nodeInfo.NodeName}}
     </div>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
@@ -45,11 +45,11 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-addapprover :preApprover="preApprover" :approvers="ruleForm.approvers" :goods="ruleForm.goods"></sam-addapprover>
+        <sam-addapprover :preset="preset" :approvers="ruleForm.approvers" :type="'approve'">
+        </sam-addapprover>
         <!--添加抄送人-->
-        <el-form-item label="抄送人">
-            <span class="hint">（审批通过后，通知抄送人）</span>
-        </el-form-item>
+        <sam-addapprover :preset="preset" :approvers="ruleForm.copyers">
+        </sam-addapprover>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -58,7 +58,8 @@
 </el-main>
 
 <script>
-    
+    var flowId = 6
+    var nodeId = 1
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -67,43 +68,113 @@
                 ruleForm: {
                     name: '',
                     remark: '',
-                    approvers: ['小唐', '院长']
+                    approvers: ['小唐', '院长'],
+                    copyers: ['小唐', '季老师']
                 },
-                preApprover: false,
+                preset: true,
                 fileList: [],
                 data: [],
                 items: [],
                 tableData: [],
-                totalRows: 0
+                totalRows: 0,
+                nodeInfo: {}
             }
         },
         methods: {
+            //提交审批
             onSubmit(formName) {
-                var form = this.ruleForm
+                var that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
                         var paramObj = {
-                            "ApplyMan": form.name,
+                            "ApplyMan": that.ruleForm.name,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
-                            "FlowId": FlowId,
-                            "Remark": form.remark
+                            "FlowId": FlowId+'',
+                            "Remark": that.ruleForm.remark
                         }
                         console.log(paramObj)
                         $.ajax({
                             url: '/FlowInfo/CreateTaskInfo',
                             type: 'POST',
-                            data: paramObj,
+                            data: JSON.stringify(paramObj),
                             success: function (data) {
-                                console.log(data)
+                                console.log("提交审批ok")
+                                that.bindData(JSON.parse(data).Content)
+                                that.bindApprover(JSON.parse(data).Content)
                             }
                         })
                     } else {
+                        alert('表单数据不全或有误')
                         console.log('error submit!!');
                         return false;
                     }
                 });
+            },
+            //审批绑定BOM表数据
+            bindData(taskId) {
+                for (let d of this.data) {
+                    d.TaskId = taskId
+                }
+                console.log(this.data)
+                var that = this
+                $.ajax({
+                    url: "/DrawingUpload/LoadPurchase",
+                    type: "POST",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(that.data),
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //审批绑定审批人
+            bindApprover(taskId) {
+                var that = this
+                var peopleList = []
+                for (let a of this.ruleForm.approvers) {
+                    peopleList.push({
+                        OldTaskId: taskId,
+                        FlowId: FlowId,
+                        NodeId: nodeId,
+                        ApplyMan: a,
+                        IsSend: "true",
+                        IsEnable: "1",
+                        State: "0"
+                    })
+                }
+                for (let c of this.ruleForm.copyers) {
+                    peopleList.push({
+                        OldTaskId: taskId,
+                        FlowId: FlowId,
+                        NodeId: nodeId,
+                        ApplyMan: c,
+                        IsSend: "false",
+                        IsEnable: "1",
+                        State: "0"
+                    })
+                }
+                console.log("peopleList")
+                console.log(peopleList)
+                $.ajax({
+                    url: "/FlowInfo/ChoseOrSend",
+                    type: "POST",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(peopleList),
+                    success: function (data) {
+                        console.log("审批绑定审批人ok")
+                        console.log(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {
@@ -134,9 +205,28 @@
             },
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
+            },
+            //获取审批申请数据
+            getNodeInfo() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetNodeInfo?NodeId=0&FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批申请数据ok")
+                        console.log(data);
+                        that.nodeInfo = data[0]
+                        that.preset = !data[0].IsNeedChose
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
             }
         },
         created: function () {
+            this.getNodeInfo()
             loadHtml("mainPage", "partPage")
         }
     })

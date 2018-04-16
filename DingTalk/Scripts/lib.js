@@ -194,19 +194,23 @@ var tableData = [{
 
 //注册组件
 Vue.component('sam-addapprover', {
-    props: ['preApprover', 'approvers', 'goods'],
+    props: ['preset', 'approvers','type'],
     template: `<div>
-                    <el-form-item label="审批人" style="margin-bottom:0px;">
-                        <span v-if="preApprover" class="hint">审批人已由管理员预置,并将自动去重</span>
+                    <el-form-item v-if="type=='approve'" label="审批人" style="margin-bottom:0px;">
+                        <span v-if="preset" class="hint">审批人已由管理员预置,并将自动去重</span>
                         <el-button v-else class="button-new-tag" size="small" v-on:click="showInput">+ 添加审批人</el-button>
+                    </el-form-item>
+                    <el-form-item v-else label="抄送人" style="margin-bottom:0px;">
+                        <span v-if="preset" class="hint">抄送人已由管理员预置,并将自动去重</span>
+                        <el-button v-else class="button-new-tag" size="small" v-on:click="showInput">+ 添加抄送人</el-button>
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(tag,index) in approvers">
                             <template v-if="index>0 && index< approvers.length+1">
-                                <span> -> </span>
+                                <span> , </span>
                             </template>
                             <el-tag :key="tag"
-                                    :closable="!preApprover"
+                                    :closable="!preset"
                                     onclick=""
                                     :disable-transitions="false"
                                     v-on:close="handleClose(tag)">
