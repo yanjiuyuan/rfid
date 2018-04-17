@@ -10,7 +10,7 @@
     </div>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
-        <el-table-column v-for="(value,key) in items" :prop="key" :label="value">
+        <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
     </el-table>
     <!--底部翻頁-->
@@ -45,8 +45,8 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-addapprover :preset="preset" :approvers="ruleForm.approvers" :type="'approve'">
-        </sam-addapprover>
+        <sam-approver-list :preset="preset" :nodelist="nodeList" :type="'approve'">
+        </sam-approver-list>
         <!--添加抄送人-->
         <sam-addapprover :preset="preset" :approvers="ruleForm.copyers">
         </sam-addapprover>
@@ -71,13 +71,14 @@
                     approvers: ['小唐', '院长'],
                     copyers: ['小唐', '季老师']
                 },
-                preset: true,
+                preset: false,
                 fileList: [],
                 data: [],
                 items: [],
                 tableData: [],
                 totalRows: 0,
-                nodeInfo: {}
+                nodeInfo: {},
+                nodeList: []
             }
         },
         methods: {
@@ -143,7 +144,7 @@
                         FlowId: FlowId,
                         NodeId: nodeId,
                         ApplyMan: a,
-                        IsSend: "true",
+                        IsSend: "false",
                         IsEnable: "1",
                         State: "0"
                     })
@@ -154,7 +155,7 @@
                         FlowId: FlowId,
                         NodeId: nodeId,
                         ApplyMan: c,
-                        IsSend: "false",
+                        IsSend: "true",
                         IsEnable: "1",
                         State: "0"
                     })
@@ -164,7 +165,6 @@
                 $.ajax({
                     url: "/FlowInfo/ChoseOrSend",
                     type: "POST",
-                    dataType: "json",
                     async: false,
                     data: JSON.stringify(peopleList),
                     success: function (data) {
@@ -206,6 +206,7 @@
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
             },
+
             //获取审批申请数据
             getNodeInfo() {
                 var that = this
@@ -218,6 +219,28 @@
                         console.log(data);
                         that.nodeInfo = data[0]
                         that.preset = !data[0].IsNeedChose
+                        that.preset = !data[0].IsSendChose
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //获取审批/抄送 相关人员列表
+            getNodeList() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批/抄送 相关人员列表ok")
+                        for (let d of data) {
+                            if (d.NodePeople)
+                                d.NodePeople = d.NodePeople.split(',')
+                        }
+                        console.log(data)
+                        that.nodeList = data
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -227,6 +250,7 @@
         },
         created: function () {
             this.getNodeInfo()
+            this.getNodeList()
             loadHtml("mainPage", "partPage")
         }
     })

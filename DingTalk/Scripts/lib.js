@@ -193,6 +193,67 @@ var tableData = [{
 
 
 //注册组件
+Vue.component('sam-approver-list', {
+    props: ['preset', 'nodelist', 'type'],
+    template: `<div>
+                    <el-form-item v-if="type=='approve'" label="审批人" style="margin-bottom:0px;">
+                        <span v-if="preset" class="hint">审批人已由管理员预置,并将自动去重</span>
+                        <el-button v-else class="button-new-tag" size="small" v-on:click="showInput">+ 添加审批人</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <template v-for="(node,index) in nodelist">
+                            <template v-if="index>0 && index< nodelist.length+1">
+                                <span> => </span>
+                                </br>
+                            </template>
+                            <el-tag type="info" class="nodeTitle">{{node.NodeName}}</el-tag>
+                            <template v-for="(p,index) in node.NodePeople">
+                                <el-tag :key="index"
+                                        :closable="!preset"
+                                        onclick="" v-if="node.NodePeople"
+                                        :disable-transitions="false"
+                                        v-on:close="handleClose(index)">
+                                    {{p}}
+                                </el-tag>
+                            </template>
+                        </template>
+                        <el-input class="input-new-tag"
+                                    v-if="inputVisible"
+                                    v-model="inputValue"
+                                    ref="saveTagInput"
+                                    size="small"
+                                    v-on:keyup.enter.native="handleInputConfirm"
+                                    v-on:blur="handleInputConfirm">
+                        </el-input>
+                    </el-form-item></div>`,
+    data: function () {
+        return {
+            inputValue: '',
+            inputVisible: false
+        }
+    },
+    methods: {
+        showInput() {
+            this.inputVisible = true;
+            this.$nextTick(_ => {
+                this.$refs.saveTagInput.$refs.input.focus();
+            });
+        },
+        handleClose(tag) {
+            this.approvers.splice(this.approvers.indexOf(tag), 1);
+        },
+        handleInputConfirm() {
+            let inputValue = this.inputValue;
+            if (inputValue) {
+                this.approvers.push(inputValue);
+            }
+            this.inputVisible = false;
+            this.inputValue = '';
+        }
+    },
+    computed: {
+    }
+})
 Vue.component('sam-addapprover', {
     props: ['preset', 'approvers','type'],
     template: `<div>
