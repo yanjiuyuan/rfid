@@ -513,7 +513,6 @@ namespace DingTalk.Controllers
                 {
                     switch (Index)
                     {
-
                         case 0:
                             //待审批的
                             ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).ToList();
@@ -533,7 +532,7 @@ namespace DingTalk.Controllers
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
-                                errorCode = 0,
+                                errorCode = 1,
                                 errorMessage = "参数不正确"
                             });
                     }
@@ -543,7 +542,7 @@ namespace DingTalk.Controllers
             {
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    errorCode = 0,
+                    errorCode = 2,
                     errorMessage = ex.Message
                 });
 
@@ -552,5 +551,59 @@ namespace DingTalk.Controllers
 
 
         #endregion
+
+        #region 审批意见数据读取
+
+        /// <summary>
+        /// 审批意见数据读取
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <returns></returns>
+        /// 测试数据： /FlowInfo/GetSign?TaskId=1
+        [HttpGet]
+        public string GetSign(string TaskId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(TaskId))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 2,
+                        errorMessage = "TaskId不能为空"
+                    });
+                }
+                else
+                {
+                    using (DDContext context=new DDContext ())
+                    {
+                        List<Tasks> Tasks = context.Tasks.Where(u=>u.TaskId.ToString()== TaskId).ToList();
+                        List<NodeInfo> NodeInfo = context.NodeInfo.ToList();
+                        var Quary = from t in Tasks
+                                    join n in NodeInfo
+                                    on t.NodeId equals n.NodeId
+                                    select new
+                                    {
+                                        NodeName=n.NodeName,
+                                        ApplyMan=t.ApplyMan,
+                                        ApplyTime=t.ApplyTime,
+                                        Remark=t.Remark,
+                                        IsSend=n.IsSend
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        #endregion
+        
     }
 }
