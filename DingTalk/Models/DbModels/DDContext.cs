@@ -259,6 +259,10 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<Tasks>()
+                .Property(e => e.ApplyManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
                 .Property(e => e.ApplyTime)
                 .IsUnicode(false);
 

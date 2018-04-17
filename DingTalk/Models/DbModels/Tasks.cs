@@ -14,8 +14,11 @@ namespace DingTalk.Models.DbModels
 
         public int? TaskId { get; set; }
 
-        [StringLength(30)]
+        [StringLength(50)]
         public string ApplyMan { get; set; }
+
+        [StringLength(500)]
+        public string ApplyManId { get; set; }
 
         [StringLength(30)]
         public string ApplyTime { get; set; }

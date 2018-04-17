@@ -27,6 +27,7 @@ namespace DingTalk.Controllers
         /// 测试数据：/DrawingUpload/CreateTaskInfo
         //var FlowTest = {
         //"ApplyMan": "蔡兴桐",
+        //"ApplyManId": "蔡兴桐Id",
         //"NodeId":"0",
         //"ApplyTime": "2018-04-10 14:40",
         //"IsEnable": "1",
@@ -88,6 +89,7 @@ namespace DingTalk.Controllers
         //var FlowTest = {
         //"TaskId":"1",
         //"ApplyMan": "蔡兴桐",
+        //"ApplyManId": "蔡兴桐",
         //"NodeId":"1",
         //"ApplyTime": "2018-04-12 14:40",
         //"IsEnable": "1",
@@ -145,7 +147,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 审批过程节点数据读取接口
         /// </summary>
-        /// <param name="TaskId">任务Id(审批页面无需传此字段)</param>
+        /// <param name="TaskId">任务Id(发起页面无需传此字段)</param>
         /// <param name="FlowId">流程Id</param>
         /// <returns></returns>
         /// 测试数据  /FlowInfo/GetFlowProgress?TaskId=1&FlowId=6
@@ -153,10 +155,9 @@ namespace DingTalk.Controllers
         {
             try
             {
-
                 using (DDContext context = new DDContext())
                 {
-                    if(string.IsNullOrEmpty(FlowId))
+                    if (string.IsNullOrEmpty(FlowId))
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
                         {
@@ -168,11 +169,11 @@ namespace DingTalk.Controllers
                     {
                         var QuaryList = context.NodeInfo.Where(u => u.FlowId == FlowId)
                             .Select(T => new
-                        {
-                            NodeId = T.NodeId,
-                            NodeName = T.NodeName,
-                            NodePeople = T.NodePeople
-                        });
+                            {
+                                NodeId = T.NodeId,
+                                NodeName = T.NodeName,
+                                NodePeople = T.NodePeople
+                            });
                         return JsonConvert.SerializeObject(QuaryList);
                     }
                     else
@@ -189,7 +190,7 @@ namespace DingTalk.Controllers
                                             NodePeople = b.NodePeople,
                                             ApplyTime = a.ApplyTime,
                                             ApplyMan = a.ApplyMan,
-                                            IsSend=a.IsSend
+                                            IsSend = a.IsSend
                                         };
                         return JsonConvert.SerializeObject(QuaryList);
                     }
@@ -241,6 +242,7 @@ namespace DingTalk.Controllers
                             NodeId = NodeId,
                             FlowId = Int32.Parse(FlowId),
                             IsSend = IsSend,
+                            ApplyManId = PeopleId,
                             State = 0 //0 表示未审核 1表示已审核
                         };
                         context.Tasks.Add(newTask);
@@ -284,6 +286,7 @@ namespace DingTalk.Controllers
         //   "FlowId":"6",
         //   "NodeId":"1",
         //   "ApplyMan":"蔡兴桐",
+        //   "ApplyManId":"123456",
         //   "IsEnable":"1",
         //   "IsSend":"True",
         //   "State":"0"
@@ -292,6 +295,7 @@ namespace DingTalk.Controllers
         //   "FlowId":"6",
         //   "NodeId":"1",
         //   "ApplyMan":"龙贤",
+        //   "ApplyManId":"龙贤Id",
         //   "IsEnable":"1",
         //   "IsSend":"Flase",
         //   "State":"0"
@@ -455,24 +459,24 @@ namespace DingTalk.Controllers
         #region 左侧审批菜单栏状态读取
 
         /// <summary>
-        /// 左侧审批状态数据读取
+        /// 左侧审批状态(数量)数据读取
         /// </summary>
-        /// <param name="UserName">用户名</param>
+        /// <param name="ApplyManId">用户名Id</param>
         /// <returns>返回待审批的、我发起的、抄送我的数量</returns>
-        /// 测试数据 /FlowInfo/GetFlowStateCounts?UserName=蔡兴桐
+        /// 测试数据 /FlowInfo/GetFlowStateCounts?ApplyManId=123456
         [HttpGet]
-        public string GetFlowStateCounts(string UserName)
+        public string GetFlowStateCounts(string ApplyManId)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
                     //待审批的
-                    int iApprove = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).Count();
+                    int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).Count();
                     //我发起的
-                    int iMyPost = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).Count();
+                    int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).Count();
                     //抄送我的
-                    int iSendMy = context.Tasks.Where(u => u.ApplyMan == UserName && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).Count();
+                    int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).Count();
 
                     Dictionary<string, int> dic = new Dictionary<string, int>();
                     dic.Add("ApproveCount", iApprove);
@@ -485,13 +489,68 @@ namespace DingTalk.Controllers
             {
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    errorCode = 0,
+                    errorCode = 1,
                     errorMessage = ex.Message
                 });
             }
         }
 
-        #endregion
 
+        /// <summary>
+        /// 左侧审批状态详细数据读取
+        /// </summary>
+        /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
+        /// <param name="ApplyManId">用户名Id</param>
+        /// <returns></returns>
+        /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=蔡兴桐Id
+        [HttpGet]
+        public string GetFlowStateDetail(int Index, string ApplyManId)
+        {
+            try
+            {
+                List<Tasks> ListTask = new List<Tasks>();
+                using (DDContext context = new DDContext())
+                {
+                    switch (Index)
+                    {
+
+                        case 0:
+                            //待审批的
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).ToList();
+                            return JsonConvert.SerializeObject(ListTask);
+                        case 1:
+                            //我已审批
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1).ToList();
+                            return JsonConvert.SerializeObject(ListTask); ;
+                        case 2:
+                            //我发起的
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).ToList();
+                            return JsonConvert.SerializeObject(ListTask);
+                        case 3:
+                            //抄送我的
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).ToList();
+                            return JsonConvert.SerializeObject(ListTask);
+                        default:
+                            return JsonConvert.SerializeObject(new ErrorModel
+                            {
+                                errorCode = 0,
+                                errorMessage = "参数不正确"
+                            });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 0,
+                    errorMessage = ex.Message
+                });
+
+            }
+        }
+
+
+        #endregion
     }
 }
