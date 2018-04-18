@@ -83,6 +83,7 @@ namespace WebZhongZhi.Controllers
             dic.Add("TimeStamp", timeStamp.ToString());
             dic.Add("NonceStr", nonceStr);
             dic.Add("Signature", signature);
+            dic.Add("JsApiTicket", ticket);
             return JsonConvert.SerializeObject(dic);
         }
 
