@@ -22,7 +22,9 @@
         //    location.href="/login"
         //}
         //mixin.data.user = userObj
-        
+        //全局变量
+        var needLogin = '@ViewBag.needLogin'
+        var DingData = {}
     </script>
 </head>
 <body>
@@ -50,8 +52,8 @@
 </script>
 
 <script>
-    var needLogin = '@ViewBag.needLogin'
-    var DingData = {}
+    console.log('')
+    console.log('1')
     //登录钉钉
     $.ajax({
         //url: 'http://17e245o364.imwork.net/signature/',
@@ -76,8 +78,13 @@
                     'device.notification.confirm',
                     'biz.user.get']
             }
+            console.log('2')
             console.log(configObj)
             DingTalkPC.config(configObj);
+        },
+        error: function (err) {
+            console.log('err')
+            console.log(err)
         }
     })
     //DingTalkPC.ready回调函数
@@ -96,6 +103,7 @@
             corpId: DingData.corpId, //企业id
             agentId: DingData.agentId,//应用id
             onSuccess: function (result) {
+                console.log('4')
                 console.log(result);
                 Window.authcode = result.code;
             },

@@ -21,7 +21,21 @@
                 return {
                     activeIndex: '1',
                     scollImages: [],
-                    isCollapse: true
+                    isCollapse: true,
+                    DingData: DingData,
+                    menuStatus: {
+                        ApproveCount: 0,
+                        MyPostCount: 0,
+                        SendMyCount: 0
+                    }
+                }
+            },
+            computed: {
+                menuStatusComputed: function () {
+                    console.log('menuStates')
+                    if(this.DingData)
+                        this.loadMenuData(this.DingData.agentId)
+                    return 1
                 }
             },
             methods:{
@@ -32,11 +46,15 @@
                 console.log(key, keyPath);
               },
               //菜单数据加载
-              loadMenuData() {
+              loadMenuData(id) {
+                  var that = this
                   $.ajax({
-                      url: '',
+                      url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
+                      datatype:'json',
                       success: function (data) {
-
+                          console.log('菜单数据加载ok')
+                          console.log(data)
+                          that.menuStatus = data
                       }
                   })
               }

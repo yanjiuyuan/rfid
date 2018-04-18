@@ -234,6 +234,9 @@ Vue.component('sam-approver-list', {
         }
     },
     methods: {
+        addNode() {
+
+        },
         showInput() {
             this.inputVisible = true;
             this.$nextTick(_ => {
