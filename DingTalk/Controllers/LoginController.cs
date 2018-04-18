@@ -55,8 +55,11 @@ namespace WebZhongZhi.Controllers
             BeginDDAutoLogin();
             return View();
         }
-
-        public void BeginDDAutoLogin()
+        
+        /// <summary>
+        /// 免登数据返回接口
+        /// </summary>
+        public string BeginDDAutoLogin()
         {
             string nonceStr = "helloDD";//todo:随机
             ViewBag.NonceStr = nonceStr;
@@ -74,6 +77,14 @@ namespace WebZhongZhi.Controllers
             ViewBag.CorpId = dtConfig.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
             ViewBag.AgentId = DDApiService.Instance.AgentId;
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("nonceStr", nonceStr);
+            dic.Add("accessToken", accessToken);
+            dic.Add("ticket", ticket);
+            dic.Add("timeStamp", timeStamp.ToString());
+            dic.Add("url", url);
+            return JsonConvert.SerializeObject(dic);
         }
 
         /// <summary>
