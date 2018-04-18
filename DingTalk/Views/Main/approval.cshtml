@@ -6,7 +6,7 @@
 <script src="~/Scripts/echarts-all.js"></script>
 <el-main id="partPage">
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(m,i) in menu" :name="i+1">
+        <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
         <template slot="title">
             <span style="font-size:20px;">{{m.SORT_NAME}}</span>
         </template>
