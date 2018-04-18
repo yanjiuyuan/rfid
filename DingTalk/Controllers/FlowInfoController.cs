@@ -261,8 +261,8 @@ namespace DingTalk.Controllers
 
                         Dictionary<string, string> dic = new Dictionary<string, string>();
                         dic.Add("NodeName", NodeName);
-                        dic.Add("NodePeople", PeopleId);
-                        dic.Add("PeopleId", NodePeople);
+                        dic.Add("NodePeople", NodePeople);
+                        dic.Add("PeopleId", PeopleId);
                         return JsonConvert.SerializeObject(dic);
                     }
                 }
@@ -559,7 +559,7 @@ namespace DingTalk.Controllers
 
             }
         }
-        
+
         #endregion
 
         #region 审批意见数据读取
@@ -615,6 +615,6 @@ namespace DingTalk.Controllers
         }
 
         #endregion
-        
+
     }
 }
