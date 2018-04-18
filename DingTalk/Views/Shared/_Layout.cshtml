@@ -62,15 +62,16 @@
         type:'GET',
         cache:false,
         success: function (data) {
-            DingData = data
             console.log(data)
+            DingData = data
+            console.log(DingData)
             var configObj = {
                 //jsticket: DingData.jsticket,
-                agentId: DingData.agentId,
-                corpId: DingData.corpId,
-                timeStamp: DingData.timeStamp,
-                signature: DingData.signature,
-                nonceStr: DingData.nonceStr,
+                agentId: DingData.AgentId,
+                corpId: DingData.CorpId,
+                timeStamp: DingData.TimeStamp,
+                signature: DingData.Signature,
+                nonceStr: DingData.NonceStr,
                 jsApiList: [
                     'runtime.info',
                     'device.notification.alert',
@@ -79,7 +80,15 @@
             }
             console.log('2')
             console.log(configObj)
-            DingTalkPC.config(configObj);
+            //DingTalkPC.config(configObj);
+            DingTalkPC.config({
+                agentId: data.AgentId, // 必填，微应用ID
+                corpId: data.CorpId,//必填，企业ID
+                timeStamp: data.TimeStamp, // 必填，生成签名的时间戳
+                signature: data.Signature, // 必填，签名
+                nonceStr: data.NonceStr, // 必填，生成签名的随机串
+                jsApiList: ['device.notification.alert', 'device.notification.confirm', 'biz.user.get'] // 必填，需要使用的jsapi列表
+            });
         },
         error: function (err) {
             console.log('err')
