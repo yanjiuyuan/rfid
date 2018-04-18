@@ -40,7 +40,6 @@ namespace WebZhongZhi.Controllers
                 {
                     Session["AccessToken"] = accessToken;
                     Session["CurrentUser"] = userInfo;
-
                 }
                 return Content(userId);
             }
