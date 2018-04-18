@@ -218,7 +218,7 @@ namespace DingTalk.Controllers
         /// <param name="IsNext">是否找下一节点的人(默认True)</param>
         /// <param name="IsSend">抄送标识(默认False)</param>
         /// <returns>NodeName节点名称  NodePeople节点审批人 PeopleId审批人Id</returns>
-        /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=true&FlowId=6&NodeId=1
+        /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=1
         [HttpGet]
         public string FindNextPeople(string FlowId, bool IsNext = true, bool IsSend = false, int OldTaskId = 0, int NodeId = 0)
         {
@@ -232,26 +232,37 @@ namespace DingTalk.Controllers
                         string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
                         string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
 
-                        //保存任务流
-                        Tasks newTask = new Tasks()
+                        //List<string> ListNodeName = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodeName).ToList();
+                        //List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.PeopleId).ToList();
+                        //List<string> ListNodePeople = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodePeople).ToList();
+
+                        string[] ListNodeName = NodeName.Split(',');
+                        string[] ListPeopleId = PeopleId.Split(',');
+                        string[] ListNodePeople = NodePeople.Split(',');
+
+                        for (int i = 0; i < ListPeopleId.Length; i++)
                         {
-                            TaskId = OldTaskId,
-                            ApplyMan = NodePeople,
-                            //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                            IsEnable = 1,
-                            NodeId = NodeId,
-                            FlowId = Int32.Parse(FlowId),
-                            IsSend = IsSend,
-                            ApplyManId = PeopleId,
-                            State = 0 //0 表示未审核 1表示已审核
-                        };
-                        context.Tasks.Add(newTask);
+                            //保存任务流
+                            Tasks newTask = new Tasks()
+                            {
+                                TaskId = OldTaskId,
+                                ApplyMan = ListNodePeople[i],
+                                //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                                IsEnable = 1,
+                                NodeId = NodeId,
+                                FlowId = Int32.Parse(FlowId),
+                                IsSend = IsSend,
+                                ApplyManId = ListPeopleId[i],
+                                State = 0 //0 表示未审核 1表示已审核
+                            };
+                            context.Tasks.Add(newTask);
+                        }
                         context.SaveChanges();
 
                         Dictionary<string, string> dic = new Dictionary<string, string>();
                         dic.Add("NodeName", NodeName);
-                        dic.Add("NodePeople", NodePeople);
-                        dic.Add("PeopleId", PeopleId);
+                        dic.Add("NodePeople", PeopleId);
+                        dic.Add("PeopleId", NodePeople);
                         return JsonConvert.SerializeObject(dic);
                     }
                 }
@@ -513,7 +524,6 @@ namespace DingTalk.Controllers
                 {
                     switch (Index)
                     {
-
                         case 0:
                             //待审批的
                             ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).ToList();
@@ -533,7 +543,7 @@ namespace DingTalk.Controllers
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
-                                errorCode = 0,
+                                errorCode = 1,
                                 errorMessage = "参数不正确"
                             });
                     }
@@ -543,14 +553,68 @@ namespace DingTalk.Controllers
             {
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    errorCode = 0,
+                    errorCode = 2,
                     errorMessage = ex.Message
                 });
 
             }
         }
+        
+        #endregion
 
+        #region 审批意见数据读取
+
+        /// <summary>
+        /// 审批意见数据读取
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <returns></returns>
+        /// 测试数据： /FlowInfo/GetSign?TaskId=1
+        [HttpGet]
+        public string GetSign(string TaskId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(TaskId))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 2,
+                        errorMessage = "TaskId不能为空"
+                    });
+                }
+                else
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        List<Tasks> Tasks = context.Tasks.Where(u => u.TaskId.ToString() == TaskId).ToList();
+                        List<NodeInfo> NodeInfo = context.NodeInfo.ToList();
+                        var Quary = from t in Tasks
+                                    join n in NodeInfo
+                                    on t.NodeId equals n.NodeId
+                                    select new
+                                    {
+                                        NodeName = n.NodeName,
+                                        ApplyMan = t.ApplyMan,
+                                        ApplyTime = t.ApplyTime,
+                                        Remark = t.Remark,
+                                        IsSend = n.IsSend
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
 
         #endregion
+        
     }
 }
