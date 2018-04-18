@@ -126,6 +126,7 @@ var pickerOptions = {
 }
 //实例总参数
 var FlowId = 0 //当前审批类别ID
+var State = 0 //多异步辅助状态
 var mixin = {
     data: {
         user: {},
@@ -206,7 +207,7 @@ Vue.component('sam-approver-list', {
                                 <span> => </span>
                                 </br>
                             </template>
-                            <el-tag type="info" class="nodeTitle">{{node.NodeName}}</el-tag>
+                            <el-tag type="warning" class="nodeTitle">{{node.NodeName}}</el-tag>
                             <template v-for="(p,index) in node.NodePeople">
                                 <el-tag :key="index"
                                         :closable="!preset"

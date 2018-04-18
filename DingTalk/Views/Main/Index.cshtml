@@ -30,6 +30,15 @@
               },
               handleClose(key, keyPath) {
                 console.log(key, keyPath);
+              },
+              //菜单数据加载
+              loadMenuData() {
+                  $.ajax({
+                      url: '',
+                      success: function (data) {
+
+                      }
+                  })
               }
             }
         })
