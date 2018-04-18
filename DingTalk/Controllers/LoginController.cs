@@ -40,7 +40,6 @@ namespace WebZhongZhi.Controllers
                 {
                     Session["AccessToken"] = accessToken;
                     Session["CurrentUser"] = userInfo;
-
                 }
                 return Content(userId);
             }
@@ -84,6 +83,7 @@ namespace WebZhongZhi.Controllers
             dic.Add("TimeStamp", timeStamp.ToString());
             dic.Add("NonceStr", nonceStr);
             dic.Add("Signature", signature);
+            dic.Add("JsApiTicket", ticket);
             return JsonConvert.SerializeObject(dic);
         }
 
