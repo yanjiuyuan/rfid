@@ -79,11 +79,11 @@ namespace WebZhongZhi.Controllers
             ViewBag.AgentId = DDApiService.Instance.AgentId;
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("nonceStr", nonceStr);
-            dic.Add("accessToken", accessToken);
-            dic.Add("ticket", ticket);
-            dic.Add("timeStamp", timeStamp.ToString());
-            dic.Add("url", url);
+            dic.Add("AgentId", DDApiService.Instance.AgentId);
+            dic.Add("CorpId", dtConfig.CorpId);
+            dic.Add("TimeStamp", timeStamp.ToString());
+            dic.Add("NonceStr", nonceStr);
+            dic.Add("Signature", signature);
             return JsonConvert.SerializeObject(dic);
         }
 
