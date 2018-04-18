@@ -39,7 +39,7 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="意见" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -60,13 +60,15 @@
 <script>
     var flowId = 6
     var nodeId = 1
+    DingData.agentId = '123456'
+    DingData.agentName = '蔡兴桐'
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
                 ruleForm: {
-                    name: '',
+                    name: DingData.agentName,
                     remark: '',
                     approvers: ['小唐', '院长'],
                     copyers: ['小唐', '季老师']
@@ -89,6 +91,7 @@
                     if (valid && this.data.length > 0) {
                         var paramObj = {
                             "ApplyMan": that.ruleForm.name,
+                            "ApplyManId": DingData.agentId,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
@@ -104,6 +107,7 @@
                                 console.log("提交审批ok")
                                 that.bindData(JSON.parse(data).Content)
                                 that.bindApprover(JSON.parse(data).Content)
+                                //寻人，提示已提交
                             }
                         })
                     } else {
@@ -128,6 +132,7 @@
                     data: JSON.stringify(that.data),
                     success: function (data) {
                         console.log(data);
+                        doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -138,17 +143,20 @@
             bindApprover(taskId) {
                 var that = this
                 var peopleList = []
+                //0000000000000000000000000000000
                 for (let a of this.ruleForm.approvers) {
                     peopleList.push({
                         OldTaskId: taskId,
                         FlowId: FlowId,
                         NodeId: nodeId,
                         ApplyMan: a,
+                        ApplyManId: DingData.agentId,
                         IsSend: "false",
                         IsEnable: "1",
                         State: "0"
                     })
                 }
+                //1111111111111111111111111111111
                 for (let c of this.ruleForm.copyers) {
                     peopleList.push({
                         OldTaskId: taskId,
@@ -169,7 +177,8 @@
                     data: JSON.stringify(peopleList),
                     success: function (data) {
                         console.log("审批绑定审批人ok")
-                        console.log(data);
+                        console.log(data)
+                        that.doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -238,6 +247,8 @@
                         for (let d of data) {
                             if (d.NodePeople)
                                 d.NodePeople = d.NodePeople.split(',')
+                            if (d.NodeId == 0) 
+                                d.NodePeople = [DingData.agentName]
                         }
                         console.log(data)
                         that.nodeList = data
@@ -246,6 +257,12 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+            },
+            //审批所有流程通过，后续处理
+            doneSubmit() {
+                State++
+                if (State >= 2)
+                    alert('提交成功')
             }
         },
         created: function () {
