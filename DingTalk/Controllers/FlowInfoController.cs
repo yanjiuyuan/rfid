@@ -210,7 +210,7 @@ namespace DingTalk.Controllers
 
         #region 寻人、选人与抄送
         /// <summary>
-        /// 寻人接口
+        /// 寻人接口（默认）
         /// </summary>
         /// <param name="OldTaskId">任务Id</param>
         /// <param name="FlowId">流程Id</param>
@@ -288,7 +288,7 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
-        /// 选人及抄送接口(多人Post)
+        /// 选人及抄送接口(多人Post)（自选）
         /// </summary>
         /// <returns>errorCode = 0 成功 </returns>
         /// 测试数据：FlowInfo/ChoseOrSend

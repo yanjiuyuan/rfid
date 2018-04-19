@@ -14,6 +14,13 @@ namespace DingTalkServer
         public string CorpSecret { get; set; } = ConfigurationManager.AppSettings["CorpSecret"];
 
         public string AgentId { get; set; } = ConfigurationManager.AppSettings["agentId"];
+        public string hao { get; set; } = ConfigurationManager.AppSettings["hao"];
+
+        public string CorpId_hao { get; set; } = ConfigurationManager.AppSettings["CorpId_hao"];
+
+        public string CorpSecret_hao { get; set; } = ConfigurationManager.AppSettings["CorpSecret_hao"];
+
+        public string AgentId_hao { get; set; } = ConfigurationManager.AppSettings["agentId_hao"];
 
         public string AccessToken { get; set; } = ConfigurationManager.AppSettings["AccessToken"].ToString();
 

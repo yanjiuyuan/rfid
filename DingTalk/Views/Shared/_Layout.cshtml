@@ -52,8 +52,6 @@
 </script>
 
 <script>
-    console.log('')
-    console.log('1')
     //登录钉钉
     $.ajax({
         //url: 'http://17e245o364.imwork.net/signature/',
@@ -62,11 +60,9 @@
         type:'GET',
         cache:false,
         success: function (data) {
-            console.log(data)
             DingData = data
-            console.log(DingData)
             var configObj = {
-                //jsticket: DingData.jsticket,
+                jsticket: DingData.JsApiTicket,
                 agentId: DingData.AgentId,
                 corpId: DingData.CorpId,
                 timeStamp: DingData.TimeStamp,
@@ -74,45 +70,34 @@
                 nonceStr: DingData.NonceStr,
                 jsApiList: [
                     'runtime.info',
+                    'biz.contact.choose',
                     'device.notification.alert',
                     'device.notification.confirm',
                     'biz.user.get']
             }
-            console.log('2')
-            console.log(configObj)
-            //DingTalkPC.config(configObj);
-            DingTalkPC.config({
-                agentId: data.AgentId, // 必填，微应用ID
-                corpId: data.CorpId,//必填，企业ID
-                timeStamp: data.TimeStamp, // 必填，生成签名的时间戳
-                signature: data.Signature, // 必填，签名
-                nonceStr: data.NonceStr, // 必填，生成签名的随机串
-                jsApiList: ['device.notification.alert', 'device.notification.confirm', 'biz.user.get'] // 必填，需要使用的jsapi列表
-            });
+            //console.log(configObj)
+            DingTalkPC.config(configObj);
         },
         error: function (err) {
-            console.log('err')
-            console.log(err)
+            console.error(err)
         }
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
-        console.log('i am ready')
-        DingTalkPC.device.notification.alert({
-            message: 'hello world',
-            title: 'just say hello',
-            buttonName: 'hello too',
-            onSuccess: function () {
-
-            }
-        })
+        //DingTalkPC.device.notification.alert({
+        //    message: '表单数据不全或有误',
+        //    title: '提示信息',
+        //    buttonName: '确定',
+        //    onSuccess: function () {
+        //    }
+        //})
+        
         //PC版获取免登授权码
         DingTalkPC.runtime.permission.requestAuthCode({
-            corpId: DingData.corpId, //企业id
-            agentId: DingData.agentId,//应用id
+            corpId: DingData.CorpId, //企业id
+            agentId: DingData.AgentId,//应用id
             onSuccess: function (result) {
-                console.log('4')
-                console.log(result);
+                //console.log(result);
                 Window.authcode = result.code;
             },
             onFail: function (err) {
