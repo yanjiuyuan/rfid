@@ -39,8 +39,20 @@
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
     </el-upload>
-
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="申请人" prop="">
+            <el-select v-model="value" placeholder="请选择">
+                <el-option v-for="item in projestList"
+                           :key="item.Id"
+                           :label="item.ProjectName"
+                           :value="item.Id"
+                           >
+                    <span style="float: left">{{ item.ProjectName }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+            <el-button class="button-new-tag" size="small" v-on:click="addProject">+ 添加项目</el-button>
+        </el-form-item>
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
@@ -59,23 +71,25 @@
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
+    <!--上传图片-->
+    <el-upload action="/drawingupload/Upload"
+               list-type="picture-card"
+               :on-preview="handlePictureCardPreview"
+               :before-upload="beforeAvatarUpload">
+        <i class="el-icon-plus"></i>
+    </el-upload>
+    <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
 </el-main>
 
 <script>
     var flowId = 6
-    DingData.agentId = '123456'
-    DingData.agentName = '蔡兴桐'
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                ruleForm: {
-                    name: DingData.agentName,
-                    remark: '',
-                    approvers: ['小唐', '院长'],
-                    copyers: ['小唐', '季老师']
-                },
                 preApprove: false,
                 preCopy: false,
                 fileList: [],
@@ -84,7 +98,19 @@
                 tableData: [],
                 totalRows: 0,
                 nodeInfo: {},
-                nodeList: []
+                nodeList: [],
+                projestList: [],
+                //图片上传参数
+                dialogImageUrl: '',
+                dialogVisible: false,
+                //表单参数
+                ruleForm: {
+                    name: DingData.nickName,
+                    remark: '',
+                    approvers: ['小唐', '院长'],
+                    copyers: ['小唐', '季老师']
+
+                }
             }
         },
         methods: {
@@ -95,7 +121,7 @@
                     if (valid && this.data.length > 0) {
                         var paramObj = {
                             "ApplyMan": that.ruleForm.name,
-                            "ApplyManId": DingData.agentId,
+                            "ApplyManId": DingData.emplId,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
@@ -246,8 +272,57 @@
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
             },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
 
-            //获取审批申请数据
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+
+            //添加项目
+            addProject() {
+                var that = this
+                $.ajax({
+                    url: "/DrawingUpload/LoadPurchase",
+                    type: "POST",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify({
+                        "ProjectName": "图纸上传项目" + _getTime,
+                        "CreateTime": _getTime(),
+                        "IsEnable":true,
+                        "IsFinish": false,
+                        "DeptName": "智慧工厂事业部",
+                        "ApplyMan": DingData.nickName,
+                        "ApplyManId": DingData.emplId,
+                        "StartTime":"2017-10-23",
+                        "EndTime":"2018-09-01",
+                        "ProjectNo":"2017ZL054"
+                    }),
+                    success: function (data) {
+                        that.projestList.push({
+                            Id: "123",
+                            ProjectName: "图纸上传项目" + _getTime
+                        })
+                        console.log(data);
+                        doneSubmit()
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //获取节点数据GetNodeInfo
             getNodeInfo() {
                 var that = this
                 $.ajax({
@@ -265,8 +340,23 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+                $.ajax({
+                    url: "/Project/GetAllProJect?ApplyManId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批申请数据ok")
+                        that.nodeInfo = data[0]
+                        that.preSpprove = !data[0].IsNeedChose
+                        that.preCopy = !data[0].IsSendChose
+                        console.log(that.nodeInfo)
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
             },
-            //获取审批/抄送 相关人员列表
+            //获取审批/抄送 相关人员列表GetFlowProgress
             getNodeList() {
                 var that = this
                 $.ajax({
@@ -279,7 +369,7 @@
                             if (d.NodePeople)
                                 d.NodePeople = d.NodePeople.split(',')
                             if (d.NodeId == 0) 
-                                d.NodePeople = [DingData.agentName]
+                                d.NodePeople = [DingData.nickName]
                             d['AddPeople'] = []
                         }
                         console.log(data)

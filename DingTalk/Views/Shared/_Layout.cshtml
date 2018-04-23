@@ -84,13 +84,6 @@
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
-        //DingTalkPC.device.notification.alert({
-        //    message: '表单数据不全或有误',
-        //    title: '提示信息',
-        //    buttonName: '确定',
-        //    onSuccess: function () {
-        //    }
-        //})
         
         //PC版获取免登授权码
         DingTalkPC.runtime.permission.requestAuthCode({
@@ -102,6 +95,18 @@
             },
             onFail: function (err) {
                 console.log('requestAuthCode fail: ' + JSON.stringify(err));
+            }
+        });
+
+        DingTalkPC.biz.user.get({
+            onSuccess: function (info) {
+                console.log(result);
+                DingData.userid = result.emplId
+                DingData.isManager = result.isManager
+                DingData.nickName = result.nickName
+            },
+            onFail: function (err) {
+                console.log('userinfo fail: ' + JSON.stringify(err));
             }
         });
     }); 
