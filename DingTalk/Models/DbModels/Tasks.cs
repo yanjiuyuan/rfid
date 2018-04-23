@@ -34,5 +34,13 @@ namespace DingTalk.Models.DbModels
         public bool? IsSend { get; set; }
 
         public int? State { get; set; }
+
+        [StringLength(500)]
+        public string ImageUrl { get; set; }
+
+        [StringLength(500)]
+        public string FileUrl { get; set; }
+
+        public string Title { get; set; }
     }
 }
