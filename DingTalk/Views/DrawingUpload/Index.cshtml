@@ -20,6 +20,7 @@
 <input id="btn2" type="button" value="流程载入接口(Approve)" />
 <input id="btn1" type="button" value="BOM表载入接口" />
 <input id="btn3" type="button" value="选人及抄送接口(多人Post)" />
+<input id="btn4" type="button" value="载入项目信息" />
 <script type="text/javascript">
     var FlowTest = {
         "ApplyMan": "蔡兴桐",
@@ -56,7 +57,21 @@
         "IsEnable": "1",
         "IsSend": true,
         "State": "0"
-    }]
+        }]
+
+
+      var ProjectTest = {
+        "ProjectName": "集成钉钉的信息管理系统",
+        "CreateTime": "2018-04-20 14:40",
+        "IsEnable":true,
+        "IsFinish": false,
+        "DeptName": "智慧工厂事业部",
+        "ApplyMan": "蔡兴桐",
+        "ApplyManId":"99f00dfc7badd72b00da35f211060176ae044d8b3b420106bb6ef6345be1ba9b",
+        "StartTime":"2017-10-23",
+        "EndTime":"2018-09-01",
+        "ProjectNo":"2017ZL054"
+        }
 
     $("#btn").click(function () {
         $.ajax({
@@ -136,6 +151,22 @@
         })
     });
 
-
+    $("#btn4").click(function () {
+        $.ajax({
+            url: "/Project/AddProject",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(ProjectTest),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
 
 </script>

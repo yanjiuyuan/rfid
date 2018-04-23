@@ -40,5 +40,7 @@ namespace DingTalk.Models.DbModels
         public bool? IsNeedChose { get; set; }
 
         public bool? IsSend { get; set; }
+
+        public bool? IsDown { get; set; }
     }
 }

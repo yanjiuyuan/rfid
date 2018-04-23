@@ -23,6 +23,7 @@ namespace DingTalk.Models.DbModels
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
+        public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -270,6 +271,18 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.Remark)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.ImageUrl)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.FileUrl)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.Title)
+                .IsUnicode(false);
+
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.nickName)
                 .IsUnicode(false);
@@ -296,6 +309,42 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.FinnalLoginTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ProjectName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.CreateTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.DeptName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ApplyManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.StartTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.EndTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ProjectNo)
                 .IsUnicode(false);
         }
     }

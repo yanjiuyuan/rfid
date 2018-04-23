@@ -26,7 +26,7 @@ namespace DingTalk.Controllers
         /// 文件上传接口
         /// </summary>
         /// <param name="form"></param>
-        /// <returns></returns>
+        /// <returns>返回文件保存路径</returns>
         [HttpPost]
         public string Upload(FormCollection form)
         {
@@ -149,11 +149,13 @@ namespace DingTalk.Controllers
             {
                 Path = "C:\\Users\\tong\\Source\\Repos\\DingTalk\\DingTalk\\UploadFile\\Excel\\20180408164559.xls";
             }
+            Dictionary<DataTable, string> dic = new Dictionary<DataTable, string>();
             DataTable db = ExcelHelperByNPOI.ImportExcel2003toDt(Path);
-            return JsonConvert.SerializeObject(db);
+            dic.Add(db, Path);
+            return JsonConvert.SerializeObject(dic);
         }
 
-       
+
 
         /// <summary>
         /// BOM表信息查询
@@ -231,7 +233,7 @@ namespace DingTalk.Controllers
                 else
                 {
                     List<Purchase> listPurchase = new List<Purchase>();
-                    listPurchase= JsonHelper.JsonToObject<List<Purchase>>(PurchaseJson);
+                    listPurchase = JsonHelper.JsonToObject<List<Purchase>>(PurchaseJson);
                     foreach (Purchase item in listPurchase)
                     {
                         using (DDContext context = new DDContext())

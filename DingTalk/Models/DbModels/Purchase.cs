@@ -42,5 +42,7 @@ namespace DingTalk.Models.DbModels
 
         [StringLength(500)]
         public string Mark { get; set; }
+
+        public bool? IsDown { get; set; }
     }
 }
