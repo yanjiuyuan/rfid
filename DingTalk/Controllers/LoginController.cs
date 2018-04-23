@@ -67,19 +67,24 @@ namespace WebZhongZhi.Controllers
             string ticket = DDApiService.Instance.GetJsApiTicket(accessToken);
             long timeStamp = DDHelper.GetTimeStamp();
             string url = "http://q202800o84.iask.in/login/login";
+            if(DDApiService.Instance.hao == "1")
+            {
+                url = "http://wuliao5222.55555.io/";
+            }
             string signature = DDApiService.Instance.GetSign(ticket, nonceStr, timeStamp, url);
             ViewBag.Url = url;
             ViewBag.JsApiTicket = ticket;
             ViewBag.Signature = signature;
             ViewBag.NonceStr = nonceStr;
             ViewBag.TimeStamp = timeStamp;
-            ViewBag.CorpId = dtConfig.CorpId;
+            ViewBag.CorpId = DDApiService.Instance.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
             ViewBag.AgentId = DDApiService.Instance.AgentId;
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("Url", url);
             dic.Add("AgentId", DDApiService.Instance.AgentId);
-            dic.Add("CorpId", dtConfig.CorpId);
+            dic.Add("CorpId", DDApiService.Instance.CorpId);
             dic.Add("TimeStamp", timeStamp.ToString());
             dic.Add("NonceStr", nonceStr);
             dic.Add("Signature", signature);

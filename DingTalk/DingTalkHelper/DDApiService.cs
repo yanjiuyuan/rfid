@@ -16,12 +16,20 @@ namespace DingTalk.DingTalkHelper
         public string CorpId { get; private set; }
         public string CorpSecret { get; private set; }
         public string AgentId { get; private set; }
+        public string hao { get; private set; }
 
         private DDApiService()
         {
+            hao = dtConfig.hao;
             CorpId = dtConfig.CorpId;
             CorpSecret = dtConfig.CorpSecret;
             AgentId = dtConfig.AgentId;
+            if(hao == "1")
+            {
+                CorpId = dtConfig.CorpId_hao;
+                CorpSecret = dtConfig.CorpSecret_hao;
+                AgentId = dtConfig.AgentId_hao;
+            }
         }
 
         /// <summary>
@@ -31,6 +39,7 @@ namespace DingTalk.DingTalkHelper
         /// <returns></returns>
         public string GetAccessToken()
         {
+
             return DDHelper.GetAccessToken(CorpId, CorpSecret);
         }
 

@@ -52,8 +52,6 @@
 </script>
 
 <script>
-    console.log('')
-    console.log('1')
     //登录钉钉
     $.ajax({
         //url: 'http://17e245o364.imwork.net/signature/',
@@ -63,47 +61,43 @@
         cache:false,
         success: function (data) {
             DingData = data
-            console.log(data)
             var configObj = {
-                //jsticket: DingData.jsticket,
-                agentId: DingData.agentId,
-                corpId: DingData.corpId,
-                timeStamp: DingData.timeStamp,
-                signature: DingData.signature,
-                nonceStr: DingData.nonceStr,
+                jsticket: DingData.JsApiTicket,
+                agentId: DingData.AgentId,
+                corpId: DingData.CorpId,
+                timeStamp: DingData.TimeStamp,
+                signature: DingData.Signature,
+                nonceStr: DingData.NonceStr,
                 jsApiList: [
                     'runtime.info',
+                    'biz.contact.choose',
                     'device.notification.alert',
                     'device.notification.confirm',
                     'biz.user.get']
             }
-            console.log('2')
-            console.log(configObj)
+            //console.log(configObj)
             DingTalkPC.config(configObj);
         },
         error: function (err) {
-            console.log('err')
-            console.log(err)
+            console.error(err)
         }
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
-        console.log('i am ready')
-        DingTalkPC.device.notification.alert({
-            message: 'hello world',
-            title: 'just say hello',
-            buttonName: 'hello too',
-            onSuccess: function () {
-
-            }
-        })
+        //DingTalkPC.device.notification.alert({
+        //    message: '表单数据不全或有误',
+        //    title: '提示信息',
+        //    buttonName: '确定',
+        //    onSuccess: function () {
+        //    }
+        //})
+        
         //PC版获取免登授权码
         DingTalkPC.runtime.permission.requestAuthCode({
-            corpId: DingData.corpId, //企业id
-            agentId: DingData.agentId,//应用id
+            corpId: DingData.CorpId, //企业id
+            agentId: DingData.AgentId,//应用id
             onSuccess: function (result) {
-                console.log('4')
-                console.log(result);
+                //console.log(result);
                 Window.authcode = result.code;
             },
             onFail: function (err) {

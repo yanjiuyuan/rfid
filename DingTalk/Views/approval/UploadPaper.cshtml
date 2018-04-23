@@ -3,6 +3,9 @@
 }
 
 <!--右侧实体内容-->
+<script>
+    //变量
+</script>
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
@@ -45,10 +48,11 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'">
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+                           :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <!--添加抄送人-->
-        <sam-addapprover :preset="preset" :approvers="ruleForm.copyers">
+        <sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
         </sam-addapprover>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
@@ -59,7 +63,6 @@
 
 <script>
     var flowId = 6
-    var nodeId = 1
     DingData.agentId = '123456'
     DingData.agentName = '蔡兴桐'
     var demo = new Vue({
@@ -73,7 +76,6 @@
                     approvers: ['小唐', '院长'],
                     copyers: ['小唐', '季老师']
                 },
-                preset: false,
                 preApprove: false,
                 preCopy: false,
                 fileList: [],
@@ -107,13 +109,22 @@
                             data: JSON.stringify(paramObj),
                             success: function (data) {
                                 console.log("提交审批ok")
-                                that.bindData(JSON.parse(data).Content)
-                                that.bindApprover(JSON.parse(data).Content)
+                                var taskId = JSON.parse(data).Content
+                                that.bindData(taskId)
+                                that.addApprover(taskId)
+                                that.bindApprover(taskId)
                                 //寻人，提示已提交
                             }
                         })
                     } else {
                         alert('表单数据不全或有误')
+                        DingTalkPC.device.notification.alert({
+                            message: '表单数据不全或有误',
+                            title: '提示信息',
+                            buttonName: '确定',
+                            onSuccess: function () {
+                            }
+                        })
                         console.log('error submit!!');
                         return false;
                     }
@@ -141,78 +152,27 @@
                     }
                 })
             },
-            //审批绑定审批人(选人)
-            //bindApprover(taskId) {
-            //    var that = this
-            //    var peopleList = []
-            //    for (let a of this.ruleForm.approvers) {
-            //        peopleList.push({
-            //            OldTaskId: taskId,
-            //            FlowId: FlowId,
-            //            NodeId: nodeId,
-            //            ApplyMan: a,
-            //            ApplyManId: DingData.agentId,
-            //            IsSend: "false",
-            //            IsEnable: "1",
-            //            State: "0"
-            //        })
-            //    }
-            //    for (let c of this.ruleForm.copyers) {
-            //        peopleList.push({
-            //            OldTaskId: taskId,
-            //            FlowId: FlowId,
-            //            NodeId: nodeId,
-            //            ApplyMan: c,
-            //            IsSend: "true",
-            //            IsEnable: "1",
-            //            State: "0"
-            //        })
-            //    }
-            //    console.log("peopleList")
-            //    console.log(peopleList)
-            //    $.ajax({
-            //        url: "/FlowInfo/ChoseOrSend",
-            //        type: "POST",
-            //        async: false,
-            //        data: JSON.stringify(peopleList),
-            //        success: function (data) {
-            //            console.log("审批绑定审批人ok")
-            //            console.log(data)
-            //            that.doneSubmit()
-            //        },
-            //        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            //            console.log(XMLHttpRequest.status);
-            //        }
-            //    })
-            //},
-
-            //审批绑定审批人(寻人)
-            bindApprover(taskId) {
+            //审批绑定审批人(自选)
+            addApprover(taskId) {
                 var that = this
                 var peopleList = []
-                for (let a of this.ruleForm.approvers) {
-                    peopleList.push({
-                        OldTaskId: taskId,
-                        FlowId: FlowId,
-                        NodeId: nodeId,
-                        ApplyMan: a,
-                        ApplyManId: DingData.agentId,
-                        IsSend: "false",
-                        IsEnable: "1",
-                        State: "0"
-                    })
+                for (let node of this.nodeList) {
+                    if (node.NodeId == this.nodeInfo.NodeId) {
+                        for (let a of node.AddPeople) {
+                            peopleList.push({
+                                OldTaskId: taskId,
+                                FlowId: FlowId,
+                                NodeId: nodeId,
+                                ApplyMan: a.name,
+                                ApplyManId: a.emplId,
+                                IsSend: "false",
+                                IsEnable: "1",
+                                State: "0"
+                            })
+                        }
+                    }
                 }
-                for (let c of this.ruleForm.copyers) {
-                    peopleList.push({
-                        OldTaskId: taskId,
-                        FlowId: FlowId,
-                        NodeId: nodeId,
-                        ApplyMan: c,
-                        IsSend: "true",
-                        IsEnable: "1",
-                        State: "0"
-                    })
-                }
+                if (peopleList.length == 0) return
                 console.log("peopleList")
                 console.log(peopleList)
                 $.ajax({
@@ -221,7 +181,32 @@
                     async: false,
                     data: JSON.stringify(peopleList),
                     success: function (data) {
-                        console.log("审批绑定审批人ok")
+                        console.log("审批绑定自选审批人ok")
+                        console.log(data)
+                        that.doneSubmit()
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //审批绑定审批人(默认)
+            bindApprover(taskId) {
+                var that = this
+                var param = {
+                    IsNext: 'true',
+                    IsSend: 'False',
+                    FloId: flowId,
+                    NodeId: nodeId,
+                    OldTaskId: taskId
+                }
+                $.ajax({
+                    url: "/FlowInfo/FindNextPeople" + _formatQueryStr(param),
+                    type: "GET",
+                    async: false,
+                    data: JSON.stringify(peopleList),
+                    success: function (data) {
+                        console.log("审批绑定默认审批人ok")
                         console.log(data)
                         that.doneSubmit()
                     },
@@ -270,11 +255,10 @@
                     dataType: "json",
                     success: function (data) {
                         console.log("获取审批申请数据ok")
-                        console.log(data);
                         that.nodeInfo = data[0]
-                        that.preset = !data[0].IsNeedChose
                         that.preSpprove = !data[0].IsNeedChose
                         that.preCopy = !data[0].IsSendChose
+                        console.log(that.nodeInfo)
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -295,6 +279,7 @@
                                 d.NodePeople = d.NodePeople.split(',')
                             if (d.NodeId == 0) 
                                 d.NodePeople = [DingData.agentName]
+                            d['AddPeople'] = []
                         }
                         console.log(data)
                         that.nodeList = data
@@ -306,8 +291,13 @@
             },
             //审批所有流程通过，后续处理
             doneSubmit() {
+                var allState = 2
+                for (let node of this.nodeList) {
+                    if (node.NodeId == this.nodeInfo.NodeId + 1 && node.AddPeople.length>0)
+                        allState = 3
+                }
                 State++
-                if (State >= 2) {
+                if (State >= allState) {
                     alert('提交成功')
                     State = 0
                 }
@@ -319,6 +309,7 @@
             loadHtml("mainPage", "partPage")
         }
     })
+
 </script>
 
 <style>
