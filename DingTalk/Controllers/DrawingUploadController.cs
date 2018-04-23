@@ -56,14 +56,14 @@ namespace DingTalk.Controllers
                 {
                     //文件大小不为0
                     HttpPostedFileBase files = Request.Files[0];
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
-                    files.SaveAs(Server.MapPath(@"~\UploadFile\Excel\" + newFileName));
+                    //string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
+                    files.SaveAs(Server.MapPath(@"~\UploadFile\Excel\" + files.FileName));
 
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
                         errorMessage = "上传成功",
-                        Content = Server.MapPath(@"~\UploadFile\Excel\" + newFileName)
+                        Content = Server.MapPath(@"~\UploadFile\Excel\" + files.FileName)
                     });
                 }
             }
@@ -80,7 +80,7 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
-        /// 文件Excel并读取数据接口
+        /// 上传Excel并读取数据接口
         /// </summary>
         /// <param name="form"></param>
         /// <returns></returns>
