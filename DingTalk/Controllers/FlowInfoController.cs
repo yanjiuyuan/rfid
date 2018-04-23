@@ -5,6 +5,7 @@ using DingTalk.Models.DbModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -620,7 +621,84 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        #region MyRegion
+        #region 流程节点人员配置
+
+        /// <summary>
+        /// 流程节点人员配置
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据：/FlowInfo/UpdateNodeInfo
+        ///var NodeInfoList = [{
+        //   "Id":"2",
+        //   "NodeId":"1",
+        //   "FlowId":"6",
+        //   "NodeName":"负责人审核",
+        //   "NodePeople":"蔡兴桐",
+        //   "PeopleId":"1",
+        //   "PreNodeId":"2",
+        //   "IsAllAllow":"1",
+        //   "Condition":"1",
+        //   "IsBack":false,
+        //   "IsNeedChose":false,
+        //   "IsSend":false
+        //},{
+        //   "Id":"3",
+        //   "NodeId":"2",
+        //   "FlowId":"6",
+        //   "NodeName":"部门审核",
+        //   "NodePeople":"渣渣辉",
+        //   "PeopleId":"1",
+        //   "PreNodeId":"3",
+        //   "IsAllAllow":"1",
+        //   "Condition":"1",
+        //   "IsBack":false,
+        //   "IsNeedChose":false,
+        //   "IsSend":false
+        //}]
+        [HttpPost]
+
+        public string UpdateNodeInfo()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    List<NodeInfo> ListNodeInfo = new List<NodeInfo>();
+                    ListNodeInfo = JsonHelper.JsonToObject<List<NodeInfo>>(List);
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (NodeInfo nodeInfo in ListNodeInfo)
+                        {
+                            context.Entry<NodeInfo>(nodeInfo).State = EntityState.Modified;
+                        }
+                        context.SaveChanges();
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
 
         #endregion
     }

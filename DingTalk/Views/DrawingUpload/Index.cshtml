@@ -21,6 +21,7 @@
 <input id="btn1" type="button" value="BOM表载入接口" />
 <input id="btn3" type="button" value="选人及抄送接口(多人Post)" />
 <input id="btn4" type="button" value="载入项目信息" />
+<input id="btn5" type="button" value="流程节点人员配置" />
 <script type="text/javascript">
     var FlowTest = {
         "ApplyMan": "蔡兴桐",
@@ -71,7 +72,35 @@
         "StartTime":"2017-10-23",
         "EndTime":"2018-09-01",
         "ProjectNo":"2017ZL054"
-        }
+    }
+
+     var NodeInfoList = [{
+           "Id":"2",
+           "NodeId":"1",
+           "FlowId":"6",
+           "NodeName":"负责人审核",
+           "NodePeople":"蔡兴桐",
+           "PeopleId":"1",
+           "PreNodeId":"2",
+           "IsAllAllow":"1",
+           "Condition":"1",
+           "IsBack":false,
+           "IsNeedChose":false,
+           "IsSend":false
+        },{
+           "Id":"3",
+           "NodeId":"2",
+           "FlowId":"6",
+           "NodeName":"部门审核",
+           "NodePeople":"渣渣辉",
+           "PeopleId":"1",
+           "PreNodeId":"3",
+           "IsAllAllow":"1",
+           "Condition":"1",
+           "IsBack":false,
+           "IsNeedChose":false,
+           "IsSend":false
+        }]
 
     $("#btn").click(function () {
         $.ajax({
@@ -158,6 +187,24 @@
             dataType: "json",
             async: false,
             data: JSON.stringify(ProjectTest),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn5").click(function () {
+        $.ajax({
+            url: "/FlowInfo/UpdateNodeInfo",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(NodeInfoList),
             success: function (data) {
                 console.log(data);
             },
