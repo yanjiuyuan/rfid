@@ -39,6 +39,6 @@ namespace DingTalk.Models.DbModels
         public string EndTime { get; set; }
 
         [StringLength(200)]
-        public string ProjectNo { get; set; }
+        public string ProjectId { get; set; }
     }
 }

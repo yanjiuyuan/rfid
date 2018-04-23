@@ -348,7 +348,7 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProjectInfo>()
-                .Property(e => e.ProjectNo)
+                .Property(e => e.ProjectId)
                 .IsUnicode(false);
         }
     }
