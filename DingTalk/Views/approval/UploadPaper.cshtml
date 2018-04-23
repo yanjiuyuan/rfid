@@ -217,6 +217,7 @@
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {
+                console.log(response)
                 if (!(response && response.length > 0)) return
                 for (let i = 0; i < response.length; i++) {
                     let data = response[i]
