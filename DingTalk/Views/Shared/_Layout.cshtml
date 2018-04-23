@@ -25,6 +25,7 @@
         //全局变量
         var needLogin = '@ViewBag.needLogin'
         var DingData = {}
+        
     </script>
 </head>
 <body>
@@ -61,6 +62,8 @@
         cache:false,
         success: function (data) {
             DingData = data
+            DingData.userid = '0935455445756597'
+            DingData.nickName = '詹姆斯'
             var configObj = {
                 jsticket: DingData.JsApiTicket,
                 agentId: DingData.AgentId,

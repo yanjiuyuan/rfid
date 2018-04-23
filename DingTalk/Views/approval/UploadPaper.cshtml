@@ -28,17 +28,19 @@
         </el-pagination>
     </div>
     <!--上传表單-->
-    <el-upload class="upload-demo"
-                action="/drawingupload/UploadAndGetInfo"
-                :on-success="handleSuccess"
-                :before-remove="beforeRemove"
-                multiple
-                :limit="3"
-                :on-exceed="handleExceed"
-                :file-list="fileList">
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
-    </el-upload>
+    @*<el-form-item label="上传excel">*@
+        <el-upload class="upload-demo"
+                   action="/drawingupload/UploadAndGetInfo"
+                   :on-success="handleSuccess"
+                   :before-remove="beforeRemove"
+                   multiple
+                   :limit="3"
+                   :on-exceed="handleExceed"
+                   :file-list="fileList">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+        </el-upload>
+    @*</el-form-item>*@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="项目名" prop="string">
             <el-select v-model="ruleForm.Title" placeholder="请选择">
@@ -59,6 +61,22 @@
         <el-form-item label="意见" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
+
+        <!--上传图片-->
+        <el-form-item label="上传图片">
+            <el-upload action="/drawingupload/Upload"
+                       list-type="picture-card"
+                       :file-list="ruleForm.ImageUrl"
+                       :on-preview="handlePictureCardPreview"
+                       :on-remove="handleRemove"
+                       :before-upload="beforePictureUpload">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+        </el-form-item>
+
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
                            :nodeid="nodeInfo.NodeId">
@@ -71,18 +89,6 @@
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
-    <!--上传图片-->
-    <el-upload action="/drawingupload/Upload"
-               list-type="picture-card"
-               :file-list="ruleForm.ImageUrl"
-               :on-preview="handlePictureCardPreview"
-               :on-remove="handleRemove"
-               :before-upload="beforePictureUpload">
-        <i class="el-icon-plus"></i>
-    </el-upload>
-    <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
 </el-main>
 
 <script>
@@ -111,7 +117,7 @@
                     remark: '',
                     ImageUrl: [],
                     Title: '',
-                    ProjectId: '2017ZL054',
+                    ProjectId: '',
                     approvers: ['小唐', '院长'],
                     copyers: ['小唐', '季老师']
 
@@ -126,7 +132,7 @@
                     if (valid && this.data.length > 0) {
                         var paramObj = {
                             "ApplyMan": that.ruleForm.name,
-                            "ApplyManId": DingData.emplId,
+                            "ApplyManId": DingData.userid,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
@@ -195,7 +201,7 @@
                                 FlowId: FlowId,
                                 NodeId: nodeId,
                                 ApplyMan: a.name,
-                                ApplyManId: a.emplId,
+                                ApplyManId: a.userid,
                                 IsSend: "false",
                                 IsEnable: "1",
                                 State: "0"
@@ -300,30 +306,31 @@
             //添加项目
             addProject() {
                 var that = this
+                var param = {
+                    "ProjectName": "图纸上传" + _getTime(),
+                    "CreateTime": _getTime(),
+                    "IsEnable": true,
+                    "IsFinish": false,
+                    "DeptName": "智慧工厂事业部",
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "StartTime": "2017-10-23",
+                    "EndTime": "2018-09-01",
+                    "ProjectId": _getTime()
+                }
+                console.log(param)
                 $.ajax({
-                    url: "/DrawingUpload/LoadPurchase",
+                    url: "/Project/AddProject",
                     type: "POST",
                     dataType: "json",
                     async: false,
-                    data: JSON.stringify({
-                        "ProjectName": "图纸上传项目" + _getTime,
-                        "CreateTime": _getTime(),
-                        "IsEnable":true,
-                        "IsFinish": false,
-                        "DeptName": "智慧工厂事业部",
-                        "ApplyMan": DingData.nickName,
-                        "ApplyManId": DingData.emplId,
-                        "StartTime":"2017-10-23",
-                        "EndTime":"2018-09-01",
-                        "ProjectId":"2017ZL054"
-                    }),
+                    data: JSON.stringify(param),
                     success: function (data) {
                         that.projestList.push({
                             Id: "123",
-                            ProjectName: "图纸上传项目" + _getTime
+                            ProjectName: "图纸上传项目" + _getTime()
                         })
                         console.log(data);
-                        doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -349,15 +356,12 @@
                     }
                 })
                 $.ajax({
-                    url: "/Project/GetAllProJect?ApplyManId=" + FlowId,
+                    url: "/Project/GetAllProJect?ApplyManId=" + DingData.userid,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("获取审批申请数据ok")
-                        that.nodeInfo = data[0]
-                        that.preSpprove = !data[0].IsNeedChose
-                        that.preCopy = !data[0].IsSendChose
-                        console.log(that.nodeInfo)
+                        console.log(data)
+                        that.projestList = data
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
