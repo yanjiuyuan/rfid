@@ -56,14 +56,14 @@ namespace DingTalk.Controllers
                     ProjectInfo projectInfo = JsonHelper.JsonToObject<ProjectInfo>(stream);
                     using (DDContext context = new DDContext())
                     {
-                        ProjectInfo pInfo = context.ProjectInfo.SingleOrDefault(u => u.ProjectNo == projectInfo.ProjectNo);
+                        ProjectInfo pInfo = context.ProjectInfo.SingleOrDefault(u => u.ProjectId == projectInfo.ProjectId);
 
-                        if (pInfo!=null)
+                        if (pInfo != null)
                         {
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 2,
-                                errorMessage = string.Format("已存在 项目编号{0}", pInfo.ProjectNo)
+                                errorMessage = string.Format("已存在 项目编号{0}", pInfo.ProjectId)
                             });
                         }
                         else

@@ -81,10 +81,11 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> GetUserDetail()
         {
-            string dptId = "1";
-            var departmentUserStr = await dtManager.GetDepartmentUserList(dptId);
-            var departmentUser = JsonConvert.DeserializeObject<DepartmentUserResponseModel>(departmentUserStr);
-            string userId = departmentUser.UserList.Last().UserId;
+            //string dptId = "0935455445756597";
+            //var departmentUserStr = await dtManager.GetDepartmentUserList(dptId);
+            //var departmentUser = JsonConvert.DeserializeObject<DepartmentUserResponseModel>(departmentUserStr);
+            //string userId = departmentUser.UserList.Last().UserId;
+            string userId = "0935455445756597";
             var result = await dtManager.GetUserDetail(userId);
             return result;
         }
