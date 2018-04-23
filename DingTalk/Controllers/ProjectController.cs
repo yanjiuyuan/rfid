@@ -94,7 +94,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="ApplyManId">创建者Id(不传时默认查所有项目信息)</param>
         /// <returns></returns>
-        /// 测试数据：/Project/GetAllProJect
+        /// 测试数据：/Project/GetAllProJect?ApplyManId=0935455445756597
         public string GetAllProJect(string ApplyManId)
         {
             try
@@ -108,7 +108,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == "ApplyManId").ToList();
+                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId).ToList();
                     }
                     return JsonConvert.SerializeObject(listProjectInfo);
                 }
