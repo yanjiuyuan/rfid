@@ -347,7 +347,7 @@
                     success: function (data) {
                         console.log("获取审批申请数据ok")
                         that.nodeInfo = data[0]
-                        that.preSpprove = !data[0].IsNeedChose
+                        that.preApprove = !data[0].IsNeedChose
                         that.preCopy = !data[0].IsSendChose
                         console.log(that.nodeInfo)
                     },
@@ -355,11 +355,14 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+                console.log("获取节点数据GetNodeInfo")
+                console.log("/Project/GetAllProJect?ApplyManId=" + DingData.userid)
                 $.ajax({
                     url: "/Project/GetAllProJect?ApplyManId=" + DingData.userid,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
+                        console.log("获取节点数据GetNodeInfo")
                         console.log(data)
                         that.projestList = data
                     },
