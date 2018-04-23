@@ -143,6 +143,10 @@ var mixin = {
             name: [
                 { required: true, message: '名称不能为空', trigger: 'blur' },
                 { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+            ],
+            string: [
+                { required: true, message: '内容不能为空', trigger: 'blur' },
+                { min: 3, max: 25, message: '长度在 3 到 25 个字符', trigger: 'blur' }
             ]
         },
         pickerOptions: pickerOptions,
