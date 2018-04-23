@@ -35,6 +35,10 @@ namespace DingTalk.Controllers
         //"Remark":"意见",
         //"IsSend":"False",
         //"State":"1"  // 1表示已审核，0表示未审核
+        //"ImageUrl","图片路径",
+        //"FileUrl","文件路径",   
+        //"Title","标题",
+        //"ProjectId","项目号",
         //}
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]

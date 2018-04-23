@@ -42,5 +42,8 @@ namespace DingTalk.Models.DbModels
         public string FileUrl { get; set; }
 
         public string Title { get; set; }
+
+        [StringLength(500)]
+        public string ProjectId { get; set; }
     }
 }
