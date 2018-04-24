@@ -145,7 +145,7 @@ namespace DingTalk.Controllers
                     //文件大小不为0
                     HttpPostedFileBase files = Request.Files[0];
                     string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
-                    string Path = Server.MapPath(@"~\UploadFile\Excel\" + files.FileName);
+                    string Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
                     files.SaveAs(Path);
                     return LoadExcel(Path);
                     //    JsonConvert.SerializeObject(new ErrorModel
