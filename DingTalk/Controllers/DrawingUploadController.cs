@@ -27,10 +27,9 @@ namespace DingTalk.Controllers
         /// 文件上传接口
         /// </summary>
         /// <param name="form"></param>
-        /// <param name="FileType">0 图片 1 Excel 2 其他文件</param>
         /// <returns>返回文件保存路径</returns>
         [HttpPost]
-        public string Upload(FormCollection form, int FileType)
+        public string Upload(FormCollection form)
         {
             try
             {
@@ -60,15 +59,29 @@ namespace DingTalk.Controllers
                     HttpPostedFileBase files = Request.Files[0];
                     string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss");
                     string Path = "";
-                    switch (FileType)
+                    string FileName = file.FileName;
+                    string strExtension = "";
+                    int nIndex = FileName.LastIndexOf('.');
+                    if (nIndex >= 0)
                     {
-                        //Excel
-                        case 0:
-                            Path = Server.MapPath(@"~\UploadFile\Images\" + newFileName);
-                            break;
+                        strExtension = FileName.Substring(nIndex);
+                    }
+
+                    switch (strExtension)
+                    {
                         //Image
-                        case 1:
-                            Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
+                        case ".jpg":
+                            Path = Server.MapPath(@"~\UploadFile\Images\" + newFileName + strExtension);
+                            break;
+                        case ".png":
+                            Path = Server.MapPath(@"~\UploadFile\Images\" + newFileName + strExtension);
+                            break;
+                        //Excel
+                        case ".xls":
+                            Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName + strExtension);
+                            break;
+                        case ".xlsx":
+                            Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName + strExtension);
                             break;
                         //其他文件
                         default:
