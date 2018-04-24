@@ -234,6 +234,7 @@
     <Compile Include="Models\DbModels\Roles.cs" />
     <Compile Include="Models\DbModels\Tasks.cs" />
     <Compile Include="Models\DbModels\UserInfo.cs" />
+    <Compile Include="Models\DbModels\WorkTime.cs" />
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />

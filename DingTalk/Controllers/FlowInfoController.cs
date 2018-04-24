@@ -224,12 +224,13 @@ namespace DingTalk.Controllers
         /// <param name="IsSend">抄送标识(默认False)</param>
         /// <returns>NodeName节点名称  NodePeople节点审批人 PeopleId审批人Id</returns>
         /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=1
+
         [HttpGet]
-        public string FindNextPeople(string FlowId, bool IsNext = true, bool IsSend = false, int OldTaskId = 0, int NodeId = 0)
+        public string FindNextPeople(string FlowId, bool IsNext = true, bool IsSend = false, int OldTaskId = 0, int NodeId = -1)
         {
             try
             {
-                if (!string.IsNullOrEmpty(FlowId) && NodeId != 0 && OldTaskId != 0)
+                if (!string.IsNullOrEmpty(FlowId) && NodeId != -1 && OldTaskId != 0)
                 {
                     using (DDContext context = new DDContext())
                     {

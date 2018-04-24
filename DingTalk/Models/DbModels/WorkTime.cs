@@ -6,31 +6,31 @@ namespace DingTalk.Models.DbModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("ProcedureInfo")]
-    public partial class ProcedureInfo
+    [Table("WorkTime")]
+    public partial class WorkTime
     {
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
-        [StringLength(200)]
-        public string DrawingNo { get; set; }
+        [StringLength(100)]
+        public string ProjectInfoId { get; set; }
 
-        [StringLength(500)]
-        public string ProcedureName { get; set; }
-
-        [StringLength(500)]
-        public string DefaultWorkTime { get; set; }
-
-        public int? State { get; set; }
+        public bool? IsFinish { get; set; }
 
         [StringLength(200)]
-        public string CreateTime { get; set; }
+        public string Worker { get; set; }
+
+        [StringLength(300)]
+        public string WorkerId { get; set; }
 
         [StringLength(200)]
-        public string ApplyMan { get; set; }
+        public string StartTime { get; set; }
 
         [StringLength(200)]
-        public string ApplyManId { get; set; }
+        public string EndTime { get; set; }
+
+        [StringLength(200)]
+        public string UseTime { get; set; }
     }
 }
