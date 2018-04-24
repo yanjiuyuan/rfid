@@ -178,12 +178,13 @@ namespace DingTalk.Controllers
         {
             if (Path == null)  //测试暂用
             {
-                Path = "C:\\Users\\tong\\Source\\Repos\\DingTalk\\DingTalk\\UploadFile\\Excel\\20180408164559.xls";
+                Path = "C:\\Users\\tong\\Source\\Repos\\DingTalk\\DingTalk\\UploadFile\\Excel\\BOM表提交模板.xls";
             }
-            Dictionary<DataTable, string> dic = new Dictionary<DataTable, string>();
+           
             DataTable db = ExcelHelperByNPOI.ImportExcel2003toDt(Path);
-            dic.Add(db, Path);
-            return JsonConvert.SerializeObject(dic);
+            Dictionary<string, DataTable> dic = new Dictionary<string, DataTable>();
+            dic.Add(Path, db);
+            return JsonConvert.SerializeObject(dic.ToArray());
         }
 
 
