@@ -26,6 +26,7 @@ namespace DingTalk.Models.DbModels
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
+        public virtual DbSet<WorkTime> WorkTime { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -322,7 +323,7 @@ namespace DingTalk.Models.DbModels
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<ProcedureInfo>()
-                .Property(e => e.BomId)
+                .Property(e => e.DrawingNo)
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProcedureInfo>()
@@ -334,11 +335,15 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProcedureInfo>()
-                .Property(e => e.Worker)
+                .Property(e => e.CreateTime)
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProcedureInfo>()
-                .Property(e => e.WorkerId)
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.ApplyManId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProjectInfo>()
@@ -431,6 +436,34 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<PurchaseDown>()
                 .Property(e => e.FlowType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.ProjectInfoId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.Worker)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.WorkerId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.StartTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.EndTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<WorkTime>()
+                .Property(e => e.UseTime)
                 .IsUnicode(false);
         }
     }
