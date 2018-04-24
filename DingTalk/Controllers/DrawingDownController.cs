@@ -1,8 +1,10 @@
-﻿using DingTalk.Models;
+﻿using Common.JsonHelper;
+using DingTalk.Models;
 using DingTalk.Models.DbModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -85,6 +87,61 @@ namespace DingTalk.Controllers
         }
         #endregion
 
+        #region 已上传的BOM表查询
+
+        /// <summary>
+        /// 已上传的BOM表查询
+        /// </summary>
+        /// <param name="ApplyManId"></param>
+        /// <returns></returns>
+        /// /DrawingDown/GetPurchaseInfo?ApplyManId=123456
+        [HttpGet]
+        public string GetPurchaseInfo(string ApplyManId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(ApplyManId))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "未传递参数ApplyManId"
+                    });
+                }
+                else
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        
+                        string PeopleId = context.NodeInfo.Where(u => u.NodeId == 0 && u.FlowId == "7").Select(u => u.PeopleId).First();
+                        if (ApplyManId != PeopleId) //校对申请人
+                        {
+                            return JsonConvert.SerializeObject(new ErrorModel
+                            {
+                                errorCode = 3,
+                                errorMessage = "用户没有权限"
+                            });
+                        }
+                        else
+                        {
+                            List<Purchase> PurchaseList = context.Purchase.Where(u => u.IsDown == false).ToList();
+                            return JsonConvert.SerializeObject(PurchaseList);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
         #region 图纸下发表单提交
 
         /// <summary>
@@ -104,6 +161,110 @@ namespace DingTalk.Controllers
                 throw;
             }
             return "";
+        }
+
+        #endregion
+
+        #region 添加工序与工时
+
+        /// <summary>
+        /// 添加工序
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据: /DrawingDown/AddProcedure
+        [HttpPost]
+        public string AddProcedure()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    
+                    List<ProcedureInfo> procedureInfoList = new List<ProcedureInfo>();
+                    procedureInfoList = JsonHelper.JsonToObject<List<ProcedureInfo>>(List);
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (ProcedureInfo procedureInfo in procedureInfoList)
+                        {
+                            context.ProcedureInfo.Add(procedureInfo);
+                        }
+                        context.SaveChanges();
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// 添加工时
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据: /DrawingDown/AddProcedure
+        [HttpPost]
+        public string AddWorkTime()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+
+                    List<ProcedureInfo> procedureInfoList = new List<ProcedureInfo>();
+                    procedureInfoList = JsonHelper.JsonToObject<List<ProcedureInfo>>(List);
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (ProcedureInfo procedureInfo in procedureInfoList)
+                        {
+                            context.ProcedureInfo.Add(procedureInfo);
+                        }
+                        context.SaveChanges();
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
         }
 
         #endregion

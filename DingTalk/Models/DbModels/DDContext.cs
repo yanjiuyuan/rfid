@@ -23,7 +23,9 @@ namespace DingTalk.Models.DbModels
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
+        public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
+        public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -315,6 +317,30 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.FinnalLoginTime)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.BomId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.ProcedureName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.DefaultWorkTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.Worker)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProcedureInfo>()
+                .Property(e => e.WorkerId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<ProjectInfo>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -349,6 +375,62 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<ProjectInfo>()
                 .Property(e => e.ProjectId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.OldTaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.DrawingNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.CodeNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Count)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.MaterialScience)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Unit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Brand)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Sorts)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.ProcedureId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.FlowType)
                 .IsUnicode(false);
         }
     }

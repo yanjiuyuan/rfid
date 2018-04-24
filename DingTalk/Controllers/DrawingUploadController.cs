@@ -22,13 +22,15 @@ namespace DingTalk.Controllers
             return View();
         }
 
+
         /// <summary>
         /// 文件上传接口
         /// </summary>
         /// <param name="form"></param>
+        /// <param name="FileType">0 图片 1 Excel 2 其他文件</param>
         /// <returns>返回文件保存路径</returns>
         [HttpPost]
-        public string Upload(FormCollection form)
+        public string Upload(FormCollection form, int FileType)
         {
             try
             {
@@ -56,14 +58,30 @@ namespace DingTalk.Controllers
                 {
                     //文件大小不为0
                     HttpPostedFileBase files = Request.Files[0];
-                    //string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
-                    files.SaveAs(Server.MapPath(@"~\UploadFile\Excel\" + files.FileName));
-
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string Path = "";
+                    switch (FileType)
+                    {
+                        //Excel
+                        case 0:
+                            Path = Server.MapPath(@"~\UploadFile\Images\" + newFileName);
+                            break;
+                        //Image
+                        case 1:
+                            Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
+                            break;
+                        //其他文件
+                        default:
+                            Path = Server.MapPath(@"~\UploadFile\Flies\" + newFileName);
+                            break;
+                    }
+                    //保存文件
+                    files.SaveAs(Path);
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
                         errorMessage = "上传成功",
-                        Content = Server.MapPath(@"~\UploadFile\Excel\" + files.FileName)
+                        Content = Path
                     });
                 }
             }

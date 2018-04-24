@@ -227,8 +227,10 @@
     <Compile Include="Models\DbModels\Flows.cs" />
     <Compile Include="Models\DbModels\FlowSort.cs" />
     <Compile Include="Models\DbModels\NodeInfo.cs" />
+    <Compile Include="Models\DbModels\ProcedureInfo.cs" />
     <Compile Include="Models\DbModels\ProjectInfo.cs" />
     <Compile Include="Models\DbModels\Purchase.cs" />
+    <Compile Include="Models\DbModels\PurchaseDown.cs" />
     <Compile Include="Models\DbModels\Roles.cs" />
     <Compile Include="Models\DbModels\Tasks.cs" />
     <Compile Include="Models\DbModels\UserInfo.cs" />
@@ -322,6 +324,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="UploadFile\Excel\" />
+    <Folder Include="UploadFile\Flies\" />
+    <Folder Include="UploadFile\Images\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\DingTalkServers\" />
     <Folder Include="Views\DrawingDown\" />
