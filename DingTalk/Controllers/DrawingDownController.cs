@@ -239,13 +239,13 @@ namespace DingTalk.Controllers
                 else
                 {
 
-                    List<ProcedureInfo> procedureInfoList = new List<ProcedureInfo>();
-                    procedureInfoList = JsonHelper.JsonToObject<List<ProcedureInfo>>(List);
+                    List<WorkTime> WorkTimeInfoList = new List<WorkTime>();
+                    WorkTimeInfoList = JsonHelper.JsonToObject<List<WorkTime>>(List);
                     using (DDContext context = new DDContext())
                     {
-                        foreach (ProcedureInfo procedureInfo in procedureInfoList)
+                        foreach (WorkTime workTime in WorkTimeInfoList)
                         {
-                            context.ProcedureInfo.Add(procedureInfo);
+                            context.WorkTime.Add(workTime);
                         }
                         context.SaveChanges();
                     }
@@ -302,7 +302,15 @@ namespace DingTalk.Controllers
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProjectInfoId
-                                    select w;
+                                    select new
+                                    {
+                                        p.TaskId,p.IsDown, p.Mark,
+                                        p.MaterialScience,p.Name,p.Sorts,
+                                        s.ApplyMan,s.ApplyManId,s.CreateTime,
+                                        s.DefaultWorkTime,s.DrawingNo,
+                                        w.IsFinish,w.ProjectInfoId,w.StartTime,
+                                        w.EndTime,w.UseTime,w.Worker,w.WorkerId
+                                    };
                         return JsonConvert.SerializeObject(Quary);
                     }
                 }
