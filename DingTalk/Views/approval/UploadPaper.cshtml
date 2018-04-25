@@ -41,13 +41,14 @@
             <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
         </el-upload>
     @*</el-form-item>*@
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="项目名" prop="string">
-            <el-select v-model="ruleForm.Title" placeholder="请选择">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+              id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" prop="ProjectId" >
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
                 <el-option v-for="item in projestList"
-                           :key="item.Id"
+                           :key="item.ProjectId"
                            :label="item.ProjectName"
-                           :value="item.Id"
+                           :value="item.ProjectId"
                            >
                     <span style="float: left">{{ item.ProjectName }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
@@ -63,13 +64,18 @@
         </el-form-item>
 
         <!--上传图片-->
+        @*<el-form-item label="上传图片" prop="file">
+            <input id="file" type="file" name="file" />
+            <button id="upload" type="button" v-on:click="upload">upload</button>
+        </el-form-item>*@
         <el-form-item label="上传图片">
             <el-upload action="/drawingupload/Upload"
-                       list-type="picture-card"
-                       :file-list="ruleForm.ImageUrl"
-                       :on-preview="handlePictureCardPreview"
-                       :on-remove="handleRemove"
-                       :before-upload="beforePictureUpload">
+                        list-type="picture-card"
+                        :file-list="imageList"
+                        :on-preview="handlePictureCardPreview"
+                        :on-remove="handleRemove"
+                        :on-success="handlePictureCardSuccess"
+                        :before-upload="beforePictureUpload">
                 <i class="el-icon-plus"></i>
             </el-upload>
             <el-dialog :visible.sync="dialogVisible">
@@ -79,7 +85,7 @@
 
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
-                           :nodeid="nodeInfo.NodeId">
+                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <!--添加抄送人-->
         <sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
@@ -88,11 +94,12 @@
             <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
-    </el-form>
+</el-form>
 </el-main>
 
 <script>
     var flowId = 6
+    nodeId = 0
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -101,6 +108,7 @@
                 preApprove: false,
                 preCopy: false,
                 fileList: [],
+                imageList: [],
                 data: [],
                 items: [],
                 tableData: [],
@@ -115,8 +123,7 @@
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
-                    ImageUrl: [],
-                    Title: '',
+                    ImageUrl: '',
                     ProjectId: '',
                     approvers: ['小唐', '院长'],
                     copyers: ['小唐', '季老师']
@@ -130,6 +137,12 @@
                 var that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
+                        var title
+                        for (let p of that.projestList) {
+                            if (p.ProjectId == that.ruleForm.ProjectId) {
+                                title = p.ProjectName
+                            }
+                        }
                         var paramObj = {
                             "ApplyMan": that.ruleForm.name,
                             "ApplyManId": DingData.userid,
@@ -137,7 +150,12 @@
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
                             "FlowId": FlowId+'',
-                            "Remark": that.ruleForm.remark
+                            "Remark": that.ruleForm.remark,
+                            "IsSend":false,
+                            "State":"1",
+                            "ImageUrl": that.ruleForm.ImageUrl,
+                            "Title": title,
+                            "ProjectId": that.ruleForm.ProjectId
                         }
                         console.log(paramObj)
                         $.ajax({
@@ -147,6 +165,7 @@
                             success: function (data) {
                                 console.log("提交审批ok")
                                 var taskId = JSON.parse(data).Content
+                                console.log(taskId)
                                 that.bindData(taskId)
                                 that.addApprover(taskId)
                                 that.bindApprover(taskId)
@@ -169,10 +188,13 @@
             },
             //审批绑定BOM表数据
             bindData(taskId) {
+                console.log(1)
+                console.log(taskId)
                 for (let d of this.data) {
                     d.TaskId = taskId
                 }
-                console.log(this.data)
+                console.log(2)
+                console.log(taskId)
                 var that = this
                 $.ajax({
                     url: "/DrawingUpload/LoadPurchase",
@@ -181,8 +203,9 @@
                     async: false,
                     data: JSON.stringify(that.data),
                     success: function (data) {
+                        console.log("审批绑定BOM表数据ok")
                         console.log(data);
-                        doneSubmit()
+                        that.doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -229,11 +252,13 @@
             },
             //审批绑定审批人(默认)
             bindApprover(taskId) {
+                console.log(3)
+                console.log(taskId)
                 var that = this
                 var param = {
                     IsNext: 'true',
                     IsSend: 'False',
-                    FloId: flowId,
+                    FlowId: flowId,
                     NodeId: nodeId,
                     OldTaskId: taskId
                 }
@@ -241,10 +266,10 @@
                     url: "/FlowInfo/FindNextPeople" + _formatQueryStr(param),
                     type: "GET",
                     async: false,
-                    data: JSON.stringify(peopleList),
                     success: function (data) {
                         console.log("审批绑定默认审批人ok")
                         console.log(data)
+                        console.log("/FlowInfo/FindNextPeople" + _formatQueryStr(param))
                         that.doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -255,9 +280,10 @@
             //上传文件方法
             handleSuccess(response, file, fileList) {
                 console.log(response)
-                if (!(response && response.length > 0)) return
-                for (let i = 0; i < response.length; i++) {
-                    let data = response[i]
+                var tableData = response[0].Value
+                if (!(tableData && tableData.length > 0)) return
+                for (let i = 0; i < tableData.length; i++) {
+                    let data = tableData[i]
                     if (i == 0) {
                         this.items = {}
                         for (let c in data) {
@@ -285,8 +311,29 @@
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
+                this.ruleForm.ImageUrl = ''
+                for (var i = 0; i < fileList.length; i++) {
+                    this.ruleForm.ImageUrl += fileList[i].response.Content
+                    if (i == fileList.length - 1) break
+                    this.ruleForm.ImageUrl += ','
+                }
+            },
+            handlePictureCardSuccess(response, file, fileList) {
+                console.log(response)
+                console.log(fileList)
+                this.ruleForm.ImageUrl = ''
+                for (var i = 0; i < fileList.length; i++) {
+                    this.ruleForm.ImageUrl += fileList[i].response.Content
+                    if (i == fileList.length-1) break
+                    this.ruleForm.ImageUrl += ','
+                }
+                console.log(this.ruleForm.ImageUrl)
+                //this.ruleForm.ImageUrl.push('123')
             },
             beforePictureUpload(file) {
+                console.log('before file')
+                console.log(file)
+                file.name = 'helloWorld'
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -302,6 +349,7 @@
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
+
 
             //添加项目
             addProject() {
@@ -327,8 +375,8 @@
                     data: JSON.stringify(param),
                     success: function (data) {
                         that.projestList.push({
-                            Id: "123",
-                            ProjectName: "图纸上传项目" + _getTime()
+                            Id: _getTime(),
+                            ProjectName: "图纸上传" + _getTime()
                         })
                         console.log(data);
                     },

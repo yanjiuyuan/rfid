@@ -147,6 +147,9 @@ var mixin = {
             string: [
                 { required: true, message: '内容不能为空', trigger: 'blur' },
                 { min: 3, max: 25, message: '长度在 3 到 25 个字符', trigger: 'blur' }
+            ],
+            ProjectId: [
+                { required: true, message: '内容不能为空', trigger: 'change' }
             ]
         },
         pickerOptions: pickerOptions,

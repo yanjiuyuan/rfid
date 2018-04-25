@@ -24,6 +24,7 @@ Thumbs.db
 *.lib
 *.sbr
 *.xls
+*.jpg
 obj/
 [Rr]elease*/
 _ReSharper*/
