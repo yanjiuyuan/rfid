@@ -67,7 +67,6 @@ namespace DingTalk.Controllers
                     tasks.TaskId = TaskId;
                     using (DDContext context = new DDContext())
                     {
-                        tasks.NodeId += 1;
                         tasks.IsPost = true;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
@@ -268,7 +267,7 @@ namespace DingTalk.Controllers
                                 ApplyMan = ListNodePeople[i],
                                 //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
                                 IsEnable = 1,
-                                NodeId = NodeId,
+                                NodeId = NodeId + 1,
                                 FlowId = Int32.Parse(FlowId),
                                 IsSend = IsSend,
                                 ApplyManId = ListPeopleId[i],
@@ -602,7 +601,7 @@ namespace DingTalk.Controllers
                             select new
                             {
                                 NodeId = NodeId,
-                                FlowId =f.FlowId,
+                                FlowId = f.FlowId,
                                 FlowName = f.FlowName,
                                 Title = t.Title,
                                 TaskId = task.TaskId,
