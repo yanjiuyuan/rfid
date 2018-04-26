@@ -593,6 +593,7 @@ namespace DingTalk.Controllers
             {
                 List<Flows> ListFlow = context.Flows.ToList();
                 string TaskId = ListTask.Select(t => t.TaskId).First().ToString();
+                string NodeId = ListTask.Select(t => t.NodeId).First().ToString();
                 Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
 
                 var Quary = from t in ListTask
@@ -600,6 +601,8 @@ namespace DingTalk.Controllers
                             on t.FlowId.ToString() equals f.FlowId.ToString()
                             select new
                             {
+                                NodeId = NodeId,
+                                FlowId =f.FlowId,
                                 FlowName = f.FlowName,
                                 Title = t.Title,
                                 TaskId = task.TaskId,
