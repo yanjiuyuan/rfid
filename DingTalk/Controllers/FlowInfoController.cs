@@ -657,7 +657,6 @@ namespace DingTalk.Controllers
         //   "IsSend":false
         //}]
         [HttpPost]
-
         public string UpdateNodeInfo()
         {
             try
@@ -702,5 +701,6 @@ namespace DingTalk.Controllers
         }
 
         #endregion
+
     }
 }
