@@ -67,6 +67,7 @@ namespace DingTalk.Controllers
                     tasks.TaskId = TaskId;
                     using (DDContext context = new DDContext())
                     {
+                        tasks.NodeId += 1;
                         tasks.IsPost = true;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
@@ -133,6 +134,7 @@ namespace DingTalk.Controllers
                     Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
                     using (DDContext context = new DDContext())
                     {
+                        tasks.NodeId += 1;
                         tasks.IsPost = false;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
@@ -256,7 +258,7 @@ namespace DingTalk.Controllers
                         string[] ListPeopleId = PeopleId.Split(',');
                         string[] ListNodePeople = NodePeople.Split(',');
 
-                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).SingleOrDefault(); 
+                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).SingleOrDefault();
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
                             //保存任务流
@@ -276,7 +278,8 @@ namespace DingTalk.Controllers
                                 ImageUrl = Task.ImageUrl,
                                 OldImageUrl = Task.OldImageUrl,
                                 Title = Task.Title,
-                                IsPost = false
+                                IsPost = false,
+                                ProjectId = Task.ProjectId,
                             };
                             context.Tasks.Add(newTask);
                         }
@@ -543,6 +546,7 @@ namespace DingTalk.Controllers
             try
             {
                 List<Tasks> ListTask = new List<Tasks>();
+                List<Flows> ListFlow = new List<Flows>();
                 using (DDContext context = new DDContext())
                 {
                     switch (Index)
@@ -550,19 +554,19 @@ namespace DingTalk.Controllers
                         case 0:
                             //待审批的
                             ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0 && u.IsPost != true).ToList();
-                            return JsonConvert.SerializeObject(ListTask);
+                            return Quary(ListTask);
                         case 1:
                             //我已审批
                             ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1 && u.IsPost != true).ToList();
-                            return JsonConvert.SerializeObject(ListTask);
+                            return Quary(ListTask);
                         case 2:
                             //我发起的
                             ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).ToList();
-                            return JsonConvert.SerializeObject(ListTask);
+                            return Quary(ListTask);
                         case 3:
                             //抄送我的
                             ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true).ToList();
-                            return JsonConvert.SerializeObject(ListTask);
+                            return Quary(ListTask);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
@@ -582,6 +586,30 @@ namespace DingTalk.Controllers
 
             }
         }
+
+        public string Quary(List<Tasks> ListTask)
+        {
+            using (DDContext context = new DDContext())
+            {
+                List<Flows> ListFlow = context.Flows.ToList();
+                string TaskId = ListTask.Select(t => t.TaskId).First().ToString();
+                Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
+
+                var Quary = from t in ListTask
+                            join f in ListFlow
+                            on t.FlowId.ToString() equals f.FlowId.ToString()
+                            select new
+                            {
+                                FlowName = f.FlowName,
+                                Title = t.Title,
+                                TaskId = task.TaskId,
+                                ApplyMan = task.ApplyMan,
+                                ApplyTime = task.ApplyTime
+                            };
+                return JsonConvert.SerializeObject(Quary);
+            }
+        }
+
 
         #endregion
 
