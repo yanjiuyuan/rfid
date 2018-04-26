@@ -121,6 +121,7 @@
                     name: DingData.nickName,
                     remark: '',
                     ImageUrl: '',
+                    OldImageUrl: '',
                     ProjectId: '',
                     copyers: ['小唐', '季老师']
 
@@ -150,6 +151,7 @@
                             "IsSend":false,
                             "State":"1",
                             "ImageUrl": that.ruleForm.ImageUrl,
+                            "OldImageUrl": that.ruleForm.OldImageUrl,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }
@@ -300,25 +302,21 @@
                 return this.$confirm(`确定移除 ${file.name}？`);
             },
             handleRemove(file, fileList) {
-                console.log(file, fileList);
+                this.changeFileList(fileList)
+            },
+            handlePictureCardSuccess(response, file, fileList) {
+                this.changeFileList(fileList)
+            },
+            changeFileList(fileList) {
+                console.log(fileList)
                 this.ruleForm.ImageUrl = ''
+                this.ruleForm.OldImageUrl = ''
                 for (var i = 0; i < fileList.length; i++) {
                     this.ruleForm.ImageUrl += fileList[i].response.Content
+                    this.ruleForm.OldImageUrl += fileList[i].name
                     if (i == fileList.length - 1) break
                     this.ruleForm.ImageUrl += ','
                 }
-            },
-            handlePictureCardSuccess(response, file, fileList) {
-                console.log(response)
-                console.log(fileList)
-                this.ruleForm.ImageUrl = ''
-                for (var i = 0; i < fileList.length; i++) {
-                    this.ruleForm.ImageUrl += fileList[i].response.Content
-                    if (i == fileList.length-1) break
-                    this.ruleForm.ImageUrl += ','
-                }
-                console.log(this.ruleForm.ImageUrl)
-                //this.ruleForm.ImageUrl.push('123')
             },
             beforePictureUpload(file) {
                 console.log('before file')
