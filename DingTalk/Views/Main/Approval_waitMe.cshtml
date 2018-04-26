@@ -57,14 +57,14 @@
     </el-form>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
-        <el-table-column prop="name" label="姓名"></el-table-column>
+        <el-table-column prop="FlowName" label="审批类型"></el-table-column>
+        <el-table-column prop="Title" label="标题"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button size="mini"
-                           type="danger"
-                           v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
+                <el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">同意</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -89,7 +89,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                tableData: [{ name: 'a' }, { name: 'b' }, {name: 'c'},],
+                tableData: [],
                 currentPage: 1,
                 totalRows: 0,
                 superSearch: false,
@@ -114,12 +114,13 @@
             },
             //获取审批列表
             getApproveList() {
+                var that = this 
                 $.ajax({
                     url: 'FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=' + DingData.userid,
                     dataType: 'json',
                     type: 'GET',
                     success: function (data) {
-                        
+                        that.tableData = data
                     },
                     error: function (err) {
                         console.error(err)
@@ -129,12 +130,15 @@
             //表单操作
             handleEdit(index, row) {
                 console.log(index, row);
+                if (row.TaskId && row.FlowId && row.NodeId)
+                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId)
             },
             handleDelete(index, row) {
                 console.log(index, row);
             }
         },
         created: function () {
+            this.getApproveList()
             loadHtml("mainPage", "partPage")
         }
     })
