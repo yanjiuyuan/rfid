@@ -16,6 +16,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_detail()
+        {
+            return View();
+        }
 
         public ActionResult Approval_waitMe()
         {
