@@ -97,6 +97,7 @@
 
 <script>
     var FlowId = 6
+    var upBom = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -186,7 +187,7 @@
             },
             //审批绑定BOM表数据
             bindData(taskId) {
-                for (let d of this.data) {
+                for (let d of upBom) {
                     d.TaskId = taskId
                 }
                 var that = this
@@ -195,10 +196,10 @@
                     type: "POST",
                     dataType: "json",
                     async: false,
-                    data: JSON.stringify(that.data),
+                    data: JSON.stringify(upBom),
                     success: function (data) {
                         console.log("审批绑定BOM表数据ok")
-                        console.log(data);
+                        console.log(data)
                         that.doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -284,8 +285,19 @@
                             }
                         }
                     } else {
-                        if (data['Column1'] && data['Column1'] != "")
+                        if (data['Column1'] && data['Column1'] != "") {
                             this.data.push(data)
+                            upBom.push({
+                                DrawingNo: data.Column1,
+                                Name: data.Column2,
+                                Count: data.Column3,
+                                MaterialScience: data.Column4,
+                                Unit: data.Column5,
+                                Brand: data.Column6,
+                                Sorts: data.Column7,
+                                Mark: data.Column8
+                            })
+                        }
                     }
                 }
                 this.totalRows = this.data.length

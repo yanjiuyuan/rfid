@@ -89,13 +89,14 @@
             getNodeInfo() {
                 var that = this
                 $.ajax({
-                    url: "/FlowInfo/GetNodeInfo?NodeId=1&FlowId=" + FlowId,
+                    url: "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
                         console.log("获取审批申请数据ok")
-                        console.log("/FlowInfo/GetNodeInfo?NodeId=1&FlowId=" + FlowId)
+                        console.log("/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId)
                         console.log(data)
+                        if(!data) return
                         that.nodeInfo = data[0]
                         that.preApprove = !data[0].IsNeedChose
                         that.preCopy = !data[0].IsSendChose
@@ -135,7 +136,7 @@
             getBomInfo() {
                 var that = this
                 $.ajax({
-                    url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                    url: "/DrawingUpload/GetPurchase?TaskId=" + TaskId,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
@@ -159,11 +160,12 @@
         created: function () {
             console.log('UrlObj')
             console.log(UrlObj)
-            if (UrlObj.flowId) FlowId = UrlObj.flowId
+            if (UrlObj.flowid) FlowId = UrlObj.flowid
             if (UrlObj.nodeid) NodeId = UrlObj.nodeid
             if (UrlObj.taskid) TaskId = UrlObj.taskid
             this.getNodeInfo()
             this.getNodeList()
+            this.getBomInfo()
             loadHtml("mainPage", "partPage")
         }
     })
