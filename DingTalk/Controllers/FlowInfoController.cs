@@ -256,6 +256,7 @@ namespace DingTalk.Controllers
                         string[] ListPeopleId = PeopleId.Split(',');
                         string[] ListNodePeople = NodePeople.Split(',');
 
+                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).SingleOrDefault(); 
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
                             //保存任务流
@@ -269,7 +270,13 @@ namespace DingTalk.Controllers
                                 FlowId = Int32.Parse(FlowId),
                                 IsSend = IsSend,
                                 ApplyManId = ListPeopleId[i],
-                                State = 0 //0 表示未审核 1表示已审核
+                                State = 0, //0 表示未审核 1表示已审核
+                                FileUrl = Task.FileUrl,
+                                OldFileUrl = Task.OldFileUrl,
+                                ImageUrl = Task.ImageUrl,
+                                OldImageUrl = Task.OldImageUrl,
+                                Title = Task.Title,
+                                IsPost = false
                             };
                             context.Tasks.Add(newTask);
                         }
@@ -318,7 +325,7 @@ namespace DingTalk.Controllers
         //   "IsSend":"True",
         //   "State":"0"
         //},{
-        // "TaskId":"1",
+        //   "TaskId":"1",
         //   "FlowId":"6",
         //   "NodeId":"1",
         //   "ApplyMan":"龙贤",
