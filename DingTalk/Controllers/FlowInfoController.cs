@@ -36,7 +36,9 @@ namespace DingTalk.Controllers
         //"Remark":"意见",
         //"IsSend":"False",
         //"State":"1"  // 1表示已审核，0表示未审核
+        //"OldImageUrl","原图片路径",
         //"ImageUrl","图片路径",
+        //"OldFileUrl","原文件路径",  
         //"FileUrl","文件路径",   
         //"Title","标题",
         //"ProjectId","项目号",
@@ -65,6 +67,7 @@ namespace DingTalk.Controllers
                     tasks.TaskId = TaskId;
                     using (DDContext context = new DDContext())
                     {
+                        tasks.IsPost = true;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
                     }
@@ -101,7 +104,13 @@ namespace DingTalk.Controllers
         //"FlowId": "6",
         //"Remark":"审核通过",
         //"IsSend":"False",
-        //"State":"0" 
+        //"State":"0",
+        //"OldImageUrl","原图片路径",
+        //"ImageUrl","图片路径",
+        //"FileUrl","原文件路径",  
+        //"FileUrl","文件路径",   
+        //"Title","标题",
+        //"ProjectId","项目号",
         //}
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
@@ -124,6 +133,7 @@ namespace DingTalk.Controllers
                     Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
                     using (DDContext context = new DDContext())
                     {
+                        tasks.IsPost = false;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
                     }
@@ -532,19 +542,19 @@ namespace DingTalk.Controllers
                     {
                         case 0:
                             //待审批的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0 && u.IsPost == false).ToList();
                             return JsonConvert.SerializeObject(ListTask);
                         case 1:
                             //我已审批
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1).ToList();
-                            return JsonConvert.SerializeObject(ListTask); ;
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1 && u.IsPost == false).ToList();
+                            return JsonConvert.SerializeObject(ListTask);
                         case 2:
                             //我发起的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).ToList();
                             return JsonConvert.SerializeObject(ListTask);
                         case 3:
                             //抄送我的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost == false).ToList();
                             return JsonConvert.SerializeObject(ListTask);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
