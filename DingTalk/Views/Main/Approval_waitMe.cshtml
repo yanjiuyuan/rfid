@@ -46,18 +46,17 @@
                 <el-option label="用车申请" value="2"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item>
+        @*<el-form-item>
             <el-radio-group v-model="formInline.state">
                 <el-radio :label="0">全部</el-radio>
                 <el-radio :label="1">审批完成</el-radio>
                 <el-radio :label="2">审批中</el-radio>
                 <el-radio :label="3">已撤回</el-radio>
             </el-radio-group>
-        </el-form-item>
+        </el-form-item>*@
     </el-form>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
-        <el-table-column prop="date" label="日期"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
@@ -90,7 +89,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                tableData: [],
+                tableData: [{ name: 'a' }, { name: 'b' }, {name: 'c'},],
                 currentPage: 1,
                 totalRows: 0,
                 superSearch: false,
