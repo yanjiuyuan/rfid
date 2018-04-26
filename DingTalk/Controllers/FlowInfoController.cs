@@ -552,15 +552,15 @@ namespace DingTalk.Controllers
                     {
                         case 0:
                             //待审批的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0 && u.IsPost != true).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true).ToList();
                             return Quary(ListTask);
                         case 1:
                             //我已审批
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1 && u.IsPost != true).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true).ToList();
                             return Quary(ListTask);
                         case 2:
                             //我发起的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).ToList();
                             return Quary(ListTask);
                         case 3:
                             //抄送我的
