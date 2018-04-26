@@ -542,11 +542,11 @@ namespace DingTalk.Controllers
                     {
                         case 0:
                             //待审批的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0 && u.IsPost == false).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0 && u.IsPost != true).ToList();
                             return JsonConvert.SerializeObject(ListTask);
                         case 1:
                             //我已审批
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1 && u.IsPost == false).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 1 && u.IsPost != true).ToList();
                             return JsonConvert.SerializeObject(ListTask);
                         case 2:
                             //我发起的
@@ -554,7 +554,7 @@ namespace DingTalk.Controllers
                             return JsonConvert.SerializeObject(ListTask);
                         case 3:
                             //抄送我的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost == false).ToList();
+                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true).ToList();
                             return JsonConvert.SerializeObject(ListTask);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel

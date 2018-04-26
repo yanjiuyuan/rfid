@@ -157,31 +157,30 @@ namespace DingTalk.Controllers
         {
             try
             {
-                //if (PurchaseDownList is null)
-                //{
-                //    return JsonConvert.SerializeObject(new ErrorModel
-                //    {
-                //        errorCode = 1,
-                //        errorMessage = "请传递参数"
-                //    });
-                //}
-                //else
-                //{
-                //    using (DDContext context = new DDContext())
-                //    {
-                //        foreach (PurchaseDown purchaseDown in PurchaseDownList)
-                //        {
-                //            context.PurchaseDown.Add(purchaseDown);
-                //        }
-                //        context.SaveChanges();
-                //    }
-                //    return JsonConvert.SerializeObject(new ErrorModel
-                //    {
-                //        errorCode = 0,
-                //        errorMessage = "保存成功"
-                //    });
-                //}
-                return "";
+                if (PurchaseDownList == null)
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (PurchaseDown purchaseDown in PurchaseDownList)
+                        {
+                            context.PurchaseDown.Add(purchaseDown);
+                        }
+                        context.SaveChanges();
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功"
+                    });
+                }
             }
             catch (Exception ex)
             {
