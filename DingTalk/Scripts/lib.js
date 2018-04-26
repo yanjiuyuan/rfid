@@ -1,4 +1,12 @@
-﻿//原型方法
+﻿//实例总参数
+var FlowId = 0 //当前审批类别ID
+var NodeId = 0 //审批节点ID
+var TaskId = 0 //审批任务ID
+var State = 0 //多异步辅助状态
+var UrlObj = {} //url参数对象
+var QueryObj = {} //获取url参数对象
+
+//原型方法
 Array.prototype.removeByValue = function (val) {
     for (var i = 0; i < this.length; i++) {
         if (this[i] == val) {
@@ -23,6 +31,13 @@ function logout() {
 }
 
 function loadPage(url) {
+    var param = url.split('?')[1]
+    if (param) {
+        var paramArr = param.split('&')
+        for (let p of paramArr) {
+            UrlObj[p.split('=')[0]] = p.split('=')[1]
+        }
+    }
     $("#tempPage").load(url)
 }
 
@@ -105,6 +120,13 @@ function _getTime() {
 function isArray(o) {
     return Object.prototype.toString.call(o) == '[object Array]';
 }
+
+function _getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
+
 //时间选择器插件参数
 var pickerOptions = {
     shortcuts: [{
@@ -133,9 +155,7 @@ var pickerOptions = {
         }
     }]
 }
-//实例总参数
-var FlowId = 0 //当前审批类别ID
-var State = 0 //多异步辅助状态
+
 var mixin = {
     data: {
         user: {},

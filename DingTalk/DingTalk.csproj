@@ -382,6 +382,7 @@
     <Content Include="Views\DrawingUpload\Upload.cshtml" />
     <Content Include="Views\approval\UploadPaper.cshtml" />
     <Content Include="Views\approval\DownloadPaper.cshtml" />
+    <Content Include="Views\Main\Approval_detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

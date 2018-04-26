@@ -27,15 +27,17 @@
                                 <span slot="title">审批管理</span>
                             </template>
                             <el-menu-item-group>
-                                <el-menu-item index="2-1" onclick="loadPage('/Main/approval')">发起审批</el-menu-item>
+                                <el-menu-item index="2-1" onclick="loadPage('/Main/approval')">
+                                    发起审批</el-menu-item>
                                 <el-menu-item index="2-2" onclick="loadPage('/Main/approval_waitMe')">
                                     待我审批<el-badge class="mark" :value="menuStatus.ApproveCount" />
                                 </el-menu-item>
-                                <el-menu-item index="2-3" onclick="loadPage('/Main/approval_IDone')">我已审批</el-menu-item>
+                                <el-menu-item index="2-3" onclick="loadPage('/Main/approval_IDone')">
+                                    我已审批</el-menu-item>
                                 <el-menu-item index="2-4" onclick="loadPage('/Main/approval_fromMe')">
                                     我发起的<el-badge class="mark" :value="menuStatus.MyPostCount" />
                                 </el-menu-item>
-                                <el-menu-item index="2-4" onclick="loadPage('/Main/approval_copyMe')">
+                                <el-menu-item index="2-5" onclick="loadPage('/Main/approval_detail?flowid=6&nodeid=1&taskid=1')">
                                     抄送我的<el-badge class="mark" :value="menuStatus.SendMyCount" />
                                 </el-menu-item>
                             </el-menu-item-group>

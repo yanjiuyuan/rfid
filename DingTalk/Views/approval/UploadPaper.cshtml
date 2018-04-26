@@ -3,9 +3,7 @@
 }
 
 <!--右侧实体内容-->
-<script>
-    //变量
-</script>
+
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
@@ -98,8 +96,7 @@
 </el-main>
 
 <script>
-    var flowId = 6
-    nodeId = 0
+    var FlowId = 6
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -125,7 +122,6 @@
                     remark: '',
                     ImageUrl: '',
                     ProjectId: '',
-                    approvers: ['小唐', '院长'],
                     copyers: ['小唐', '季老师']
 
                 }
@@ -188,13 +184,9 @@
             },
             //审批绑定BOM表数据
             bindData(taskId) {
-                console.log(1)
-                console.log(taskId)
                 for (let d of this.data) {
                     d.TaskId = taskId
                 }
-                console.log(2)
-                console.log(taskId)
                 var that = this
                 $.ajax({
                     url: "/DrawingUpload/LoadPurchase",
@@ -222,7 +214,7 @@
                             peopleList.push({
                                 OldTaskId: taskId,
                                 FlowId: FlowId,
-                                NodeId: nodeId,
+                                NodeId: NodeId,
                                 ApplyMan: a.name,
                                 ApplyManId: a.userid,
                                 IsSend: "false",
@@ -252,14 +244,12 @@
             },
             //审批绑定审批人(默认)
             bindApprover(taskId) {
-                console.log(3)
-                console.log(taskId)
                 var that = this
                 var param = {
                     IsNext: 'true',
                     IsSend: 'False',
-                    FlowId: flowId,
-                    NodeId: nodeId,
+                    FlowId: FlowId,
+                    NodeId: NodeId,
                     OldTaskId: taskId
                 }
                 $.ajax({

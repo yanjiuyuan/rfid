@@ -1,0 +1,175 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval_waitMe')">
+        <i class="el-icon-arrow-left"></i>
+        审批处理-{{nodeInfo.NodeName}}
+    </div>
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" prop="name">
+            <el-input v-model="ruleForm.projectName" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+
+        <!--图片展示-->
+        <el-form-item label="相关图片">
+            <el-carousel :interval="5000" arrow="always">
+                <el-carousel-item v-for="img in imageList" :key="img">
+                    <img :src="'Content/images/'+img"/>
+                </el-carousel-item>
+            </el-carousel>
+        </el-form-item>
+
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
+        <!--添加抄送人-->
+        <sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
+        </sam-addapprover>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')">同意</el-button>
+            <el-button type="danger" >不同意</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var flowId = 6
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                preApprove: false,
+                preCopy: false,
+                imageList: ['card1.jpg', 'card2.jpg', 'card3.jpg'],
+                data: [],
+                items: [],
+                tableData: [],
+                totalRows: 0,
+                nodeInfo: {},
+                nodeList: [],
+                //表单参数
+                ruleForm: {
+                    projectName: '项目名',
+                    name:'申请人'
+                }
+            }
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                
+            },
+            //获取节点数据GetNodeInfo
+            getNodeInfo() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetNodeInfo?NodeId=1&FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批申请数据ok")
+                        console.log("/FlowInfo/GetNodeInfo?NodeId=1&FlowId=" + FlowId)
+                        console.log(data)
+                        that.nodeInfo = data[0]
+                        that.preApprove = !data[0].IsNeedChose
+                        that.preCopy = !data[0].IsSendChose
+                        
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+                
+            },
+            //获取审批/抄送 相关人员列表GetFlowProgress
+            getNodeList() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批/抄送 相关人员列表ok")
+                        for (let d of data) {
+                            if (d.NodePeople)
+                                d.NodePeople = d.NodePeople.split(',')
+                            if (d.NodeId == 0)
+                                d.NodePeople = [DingData.nickName]
+                            d['AddPeople'] = []
+                        }
+                        console.log(data)
+                        that.nodeList = data
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //获取bom表信息
+            getBomInfo() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批/抄送 相关人员列表ok")
+                        for (let d of data) {
+                            if (d.NodePeople)
+                                d.NodePeople = d.NodePeople.split(',')
+                            if (d.NodeId == 0)
+                                d.NodePeople = [DingData.nickName]
+                            d['AddPeople'] = []
+                        }
+                        console.log(data)
+                        that.nodeList = data
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            }
+        },
+        created: function () {
+            console.log('UrlObj')
+            console.log(UrlObj)
+            if (UrlObj.flowId) FlowId = UrlObj.flowId
+            if (UrlObj.nodeid) NodeId = UrlObj.nodeid
+            if (UrlObj.taskid) TaskId = UrlObj.taskid
+            this.getNodeInfo()
+            this.getNodeList()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>
+
+
+
