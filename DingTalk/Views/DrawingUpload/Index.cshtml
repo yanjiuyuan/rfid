@@ -25,6 +25,7 @@
 <h2>图纸下发接口</h2>
 <input id="btn6" type="button" value="添加工序" />
 <input id="btn7" type="button" value="添加工时" />
+<input id="btn8" type="button" value="图纸下发表单提交接口" />
 <script type="text/javascript">
     var FlowTest = {
         "ApplyMan": "蔡兴桐",
@@ -118,6 +119,9 @@
     { "ProjectInfoId": "2", "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3" },
     { "ProjectInfoId": "2", "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3" }]
 
+    var PurchaseDownList = [{ "TaskId": "DTE-801B-WX-01C", "OldTaskId": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456" },
+    { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456" },
+    { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456" }]
 
     $("#btn").click(function () {
         $.ajax({
@@ -253,6 +257,25 @@
             dataType: "json",
             async: false,
             data: JSON.stringify(WorkTimeList),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+
+    $("#btn8").click(function () {
+        $.ajax({
+            url: "/DrawingDown/SubmitDrawingDown",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(PurchaseDownList),
             success: function (data) {
                 console.log(data);
             },
