@@ -544,7 +544,6 @@ namespace DingTalk.Controllers
         {
             try
             {
-                List<Flows> ListFlow = new List<Flows>();
                 List<int?> ListTasks = new List<int?>();
                 using (DDContext context = new DDContext())
                 {
@@ -560,7 +559,7 @@ namespace DingTalk.Controllers
                             return Quary(context, ListTasks);
                         case 2:
                             //我发起的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks);
                         case 3:
                             //抄送我的
