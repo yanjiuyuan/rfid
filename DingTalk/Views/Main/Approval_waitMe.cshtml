@@ -59,7 +59,15 @@
     <el-table :data="tableData" stripe border>
         <el-table-column prop="date" label="日期"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
-        <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini"
+                           v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini"
+                           type="danger"
+                           v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -118,6 +126,13 @@
                         console.error(err)
                     }
                 })
+            },
+            //表单操作
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            handleDelete(index, row) {
+                console.log(index, row);
             }
         },
         created: function () {
