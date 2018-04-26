@@ -38,7 +38,7 @@
                     return 1
                 }
             },
-            methods:{
+            methods: {
               handleOpen(key, keyPath) {
                 console.log(key, keyPath);
               },
@@ -53,11 +53,17 @@
                       datatype:'json',
                       success: function (data) {
                           console.log('菜单数据加载ok')
-                          console.log(data)
-                          that.menuStatus = data
+                          that.menuStatus = JSON.parse(data)
                       }
                   })
               }
+            },
+            created: function () {
+                var that = this
+                this.loadMenuData(DingData.userid)
+                window.setInterval(function () {
+                    that.loadMenuData(DingData.userid)
+                },5000)
             }
         })
         $("#tempPage").load('/Main/approval')

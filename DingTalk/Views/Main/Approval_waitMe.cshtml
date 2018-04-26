@@ -57,26 +57,24 @@
     </el-form>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
-        <el-table-column prop="name" label="审批标题" width="120">
+        <el-table-column prop="date" label="日期" width="180"></el-table-column>
+        <el-table-column prop="name"
+                         label="姓名"
+                         width="180">
         </el-table-column>
-        <el-table-column prop="address" label="审批摘要">
-        </el-table-column>
-        <el-table-column prop="date" label="发起时间" width="140">
-        </el-table-column>
-        <el-table-column prop="date" label="完成时间" width="140">
-        </el-table-column>
-        <el-table-column prop="address" label="状态">
+        <el-table-column prop="address"
+                         label="地址">
         </el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
         <el-pagination v-on:size-change="handleSizeChange"
                        v-on:current-change="handleCurrentChange"
-                       :current-page="currentPage4"
+                       :current-page="currentPage"
                        :page-sizes="[1, 3, 5, 10]"
                        :page-size="5"
                        layout="total, sizes, prev, pager, next, jumper"
-                       :total="10">
+                       :total="totalRows">
         </el-pagination>
     </div>
 </div>
@@ -89,8 +87,9 @@
         mixins: [mixin],
         data: function () {
             return {
-                tableData: tableData,
-                currentPage4: 1,
+                tableData: [],
+                currentPage: 1,
+                totalRows: 0,
                 superSearch: false,
                 formInline: {
                     user: '',
@@ -98,19 +97,11 @@
                     startDate: '',
                     endDate: '',
                     state:0
-                }
+                },
+                items: { TaskId: '审批编号' ,ApplyMan:'审批人'}
             }
         },
         methods: {
-            //表格相關事件
-
-            //翻頁相關事件
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
             //查詢相關頁面
             onFilter() {
                 console.log(this.formInline)
@@ -118,6 +109,20 @@
             //切换高级搜索
             changeSuperSearch() {
                 this.superSearch = !this.superSearch;
+            },
+            //获取审批列表
+            getApproveList() {
+                $.ajax({
+                    url: 'FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=' + DingData.userid,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (data) {
+                        
+                    },
+                    error: function (err) {
+                        console.error(err)
+                    }
+                })
             }
         },
         created: function () {
@@ -125,14 +130,5 @@
         }
     })
 
-    function formatQueryStr(object) {
-        var obj = _cloneObj(object)
-        var queryStr = ''
-        for (var o in obj) {
-            if (o == 'date') {
-
-            }
-        }
-    }
 
 </script>
