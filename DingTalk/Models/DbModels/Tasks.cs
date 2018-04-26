@@ -45,5 +45,13 @@ namespace DingTalk.Models.DbModels
 
         [StringLength(500)]
         public string ProjectId { get; set; }
+
+        public bool? IsPost { get; set; }
+
+        [StringLength(500)]
+        public string OldImageUrl { get; set; }
+
+        [StringLength(500)]
+        public string OldFileUrl { get; set; }
     }
 }

@@ -290,6 +290,14 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.ProjectId)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.OldImageUrl)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.OldFileUrl)
+                .IsUnicode(false);
+
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.nickName)
                 .IsUnicode(false);

@@ -148,19 +148,49 @@ namespace DingTalk.Controllers
         /// 图纸下发表单提交接口
         /// </summary>
         /// <returns></returns>
+        /// 测试数据  /DrawingDown/SubmitDrawingDown
+        /// var PurchaseDownList =  [{ "TaskId": "DTE-801B-WX-01C", "OldTaskId": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
         [HttpPost]
-        public string SubmitDrawingDown()
+        public string SubmitDrawingDown(List<PurchaseDown> PurchaseDownList)
         {
             try
             {
-
+                //if (PurchaseDownList is null)
+                //{
+                //    return JsonConvert.SerializeObject(new ErrorModel
+                //    {
+                //        errorCode = 1,
+                //        errorMessage = "请传递参数"
+                //    });
+                //}
+                //else
+                //{
+                //    using (DDContext context = new DDContext())
+                //    {
+                //        foreach (PurchaseDown purchaseDown in PurchaseDownList)
+                //        {
+                //            context.PurchaseDown.Add(purchaseDown);
+                //        }
+                //        context.SaveChanges();
+                //    }
+                //    return JsonConvert.SerializeObject(new ErrorModel
+                //    {
+                //        errorCode = 0,
+                //        errorMessage = "保存成功"
+                //    });
+                //}
+                return "";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
             }
-            return "";
         }
 
         #endregion
@@ -172,6 +202,9 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/AddProcedure
+        ///  var PurchaseList = [{ "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
         [HttpPost]
         public string AddProcedure()
         {
@@ -221,6 +254,9 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/AddWorkTime
+        ///  var WorkTimeList = [{ "ProjectInfoId": "1", "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2"},
+        ///  { "ProjectInfoId": "2", "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"},
+        ///  { "ProjectInfoId": "2", "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"}] 
         [HttpPost]
         public string AddWorkTime()
         {
@@ -238,7 +274,6 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
-
                     List<WorkTime> WorkTimeInfoList = new List<WorkTime>();
                     WorkTimeInfoList = JsonHelper.JsonToObject<List<WorkTime>>(List);
                     using (DDContext context = new DDContext())
@@ -304,12 +339,24 @@ namespace DingTalk.Controllers
                                     on s.Id.ToString() equals w.ProjectInfoId
                                     select new
                                     {
-                                        p.TaskId,p.IsDown, p.Mark,
-                                        p.MaterialScience,p.Name,p.Sorts,
-                                        s.ApplyMan,s.ApplyManId,s.CreateTime,
-                                        s.DefaultWorkTime,s.DrawingNo,
-                                        w.IsFinish,w.ProjectInfoId,w.StartTime,
-                                        w.EndTime,w.UseTime,w.Worker,w.WorkerId
+                                        p.TaskId,
+                                        p.IsDown,
+                                        p.Mark,
+                                        p.MaterialScience,
+                                        p.Name,
+                                        p.Sorts,
+                                        s.ApplyMan,
+                                        s.ApplyManId,
+                                        s.CreateTime,
+                                        s.DefaultWorkTime,
+                                        s.DrawingNo,
+                                        w.IsFinish,
+                                        w.ProjectInfoId,
+                                        w.StartTime,
+                                        w.EndTime,
+                                        w.UseTime,
+                                        w.Worker,
+                                        w.WorkerId
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
