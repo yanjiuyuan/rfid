@@ -544,28 +544,28 @@ namespace DingTalk.Controllers
         {
             try
             {
-                List<Tasks> ListTask = new List<Tasks>();
                 List<Flows> ListFlow = new List<Flows>();
+                List<int?> ListTasks = new List<int?>();
                 using (DDContext context = new DDContext())
                 {
                     switch (Index)
                     {
                         case 0:
                             //待审批的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true).ToList();
-                            return Quary(ListTask);
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true).Select(u => u.TaskId).ToList();
+                            return Quary(context, ListTasks);
                         case 1:
                             //我已审批
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true).ToList();
-                            return Quary(ListTask);
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true).Select(u => u.TaskId).ToList();
+                            return Quary(context, ListTasks);
                         case 2:
                             //我发起的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).ToList();
-                            return Quary(ListTask);
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 0 && u.IsPost == true).Select(u => u.TaskId).ToList();
+                            return Quary(context, ListTasks);
                         case 3:
                             //抄送我的
-                            ListTask = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true).ToList();
-                            return Quary(ListTask);
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true).Select(u => u.TaskId).ToList();
+                            return Quary(context, ListTasks);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
@@ -586,30 +586,29 @@ namespace DingTalk.Controllers
             }
         }
 
-        public string Quary(List<Tasks> ListTask)
+        public string Quary(DDContext context, List<int?> ListTasks)
         {
-            using (DDContext context = new DDContext())
+            List<Object> listQuary = new List<object>();
+            foreach (int TaskId in ListTasks)
             {
-                List<Flows> ListFlow = context.Flows.ToList();
-                string TaskId = ListTask.Select(t => t.TaskId).First().ToString();
-                string NodeId = ListTask.Select(t => t.NodeId).First().ToString();
-                Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
-
-                var Quary = from t in ListTask
-                            join f in ListFlow
-                            on t.FlowId.ToString() equals f.FlowId.ToString()
-                            select new
-                            {
-                                NodeId = NodeId,
-                                FlowId = f.FlowId,
-                                FlowName = f.FlowName,
-                                Title = t.Title,
-                                TaskId = task.TaskId,
-                                ApplyMan = task.ApplyMan,
-                                ApplyTime = task.ApplyTime
-                            };
-                return JsonConvert.SerializeObject(Quary);
+                List<Tasks> ListTask = context.Tasks.ToList();
+                List<Flows> ListFlows = context.Flows.ToList();
+                listQuary.Add(from t in ListTask
+                              join f in ListFlows
+                              on t.FlowId.ToString() equals f.FlowId.ToString()
+                              where t.NodeId == 0 && t.TaskId == TaskId
+                              select new
+                              {
+                                  TaskId = t.TaskId,
+                                  NodeId = t.NodeId,
+                                  FlowId = t.FlowId,
+                                  FlowName = f.FlowName,
+                                  ApplyMan = t.ApplyMan,
+                                  ApplyManId = t.ApplyManId,
+                                  ApplyTime = t.ApplyTime
+                              });
             }
+            return JsonConvert.SerializeObject(listQuary);
         }
 
 
