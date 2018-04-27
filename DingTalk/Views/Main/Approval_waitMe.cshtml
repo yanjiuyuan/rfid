@@ -120,6 +120,7 @@
                     dataType: 'json',
                     type: 'GET',
                     success: function (data) {
+                        console.log('FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=' + DingData.userid)
                         that.tableData = data
                         that.totalRows = data.length
                     },
