@@ -94,23 +94,24 @@ namespace DingTalk.Controllers
         /// 流程提交接口(Approve)
         /// </summary>
         /// 测试数据：/DrawingUpload/SubmitTaskInfo
-        //var FlowTest = {
-        //"TaskId":"1",
-        //"ApplyMan": "蔡兴桐",
-        //"ApplyManId": "蔡兴桐",
-        //"NodeId":"1",
-        //"ApplyTime": "2018-04-12 14:40",
-        //"IsEnable": "1",
-        //"FlowId": "6",
-        //"Remark":"审核通过",
-        //"IsSend":"False",
-        //"State":"0",
-        //"OldImageUrl","原图片路径",
-        //"ImageUrl","图片路径",
-        //"FileUrl","原文件路径",  
-        //"FileUrl","文件路径",   
-        //"Title","标题",
-        //"ProjectId","项目号",
+        // var FlowTestApprove = {
+        // "Id":"137",
+        // "TaskId": "3",
+        // "ApplyMan": "蔡兴桐",
+        // "ApplyManId": "manager5312",
+        // "NodeId": "1",
+        // "ApplyTime": "2018-04-12 14:40",
+        // "IsEnable": "1",
+        // "FlowId": "6",
+        // "Remark": "审核通过",
+        // "IsSend": false,
+        // "State": "0",
+        // "OldImageUrl":"原图片路径",
+        // "ImageUrl":"图片路径",
+        // "OldFileUrl":"原文件路径",
+        // "FileUrl":"文件路径",
+        // "Title":"标题",
+        // "ProjectId":"项目号"
         //}
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
@@ -133,10 +134,9 @@ namespace DingTalk.Controllers
                     Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
                     using (DDContext context = new DDContext())
                     {
-                        tasks.NodeId += 1;
-                        tasks.IsPost = false;
-                        tasks.State = 1;
-                        context.Tasks.Add(tasks);
+                        //修改流程状态
+                        context.Entry(tasks).State = EntityState.Modified;
+                        FindNextPeople(tasks.FlowId.ToString(), true, tasks.IsSend, tasks.TaskId, tasks.NodeId);
                         context.SaveChanges();
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
@@ -238,7 +238,7 @@ namespace DingTalk.Controllers
         /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=1
 
         [HttpGet]
-        public string FindNextPeople(string FlowId, bool IsNext = true, bool IsSend = false, int OldTaskId = 0, int NodeId = -1)
+        public string FindNextPeople(string FlowId, bool IsNext = true, bool? IsSend = false, int? OldTaskId = 0, int? NodeId = -1)
         {
             try
             {
@@ -258,7 +258,7 @@ namespace DingTalk.Controllers
                         string[] ListPeopleId = PeopleId.Split(',');
                         string[] ListNodePeople = NodePeople.Split(',');
 
-                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).SingleOrDefault();
+                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
                             //保存任务流
@@ -600,6 +600,7 @@ namespace DingTalk.Controllers
                               where t.NodeId == 0 && t.TaskId == TaskId
                               select new
                               {
+                                  Id = t.Id,
                                   TaskId = t.TaskId,
                                   NodeId = NodeId,
                                   FlowId = t.FlowId,
