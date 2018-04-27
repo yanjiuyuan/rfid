@@ -181,6 +181,10 @@ var mixin = {
             this.$refs[formName].resetFields();
         },
         //翻頁相關事件
+        getData() {
+            var start = this.pageSize * (this.currentPage - 1)
+            this.tableData = this.data.slice(start, start + this.pageSize)
+        },
         handleSizeChange: function (val) {
             this.currentPage = 1
             this.pageSize = val

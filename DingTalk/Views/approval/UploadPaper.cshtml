@@ -303,10 +303,6 @@
                 this.totalRows = this.data.length
                 this.getData()
             },
-            getData() {
-                var start = this.pageSize * (this.currentPage - 1)
-                this.tableData = this.data.slice(start, start + this.pageSize)
-            },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },

@@ -68,7 +68,16 @@
                 preCopy: false,
                 imageList: ['card1.jpg', 'card2.jpg', 'card3.jpg'],
                 data: [],
-                items: [],
+                items: {
+                    DrawingNo: '代号',
+                    Name: '名称',
+                    Count: '数量',
+                    MaterialScience: '材料',
+                    Unit: '单位',
+                    Brand: '品牌',
+                    Sorts: '类别',
+                    Mark: '备注'
+                },
                 tableData: [],
                 totalRows: 0,
                 nodeInfo: {},
@@ -76,7 +85,8 @@
                 //表单参数
                 ruleForm: {
                     projectName: '项目名',
-                    name:'申请人'
+                    name: '申请人',
+                    copyers: ['小唐', '季老师']
                 }
             }
         },
@@ -100,7 +110,6 @@
                         that.nodeInfo = data[0]
                         that.preApprove = !data[0].IsNeedChose
                         that.preCopy = !data[0].IsSendChose
-                        
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -140,16 +149,11 @@
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("获取审批/抄送 相关人员列表ok")
-                        for (let d of data) {
-                            if (d.NodePeople)
-                                d.NodePeople = d.NodePeople.split(',')
-                            if (d.NodeId == 0)
-                                d.NodePeople = [DingData.nickName]
-                            d['AddPeople'] = []
-                        }
+                        console.log("获取bom表信息ok")
                         console.log(data)
-                        that.nodeList = data
+                        that.data = data
+                        that.getData()
+                        that.totalRows = data.length
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -160,9 +164,11 @@
         created: function () {
             console.log('UrlObj')
             console.log(UrlObj)
-            if (UrlObj.flowid) FlowId = UrlObj.flowid
-            if (UrlObj.nodeid) NodeId = UrlObj.nodeid
-            if (UrlObj.taskid) TaskId = UrlObj.taskid
+            if (UrlObj.flowid) {
+                FlowId = UrlObj.flowid
+                NodeId = UrlObj.nodeid
+                TaskId = UrlObj.taskid
+            }
             this.getNodeInfo()
             this.getNodeList()
             this.getBomInfo()
