@@ -91,18 +91,18 @@
             //提交审批
             onSubmit(formName) {
                 var param = {
-                    "taskid": TaskId,
-                    "applyman": DingData.nickName,
-                    "applymanid": DingData.userid,
-                    "nodeid": NodeId,
-                    "applytime": _getTime(),
-                    "isenable": "1",
-                    "flowid": FlowId,
-                    "remark": ruleForm.mark,
-                    "issend": "false",
-                    "state": "0",
-                    "title": ruleForm.Title,
-                    "projectid": ruleForm.projectid
+                    "TaskId": TaskId,
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": NodeId,
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId,
+                    "Remark": this.ruleForm.mark,
+                    "IsSend": "false",
+                    "State": "0",
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId
                 }
                 $.ajax({
                     url: "/FlowInfo/SubmitTaskInfo",
