@@ -600,7 +600,7 @@ namespace DingTalk.Controllers
                               where t.NodeId == 0 && t.TaskId == TaskId
                               select new
                               {
-                                  Id = t.Id,
+                                  Id = t.Id + 1,
                                   TaskId = t.TaskId,
                                   NodeId = NodeId,
                                   FlowId = t.FlowId,
