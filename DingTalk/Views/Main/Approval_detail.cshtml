@@ -28,28 +28,29 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="项目名" prop="name">
-            <el-input v-model="ruleForm.projectName" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
-
         <!--图片展示-->
-        <el-form-item label="相关图片">
+        <el-form-item v-if="imageList.length>0" label="相关图片">
             <el-carousel :interval="5000" arrow="always">
                 <el-carousel-item v-for="img in imageList" :key="img">
-                    <img :src="'Content/images/'+img"/>
+                    <img :src="img"/>
                 </el-carousel-item>
             </el-carousel>
         </el-form-item>
-
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <!--添加抄送人-->
-        <sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
+        <sam-addapprover :preset="preCopy" :approvers="copyers">
         </sam-addapprover>
+        <el-form-item label="审批意见" prop="mark">
+            <el-input v-model="ruleForm.mark"></el-input>
+        </el-form-item>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')">同意</el-button>
             <el-button type="danger" >不同意</el-button>
@@ -66,7 +67,7 @@
             return {
                 preApprove: false,
                 preCopy: false,
-                imageList: ['card1.jpg', 'card2.jpg', 'card3.jpg'],
+                imageList: [],
                 data: [],
                 items: {
                     DrawingNo: '代号',
@@ -82,18 +83,33 @@
                 totalRows: 0,
                 nodeInfo: {},
                 nodeList: [],
-                //表单参数
-                ruleForm: {
-                    projectName: '项目名',
-                    name: '申请人',
-                    copyers: ['小唐', '季老师']
-                }
+                copyers: ['小唐', '季老师'],
+                ruleForm: {}
             }
         },
         methods: {
             //提交审批
             onSubmit(formName) {
                 
+            },
+            //获取审批表单信息
+            getFormData() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批表单信息ok")
+                        console.log(data)
+                        that.ruleForm = data
+                        that.imageList = data.ImageUrl.split(',') 
+                        console.log(that.imageList)
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
             },
             //获取节点数据GetNodeInfo
             getNodeInfo() {
@@ -104,7 +120,6 @@
                     dataType: "json",
                     success: function (data) {
                         console.log("获取审批申请数据ok")
-                        console.log("/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId)
                         console.log(data)
                         if(!data) return
                         that.nodeInfo = data[0]
@@ -172,6 +187,7 @@
             this.getNodeInfo()
             this.getNodeList()
             this.getBomInfo()
+            this.getFormData()
             loadHtml("mainPage", "partPage")
         }
     })
