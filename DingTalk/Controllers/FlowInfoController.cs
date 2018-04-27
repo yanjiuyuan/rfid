@@ -508,9 +508,9 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     //待审批的
-                    int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 1 && u.IsSend == false && u.State == 0).Count();
+                    int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).Count();
                     //我发起的
-                    int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).Count();
+                    int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1).Count();
                     //抄送我的
                     int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).Count();
 
@@ -744,6 +744,11 @@ namespace DingTalk.Controllers
                 });
             }
         }
+
+        #endregion
+
+        #region 测试数据
+
 
         #endregion
 
