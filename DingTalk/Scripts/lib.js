@@ -5,6 +5,7 @@ var TaskId = 0 //审批任务ID
 var State = 0 //多异步辅助状态
 var UrlObj = {} //url参数对象
 var QueryObj = {} //获取url参数对象
+var Id = 0 //自增task表的id
 
 //原型方法
 Array.prototype.removeByValue = function (val) {

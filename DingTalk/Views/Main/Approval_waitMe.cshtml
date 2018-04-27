@@ -139,7 +139,7 @@
             handleEdit(index, row) {
                 console.log(index, row);
                 if (row.TaskId && row.FlowId)
-                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId)
+                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' +row.Id)
             },
             handleDelete(index, row) {
                 console.log(index, row);
