@@ -604,7 +604,8 @@ namespace DingTalk.Controllers
                                   FlowName = f.FlowName,
                                   ApplyMan = t.ApplyMan,
                                   ApplyManId = t.ApplyManId,
-                                  ApplyTime = t.ApplyTime
+                                  ApplyTime = t.ApplyTime,
+                                  Title = t.Title
                               });
             }
             return JsonConvert.SerializeObject(listQuary);
