@@ -121,6 +121,7 @@
                     type: 'GET',
                     success: function (data) {
                         that.tableData = data
+                        that.totalRows = data.length
                     },
                     error: function (err) {
                         console.error(err)
