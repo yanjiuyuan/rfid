@@ -135,6 +135,7 @@ namespace DingTalk.Controllers
                     {
                         tasks.NodeId += 1;
                         tasks.IsPost = false;
+                        tasks.State = 1;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
                     }
@@ -551,19 +552,19 @@ namespace DingTalk.Controllers
                     {
                         case 0:
                             //待审批的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         case 1:
                             //我已审批
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         case 2:
                             //我发起的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         case 3:
                             //抄送我的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true && u.ApplyTime == null).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
