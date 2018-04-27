@@ -119,6 +119,30 @@
                     }
                 })
             },
+            //审批绑定审批人(默认)
+            bindApprover() {
+                var that = this
+                var param = {
+                    IsNext: 'true',
+                    IsSend: 'False',
+                    FlowId: FlowId,
+                    NodeId: NodeId,
+                    OldTaskId: TaskId
+                }
+                $.ajax({
+                    url: "/FlowInfo/FindNextPeople" + _formatQueryStr(param),
+                    type: "GET",
+                    async: false,
+                    success: function (data) {
+                        console.log("审批绑定默认审批人ok")
+                        console.log(data)
+                        that.doneSubmit()
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
             //获取审批表单信息
             getFormData() {
                 var that = this
@@ -130,7 +154,10 @@
                         console.log("获取审批表单信息ok")
                         console.log(data)
                         that.ruleForm = data
-                        that.imageList = data.ImageUrl.split(',') 
+                        that.imageList = data.ImageUrl.split(',')
+                        for (var i = 0; i < that.imageList.length; i++) {
+                            that.imageList[i] = that.imageList[i].substring(2)+'.jpg'
+                        }
                         console.log(that.imageList)
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
