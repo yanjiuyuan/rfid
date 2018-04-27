@@ -508,11 +508,11 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     //待审批的
-                    int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0).Count();
+                    int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == false).Count();
                     //我发起的
-                    int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1).Count();
+                    int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true).Count();
                     //抄送我的
-                    int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0).Count();
+                    int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost == false).Count();
 
                     Dictionary<string, int> dic = new Dictionary<string, int>();
                     dic.Add("ApproveCount", iApprove);
@@ -748,10 +748,56 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        #region 测试数据
+        #region 审批页面通用数据读取
 
+        /// <summary>
+        /// 审批页面通用数据读取
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <returns></returns>
+        /// 测试数据 /FlowInfo/GetApproveInfo?TaskId=7
+        public string GetApproveInfo(string TaskId,string ApplyManId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(TaskId))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true).First();
+                        return JsonConvert.SerializeObject(task);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+
+        }
 
         #endregion
 
+        #region 测试数据读取
+
+        //public string GetTestInfo<>(TagBuilder t)
+        //{
+        //    return "";
+        //}
+
+        #endregion
     }
 }
