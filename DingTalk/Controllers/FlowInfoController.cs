@@ -756,7 +756,7 @@ namespace DingTalk.Controllers
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
         /// 测试数据 /FlowInfo/GetApproveInfo?TaskId=7
-        public string GetApproveInfo(string TaskId,string ApplyManId)
+        public string GetApproveInfo(string TaskId, string ApplyManId)
         {
             try
             {
@@ -793,10 +793,14 @@ namespace DingTalk.Controllers
 
         #region 测试数据读取
 
-        //public string GetTestInfo<>(TagBuilder t)
-        //{
-        //    return "";
-        //}
+        public string GetTestInfo<T>(T t)
+        {
+            using (DDContext context = new DDContext())
+            {
+                PurchaseDown purchaseDown = context.PurchaseDown.First();
+                return JsonConvert.SerializeObject(purchaseDown);
+            }
+        }
 
         #endregion
     }

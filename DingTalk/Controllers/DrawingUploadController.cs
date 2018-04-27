@@ -94,7 +94,7 @@ namespace DingTalk.Controllers
                     {
                         errorCode = 0,
                         errorMessage = "上传成功",
-                        Content = Path
+                        Content = @"~\UploadFile\Flies\" + newFileName
                     });
                 }
             }
