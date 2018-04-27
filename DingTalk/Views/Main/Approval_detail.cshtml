@@ -52,7 +52,7 @@
             <el-input v-model="ruleForm.mark"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')">同意</el-button>
+            <el-button type="primary" v-on:click="onSubmit">同意</el-button>
             <el-button type="danger" >不同意</el-button>
         </el-form-item>
     </el-form>
@@ -90,7 +90,34 @@
         methods: {
             //提交审批
             onSubmit(formName) {
-                
+                var param = {
+                    "taskid": TaskId,
+                    "applyman": DingData.nickName,
+                    "applymanid": DingData.userid,
+                    "nodeid": NodeId,
+                    "applytime": _getTime(),
+                    "isenable": "1",
+                    "flowid": FlowId,
+                    "remark": ruleForm.mark,
+                    "issend": "false",
+                    "state": "0",
+                    "title": ruleForm.Title,
+                    "projectid": ruleForm.projectid
+                }
+                $.ajax({
+                    url: "/FlowInfo/SubmitTaskInfo",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("提交审批ok")
+                        console.log(param)
+                        console.log(data)
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
             },
             //获取审批表单信息
             getFormData() {
