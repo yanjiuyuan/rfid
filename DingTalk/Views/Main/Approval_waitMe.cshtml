@@ -89,6 +89,7 @@
         mixins: [mixin],
         data: function () {
             return {
+                data: [],
                 tableData: [],
                 currentPage: 1,
                 totalRows: 0,
@@ -121,7 +122,12 @@
                     type: 'GET',
                     success: function (data) {
                         console.log('FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=' + DingData.userid)
-                        that.tableData = data
+                        console.log(data)
+                        for (let d of data) {
+                            that.data.push(d[0])
+                        }
+                        //that.tableData = data
+                        that.getData()
                         that.totalRows = data.length
                     },
                     error: function (err) {
@@ -132,7 +138,7 @@
             //表单操作
             handleEdit(index, row) {
                 console.log(index, row);
-                if (row.TaskId && row.FlowId && row.NodeId)
+                if (row.TaskId && row.FlowId)
                     loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId)
             },
             handleDelete(index, row) {
