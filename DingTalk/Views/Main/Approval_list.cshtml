@@ -57,6 +57,7 @@
     </el-form>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
+        <el-table-column prop="TaskId" label="流水号"></el-table-column>
         <el-table-column prop="FlowName" label="审批类型"></el-table-column>
         <el-table-column prop="Title" label="标题"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
@@ -83,7 +84,7 @@
 
 
 <script>
-
+    var Index = 0
     new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -117,11 +118,11 @@
             getApproveList() {
                 var that = this 
                 $.ajax({
-                    url: 'FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=' + DingData.userid,
+                    url: 'FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid,
                     dataType: 'json',
                     type: 'GET',
                     success: function (data) {
-                        console.log('FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=' + DingData.userid)
+                        console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
                         console.log(data)
                         for (let d of data) {
                             that.data.push(d[0])
@@ -146,6 +147,9 @@
             }
         },
         created: function () {
+            console.log('UrlObj')
+            console.log(UrlObj)
+            Index = UrlObj.Index
             this.getApproveList()
             loadHtml("mainPage", "partPage")
         }

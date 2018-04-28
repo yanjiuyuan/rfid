@@ -367,7 +367,7 @@
     <Content Include="Views\Main\Approval_copyMe.cshtml" />
     <Content Include="Views\Main\Approval_fromMe.cshtml" />
     <Content Include="Views\Main\Approval_IDone.cshtml" />
-    <Content Include="Views\Main\Approval_waitMe.cshtml" />
+    <Content Include="Views\Main\Approval_list.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
     <Content Include="Views\Main\Main6.cshtml" />
     <Content Include="Views\Main\Main7.cshtml" />
