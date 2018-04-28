@@ -40,5 +40,8 @@ namespace DingTalk.Models.DbModels
         public bool? IsNeedChose { get; set; }
 
         public bool? IsSend { get; set; }
+
+        [StringLength(100)]
+        public string BackNodeId { get; set; }
     }
 }
