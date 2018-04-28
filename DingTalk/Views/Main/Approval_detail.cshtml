@@ -91,6 +91,7 @@
             //提交审批
             onSubmit(formName) {
                 var param = {
+                    "Id": UrlObj.id,
                     "TaskId": TaskId,
                     "ApplyMan": DingData.nickName,
                     "ApplyManId": DingData.userid,
@@ -100,7 +101,7 @@
                     "FlowId": FlowId,
                     "Remark": this.ruleForm.mark,
                     "IsSend": "false",
-                    "State": "0",
+                    "State": "1",
                     "Title": this.ruleForm.Title,
                     "ProjectId": this.ruleForm.ProjectId
                 }
@@ -113,30 +114,6 @@
                         console.log("提交审批ok")
                         console.log(param)
                         console.log(data)
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
-            //审批绑定审批人(默认)
-            bindApprover() {
-                var that = this
-                var param = {
-                    IsNext: 'true',
-                    IsSend: 'False',
-                    FlowId: FlowId,
-                    NodeId: NodeId,
-                    OldTaskId: TaskId
-                }
-                $.ajax({
-                    url: "/FlowInfo/FindNextPeople" + _formatQueryStr(param),
-                    type: "GET",
-                    async: false,
-                    success: function (data) {
-                        console.log("审批绑定默认审批人ok")
-                        console.log(data)
-                        that.doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -237,6 +214,7 @@
                 FlowId = UrlObj.flowid
                 NodeId = UrlObj.nodeid
                 TaskId = UrlObj.taskid
+                Id = UrlObj.id
             }
             this.getNodeInfo()
             this.getNodeList()
