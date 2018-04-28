@@ -136,13 +136,23 @@ namespace DingTalk.Controllers
                     {
                         //修改流程状态
                         context.Entry(tasks).State = EntityState.Modified;
-                        FindNextPeople(tasks.FlowId.ToString(), true, tasks.IsSend, tasks.TaskId, tasks.NodeId);
+                        Dictionary<string, string> dic = new Dictionary<string, string>();
+                        dic=FindNextPeople(tasks.FlowId.ToString(), true, tasks.IsSend, tasks.TaskId, tasks.NodeId);
+                        if (dic["NodeName"] == "结束")
+                        {
+                            JsonConvert.SerializeObject(new ErrorModel
+                            {
+                                errorCode = 0,
+                                errorMessage = "流程结束",
+                                Content = tasks.TaskId.ToString()
+                            });
+                        }
                         context.SaveChanges();
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
-                        errorMessage = "创建成功！",
+                        errorMessage = "创建成功",
                         Content = tasks.TaskId.ToString()
                     });
                 }
@@ -238,77 +248,60 @@ namespace DingTalk.Controllers
         /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=1
 
         [HttpGet]
-        public string FindNextPeople(string FlowId, bool IsNext = true, bool? IsSend = false, int? OldTaskId = 0, int? NodeId = -1)
+        public Dictionary<string, string> FindNextPeople(string FlowId, bool IsNext = true, bool? IsSend = false, int? OldTaskId = 0, int? NodeId = -1)
         {
-            try
+            using (DDContext context = new DDContext())
             {
-                if (!string.IsNullOrEmpty(FlowId) && NodeId != -1 && OldTaskId != 0)
+                string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
+                string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
+                string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+
+                dic.Add("NodeName", NodeName);
+                dic.Add("NodePeople", NodePeople);
+                dic.Add("PeopleId", PeopleId);
+                if (NodeName == "结束")
                 {
-                    using (DDContext context = new DDContext())
-                    {
-                        string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
-                        string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
-                        string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
-
-                        //List<string> ListNodeName = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodeName).ToList();
-                        //List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.PeopleId).ToList();
-                        //List<string> ListNodePeople = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodePeople).ToList();
-
-                        string[] ListNodeName = NodeName.Split(',');
-                        string[] ListPeopleId = PeopleId.Split(',');
-                        string[] ListNodePeople = NodePeople.Split(',');
-
-                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
-                        for (int i = 0; i < ListPeopleId.Length; i++)
-                        {
-                            //保存任务流
-                            Tasks newTask = new Tasks()
-                            {
-                                TaskId = OldTaskId,
-                                ApplyMan = ListNodePeople[i],
-                                //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                                IsEnable = 1,
-                                NodeId = NodeId + 1,
-                                FlowId = Int32.Parse(FlowId),
-                                IsSend = IsSend,
-                                ApplyManId = ListPeopleId[i],
-                                State = 0, //0 表示未审核 1表示已审核
-                                FileUrl = Task.FileUrl,
-                                OldFileUrl = Task.OldFileUrl,
-                                ImageUrl = Task.ImageUrl,
-                                OldImageUrl = Task.OldImageUrl,
-                                Title = Task.Title,
-                                IsPost = false,
-                                ProjectId = Task.ProjectId,
-                            };
-                            context.Tasks.Add(newTask);
-                        }
-                        context.SaveChanges();
-
-                        Dictionary<string, string> dic = new Dictionary<string, string>();
-                        dic.Add("NodeName", NodeName);
-                        dic.Add("NodePeople", NodePeople);
-                        dic.Add("PeopleId", PeopleId);
-                        return JsonConvert.SerializeObject(dic);
-                    }
+                    return dic;
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject(new ErrorModel
+                    //List<string> ListNodeName = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodeName).ToList();
+                    //List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.PeopleId).ToList();
+                    //List<string> ListNodePeople = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodePeople).ToList();
+
+                    string[] ListNodeName = NodeName.Split(',');
+                    string[] ListPeopleId = PeopleId.Split(',');
+                    string[] ListNodePeople = NodePeople.Split(',');
+
+                    Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                    for (int i = 0; i < ListPeopleId.Length; i++)
                     {
-                        errorCode = 1,
-                        errorMessage = "参数未传递"
-                    });
+                        //保存任务流
+                        Tasks newTask = new Tasks()
+                        {
+                            TaskId = OldTaskId,
+                            ApplyMan = ListNodePeople[i],
+                            //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                            IsEnable = 1,
+                            NodeId = NodeId + 1,
+                            FlowId = Int32.Parse(FlowId),
+                            IsSend = IsSend,
+                            ApplyManId = ListPeopleId[i],
+                            State = 0, //0 表示未审核 1表示已审核
+                            FileUrl = Task.FileUrl,
+                            OldFileUrl = Task.OldFileUrl,
+                            ImageUrl = Task.ImageUrl,
+                            OldImageUrl = Task.OldImageUrl,
+                            Title = Task.Title,
+                            IsPost = false,
+                            ProjectId = Task.ProjectId,
+                        };
+                        context.Tasks.Add(newTask);
+                    }
+                    context.SaveChanges();
+                    return dic;
                 }
-            }
-            catch (Exception ex)
-            {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 2,
-                    errorMessage = ex.Message,
-                    Content = "未找到数据"
-                });
             }
         }
 
