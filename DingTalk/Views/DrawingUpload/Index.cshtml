@@ -22,6 +22,7 @@
 <input id="btn3" type="button" value="选人及抄送接口(多人Post)" />
 <input id="btn4" type="button" value="载入项目信息" />
 <input id="btn5" type="button" value="流程节点人员配置" />
+<input id="btn9" type="button" value="流程退回" />
 <h2>图纸下发接口</h2>
 <input id="btn6" type="button" value="添加工序" />
 <input id="btn7" type="button" value="添加工时" />
@@ -37,7 +38,7 @@
     }
 
     var FlowTestApprove = {
-        "Id":"137",
+        "Id": "137",
         "TaskId": "3",
         "ApplyMan": "蔡兴桐",
         "ApplyManId": "manager5312",
@@ -48,12 +49,12 @@
         "Remark": "审核通过",
         "IsSend": false,
         "State": "1",
-        "OldImageUrl":"原图片路径",
-        "ImageUrl":"图片路径",
-        "OldFileUrl":"原文件路径",
-        "FileUrl":"文件路径",
-        "Title":"标题",
-        "ProjectId":"项目号"
+        "OldImageUrl": "原图片路径",
+        "ImageUrl": "图片路径",
+        "OldFileUrl": "原文件路径",
+        "FileUrl": "文件路径",
+        "Title": "标题",
+        "ProjectId": "项目号"
     }
 
     var PeopleList = [{
@@ -132,6 +133,8 @@
     var PurchaseDownList = [{ "TaskId": "DTE-801B-WX-01C", "OldTaskId": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456" },
     { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456" },
     { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456" }]
+
+    var FlowBackList = { "Id": 163, "TaskId": 5, "ApplyMan": "蔡兴桐", "ApplyManId": "manager5312", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 1, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": "", "FileUrl": null, "Title": "图纸上传2018-04-25 16:38", "ProjectId": "2018-04-25 16:38", "IsPost": false, "OldImageUrl": "", "OldFileUrl": null, "IsBack": null }
 
     $("#btn").click(function () {
         $.ajax({
@@ -286,6 +289,24 @@
             dataType: "json",
             async: false,
             data: JSON.stringify(PurchaseDownList),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn9").click(function () {
+        $.ajax({
+            url: "/FlowInfo/FlowBack",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(FlowBackList),
             success: function (data) {
                 console.log(data);
             },

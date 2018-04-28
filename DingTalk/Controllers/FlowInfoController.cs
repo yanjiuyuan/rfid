@@ -167,7 +167,14 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 流程退回
+        /// </summary>
+        /// <returns></returns>
+        /// 测试：/FlowInfo/FlowBack
+        /// var FlowBackList={"Id":157,"TaskId":4,"ApplyMan":"蔡兴桐","ApplyManId":"manager5312","ApplyTime":null,"IsEnable":1,"FlowId":6,"NodeId":1,"Remark":null,"IsSend":false,"State":0,"ImageUrl":"","FileUrl":null,"Title":"图纸上传2018-04-23 16:41","ProjectId":"2018-04-23 16:41","IsPost":false,"OldImageUrl":"","OldFileUrl":null,"IsBack":true,"BackNodeId":0}
 
+        [HttpPost]
         public string FlowBack()
         {
             try
@@ -185,6 +192,67 @@ namespace DingTalk.Controllers
                 else
                 {
                     Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
+                    using (DDContext context = new DDContext())
+                    {
+                        //修改流程状态
+                        tasks.IsBack = true;
+                        tasks.State = 1;
+                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm");
+                        context.Entry(tasks).State = EntityState.Modified;
+                        context.SaveChanges();
+
+                        //查找退回节点Id
+                        string newBackNodeId = context.NodeInfo.Where
+                            (u => u.FlowId == tasks.FlowId.ToString() && u.NodeId == tasks.NodeId)
+                            .Select(u => u.BackNodeId).First();
+
+                        //根据退回节点Id找人
+                        if (newBackNodeId == "0")  //退回节点为发起人
+                        {
+                            Tasks newTask = new Tasks();
+                            newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
+                            newTask.IsBack = false;
+                            newTask.ApplyTime = null;
+                            newTask.State = 0;
+                            newTask.Remark = null;
+                            newTask.IsPost = true;
+                            context.Tasks.Add(newTask);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            string PeopleId = context.NodeInfo.SingleOrDefault
+                                (u => u.NodeId.ToString() == newBackNodeId && u.FlowId == tasks.FlowId.ToString()).PeopleId;
+                            string NodePeople = context.NodeInfo.SingleOrDefault
+                                (u => u.NodeId.ToString() == newBackNodeId && u.FlowId == tasks.FlowId.ToString()).NodePeople;
+                            if (string.IsNullOrEmpty(PeopleId))
+                            {
+                                return JsonConvert.SerializeObject(new ErrorModel
+                                {
+                                    errorCode = 1,
+                                    errorMessage = "退回节点尚未配置人员"
+                                });
+                            }
+                            else
+                            {
+                                int iBackNodeIds = int.Parse(newBackNodeId);
+                                //根据找到的人创建新任务流
+                                Tasks newTask = new Tasks();
+                                newTask = tasks;
+                                newTask.IsBack = false;
+                                newTask.ApplyMan = NodePeople;
+                                newTask.ApplyManId = PeopleId;
+                                newTask.ApplyTime = null;
+                                newTask.State = 0;
+                                newTask.NodeId = iBackNodeIds;
+                                newTask.Remark = null;
+                                newTask.IsPost = false;
+                                context.Tasks.Add(newTask);
+                                context.SaveChanges();
+                            }
+                        }
+                    }
+
 
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -655,7 +723,7 @@ namespace DingTalk.Controllers
         /// <param name="TaskId">流水号</param>
         /// <param name="FlowId">流程Id</param>
         /// <returns></returns>
-        /// 测试数据： /FlowInfo/GetSign?TaskId=4&FlowId=6
+        /// 测试数据： /FlowInfo/GetSign?TaskId=3&FlowId=6
         [HttpGet]
         public string GetSign(string TaskId, string FlowId)
         {
@@ -684,8 +752,8 @@ namespace DingTalk.Controllers
                                     {
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
-                                        IsBack = tt==null?false:tt.IsBack,
-                                        ApplyMan = tt==null?"":tt.ApplyMan,
+                                        IsBack = tt == null ? false : tt.IsBack,
+                                        ApplyMan = n.NodePeople,
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
@@ -831,11 +899,16 @@ namespace DingTalk.Controllers
 
         #region 测试数据读取
 
-        public string GetTestInfo<T>(T t)
+        /// <summary>
+        /// 测试数据读取
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据：/FlowInfo/GetTestInfo
+        public string GetTestInfo()
         {
             using (DDContext context = new DDContext())
             {
-                PurchaseDown purchaseDown = context.PurchaseDown.First();
+                Tasks purchaseDown = context.Tasks.Where(u => u.Id == 163).First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
