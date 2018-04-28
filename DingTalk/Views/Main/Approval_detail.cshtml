@@ -34,12 +34,13 @@
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
-        <el-form-item v-if="imageList.length>0" label="相关图片">
-            <el-carousel :interval="5000" arrow="always">
-                <el-carousel-item v-for="img in imageList" :key="img">
-                    <img :src="img"/>
-                </el-carousel-item>
-            </el-carousel>
+        <el-form-item label="相关图片">
+            <el-upload action=""
+                       list-type="picture-card"
+                       :on-preview="handlePictureCardPreview"
+                       :file-list="fileList"
+                       :disabled="true">
+            </el-upload>
         </el-form-item>
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
@@ -68,6 +69,15 @@
                 preApprove: false,
                 preCopy: false,
                 imageList: [],
+                fileList: [
+                {
+                    name: 'food.jpeg',
+                    url: 'http://localhost:52920/UploadFile/Flies/20180427154100.jpg'
+                },
+                {
+                    name: 'food2.jpeg',
+                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+                }],
                 data: [],
                 items: {
                     DrawingNo: '代号',
@@ -132,10 +142,15 @@
                         console.log(data)
                         that.ruleForm = data
                         that.imageList = data.ImageUrl.split(',')
-                        for (var i = 0; i < that.imageList.length; i++) {
-                            that.imageList[i] = that.imageList[i].substring(2)+'.jpg'
+                        for (let i = 0; i < that.imageList.length; i++) {
+                            that.imageList[i] = that.imageList[i].substring(2) + '.jpg'
+                            that.fileList[i] = {
+                                name: 'hello.jpg',
+                                url: document.location + that.imageList[i].replace(/\\/g, "/")
+                            }
                         }
                         console.log(that.imageList)
+                        console.log(that.fileList)
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -205,6 +220,10 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
             }
         },
         created: function () {
