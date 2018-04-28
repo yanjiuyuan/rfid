@@ -53,5 +53,7 @@ namespace DingTalk.Models.DbModels
 
         [StringLength(500)]
         public string OldFileUrl { get; set; }
+
+        public bool? IsBack { get; set; }
     }
 }

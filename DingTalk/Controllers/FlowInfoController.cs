@@ -21,7 +21,7 @@ namespace DingTalk.Controllers
             return View();
         }
 
-        #region 流程创建与提交
+        #region 流程创建与提交、退回
         /// <summary>
         /// 流程创建接口(Post)
         /// </summary>
@@ -137,7 +137,7 @@ namespace DingTalk.Controllers
                         //修改流程状态
                         context.Entry(tasks).State = EntityState.Modified;
                         Dictionary<string, string> dic = new Dictionary<string, string>();
-                        dic=FindNextPeople(tasks.FlowId.ToString(), true, tasks.IsSend, tasks.TaskId, tasks.NodeId);
+                        dic = FindNextPeople(tasks.FlowId.ToString(), true, tasks.IsSend, tasks.TaskId, tasks.NodeId);
                         if (dic["NodeName"] == "结束")
                         {
                             JsonConvert.SerializeObject(new ErrorModel
@@ -153,6 +153,43 @@ namespace DingTalk.Controllers
                     {
                         errorCode = 0,
                         errorMessage = "创建成功",
+                        Content = tasks.TaskId.ToString()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+
+        public string FlowBack()
+        {
+            try
+            {
+                StreamReader sr = new StreamReader(Request.InputStream);
+                var stream = sr.ReadToEnd();
+                if (string.IsNullOrEmpty(stream))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "提交的数据不能为空！"
+                    });
+                }
+                else
+                {
+                    Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
+
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "退回成功",
                         Content = tasks.TaskId.ToString()
                     });
                 }
@@ -616,10 +653,11 @@ namespace DingTalk.Controllers
         /// 审批意见数据读取
         /// </summary>
         /// <param name="TaskId">流水号</param>
+        /// <param name="FlowId">流程Id</param>
         /// <returns></returns>
-        /// 测试数据： /FlowInfo/GetSign?TaskId=1
+        /// 测试数据： /FlowInfo/GetSign?TaskId=4&FlowId=6
         [HttpGet]
-        public string GetSign(string TaskId)
+        public string GetSign(string TaskId, string FlowId)
         {
             try
             {
@@ -635,18 +673,22 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<Tasks> Tasks = context.Tasks.Where(u => u.TaskId.ToString() == TaskId).ToList();
-                        List<NodeInfo> NodeInfo = context.NodeInfo.ToList();
-                        var Quary = from t in Tasks
-                                    join n in NodeInfo
-                                    on t.NodeId equals n.NodeId
+                        List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
+                        List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId).ToList();
+                        var Quary = from n in NodeInfoList
+                                    join t in TaskList
+                                    on n.NodeId equals t.NodeId
+                                    into temp
+                                    from tt in temp.DefaultIfEmpty()
                                     select new
                                     {
+                                        NodeId = n.NodeId,
                                         NodeName = n.NodeName,
-                                        ApplyMan = t.ApplyMan,
-                                        ApplyTime = t.ApplyTime,
-                                        Remark = t.Remark,
-                                        IsSend = n.IsSend
+                                        IsBack = tt==null?false:tt.IsBack,
+                                        ApplyMan = tt==null?"":tt.ApplyMan,
+                                        ApplyTime = tt == null ? "" : tt.ApplyTime,
+                                        Remark = tt == null ? "" : tt.Remark,
+                                        IsSend = tt == null ? false : tt.IsSend
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
