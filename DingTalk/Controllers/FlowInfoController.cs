@@ -211,7 +211,6 @@ namespace DingTalk.Controllers
                         {
                             Tasks newTask = new Tasks();
                             newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
-                            newTask = tasks;
                             newTask.IsBack = false;
                             newTask.ApplyTime = null;
                             newTask.State = 0;
@@ -909,7 +908,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                Tasks purchaseDown = context.Tasks.Where(u => u.Id == 162).First();
+                Tasks purchaseDown = context.Tasks.Where(u => u.Id == 163).First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
