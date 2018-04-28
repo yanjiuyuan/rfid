@@ -244,12 +244,11 @@ Vue.component('sam-approver-list', {
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
-                            <template v-if="index>0 && index< nodelist.length+1">
-                                <span> => </span>
-                                </br>
-                            </template>
-                            <el-tag type="warning" class="nodeTitle">{{node.NodeName}}</el-tag>
+                            <el-tag type="warning" class="nodeTitle" style="width:100px;">
+                                {{node.NodeName}}
+                            </el-tag>
                             <template v-for="(p,a) in node.NodePeople">
+                                <span v-if="a>0" style="margin-left:107px;">&nbsp;</span>
                                 <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
@@ -257,16 +256,14 @@ Vue.component('sam-approver-list', {
                                         >
                                     {{p}}
                                 </el-tag>
+                                <p class='remark'>审批意见</p>
+                                <p class='applytime'>2018-05-01 11:40</p>
+                                </br>
                             </template>
-                            <template v-for="(p,b) in node.AddPeople">
-                                <el-tag :key="b"
-                                        :closable="true"
-                                        onclick="" 
-                                        :disable-transitions="false"
-                                        v-on:close="handleClose(p.emplId)">
-                                    {{p.name}}
-                                </el-tag>
-                            </template>
+                            <div v-if="index<nodelist.length-1">
+                                <i class="el-icon-arrow-down approve-arrow"  type="primary"></i>
+                                </br>
+                            </div>
                         </template>
                         <el-input class="input-new-tag"
                                     v-if="inputVisible"
@@ -394,3 +391,14 @@ Vue.component('sam-addapprover', {
     computed: {
     }
 })
+
+
+  //  < template v-for="(p,b) in node.AddPeople" >
+  //      <el-tag :key="b"
+  //                                      :closable="true"
+  //          onclick="" 
+  //                                      :disable-transitions="false"
+  //          v-on:close="handleClose(p.emplId)">
+  //          {{ p.name }}
+  //      </el-tag>
+  //</template >

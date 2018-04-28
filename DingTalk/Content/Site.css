@@ -202,7 +202,6 @@ ol {
 .el-tag + .el-tag {
     margin-left: 10px;
 }
-
 .button-new-tag {
     margin-left: 10px;
     height: 32px;
@@ -210,13 +209,27 @@ ol {
     padding-top: 0;
     padding-bottom: 0;
 }
-
 .input-new-tag {
     width: 90px;
     margin-left: 10px;
     vertical-align: bottom;
 }
-
+.remark{
+    display:inline-block;
+    line-height:14px;
+}
+.applytime {
+    display: inline-block;
+    float: right;
+    color: gray;
+    font-size: small;
+    line-height: 14px;
+}
+.approve-arrow {
+    font-size: 24px;
+    margin-left: 36px;
+    color: #409EFF;
+}
 
 /*底部样式*/
 .footer {
