@@ -25,8 +25,16 @@ namespace DingTalkServer
 
         public async Task<string> GetAccessToken()
         {
-            _client.QueryString.Add("corpid", DTConfig.CorpId);
-            _client.QueryString.Add("corpsecret", DTConfig.CorpSecret);
+            if (DTConfig.hao == "1")
+            {
+                _client.QueryString.Add("corpid", DTConfig.CorpId_hao);
+                _client.QueryString.Add("corpsecret", DTConfig.CorpSecret_hao);
+            }
+            else
+            {
+                _client.QueryString.Add("corpid", DTConfig.CorpId);
+                _client.QueryString.Add("corpsecret", DTConfig.CorpSecret);
+            }
             var url = _addressConfig.GetAccessTokenUrl;
             var result = await _client.Get(url);
             try
