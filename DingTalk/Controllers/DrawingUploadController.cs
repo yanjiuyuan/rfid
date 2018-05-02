@@ -59,6 +59,7 @@ namespace DingTalk.Controllers
                     HttpPostedFileBase files = Request.Files[0];
                     string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss");
                     string Path = "";
+                    string strPath = "";
                     string FileName = file.FileName;
                     string strExtension = "";
                     int nIndex = FileName.LastIndexOf('.');
@@ -71,21 +72,26 @@ namespace DingTalk.Controllers
                     {
                         //Image
                         case ".jpg":
-                            Path = Server.MapPath(@"~\UploadFile\Images\" + newFileName + strExtension);
+                            strPath = @"~\UploadFile\Images\";
+                            Path = Server.MapPath(strPath + newFileName + strExtension);
                             break;
                         case ".png":
-                            Path = Server.MapPath(@"~\UploadFile\Images\" + newFileName + strExtension);
+                            strPath = @"~\UploadFile\Images\";
+                            Path = Server.MapPath(strPath + newFileName + strExtension);
                             break;
                         //Excel
                         case ".xls":
-                            Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName + strExtension);
+                            strPath = @"~\UploadFile\Excel\";
+                            Path = Server.MapPath(strPath + newFileName + strExtension);
                             break;
                         case ".xlsx":
-                            Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName + strExtension);
+                            strPath = @"~\UploadFile\Excel\";
+                            Path = Server.MapPath(strPath + newFileName + strExtension);
                             break;
                         //其他文件
                         default:
-                            Path = Server.MapPath(@"~\UploadFile\Flies\" + newFileName);
+                            strPath = @"~\UploadFile\Flies\";
+                            Path = Server.MapPath(strPath + newFileName + strExtension);
                             break;
                     }
                     //保存文件
@@ -94,7 +100,7 @@ namespace DingTalk.Controllers
                     {
                         errorCode = 0,
                         errorMessage = "上传成功",
-                        Content = @"~\UploadFile\Flies\" + newFileName
+                        Content = strPath + newFileName + strExtension
                     });
                 }
             }
@@ -180,7 +186,7 @@ namespace DingTalk.Controllers
             {
                 Path = "C:\\Users\\tong\\Source\\Repos\\DingTalk\\DingTalk\\UploadFile\\Excel\\BOM表提交模板.xls";
             }
-           
+
             DataTable db = ExcelHelperByNPOI.ImportExcel2003toDt(Path);
             Dictionary<string, DataTable> dic = new Dictionary<string, DataTable>();
             dic.Add(Path, db);
