@@ -101,7 +101,7 @@
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
-        
+        console.log('ready11111111111111111')
         //PC版获取免登授权码
         DingTalkPC.runtime.permission.requestAuthCode({
             corpId: DingData.CorpId, //企业id
@@ -116,11 +116,13 @@
         });
 
         DingTalkPC.biz.user.get({
-            onSuccess: function (info) {
+            onSuccess: function (result) {
                 console.log(result);
                 DingData.userid = result.emplId
                 DingData.isManager = result.isManager
                 DingData.nickName = result.nickName
+                console.log('免登成功')
+                console.log("你好，" + DingData.nickName)
             },
             onFail: function (err) {
                 console.log('userinfo fail: ' + JSON.stringify(err));
