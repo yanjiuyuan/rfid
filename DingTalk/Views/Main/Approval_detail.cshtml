@@ -176,7 +176,7 @@
                         "FlowId": FlowId,
                         "Remark": this.ruleForm.mark,
                         "IsSend": "false",
-                        "State": "0",
+                        "State": "1",
                         "Title": this.ruleForm.Title,
                         "ProjectId": this.ruleForm.ProjectId
                     }
@@ -186,6 +186,7 @@
                         data: JSON.stringify(param),
                         dataType: "json",
                         success: function (data) {
+                            console.log('退回')
                             console.log(param)
                             console.log(data)
                         },
@@ -229,7 +230,7 @@
                                 if (d.ApplyMan)
                                     d["NodePeople"] = d.ApplyMan.split(',')
                                 if (d.NodeId == 0)
-                                    d["NodePeople"] = ["temp"]//[d.ApplyMan]
+                                    d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
                                 d['AddPeople'] = []
                             }
                             console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)

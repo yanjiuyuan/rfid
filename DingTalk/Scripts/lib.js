@@ -253,6 +253,7 @@ Vue.component('sam-approver-list', {
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
+                                        :type="node.ApplyTime?'success':''"
                                         >
                                     {{p}}
                                 </el-tag>
