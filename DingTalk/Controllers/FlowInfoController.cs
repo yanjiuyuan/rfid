@@ -135,9 +135,13 @@ namespace DingTalk.Controllers
                     using (DDContext context = new DDContext())
                     {
                         //修改流程状态
+                        tasks.State = 1;
+                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
                         context.Entry(tasks).State = EntityState.Modified;
+                        context.SaveChanges();
                         Dictionary<string, string> dic = new Dictionary<string, string>();
-                        dic = FindNextPeople(tasks.FlowId.ToString(), true, tasks.IsSend, tasks.TaskId, tasks.NodeId);
+                        dic = FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyManId, true, tasks.IsSend,
+                            tasks.TaskId, tasks.NodeId);
                         if (dic["NodeName"] == "结束")
                         {
                             JsonConvert.SerializeObject(new ErrorModel
@@ -147,7 +151,6 @@ namespace DingTalk.Controllers
                                 Content = tasks.TaskId.ToString()
                             });
                         }
-                        context.SaveChanges();
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -353,15 +356,17 @@ namespace DingTalk.Controllers
         /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=1
 
         [HttpGet]
-        public Dictionary<string, string> FindNextPeople(string FlowId, bool IsNext = true, bool? IsSend = false, int? OldTaskId = 0, int? NodeId = -1)
+        public Dictionary<string, string> FindNextPeople(string FlowId, string ApplyManId, bool IsNext = true,
+            bool? IsSend = false, int? OldTaskId = 0, int? NodeId = -1)
         {
             using (DDContext context = new DDContext())
             {
+
+
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
                 Dictionary<string, string> dic = new Dictionary<string, string>();
-
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
@@ -375,36 +380,83 @@ namespace DingTalk.Controllers
                     //List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.PeopleId).ToList();
                     //List<string> ListNodePeople = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodePeople).ToList();
 
-                    string[] ListNodeName = NodeName.Split(',');
-                    string[] ListPeopleId = PeopleId.Split(',');
-                    string[] ListNodePeople = NodePeople.Split(',');
-
-                    Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
-                    for (int i = 0; i < ListPeopleId.Length; i++)
+                    //判断流程多人提交(当前步骤)
+                    bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;
+                    if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
                     {
-                        //保存任务流
-                        Tasks newTask = new Tasks()
+                        //查找当前是否还有人未审核
+                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.ApplyManId != ApplyManId && u.State == 1).ToList();
+                        if (ListTask.Count > 0)  //还有人未审核
                         {
-                            TaskId = OldTaskId,
-                            ApplyMan = ListNodePeople[i],
-                            //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                            IsEnable = 1,
-                            NodeId = NodeId + 1,
-                            FlowId = Int32.Parse(FlowId),
-                            IsSend = IsSend,
-                            ApplyManId = ListPeopleId[i],
-                            State = 0, //0 表示未审核 1表示已审核
-                            FileUrl = Task.FileUrl,
-                            OldFileUrl = Task.OldFileUrl,
-                            ImageUrl = Task.ImageUrl,
-                            OldImageUrl = Task.OldImageUrl,
-                            Title = Task.Title,
-                            IsPost = false,
-                            ProjectId = Task.ProjectId,
-                        };
-                        context.Tasks.Add(newTask);
+                            return dic;
+                        }
+                        else
+                        {
+                            string[] ListNodeName = NodeName.Split(',');
+                            string[] ListPeopleId = PeopleId.Split(',');
+                            string[] ListNodePeople = NodePeople.Split(',');
+
+                            Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                            for (int i = 0; i < ListPeopleId.Length; i++)
+                            {
+                                //保存任务流
+                                Tasks newTask = new Tasks()
+                                {
+                                    TaskId = OldTaskId,
+                                    ApplyMan = ListNodePeople[i],
+                                    //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                                    IsEnable = 1,
+                                    NodeId = NodeId + 1,
+                                    FlowId = Int32.Parse(FlowId),
+                                    IsSend = IsSend,
+                                    ApplyManId = ListPeopleId[i],
+                                    State = 0, //0 表示未审核 1表示已审核
+                                    FileUrl = Task.FileUrl,
+                                    OldFileUrl = Task.OldFileUrl,
+                                    ImageUrl = Task.ImageUrl,
+                                    OldImageUrl = Task.OldImageUrl,
+                                    Title = Task.Title,
+                                    IsPost = false,
+                                    ProjectId = Task.ProjectId,
+                                };
+                                context.Tasks.Add(newTask);
+                            }
+                            context.SaveChanges();
+                        }
                     }
-                    context.SaveChanges();
+                    else  //流程配置为任意一人同意后提交
+                    {
+                        string[] ListNodeName = NodeName.Split(',');
+                        string[] ListPeopleId = PeopleId.Split(',');
+                        string[] ListNodePeople = NodePeople.Split(',');
+
+                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                        for (int i = 0; i < ListPeopleId.Length; i++)
+                        {
+                            //保存任务流
+                            Tasks newTask = new Tasks()
+                            {
+                                TaskId = OldTaskId,
+                                ApplyMan = ListNodePeople[i],
+                                //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                                IsEnable = 1,
+                                NodeId = NodeId + 1,
+                                FlowId = Int32.Parse(FlowId),
+                                IsSend = IsSend,
+                                ApplyManId = ListPeopleId[i],
+                                State = 0, //0 表示未审核 1表示已审核
+                                FileUrl = Task.FileUrl,
+                                OldFileUrl = Task.OldFileUrl,
+                                ImageUrl = Task.ImageUrl,
+                                OldImageUrl = Task.OldImageUrl,
+                                Title = Task.Title,
+                                IsPost = false,
+                                ProjectId = Task.ProjectId,
+                            };
+                            context.Tasks.Add(newTask);
+                        }
+                        context.SaveChanges();
+                    }
                     return dic;
                 }
             }
@@ -741,6 +793,7 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
+                        string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId).ToList();
                         var Quary = from n in NodeInfoList
@@ -753,11 +806,12 @@ namespace DingTalk.Controllers
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
                                         IsBack = tt == null ? false : tt.IsBack,
-                                        ApplyMan = n.NodePeople,
+                                        ApplyMan = (n.NodeName == "申请人发起") ? ApplyMan : n.NodePeople,
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
                                     };
+
                         return JsonConvert.SerializeObject(Quary);
                     }
                 }
@@ -908,7 +962,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                Tasks purchaseDown = context.Tasks.Where(u => u.Id == 163).First();
+                Tasks purchaseDown = context.Tasks.Where(u => u.Id == 191).First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
