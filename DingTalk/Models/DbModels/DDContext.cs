@@ -8,7 +8,7 @@ namespace DingTalk.Models.DbModels
     public partial class DDContext : DbContext
     {
         public DDContext()
-            : base("name=DDContext1")
+            : base("name=DDContext")
         {
         }
 
