@@ -33,6 +33,9 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="备注">
+            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
+        </el-form-item>
         <!--图片展示-->
         <el-form-item label="相关图片">
             <el-upload action=""
@@ -54,6 +57,7 @@
         </el-form-item>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit">同意</el-button>
+            <el-button v-if="isBack" type="warning" v-on:click="returnSubmit">退回</el-button>
             <el-button type="danger" >不同意</el-button>
         </el-form-item>
     </el-form>
@@ -96,7 +100,8 @@
                     nodeInfo: {},
                     nodeList: [],
                     copyers: ['小唐', '季老师'],
-                    ruleForm: {}
+                    ruleForm: {},
+                    isBack: false
                 }
             },
             methods: {
@@ -125,6 +130,64 @@
                         success: function (data) {
                             console.log(param)
                             console.log(data)
+                            if (data && data.errorCode == 0) {
+                                alert("创建成功")
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            console.log(XMLHttpRequest.status);
+                        }
+                    })
+                },
+                //退回审批
+                returnSubmit() {
+                    //var FlowBackList = {
+                    //    "Id": 157,
+                    //    "TaskId": 4,
+                    //    "ApplyMan": "蔡兴桐",
+                    //    "ApplyManId": "manager5312",
+
+                    //    "ApplyTime": null,
+                    //    "IsEnable": 1,
+                    //    "FlowId": 6,
+                    //    "NodeId": 1,
+                    //    "Remark": null,
+                    //    "IsSend": false,
+                    //    "State": 1,
+
+                    //    "ImageUrl": "",
+                    //    "FileUrl": null,
+                    //    "Title": "图纸上传2018-04-23 16:41",
+                    //    "ProjectId": "2018-04-23 16:41",
+                    //    "IsPost": false,
+                    //    "OldImageUrl": "",
+                    //    "OldFileUrl": null,
+                    //    "IsBack": true,
+                    //    "BackNodeId": 0
+                    //}
+                    var param = {
+                        "Id": UrlObj.id,
+                        "TaskId": TaskId,
+                        "ApplyMan": DingData.nickName,
+                        "ApplyManId": DingData.userid,
+                        "NodeId": NodeId,
+                        "ApplyTime": _getTime(),
+                        "IsEnable": "1",
+                        "FlowId": FlowId,
+                        "Remark": this.ruleForm.mark,
+                        "IsSend": "false",
+                        "State": "0",
+                        "Title": this.ruleForm.Title,
+                        "ProjectId": this.ruleForm.ProjectId
+                    }
+                    $.ajax({
+                        url: "/FlowInfo/FlowBack",
+                        type: "POST",
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        success: function (data) {
+                            console.log(param)
+                            console.log(data)
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             console.log(XMLHttpRequest.status);
@@ -140,10 +203,13 @@
                         type: "GET",
                         dataType: "json",
                         success: function (data) {
+                            console.log("获取节点数据GetNodeInfo")
+                            console.log(data)
                             if(!data) return
                             that.nodeInfo = data[0]
                             that.preApprove = !data[0].IsNeedChose
                             that.preCopy = !data[0].IsSendChose
+                            that.isBack = data[0].IsBack
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             console.log(XMLHttpRequest.status);
@@ -166,6 +232,8 @@
                                     d.NodePeople = [DingData.nickName]
                                 d['AddPeople'] = []
                             }
+                            console.log("相关人员列表GetFlowProgress")
+                            console.log(data)
                             that.nodeList = data
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -198,6 +266,8 @@
                 }
             },
             created: function () {
+                console.log('get all data')
+                console.log(allData)
                 this.ruleForm = allData
                 this.getNodeInfo()
                 this.getNodeList()
@@ -206,7 +276,8 @@
             }
         })
         //获取审批表单信息
-        function getFormData() {
+        async function getFormData() {
+            await
             $.ajax({
                 url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId,
                 type: "GET",
