@@ -930,7 +930,7 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true).First();
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).First();
                         return JsonConvert.SerializeObject(task);
                     }
                 }
