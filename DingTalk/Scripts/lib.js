@@ -256,8 +256,8 @@ Vue.component('sam-approver-list', {
                                         >
                                     {{p}}
                                 </el-tag>
-                                <p class='remark'>审批意见</p>
-                                <p class='applytime'>2018-05-01 11:40</p>
+                                <p class='remark'>{{node.Remark}}</p>
+                                <p class='applytime'>{{node.ApplyTime}}</p>
                                 </br>
                             </template>
                             <div v-if="index<nodelist.length-1">

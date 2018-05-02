@@ -221,18 +221,18 @@
                 getNodeList() {
                     var that = this
                     $.ajax({
-                        url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                        url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
                         type: "GET",
                         dataType: "json",
                         success: function (data) {
                             for (let d of data) {
-                                if (d.NodePeople)
-                                    d.NodePeople = d.NodePeople.split(',')
+                                if (d.ApplyMan)
+                                    d["NodePeople"] = d.ApplyMan.split(',')
                                 if (d.NodeId == 0)
-                                    d.NodePeople = [DingData.nickName]
+                                    d["NodePeople"] = ["temp"]//[d.ApplyMan]
                                 d['AddPeople'] = []
                             }
-                            console.log("相关人员列表GetFlowProgress")
+                            console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
                             console.log(data)
                             that.nodeList = data
                         },
@@ -290,7 +290,7 @@
                     for (let img of imageList) {
                         fileList.push({
                             name: 'hello.jpg',
-                            url: document.location + (img.substring(2) + '.jpg').replace(/\\/g, "/")
+                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
                         })
                     }
                     console.log(fileList)
