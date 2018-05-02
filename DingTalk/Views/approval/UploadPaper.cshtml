@@ -390,7 +390,9 @@
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
+                        console.log("/FlowInfo/GetNodeInfo?NodeId=0&FlowId=" + FlowId)
                         console.log("获取审批申请数据ok")
+                        console.log(data)
                         that.nodeInfo = data[0]
                         that.preApprove = !data[0].IsNeedChose
                         that.preCopy = !data[0].IsSendChose
