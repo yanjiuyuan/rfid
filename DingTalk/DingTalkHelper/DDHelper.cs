@@ -47,7 +47,6 @@ namespace DingTalk.DingTalkHelper
             {
                 string response = HttpRequestHelper.Get(url);
                 JsApiTicketModel model = Newtonsoft.Json.JsonConvert.DeserializeObject<JsApiTicketModel>(response);
-
                 if (model != null)
                 {
                     if (model.errcode == 0)
