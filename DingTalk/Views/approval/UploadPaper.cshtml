@@ -253,7 +253,8 @@
                     IsSend: 'False',
                     FlowId: FlowId,
                     NodeId: NodeId,
-                    OldTaskId: taskId
+                    OldTaskId: taskId,
+                    ApplyManId: DingData.userid
                 }
                 $.ajax({
                     url: "/FlowInfo/FindNextPeople" + _formatQueryStr(param),
@@ -261,6 +262,7 @@
                     async: false,
                     success: function (data) {
                         console.log("审批绑定默认审批人ok")
+                        console.log(param)
                         console.log(data)
                         console.log("/FlowInfo/FindNextPeople" + _formatQueryStr(param))
                         that.doneSubmit()
