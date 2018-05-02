@@ -166,7 +166,7 @@
                     //    "BackNodeId": 0
                     //}
                     var param = {
-                        "Id": UrlObj.id,
+                        "Id": allData.Id,
                         "TaskId": TaskId,
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
@@ -178,7 +178,8 @@
                         "IsSend": "false",
                         "State": "1",
                         "Title": this.ruleForm.Title,
-                        "ProjectId": this.ruleForm.ProjectId
+                        "ProjectId": this.ruleForm.ProjectId,
+                        "BackNodeId": this.nodeInfo.BackNodeId
                     }
                     $.ajax({
                         url: "/FlowInfo/FlowBack",
@@ -279,25 +280,26 @@
         //获取审批表单信息
         async function getFormData() {
             await
-            $.ajax({
-                url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log("获取审批表单信息ok")
-                    console.log(data)
-                    allData = data
-                    var imageList = data.ImageUrl.split(',')
-                    for (let img of imageList) {
-                        fileList.push({
-                            name: 'hello.jpg',
-                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
-                        })
-                    }
-                    console.log(fileList)
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
+                $.ajax({
+                    url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取审批表单信息ok")
+                        console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
+                        console.log(data)
+                        allData = data
+                        var imageList = data.ImageUrl.split(',')
+                        for (let img of imageList) {
+                            fileList.push({
+                                name: 'hello.jpg',
+                                url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                            })
+                        }
+                        console.log(fileList)
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
                 }
              })
         }
