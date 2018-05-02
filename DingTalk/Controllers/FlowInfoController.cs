@@ -353,7 +353,7 @@ namespace DingTalk.Controllers
         /// <param name="IsNext">是否找下一节点的人(默认True)</param>
         /// <param name="IsSend">抄送标识(默认False)</param>
         /// <returns>NodeName节点名称  NodePeople节点审批人 PeopleId审批人Id</returns>
-        /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=1
+        /// 测试数据: FlowInfo/FindNextPeople?OldTaskId=1&IsNext=true&IsSend=False&FlowId=6&NodeId=0&ApplyManId=0935455445756597
 
         [HttpGet]
         public Dictionary<string, string> FindNextPeople(string FlowId, string ApplyManId, bool IsNext = true,
@@ -361,8 +361,6 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-
-
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
@@ -932,7 +930,7 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true).First();
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).First();
                         return JsonConvert.SerializeObject(task);
                     }
                 }
