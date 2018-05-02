@@ -166,7 +166,7 @@
                     //    "BackNodeId": 0
                     //}
                     var param = {
-                        "Id": UrlObj.id,
+                        "Id": allData.Id,
                         "TaskId": TaskId,
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
@@ -178,7 +178,8 @@
                         "IsSend": "false",
                         "State": "1",
                         "Title": this.ruleForm.Title,
-                        "ProjectId": this.ruleForm.ProjectId
+                        "ProjectId": this.ruleForm.ProjectId,
+                        "BackNodeId": this.nodeInfo.BackNodeId
                     }
                     $.ajax({
                         url: "/FlowInfo/FlowBack",
