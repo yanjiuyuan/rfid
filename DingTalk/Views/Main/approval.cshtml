@@ -4,6 +4,17 @@
 
 <!--右侧实体内容-->
 <el-main id="partPage">
+    <br />
+    <template>
+        <span>我是：</span>
+        <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">
+            <el-option v-for="item in userList"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id">
+            </el-option>
+        </el-select>
+    </template>
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
         <template slot="title">
@@ -70,7 +81,9 @@
                 activeNames: [1,2,3],
                 count: 2,
                 menu: [],
-                list: []
+                list: [],
+                userList: userList,
+                userName: DingData.nickName
             }
         },
         methods: {
@@ -101,6 +114,15 @@
             },
             loadPage: function (url) {
                 $("#tempPage").load(url)
+            },
+            selectUser: function (id) {
+                console.log(id)
+                for (var user of this.userList) {
+                    if (user.id == id) {
+                        DingData.userid = user.id
+                        DingData.nickName = user.name
+                    }
+                }
             }
         },
         created: function () {

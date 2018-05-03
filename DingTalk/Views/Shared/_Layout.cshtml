@@ -25,7 +25,13 @@
         //全局变量
         var needLogin = '@ViewBag.needLogin'
         var DingData = {}
-        
+        var userList = [
+            { name: '张鹏辉', id: '100328051024695354' },
+            { name: '肖民生', id: '073110326032521796' },
+            { name: '黄龙贤', id: '020821466340361583' },
+            { name: '蔡兴桐', id: '083452125733424957' },
+            { name: '詹姆斯', id: 'manager325' }
+        ]
     </script>
 </head>
 <body>
@@ -64,19 +70,19 @@
             DingData = data
             DingData.userid = '0935455445756597'
             DingData.nickName = '詹姆斯'
-            var a = 11
-            if (a == 1) {
-                DingData.userid = 'manager325'
-                DingData.nickName = '蔡兴桐'
-            }
-            if (a == 2) {
-                DingData.userid = '1209662535974958'
-                DingData.nickName = '小威'
-            }
-            if (a == 3) {
-                DingData.userid = '111'
-                DingData.nickName = '王老师'
-            }
+            //var a = 11
+            //if (a == 1) {
+            //    DingData.userid = 'manager325'
+            //    DingData.nickName = '蔡兴桐'
+            //}
+            //if (a == 2) {
+            //    DingData.userid = '1209662535974958'
+            //    DingData.nickName = '小威'
+            //}
+            //if (a == 3) {
+            //    DingData.userid = '111'
+            //    DingData.nickName = '王老师'
+            //}
             console.log("你好，" + DingData.nickName)
             var configObj = {
                 jsticket: DingData.JsApiTicket,
