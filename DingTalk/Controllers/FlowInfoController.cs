@@ -144,6 +144,7 @@ namespace DingTalk.Controllers
                             tasks.TaskId, tasks.NodeId);
                         if (dic["NodeName"] == "结束")
                         {
+
                             JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 0,
@@ -967,9 +968,35 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        #region 钉钉SDK测试
+        #region 系统已配置人员信息读取
 
+        /// <summary>
+        /// 系统已配置人员信息读取
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据 /FlowInfo/GetUserInfo
+        public string GetUserInfo()
+        {
+            using (DDContext context = new DDContext())
+            {
+                var NodeInfoList = context.NodeInfo.Where(n => n.PeopleId != null && n.NodePeople != null);
+                var Quary = from n in NodeInfoList
+                            select new
+                            {
+                                n.PeopleId,
+                                n.NodePeople
+                            };
+                return JsonConvert.SerializeObject(Quary);
+            }
+        }
 
+        #endregion
+
+        #region 钉钉SDK再封装接口
+
+        /// <summary>
+        /// 发送OA消息
+        /// </summary>
         public void TestSentMsg()
         {
             TopSDKTest top = new TopSDKTest();
