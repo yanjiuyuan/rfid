@@ -161,7 +161,8 @@ namespace DingTalk.Controllers
                     using (DDContext context = new DDContext())
                     {
                         foreach (PurchaseDown purchaseDown in PurchaseDownList)
-                        {
+                        { 
+                            purchaseDown.IsDown = true;
                             context.PurchaseDown.Add(purchaseDown);
                         }
                         context.SaveChanges();
