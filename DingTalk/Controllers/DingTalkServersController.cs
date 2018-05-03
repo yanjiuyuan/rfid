@@ -19,6 +19,8 @@ namespace DingTalk.Controllers
     public class DingTalkServersController : ApiController
     {
         DingTalkManager dtManager;
+        public DingTalkConfig DTConfig { get; set; } = new DingTalkConfig();
+
         public DingTalkServersController()
         {
             dtManager = new DingTalkManager();
@@ -204,10 +206,10 @@ namespace DingTalk.Controllers
         {
             var msgModel = new TextMsgModel()
             {
-                Agentid = "86624962",
+                Agentid = DTConfig.AgentId,
                 Content = "测试一条消息",
                 //Toparty = "32760351"
-                Touser = "manager9585"
+                Touser = "manager3312",
             };
             return await dtManager.SendMessage(msgModel);
         }

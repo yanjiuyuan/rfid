@@ -19,7 +19,6 @@ namespace DingTalkServer
             
             var url = _addressConfig.SendMessageUrl;
             var result = await _client.UploadModel(url,msgModel);
-
             return result;
 
         }

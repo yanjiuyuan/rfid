@@ -966,5 +966,16 @@ namespace DingTalk.Controllers
         }
 
         #endregion
+
+        #region 钉钉SDK测试
+
+
+        public void TestSentMsg()
+        {
+            TopSDKTest top = new TopSDKTest();
+            top.SendMessage("manager5312");
+        }
+
+        #endregion
     }
 }

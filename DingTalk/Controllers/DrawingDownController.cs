@@ -23,53 +23,44 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 图纸上传数据读取(图纸上传流程已结束)
         /// </summary>
-        /// <param name="ApplyManId">用户Id</param>
+        /// <param name="ProjectId">项目Id</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetDrawingDownInfo?ApplyManId=123456
+        /// 测试数据：/DrawingDown/GetDrawingDownInfo?ProjectId=2017ZL054&ApplyManId=123456
         [HttpGet]
-        public string GetDrawingDownInfo(string ApplyManId)
+        public string GetDrawingDownInfo(string ProjectId, string ApplyManId)
         {
             try
             {
-                if (string.IsNullOrEmpty(ApplyManId))
+                using (DDContext context = new DDContext())
                 {
-                    return JsonConvert.SerializeObject(new ErrorModel
+                    string CheckApplyManId = context.NodeInfo.Where(u => u.FlowId == "7" && u.NodeId == 0).First().PeopleId;
+                    if (ApplyManId != CheckApplyManId)
                     {
-                        errorCode = 1,
-                        errorMessage = "未传递参数ApplyManId"
-                    });
-                }
-                else
-                {
-                    using (DDContext context = new DDContext())
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 1,
+                            errorMessage = "没有权限发起次流程"
+                        });
+                    }
+                    else
                     {
-                        var TaskList = context.Tasks.Where(u => u.State == 1 && u.FlowId == 6);
-                        var NodeInfoList = context.NodeInfo.Where(u => u.FlowId == "6" && u.PeopleId == ApplyManId);
-                        var Purchase = context.Purchase;
-                        var TaskLists = from t in TaskList
-                                        join n in NodeInfoList
-                                        on t.FlowId.ToString() equals n.FlowId
-                                        select new
-                                        {
-                                            TaskId = t.TaskId
-                                        };
-                        var Quary = from t in TaskLists
+                        var TaskList = context.Tasks.Where(u => u.State == 1 && u.FlowId == 6 && u.ProjectId == ProjectId);
+                        var Purchase = context.Purchase.Where(u => u.IsDown != true);
+                        var Quary = from t in TaskList
                                     join p in Purchase
                                     on t.TaskId.ToString() equals p.TaskId
-                                    where p.IsDown == false
                                     select new
                                     {
-                                        TaskId = p.TaskId,
-                                        DrawingNo = p.DrawingNo,
-                                        CodeNo = p.CodeNo,
-                                        Name = p.Name,
-                                        Count = p.Count,
-                                        MaterialScience = p.MaterialScience,
-                                        Unit = p.Unit,
-                                        Brand = p.Brand,
-                                        Sorts = p.Sorts,
-                                        Mark = p.Mark,
-                                        IsDown = p.IsDown
+                                        p.Id,
+                                        p.DrawingNo,
+                                        p.Name,
+                                        p.Sorts,
+                                        p.TaskId,
+                                        p.MaterialScience,
+                                        p.Brand,
+                                        p.Count,
+                                        p.Unit,
+                                        p.Mark,
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }

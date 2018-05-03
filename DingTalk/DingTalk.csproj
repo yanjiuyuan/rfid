@@ -138,6 +138,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="TopSdk, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\TopSdk.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -191,6 +195,7 @@
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Controllers\DingTalkServersController.cs" />
+    <Compile Include="Controllers\TopSDKTest.cs" />
     <Compile Include="DingTalkAddressConfig\DepartmentAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\DingTalkServerAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\UserAddressConfig.cs" />
