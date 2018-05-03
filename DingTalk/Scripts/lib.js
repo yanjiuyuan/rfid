@@ -160,6 +160,7 @@ var pickerOptions = {
 var mixin = {
     data: {
         user: {},
+        disablePage: false,
         rules: {
             name: [
                 { required: true, message: '名称不能为空', trigger: 'blur' },
