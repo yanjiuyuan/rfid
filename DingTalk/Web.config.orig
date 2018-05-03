@@ -13,7 +13,7 @@
     <add key="webpages:Enabled" value="false" />
     <add key="ClientValidationEnabled" value="true" />
     <add key="UnobtrusiveJavaScriptEnabled" value="true" />
-    <add key="AccessToken" value="7d42f15272d73aa491398ea49ba3ba54" />
+    <add key="AccessToken" value="5794a8d4ce373b528fa5e8f83feefbf6" />
     <add key="CorpId" value="ding1238d49a88c92de535c2f4657eb6378f" />
     <add key="CorpId_hao" value="dingac9b87fa3acab57135c2f4657eb6378f" />
     <add key="CorpSecret" value="JEgMvDPWMWtJM2ZVzvup73_XBHsI-lL-lflOK_E1rW16PGVICvSkSrRDIZkuJbAT" />
@@ -21,7 +21,11 @@
     <add key="SSOSecret" value="1lNpDISp3vg1XqfssWehDTC7EqdLrmuX-u-cFcg1aA-6wimomJQPU8vVxKyx_fBu" />
     <add key="agentId" value="122630327" />
     <add key="agentId_hao" value="155763478" />
+<<<<<<< HEAD
     <add key="hao" value="1" />
+=======
+    <add key="hao" value="3" />
+>>>>>>> 0e2ee586bfa10a1dcfb73d991cfea17e6dcd4a87
     <add key="AccessTokenLastUpdateTime" value="" />
   </appSettings>
   <system.web>
