@@ -9,9 +9,9 @@
         <span>我是：</span>
         <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">
             <el-option v-for="item in userList"
-                       :key="item.id"
-                       :label="item.name"
-                       :value="item.id">
+                       :key="item.PeopleId"
+                       :label="item.NodePeople"
+                       :value="item.PeopleId">
             </el-option>
         </el-select>
     </template>
@@ -69,7 +69,7 @@
         {
             flowId: 7,
             sortId: 3,
-            url: '/approval/UseCar',
+            url: '/approval/DownloadPaper',
             position: '-324px -227px'
         }
     ]
@@ -118,15 +118,28 @@
             selectUser: function (id) {
                 console.log(id)
                 for (var user of this.userList) {
-                    if (user.id == id) {
-                        DingData.userid = user.id
-                        DingData.nickName = user.name
+                    if (user.PeopleId == id) {
+                        DingData.userid = user.PeopleId
+                        DingData.nickName = user.NodePeople
                     }
                 }
+            },
+            getUserInfo: function () {
+                var that = this 
+                $.ajax({
+                    url: '/FlowInfo/GetUserInfo',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log('获取用户数据')
+                        console.log(data)
+                        that.userList = data
+                    }
+                })
             }
         },
         created: function () {
             this.getMenu()
+            this.getUserInfo()
             loadHtml("mainPage", "partPage")
         }
     })
