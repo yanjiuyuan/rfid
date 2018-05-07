@@ -1,4 +1,5 @@
 ﻿using Common.JsonHelper;
+using DingTalk.Bussiness.FlowInfo;
 using DingTalk.Models;
 using DingTalk.Models.DbModels;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="ProjectId">项目Id</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetDrawingDownInfo?ProjectId=2017ZL054&ApplyManId=123456
+        /// 测试数据：/DrawingDown/GetDrawingDownInfo?ProjectId=2018-04-23 16:57&ApplyManId=123456
         [HttpGet]
         public string GetDrawingDownInfo(string ProjectId, string ApplyManId)
         {
@@ -44,11 +45,27 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        var TaskList = context.Tasks.Where(u => u.State == 1 && u.FlowId == 6 && u.ProjectId == ProjectId);
+                        List<Tasks> TaskIdList = FlowInfoServer.ReturnUnFinishedTaskId("6");
+                        var TaskIdLists = from t in TaskIdList
+                                          where
+                     t.ProjectId == ProjectId
+                                          select t;
+                        //获取并过滤已完成流程的TaskId
+                        List<string> ListTaskId = new List<string>();
+                        foreach (var item in TaskIdLists)
+                        {
+                            if (!ListTaskId.Contains(item.TaskId.ToString()))
+                            {
+                                ListTaskId.Add(item.TaskId.ToString());
+                            }
+                        }
+
+                        var TaskList = from t in ListTaskId select t;
+
                         var Purchase = context.Purchase.Where(u => u.IsDown != true);
                         var Quary = from t in TaskList
                                     join p in Purchase
-                                    on t.TaskId.ToString() equals p.TaskId
+                                    on t.ToString() equals p.TaskId
                                     select new
                                     {
                                         p.Id,
@@ -161,7 +178,7 @@ namespace DingTalk.Controllers
                     using (DDContext context = new DDContext())
                     {
                         foreach (PurchaseDown purchaseDown in PurchaseDownList)
-                        { 
+                        {
                             purchaseDown.IsDown = true;
                             context.PurchaseDown.Add(purchaseDown);
                         }
