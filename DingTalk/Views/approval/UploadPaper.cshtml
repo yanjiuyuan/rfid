@@ -89,7 +89,7 @@
         <sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
         </sam-addapprover>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
 </el-form>
@@ -135,6 +135,7 @@
                 var that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
+                        that.disablePage = true
                         var title
                         for (let p of that.projestList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
@@ -445,6 +446,7 @@
             //审批所有流程通过，后续处理
             doneSubmit() {
                 var allState = 2
+                //有自选审批人，多调一个接口
                 for (let node of this.nodeList) {
                     if (node.NodeId == this.nodeInfo.NodeId + 1 && node.AddPeople.length>0)
                         allState = 3
@@ -453,6 +455,13 @@
                 if (State >= allState) {
                     alert('提交成功')
                     State = 0
+                    DingTalkPC.device.notification.alert({
+                        message: '提交成功',
+                        buttonName: '确定',
+                        onSuccess: function () {
+                            loadPage('/main/Approval')
+                        }
+                    })
                 }
             }
         },

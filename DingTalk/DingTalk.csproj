@@ -140,7 +140,7 @@
     </Reference>
     <Reference Include="TopSdk, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\TopSdk.dll</HintPath>
+      <HintPath>..\bin\TopSdk.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>

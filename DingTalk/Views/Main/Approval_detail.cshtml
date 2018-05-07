@@ -4,7 +4,7 @@
 
 <!--右侧实体内容-->
 <el-main id="partPage" style="position:relative;">
-    <div class="head-fixed" onclick="loadPage('/Main/approval_waitMe')">
+    <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
         审批处理-{{nodeInfo.NodeName}}
     </div>
@@ -56,254 +56,244 @@
             <el-input v-model="ruleForm.mark"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit">同意</el-button>
-            <el-button v-if="isBack" type="warning" v-on:click="returnSubmit">退回</el-button>
-            <el-button type="danger" >不同意</el-button>
+            <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+            <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+            <el-button type="danger" :disabled="disablePage" >不同意</el-button>
         </el-form-item>
     </el-form>
 </el-main>
 
 <script>
     //初始化
-    (async function () {
-        if (UrlObj.flowid) {
-            FlowId = UrlObj.flowid
-            NodeId = UrlObj.nodeid
-            TaskId = UrlObj.taskid
-            Id = UrlObj.id
-        }
-        var allData = {}
-        var fileList = []
-        await getFormData()
-        var demo = new Vue({
-            el: "#partPage",
-            mixins: [mixin],
-            data: function () {
-                return {
-                    preApprove: false,
-                    preCopy: false,
-                    imageList: [],
-                    fileList: fileList,
-                    data: [],
-                    items: {
-                        DrawingNo: '代号',
-                        Name: '名称',
-                        Count: '数量',
-                        MaterialScience: '材料',
-                        Unit: '单位',
-                        Brand: '品牌',
-                        Sorts: '类别',
-                        Mark: '备注'
-                    },
-                    tableData: [],
-                    totalRows: 0,
-                    nodeInfo: {},
-                    nodeList: [],
-                    copyers: ['小唐', '季老师'],
-                    ruleForm: {},
-                    isBack: false
-                }
-            },
-            methods: {
-                //提交审批
-                onSubmit(formName) {
-                    var param = {
-                        "Id": UrlObj.id,
-                        "TaskId": TaskId,
-                        "ApplyMan": DingData.nickName,
-                        "ApplyManId": DingData.userid,
-                        "NodeId": NodeId,
-                        "ApplyTime": _getTime(),
-                        "IsEnable": "1",
-                        "FlowId": FlowId,
-                        "Remark": this.ruleForm.mark,
-                        "IsSend": "false",
-                        "State": "1",
-                        "Title": this.ruleForm.Title,
-                        "ProjectId": this.ruleForm.ProjectId
-                    }
-                    $.ajax({
-                        url: "/FlowInfo/SubmitTaskInfo",
-                        type: "POST",
-                        data: JSON.stringify(param),
-                        dataType: "json",
-                        success: function (data) {
-                            console.log(param)
-                            console.log(data)
-                            if (data && data.errorCode == 0) {
-                                alert("创建成功")
-                            }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            console.log(XMLHttpRequest.status);
-                        }
-                    })
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        Id = UrlObj.id
+    }
+    var allData = {}
+    var fileList = []
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                preApprove: false,
+                preCopy: false,
+                imageList: [],
+                fileList: fileList,
+                data: [],
+                items: {
+                    DrawingNo: '代号',
+                    Name: '名称',
+                    Count: '数量',
+                    MaterialScience: '材料',
+                    Unit: '单位',
+                    Brand: '品牌',
+                    Sorts: '类别',
+                    Mark: '备注'
                 },
-                //退回审批
-                returnSubmit() {
-                    //var FlowBackList = {
-                    //    "Id": 157,
-                    //    "TaskId": 4,
-                    //    "ApplyMan": "蔡兴桐",
-                    //    "ApplyManId": "manager5312",
-
-                    //    "ApplyTime": null,
-                    //    "IsEnable": 1,
-                    //    "FlowId": 6,
-                    //    "NodeId": 1,
-                    //    "Remark": null,
-                    //    "IsSend": false,
-                    //    "State": 1,
-
-                    //    "ImageUrl": "",
-                    //    "FileUrl": null,
-                    //    "Title": "图纸上传2018-04-23 16:41",
-                    //    "ProjectId": "2018-04-23 16:41",
-                    //    "IsPost": false,
-                    //    "OldImageUrl": "",
-                    //    "OldFileUrl": null,
-                    //    "IsBack": true,
-                    //    "BackNodeId": 0
-                    //}
-                    var param = {
-                        "Id": allData.Id,
-                        "TaskId": TaskId,
-                        "ApplyMan": DingData.nickName,
-                        "ApplyManId": DingData.userid,
-                        "NodeId": NodeId,
-                        "ApplyTime": _getTime(),
-                        "IsEnable": "1",
-                        "FlowId": FlowId,
-                        "Remark": this.ruleForm.mark,
-                        "IsSend": "false",
-                        "State": "1",
-                        "Title": this.ruleForm.Title,
-                        "ProjectId": this.ruleForm.ProjectId,
-                        "BackNodeId": this.nodeInfo.BackNodeId
-                    }
-                    $.ajax({
-                        url: "/FlowInfo/FlowBack",
-                        type: "POST",
-                        data: JSON.stringify(param),
-                        dataType: "json",
-                        success: function (data) {
-                            console.log('退回')
-                            console.log(param)
-                            console.log(data)
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            console.log(XMLHttpRequest.status);
-                        }
-                    })
-                },
-            
-                //获取节点数据GetNodeInfo
-                getNodeInfo() {
-                    var that = this
-                    $.ajax({
-                        url: "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function (data) {
-                            console.log("获取节点数据GetNodeInfo")
-                            console.log(data)
-                            if(!data) return
-                            that.nodeInfo = data[0]
-                            that.preApprove = !data[0].IsNeedChose
-                            that.preCopy = !data[0].IsSendChose
-                            that.isBack = data[0].IsBack
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            console.log(XMLHttpRequest.status);
-                        }
-                    })
-                
-                },
-                //获取审批/抄送 相关人员列表GetFlowProgress
-                getNodeList() {
-                    var that = this
-                    $.ajax({
-                        url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function (data) {
-                            for (let d of data) {
-                                if (d.ApplyMan)
-                                    d["NodePeople"] = d.ApplyMan.split(',')
-                                if (d.NodeId == 0)
-                                    d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
-                                d['AddPeople'] = []
-                            }
-                            console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
-                            console.log(data)
-                            that.nodeList = data
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            console.log(XMLHttpRequest.status);
-                        }
-                    })
-                },
-                //获取bom表信息
-                getBomInfo() {
-                    var that = this
-                    $.ajax({
-                        url: "/DrawingUpload/GetPurchase?TaskId=" + TaskId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function (data) {
-                            console.log("获取bom表信息ok")
-                            console.log(data)
-                            that.data = data
-                            that.getData()
-                            that.totalRows = data.length
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            console.log(XMLHttpRequest.status);
-                        }
-                    })
-                },
-                handlePictureCardPreview(file) {
-                    this.dialogImageUrl = file.url;
-                    this.dialogVisible = true;
-                }
-            },
-            created: function () {
-                console.log('get all data')
-                console.log(allData)
-                this.ruleForm = allData
-                this.getNodeInfo()
-                this.getNodeList()
-                this.getBomInfo()
-                loadHtml("mainPage", "partPage")
+                tableData: [],
+                totalRows: 0,
+                nodeInfo: {},
+                nodeList: [],
+                copyers: ['小唐', '季老师'],
+                ruleForm: {},
+                isBack: false
             }
-        })
-        //获取审批表单信息
-        async function getFormData() {
-            await
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                this.disablePage = true
+                var param = {
+                    "Id": UrlObj.id,
+                    "TaskId": TaskId,
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": NodeId,
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId,
+                    "Remark": this.ruleForm.mark,
+                    "IsSend": "false",
+                    "State": "1",
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId
+                }
                 $.ajax({
-                    url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
-                    type: "GET",
+                    url: "/FlowInfo/SubmitTaskInfo",
+                    type: "POST",
+                    data: JSON.stringify(param),
                     dataType: "json",
                     success: function (data) {
-                        console.log("获取审批表单信息ok")
-                        console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
+                        console.log(param)
                         console.log(data)
-                        allData = data
-                        var imageList = data.ImageUrl.split(',')
-                        for (let img of imageList) {
-                            fileList.push({
-                                name: 'hello.jpg',
-                                url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                        if (data && data.errorCode == 0) {
+                            alert("创建成功")
+                            DingTalkPC.device.notification.alert({
+                                message: '提交成功',
+                                buttonName: '确定',
+                                onSuccess: function () {
+                                    loadPage('/main/Approval')
+                                }
                             })
                         }
-                        console.log(fileList)
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //退回审批
+            returnSubmit() {
+                this.disablePage = true
+                var param = {
+                    "Id": allData.Id,
+                    "TaskId": TaskId,
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": NodeId,
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId,
+                    "Remark": this.ruleForm.mark,
+                    "IsSend": "false",
+                    "State": "1",
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId,
+                    "BackNodeId": this.nodeInfo.BackNodeId
                 }
-             })
+                $.ajax({
+                    url: "/FlowInfo/FlowBack",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log('退回')
+                        console.log(param)
+                        console.log(data)
+                        DingTalkPC.device.notification.alert({
+                            message: '提交成功',
+                            buttonName: '确定',
+                            onSuccess: function () {
+                                loadPage('/main/Approval')
+                            }
+                        })
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+
+            //获取节点数据GetNodeInfo
+            getNodeInfo() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取节点数据GetNodeInfo")
+                        console.log(data)
+                        if (!data) return
+                        that.nodeInfo = data[0]
+                        that.preApprove = !data[0].IsNeedChose
+                        that.preCopy = !data[0].IsSendChose
+                        that.isBack = data[0].IsBack
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+
+            },
+            //获取审批/抄送 相关人员列表GetFlowProgress
+            getNodeList() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        for (let d of data) {
+                            if (d.ApplyMan)
+                                d["NodePeople"] = d.ApplyMan.split(',')
+                            if (d.NodeId == 0)
+                                d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
+                            d['AddPeople'] = []
+                        }
+                        console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
+                        console.log(data)
+                        that.nodeList = data
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //获取bom表信息
+            getBomInfo() {
+                var that = this
+                $.ajax({
+                    url: "/DrawingUpload/GetPurchase?TaskId=" + TaskId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取bom表信息ok")
+                        console.log(data)
+                        that.data = data
+                        that.getData()
+                        that.totalRows = data.length
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
         }
-    })()
+    })
+    getFormData()
+    
+
+    //获取审批表单信息
+    function getFormData() {
+        $.ajax({
+            url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log("获取审批表单信息ok")
+                console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
+                console.log(data)
+                allData = data
+                var imageList = data.ImageUrl.split(',')
+                for (let img of imageList) {
+                    fileList.push({
+                        name: 'hello.jpg',
+                        url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                    })
+                }
+                console.log(fileList)
+                demo.ruleForm = allData
+                demo.getNodeInfo()
+                demo.getNodeList()
+                demo.getBomInfo()
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+            }
+        })
+    }
+
 </script>
 
 

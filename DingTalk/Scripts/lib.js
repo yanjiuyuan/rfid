@@ -6,6 +6,7 @@ var State = 0 //多异步辅助状态
 var UrlObj = {} //url参数对象
 var QueryObj = {} //获取url参数对象
 var Id = 0 //自增task表的id
+var UserList = [] //所有用户数据
 
 //原型方法
 Array.prototype.removeByValue = function (val) {
@@ -160,6 +161,7 @@ var pickerOptions = {
 var mixin = {
     data: {
         user: {},
+        disablePage: false,
         rules: {
             name: [
                 { required: true, message: '名称不能为空', trigger: 'blur' },
