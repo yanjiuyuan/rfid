@@ -250,6 +250,7 @@
     <Compile Include="Models\ImageMsgModel.cs" />
     <Compile Include="Models\LinkMsgModel.cs" />
     <Compile Include="Models\MessageRequestBaseModel.cs" />
+    <Compile Include="Models\OATextModel.cs" />
     <Compile Include="Models\RequestBaseModel.cs" />
     <Compile Include="Models\ResponseBaseModel.cs" />
     <Compile Include="Models\TextMsgModel.cs" />

@@ -11,7 +11,7 @@ namespace DingTalkServer
     {
         public DingTalkConfig()
         {
-            if (hao == "2")
+            if (ConfigurationManager.AppSettings["hao"].ToString()== "2")
             {
                 CorpId = ConfigurationManager.AppSettings["CorpId_hao"];
                 CorpSecret = ConfigurationManager.AppSettings["CorpSecret_hao"];
@@ -24,7 +24,6 @@ namespace DingTalkServer
                 AgentId = ConfigurationManager.AppSettings["agentId"];
             }
         }
-        public string hao { get; set; }
 
         public string CorpId { get; set; }
 
