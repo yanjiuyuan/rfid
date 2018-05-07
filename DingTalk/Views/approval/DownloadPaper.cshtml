@@ -6,120 +6,152 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        用车申请
+        下发图纸
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        
-        <el-form-item label="用车人" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
-        </el-form-item>
 
-        <el-form-item label="用车事由" prop="reson">
-            <el-input v-model="ruleForm.reson"></el-input>
-        </el-form-item>
+    <div>
+        <span>项目名称</span>
+        <el-select v-model="project" v-on:change="selectProject">
+            <el-option v-for="item in projectList"
+                       :key="item"
+                       :label="item"
+                       :value="item">
+            </el-option>
+        </el-select>
+    </div>
 
-        <hr />
+    <div class="custom-tree-container">
+       
+        <div class="block">
+            <p>使用 scoped slot</p>
+            <el-tree :data="data5"
+                     show-checkbox
+                     node-key="id"
+                     default-expand-all
+                     :props="defaultProps"
+                     :expand-on-click-node="false">
+                    <template class="custom-tree-node" slot-scope="{ node, data }">
+                        <button>hello?</button>
+                        <span>{{ node.label }}</span>
+                        <img src="~/Content/images/title.png" />
+                        <span>
+                            <el-button type="text"
+                                       size="mini"
+                                       v-on:click="() => append(data)">
+                                Append
+                            </el-button>
+                            <el-button type="text"
+                                       size="mini"
+                                       v-on:click="() => remove(node, data)">
+                                Delete
+                            </el-button>
+                        </span>
+                    </template>
+            </el-tree>
+        </div>
 
-        <el-form-item label="始发地点" prop="startAddress">
-            <el-input v-model="ruleForm.startAddress"></el-input>
-        </el-form-item>
+        <div class="block">
+            <p>使用 render-content</p>
+            <el-tree :data="data4"
+                     show-checkbox
+                     node-key="id"
+                     default-expand-all
+                     :expand-on-click-node="false"
+                     :render-content="renderContent">
+            </el-tree>
+        </div>
+    </div>
 
-        <el-form-item label="返回地点" prop="endAddress">
-            <el-input v-model="ruleForm.endAddress"></el-input>
-        </el-form-item>
-
-        <el-form-item label="用车时间" prop="startTime">
-            <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.startTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>
-        </el-form-item>
-
-        <el-form-item label="返回时间" prop="endTime">
-            <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.endTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>
-        </el-form-item>
-
-        <hr />
-
-        <el-form-item label="审批人">
-            <span class="hint">审批人已由管理员预置，并将自动去重</span>
-        </el-form-item>
-
-        <el-form-item label="抄送人">
-            <span class="hint">（审批通过后，通知抄送人）</span>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit()">提交</el-button>
-            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
-    </el-form>
 </el-main>
 
 <script>
+    let no = 1000
+
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
+            const data = [{
+                id: 1,
+                label: '一级 1',
+                children: [{
+                    id: 4,
+                    label: '二级 1-1',
+                    children: [{
+                        id: 9,
+                        label: '三级 1-1-1'
+                    }, {
+                        id: 10,
+                        label: '三级 1-1-2'
+                    }]
+                }]
+            }, {
+                id: 2,
+                label: '一级 2',
+                children: [{
+                    id: 5,
+                    label: '二级 2-1'
+                }, {
+                    id: 6,
+                    label: '二级 2-2'
+                }]
+            }, {
+                id: 3,
+                label: '一级 3',
+                children: [{
+                    id: 7,
+                    label: '二级 3-1'
+                }, {
+                    id: 8,
+                    label: '二级 3-2'
+                }]
+            }]
             return {
+                projectList: ['1','22','333'],
+                project: '',
+                data4: JSON.parse(JSON.stringify(data)),
+                data5: JSON.parse(JSON.stringify(data)),
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
                 ruleForm: {
                     name: '',
                     reson: '',
-                    startAddress: '',
-                    endAddress: '',
-                    startTime: '',
-                    endTime: '',
-                },
-                rules: {
-                    name: [
-                        { required: true, message: '申请人不能为空', trigger: 'blur' },
-                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-                    ],
-                    startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
-                    endAddress: { required: true, message: '返回地点不能为空', trigger: 'blur' },
-                    startTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
-                    endTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
-                },
-                dayPickerOptions: {
-                    shortcuts: [
-                        {
-                            text: '昨天',
-                            onClick(picker) {
-                                const date = new Date();
-                                date.setTime(date.getTime() - 3600 * 1000 * 24);
-                                picker.$emit('pick', date);
-                            }
-                        },{
-                        text: '今天',
-                        onClick(picker) {
-                            picker.$emit('pick', new Date());
-                        }
-                    }, {
-                        text: '明天',
-                        onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() + 3600 * 1000 * 24);
-                            picker.$emit('pick', date);
-                        }
-                    }]
                 }
             }
         },
         methods: {
             onSubmit() {
                 console.log('submit!');
+            },
+            selectProject(project) {
+
+            },
+            append(data) {
+                const newChild = { id: no++, label: 'testtest', children: [] };
+                if (!data.children) {
+                    this.$set(data, 'children', []);
+                }
+                data.children.push(newChild);
+            },
+            remove(node, data) {
+                const parent = node.parent;
+                const children = parent.data.children || parent.data;
+                const index = children.findIndex(d => d.id === data.id);
+                children.splice(index, 1);
+            },
+
+            renderContent(h, { node, data, store }) {
+                return (
+                    `<span class="custom-tree-node">
+                        <span>{node.label}</span>
+                        <span>
+                            <el-button size="mini" type="text" >Append</el-button>
+                            <el-button size="mini" type="text" >Delete</el-button>
+                        </span>
+                    </span>`
+                );
             }
         },
         created: function () {

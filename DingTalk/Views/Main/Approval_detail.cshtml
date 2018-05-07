@@ -27,10 +27,10 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名" prop="name">
+        <el-form-item label="项目名">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
+        <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注">
@@ -107,7 +107,7 @@
             onSubmit(formName) {
                 this.disablePage = true
                 var param = {
-                    "Id": UrlObj.id,
+                    "Id": allData.Id,
                     "TaskId": TaskId,
                     "ApplyMan": DingData.nickName,
                     "ApplyManId": DingData.userid,
@@ -275,12 +275,14 @@
                 console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
                 console.log(data)
                 allData = data
-                var imageList = data.ImageUrl.split(',')
-                for (let img of imageList) {
-                    fileList.push({
-                        name: 'hello.jpg',
-                        url: document.location + (img.substring(2)).replace(/\\/g, "/")
-                    })
+                if (data.ImageUrl.length > 5) {
+                    var imageList = data.ImageUrl.split(',')
+                    for (let img of imageList) {
+                        fileList.push({
+                            name: 'hello.jpg',
+                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                        })
+                    }
                 }
                 console.log(fileList)
                 demo.ruleForm = allData
