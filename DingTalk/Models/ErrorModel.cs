@@ -13,5 +13,7 @@ namespace DingTalk.Models
         public string errorMessage { get; set; }
 
         public string Content { get; set; }
+
+        public bool IsError { get; set; }
     }
 }

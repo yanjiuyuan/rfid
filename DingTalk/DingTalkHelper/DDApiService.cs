@@ -24,12 +24,6 @@ namespace DingTalk.DingTalkHelper
             CorpId = dtConfig.CorpId;
             CorpSecret = dtConfig.CorpSecret;
             AgentId = dtConfig.AgentId;
-            if(hao == "1")
-            {
-                CorpId = dtConfig.CorpId_hao;
-                CorpSecret = dtConfig.CorpSecret_hao;
-                AgentId = dtConfig.AgentId_hao;
-            }
         }
 
         /// <summary>
@@ -39,7 +33,6 @@ namespace DingTalk.DingTalkHelper
         /// <returns></returns>
         public string GetAccessToken()
         {
-
             return DDHelper.GetAccessToken(CorpId, CorpSecret);
         }
 

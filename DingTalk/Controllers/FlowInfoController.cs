@@ -144,7 +144,6 @@ namespace DingTalk.Controllers
                             tasks.TaskId, tasks.NodeId);
                         if (dic["NodeName"] == "结束")
                         {
-
                             JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 0,
@@ -201,7 +200,7 @@ namespace DingTalk.Controllers
                         //修改流程状态
                         tasks.IsBack = true;
                         tasks.State = 1;
-                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm");
+                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
                         context.Entry(tasks).State = EntityState.Modified;
                         context.SaveChanges();
 
@@ -997,12 +996,23 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 发送OA消息
         /// </summary>
-        public void TestSentMsg()
+        /// 测试数据 /FlowInfo/TestSentOaMsg
+        public string TestSentOaMsg()
         {
             TopSDKTest top = new TopSDKTest();
-            top.SendMessage("manager5312");
+            return top.SendOaMessage("manager5312");
+        }
+
+        /// <summary>
+        /// 发送普通消息
+        /// </summary>
+        /// 测试数据 /FlowInfo/TestSentCommonMsg
+        public string TestSentCommonMsg()
+        {
+            return "";
         }
 
         #endregion
+
     }
 }
