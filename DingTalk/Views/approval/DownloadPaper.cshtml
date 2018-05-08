@@ -15,7 +15,11 @@
         <el-table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
         </el-table-column>
         <el-table-column label="操作">
-            <el-button v-on:click="selectProject()">选择项目</el-button>
+            <template slot-scope="scope">
+                <el-button v-on:click.native.prevent="selectProject(scope.$index, projectTable)"
+                           type="text" size="small">选择项目
+                </el-button>
+            </template>
         </el-table-column>
     </el-table>
     <!--底部翻頁-->
@@ -176,9 +180,13 @@
                         console.log(err);
                     }
                 })
+            },
+            selectProject(index, data) {
+
             }
         },
         created: function () {
+            this.getProject()
             loadHtml("mainPage", "partPage")
         }
     })
