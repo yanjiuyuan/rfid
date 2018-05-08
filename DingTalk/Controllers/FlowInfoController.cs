@@ -35,11 +35,11 @@ namespace DingTalk.Controllers
         //"FlowId": "6",
         //"Remark":"意见",
         //"IsSend":"False",
-        //"State":"1"  // 1表示已审核，0表示未审核
+        //"State":"1"  
         //"OldImageUrl","原图片路径",
         //"ImageUrl","图片路径",
-        //"OldFileUrl","原文件路径",  
-        //"FileUrl","文件路径",   
+        //"OldFileUrl","原文件路径",
+        //"FileUrl","文件路径",
         //"Title","标题",
         //"ProjectId","项目号",
         //}
@@ -74,8 +74,7 @@ namespace DingTalk.Controllers
                         Dictionary<string, string> dic =
                         FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, tasks.TaskId, 0);
                         //推送OA消息
-                        // string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。",tasks.TaskId)
-                        SentCommonMsg(dic["PeopleId"].ToString(),"6666", tasks.ApplyMan, tasks.Remark, null);
+                        SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId), tasks.ApplyMan, tasks.Remark, null);
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -976,7 +975,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                Tasks purchaseDown = context.Tasks.Where(u => u.Id == 191).First();
+                List<Tasks> purchaseDown = context.Tasks.Where(u => u.TaskId == 3).ToList();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
@@ -1061,7 +1060,7 @@ namespace DingTalk.Controllers
             {
                 form = new form[] {
                     new form{ key="申请人：",value=ApplyMan},
-                    new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")},
+                    new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
                 },
                 //rich = new rich
                 //{
