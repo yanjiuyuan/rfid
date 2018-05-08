@@ -1,4 +1,5 @@
-﻿using DingTalkServer.Models;
+﻿using DingTalk.DingTalkHelper;
+using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace DingTalkServer
         public DingTalkManager()
         {
             _client = new HttpsClient();
-            _client.QueryString.Add("access_token", DTConfig.AccessToken);
+            _client.QueryString.Add("access_token", DDApiService.Instance.GetAccessToken());
         }
 
         public async Task<string> GetAccessToken()

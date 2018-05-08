@@ -66,11 +66,7 @@ namespace WebZhongZhi.Controllers
             ViewBag.AccessToken = accessToken;
             string ticket = DDApiService.Instance.GetJsApiTicket(accessToken);
             long timeStamp = DDHelper.GetTimeStamp();
-            string url = "http://q202800o84.iask.in/login/login";
-            if(DDApiService.Instance.hao == "1")
-            {
-                url = "http://wuliao5222.55555.io/";
-            }
+            string url = dtConfig.Url;
             string signature = DDApiService.Instance.GetSign(ticket, nonceStr, timeStamp, url);
             ViewBag.Url = url;
             ViewBag.JsApiTicket = ticket;

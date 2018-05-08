@@ -74,7 +74,8 @@ namespace DingTalk.Controllers
                         Dictionary<string, string> dic =
                         FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, tasks.TaskId, 0);
                         //推送OA消息
-                        SentCommonMsg(dic["PeopleId"].ToString(), tasks.Title, tasks.ApplyMan, tasks.Remark);
+                        // string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。",tasks.TaskId)
+                        SentCommonMsg(dic["PeopleId"].ToString(),"6666", tasks.ApplyMan, tasks.Remark, null);
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -155,6 +156,16 @@ namespace DingTalk.Controllers
                                 errorMessage = "流程结束",
                                 Content = tasks.TaskId.ToString()
                             });
+                        }
+                        else
+                        {
+                            //获取申请人提交表单信息
+                            FlowInfoServer fServer = new FlowInfoServer();
+                            Tasks taskNew = fServer.GetApplyManFormInfo(tasks.TaskId.ToString());
+                            //推送OA消息
+                            SentCommonMsg(dic["PeopleId"].ToString(), 
+                            string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。",taskNew.TaskId), 
+                            taskNew.ApplyMan, taskNew.Remark,null);
                         }
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
@@ -388,7 +399,7 @@ namespace DingTalk.Controllers
                     if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
                     {
                         //查找当前是否还有人未审核
-                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.ApplyManId != ApplyManId && u.State == 1).ToList();
+                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId !=0 && u.ApplyManId != ApplyManId && u.State == 1).ToList();
                         if (ListTask.Count > 0)  //还有人未审核
                         {
                             return dic;
@@ -1029,7 +1040,7 @@ namespace DingTalk.Controllers
                 file_count = "3",
                 author = "李四"
             };
-            return top.SendOaMessage("083452125733424957", oaTextModel);
+            return top.SendOaMessage("1209662535974958", oaTextModel);
         }
 
         /// <summary>
@@ -1037,7 +1048,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// 测试数据 /FlowInfo/TestSentCommonMsg
         public string SentCommonMsg(string SendPeoPleId, string Title, string ApplyMan,
-            string Content)
+            string Content, string Url)
         {
             TopSDKTest top = new TopSDKTest();
             OATextModel oaTextModel = new OATextModel();
@@ -1062,7 +1073,7 @@ namespace DingTalk.Controllers
                 //image = "@lADOADmaWMzazQKA",
                 //file_count = "3",
             };
-            oaTextModel.message_url = "https://www.baidu.com/";
+            oaTextModel.message_url = Url;
             return top.SendOaMessage(SendPeoPleId, oaTextModel);
         }
 
@@ -1077,7 +1088,7 @@ namespace DingTalk.Controllers
             for (int i = 0; i < 10000; i++)
             {
                 j++;
-                SentCommonMsg("100328051024695354", "您有一条待审批的流程，请登入OA系统审批", "古天乐", string.Format("我要请假~~~~{0}", i));
+                SentCommonMsg("073110326032521796", "您有一条待审批的流程，请登入OA系统审批", "古天乐",string.Format("我要请假1~~~~{0}", i), "https://www.cnblogs.com/BraveBoy/p/7417972.html");
             }
             return j;
         }
