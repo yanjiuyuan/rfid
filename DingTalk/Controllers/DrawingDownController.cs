@@ -26,7 +26,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="ProjectId">项目Id</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetDrawingDownInfo?ProjectId=2018-04-23 16:57&ApplyManId=123456
+        /// 测试数据：/DrawingDown/GetDrawingDownInfo?ProjectId=2016ZL051&ApplyManId=123456
         [HttpGet]
         public string GetDrawingDownInfo(string ProjectId, string ApplyManId)
         {
@@ -157,7 +157,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据  /DrawingDown/SubmitDrawingDown
-        /// var PurchaseDownList =  [{ "TaskId": "DTE-801B-WX-01C", "OldTaskId": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        /// var PurchaseDownList =  [{ "DrawingNo": "DTE-801B-WX-01C", "OldTaskId": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
         ///  { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
         ///  { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
         [HttpPost]
@@ -377,6 +377,26 @@ namespace DingTalk.Controllers
                     errorCode = 2,
                     errorMessage = ex.Message
                 });
+            }
+        }
+
+        #endregion
+
+        #region 工序信息查询
+
+        /// <summary>
+        /// 工序信息查询
+        /// </summary>
+        /// <param name="DrawingNo">零件编号</param>
+        /// <returns></returns>
+        /// 测试数据：/DrawingDown/GetProcedureInfo?DrawingNo=DTE-801B-WX-01C
+        [HttpGet]
+        public string GetProcedureInfo(string DrawingNo)
+        {
+            using (DDContext context = new DDContext())
+            {
+                List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == DrawingNo).ToList();
+                return JsonConvert.SerializeObject(ListProcedureInfo);
             }
         }
 
