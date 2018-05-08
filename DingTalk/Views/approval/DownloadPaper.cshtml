@@ -20,53 +20,62 @@
         </el-select>
     </div>
 
-    <div class="custom-tree-container">
-       
-        <div class="block">
-            <p>使用 scoped slot</p>
-            <el-tree :data="data5"
-                     show-checkbox
-                     node-key="id"
-                     default-expand-all
-                     :props="defaultProps"
-                     :expand-on-click-node="false">
-                    <template class="custom-tree-node" slot-scope="{ node, data }">
-                        <button>hello?</button>
-                        <span>{{ node.label }}</span>
-                        <img src="~/Content/images/title.png" />
-                        <span>
-                            <el-button type="text"
-                                       size="mini"
-                                       v-on:click="() => append(data)">
-                                Append
-                            </el-button>
-                            <el-button type="text"
-                                       size="mini"
-                                       v-on:click="() => remove(node, data)">
-                                Delete
-                            </el-button>
-                        </span>
-                    </template>
-            </el-tree>
-        </div>
-
-        <div class="block">
-            <p>使用 render-content</p>
-            <el-tree :data="data4"
-                     show-checkbox
-                     node-key="id"
-                     default-expand-all
-                     :expand-on-click-node="false"
-                     :render-content="renderContent">
-            </el-tree>
-        </div>
-    </div>
+    <el-table :data="data5"
+              style="width: 100%">
+        <el-table-column type="expand">
+            <template slot-scope="props">
+                @*<el-form label-position="left" inline class="demo-table-expand">
+                    <el-form-item label="商品名称">
+                        <span>{{ props.row.label }}</span>
+                    </el-form-item>
+                </el-form>*@
+                <el-collapse accordion>
+                    <el-collapse-item v-for="flows in props.row.children" :key="flows.id">
+                        <template slot="title">
+                            <span>工序名称：</span>
+                            <el-button type="primary" plain size="mini">{{flows.label}}</el-button>
+                            <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除流程</el-button>
+                            <el-button size="mini" v-on:click="deleteFlow()" class="tableRight">添加工作</el-button>
+                        </template>
+                        <el-form v-for="flow in flows.children" :key="flow.id" :inline="true" class="demo-form-inline form" size="mini">
+                            <el-form-item label="执行人">
+                                <el-input v-model="flow.label" :placeholder="flow.label" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="开始日期">
+                                <el-date-picker v-model="flow.id"
+                                                type="daterange"
+                                                :picker-options="pickerOptions"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期">
+                                </el-date-picker>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="danger" v-on:click="deleteWork">删除工作</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-collapse-item>
+                </el-collapse>
+            </template>
+        </el-table-column>
+        <el-table-column label="零件编号"
+                         prop="id">
+        </el-table-column>
+        <el-table-column label="零件名称"
+                         prop="label">
+        </el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini"
+                           v-on:click="addFlow(scope.$index, scope.row)">添加流程</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
 
 </el-main>
 
 <script>
-    let no = 1000
-
+    let itemId = 1000
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -109,12 +118,7 @@
             return {
                 projectList: ['1','22','333'],
                 project: '',
-                data4: JSON.parse(JSON.stringify(data)),
                 data5: JSON.parse(JSON.stringify(data)),
-                defaultProps: {
-                    children: 'children',
-                    label: 'label'
-                },
                 ruleForm: {
                     name: '',
                     reson: '',
@@ -128,30 +132,17 @@
             selectProject(project) {
 
             },
-            append(data) {
-                const newChild = { id: no++, label: 'testtest', children: [] };
-                if (!data.children) {
-                    this.$set(data, 'children', []);
-                }
-                data.children.push(newChild);
-            },
-            remove(node, data) {
-                const parent = node.parent;
-                const children = parent.data.children || parent.data;
-                const index = children.findIndex(d => d.id === data.id);
-                children.splice(index, 1);
-            },
+            addFlow(index,row){
 
-            renderContent(h, { node, data, store }) {
-                return (
-                    `<span class="custom-tree-node">
-                        <span>{node.label}</span>
-                        <span>
-                            <el-button size="mini" type="text" >Append</el-button>
-                            <el-button size="mini" type="text" >Delete</el-button>
-                        </span>
-                    </span>`
-                );
+            },
+            deleteFlow() {
+                
+            },
+            addWork() {
+
+            },
+            deleteWork() {
+
             }
         },
         created: function () {

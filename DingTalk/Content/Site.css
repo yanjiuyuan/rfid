@@ -13,11 +13,17 @@ hr {
     border: none;
     border-top: 1px solid #b3b3b3;
 }
-
+form{
+    margin-left:5%;
+}
 .hint {
     color: #808080;
 }
-
+.tableRight{
+    float:right;
+    margin-top:10px;
+    margin-right:10px;
+}
 .clickable-text {
     color: #409EFF;
     cursor: pointer;
@@ -264,4 +270,8 @@ ol {
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
+}
+
+.el-table__expanded-cell[class*=cell]{
+    padding: 0px 10px;
 }
