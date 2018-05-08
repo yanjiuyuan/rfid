@@ -1000,7 +1000,30 @@ namespace DingTalk.Controllers
         public string TestSentOaMsg()
         {
             TopSDKTest top = new TopSDKTest();
-            return top.SendOaMessage("manager5312");
+            OATextModel oaTextModel = new OATextModel();
+            oaTextModel.message_url = "http://dingtalk.com";
+            oaTextModel.head = new head
+            {
+                bgcolor = "FFBBBBBB",
+                text = "头部标题"
+            };
+            oaTextModel.body = new body
+            {
+                form = new form[] {
+                    new form{ key="姓名",value="11张三"},
+                    new form{ key="爱好",value="打球"},
+                },
+                rich = new rich
+                {
+                    num = "15.6",
+                    unit = "元"
+                },
+                content = "一大段文字",
+                image = "@lADOADmaWMzazQKA",
+                file_count = "3",
+                author = "李四"
+            };
+            return top.SendOaMessage("manager5312", oaTextModel);
         }
 
         /// <summary>
@@ -1009,7 +1032,30 @@ namespace DingTalk.Controllers
         /// 测试数据 /FlowInfo/TestSentCommonMsg
         public string TestSentCommonMsg()
         {
-            return "";
+            TopSDKTest top = new TopSDKTest();
+            OATextModel oaTextModel = new OATextModel();
+            oaTextModel.head = new head
+            {
+                bgcolor = "FFBBBBBB",
+                text = "您有一条待审批的流程，请登入OA系统审批"
+            };
+            oaTextModel.body = new body
+            {
+                form = new form[] {
+                    new form{ key="申请人：",value="古舔乐"},
+                    new form{ key="申请时间：",value="2018-05-07"},
+                },
+                //rich = new rich
+                //{
+                //    num = "15.6",
+                //    unit = "元"
+                //},
+                content = "我要请假~~~~666",
+                //image = "@lADOADmaWMzazQKA",
+                //file_count = "3",
+            };
+            oaTextModel.message_url = "https://www.baidu.com/";
+            return top.SendOaMessage("100328051024695354", oaTextModel);
         }
 
         #endregion

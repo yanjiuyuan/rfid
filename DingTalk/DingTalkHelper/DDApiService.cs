@@ -20,7 +20,6 @@ namespace DingTalk.DingTalkHelper
 
         private DDApiService()
         {
-            hao = dtConfig.hao;
             CorpId = dtConfig.CorpId;
             CorpSecret = dtConfig.CorpSecret;
             AgentId = dtConfig.AgentId;
