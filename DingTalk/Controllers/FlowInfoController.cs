@@ -70,6 +70,11 @@ namespace DingTalk.Controllers
                         tasks.IsPost = true;
                         context.Tasks.Add(tasks);
                         context.SaveChanges();
+                        //寻人推送
+                        Dictionary<string, string> dic =
+                        FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, tasks.TaskId, 0);
+                        //推送OA消息
+                        SentCommonMsg(dic["PeopleId"].ToString(), tasks.Title, tasks.ApplyMan, tasks.Remark);
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -1005,7 +1010,7 @@ namespace DingTalk.Controllers
             oaTextModel.head = new head
             {
                 bgcolor = "FFBBBBBB",
-                text = "头部标题"
+                text = "头部标题111"
             };
             oaTextModel.body = new body
             {
@@ -1018,19 +1023,21 @@ namespace DingTalk.Controllers
                     num = "15.6",
                     unit = "元"
                 },
+                //title = "正文标题",
                 content = "一大段文字",
                 image = "@lADOADmaWMzazQKA",
                 file_count = "3",
                 author = "李四"
             };
-            return top.SendOaMessage("manager5312", oaTextModel);
+            return top.SendOaMessage("083452125733424957", oaTextModel);
         }
 
         /// <summary>
         /// 发送普通消息
         /// </summary>
         /// 测试数据 /FlowInfo/TestSentCommonMsg
-        public string TestSentCommonMsg()
+        public string SentCommonMsg(string SendPeoPleId, string Title, string ApplyMan,
+            string Content)
         {
             TopSDKTest top = new TopSDKTest();
             OATextModel oaTextModel = new OATextModel();
@@ -1042,22 +1049,38 @@ namespace DingTalk.Controllers
             oaTextModel.body = new body
             {
                 form = new form[] {
-                    new form{ key="申请人：",value="古舔乐"},
-                    new form{ key="申请时间：",value="2018-05-07"},
+                    new form{ key="申请人：",value=ApplyMan},
+                    new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")},
                 },
                 //rich = new rich
                 //{
                 //    num = "15.6",
                 //    unit = "元"
                 //},
-                content = "我要请假~~~~666",
+                title = Title,//"您有一条待审批的流程，请登入OA系统审批",
+                content = Content//"我要请假~~~~123456",
                 //image = "@lADOADmaWMzazQKA",
                 //file_count = "3",
             };
             oaTextModel.message_url = "https://www.baidu.com/";
-            return top.SendOaMessage("100328051024695354", oaTextModel);
+            return top.SendOaMessage(SendPeoPleId, oaTextModel);
         }
 
+        /// <summary>
+        /// 测试发送数量上限接口
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据：/FlowInfo/Test
+        public int Test()
+        {
+            int j = 0;
+            for (int i = 0; i < 10000; i++)
+            {
+                j++;
+                SentCommonMsg("100328051024695354", "您有一条待审批的流程，请登入OA系统审批", "古天乐", string.Format("我要请假~~~~{0}", i));
+            }
+            return j;
+        }
         #endregion
 
     }
