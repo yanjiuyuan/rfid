@@ -15,13 +15,15 @@ namespace DingTalkServer
             {
                 CorpId = ConfigurationManager.AppSettings["CorpId_hao"];
                 CorpSecret = ConfigurationManager.AppSettings["CorpSecret_hao"];
-                AgentId = ConfigurationManager.AppSettings["agentId_hao"];
+                AgentId = ConfigurationManager.AppSettings["AgentId_hao"];
+                Url = ConfigurationManager.AppSettings["Url_hao"];
             }
             else
             {
                 CorpId = ConfigurationManager.AppSettings["CorpId"];
                 CorpSecret = ConfigurationManager.AppSettings["CorpSecret"];
-                AgentId = ConfigurationManager.AppSettings["agentId"];
+                AgentId = ConfigurationManager.AppSettings["AgentId"];
+                Url = ConfigurationManager.AppSettings["Url"];
             }
         }
 
@@ -31,15 +33,8 @@ namespace DingTalkServer
 
         public string AgentId { get; set; }
 
-
-        //public string CorpId_hao { get; set; } = ConfigurationManager.AppSettings["CorpId_hao"];
-
-        //public string CorpSecret_hao { get; set; } = ConfigurationManager.AppSettings["CorpSecret_hao"];
-
-        //public string AgentId_hao { get; set; } = ConfigurationManager.AppSettings["agentId_hao"];
-
-        public string AccessToken { get; set; }
-
+        public string Url { get; set; }
+        
         public DateTime LastUpdateTime { get; set; }
 
     }

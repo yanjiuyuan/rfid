@@ -67,6 +67,21 @@ namespace DingTalk.Bussiness.FlowInfo
 
 
         /// <summary>
+        /// 获取申请者表单信息
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <returns></returns>
+        public Tasks GetApplyManFormInfo(string TaskId)
+        {
+            using (DDContext context=new DDContext ())
+            {
+                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true).First();
+                return task;
+            }
+        }
+
+
+        /// <summary>
         /// 返回已审批完成的任务流
         /// </summary>
         /// <returns>List<Tasks></returns>

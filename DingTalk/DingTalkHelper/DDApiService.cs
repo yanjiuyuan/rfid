@@ -16,7 +16,6 @@ namespace DingTalk.DingTalkHelper
         public string CorpId { get; private set; }
         public string CorpSecret { get; private set; }
         public string AgentId { get; private set; }
-        public string hao { get; private set; }
 
         private DDApiService()
         {

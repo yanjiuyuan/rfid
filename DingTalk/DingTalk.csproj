@@ -195,7 +195,7 @@
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Controllers\DingTalkServersController.cs" />
-    <Compile Include="Controllers\TopSDKTest.cs" />
+    <Compile Include="DingTalkHelper\TopSDKTest.cs" />
     <Compile Include="DingTalkAddressConfig\DepartmentAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\DingTalkServerAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\UserAddressConfig.cs" />
