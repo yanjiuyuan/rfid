@@ -975,7 +975,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                List<Tasks> purchaseDown = context.Tasks.Where(u => u.TaskId == 3).ToList();
+                List<PurchaseDown> purchaseDown = context.PurchaseDown.ToList();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
