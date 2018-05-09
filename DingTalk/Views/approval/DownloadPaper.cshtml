@@ -55,20 +55,29 @@
     <!--部件编辑部分-->
     <el-table :data="tableParts"
               style="width: 100%;margin-top:100px;">
+        <el-table-column label="代号" prop="DrawingNo"></el-table-column>
+        <el-table-column label="名称" prop="Name"></el-table-column>
+        @*<el-table-column label="材料" prop="MaterialScience"></el-table-column>
+        <el-table-column label="品牌" prop="Brand"></el-table-column>*@
+        <el-table-column label="数量" prop="Count"></el-table-column>
+        <el-table-column label="单位" prop="Unit"></el-table-column>
+        <el-table-column label="类别" prop="Sorts"></el-table-column>
+        <el-table-column label="备注" prop="Mark"></el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini"
+                           v-on:click="addFlow(scope.$index, scope.row)">
+                    添加工序
+                </el-button>
+            </template>
+        </el-table-column>
         <el-table-column type="expand">
             <template slot-scope="props">
                 <el-collapse accordion>
                     <el-collapse-item v-for="flow in props.row.flows" :key="flows.id">
-                        <!--工序编辑部分-->
-                        @*<template slot="title">
-                            <span>工序名称：</span>
-                            <el-button type="primary" plain size="mini">{{flow.name}}</el-button>
-                            <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
-                            <el-button size="mini" v-on:click="addWork()" class="tableRight">分配工作</el-button>
-                        </template>*@
                         <el-form>
                             <el-form-item label="工序名称">
-                                <el-input v-model="flow.name" prop="string"></el-input>
+                                <el-input v-model="flow.Name" prop="string"></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button size="mini" v-on:click="addWork()" class="tableRight">分配工作</el-button>
@@ -99,21 +108,6 @@
                 </el-collapse>
             </template>
         </el-table-column>
-        <el-table-column label="代号" prop="DrawingNo"></el-table-column>
-        <el-table-column label="名称" prop="Name"></el-table-column>
-        @*<el-table-column label="材料" prop="MaterialScience"></el-table-column>
-        <el-table-column label="品牌" prop="Brand"></el-table-column>*@
-        <el-table-column label="数量" prop="Count"></el-table-column>
-        <el-table-column label="单位" prop="Unit"></el-table-column>
-        <el-table-column label="类别" prop="Sorts"></el-table-column>
-        <el-table-column label="备注" prop="Mark"></el-table-column>
-        <el-table-column label="操作">
-            <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addFlow(scope.$index, scope.row)">
-                添加工序</el-button>
-            </template>
-        </el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -129,7 +123,7 @@
 
     <div>
         <el-button style="margin:40px 0 0 40%" type="primary"
-                   v-on:click="addFlow">确定下发</el-button>
+                   v-on:click="">确定下发</el-button>
     </div>
 
 </el-main>
@@ -193,6 +187,8 @@
                 partsCurrentPage: 1,
                 partsPageSize: 5,
 
+                flowList: [],
+                workList: [],
                 ruleForm: {
                     name: '',
                     reson: '',
@@ -203,8 +199,18 @@
             onSubmit() {
                 console.log('submit!');
             },
-            addFlow(index,row){
-
+            addFlow(index, row) {
+                for (let part of this.parts) {
+                    if (part.Id == row.Id) {
+                        if (!part.flows) part["flows"] = []
+                        part.flows.push({
+                            ProcedureName: '',
+                            DefaultWorkTime: ''
+                        })
+                    }
+                }
+                console.log(index)
+                console.log(row)
             },
             deleteFlow() {
                 
