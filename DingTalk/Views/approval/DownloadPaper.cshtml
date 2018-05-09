@@ -73,49 +73,49 @@
         </el-table-column>*@
         <el-table-column type="expand">
             <template slot-scope="scope">
-                <div v-for="flow in scope.row.flows" :key="flow.id">
-                    <!--工序分配部分-->
+                <div v-for="(flow,index) in scope.row.flows" :key="flow.id">
+                    <!--工序列表-->
                     <el-form :inline="true">
                         <el-form-item label="工序名称">
-                            <el-input v-model="flow.ProcedureName"></el-input>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button size="mini" v-on:click="addWork()" class="tableRight">分配工作</el-button>
+                            <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
                         </el-form-item>
                         <el-form-item>
                             <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
                         </el-form-item>
                     </el-form>
-                    <!--工作分配部分-->
+                    <!--工作分配列表-->
+                    <!--添加工作分配-->
+                    <el-form :id="scope.row.DrawingNo+index" :inline="true" class="demo-form-inline form" size="mini">
+                        <el-form-item label="执行人">
+                            <el-input name="myName" style="width:100px;"></el-input>
+                        </el-form-item>
+                        <el-form-item label="开始日期">
+                            <el-date-picker name="[starDay,endDay]"
+                                            type="daterange"
+                                            :picker-options="pickerOptions"
+                                            range-separator="至"
+                                            start-placeholder="开始日期"
+                                            end-placeholder="结束日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
+                        </el-form-item>
+                    </el-form>
                     <el-collapse accordion>
-                        <el-collapse-item>
-                            <el-form v-for="work in flow.works" :key="work.DrawingNo" :inline="true" class="demo-form-inline form" size="mini">
-                                <el-form-item label="执行人">
-                                    <el-input v-model="flow.label" :placeholder="flow.label" style="width:100px;"></el-input>
-                                </el-form-item>
-                                <el-form-item label="开始日期">
-                                    <el-date-picker v-model="flow.id"
-                                                    type="daterange"
-                                                    :picker-options="pickerOptions"
-                                                    range-separator="至"
-                                                    start-placeholder="开始日期"
-                                                    end-placeholder="结束日期">
-                                    </el-date-picker>
-                                </el-form-item>
-                                <el-form-item>
-                                    <el-button type="danger" v-on:click="deleteWork">删除工作</el-button>
-                                </el-form-item>
-                            </el-form>
+                        <el-collapse-item v-for="work in flow.works" :key="work.DrawingNo">
+
                         </el-collapse-item>
                     </el-collapse>
                 </div>
-
+                <!--添加工序-->
                 <el-form :inline="true">
                     <el-form-item label="工序名称" prop="ProcedureName">
-                        <el-input v-model="flowForm.ProcedureName"></el-input>
+                        <el-input :id="scope.row.DrawingNo"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button size="mini" v-on:click="addFlow(scope.row)" class="tableRight">分配工作</el-button>
+                        <el-button size="mini" type="primary" class="tableRight"
+                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)">添加工序</el-button>
                     </el-form-item>
                 </el-form>
             </template>
@@ -178,13 +178,17 @@
                 console.log('submit!');
             },
             //为部件添加工序，删除工序
-            addFlow(row) {
-
+            addFlow(row, id) {
+                var procName = $("#" + id).val().trim()
+                if (procName.length < 1) {
+                    alert("必须输入工序名称")
+                    return
+                }
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
                         if (!part.flows) part["flows"] = []
                         part.flows.push({
-                            ProcedureName: this.flowForm.ProcedureName,
+                            ProcedureName: $("#"+id).val(),
                             DrawingNo: part.DrawingNo,
                             DefaultWorkTime: ''
                         })
@@ -197,13 +201,10 @@
                 
             },
             //为工序配置人员
-            addWork(index, row) {
-                for (let part of this.parts) {
-                    if (part.Id == row.Id) {
-                        part[index]
-                    }
-                }
-                console.log(this.parts)
+            addWork(row, id, index) {
+                var workObj = $("#" + id + index).serializeArray()
+                console.log(workObj)
+                return
                 this.getPartsData()
             },
             deleteWork() {
