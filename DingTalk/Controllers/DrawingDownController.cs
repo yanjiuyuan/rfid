@@ -203,7 +203,7 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        #region 添加工序与工时
+        #region 添加、删除工序与工时
 
         /// <summary>
         /// 添加工序
@@ -309,6 +309,112 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 批量删除工序
+        /// </summary>
+        /// <param name="Id">(逗号隔开)</param>
+        /// <returns></returns>
+        /// 测试数据： /DrawingDown/DeleteProcedure?&Id=10004,10005
+        [HttpGet]
+        public string DeleteProcedure(string Id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Id))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    string[] ListIds = Id.Split(',');
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (var item in ListIds)
+                        {
+                            ProcedureInfo procedureInfo = new ProcedureInfo()
+                            {
+                                Id = decimal.Parse(item)
+                            };
+                            context.ProcedureInfo.Attach(procedureInfo);
+                            context.ProcedureInfo.Remove(procedureInfo);
+                            context.SaveChanges();
+                        }
+                    }
+
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "删除成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// 批量删除工时
+        /// </summary>
+        /// <param name="Id">(逗号隔开)</param>
+        /// <returns></returns>
+        /// 测试数据： /DrawingDown/DeleteWorkTime?&Id=10002,10003,10004
+        public string DeleteWorkTime(string Id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Id))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    string[] ListIds = Id.Split(',');
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (var item in ListIds)
+                        {
+                            WorkTime workTime = new WorkTime()
+                            {
+                                Id = decimal.Parse(item)
+                            };
+                            context.WorkTime.Attach(workTime);
+                            context.WorkTime.Remove(workTime);
+                            context.SaveChanges();
+                        }
+                    }
+
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "删除成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
         #endregion
 
         #region Bom表、工序、工时数据读取
@@ -389,7 +495,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="DrawingNo">零件编号</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetProcedureInfo?DrawingNo=DTE-801B-WX-01C
+        /// 测试数据：/DrawingDown/GetProcedureInfo?DrawingNo=DTE-801B-WX-01C,DTE-801B-WX-01D
         [HttpGet]
         public string GetProcedureInfo(string DrawingNo)
         {
@@ -407,8 +513,14 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == DrawingNo).ToList();
-                        return JsonConvert.SerializeObject(ListProcedureInfo);
+                        string[] DrawingNoList = DrawingNo.Split(',');
+                        Dictionary<string, List<ProcedureInfo>> dic = new Dictionary<string, List<ProcedureInfo>>();
+                        foreach (var drawingNo in DrawingNoList)
+                        {
+                            List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == drawingNo).ToList();
+                            dic.Add(drawingNo, ListProcedureInfo);
+                        }
+                        return JsonConvert.SerializeObject(dic);
                     }
                 }
             }

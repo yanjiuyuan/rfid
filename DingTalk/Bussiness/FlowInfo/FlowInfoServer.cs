@@ -101,5 +101,22 @@ namespace DingTalk.Bussiness.FlowInfo
             return ListTaskFinall;
         }
 
+
+        /// <summary>
+        /// 修改任务流状态
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        public Tasks TasksModify(Tasks tasks)
+        {
+            using (DDContext context=new DDContext ())
+            {
+                tasks.IsPost = true;
+                context.Tasks.Add(tasks);
+                context.SaveChanges();
+                return tasks;
+            }
+        }
+
     }
 }

@@ -162,9 +162,9 @@ namespace DingTalk.Controllers
                             FlowInfoServer fServer = new FlowInfoServer();
                             Tasks taskNew = fServer.GetApplyManFormInfo(tasks.TaskId.ToString());
                             //推送OA消息
-                            SentCommonMsg(dic["PeopleId"].ToString(), 
-                            string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。",taskNew.TaskId), 
-                            taskNew.ApplyMan, taskNew.Remark,null);
+                            SentCommonMsg(dic["PeopleId"].ToString(),
+                            string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
+                            taskNew.ApplyMan, taskNew.Remark, null);
                         }
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
@@ -398,7 +398,7 @@ namespace DingTalk.Controllers
                     if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
                     {
                         //查找当前是否还有人未审核
-                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId !=0 && u.ApplyManId != ApplyManId && u.State == 1).ToList();
+                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 1).ToList();
                         if (ListTask.Count > 0)  //还有人未审核
                         {
                             return dic;
@@ -1087,7 +1087,7 @@ namespace DingTalk.Controllers
             for (int i = 0; i < 10000; i++)
             {
                 j++;
-                SentCommonMsg("073110326032521796", "您有一条待审批的流程，请登入OA系统审批", "古天乐",string.Format("我要请假1~~~~{0}", i), "https://www.cnblogs.com/BraveBoy/p/7417972.html");
+                SentCommonMsg("073110326032521796", "您有一条待审批的流程，请登入OA系统审批", "古天乐", string.Format("我要请假1~~~~{0}", i), "https://www.cnblogs.com/BraveBoy/p/7417972.html");
             }
             return j;
         }
