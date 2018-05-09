@@ -52,8 +52,27 @@
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
-            <el-button class="button-new-tag" size="small" v-on:click="addProject">+ 添加项目</el-button>
+            <el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
         </el-form-item>
+        
+        <template v-if="showAddProject">
+            <el-form-item label="项目名称" prop="ProjectName">
+                <el-input v-model="ruleForm.ProjectName"></el-input>
+            </el-form-item>
+            <el-form-item label="开始日期">
+                <el-date-picker v-model="ruleForm.Time"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="addProject">添加</el-button>
+            </el-form-item>
+        </template>
+
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
@@ -114,6 +133,7 @@
                 nodeInfo: {},
                 nodeList: [],
                 projestList: [],
+                showAddProject: false,
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
@@ -124,8 +144,10 @@
                     ImageUrl: '',
                     OldImageUrl: '',
                     ProjectId: '',
-                    copyers: ['小唐', '季老师']
+                    copyers: ['小唐', '季老师'],
 
+                    ProjectName: '',
+                    Time: ''
                 }
             }
         },
@@ -350,20 +372,19 @@
                 this.dialogVisible = true;
             },
 
-
             //添加项目
             addProject() {
                 var that = this
                 var param = {
-                    "ProjectName": "图纸上传" + _getTime(),
+                    "ProjectName": this.ruleForm.ProjectName,
                     "CreateTime": _getTime(),
                     "IsEnable": true,
                     "IsFinish": false,
                     "DeptName": "智慧工厂事业部",
                     "ApplyMan": DingData.nickName,
                     "ApplyManId": DingData.userid,
-                    "StartTime": "2017-10-23",
-                    "EndTime": "2018-09-01",
+                    "StartTime": _dateToString(this.ruleForm.Time[0]),
+                    "EndTime": _dateToString(this.ruleForm.Time[1]),
                     "ProjectId": _getTime()
                 }
                 console.log(param)
@@ -379,6 +400,7 @@
                             ProjectName: "图纸上传" + _getTime()
                         })
                         console.log(data);
+                        that.showAddProject = false
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
