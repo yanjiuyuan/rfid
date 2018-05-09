@@ -393,10 +393,61 @@ namespace DingTalk.Controllers
         [HttpGet]
         public string GetProcedureInfo(string DrawingNo)
         {
-            using (DDContext context = new DDContext())
+            try
             {
-                List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == DrawingNo).ToList();
-                return JsonConvert.SerializeObject(ListProcedureInfo);
+                if (string.IsNullOrEmpty(DrawingNo))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数DrawingNo"
+                    });
+                }
+                else
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == DrawingNo).ToList();
+                        return JsonConvert.SerializeObject(ListProcedureInfo);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region 员工信息查询
+
+        /// <summary>
+        /// 员工信息查询
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据：测试数据：/DrawingDown/GetWorkerInfo
+        public string GetWorkerInfo()
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Worker> ListWorker = context.Worker.ToList();
+                    return JsonConvert.SerializeObject(ListWorker);
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
             }
         }
 

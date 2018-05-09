@@ -26,6 +26,7 @@ namespace DingTalk.Models.DbModels
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
+        public virtual DbSet<Worker> Worker { get; set; }
         public virtual DbSet<WorkTime> WorkTime { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -448,6 +449,26 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<PurchaseDown>()
                 .Property(e => e.FlowType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Worker>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Worker>()
+                .Property(e => e.WorkerId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Worker>()
+                .Property(e => e.WorkerName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Worker>()
+                .Property(e => e.CreateManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Worker>()
+                .Property(e => e.CreateTime)
                 .IsUnicode(false);
 
             modelBuilder.Entity<WorkTime>()
