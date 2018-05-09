@@ -119,6 +119,8 @@
 
     var FlowBackList = { "Id": 163, "TaskId": 5, "ApplyMan": "蔡兴桐", "ApplyManId": "manager5312", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 1, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": "", "FileUrl": null, "Title": "图纸上传2018-04-25 16:38", "ProjectId": "2018-04-25 16:38", "IsPost": false, "OldImageUrl": "", "OldFileUrl": null, "IsBack": null }
 
+    var PurchaseDownList = [{ "Id": 1.0, "TaskId": "3", "OldTaskId": "2", "DrawingNo": "DTE-801B-WX-01C", "CodeNo": "2", "Name": "十字座套", "Count": "2", "MaterialScience": "7075T6", "Unit": "件", "Brand": "耐克", "Sorts": "自制", "Mark": "借用", "IsDown": true, "ProcedureId": "1", "FlowType": "0" }, { "Id": 2.0, "TaskId": "3", "OldTaskId": "2", "DrawingNo": "DTE-801B-WX-01B", "CodeNo": "3", "Name": "十字座D10", "Count": "1", "MaterialScience": "7075T6", "Unit": "件", "Brand": "阿迪", "Sorts": "自制", "Mark": "借用", "IsDown": true, "ProcedureId": "2", "FlowType": "1" }]
+
     $("#btn").click(function () {
         $.ajax({
             url: "/FlowInfo/CreateTaskInfo",

@@ -157,15 +157,15 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据  /DrawingDown/SubmitDrawingDown
-        /// var PurchaseDownList =  [{ "DrawingNo": "DTE-801B-WX-01C", "OldTaskId": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
-        ///  { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
-        ///  { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
+        /// var PurchaseDownList = [{"Id":1.0,"TaskId":"3","OldTaskId":"2","DrawingNo":"DTE-801B-WX-01C","CodeNo":"2","Name":"十字座套","Count":"2","MaterialScience":"7075T6","Unit":"件","Brand":"耐克","Sorts":"自制","Mark":"借用","IsDown":true,"ProcedureId":"1","FlowType":"0"},{"Id":2.0,"TaskId":"3","OldTaskId":"2","DrawingNo":"DTE-801B-WX-01B","CodeNo":"3","Name":"十字座D10","Count":"1","MaterialScience":"7075T6","Unit":"件","Brand":"阿迪","Sorts":"自制","Mark":"借用","IsDown":true,"ProcedureId":"2","FlowType":"1"}]
         [HttpPost]
-        public string SubmitDrawingDown(List<PurchaseDown> PurchaseDownList)
+        public string SubmitDrawingDown()
         {
             try
             {
-                if (PurchaseDownList == null)
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
                 {
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -175,11 +175,12 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
+                    List<PurchaseDown> procedureInfoList = new List<PurchaseDown>();
+                    procedureInfoList = JsonHelper.JsonToObject<List<PurchaseDown>>(List);
                     using (DDContext context = new DDContext())
                     {
-                        foreach (PurchaseDown purchaseDown in PurchaseDownList)
+                        foreach (PurchaseDown purchaseDown in procedureInfoList)
                         {
-                            purchaseDown.IsDown = true;
                             context.PurchaseDown.Add(purchaseDown);
                         }
                         context.SaveChanges();
