@@ -63,49 +63,61 @@
         <el-table-column label="单位" prop="Unit"></el-table-column>
         <el-table-column label="类别" prop="Sorts"></el-table-column>
         <el-table-column label="备注" prop="Mark"></el-table-column>
-        <el-table-column label="操作">
+        @*<el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button size="mini"
                            v-on:click="addFlow(scope.$index, scope.row)">
                     添加工序
                 </el-button>
             </template>
-        </el-table-column>
+        </el-table-column>*@
         <el-table-column type="expand">
-            <template slot-scope="props">
-                <el-collapse accordion>
-                    <el-collapse-item v-for="flow in props.row.flows" :key="flows.id">
-                        <el-form>
-                            <el-form-item label="工序名称">
-                                <el-input v-model="flow.Name" prop="string"></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button size="mini" v-on:click="addWork()" class="tableRight">分配工作</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
-                            </el-form-item>
-                        </el-form>
-                        <!--工作分配部分-->
-                        <el-form v-for="flow in flows.children" :key="flow.id" :inline="true" class="demo-form-inline form" size="mini">
-                            <el-form-item label="执行人">
-                                <el-input v-model="flow.label" :placeholder="flow.label" style="width:100px;"></el-input>
-                            </el-form-item>
-                            <el-form-item label="开始日期">
-                                <el-date-picker v-model="flow.id"
-                                                type="daterange"
-                                                :picker-options="pickerOptions"
-                                                range-separator="至"
-                                                start-placeholder="开始日期"
-                                                end-placeholder="结束日期">
-                                </el-date-picker>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="danger" v-on:click="deleteWork">删除工作</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </el-collapse-item>
-                </el-collapse>
+            <template slot-scope="scope">
+                <div v-for="flow in scope.row.flows" :key="flow.id">
+                    <!--工序分配部分-->
+                    <el-form :inline="true">
+                        <el-form-item label="工序名称">
+                            <el-input v-model="flow.ProcedureName"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button size="mini" v-on:click="addWork()" class="tableRight">分配工作</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <!--工作分配部分-->
+                    <el-collapse accordion>
+                        <el-collapse-item>
+                            <el-form v-for="work in flow.works" :key="work.DrawingNo" :inline="true" class="demo-form-inline form" size="mini">
+                                <el-form-item label="执行人">
+                                    <el-input v-model="flow.label" :placeholder="flow.label" style="width:100px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="开始日期">
+                                    <el-date-picker v-model="flow.id"
+                                                    type="daterange"
+                                                    :picker-options="pickerOptions"
+                                                    range-separator="至"
+                                                    start-placeholder="开始日期"
+                                                    end-placeholder="结束日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="danger" v-on:click="deleteWork">删除工作</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-collapse-item>
+                    </el-collapse>
+                </div>
+
+                <el-form :inline="true">
+                    <el-form-item label="工序名称" prop="ProcedureName">
+                        <el-input v-model="flowForm.ProcedureName"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button size="mini" v-on:click="addFlow(scope.row)" class="tableRight">分配工作</el-button>
+                    </el-form-item>
+                </el-form>
             </template>
         </el-table-column>
     </el-table>
@@ -147,41 +159,7 @@
                 totalRows: 0,
                 project: [],
                 //零件列表相关参数
-                parts: [{
-                    "id": 1,
-                    "label": "一级 1",
-                    "children": [{
-                        "id": 4,
-                        "label": "二级 1-1",
-                        "children": [{
-                            "id": 9,
-                            "label": "三级 1-1-1"
-                        }, {
-                            "id": 10,
-                            "label": "三级 1-1-2"
-                        }]
-                    }]
-                }, {
-                        "id": 2,
-                        "label": "一级 2",
-                        "children": [{
-                        "id": 5,
-                        "label": "二级 2-1"
-                    }, {
-                            "id": 6,
-                            "label": "二级 2-2"
-                    }]
-                }, {
-                        "id": 3,
-                        "label": "一级 3",
-                        "children": [{
-                        "id": 7,
-                        "label": "二级 3-1"
-                    }, {
-                        "id": 8,
-                        "label": "二级 3-2"
-                    }]
-                    }],
+                parts: [],
                 tableParts: [],
                 partsRows: 0,
                 partsCurrentPage: 1,
@@ -199,24 +177,34 @@
             onSubmit() {
                 console.log('submit!');
             },
-            addFlow(index, row) {
+            //为部件添加工序，删除工序
+            addFlow(row) {
+
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
                         if (!part.flows) part["flows"] = []
                         part.flows.push({
-                            ProcedureName: '',
+                            ProcedureName: this.flowForm.ProcedureName,
+                            DrawingNo: part.DrawingNo,
                             DefaultWorkTime: ''
                         })
                     }
                 }
-                console.log(index)
-                console.log(row)
+                console.log(this.parts)
+                this.getPartsData()
             },
             deleteFlow() {
                 
             },
-            addWork() {
-
+            //为工序配置人员
+            addWork(index, row) {
+                for (let part of this.parts) {
+                    if (part.Id == row.Id) {
+                        part[index]
+                    }
+                }
+                console.log(this.parts)
+                this.getPartsData()
             },
             deleteWork() {
 
