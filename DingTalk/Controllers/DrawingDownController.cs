@@ -389,7 +389,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="DrawingNo">零件编号</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetProcedureInfo?DrawingNo=DTE-801B-WX-01C
+        /// 测试数据：/DrawingDown/GetProcedureInfo?DrawingNo=DTE-801B-WX-01C,DTE-801B-WX-01D
         [HttpGet]
         public string GetProcedureInfo(string DrawingNo)
         {
@@ -407,8 +407,14 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == DrawingNo).ToList();
-                        return JsonConvert.SerializeObject(ListProcedureInfo);
+                        string[] DrawingNoList = DrawingNo.Split(',');
+                        Dictionary<string, List<ProcedureInfo>> dic = new Dictionary<string, List<ProcedureInfo>>();
+                        foreach (var drawingNo in DrawingNoList)
+                        {
+                            List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == drawingNo).ToList();
+                            dic.Add(drawingNo, ListProcedureInfo);
+                        }
+                        return JsonConvert.SerializeObject(dic);
                     }
                 }
             }
