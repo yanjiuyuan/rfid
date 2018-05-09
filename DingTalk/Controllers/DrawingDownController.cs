@@ -203,7 +203,7 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        #region 添加工序与工时
+        #region 添加、删除工序与工时
 
         /// <summary>
         /// 添加工序
@@ -296,6 +296,112 @@ namespace DingTalk.Controllers
                     {
                         errorCode = 0,
                         errorMessage = "保存成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// 批量删除工序
+        /// </summary>
+        /// <param name="Id">(逗号隔开)</param>
+        /// <returns></returns>
+        /// 测试数据： /DrawingDown/DeleteProcedure?&Id=10004,10005
+        [HttpGet]
+        public string DeleteProcedure(string Id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Id))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    string[] ListIds = Id.Split(',');
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (var item in ListIds)
+                        {
+                            ProcedureInfo procedureInfo = new ProcedureInfo()
+                            {
+                                Id = decimal.Parse(item)
+                            };
+                            context.ProcedureInfo.Attach(procedureInfo);
+                            context.ProcedureInfo.Remove(procedureInfo);
+                            context.SaveChanges();
+                        }
+                    }
+
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "删除成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// 批量删除工时
+        /// </summary>
+        /// <param name="Id">(逗号隔开)</param>
+        /// <returns></returns>
+        /// 测试数据： /DrawingDown/DeleteWorkTime?&Id=10002,10003,10004
+        public string DeleteWorkTime(string Id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Id))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    string[] ListIds = Id.Split(',');
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (var item in ListIds)
+                        {
+                            WorkTime workTime = new WorkTime()
+                            {
+                                Id = decimal.Parse(item)
+                            };
+                            context.WorkTime.Attach(workTime);
+                            context.WorkTime.Remove(workTime);
+                            context.SaveChanges();
+                        }
+                    }
+
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "删除成功"
                     });
                 }
             }
