@@ -97,6 +97,7 @@ function _delCookie(name) {
 }
 
 function _dateToString(date, split) {
+    if(!split) split = "-"
     var d = new Date(date)
     var year = d.getFullYear()
     var month = d.getMonth() + 1
@@ -169,10 +170,13 @@ var mixin = {
             ],
             string: [
                 { required: true, message: '内容不能为空', trigger: 'blur' },
-                { min: 3, max: 25, message: '长度在 3 到 25 个字符', trigger: 'blur' }
+                { min: 1, max: 25, message: '长度在 1 到 25 个字符', trigger: 'blur' }
             ],
             ProjectId: [
-                { required: true, message: '内容不能为空', trigger: 'change' }
+                { required: true, message: '内容不能为空！', trigger: 'change' }
+            ],
+            ProjectName: [
+                { required: true, message: '内容不能为空！', trigger: 'change' }
             ]
         },
         pickerOptions: pickerOptions,
@@ -263,7 +267,7 @@ Vue.component('sam-approver-list', {
                                 <p class='applytime'>{{node.ApplyTime}}</p>
                                 </br>
                             </template>
-                            <div v-if="index<nodelist.length-1">
+                            <div v-if="index<nodelist.length-1" style="line-height:1px;">
                                 <i class="el-icon-arrow-down approve-arrow"  type="primary"></i>
                                 </br>
                             </div>
