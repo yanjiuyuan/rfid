@@ -73,49 +73,57 @@
         </el-table-column>*@
         <el-table-column type="expand">
             <template slot-scope="scope">
-                <div v-for="flow in scope.row.flows" :key="flow.id">
-                    <!--工序分配部分-->
-                    <el-form :inline="true">
-                        <el-form-item label="工序名称">
-                            <el-input v-model="flow.ProcedureName"></el-input>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button size="mini" v-on:click="addWork()" class="tableRight">分配工作</el-button>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
-                        </el-form-item>
-                    </el-form>
-                    <!--工作分配部分-->
-                    <el-collapse accordion>
-                        <el-collapse-item>
-                            <el-form v-for="work in flow.works" :key="work.DrawingNo" :inline="true" class="demo-form-inline form" size="mini">
-                                <el-form-item label="执行人">
-                                    <el-input v-model="flow.label" :placeholder="flow.label" style="width:100px;"></el-input>
-                                </el-form-item>
-                                <el-form-item label="开始日期">
-                                    <el-date-picker v-model="flow.id"
-                                                    type="daterange"
-                                                    :picker-options="pickerOptions"
-                                                    range-separator="至"
-                                                    start-placeholder="开始日期"
-                                                    end-placeholder="结束日期">
-                                    </el-date-picker>
-                                </el-form-item>
-                                <el-form-item>
-                                    <el-button type="danger" v-on:click="deleteWork">删除工作</el-button>
-                                </el-form-item>
-                            </el-form>
-                        </el-collapse-item>
-                    </el-collapse>
-                </div>
-
+                <el-collapse accordion>
+                    <el-collapse-item v-for="(flow,index) in scope.row.flows" :key="flow.id" :title="flow.ProcedureName">
+                        <!--工序列表-->
+                        <el-form :inline="true">
+                            <el-form-item label="工序名称">
+                                <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
+                            </el-form-item>
+                        </el-form>
+                        <!--工作分配列表-->
+                        <el-form v-for="(work,i) in scope.row.flows[index].works" :inline="true" class="demo-form-inline form" size="mini">
+                            <el-form-item label="执行人">
+                                <el-input v-model="work.name" style="width:100px;" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="开始时间">
+                                <el-input v-model="work.startTime" style="width:100px;" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="结束时间">
+                                <el-input v-model="work.endTime" style="width:100px;" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button v-on:click="">删除工作</el-button>
+                            </el-form-item>
+                        </el-form>
+                        <!--添加工作分配-->
+                        <el-form :id="scope.row.DrawingNo+index" :inline="true" class="demo-form-inline form" size="mini">
+                            <el-form-item label="执行人">
+                                <el-input name="name" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="开始时间">
+                                <el-input name="startTime" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="结束时间">
+                                <el-input name="endTime" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-collapse-item>
+                </el-collapse>
+                <!--添加工序-->
                 <el-form :inline="true">
                     <el-form-item label="工序名称" prop="ProcedureName">
-                        <el-input v-model="flowForm.ProcedureName"></el-input>
+                        <el-input :id="scope.row.DrawingNo"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button size="mini" v-on:click="addFlow(scope.row)" class="tableRight">分配工作</el-button>
+                        <el-button size="mini" type="primary" class="tableRight"
+                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)">添加工序</el-button>
                     </el-form-item>
                 </el-form>
             </template>
@@ -178,33 +186,99 @@
                 console.log('submit!');
             },
             //为部件添加工序，删除工序
-            addFlow(row) {
-
+            addFlow(row, id) {
+                var param = []
+                var procName = $("#" + id).val().trim()
+                if (procName.length < 1) {
+                    alert("必须输入工序名称")
+                    return
+                }
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
                         if (!part.flows) part["flows"] = []
                         part.flows.push({
-                            ProcedureName: this.flowForm.ProcedureName,
+                            ProcedureName: $("#"+id).val(),
                             DrawingNo: part.DrawingNo,
                             DefaultWorkTime: ''
                         })
+                        paramObj = [
+                            {
+                                "DrawingNo": part.DrawingNo,
+                                "ProcedureName": $("#" + id).val(),
+                                "DefaultWorkTime": "1",
+                                "State": "0",
+                                "CreateTime": _getTime(),
+                                "ApplyMan": DingData.nickName,
+                                "ApplyManId": DingData.userid
+                            }] 
                     }
                 }
                 console.log(this.parts)
                 this.getPartsData()
+                
+                $.ajax({
+                    url: "/DrawingDown/AddProcedure",
+                    type: "POST",
+                    data: JSON.stringify(paramObj),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工序接口")
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
             },
             deleteFlow() {
                 
             },
-            //为工序配置人员
-            addWork(index, row) {
+            //添加工时，删除工时
+            addWork(row, id, index) {
+                var param = []
+                var workArr = $("#" + id + index).serializeArray()
+                var workObj = {}
+                for (let obj of workArr) {
+                    if (obj.value == "") {
+                        alert("内容不能为空")
+                        return
+                    }
+                    workObj[obj.name] = obj.value
+                }
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
-                        part[index]
+                        if (!part.flows[index].works) part.flows[index]["works"] = []
+                        part.flows[index]["works"].push({
+                            name: workObj.name,
+                            startTime: workObj.startTime,
+                            endTime: workObj.endTime
+                        })
+                        paramObj = [
+                            {
+                                "ProjectInfoId": this.project.ProjectId,
+                                "IsFinish": false,
+                                "Worker": workObj.name,
+                                "WorkerId": "666",
+                                "StartTime": workObj.startTime,
+                                "EndTime": workObj.endTime,
+                                "UseTime": workObj.endTime - workObj.endTime
+                            }] 
                     }
                 }
-                console.log(this.parts)
                 this.getPartsData()
+                $.ajax({
+                    url: "/DrawingDown/AddWorkTime",
+                    type: "POST",
+                    data: JSON.stringify(paramObj),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工时接口")
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
             },
             deleteWork() {
 
