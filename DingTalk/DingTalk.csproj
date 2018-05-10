@@ -224,6 +224,7 @@
     <Compile Include="Models\AddUserRequestModel.cs" />
     <Compile Include="Models\AttendanceRequestModel.cs" />
     <Compile Include="Models\BatchDeleteUserModel.cs" />
+    <Compile Include="Models\CommomModel.cs" />
     <Compile Include="Models\DbModels\Approve.cs" />
     <Compile Include="Models\DbModels\DDContext.cs" />
     <Compile Include="Models\DbModels\FlowMan.cs" />
