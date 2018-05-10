@@ -63,14 +63,6 @@
         <el-table-column label="单位" prop="Unit"></el-table-column>
         <el-table-column label="类别" prop="Sorts"></el-table-column>
         <el-table-column label="备注" prop="Mark"></el-table-column>
-        @*<el-table-column label="操作">
-            <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addFlow(scope.$index, scope.row)">
-                    添加工序
-                </el-button>
-            </template>
-        </el-table-column>*@
         <el-table-column type="expand">
             <template slot-scope="scope">
                 <el-collapse accordion>
@@ -81,7 +73,7 @@
                                 <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button size="mini" v-on:click="deleteFlow()" type="danger" class="tableRight">删除工序</el-button>
+                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index)" type="danger" class="tableRight">删除工序</el-button>
                             </el-form-item>
                         </el-form>
                         <!--工作分配列表-->
@@ -230,8 +222,12 @@
                     }
                 })
             },
-            deleteFlow() {
-                
+            deleteFlow(DrawingNo, index) {
+                for (let part of this.parts) {
+                    if (part.DrawingNo == DrawingNo) {
+                        part.flows.splice(index,1)
+                    }
+                }
             },
             //添加工时，删除工时
             addWork(row, id, index) {
@@ -320,6 +316,27 @@
                         that.partsRows = data.length
                         that.parts = data
                         that.getPartsData()
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            getProcedureInfo() {
+                var param = [] 
+                for (let part of this.parts) {
+                    param.push({
+                        DrawingNo: part.DrawingNo
+                    })
+                }
+                $.ajax({
+                    url: "/DrawingDown/GetProcedureInfo",
+                    type: "POST",
+                    data: JSON.stringify(paramObj),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工时接口")
+                        console.log(data)
                     },
                     error: function (err) {
                         console.log(err);
