@@ -79,7 +79,29 @@ namespace DingTalk.Controllers
                                         p.Unit,
                                         p.Mark,
                                     };
-                        return JsonConvert.SerializeObject(Quary);
+                        var Procedure = context.ProcedureInfo;
+                        var QuaryPro = from q in Quary
+                                       join p in Procedure
+                                       on q.DrawingNo equals p.DrawingNo
+                                       select new
+                                       {
+                                           DrawingNoId=q.Id,
+                                           q.DrawingNo,
+                                           q.Name,
+                                           q.Sorts,
+                                           q.TaskId,
+                                           q.MaterialScience,
+                                           q.Brand,
+                                           q.Count,
+                                           q.Unit,
+                                           q.Mark,
+                                           ProcedureId = p.Id,
+                                           p.ProcedureName,
+                                           p.CreateTime,
+                                           p.ApplyMan
+                                       };
+
+                        return JsonConvert.SerializeObject(QuaryPro);
                     }
                 }
 
