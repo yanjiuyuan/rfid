@@ -79,7 +79,31 @@ namespace DingTalk.Controllers
                                         p.Unit,
                                         p.Mark,
                                     };
-                        return JsonConvert.SerializeObject(Quary);
+                        var Procedure = context.ProcedureInfo;
+                        var QuaryPro = from q in Quary
+                                       join p in Procedure
+                                       on q.DrawingNo equals p.DrawingNo
+                                       into temp
+                                       from pp in temp.DefaultIfEmpty()
+                                       select new
+                                       {
+                                           DrawingNoId = q.Id,
+                                           DrawingNo = q.DrawingNo,
+                                           Name = q.Name,
+                                           Sorts = q.Sorts,
+                                           TaskId = q.TaskId,
+                                           MaterialScience = q.MaterialScience,
+                                           Brand = q.Brand,
+                                           Count = q.Count,
+                                           Unit = q.Unit,
+                                           Mark = q.Mark,
+                                           ProcedureId = pp == null ? "" : pp.Id.ToString(),
+                                           ProcedureName = pp == null ? "" : pp.ProcedureName,
+                                           CreateTime = pp == null ? "" : pp.CreateTime,
+                                           ApplyMan = pp == null ? "" : pp.ApplyMan
+                                       };
+
+                        return JsonConvert.SerializeObject(QuaryPro);
                     }
                 }
 
@@ -247,7 +271,7 @@ namespace DingTalk.Controllers
                     {
                         errorCode = 0,
                         errorMessage = "保存成功",
-                        Content= JsonConvert.SerializeObject(ProcedureIdList)
+                        Content = JsonConvert.SerializeObject(ProcedureIdList)
                     });
                 }
             }
