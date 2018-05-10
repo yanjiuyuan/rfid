@@ -211,9 +211,9 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/AddProcedure
-        ///  var PurchaseList = [{ "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
-        ///  { "DrawingNo": "DTE-801B-WX-01C", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
-        ///  { "DrawingNo": "DTE-801B-WX-01D", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
+        ///  var PurchaseList = [{ "DrawingNo1": "DTE-801B-WX-01C", "ProcedureName": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "DrawingNo": "DTE-801B-WX-01C1", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "DrawingNo": "DTE-801B-WX-01D1", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
         [HttpPost]
         public string AddProcedure()
         {
@@ -233,18 +233,21 @@ namespace DingTalk.Controllers
                 {
                     List<ProcedureInfo> procedureInfoList = new List<ProcedureInfo>();
                     procedureInfoList = JsonHelper.JsonToObject<List<ProcedureInfo>>(List);
+                    List<string> ProcedureIdList = new List<string>();
                     using (DDContext context = new DDContext())
                     {
                         foreach (ProcedureInfo procedureInfo in procedureInfoList)
                         {
                             context.ProcedureInfo.Add(procedureInfo);
+                            context.SaveChanges();
+                            ProcedureIdList.Add(procedureInfo.Id.ToString());
                         }
-                        context.SaveChanges();
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
-                        errorMessage = "保存成功"
+                        errorMessage = "保存成功",
+                        Content= JsonConvert.SerializeObject(ProcedureIdList)
                     });
                 }
             }
@@ -499,7 +502,7 @@ namespace DingTalk.Controllers
         /// 测试数据：/DrawingDown/GetProcedureInfo
         /// var DrawingNoList=  [{ "DrawingNo": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C"}] 
         [HttpPost]
-        public string GetProcedureInfo(string DrawingNo)
+        public string GetProcedureInfo()
         {
             try
             {
@@ -517,14 +520,13 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<string> StringList = new List<string>();
-                        StringList=JsonHelper.JsonToObject<List<string>>(List);
-                        string[] DrawingNoList = DrawingNo.Split(',');
+                        CommomModel commomModel = new CommomModel();
+                        List<CommomModel> commomModelList = JsonHelper.JsonToObject<List<CommomModel>>(List);
                         Dictionary<string, List<ProcedureInfo>> dic = new Dictionary<string, List<ProcedureInfo>>();
-                        foreach (var drawingNo in StringList)
+                        foreach (var drawingNo in commomModelList)
                         {
-                            List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == drawingNo).ToList();
-                            dic.Add(drawingNo, ListProcedureInfo);
+                            List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == drawingNo.msg.DrawingNo).ToList();
+                            dic.Add(drawingNo.msg.DrawingNo, ListProcedureInfo);
                         }
                         return JsonConvert.SerializeObject(dic);
                     }
