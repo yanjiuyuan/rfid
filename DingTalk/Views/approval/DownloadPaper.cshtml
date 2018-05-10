@@ -178,35 +178,30 @@
                 console.log('submit!');
             },
             //为部件添加工序，删除工序
-            addFlow(row, id) {
+            addFlow(row, DrawingNo) {
+                var that = this 
                 var param = []
-                var procName = $("#" + id).val().trim()
+                var procName = $("#" + DrawingNo).val().trim()
                 if (procName.length < 1) {
                     alert("必须输入工序名称")
                     return
                 }
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
-                        if (!part.flows) part["flows"] = []
-                        part.flows.push({
-                            ProcedureName: $("#"+id).val(),
-                            DrawingNo: part.DrawingNo,
-                            DefaultWorkTime: ''
-                        })
                         paramObj = [
                             {
                                 "DrawingNo": part.DrawingNo,
-                                "ProcedureName": $("#" + id).val(),
+                                "ProcedureName": $("#" + DrawingNo).val(),
                                 "DefaultWorkTime": "1",
                                 "State": "0",
                                 "CreateTime": _getTime(),
                                 "ApplyMan": DingData.nickName,
                                 "ApplyManId": DingData.userid
                             }] 
+                        break
                     }
                 }
                 console.log(this.parts)
-                this.getPartsData()
                 
                 $.ajax({
                     url: "/DrawingDown/AddProcedure",
@@ -215,7 +210,21 @@
                     dataType: "json",
                     success: function (data) {
                         console.log("添加工序接口")
-                        console.log(data)
+                        var flowId = JSON.parse(data.Content)[0]
+                        console.log(flowId)
+                        for (let part of that.parts) {
+                            if (part.Id == row.Id) {
+                                if (!part.flows) part["flows"] = []
+                                part.flows.push({
+                                    Id: flowId,
+                                    ProcedureName: $("#" + DrawingNo).val(),
+                                    DrawingNo: part.DrawingNo,
+                                    DefaultWorkTime: ''
+                                })
+                                break
+                            }
+                        }
+                        that.getPartsData()
                     },
                     error: function (err) {
                         console.log(err);
