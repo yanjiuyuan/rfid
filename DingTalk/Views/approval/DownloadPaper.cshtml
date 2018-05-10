@@ -73,7 +73,7 @@
                                 <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index)" type="danger" class="tableRight">删除工序</el-button>
+                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.Id)" type="danger" class="tableRight">删除工序</el-button>
                             </el-form-item>
                         </el-form>
                         <!--工作分配列表-->
@@ -180,33 +180,26 @@
             //为部件添加工序，删除工序
             addFlow(row, DrawingNo) {
                 var that = this 
-                var param = []
                 var procName = $("#" + DrawingNo).val().trim()
                 if (procName.length < 1) {
                     alert("必须输入工序名称")
                     return
                 }
-                for (let part of this.parts) {
-                    if (part.Id == row.Id) {
-                        paramObj = [
-                            {
-                                "DrawingNo": part.DrawingNo,
-                                "ProcedureName": $("#" + DrawingNo).val(),
-                                "DefaultWorkTime": "1",
-                                "State": "0",
-                                "CreateTime": _getTime(),
-                                "ApplyMan": DingData.nickName,
-                                "ApplyManId": DingData.userid
-                            }] 
-                        break
-                    }
-                }
-                console.log(this.parts)
+                var param = [
+                {
+                    "DrawingNo": DrawingNo,
+                    "ProcedureName": $("#" + DrawingNo).val(),
+                    "DefaultWorkTime": "1",
+                    "State": "0",
+                    "CreateTime": _getTime(),
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid
+                }]
                 
                 $.ajax({
                     url: "/DrawingDown/AddProcedure",
                     type: "POST",
-                    data: JSON.stringify(paramObj),
+                    data: JSON.stringify(param),
                     dataType: "json",
                     success: function (data) {
                         console.log("添加工序接口")
@@ -224,6 +217,7 @@
                                 break
                             }
                         }
+                        console.log(that.parts)
                         that.getPartsData()
                     },
                     error: function (err) {
@@ -231,12 +225,25 @@
                     }
                 })
             },
-            deleteFlow(DrawingNo, index) {
+            deleteFlow(DrawingNo, index, flowId) {
                 for (let part of this.parts) {
                     if (part.DrawingNo == DrawingNo) {
                         part.flows.splice(index,1)
                     }
                 }
+                this.getData()
+                $.ajax({
+                    url: "/DrawingDown/DeleteProcedure?Id=" + flowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("删除工序")
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
             },
             //添加工时，删除工时
             addWork(row, id, index) {
