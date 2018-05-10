@@ -481,25 +481,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns>errorCode = 0 成功 </returns>
         /// 测试数据：FlowInfo/ChoseOrSend
-        ///var PeopleList = [{
-        //   "TaskId":"1",
-        //   "FlowId":"6",
-        //   "NodeId":"1",
-        //   "ApplyMan":"蔡兴桐",
-        //   "ApplyManId":"123456",
-        //   "IsEnable":"1",
-        //   "IsSend":"True",
-        //   "State":"0"
-        //},{
-        //   "TaskId":"1",
-        //   "FlowId":"6",
-        //   "NodeId":"1",
-        //   "ApplyMan":"龙贤",
-        //   "ApplyManId":"龙贤Id",
-        //   "IsEnable":"1",
-        //   "IsSend":"Flase",
-        //   "State":"0"
-        //}]
+        //   var PeopleList = [{ "Id": 335.0, "TaskId": 4, "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 1, "Remark": null, "IsSend": true, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }, { "Id": 336.0, "TaskId": 4, "ApplyMan": "黄龙贤", "ApplyManId": "020821466340361583", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": "44444444444444", "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }];
         [HttpPost]
         public string ChoseOrSend()
         {
@@ -525,7 +507,7 @@ namespace DingTalk.Controllers
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
-                        errorMessage = "选人或抄送成功"
+                        errorMessage = "选人、抄送成功"
                     });
                 }
                 else
@@ -546,7 +528,6 @@ namespace DingTalk.Controllers
                 });
             }
         }
-
 
         #endregion
 
@@ -975,7 +956,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                List<PurchaseDown> purchaseDown = context.PurchaseDown.ToList();
+                List<Tasks> purchaseDown = context.Tasks.Where(u=>u.TaskId==4).ToList();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
@@ -1034,12 +1015,12 @@ namespace DingTalk.Controllers
                     unit = "元"
                 },
                 //title = "正文标题",
-                content = "一大段文字",
+                content = "111一大段文字",
                 image = "@lADOADmaWMzazQKA",
                 file_count = "3",
                 author = "李四"
             };
-            return top.SendOaMessage("020821466340361583", oaTextModel);
+            return top.SendOaMessage("073110326032521796", oaTextModel);
         }
 
         /// <summary>

@@ -496,27 +496,32 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="DrawingNo">零件编号</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetProcedureInfo?DrawingNo=DTE-801B-WX-01C,DTE-801B-WX-01D
-        [HttpGet]
+        /// 测试数据：/DrawingDown/GetProcedureInfo
+        /// var DrawingNoList=  [{ "DrawingNo": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C"}] 
+        [HttpPost]
         public string GetProcedureInfo(string DrawingNo)
         {
             try
             {
-                if (string.IsNullOrEmpty(DrawingNo))
+                StreamReader streamReader = new StreamReader(Request.InputStream);
+                var List = streamReader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
                 {
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 1,
-                        errorMessage = "请传递参数DrawingNo"
+                        errorMessage = "请传递参数"
                     });
                 }
                 else
                 {
                     using (DDContext context = new DDContext())
                     {
+                        List<string> StringList = new List<string>();
+                        StringList=JsonHelper.JsonToObject<List<string>>(List);
                         string[] DrawingNoList = DrawingNo.Split(',');
                         Dictionary<string, List<ProcedureInfo>> dic = new Dictionary<string, List<ProcedureInfo>>();
-                        foreach (var drawingNo in DrawingNoList)
+                        foreach (var drawingNo in StringList)
                         {
                             List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == drawingNo).ToList();
                             dic.Add(drawingNo, ListProcedureInfo);
