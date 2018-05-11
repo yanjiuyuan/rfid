@@ -378,6 +378,7 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
+                    List<string> WorkTimeIdList = new List<string>();
                     List<WorkTime> WorkTimeInfoList = new List<WorkTime>();
                     WorkTimeInfoList = JsonHelper.JsonToObject<List<WorkTime>>(List);
                     using (DDContext context = new DDContext())
@@ -385,13 +386,15 @@ namespace DingTalk.Controllers
                         foreach (WorkTime workTime in WorkTimeInfoList)
                         {
                             context.WorkTime.Add(workTime);
+                            context.SaveChanges();
+                            WorkTimeIdList.Add(workTime.Id.ToString());
                         }
-                        context.SaveChanges();
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
-                        errorMessage = "保存成功"
+                        errorMessage = "保存成功",
+                        Content = JsonConvert.SerializeObject(WorkTimeIdList)
                     });
                 }
             }
