@@ -138,55 +138,6 @@
             }
         },
         created: function () {
-            var arr1 = [
-                {
-                    "DrawingNoId": 1,
-                    "ProList": [
-                        {
-                            "ProcedureId": "1",
-                            "ProcedureName": "磨削"
-                        }
-                    ]
-                },
-                {
-                    "DrawingNoId": 1,
-                    "ProList": [
-                        {
-                            "ProcedureId": "6",
-                            "ProcedureName": "切割"
-                        }
-                    ]
-                },
-                {
-                    "DrawingNoId": 2,
-                    "ProList": [
-                        {
-                            "ProcedureId": "1",
-                            "ProcedureName": "磨削"
-                        }
-                    ]
-                }
-
-            ]
-            var arr2 = []
-            for (let a1 of arr1) {
-                var ifHad = false
-                for (let a2 of arr2) {
-                    if (a2.DrawingNoId == a1.DrawingNoId)  ifHad = true
-                }
-                if (!ifHad) arr2.push({
-                    DrawingNoId: a1.DrawingNoId
-                })
-            }
-            for (let a2 of arr2) 
-                for (let a1 of arr1) 
-                    if (a2.DrawingNoId == a1.DrawingNoId) 
-                        if (!a2.ProList) a2["ProList"] = []
-                            a2.ProList.push(a1.ProList[0])
-            console.log(11111111111111111111111111111111111111)
-            console.log(arr1)
-            console.log(arr2)
-            console.log(22222222222222222222222222222222222222)
             this.getMenu()
             this.getUserInfo()
             loadHtml("mainPage", "partPage")
