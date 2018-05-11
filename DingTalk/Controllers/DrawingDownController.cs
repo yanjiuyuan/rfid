@@ -97,16 +97,84 @@ namespace DingTalk.Controllers
                                            Count = q.Count,
                                            Unit = q.Unit,
                                            Mark = q.Mark,
-                                           ProcedureId = pp == null ? "" : pp.Id.ToString(),
-                                           ProcedureName = pp == null ? "" : pp.ProcedureName,
-                                           CreateTime = pp == null ? "" : pp.CreateTime,
-                                           ApplyMan = pp == null ? "" : pp.ApplyMan
+
+                                           ProList = new List<Pro>()
+                                           {
+                                               new Pro{
+                                                   ProcedureId = pp == null ? "" : pp.Id.ToString(),
+                                                   ProcedureName = pp == null ? "" : pp.ProcedureName,
+                                                   CreateTime = pp == null ? "" : pp.CreateTime,
+                                                   ApplyMan = pp == null ? "" : pp.ApplyMan
+                                               }
+                                           },
                                        };
+                        
+
+                        //List<DrowDownModel> DrowDownModelList = new List<DrowDownModel>();
+
+                        //foreach (var item in QuaryPro)
+                        //{
+                        //    DrowDownModel drowDownModel = new DrowDownModel();
+                        //    Pro pro = new Pro();
+                        //    List<Pro> proList = new List<Pro>();
+                        //    drowDownModel.DrawingNo = item.DrawingNo;
+                        //    drowDownModel.Name = item.Name;
+                        //    drowDownModel.Sorts = item.Sorts;
+                        //    drowDownModel.TaskId = item.TaskId;
+                        //    drowDownModel.MaterialScience = item.MaterialScience;
+                        //    drowDownModel.Brand = item.Brand;
+                        //    drowDownModel.Count = item.Count;
+                        //    drowDownModel.Unit = item.Unit;
+                        //    drowDownModel.Mark = item.Mark;
+                        //    pro.ProcedureId = item.ProList[0].ProcedureId ;
+                        //    pro.ProcedureName = item.ProList[0].ProcedureName;
+                        //    pro.CreateTime = item.ProList[0].CreateTime;
+                        //    pro.ApplyMan = item.ProList[0].ApplyMan;
+                        //    proList.Add(pro);
+                        //    drowDownModel.ProList = proList;
+                        //    DrowDownModelList.Add(drowDownModel);
+                        //}
+
+
+
+                        //List<DrowDownModel> DrowDownModelListTest = new List<DrowDownModel>();
+
+                        //foreach (DrowDownModel drowDownModel in DrowDownModelList)
+                        //{
+                        //    List<Pro> ProList = new List<Pro>();
+                        //    foreach (DrowDownModel drowDownModelT in DrowDownModelList)
+                        //    {
+                        //        if (drowDownModel.DrawingNo == drowDownModelT.DrawingNo && drowDownModel!= drowDownModelT)
+                        //        {
+                        //            foreach (Pro pro in drowDownModel.ProList)
+                        //            {
+                        //                ProList.Add(pro);
+                        //            }
+                        //            foreach (Pro proT in drowDownModelT.ProList)
+                        //            {
+                        //                ProList.Add(proT);
+                        //            }
+                        //        }
+                        //    }
+
+                        //    DrowDownModel drowDownModelTest = new DrowDownModel();
+                        //    drowDownModelTest.ProList = ProList;
+                        //    drowDownModelTest.DrawingNo = drowDownModel.DrawingNo;
+                        //    drowDownModelTest.Name = drowDownModel.Name;
+                        //    drowDownModelTest.Sorts = drowDownModel.Sorts;
+                        //    drowDownModelTest.TaskId = drowDownModel.TaskId;
+                        //    drowDownModelTest.MaterialScience = drowDownModel.MaterialScience;
+                        //    drowDownModelTest.Brand = drowDownModel.Brand;
+                        //    drowDownModelTest.Count = drowDownModel.Count;
+                        //    drowDownModelTest.Unit = drowDownModel.Unit;
+                        //    drowDownModelTest.Mark = drowDownModel.Mark;
+                        //    DrowDownModelListTest.Add(drowDownModelTest);
+                        //}
+
 
                         return JsonConvert.SerializeObject(QuaryPro);
                     }
                 }
-
             }
             catch (Exception ex)
             {

@@ -247,6 +247,7 @@
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DownloadFileModel.cs" />
+    <Compile Include="Models\DrowDownModel.cs" />
     <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\FileMsgModel.cs" />
     <Compile Include="Models\ImageMsgModel.cs" />
