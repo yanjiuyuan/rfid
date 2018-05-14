@@ -94,7 +94,13 @@
                         <!--添加工作分配-->
                         <el-form :id="scope.row.DrawingNo+index" :inline="true" class="demo-form-inline form" size="mini">
                             <el-form-item label="执行人">
-                                <el-input name="name" style="width:100px;"></el-input>
+                                <el-select name="name" v-model="value" placeholder="请选择" >
+                                    <el-option v-for="e in employees"
+                                               :key="e.WorkerId"
+                                               :label="e.WorkerName"
+                                               :value="e.WorkerId">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
                             <el-form-item label="开始时间">
                                 <el-input name="startTime" style="width:100px;"></el-input>
@@ -135,7 +141,7 @@
 
     <div>
         <el-button style="margin:40px 0 0 40%" type="primary"
-                   v-on:click="">确定下发</el-button>
+                 :disabled="disabled"  v-on:click="">确定下发</el-button>
     </div>
 
 </el-main>
@@ -167,15 +173,70 @@
 
                 flowList: [],
                 workList: [],
+                employees: [],
                 ruleForm: {
                     name: '',
                     reson: '',
-                }
+                },
+                value: '',
+                disabled: false
             }
         },
         methods: {
             onSubmit() {
-                console.log('submit!');
+                var that = this
+                this.disabled = true
+                
+            },
+            //提交下发表单
+            SubmitDrawingDown() {
+                var param = [{
+                    "Id": 1.0,
+                    "TaskId": "3",
+                    "OldTaskId": "2",
+                    "DrawingNo": "DTE-801B-WX-01C",
+                    "CodeNo": "2",
+                    "Name": "十字座套",
+                    "Count": "2",
+                    "MaterialScience": "7075T6",
+                    "Unit": "件",
+                    "Brand": "耐克",
+                    "Sorts": "自制",
+                    "Mark": "借用",
+                    "IsDown": true,
+                    "ProcedureId": "1",
+                    "FlowType": "0"
+                },
+                {
+                    "Id": 2.0,
+                    "TaskId": "3",
+                    "OldTaskId": "2",
+                    "DrawingNo": "DTE-801B-WX-01B",
+                    "CodeNo": "3",
+                    "Name": "十字座D10",
+                    "Count": "1",
+                    "MaterialScience": "7075T6",
+                    "Unit": "件",
+                    "Brand": "阿迪",
+                    "Sorts": "自制",
+                    "Mark": "借用",
+                    "IsDown": true,
+                    "ProcedureId": "2",
+                    "FlowType": "1"
+                }]
+                $.ajax({
+                    url: "/DrawingDown/SubmitDrawingDown",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        that.disabled = false
+                    },
+                    error: function (err) {
+                        console.log(err)
+                        that.disabled = false
+                    }
+                })
             },
             //为部件添加工序，删除工序
             addFlow(row, DrawingNo) {
@@ -436,10 +497,28 @@
                 console.log('part current change')
                 this.partsCurrentPage = val
                 this.getPartsData()
-            }
+            },
+            //获取员工列表
+            getEmployees() {
+                var that = this
+                $.ajax({
+                    url: "/DrawingDown/GetWorkerInfo",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取员工列表")
+                        console.log(data)
+                        that.employees = data
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
         },
         created: function () {
             this.getProject()
+            this.getEmployees()
             loadHtml("mainPage", "partPage")
         }
     })
