@@ -43,5 +43,8 @@ namespace DingTalk.Models.DbModels
 
         [StringLength(100)]
         public string BackNodeId { get; set; }
+
+        [StringLength(100)]
+        public string ChoseNodeId { get; set; }
     }
 }

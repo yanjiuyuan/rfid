@@ -203,6 +203,10 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.BackNodeId)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<NodeInfo>()
+                .Property(e => e.ChoseNodeId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<Purchase>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
