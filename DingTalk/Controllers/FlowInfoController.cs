@@ -26,23 +26,11 @@ namespace DingTalk.Controllers
         /// 流程创建接口(Post)
         /// </summary>
         /// 测试数据：/DrawingUpload/CreateTaskInfo
-        //var FlowTest = {
-        //"ApplyMan": "蔡兴桐",
-        //"ApplyManId": "蔡兴桐Id",
-        //"NodeId":"0",
-        //"ApplyTime": "2018-04-10 14:40",
-        //"IsEnable": "1",
-        //"FlowId": "6",
-        //"Remark":"意见",
-        //"IsSend":"False",
-        //"State":"1"  
-        //"OldImageUrl","原图片路径",
-        //"ImageUrl","图片路径",
-        //"OldFileUrl","原文件路径",
-        //"FileUrl","文件路径",
-        //"Title","标题",
-        //"ProjectId","项目号",
-        //}
+        //var FlowTest =
+        //[{ "ApplyMan": "小威", "ApplyManId": "1209662535974958", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 0, "Remark": "6666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+        //{ "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+        //{ "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
+        //];
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
         public string CreateTaskInfo()
@@ -61,26 +49,58 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
-                    Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
+                    List<Tasks> taskList = JsonHelper.JsonToObject<List<Tasks>>(stream);
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     int TaskId = flowInfoServer.FindMaxTaskId();
-                    tasks.TaskId = TaskId;
-                    using (DDContext context = new DDContext())
+                    foreach (var tasks in taskList)
                     {
-                        tasks.IsPost = true;
-                        context.Tasks.Add(tasks);
-                        context.SaveChanges();
-                        //寻人推送
-                        Dictionary<string, string> dic =
-                        FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, tasks.TaskId, 0);
-                        //推送OA消息
-                        SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId), tasks.ApplyMan, tasks.Remark, null);
+                        tasks.TaskId = TaskId;
+                        using (DDContext context = new DDContext())
+                        {
+                            //修改任务流状态
+                            if (taskList.IndexOf(tasks) == 0)
+                            {
+                                tasks.FlowId.ToString();
+                                tasks.IsPost = true;
+                                tasks.State = 1;
+                                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                                context.Tasks.Add(tasks);
+                                context.SaveChanges();
+                            }
+                            else
+                            {
+                                tasks.IsPost = false;
+                                tasks.State = 0;
+                                context.Tasks.Add(tasks);
+                                context.SaveChanges();
+                            }
+
+                            if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
+                            {
+                                //寻人推送
+                                Dictionary<string, string> dic =
+                                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, 0);
+                                //推送OA消息
+                                SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                            }
+                            else  //有选人
+                            {
+                                if (taskList.IndexOf(tasks) > 0)
+                                {
+                                    //推送OA消息
+                                    SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                                }
+                            }
+                        }
                     }
+
+
+
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
                         errorMessage = "创建成功！",
-                        Content = tasks.TaskId.ToString()
+                        Content = TaskId.ToString()
                     });
                 }
             }
@@ -956,7 +976,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                List<Tasks> purchaseDown = context.Tasks.Where(u=>u.TaskId==4).ToList();
+                List<Tasks> purchaseDown = context.Tasks.Where(u => u.TaskId == 4).ToList();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
