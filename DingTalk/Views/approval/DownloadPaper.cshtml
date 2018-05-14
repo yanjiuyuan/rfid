@@ -58,7 +58,7 @@
         <el-table-column label="代号" prop="DrawingNo"></el-table-column>
         <el-table-column label="名称" prop="Name"></el-table-column>
         @*<el-table-column label="材料" prop="MaterialScience"></el-table-column>
-        <el-table-column label="品牌" prop="Brand"></el-table-column>*@
+            <el-table-column label="品牌" prop="Brand"></el-table-column>*@
         <el-table-column label="数量" prop="Count"></el-table-column>
         <el-table-column label="单位" prop="Unit"></el-table-column>
         <el-table-column label="类别" prop="Sorts"></el-table-column>
@@ -73,7 +73,7 @@
                                 <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.Id)" type="danger" class="tableRight">删除工序</el-button>
+                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.ProcedureId)" type="danger" class="tableRight">删除工序</el-button>
                             </el-form-item>
                         </el-form>
                         <!--工作分配列表-->
@@ -88,7 +88,7 @@
                                 <el-input v-model="work.endTime" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button v-on:click="">删除工作</el-button>
+                                <el-button v-on:click="deleteWork(scope.row.DrawingNo,flow.ProcedureId,i)">删除工作</el-button>
                             </el-form-item>
                         </el-form>
                         <!--添加工作分配-->
@@ -225,20 +225,27 @@
                     }
                 })
             },
-            deleteFlow(DrawingNo, index, flowId) {
+            deleteFlow(DrawingNo, index, ProcedureId) {
+                var that = this
                 for (let part of this.parts) {
                     if (part.DrawingNo == DrawingNo) {
-                        part.flows.splice(index,1)
+                        part.flows.splice(index, 1)
+                        break
                     }
                 }
                 this.getData()
                 $.ajax({
-                    url: "/DrawingDown/DeleteProcedure?Id=" + flowId,
+                    url: "/DrawingDown/DeleteProcedure?Id=" + ProcedureId,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
                         console.log("删除工序")
                         console.log(data)
+                        that.$notify({
+                            title: '删除成功',
+                            message: '成功删除工序' + ProcedureId,
+                            type: 'success'
+                        });
                     },
                     error: function (err) {
                         console.log(err);
@@ -292,8 +299,43 @@
                     }
                 })
             },
-            deleteWork() {
-
+            deleteWork(DrawingNo, ProcedureId, index) {
+                var that = this
+                var ifDone = false
+                for (let part of this.parts) {
+                    if (part.DrawingNo == DrawingNo) {
+                        for (let flow of part.flows) {
+                            if (flow.ProcedureId == ProcedureId) {
+                                console.log("删除工时")
+                                console.log(flow.works)
+                                flow.works.splice(index, 1)
+                                console.log(flow.works)
+                                ifDone = true
+                                break
+                            }
+                        }
+                        if(ifDone) break
+                    }
+                }
+                this.getData()
+                return
+                $.ajax({
+                    url: "/DrawingDown/DeleteWorkTime?Id=" + ProcedureId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("删除工序")
+                        console.log(data)
+                        that.$notify({
+                            title: '删除成功',
+                            message: '成功删除工序' + ProcedureId,
+                            type: 'success'
+                        });
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
             },
             //获取项目列表
             getProject() {
@@ -329,8 +371,27 @@
                     success: function (data) {
                         console.log("加载项目信息!-" + "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=123456")
                         console.log(data)
-                        that.partsRows = data.length
-                        that.parts = data
+
+                        that.parts = []
+                        for (let a1 of data) {
+                            var ifHad = false
+                            for (let part of that.parts) {
+                                if (part.DrawingNoId == a1.DrawingNoId) ifHad = true
+                            }
+                            if (!ifHad) {
+                                let tmpObj = _cloneObj(a1)
+                                delete tmpObj.ProList
+                                that.parts.push(tmpObj)
+                            } 
+                        }
+                        for (let part of that.parts)
+                            for (let a1 of data)
+                                if (part.DrawingNoId == a1.DrawingNoId) {
+                                    if (!part.flows) part["flows"] = []
+                                    part.flows.push(a1.ProList[0])
+                                }
+                        console.log(that.parts)
+                        that.partsRows = that.parts.length
                         that.getPartsData()
                     },
                     error: function (err) {
