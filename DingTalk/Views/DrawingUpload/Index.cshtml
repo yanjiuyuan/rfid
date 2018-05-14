@@ -29,7 +29,10 @@
 <input id="btn7" type="button" value="添加工时" />
 <input id="btn8" type="button" value="图纸下发表单提交接口" />
 <script type="text/javascript">
-    var FlowTest = [{ "Id": 332.0, "TaskId": 4, "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": "2018-05-08 03:29:12", "IsEnable": 1, "FlowId": 6, "NodeId": 4, "Remark": "55555555555555", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": null, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }, { "Id": 333.0, "TaskId": 4, "ApplyMan": "胡工", "ApplyManId": "123456", "ApplyTime": "2018-05-08 03:29:33", "IsEnable": 1, "FlowId": 6, "NodeId": 5, "Remark": "66666666666666666666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": null, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }]
+    var FlowTest = [{ "ApplyMan": "小威", "ApplyManId": "1209662535974958", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 0, "Remark": "6666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+    { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+    { "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
+    ];
 
     var FlowTestApprove = {
         "Id": 195,
@@ -105,8 +108,8 @@
     var FlowBackList = { "Id": 163, "TaskId": 5, "ApplyMan": "蔡兴桐", "ApplyManId": "manager5312", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 1, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": "", "FileUrl": null, "Title": "图纸上传2018-04-25 16:38", "ProjectId": "2018-04-25 16:38", "IsPost": false, "OldImageUrl": "", "OldFileUrl": null, "IsBack": null }
 
     var PurchaseDownList = [{ "Id": 1.0, "TaskId": "3", "OldTaskId": "2", "DrawingNo": "DTE-801B-WX-01C", "CodeNo": "2", "Name": "十字座套", "Count": "2", "MaterialScience": "7075T6", "Unit": "件", "Brand": "耐克", "Sorts": "自制", "Mark": "借用", "IsDown": true, "ProcedureId": "1", "FlowType": "0" }, { "Id": 2.0, "TaskId": "3", "OldTaskId": "2", "DrawingNo": "DTE-801B-WX-01B", "CodeNo": "3", "Name": "十字座D10", "Count": "1", "MaterialScience": "7075T6", "Unit": "件", "Brand": "阿迪", "Sorts": "自制", "Mark": "借用", "IsDown": true, "ProcedureId": "2", "FlowType": "1" }]
-    
-    var DrawingNoList = [{ "DrawingNo": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C" }] 
+
+    var DrawingNoList = [{ "DrawingNo": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C" }]
 
     $("#btn").click(function () {
         $.ajax({
