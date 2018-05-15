@@ -844,21 +844,21 @@ namespace DingTalk.Controllers
                         List<object> ListObject = new List<object>();
 
 
-                        var QuaryChose = from n in ChoseNodeInfoList
-                                         join t in TaskList
-                                         on n.NodeId equals t.NodeId
-                                         into temp
-                                         from tt in temp.DefaultIfEmpty()
-                                         select new
-                                         {
-                                             NodeId = n.NodeId,
-                                             NodeName = n.NodeName,
-                                             IsBack = tt == null ? false : tt.IsBack,
-                                             ApplyMan = tt == null ? "" : tt.ApplyMan,
-                                             ApplyTime = tt == null ? "" : tt.ApplyTime,
-                                             Remark = tt == null ? "" : tt.Remark,
-                                             IsSend = tt == null ? false : tt.IsSend
-                                         };
+                        //var QuaryChose = from n in ChoseNodeInfoList
+                        //                 join t in TaskList
+                        //                 on n.NodeId equals t.NodeId
+                        //                 into temp
+                        //                 from tt in temp.DefaultIfEmpty()
+                        //                 select new
+                        //                 {
+                        //                     NodeId = n.NodeId,
+                        //                     NodeName = n.NodeName,
+                        //                     IsBack = tt == null ? false : tt.IsBack,
+                        //                     ApplyMan = tt == null ? "" : tt.ApplyMan,
+                        //                     ApplyTime = tt == null ? "" : tt.ApplyTime,
+                        //                     Remark = tt == null ? "" : tt.Remark,
+                        //                     IsSend = tt == null ? false : tt.IsSend
+                        //                 };
 
                         var Quary = from n in NodeInfoList
                                     join t in TaskList
@@ -875,7 +875,7 @@ namespace DingTalk.Controllers
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
                                     };
-                        ListObject.Add(QuaryChose);
+                        //ListObject.Add(QuaryChose);
                         ListObject.Add(Quary);
                         return JsonConvert.SerializeObject(ListObject);
                     }
