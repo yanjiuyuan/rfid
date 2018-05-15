@@ -301,7 +301,7 @@
                 console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
                 console.log(data)
                 allData = data
-                if (data.ImageUrl.length > 5) {
+                if (data.ImageUrl && data.ImageUrl.length > 5) {
                     var imageList = data.ImageUrl.split(',')
                     for (let img of imageList) {
                         fileList.push({

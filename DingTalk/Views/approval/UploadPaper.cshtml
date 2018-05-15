@@ -184,14 +184,17 @@
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
-
+                        
                         for (let node of this.nodeList) {
-                            if (node.NodeId == this.nodeInfo.NodeId) {
+                            if (node.NodeId == (this.nodeInfo.NodeId + 1)) {
+                                console.log(node)
+                                console.log(node.AddPeople)
                                 if (node.AddPeople.length == 0) {
-                                    that.$notify.error({
-                                        title: '提交错误',
-                                        message: "您尚未选择审批人",
-                                        type: 'success'
+                                    this.$alert('您尚未选择审批人', '提交错误', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+                                            
+                                        }
                                     });
                                     that.disablePage = false
                                     return 
@@ -199,11 +202,11 @@
                                 for (let a of node.AddPeople) {
                                     paramArr.push({
                                         "ApplyMan": a.name,
-                                        "ApplyManId": a.userid,
+                                        "ApplyManId": a.emplId,
                                         "ApplyTime": null,
                                         "IsEnable": 1,
                                         "FlowId": FlowId,
-                                        "NodeId": NodeId,
+                                        "NodeId": node.NodeId,
                                         "Remark": null,
                                         "IsSend": false,
                                         "State": 0,

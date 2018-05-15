@@ -107,14 +107,6 @@
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
-        console.log('ready11111111111111111')
-        //弹窗
-        DingTalkPC.device.notification.alert({
-            message: '弹窗成功',
-            buttonName: '确定',
-            onSuccess: function () {
-            }
-        })
         //PC版获取免登授权码
         DingTalkPC.runtime.permission.requestAuthCode({
             corpId: DingData.CorpId, //企业id

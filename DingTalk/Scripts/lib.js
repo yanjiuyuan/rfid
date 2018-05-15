@@ -268,7 +268,7 @@ Vue.component('sam-approver-list', {
                                 </br>
                             </template>
                             <template v-for="(ap,a) in node.AddPeople">
-                                <span v-if="a>0" style="margin-left:107px;">&nbsp;</span>
+                                <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.AddPeople.length>0"
