@@ -106,7 +106,8 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                var param = {
+                var paramArr = []
+                paramArr.push({
                     "Id": allData.Id,
                     "TaskId": TaskId,
                     "ApplyMan": DingData.nickName,
@@ -120,14 +121,39 @@
                     "State": "1",
                     "Title": this.ruleForm.Title,
                     "ProjectId": this.ruleForm.ProjectId
+                })
+                for (let node of this.nodeList) {
+                    if (node.NodeId == this.nodeInfo.NodeId) {
+                        for (let a of node.AddPeople) {
+                            paramArr.push({
+                                "ApplyMan": a.name,
+                                "ApplyManId": a.userid,
+                                "TaskId": TaskId,
+                                "ApplyTime": null,
+                                "IsEnable": 1,
+                                "FlowId": FlowId,
+                                "NodeId": NodeId,
+                                "Remark": null,
+                                "IsSend": false,
+                                "State": 0,
+                                "ImageUrl": null,
+                                "FileUrl": null,
+                                "ProjectId": that.ruleForm.ProjectId,
+                                "IsPost": false,
+                                "OldImageUrl": null,
+                                "OldFileUrl": null,
+                                "IsBack": null
+                            })
+                        }
+                    }
                 }
                 $.ajax({
                     url: "/FlowInfo/SubmitTaskInfo",
                     type: "POST",
-                    data: JSON.stringify(param),
+                    data: JSON.stringify(paramArr),
                     dataType: "json",
                     success: function (data) {
-                        console.log(param)
+                        console.log(paramArr)
                         console.log(data)
                         if (data && data.errorCode == 0) {
                             alert("创建成功")

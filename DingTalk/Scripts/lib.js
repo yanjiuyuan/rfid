@@ -267,6 +267,18 @@ Vue.component('sam-approver-list', {
                                 <p class='applytime'>{{node.ApplyTime}}</p>
                                 </br>
                             </template>
+                            <template v-for="(ap,a) in node.AddPeople">
+                                <span v-if="a>0" style="margin-left:107px;">&nbsp;</span>
+                                <el-tag :key="a"
+                                        :closable="false"
+                                        onclick="" v-if="node.AddPeople.length>0"
+                                        :disable-transitions="false"
+                                        :type="node.ApplyTime?'success':''"
+                                        >
+                                    {{ap.name}}
+                                </el-tag>
+                                </br>
+                            </template>
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
                                 <i class="el-icon-arrow-down approve-arrow"  type="primary"></i>
                                 </br>

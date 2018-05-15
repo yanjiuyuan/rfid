@@ -164,32 +164,59 @@
                                 title = p.ProjectName
                             }
                         }
-                        var paramObj = {
+                        var paramArr = []
+                        paramArr.push({
                             "ApplyMan": that.ruleForm.name,
                             "ApplyManId": DingData.userid,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
-                            "FlowId": FlowId+'',
+                            "FlowId": FlowId + '',
                             "Remark": that.ruleForm.remark,
-                            "IsSend":false,
-                            "State":"1",
+                            "IsSend": false,
+                            "State": "1",
                             "ImageUrl": that.ruleForm.ImageUrl,
                             "OldImageUrl": that.ruleForm.OldImageUrl,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
+                        }) 
+
+                        for (let node of this.nodeList) {
+                            if (node.NodeId == this.nodeInfo.NodeId) {
+                                for (let a of node.AddPeople) {
+                                    paramArr.push({
+                                        "ApplyMan": a.name,
+                                        "ApplyManId": a.userid,
+                                        "ApplyTime": null,
+                                        "IsEnable": 1,
+                                        "FlowId": FlowId,
+                                        "NodeId": NodeId,
+                                        "Remark": null,
+                                        "IsSend": false,
+                                        "State": 0,
+                                        "ImageUrl": null,
+                                        "FileUrl": null,
+                                        "ProjectId": that.ruleForm.ProjectId,
+                                        "IsPost": false,
+                                        "OldImageUrl": null,
+                                        "OldFileUrl": null,
+                                        "IsBack": null
+                                    })
+                                }
+                            }
                         }
-                        console.log(paramObj)
+                        console.log("paramArr")
+                        console.log(paramArr)
                         $.ajax({
                             url: '/FlowInfo/CreateTaskInfo',
                             type: 'POST',
-                            data: JSON.stringify(paramObj),
+                            data: JSON.stringify(paramArr),
                             success: function (data) {
                                 console.log("提交审批ok")
                                 var taskId = JSON.parse(data).Content
                                 console.log(taskId)
                                 that.bindData(taskId)
-                                that.addApprover(taskId)
+                                //that.addApprover(taskId)
                                 //that.bindApprover(taskId)
                                 //寻人，提示已提交
                             }
@@ -397,7 +424,7 @@
                     success: function (data) {
                         that.projestList.push({
                             Id: _getTime(),
-                            ProjectName: "图纸上传" + _getTime()
+                            ProjectName: that.ruleForm.ProjectName
                         })
                         console.log(data);
                         that.showAddProject = false
@@ -467,24 +494,19 @@
             },
             //审批所有流程通过，后续处理
             doneSubmit() {
-                var allState = 2
-                //有自选审批人，多调一个接口
-                for (let node of this.nodeList) {
-                    if (node.NodeId == this.nodeInfo.NodeId + 1 && node.AddPeople.length>0)
-                        allState = 3
-                }
-                State++
-                if (State >= allState) {
-                    alert('提交成功')
-                    State = 0
-                    DingTalkPC.device.notification.alert({
-                        message: '提交成功',
-                        buttonName: '确定',
-                        onSuccess: function () {
-                            loadPage('/main/Approval')
-                        }
-                    })
-                }
+                alert('提交成功')
+                DingTalkPC.device.notification.alert({
+                    message: '提交成功',
+                    buttonName: '确定',
+                    onSuccess: function () {
+                        loadPage('/main/Approval')
+                    }
+                })
+                //var allState = 2
+                //State++
+                //if (State >= allState) {
+                //    State = 0
+                //}
             }
         },
         created: function () {

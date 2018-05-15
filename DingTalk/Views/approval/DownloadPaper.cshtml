@@ -141,7 +141,7 @@
 
     <div>
         <el-button style="margin:40px 0 0 40%" type="primary"
-                 :disabled="disabled"  v-on:click="">确定下发</el-button>
+                 @*:disabled="disabled"*@  v-on:click="onSubmit">确定下发</el-button>
     </div>
 
 </el-main>
@@ -186,7 +186,15 @@
             onSubmit() {
                 var that = this
                 this.disabled = true
-                
+                console.log(this.parts)
+                for (let part of this.parts) {
+                    for (let flow of part.flows) {
+                        var state = 1
+                        for (let work of flow.works) {
+                            //if()
+                        }
+                    }
+                }
             },
             //提交下发表单
             SubmitDrawingDown() {
