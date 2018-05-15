@@ -270,7 +270,8 @@ Vue.component('sam-approver-list', {
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a"
-                                        :closable="false"
+                                        :closable="true"
+                                        v-on:close="deletePeople(ap.emplId)"
                                         onclick="" v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
@@ -329,6 +330,15 @@ Vue.component('sam-approver-list', {
                 },
                 onFail: function (err) { }
             });
+        },
+        deletePeople(emplId) {
+            for (let node of this.nodelist) {
+                for (let a of node.AddPeople) {
+                    if (a.emplId == emplId) {
+                        node.AddPeople.splice(node.AddPeople.indexOf(a), 1);
+                    }
+                }
+            }
         },
         handleClose(emplId) {
             for (let node of this.nodelist) 
