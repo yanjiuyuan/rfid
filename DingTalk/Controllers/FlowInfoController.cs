@@ -870,7 +870,7 @@ namespace DingTalk.Controllers
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
                                         IsBack = tt == null ? false : tt.IsBack,
-                                        ApplyMan = (n.NodeName == "申请人发起") ? ApplyMan : n.NodePeople,
+                                        ApplyMan = tt == null ? "" : tt.ApplyMan,
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
