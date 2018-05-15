@@ -60,6 +60,7 @@ namespace DingTalk.Controllers
                             //修改任务流状态
                             if (taskList.IndexOf(tasks) == 0)
                             {
+                                tasks.NodeId = 0;
                                 tasks.FlowId.ToString();
                                 tasks.IsPost = true;
                                 tasks.State = 1;
