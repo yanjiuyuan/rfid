@@ -95,7 +95,7 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> GetDepartmentUserList()
         {
-            string dptId = "1";
+            string dptId = "56943182";
             var result = await dtManager.GetDepartmentUserList(dptId);
             return result;
         }
