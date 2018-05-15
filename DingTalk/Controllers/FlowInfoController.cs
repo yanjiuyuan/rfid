@@ -81,9 +81,11 @@ namespace DingTalk.Controllers
                                 //寻人推送
                                 Dictionary<string, string> dic =
                                 FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, 0);
-
-                                //推送OA消息
-                                SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                                if (dic["PeopleId"].ToString() != "")
+                                {
+                                    //推送OA消息
+                                    SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                                }
                             }
                             else  //有选人
                             {
@@ -416,6 +418,7 @@ namespace DingTalk.Controllers
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
+                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).IsNeedChose;
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
@@ -423,6 +426,14 @@ namespace DingTalk.Controllers
                 if (NodeName == "结束")
                 {
                     return dic;
+                }
+                if (IsNeedChose == true)  //当前节点需要选人、停止找人
+                {
+                    return dic;
+                }
+                if (PeopleId == "" && IsNeedChose == false)  //找不到人、且不需要找人时继续查找下一节点人员
+                {
+                    return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                 }
                 else
                 {
