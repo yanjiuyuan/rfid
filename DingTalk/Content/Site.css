@@ -262,7 +262,9 @@ ol {
     padding:0px;
     overflow:hidden;
 }
-
+.head-fixed{
+    font-size:1.2rem;
+}
 .custom-tree-node {
     flex: 1;
     display: flex;
@@ -274,4 +276,7 @@ ol {
 
 .el-table__expanded-cell[class*=cell]{
     padding: 0px 10px;
+}
+#partPage{
+    margin-top:20px;
 }

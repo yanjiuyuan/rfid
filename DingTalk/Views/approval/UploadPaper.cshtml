@@ -59,6 +59,9 @@
             <el-form-item label="项目名称" prop="ProjectName">
                 <el-input v-model="ruleForm.ProjectName"></el-input>
             </el-form-item>
+            <el-form-item label="项目编号" prop="ProjectName">
+                <el-input v-model="ruleForm.ProjectId"></el-input>
+            </el-form-item>
             <el-form-item label="开始日期">
                 <el-date-picker v-model="ruleForm.Time"
                                 type="daterange"
@@ -147,6 +150,7 @@
                     copyers: ['小唐', '季老师'],
 
                     ProjectName: '',
+                    ProjectId: null,
                     Time: ''
                 }
             }
@@ -166,7 +170,7 @@
                         }
                         var paramArr = []
                         paramArr.push({
-                            "ApplyMan": that.ruleForm.name,
+                            "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
@@ -183,6 +187,15 @@
 
                         for (let node of this.nodeList) {
                             if (node.NodeId == this.nodeInfo.NodeId) {
+                                if (node.AddPeople.length == 0) {
+                                    that.$notify.error({
+                                        title: '提交错误',
+                                        message: "您尚未选择审批人",
+                                        type: 'success'
+                                    });
+                                    that.disablePage = false
+                                    return 
+                                }
                                 for (let a of node.AddPeople) {
                                     paramArr.push({
                                         "ApplyMan": a.name,
@@ -412,7 +425,7 @@
                     "ApplyManId": DingData.userid,
                     "StartTime": _dateToString(this.ruleForm.Time[0]),
                     "EndTime": _dateToString(this.ruleForm.Time[1]),
-                    "ProjectId": _getTime()
+                    "ProjectId": this.ruleForm.ProjectId
                 }
                 console.log(param)
                 $.ajax({
@@ -423,7 +436,7 @@
                     data: JSON.stringify(param),
                     success: function (data) {
                         that.projestList.push({
-                            Id: _getTime(),
+                            ProjectId: that.ruleForm.ProjectId,
                             ProjectName: that.ruleForm.ProjectName
                         })
                         console.log(data);
@@ -442,7 +455,7 @@
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("获取审批申请数据ok")
+                        console.log("获取节点数据 GetNodeInfo")
                         that.nodeInfo = data[0]
                         that.preApprove = !data[0].IsNeedChose
                         that.preCopy = !data[0].IsSendChose
@@ -452,14 +465,13 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
-                console.log("获取节点数据GetNodeInfo")
                 console.log("/Project/GetAllProJect?ApplyManId=" + DingData.userid)
                 $.ajax({
                     url: "/Project/GetAllProJect?ApplyManId=" + DingData.userid,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("获取节点数据GetNodeInfo")
+                        console.log("获取项目列表数据 GetAllProJect")
                         console.log(data)
                         that.projestList = data
                     },
