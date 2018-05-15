@@ -277,3 +277,6 @@ ol {
 .el-table__expanded-cell[class*=cell]{
     padding: 0px 10px;
 }
+#partPage{
+    margin-top:20px;
+}
