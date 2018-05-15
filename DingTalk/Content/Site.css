@@ -262,7 +262,9 @@ ol {
     padding:0px;
     overflow:hidden;
 }
-
+.head-fixed{
+    font-size:1.2rem;
+}
 .custom-tree-node {
     flex: 1;
     display: flex;

@@ -3,7 +3,7 @@
 }
 
 <!--右侧实体内容-->
-<el-main id="partPage">
+<el-main id="partPage" style="margin-top:20px;">
     <br />
     <template>
         <span>我是：</span>
@@ -20,7 +20,7 @@
         <template slot="title">
             <span style="font-size:20px;">{{m.SORT_NAME}}</span>
         </template>
-        <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url"  class="approval-box" v-on:click="toApprove(l.url,l.flowId)">
+        <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url"  class="approval-box" v-on:click="toApprove(l.url,l.flowId)" style="cursor:pointer;">
             <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
             <p>{{l.flowName}}</p>
         </div>

@@ -59,6 +59,9 @@
             <el-form-item label="项目名称" prop="ProjectName">
                 <el-input v-model="ruleForm.ProjectName"></el-input>
             </el-form-item>
+            <el-form-item label="项目编号" prop="ProjectName">
+                <el-input v-model="ruleForm.ProjectId"></el-input>
+            </el-form-item>
             <el-form-item label="开始日期">
                 <el-date-picker v-model="ruleForm.Time"
                                 type="daterange"
@@ -147,6 +150,7 @@
                     copyers: ['小唐', '季老师'],
 
                     ProjectName: '',
+                    ProjectId: null,
                     Time: ''
                 }
             }
@@ -412,7 +416,7 @@
                     "ApplyManId": DingData.userid,
                     "StartTime": _dateToString(this.ruleForm.Time[0]),
                     "EndTime": _dateToString(this.ruleForm.Time[1]),
-                    "ProjectId": _getTime()
+                    "ProjectId": this.ruleForm.ProjectId
                 }
                 console.log(param)
                 $.ajax({

@@ -187,14 +187,35 @@
                 var that = this
                 this.disabled = true
                 console.log(this.parts)
-                for (let part of this.parts) {
-                    for (let flow of part.flows) {
-                        var state = 1
-                        for (let work of flow.works) {
-                            //if()
-                        }
-                    }
+                var count = 0
+                for (let part of this.parts) 
+                    for (let flow of part.flows) 
+                        for (let work of flow.works) 
+                            if (work.name || work.startTime || work.endTime) {
+                                count ++
+                                for (let w of flow.works)
+                                    if (!w.name || !w.startTime || !w.endTime) {
+                                        that.$notify.error({
+                                            title: '提交错误',
+                                            message: "您有未编辑完成的部件",
+                                            type: 'success'
+                                        });
+                                        return
+                                    }
+                            }
+                if (count == 0) {
+                    that.$notify.error({
+                        title: '提交错误',
+                        message: "您未编辑任何部件",
+                        type: 'success'
+                    });
+                    return
                 }
+                for (let part of this.parts)
+                    for (let flow of part.flows)
+                        for (let work of flow.works) {
+
+                        }
             },
             //提交下发表单
             SubmitDrawingDown() {
