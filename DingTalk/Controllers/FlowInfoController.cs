@@ -193,7 +193,7 @@ namespace DingTalk.Controllers
                                 if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                                 {
                                     //当前节点所有任务流已完成
-                                    if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(),tasks.NodeId.ToString()).Count == 0)
+                                    if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(), tasks.NodeId.ToString()).Count == 0)
                                     {
                                         //推送任务流
                                         context.Tasks.Add(new Tasks
@@ -1015,7 +1015,7 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).First();
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
                         return JsonConvert.SerializeObject(task);
                     }
                 }
