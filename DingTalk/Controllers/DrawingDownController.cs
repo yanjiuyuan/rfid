@@ -549,7 +549,7 @@ namespace DingTalk.Controllers
                                     join s in ProcedureInfoList
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
-                                    on s.Id.ToString() equals w.ProjectInfoId
+                                    on s.Id.ToString() equals w.ProcedureInfoId
                                     select new
                                     {
                                         p.TaskId,
@@ -564,7 +564,7 @@ namespace DingTalk.Controllers
                                         s.DefaultWorkTime,
                                         s.DrawingNo,
                                         w.IsFinish,
-                                        w.ProjectInfoId,
+                                        w.ProcedureInfoId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
