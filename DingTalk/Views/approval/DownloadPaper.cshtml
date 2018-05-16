@@ -188,11 +188,13 @@
                 this.disabled = true
                 console.log(this.parts)
                 var count = 0
-                for (let part of this.parts) 
-                    for (let flow of part.flows) 
-                        for (let work of flow.works) 
+                for (let part of this.parts) {
+                    if (!part.flows || part.flows.length == 0) continue
+                    for (let flow of part.flows) {
+                        if (!flow || flow.works.length == 0) continue
+                        for (let work of flow.works) {
                             if (work.name || work.startTime || work.endTime) {
-                                count ++
+                                count++
                                 for (let w of flow.works)
                                     if (!w.name || !w.startTime || !w.endTime) {
                                         that.$notify.error({
@@ -203,6 +205,10 @@
                                         return
                                     }
                             }
+                        }
+                    }
+                }
+                    
                 if (count == 0) {
                     that.$notify.error({
                         title: '提交错误',
@@ -249,13 +255,15 @@
                     "State": "1",
                     "ProjectId": this.project[0].ProjectId
                 }) 
-                for (let part of this.parts)
-                    for (let flow of part.flows)
+                for (let part of this.parts) {
+                    if (!part.flows || part.flows.length == 0) continue
+                    for (let flow of part.flows) {
+                        if (!flow || flow.works.length == 0) continue
                         for (let work of flow.works) {
                             count++
                             paramArr.push({
-                                "ApplyMan": DingData.nickName,
-                                "ApplyManId": DingData.userid,
+                                "ApplyMan": work.name,
+                                "ApplyManId": work.id,
                                 "NodeId": "0",
                                 "ApplyTime": _getTime(),
                                 "IsEnable": "1",
@@ -264,8 +272,14 @@
                                 "IsSend": false,
                                 "State": "1",
                                 "ProjectId": this.project[0].ProjectId
-                            }) 
+                            })
                         }
+                    }
+                }
+                    
+                console.log("提交表单 paramArr ")
+                console.log(paramArr)
+                return
             },
             //提交下发表单
             SubmitDrawingDown() {
@@ -405,11 +419,19 @@
                     }
                     workObj[obj.name] = obj.value
                 }
+                for (let e of this.employees) {
+                    for (let w in workObj)
+                        if (e.WorkerName == w.name) {
+                            w.id = e.WorkerId
+                        }
+                }
+                console.log(workObj)
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
                         if (!part.flows[index].works) part.flows[index]["works"] = []
                         part.flows[index]["works"].push({
                             name: workObj.name,
+                            id: workObj.id,
                             startTime: workObj.startTime,
                             endTime: workObj.endTime
                         })
