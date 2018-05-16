@@ -191,7 +191,7 @@
                 for (let part of this.parts) {
                     if (!part.flows || part.flows.length == 0) continue
                     for (let flow of part.flows) {
-                        if (!flow || flow.works.length == 0) continue
+                        if (!flow.works || flow.works.length == 0) continue
                         for (let work of flow.works) {
                             if (work.name || work.startTime || work.endTime) {
                                 count++
@@ -258,7 +258,7 @@
                 for (let part of this.parts) {
                     if (!part.flows || part.flows.length == 0) continue
                     for (let flow of part.flows) {
-                        if (!flow || flow.works.length == 0) continue
+                        if (!flow.works || flow.works.length == 0) continue
                         for (let work of flow.works) {
                             count++
                             paramArr.push({
@@ -422,12 +422,16 @@
                 for (let e of this.employees) {
                     for (let w in workObj)
                         if (e.WorkerName == w.name) {
-                            w.id = e.WorkerId
+                            w["id"] = e.WorkerId
                         }
                 }
+                console.log(this.employees)
+
                 console.log(workObj)
                 for (let part of this.parts) {
                     if (part.Id == row.Id) {
+                        console.log(part.flows)
+                        console.log(part.flows[index])
                         if (!part.flows[index].works) part.flows[index]["works"] = []
                         part.flows[index]["works"].push({
                             name: workObj.name,
@@ -440,13 +444,17 @@
                                 "ProjectInfoId": this.project[0].ProjectId,
                                 "IsFinish": false,
                                 "Worker": workObj.name,
-                                "WorkerId": "666",
+                                "WorkerId": workObj.id,
                                 "StartTime": workObj.startTime,
                                 "EndTime": workObj.endTime,
                                 "UseTime": workObj.endTime - workObj.endTime
                             }] 
                     }
                 }
+                console.log(111111111111111111111111111)
+                console.log(workObj)
+                console.log(this.parts)
+                return
                 this.getPartsData()
                 $.ajax({
                     url: "/DrawingDown/AddWorkTime",
