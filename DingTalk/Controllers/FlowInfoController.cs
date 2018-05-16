@@ -196,21 +196,49 @@ namespace DingTalk.Controllers
                                     if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(), tasks.NodeId.ToString()).Count == 0)
                                     {
                                         //推送任务流
-                                        context.Tasks.Add(new Tasks
-                                        {
-                                            TaskId = tasks.TaskId,
-                                            ApplyMan = dic["NodePeople"],
-                                            ApplyManId = dic["PeopleId"],
-                                            IsPost = false,
-                                            IsSend = false,
-                                            IsEnable = 1,
-                                            State = 0,
-                                        });
-                                        context.SaveChanges();
-                                        //推送OA消息(寻人)
-                                        SentCommonMsg(dic["PeopleId"].ToString(),
-                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                        taskNew.ApplyMan, taskNew.Remark, null);
+                                        //context.Tasks.Add(new Tasks
+                                        //{
+                                        //    TaskId = tasks.TaskId,
+                                        //    ApplyMan = dic["NodePeople"],
+                                        //    ApplyManId = dic["PeopleId"],
+                                        //    IsPost = false,
+                                        //    IsSend = false,
+                                        //    IsEnable = 1,
+                                        //    State = 0,
+                                        //});
+                                        //context.SaveChanges();
+                                        ////推送OA消息(寻人)
+                                        //SentCommonMsg(dic["PeopleId"].ToString(),
+                                        //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
+                                        //taskNew.ApplyMan, taskNew.Remark, null);                                        //context.Tasks.Add(new Tasks
+                                        //{
+                                        //    TaskId = tasks.TaskId,
+                                        //    ApplyMan = dic["NodePeople"],
+                                        //    ApplyManId = dic["PeopleId"],
+                                        //    IsPost = false,
+                                        //    IsSend = false,
+                                        //    IsEnable = 1,
+                                        //    State = 0,
+                                        //});
+                                        //context.SaveChanges();
+                                        ////推送OA消息(寻人)
+                                        //SentCommonMsg(dic["PeopleId"].ToString(),
+                                        //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
+                                        //taskNew.ApplyMan, taskNew.Remark, null);                                        //context.Tasks.Add(new Tasks
+                                        //{
+                                        //    TaskId = tasks.TaskId,
+                                        //    ApplyMan = dic["NodePeople"],
+                                        //    ApplyManId = dic["PeopleId"],
+                                        //    IsPost = false,
+                                        //    IsSend = false,
+                                        //    IsEnable = 1,
+                                        //    State = 0,
+                                        //});
+                                        //context.SaveChanges();
+                                        ////推送OA消息(寻人)
+                                        //SentCommonMsg(dic["PeopleId"].ToString(),
+                                        //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
+                                        //taskNew.ApplyMan, taskNew.Remark, null);
                                     }
                                 }
                                 else
@@ -433,10 +461,11 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
-                string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
-                string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
-                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId : NodeId)).IsNeedChose;
+                string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PreNodeId;
+                string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodeName;
+                string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
+                string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
+                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).IsNeedChose;
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
@@ -464,7 +493,7 @@ namespace DingTalk.Controllers
                     if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
                     {
                         //查找当前是否还有人未审核
-                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 1).ToList();
+                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0).ToList();
                         if (ListTask.Count > 0)  //还有人未审核
                         {
                             return dic;
@@ -834,7 +863,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="TaskId">流水号</param>
         /// <param name="FlowId">流程Id</param>
-        /// <returns></returns>
+        /// <returns></returns
         /// 测试数据： /FlowInfo/GetSign?TaskId=100&FlowId=6
         [HttpGet]
         public string GetSign(string TaskId, string FlowId)
@@ -1015,8 +1044,10 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
-                        return JsonConvert.SerializeObject(task);
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).First();
+                        Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
+                        taskOld.Id = task.Id;
+                        return JsonConvert.SerializeObject(taskOld);
                     }
                 }
 
