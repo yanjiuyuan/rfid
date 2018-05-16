@@ -152,6 +152,8 @@ namespace DingTalk.Controllers
                     dic = FindNextPeople(Findtasks.FlowId.ToString(), Findtasks.ApplyManId, true, Findtasks.IsSend,
                         Findtasks.TaskId, Findtasks.NodeId);
 
+
+
                     foreach (var tasks in taskList)
                     {
                         using (DDContext context = new DDContext())
@@ -178,7 +180,7 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
-                                    //创建流程推送
+                                    //创建流程推送(选人)
                                     tasks.IsPost = false;
                                     tasks.State = 0;
                                     context.Tasks.Add(tasks);
@@ -190,10 +192,26 @@ namespace DingTalk.Controllers
                                 Tasks taskNew = fServer.GetApplyManFormInfo(tasks.TaskId.ToString());
                                 if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                                 {
-                                    //推送OA消息(寻人)
-                                    SentCommonMsg(dic["PeopleId"].ToString(),
-                                    string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                    taskNew.ApplyMan, taskNew.Remark, null);
+                                    //当前节点所有任务流已完成
+                                    if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(),tasks.NodeId.ToString()).Count == 0)
+                                    {
+                                        //推送任务流
+                                        context.Tasks.Add(new Tasks
+                                        {
+                                            TaskId = tasks.TaskId,
+                                            ApplyMan = dic["NodePeople"],
+                                            ApplyManId = dic["PeopleId"],
+                                            IsPost = false,
+                                            IsSend = false,
+                                            IsEnable = 1,
+                                            State = 0,
+                                        });
+                                        context.SaveChanges();
+                                        //推送OA消息(寻人)
+                                        SentCommonMsg(dic["PeopleId"].ToString(),
+                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
+                                        taskNew.ApplyMan, taskNew.Remark, null);
+                                    }
                                 }
                                 else
                                 {
@@ -418,7 +436,7 @@ namespace DingTalk.Controllers
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodeName;
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).NodePeople;
-                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).IsNeedChose;
+                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId : NodeId)).IsNeedChose;
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
@@ -817,7 +835,7 @@ namespace DingTalk.Controllers
         /// <param name="TaskId">流水号</param>
         /// <param name="FlowId">流程Id</param>
         /// <returns></returns>
-        /// 测试数据： /FlowInfo/GetSign?TaskId=104&FlowId=6
+        /// 测试数据： /FlowInfo/GetSign?TaskId=100&FlowId=6
         [HttpGet]
         public string GetSign(string TaskId, string FlowId)
         {
@@ -870,7 +888,7 @@ namespace DingTalk.Controllers
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
                                         IsBack = tt == null ? false : tt.IsBack,
-                                        ApplyMan = tt == null ? "" : tt.ApplyMan,
+                                        ApplyMan = tt == null ? n.NodePeople : tt.ApplyMan,
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
@@ -1121,8 +1139,8 @@ namespace DingTalk.Controllers
                 //},
                 title = Title,//"您有一条待审批的流程，请登入OA系统审批",
                 content = Content//"我要请假~~~~123456",
-                //image = "@lADOADmaWMzazQKA",
-                //file_count = "3",
+                                 //image = "@lADOADmaWMzazQKA",
+                                 //file_count = "3",
             };
             oaTextModel.message_url = Url;
             return top.SendOaMessage(SendPeoPleId, oaTextModel);

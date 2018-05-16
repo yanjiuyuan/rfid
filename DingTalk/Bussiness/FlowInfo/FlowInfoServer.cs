@@ -73,7 +73,7 @@ namespace DingTalk.Bussiness.FlowInfo
         /// <returns></returns>
         public Tasks GetApplyManFormInfo(string TaskId)
         {
-            using (DDContext context=new DDContext ())
+            using (DDContext context = new DDContext())
             {
                 Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true).First();
                 return task;
@@ -109,12 +109,29 @@ namespace DingTalk.Bussiness.FlowInfo
         /// <returns></returns>
         public Tasks TasksModify(Tasks tasks)
         {
-            using (DDContext context=new DDContext ())
+            using (DDContext context = new DDContext())
             {
                 tasks.IsPost = true;
                 context.Tasks.Add(tasks);
                 context.SaveChanges();
                 return tasks;
+            }
+        }
+
+
+        /// <summary>
+        /// 返还未完成的任务流
+        /// </summary>
+        /// <param name="TaskId"></param>
+        /// <param name="NodeId"></param>
+        /// <returns></returns>
+        public List<Tasks> GetTasksByNotFinished(string TaskId, string NodeId)
+        {
+            using (DDContext context = new DDContext())
+            {
+                List<Tasks> TaskList = new List<Tasks>();
+                TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.State == 0 && u.NodeId.ToString() == NodeId).ToList();
+                return TaskList;
             }
         }
 
