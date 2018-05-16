@@ -211,12 +211,48 @@
                     });
                     return
                 }
+                 var FlowTest =
+                     [
+                         {
+                             "ApplyMan": "小威",
+                             "ApplyManId": "1209662535974958",
+                             "ApplyTime": null,
+                             "IsEnable": 1,
+                             "FlowId": 6,
+                             "NodeId": 0,
+                             "Remark": "6666",
+                             "IsSend": false,
+                             "State": 1,
+                             "ImageUrl": null,
+                             "FileUrl": null,
+                             "Title": "大型石板材扫描仪",
+                             "ProjectId": "2016ZL051",
+                             "IsPost": false,
+                             "OldImageUrl": null,
+                             "OldFileUrl": null,
+                             "IsBack": null
+                         },
+                             { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+                             { "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
+                    ];
                 count = 0
+                var paramArr = []
+                paramArr.push({
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": "0",
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId + '',
+                    "Remark": "",
+                    "IsSend": false,
+                    "State": "1",
+                    "ProjectId": this.project[0].ProjectId
+                }) 
                 for (let part of this.parts)
                     for (let flow of part.flows)
                         for (let work of flow.works) {
                             count++
-                            var paramArr = []
                             paramArr.push({
                                 "ApplyMan": DingData.nickName,
                                 "ApplyManId": DingData.userid,
@@ -227,19 +263,17 @@
                                 "Remark": "",
                                 "IsSend": false,
                                 "State": "1",
-                                "ImageUrl": that.ruleForm.ImageUrl,
-                                "OldImageUrl": that.ruleForm.OldImageUrl,
-                                "Title": title,
-                                "ProjectId": that.ruleForm.ProjectId
+                                "ProjectId": this.project[0].ProjectId
                             }) 
                         }
             },
             //提交下发表单
             SubmitDrawingDown() {
+                var part = this.parts[0]
                 var param = [{
                     "Id": 1.0,
                     "TaskId": "3",
-                    "OldTaskId": "2",
+                    "OldTaskId": part.TaskId,
                     "DrawingNo": "DTE-801B-WX-01C",
                     "CodeNo": "2",
                     "Name": "十字座套",
@@ -381,7 +415,7 @@
                         })
                         paramObj = [
                             {
-                                "ProjectInfoId": this.project.ProjectId,
+                                "ProjectInfoId": this.project[0].ProjectId,
                                 "IsFinish": false,
                                 "Worker": workObj.name,
                                 "WorkerId": "666",
