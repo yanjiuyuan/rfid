@@ -64,7 +64,7 @@ namespace DingTalk.Controllers
                                 tasks.FlowId.ToString();
                                 tasks.IsPost = true;
                                 tasks.State = 1;
-                                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
                             }
@@ -160,6 +160,12 @@ namespace DingTalk.Controllers
                         {
                             if (dic["NodeName"] == "结束")
                             {
+                                //修改流程状态
+                                tasks.IsPost = false;
+                                tasks.State = 1;
+                                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                context.Entry(tasks).State = EntityState.Modified;
+                                context.SaveChanges();
                                 JsonConvert.SerializeObject(new ErrorModel
                                 {
                                     errorCode = 0,
@@ -174,7 +180,7 @@ namespace DingTalk.Controllers
                                     //修改流程状态
                                     tasks.IsPost = false;
                                     tasks.State = 1;
-                                    tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                                    tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     context.Entry(tasks).State = EntityState.Modified;
                                     context.SaveChanges();
                                 }
@@ -300,7 +306,7 @@ namespace DingTalk.Controllers
                         //修改流程状态
                         tasks.IsBack = true;
                         tasks.State = 1;
-                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                         context.Entry(tasks).State = EntityState.Modified;
                         context.SaveChanges();
 
@@ -461,7 +467,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).PreNodeId;
+                string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId== NodeId).PreNodeId;
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodeName;
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
