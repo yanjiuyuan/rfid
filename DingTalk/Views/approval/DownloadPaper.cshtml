@@ -147,6 +147,7 @@
 </el-main>
 
 <script>
+    var editParts = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -189,14 +190,16 @@
                 console.log(this.parts)
                 var count = 0
                 for (let part of this.parts) {
+                    var fullInput = false
                     if (!part.flows || part.flows.length == 0) continue
                     for (let flow of part.flows) {
-                        if (!flow || flow.works.length == 0) continue
+                        if (!flow.works || flow.works.length == 0) continue
                         for (let work of flow.works) {
                             if (work.name || work.startTime || work.endTime) {
                                 count++
-                                for (let w of flow.works)
-                                    if (!w.name || !w.startTime || !w.endTime) {
+                                let tmpFlows = _cloneArr(part.flows)
+                                for (let f of tmpFlows) {
+                                    if (!f.works || f.works.length == 0) {
                                         that.$notify.error({
                                             title: '提交错误',
                                             message: "您有未编辑完成的部件",
@@ -204,11 +207,15 @@
                                         });
                                         return
                                     }
+                                }
+                                fullInput = true
+                                editParts.push(part)
                             }
+                            if (fullInput) continue
                         }
+                        if (fullInput) continue
                     }
                 }
-                    
                 if (count == 0) {
                     that.$notify.error({
                         title: '提交错误',
@@ -217,30 +224,30 @@
                     });
                     return
                 }
-                 var FlowTest =
-                     [
-                         {
-                             "ApplyMan": "小威",
-                             "ApplyManId": "1209662535974958",
-                             "ApplyTime": null,
-                             "IsEnable": 1,
-                             "FlowId": 6,
-                             "NodeId": 0,
-                             "Remark": "6666",
-                             "IsSend": false,
-                             "State": 1,
-                             "ImageUrl": null,
-                             "FileUrl": null,
-                             "Title": "大型石板材扫描仪",
-                             "ProjectId": "2016ZL051",
-                             "IsPost": false,
-                             "OldImageUrl": null,
-                             "OldFileUrl": null,
-                             "IsBack": null
-                         },
-                             { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
-                             { "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
-                    ];
+                var FlowTest =
+                    [
+                        {
+                            "ApplyMan": "小威",
+                            "ApplyManId": "1209662535974958",
+                            "ApplyTime": null,
+                            "IsEnable": 1,
+                            "FlowId": 6,
+                            "NodeId": 0,
+                            "Remark": "6666",
+                            "IsSend": false,
+                            "State": 1,
+                            "ImageUrl": null,
+                            "FileUrl": null,
+                            "Title": "大型石板材扫描仪",
+                            "ProjectId": "2016ZL051",
+                            "IsPost": false,
+                            "OldImageUrl": null,
+                            "OldFileUrl": null,
+                            "IsBack": null
+                        },
+                            { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+                            { "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
+                ];
                 count = 0
                 var paramArr = []
                 paramArr.push({
@@ -258,13 +265,13 @@
                 for (let part of this.parts) {
                     if (!part.flows || part.flows.length == 0) continue
                     for (let flow of part.flows) {
-                        if (!flow || flow.works.length == 0) continue
+                        if (!flow.works || flow.works.length == 0) continue
                         for (let work of flow.works) {
                             count++
                             paramArr.push({
                                 "ApplyMan": work.name,
                                 "ApplyManId": work.id,
-                                "NodeId": "0",
+                                "NodeId": "1",
                                 "ApplyTime": _getTime(),
                                 "IsEnable": "1",
                                 "FlowId": FlowId + '',
@@ -276,15 +283,45 @@
                         }
                     }
                 }
-                    
-                console.log("提交表单 paramArr ")
+                console.log("提交审批 paramArr ")
                 console.log(paramArr)
-                return
+                $.ajax({
+                    url: '/FlowInfo/CreateTaskInfo',
+                    type: 'POST',
+                    data: JSON.stringify(paramArr),
+                    success: function (data) {
+                        console.log("提交审批ok")
+                        var taskId = JSON.parse(data).Content
+                        console.log(taskId)
+                        that.SubmitDrawingDown(taskId)
+                    }
+                })
             },
             //提交下发表单
-            SubmitDrawingDown() {
+            SubmitDrawingDown(taskId) {
+                var that = this
                 var part = this.parts[0]
-                var param = [{
+                var param = []
+                for (let part of editParts) {
+                    param.push({
+                        "Id": part.DrawingNoId,
+                        "TaskId": taskId,
+                        "OldTaskId": part.TaskId,
+                        "DrawingNo": part.DrawingNo,
+                        "CodeNo": "2",
+                        "Name": part.TaskId,
+                        "Count": part.TaskId,
+                        "MaterialScience": part.TaskId,
+                        "Unit": part.TaskId,
+                        "Brand": part.TaskId,
+                        "Sorts": part.TaskId,
+                        "Mark": part.TaskId,
+                        "IsDown": true,
+                        "ProcedureId": "1",
+                        "FlowType": "0"
+                    })
+                }
+                var paramText = [{
                     "Id": 1.0,
                     "TaskId": "3",
                     "OldTaskId": part.TaskId,
@@ -317,7 +354,9 @@
                     "IsDown": true,
                     "ProcedureId": "2",
                     "FlowType": "1"
-                }]
+                    }]
+                console.log("提交下发表单 param ")
+                console.log(param)
                 $.ajax({
                     url: "/DrawingDown/SubmitDrawingDown",
                     type: "POST",
@@ -325,6 +364,8 @@
                     dataType: "json",
                     success: function (data) {
                         that.disabled = false
+                        console.log("提交下发表单ok")
+                        console.log(data)
                     },
                     error: function (err) {
                         console.log(err)
@@ -420,14 +461,14 @@
                     workObj[obj.name] = obj.value
                 }
                 for (let e of this.employees) {
-                    for (let w in workObj)
-                        if (e.WorkerName == w.name) {
-                            w.id = e.WorkerId
-                        }
+                    if (e.WorkerName == workObj.name) {
+                        workObj["id"] = e.WorkerId
+                    }
                 }
-                console.log(workObj)
                 for (let part of this.parts) {
-                    if (part.Id == row.Id) {
+                    if (part.DrawingNoId == row.DrawingNoId) {
+                        console.log(part.flows)
+                        console.log(part.flows[index])
                         if (!part.flows[index].works) part.flows[index]["works"] = []
                         part.flows[index]["works"].push({
                             name: workObj.name,
@@ -440,7 +481,7 @@
                                 "ProjectInfoId": this.project[0].ProjectId,
                                 "IsFinish": false,
                                 "Worker": workObj.name,
-                                "WorkerId": "666",
+                                "WorkerId": workObj.id,
                                 "StartTime": workObj.startTime,
                                 "EndTime": workObj.endTime,
                                 "UseTime": workObj.endTime - workObj.endTime
