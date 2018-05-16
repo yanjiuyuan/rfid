@@ -303,23 +303,25 @@
                 var part = this.parts[0]
                 var param = []
                 for (let part of editParts) {
-                    param.push({
-                        "Id": part.DrawingNoId,
-                        "TaskId": taskId,
-                        "OldTaskId": part.TaskId,
-                        "DrawingNo": part.DrawingNo,
-                        "CodeNo": "2",
-                        "Name": part.TaskId,
-                        "Count": part.TaskId,
-                        "MaterialScience": part.TaskId,
-                        "Unit": part.TaskId,
-                        "Brand": part.TaskId,
-                        "Sorts": part.TaskId,
-                        "Mark": part.TaskId,
-                        "IsDown": true,
-                        "ProcedureId": "1",
-                        "FlowType": "0"
-                    })
+                    for (let flow of part.flows) {
+                        param.push({
+                            "Id": part.DrawingNoId,
+                            "TaskId": taskId,
+                            "OldTaskId": part.TaskId,
+                            "DrawingNo": part.DrawingNo,
+                            "CodeNo": "2",
+                            "Name": part.TaskId,
+                            "Count": part.TaskId,
+                            "MaterialScience": part.TaskId,
+                            "Unit": part.TaskId,
+                            "Brand": part.TaskId,
+                            "Sorts": part.TaskId,
+                            "Mark": part.TaskId,
+                            "IsDown": true,
+                            "ProcedureId": flow.ProcedureId,
+                            "FlowType": "0"
+                        })
+                    }
                 }
                 var paramText = [{
                     "Id": 1.0,
