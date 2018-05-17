@@ -161,8 +161,26 @@
                 })
             },
             //改变任务完成状态
-            changeState() {
-
+            changeState(row) {
+                console.log(row)
+                console.log(row.IsFinish)
+                return
+                $.ajax({
+                    url: "/DrawingDown/ChangeWorkTimeState",
+                    type: "POST",
+                    data: JSON.stringify(row),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(paramArr)
+                        console.log(data)
+                        if (data && data.errorCode == 0) {
+                            
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
             },
             //退回审批
             returnSubmit() {
