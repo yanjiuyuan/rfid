@@ -501,14 +501,12 @@
             },
             //审批所有流程通过，后续处理
             doneSubmit() {
-                alert('提交成功')
-                DingTalkPC.device.notification.alert({
-                    message: '提交成功',
-                    buttonName: '确定',
-                    onSuccess: function () {
+                this.$alert('提交审批成功', '提交成功', {
+                    confirmButtonText: '确定',
+                    callback: action => {
                         loadPage('/main/Approval')
                     }
-                })
+                });
                 //var allState = 2
                 //State++
                 //if (State >= allState) {

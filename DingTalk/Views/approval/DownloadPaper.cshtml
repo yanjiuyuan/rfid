@@ -370,6 +370,12 @@
                         that.disabled = false
                         console.log("提交下发表单ok")
                         console.log(data)
+                        this.$alert('提交审批成功', '提交成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/main/Approval')
+                            }
+                        });
                     },
                     error: function (err) {
                         console.log(err)

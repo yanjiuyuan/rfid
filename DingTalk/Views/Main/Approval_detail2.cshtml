@@ -12,6 +12,14 @@
     <el-table :data="tableData" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-switch v-model="scope.row.IsFinish"
+                           active-color="#13ce66"
+                           inactive-color="#ff4949">
+                </el-switch>
+            </template>
+        </el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -175,7 +183,6 @@
             loadHtml("mainPage", "partPage")
         }
     })
-    
     
 
 </script>
