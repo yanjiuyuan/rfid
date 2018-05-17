@@ -200,10 +200,11 @@
                                 let tmpFlows = _cloneArr(part.flows)
                                 for (let f of tmpFlows) {
                                     if (!f.works || f.works.length == 0) {
-                                        that.$notify.error({
-                                            title: '提交错误',
-                                            message: "您有未编辑完成的部件",
-                                            type: 'success'
+                                        this.$alert('您有未编辑完成的部件', '提交错误', {
+                                            confirmButtonText: '确定',
+                                            callback: action => {
+
+                                            }
                                         });
                                         return
                                     }
@@ -217,10 +218,11 @@
                     }
                 }
                 if (count == 0) {
-                    that.$notify.error({
-                        title: '提交错误',
-                        message: "您未编辑任何部件",
-                        type: 'success'
+                    this.$alert('您未编辑任何部件', '提交错误', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
                     });
                     return
                 }
@@ -272,7 +274,7 @@
                                 "ApplyMan": work.name,
                                 "ApplyManId": work.id,
                                 "NodeId": "1",
-                                "ApplyTime": _getTime(),
+                                "ApplyTime": "",
                                 "IsEnable": "1",
                                 "FlowId": FlowId + '',
                                 "Remark": "",
@@ -380,7 +382,12 @@
                 var that = this 
                 var procName = $("#" + DrawingNo).val().trim()
                 if (procName.length < 1) {
-                    alert("必须输入工序名称")
+                    this.$alert('必须输入工序名称', '提交错误', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
+                    });
                     return
                 }
                 var param = [
@@ -457,7 +464,12 @@
                 var workObj = {}
                 for (let obj of workArr) {
                     if (obj.value == "") {
-                        alert("内容不能为空")
+                        this.$alert('内容不能为空', '提交错误', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
                         return
                     }
                     workObj[obj.name] = obj.value
@@ -524,24 +536,6 @@
                     }
                 }
                 this.getData()
-                return
-                $.ajax({
-                    url: "/DrawingDown/DeleteWorkTime?Id=" + ProcedureId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("删除工序")
-                        console.log(data)
-                        that.$notify({
-                            title: '删除成功',
-                            message: '成功删除工序' + ProcedureId,
-                            type: 'success'
-                        });
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
             },
             //获取项目列表
             getProject() {
