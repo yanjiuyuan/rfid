@@ -96,6 +96,7 @@
             onSubmit(formName) {
                 this.disablePage = true
                 var paramArr = []
+                var that = this
                 paramArr.push({
                     "Id": allData.Id,
                     "TaskId": TaskId,
@@ -120,14 +121,12 @@
                         console.log(paramArr)
                         console.log(data)
                         if (data && data.errorCode == 0) {
-                            alert("创建成功")
-                            DingTalkPC.device.notification.alert({
-                                message: '提交成功',
-                                buttonName: '确定',
-                                onSuccess: function () {
+                            that.$alert('审批成功', '操作成功', {
+                                confirmButtonText: '确定',
+                                callback: action => {
                                     loadPage('/main/Approval')
                                 }
-                            })
+                            });
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -137,6 +136,8 @@
             },
             //改变任务完成状态
             changeState(row) {
+                var tmpArr = []
+                tmpArr.push(row)
                 console.log(this.data)
                 this.allDone = true
                 for (let d of this.data) {
@@ -148,11 +149,11 @@
                 $.ajax({
                     url: "/DrawingDown/ChangeWorkTimeState",
                     type: "POST",
-                    data: JSON.stringify(row),
+                    data: JSON.stringify(tmpArr),
                     dataType: "json",
                     success: function (data) {
                         console.log("改变成功")
-                        console.log(row)
+                        console.log(tmpArr)
                         console.log(data)
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
