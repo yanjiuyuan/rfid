@@ -41,18 +41,18 @@
     @*</el-form-item>*@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
               id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名" prop="ProjectId" >
+        <el-form-item label="项目名" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
                 <el-option v-for="item in projestList"
                            :key="item.ProjectId"
                            :label="item.ProjectName"
-                           :value="item.ProjectId"
-                           >
+                           :value="item.ProjectId">
                     <span style="float: left">{{ item.ProjectName }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
             <el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>
         </el-form-item>
         
         <template v-if="showAddProject">
@@ -83,11 +83,6 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
 
-        <!--上传图片-->
-        @*<el-form-item label="上传图片" prop="file">
-            <input id="file" type="file" name="file" />
-            <button id="upload" type="button" v-on:click="upload">upload</button>
-        </el-form-item>*@
         <el-form-item label="上传图片">
             <el-upload action="/drawingupload/Upload"
                         list-type="picture-card"
@@ -108,8 +103,8 @@
                             :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <!--添加抄送人-->
-        <sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
-        </sam-addapprover>
+        @*<sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
+        </sam-addapprover>*@
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -189,7 +184,7 @@
                             if (node.NodeId == (this.nodeInfo.NodeId + 1)) {
                                 console.log(node)
                                 console.log(node.AddPeople)
-                                if (node.AddPeople.length == 0) {
+                                if (!that.preApprove && node.AddPeople.length == 0) {
                                     this.$alert('您尚未选择审批人', '提交错误', {
                                         confirmButtonText: '确定',
                                         callback: action => {
@@ -207,14 +202,16 @@
                                         "IsEnable": 1,
                                         "FlowId": FlowId,
                                         "NodeId": node.NodeId,
-                                        "Remark": null,
+                                        "Remark": that.ruleForm.remark,
                                         "IsSend": false,
                                         "State": 0,
-                                        "ImageUrl": null,
+                                        //"ImageUrl": that.ruleForm.ImageUrl,
+                                        "ImageUrl": '',
                                         "FileUrl": null,
                                         "ProjectId": that.ruleForm.ProjectId,
                                         "IsPost": false,
-                                        "OldImageUrl": null,
+                                        "OldImageUrl": that.ruleForm.OldImageUrl,
+                                        "Title": title,
                                         "OldFileUrl": null,
                                         "IsBack": null
                                     })
@@ -399,16 +396,19 @@
                 console.log('before file')
                 console.log(file)
                 file.name = 'helloWorld'
-                const isJPG = file.type === 'image/jpeg';
-                const isLt2M = file.size / 1024 / 1024 < 2;
+                const isJPG = file.type === 'image/jpeg'
+                const isPNG = file.type === 'image/png'
+                const isLt2M = file.size / 1024 / 1024 < 2
 
-                if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                if (!(isJPG || isPNG)) {
+                    this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
+                    return false
                 }
                 if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                    this.$message.error('上传图片大小不能超过 2MB!')
+                    return false
                 }
-                return isJPG && isLt2M;
+                return true
             },
             handlePictureCardPreview(file) {
                 this.dialogImageUrl = file.url;
