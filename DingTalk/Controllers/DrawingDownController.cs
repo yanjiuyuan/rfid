@@ -771,6 +771,8 @@ namespace DingTalk.Controllers
                                         p.TaskId,
                                         p.IsDown,
                                         p.Mark,
+                                        p.Count,
+                                        p.Unit,
                                         p.MaterialScience,
                                         p.Name,
                                         p.Sorts,
@@ -785,7 +787,7 @@ namespace DingTalk.Controllers
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId
+                                        w.WorkerId,
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
@@ -806,6 +808,8 @@ namespace DingTalk.Controllers
                                         p.TaskId,
                                         p.IsDown,
                                         p.Mark,
+                                        p.Count,
+                                        p.Unit,
                                         p.MaterialScience,
                                         p.Name,
                                         p.Sorts,
