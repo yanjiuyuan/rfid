@@ -358,9 +358,9 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/AddWorkTime
-        ///  var WorkTimeList = [{ "ProjectInfoId": "1", "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2"},
-        ///  { "ProjectInfoId": "2", "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"},
-        ///  { "ProjectInfoId": "2", "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"}] 
+        ///  var WorkTimeList = [{ "ProcedureId": "1", "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2"},
+        ///  { "ProcedureId": "2", "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"},
+        ///  { "ProcedureId": "2", "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"}] 
         [HttpPost]
         public string AddWorkTime()
         {
@@ -549,7 +549,7 @@ namespace DingTalk.Controllers
                                     join s in ProcedureInfoList
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
-                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    on s.Id.ToString() equals w.ProcedureId
                                     select new
                                     {
                                         p.TaskId,
@@ -564,7 +564,7 @@ namespace DingTalk.Controllers
                                         s.DefaultWorkTime,
                                         s.DrawingNo,
                                         w.IsFinish,
-                                        w.ProcedureInfoId,
+                                        w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
@@ -617,7 +617,7 @@ namespace DingTalk.Controllers
                                     join s in ProcedureInfoList
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
-                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    on s.Id.ToString() equals w.ProcedureId
                                     select new
                                     {
                                         p.TaskId,
@@ -632,7 +632,7 @@ namespace DingTalk.Controllers
                                         s.DefaultWorkTime,
                                         s.DrawingNo,
                                         w.IsFinish,
-                                        w.ProcedureInfoId,
+                                        w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
@@ -744,8 +744,7 @@ namespace DingTalk.Controllers
         /// <param name="IsFinished">是否完成(不传默认未完成)</param>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=123&IsFinished=true&TaskId=3
-        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=073110326032521796&IsFinished=true&TaskId=3
+        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=073110326032521796&TaskId=101
         [HttpGet]
         public string GetFinishInfo(string ApplyManId, string TaskId)
         {
@@ -765,7 +764,7 @@ namespace DingTalk.Controllers
                                     join s in ProcedureInfoList
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
-                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    on s.Id.ToString() equals w.ProcedureId
                                     select new
                                     {
                                         p.TaskId,
@@ -782,7 +781,7 @@ namespace DingTalk.Controllers
                                         s.DefaultWorkTime,
                                         s.DrawingNo,
                                         w.IsFinish,
-                                        w.ProcedureInfoId,
+                                        w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
@@ -801,7 +800,7 @@ namespace DingTalk.Controllers
                                     join s in ProcedureInfoList
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
-                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    on s.Id.ToString() equals w.ProcedureId
                                     where w.WorkerId == ApplyManId 
                                     select new
                                     {
@@ -819,7 +818,7 @@ namespace DingTalk.Controllers
                                         s.DefaultWorkTime,
                                         s.DrawingNo,
                                         w.IsFinish,
-                                        w.ProcedureInfoId,
+                                        w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,

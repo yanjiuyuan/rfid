@@ -480,7 +480,7 @@ namespace DingTalk.Models.DbModels
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<WorkTime>()
-                .Property(e => e.ProcedureInfoId)
+                .Property(e => e.ProcedureId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<WorkTime>()
