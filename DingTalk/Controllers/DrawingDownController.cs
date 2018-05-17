@@ -740,7 +740,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 绑定数据读取
         /// </summary>
-        /// <param name="ApplyManId">当前用户Id</param>
+        /// <param name="ApplyManId">当前用户Id(不传默认所有人)</param>
         /// <param name="IsFinished">是否完成(不传默认未完成)</param>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
