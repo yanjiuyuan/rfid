@@ -111,31 +111,6 @@
                     "Title": this.ruleForm.Title,
                     "ProjectId": this.ruleForm.ProjectId
                 })
-                for (let node of this.nodeList) {
-                    if (node.NodeId == this.nodeInfo.NodeId) {
-                        for (let a of node.AddPeople) {
-                            paramArr.push({
-                                "ApplyMan": a.name,
-                                "ApplyManId": a.userid,
-                                "TaskId": TaskId,
-                                "ApplyTime": null,
-                                "IsEnable": 1,
-                                "FlowId": FlowId,
-                                "NodeId": NodeId,
-                                "Remark": null,
-                                "IsSend": false,
-                                "State": 0,
-                                "ImageUrl": null,
-                                "FileUrl": null,
-                                "ProjectId": that.ruleForm.ProjectId,
-                                "IsPost": false,
-                                "OldImageUrl": null,
-                                "OldFileUrl": null,
-                                "IsBack": null
-                            })
-                        }
-                    }
-                }
                 $.ajax({
                     url: "/FlowInfo/SubmitTaskInfo",
                     type: "POST",
@@ -176,6 +151,7 @@
                     data: JSON.stringify(row),
                     dataType: "json",
                     success: function (data) {
+                        console.log("改变成功")
                         console.log(row)
                         console.log(data)
                     },
