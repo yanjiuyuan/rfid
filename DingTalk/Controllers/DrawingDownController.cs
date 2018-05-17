@@ -519,7 +519,7 @@ namespace DingTalk.Controllers
         #region Bom表、工序、工时数据读取
 
         /// <summary>
-        /// Bom表、工序、工时数据读取
+        /// Bom表、工序、工时数据读取(胡工)
         /// </summary>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
@@ -550,6 +550,75 @@ namespace DingTalk.Controllers
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureInfoId
+                                    select new
+                                    {
+                                        p.TaskId,
+                                        p.IsDown,
+                                        p.Mark,
+                                        p.MaterialScience,
+                                        p.Name,
+                                        p.Sorts,
+                                        s.ApplyMan,
+                                        s.ApplyManId,
+                                        s.CreateTime,
+                                        s.DefaultWorkTime,
+                                        s.DrawingNo,
+                                        w.IsFinish,
+                                        w.ProcedureInfoId,
+                                        w.StartTime,
+                                        w.EndTime,
+                                        w.UseTime,
+                                        w.Worker,
+                                        w.WorkerId
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// Bom表、工序、工时数据读取(胡工)
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <returns></returns>
+        /// 测试数据: /DrawingDown/GetPersonInfo?ApplyManId=073110326032521796&TaskId=101
+        [HttpGet]
+        public string GetPersonInfo(string ApplyManId,int TaskId = 0)
+        {
+            try
+            {
+                if (TaskId == 0)
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        List<Purchase> PurchaseList = context.Purchase.
+                            Where(u => u.TaskId == TaskId.ToString()).ToList();
+                        List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
+                        List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
+                        var Quary = from p in PurchaseList
+                                    join s in ProcedureInfoList
+                                    on p.DrawingNo equals s.DrawingNo
+                                    join w in WorkTimeInfoList
+                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    where w.WorkerId==ApplyManId
                                     select new
                                     {
                                         p.TaskId,
