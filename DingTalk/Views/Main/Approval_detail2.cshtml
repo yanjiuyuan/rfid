@@ -162,20 +162,22 @@
             },
             //改变任务完成状态
             changeState(row) {
-                console.log(row)
-                console.log(row.IsFinish)
-                return
+                console.log(this.data)
+                this.allDone = true
+                for (let d of this.data) {
+                    if (!d.IsFinish) {
+                        this.allDone = false
+                        break
+                    }
+                }
                 $.ajax({
                     url: "/DrawingDown/ChangeWorkTimeState",
                     type: "POST",
                     data: JSON.stringify(row),
                     dataType: "json",
                     success: function (data) {
-                        console.log(paramArr)
+                        console.log(row)
                         console.log(data)
-                        if (data && data.errorCode == 0) {
-                            
-                        }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
