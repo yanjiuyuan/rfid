@@ -792,7 +792,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        List<Purchase> PurchaseList = context.Purchase.
+                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
                        Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
