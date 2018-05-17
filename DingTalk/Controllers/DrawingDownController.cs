@@ -418,11 +418,9 @@ namespace DingTalk.Controllers
         /// 修改工时状态
         /// </summary>
         /// <returns></returns>
-        ///  var WorkTimeList = [{ "ProcedureId": "1", "IsFinish": true, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2"},
-        ///  { "ProcedureId": "2", "IsFinish": true, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"},
-        ///  { "ProcedureId": "2", "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"}] 
-        [HttpPost]
-        public string ChangeWorkTimeState()
+      
+        [HttpGet]
+        public string ChangeWorkTimeState(string ProcedureId,bool IsFinish)
         {
             try
             {
@@ -847,6 +845,7 @@ namespace DingTalk.Controllers
                                         w.UseTime,
                                         w.Worker,
                                         w.WorkerId,
+                                        w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
@@ -883,7 +882,8 @@ namespace DingTalk.Controllers
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId
+                                        w.WorkerId,
+                                        w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
