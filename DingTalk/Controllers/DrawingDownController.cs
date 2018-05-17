@@ -418,9 +418,8 @@ namespace DingTalk.Controllers
         /// 修改工时状态
         /// </summary>
         /// <returns></returns>
-      
-        [HttpGet]
-        public string ChangeWorkTimeState(string ProcedureId,bool IsFinish)
+        [HttpPost]
+        public string ChangeWorkTimeState()
         {
             try
             {
@@ -882,8 +881,7 @@ namespace DingTalk.Controllers
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId,
-                                        w.Id
+                                        w.WorkerId
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
