@@ -75,7 +75,7 @@ namespace DingTalk.Bussiness.FlowInfo
         {
             using (DDContext context = new DDContext())
             {
-                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true).First();
+                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true && u.TaskId.ToString()== TaskId).First();
                 return task;
             }
         }
