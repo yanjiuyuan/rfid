@@ -740,20 +740,22 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 绑定数据读取
         /// </summary>
-        /// <param name="ApplyManId">当前用户Id(不传默认所有人)</param>
+        /// <param name="ApplyManId">当前用户Id<param>
         /// <param name="IsFinished">是否完成(不传默认未完成)</param>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
         /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=123&IsFinished=true&TaskId=3
-        /// 测试数据：/DrawingDown/GetFinishInfo?IsFinished=true&TaskId=3
+        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=073110326032521796&IsFinished=true&TaskId=3
         [HttpGet]
-        public string GetFinishInfo(string ApplyManId, string TaskId, bool IsFinished = false)
+        public string GetFinishInfo(string ApplyManId, string TaskId)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    if (string.IsNullOrEmpty(ApplyManId))
+                    List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == "7" && (u.NodeId.ToString() == "2" || u.NodeId.ToString() == "3")).Select(u => u.PeopleId).ToList();
+                    
+                    if (ListPeopleId.Contains(ApplyManId))
                     {
                         List<Purchase> PurchaseList = context.Purchase.
                            Where(u => u.TaskId == TaskId.ToString()).ToList();
@@ -798,7 +800,7 @@ namespace DingTalk.Controllers
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureInfoId
-                                    where w.WorkerId == ApplyManId && w.IsFinish == IsFinished
+                                    where w.WorkerId == ApplyManId 
                                     select new
                                     {
                                         p.TaskId,
