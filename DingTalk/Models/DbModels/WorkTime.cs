@@ -14,7 +14,7 @@ namespace DingTalk.Models.DbModels
         public decimal Id { get; set; }
 
         [StringLength(100)]
-        public string ProcedureInfoId { get; set; }
+        public string ProcedureId { get; set; }
 
         public bool? IsFinish { get; set; }
 
