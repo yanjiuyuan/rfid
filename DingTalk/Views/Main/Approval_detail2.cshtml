@@ -161,6 +161,9 @@
                 })
             },
             //改变任务完成状态
+            changeState() {
+
+            },
             //退回审批
             returnSubmit() {
                 
@@ -179,7 +182,10 @@
                         console.log(data)
                         that.data = data
                         for (let d of data) {
-
+                            if (!d.IsFinish) {
+                                that.allDone = false
+                                break
+                            }
                         }
                         that.getData()
                         that.totalRows = data.length
@@ -195,7 +201,26 @@
             loadHtml("mainPage", "partPage")
         }
     })
-    
+    getFormData()
+
+
+    //获取审批表单信息
+    function getFormData() {
+        $.ajax({
+            url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log("获取审批表单信息ok")
+                console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
+                console.log(data)
+                allData = data
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+            }
+        })
+    }
 
 </script>
 
