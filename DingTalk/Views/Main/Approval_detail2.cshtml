@@ -1,0 +1,184 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
+        <i class="el-icon-arrow-left"></i>
+        审批处理-{{nodeInfo.NodeName}}
+    </div>
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <template v-if="index==0">
+            <el-form-item label="审批意见" prop="mark">
+                <el-input v-model="ruleForm.mark"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+                <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+                <el-button type="danger" :disabled="disablePage">不同意</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+</el-main>
+
+<script>
+    //初始化
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var allData = {}
+    var fileList = []
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                items: {
+                    DrawingNo: '代号',
+                    Name: '名称',
+                    Count: '数量',
+                    MaterialScience: '材料',
+                    Unit: '单位',
+                    Brand: '品牌',
+                    //Sorts: '类别',
+                    Mark: '备注',
+                    IsFinish: '是否完成'
+                },
+                tableData: [],
+                totalRows: 0,
+                nodeInfo: {},
+                ruleForm: {},
+                isBack: false,
+                index: Index
+            }
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                this.disablePage = true
+                var paramArr = []
+                paramArr.push({
+                    "Id": allData.Id,
+                    "TaskId": TaskId,
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": NodeId,
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId,
+                    "Remark": this.ruleForm.mark,
+                    "IsSend": "false",
+                    "State": "1",
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId
+                })
+                for (let node of this.nodeList) {
+                    if (node.NodeId == this.nodeInfo.NodeId) {
+                        for (let a of node.AddPeople) {
+                            paramArr.push({
+                                "ApplyMan": a.name,
+                                "ApplyManId": a.userid,
+                                "TaskId": TaskId,
+                                "ApplyTime": null,
+                                "IsEnable": 1,
+                                "FlowId": FlowId,
+                                "NodeId": NodeId,
+                                "Remark": null,
+                                "IsSend": false,
+                                "State": 0,
+                                "ImageUrl": null,
+                                "FileUrl": null,
+                                "ProjectId": that.ruleForm.ProjectId,
+                                "IsPost": false,
+                                "OldImageUrl": null,
+                                "OldFileUrl": null,
+                                "IsBack": null
+                            })
+                        }
+                    }
+                }
+                $.ajax({
+                    url: "/FlowInfo/SubmitTaskInfo",
+                    type: "POST",
+                    data: JSON.stringify(paramArr),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(paramArr)
+                        console.log(data)
+                        if (data && data.errorCode == 0) {
+                            alert("创建成功")
+                            DingTalkPC.device.notification.alert({
+                                message: '提交成功',
+                                buttonName: '确定',
+                                onSuccess: function () {
+                                    loadPage('/main/Approval')
+                                }
+                            })
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            //退回审批
+            returnSubmit() {
+                
+            },
+
+            //获取bom表信息-任务零件列表
+            getBomInfo() {
+                var that = this
+                $.ajax({
+                    url: "/DrawingUpload/GetFinishInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获任务零件列表ok")
+                        console.log(data)
+                        that.data = data
+                        that.getData()
+                        that.totalRows = data.length
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            }
+        },
+        created: function () {
+            this.getBomInfo()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    
+    
+
+</script>
+
+
+
