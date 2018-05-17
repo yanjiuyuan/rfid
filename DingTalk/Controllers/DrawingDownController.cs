@@ -5,6 +5,7 @@ using DingTalk.Models.DbModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -274,6 +275,11 @@ namespace DingTalk.Controllers
                         foreach (PurchaseDown purchaseDown in procedureInfoList)
                         {
                             context.PurchaseDown.Add(purchaseDown);
+
+                            //修改下发状态
+                            Purchase purchase = context.Purchase.Where(u => u.DrawingNo == purchaseDown.DrawingNo).First();
+                            purchase.IsDown = true;
+                            context.Entry<Purchase>(purchase).State = EntityState.Modified;
                         }
                         context.SaveChanges();
                     }
@@ -386,6 +392,60 @@ namespace DingTalk.Controllers
                         foreach (WorkTime workTime in WorkTimeInfoList)
                         {
                             context.WorkTime.Add(workTime);
+                            context.SaveChanges();
+                            WorkTimeIdList.Add(workTime.Id.ToString());
+                        }
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功",
+                        Content = JsonConvert.SerializeObject(WorkTimeIdList)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// 修改工时状态
+        /// </summary>
+        /// <returns></returns>
+        ///  var WorkTimeList = [{ "ProcedureId": "1", "IsFinish": true, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2"},
+        ///  { "ProcedureId": "2", "IsFinish": true, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"},
+        ///  { "ProcedureId": "2", "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3"}] 
+        [HttpPost]
+        public string ChangeWorkTimeState()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    List<string> WorkTimeIdList = new List<string>();
+                    List<WorkTime> WorkTimeInfoList = new List<WorkTime>();
+                    WorkTimeInfoList = JsonHelper.JsonToObject<List<WorkTime>>(List);
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (WorkTime workTime in WorkTimeInfoList)
+                        {
+                            context.Entry<WorkTime>(workTime).State = EntityState.Modified;
                             context.SaveChanges();
                             WorkTimeIdList.Add(workTime.Id.ToString());
                         }
@@ -753,7 +813,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == "7" && (u.NodeId.ToString() == "2" || u.NodeId.ToString() == "3")).Select(u => u.PeopleId).ToList();
-                    
+
                     if (ListPeopleId.Contains(ApplyManId))
                     {
                         List<Purchase> PurchaseList = context.Purchase.
@@ -801,7 +861,7 @@ namespace DingTalk.Controllers
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureId
-                                    where w.WorkerId == ApplyManId 
+                                    where w.WorkerId == ApplyManId
                                     select new
                                     {
                                         p.TaskId,
@@ -846,5 +906,7 @@ namespace DingTalk.Controllers
 
 
         #endregion
+
+
     }
 }
