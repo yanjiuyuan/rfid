@@ -250,7 +250,6 @@
                                 "ApplyMan": work.name,
                                 "ApplyManId": work.id,
                                 "NodeId": "1",
-                                "ApplyTime": "",
                                 "IsEnable": "1",
                                 "FlowId": FlowId + '',
                                 "Remark": "",
@@ -280,6 +279,7 @@
                 var that = this
                 var part = this.parts[0]
                 var param = []
+                var paramWork = []
                 for (let part of editParts) {
                     for (let flow of part.flows) {
                         param.push({
@@ -299,10 +299,35 @@
                             "ProcedureId": flow.ProcedureId,
                             "FlowType": "0"
                         })
+                        for (let w of flow.works) {
+                            paramWork.push({
+                                "ProcedureId": flow.ProcedureId,
+                                "IsFinish": false,
+                                "Worker": w.name,
+                                "WorkerId": w.id,
+                                "StartTime": w.startTime,
+                                "EndTime": w.endTime,
+                                "UseTime": w.endTime - w.endTime
+                            })
+                        }
                     }
                 }
                 console.log("提交下发表单 param ")
                 console.log(param)
+                $.ajax({
+                    url: "/DrawingDown/AddWorkTime",
+                    type: "POST",
+                    data: JSON.stringify(paramWork),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工时接口")
+                        console.log(paramWork)
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
                 $.ajax({
                     url: "/DrawingDown/SubmitDrawingDown",
                     type: "POST",
@@ -438,33 +463,10 @@
                             startTime: workObj.startTime,
                             endTime: workObj.endTime
                         })
-                        paramObj = [
-                            {
-                                "ProcedureInfoId": part.flows[index].ProcedureInfoId,
-                                "IsFinish": false,
-                                "Worker": workObj.name,
-                                "WorkerId": workObj.id,
-                                "StartTime": workObj.startTime,
-                                "EndTime": workObj.endTime,
-                                "UseTime": workObj.endTime - workObj.endTime
-                            }] 
                     }
                 }
                 this.getPartsData()
-                $.ajax({
-                    url: "/DrawingDown/AddWorkTime",
-                    type: "POST",
-                    data: JSON.stringify(paramObj),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("添加工时接口")
-                        console.log(paramObj)
-                        console.log(data)
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                
             },
             deleteWork(DrawingNo, ProcedureId, index) {
                 var that = this
