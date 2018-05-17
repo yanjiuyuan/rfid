@@ -108,7 +108,7 @@ namespace DingTalk.Controllers
                                                }
                                            },
                                        };
-                        
+
 
                         //List<DrowDownModel> DrowDownModelList = new List<DrowDownModel>();
 
@@ -593,7 +593,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         /// 测试数据: /DrawingDown/GetPersonInfo?ApplyManId=073110326032521796&TaskId=101
         [HttpGet]
-        public string GetPersonInfo(string ApplyManId,int TaskId = 0)
+        public string GetPersonInfo(string ApplyManId, int TaskId = 0)
         {
             try
             {
@@ -618,7 +618,6 @@ namespace DingTalk.Controllers
                                     on p.DrawingNo equals s.DrawingNo
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureInfoId
-                                    where w.WorkerId==ApplyManId
                                     select new
                                     {
                                         p.TaskId,
@@ -723,6 +722,106 @@ namespace DingTalk.Controllers
                 {
                     List<Worker> ListWorker = context.Worker.ToList();
                     return JsonConvert.SerializeObject(ListWorker);
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region 绑定数据读取(用于下发审批页面数据读取)
+        /// <summary>
+        /// 绑定数据读取
+        /// </summary>
+        /// <param name="ApplyManId">当前用户Id</param>
+        /// <param name="IsFinished">是否完成(不传默认未完成)</param>
+        /// <param name="TaskId">流水号</param>
+        /// <returns></returns>
+        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=123&IsFinished=true&TaskId=3
+        /// 测试数据：/DrawingDown/GetFinishInfo?IsFinished=true&TaskId=3
+        [HttpGet]
+        public string GetFinishInfo(string ApplyManId, string TaskId, bool IsFinished = false)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (string.IsNullOrEmpty(ApplyManId))
+                    {
+                        List<Purchase> PurchaseList = context.Purchase.
+                           Where(u => u.TaskId == TaskId.ToString()).ToList();
+                        List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
+                        List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
+                        var Quary = from p in PurchaseList
+                                    join s in ProcedureInfoList
+                                    on p.DrawingNo equals s.DrawingNo
+                                    join w in WorkTimeInfoList
+                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    select new
+                                    {
+                                        p.TaskId,
+                                        p.IsDown,
+                                        p.Mark,
+                                        p.MaterialScience,
+                                        p.Name,
+                                        p.Sorts,
+                                        s.ApplyMan,
+                                        s.ApplyManId,
+                                        s.CreateTime,
+                                        s.DefaultWorkTime,
+                                        s.DrawingNo,
+                                        w.IsFinish,
+                                        w.ProcedureInfoId,
+                                        w.StartTime,
+                                        w.EndTime,
+                                        w.UseTime,
+                                        w.Worker,
+                                        w.WorkerId
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
+                    else
+                    {
+                        List<Purchase> PurchaseList = context.Purchase.
+                       Where(u => u.TaskId == TaskId.ToString()).ToList();
+                        List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
+                        List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
+                        var Quary = from p in PurchaseList
+                                    join s in ProcedureInfoList
+                                    on p.DrawingNo equals s.DrawingNo
+                                    join w in WorkTimeInfoList
+                                    on s.Id.ToString() equals w.ProcedureInfoId
+                                    where w.WorkerId == ApplyManId && w.IsFinish == IsFinished
+                                    select new
+                                    {
+                                        p.TaskId,
+                                        p.IsDown,
+                                        p.Mark,
+                                        p.MaterialScience,
+                                        p.Name,
+                                        p.Sorts,
+                                        s.ApplyMan,
+                                        s.ApplyManId,
+                                        s.CreateTime,
+                                        s.DefaultWorkTime,
+                                        s.DrawingNo,
+                                        w.IsFinish,
+                                        w.ProcedureInfoId,
+                                        w.StartTime,
+                                        w.EndTime,
+                                        w.UseTime,
+                                        w.Worker,
+                                        w.WorkerId
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
                 }
             }
             catch (Exception ex)
