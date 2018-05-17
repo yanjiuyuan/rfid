@@ -418,24 +418,43 @@ namespace DingTalk.Controllers
         /// 修改工时状态
         /// </summary>
         /// <returns></returns>
-
+      
         [HttpGet]
-        public string ChangeWorkTimeState(string ProcedureId, bool IsFinish,string ApplyManId)
+        public string ChangeWorkTimeState(string ProcedureId,bool IsFinish)
         {
             try
             {
-                using (DDContext context = new DDContext())
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
                 {
-                    WorkTime workTime = context.WorkTime.Where(u => u.ProcedureId == ProcedureId && u.Worker== ApplyManId).First();
-                    workTime.IsFinish = IsFinish;
-                    context.Entry<WorkTime>(workTime).State = EntityState.Modified;
-                    context.SaveChanges();
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
                 }
-                return JsonConvert.SerializeObject(new ErrorModel
+                else
                 {
-                    errorCode = 0,
-                    errorMessage ="修改成功"
-                });
+                    List<string> WorkTimeIdList = new List<string>();
+                    List<WorkTime> WorkTimeInfoList = new List<WorkTime>();
+                    WorkTimeInfoList = JsonHelper.JsonToObject<List<WorkTime>>(List);
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (WorkTime workTime in WorkTimeInfoList)
+                        {
+                            context.Entry<WorkTime>(workTime).State = EntityState.Modified;
+                            context.SaveChanges();
+                            WorkTimeIdList.Add(workTime.Id.ToString());
+                        }
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功",
+                        Content = JsonConvert.SerializeObject(WorkTimeIdList)
+                    });
+                }
             }
             catch (Exception ex)
             {
