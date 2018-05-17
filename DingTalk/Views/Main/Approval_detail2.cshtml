@@ -22,7 +22,8 @@
             <template slot-scope="scope">
                 <el-switch v-model="scope.row.IsFinish"
                            active-color="#13ce66"
-                           inactive-color="#ff4949">
+                           inactive-color="#ff4949"
+                           v-on:change="changeState(scope.row)">
                 </el-switch>
             </template>
         </el-table-column>
@@ -46,9 +47,9 @@
                 <el-input v-model="ruleForm.mark"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+                <el-button v-if="allDone" type="primary" v-on:click="onSubmit" :disabled="disablePage">提交</el-button>
                 <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
-                <el-button type="danger" :disabled="disablePage">不同意</el-button>
+                <el-button type="danger" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -86,7 +87,8 @@
                 nodeInfo: {},
                 ruleForm: {},
                 isBack: false,
-                index: Index
+                index: Index,
+                allDone: true
             }
         },
         methods: {
@@ -158,6 +160,7 @@
                     }
                 })
             },
+            //改变任务完成状态
             //退回审批
             returnSubmit() {
                 
@@ -174,6 +177,9 @@
                         console.log("获任务零件列表ok")
                         console.log(data)
                         that.data = data
+                        for (let d of data) {
+
+                        }
                         that.getData()
                         that.totalRows = data.length
                     },

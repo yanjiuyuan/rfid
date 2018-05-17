@@ -226,30 +226,6 @@
                     });
                     return
                 }
-                var FlowTest =
-                    [
-                        {
-                            "ApplyMan": "小威",
-                            "ApplyManId": "1209662535974958",
-                            "ApplyTime": null,
-                            "IsEnable": 1,
-                            "FlowId": 6,
-                            "NodeId": 0,
-                            "Remark": "6666",
-                            "IsSend": false,
-                            "State": 1,
-                            "ImageUrl": null,
-                            "FileUrl": null,
-                            "Title": "大型石板材扫描仪",
-                            "ProjectId": "2016ZL051",
-                            "IsPost": false,
-                            "OldImageUrl": null,
-                            "OldFileUrl": null,
-                            "IsBack": null
-                        },
-                            { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
-                            { "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
-                ];
                 count = 0
                 var paramArr = []
                 paramArr.push({
@@ -325,40 +301,6 @@
                         })
                     }
                 }
-                var paramText = [{
-                    "Id": 1.0,
-                    "TaskId": "3",
-                    "OldTaskId": part.TaskId,
-                    "DrawingNo": "DTE-801B-WX-01C",
-                    "CodeNo": "2",
-                    "Name": "十字座套",
-                    "Count": "2",
-                    "MaterialScience": "7075T6",
-                    "Unit": "件",
-                    "Brand": "耐克",
-                    "Sorts": "自制",
-                    "Mark": "借用",
-                    "IsDown": true,
-                    "ProcedureId": "1",
-                    "FlowType": "0"
-                },
-                {
-                    "Id": 2.0,
-                    "TaskId": "3",
-                    "OldTaskId": "2",
-                    "DrawingNo": "DTE-801B-WX-01B",
-                    "CodeNo": "3",
-                    "Name": "十字座D10",
-                    "Count": "1",
-                    "MaterialScience": "7075T6",
-                    "Unit": "件",
-                    "Brand": "阿迪",
-                    "Sorts": "自制",
-                    "Mark": "借用",
-                    "IsDown": true,
-                    "ProcedureId": "2",
-                    "FlowType": "1"
-                    }]
                 console.log("提交下发表单 param ")
                 console.log(param)
                 $.ajax({
@@ -370,7 +312,7 @@
                         that.disabled = false
                         console.log("提交下发表单ok")
                         console.log(data)
-                        this.$alert('提交审批成功', '提交成功', {
+                        that.$alert('提交审批成功', '提交成功', {
                             confirmButtonText: '确定',
                             callback: action => {
                                 loadPage('/main/Approval')
@@ -498,7 +440,7 @@
                         })
                         paramObj = [
                             {
-                                "ProjectInfoId": this.project[0].ProjectId,
+                                "ProcedureInfoId": part.flows[index].ProcedureInfoId,
                                 "IsFinish": false,
                                 "Worker": workObj.name,
                                 "WorkerId": workObj.id,
@@ -516,6 +458,7 @@
                     dataType: "json",
                     success: function (data) {
                         console.log("添加工时接口")
+                        console.log(paramObj)
                         console.log(data)
                     },
                     error: function (err) {
