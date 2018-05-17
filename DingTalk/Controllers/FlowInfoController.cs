@@ -216,8 +216,8 @@ namespace DingTalk.Controllers
                                         //context.SaveChanges();
                                         //推送OA消息(寻人)
                                         SentCommonMsg(dic["PeopleId"].ToString(),
-                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                        taskNew.ApplyMan, taskNew.Remark, null);                                        //context.Tasks.Add(new Tasks
+                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
+                                        tasks.ApplyMan, tasks.Remark, null);                                        //context.Tasks.Add(new Tasks
                                         //{
                                         //    TaskId = tasks.TaskId,
                                         //    ApplyMan = dic["NodePeople"],
