@@ -810,7 +810,6 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == "7" && (u.NodeId.ToString() == "2" || u.NodeId.ToString() == "3")).Select(u => u.PeopleId).ToList();
-
                     if (ListPeopleId.Contains(ApplyManId))
                     {
                         List<Purchase> PurchaseList = context.Purchase.
@@ -881,7 +880,8 @@ namespace DingTalk.Controllers
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId
+                                        w.WorkerId,
+                                        w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
