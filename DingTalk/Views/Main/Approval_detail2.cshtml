@@ -162,7 +162,7 @@
             getBomInfo() {
                 var that = this
                 $.ajax({
-                    url: "/DrawingUpload/GetFinishInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+                    url: "/DrawingDown/GetFinishInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
