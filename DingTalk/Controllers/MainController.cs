@@ -20,6 +20,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_detail2()
+        {
+            return View();
+        }
 
         public ActionResult Approval_list()
         {
