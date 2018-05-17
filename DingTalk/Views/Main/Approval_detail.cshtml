@@ -50,16 +50,18 @@
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <!--添加抄送人-->
-        <sam-addapprover :preset="preCopy" :approvers="copyers">
-        </sam-addapprover>
-        <el-form-item label="审批意见" prop="mark">
-            <el-input v-model="ruleForm.mark"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-            <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
-            <el-button type="danger" :disabled="disablePage" >不同意</el-button>
-        </el-form-item>
+        @*<sam-addapprover :preset="preCopy" :approvers="copyers">
+        </sam-addapprover>*@
+        <template v-if="index==0">
+            <el-form-item label="审批意见" prop="mark">
+                <el-input v-model="ruleForm.mark"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+                <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+                <el-button type="danger" :disabled="disablePage">不同意</el-button>
+            </el-form-item>
+        </template>
     </el-form>
 </el-main>
 
@@ -70,6 +72,7 @@
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
         Id = UrlObj.id
+        var Index = UrlObj.index
     }
     var allData = {}
     var fileList = []
@@ -99,7 +102,8 @@
                 nodeList: [],
                 copyers: ['小唐', '季老师'],
                 ruleForm: {},
-                isBack: false
+                isBack: false,
+                index: Index
             }
         },
         methods: {
@@ -225,7 +229,7 @@
                         console.log(data)
                         if (!data) return
                         that.nodeInfo = data[0]
-                        that.preApprove = !data[0].IsNeedChose
+                        that.preApprove = (!data[0].IsNeedChose) || (Index>0)
                         that.preCopy = !data[0].IsSendChose
                         that.isBack = data[0].IsBack
                     },
