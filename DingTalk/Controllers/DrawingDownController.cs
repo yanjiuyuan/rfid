@@ -719,7 +719,7 @@ namespace DingTalk.Controllers
         /// <param name="DrawingNo">零件编号</param>
         /// <returns></returns>
         /// 测试数据：/DrawingDown/GetProcedureInfo
-        /// var DrawingNoList=  [{ "Id": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C"}] 
+        /// var DrawingNoList=  [{ "Id": "1" }, { "DrawingNo": "2"}] 
         [HttpPost]
         public string GetProcedureInfo()
         {
