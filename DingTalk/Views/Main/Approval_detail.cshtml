@@ -111,6 +111,7 @@
             onSubmit(formName) {
                 this.disablePage = true
                 var paramArr = []
+                var that = this
                 paramArr.push({
                     "Id": allData.Id,
                     "TaskId": TaskId,
@@ -160,14 +161,12 @@
                         console.log(paramArr)
                         console.log(data)
                         if (data && data.errorCode == 0) {
-                            alert("创建成功")
-                            DingTalkPC.device.notification.alert({
-                                message: '提交成功',
-                                buttonName: '确定',
-                                onSuccess: function () {
+                            that.$alert('审批成功', '操作成功', {
+                                confirmButtonText: '确定',
+                                callback: action => {
                                     loadPage('/main/Approval')
                                 }
-                            })
+                            });
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
