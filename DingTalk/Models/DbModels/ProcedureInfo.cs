@@ -13,9 +13,6 @@ namespace DingTalk.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
-        [StringLength(200)]
-        public string DrawingNo { get; set; }
-
         [StringLength(500)]
         public string ProcedureName { get; set; }
 

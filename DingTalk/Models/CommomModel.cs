@@ -13,6 +13,6 @@ namespace DingTalk.Models
 
     public class Msg
     {
-       public string DrawingNo { get; set; }
+       public string Id { get; set; }
     }
 }
