@@ -16,6 +16,9 @@ namespace DingTalk.Models.DbModels
         [StringLength(300)]
         public string TaskId { get; set; }
 
+        [StringLength(500)]
+        public string BomId { get; set; }
+
         [StringLength(300)]
         public string DrawingNo { get; set; }
 

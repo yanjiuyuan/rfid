@@ -216,6 +216,10 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<Purchase>()
+                .Property(e => e.BomId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
                 .Property(e => e.DrawingNo)
                 .IsUnicode(false);
 
@@ -340,10 +344,6 @@ namespace DingTalk.Models.DbModels
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<ProcedureInfo>()
-                .Property(e => e.DrawingNo)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<ProcedureInfo>()
                 .Property(e => e.ProcedureName)
                 .IsUnicode(false);
 
@@ -409,6 +409,10 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<PurchaseDown>()
                 .Property(e => e.OldTaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseDown>()
+                .Property(e => e.BomId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<PurchaseDown>()

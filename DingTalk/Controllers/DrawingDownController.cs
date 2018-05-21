@@ -63,9 +63,9 @@ namespace DingTalk.Controllers
 
                         var TaskList = from t in ListTaskId select t;
 
-                        var Purchase = context.Purchase.Where(u => u.IsDown != true);
+                        var PurchaseDown = context.PurchaseDown.Where(u => u.IsDown != true);
                         var Quary = from t in TaskList
-                                    join p in Purchase
+                                    join p in PurchaseDown
                                     on t.ToString() equals p.TaskId
                                     select new
                                     {
@@ -79,11 +79,12 @@ namespace DingTalk.Controllers
                                         p.Count,
                                         p.Unit,
                                         p.Mark,
+                                        p.ProcedureId
                                     };
                         var Procedure = context.ProcedureInfo;
                         var QuaryPro = from q in Quary
                                        join p in Procedure
-                                       on q.DrawingNo equals p.DrawingNo
+                                       on q.ProcedureId equals p.Id.ToString()
                                        into temp
                                        from pp in temp.DefaultIfEmpty()
                                        select new
@@ -309,9 +310,9 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/AddProcedure
-        ///  var PurchaseList = [{ "DrawingNo1": "DTE-801B-WX-01C", "ProcedureName": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
-        ///  { "DrawingNo": "DTE-801B-WX-01C1", "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
-        ///  { "DrawingNo": "DTE-801B-WX-01D1", "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
+        ///  var PurchaseList = [{"ProcedureName": "中料", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "ProcedureName": "喷漆", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"},
+        ///  { "ProcedureName": "切割", "DefaultWorkTime": "1", "State": "0", "CreateTime": "2018-04-24 15:48", "ApplyMan": "胡工", "ApplyManId": "123456"}] 
         [HttpPost]
         public string AddProcedure()
         {
@@ -598,13 +599,13 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<Purchase> PurchaseList = context.Purchase.
+                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
                             Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
                         var Quary = from p in PurchaseList
                                     join s in ProcedureInfoList
-                                    on p.DrawingNo equals s.DrawingNo
+                                    on p.ProcedureId equals s.Id.ToString()
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureId
                                     select new
@@ -619,7 +620,6 @@ namespace DingTalk.Controllers
                                         s.ApplyManId,
                                         s.CreateTime,
                                         s.DefaultWorkTime,
-                                        s.DrawingNo,
                                         w.IsFinish,
                                         w.ProcedureId,
                                         w.StartTime,
@@ -666,13 +666,13 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<Purchase> PurchaseList = context.Purchase.
+                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
                             Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
                         var Quary = from p in PurchaseList
                                     join s in ProcedureInfoList
-                                    on p.DrawingNo equals s.DrawingNo
+                                    on p.ProcedureId equals s.Id.ToString()
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureId
                                     select new
@@ -687,7 +687,6 @@ namespace DingTalk.Controllers
                                         s.ApplyManId,
                                         s.CreateTime,
                                         s.DefaultWorkTime,
-                                        s.DrawingNo,
                                         w.IsFinish,
                                         w.ProcedureId,
                                         w.StartTime,
@@ -720,7 +719,7 @@ namespace DingTalk.Controllers
         /// <param name="DrawingNo">零件编号</param>
         /// <returns></returns>
         /// 测试数据：/DrawingDown/GetProcedureInfo
-        /// var DrawingNoList=  [{ "DrawingNo": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C"}] 
+        /// var DrawingNoList=  [{ "Id": "DTE-801B-WX-01C" }, { "DrawingNo": "DTE-801B-WX-01C"}] 
         [HttpPost]
         public string GetProcedureInfo()
         {
@@ -745,8 +744,8 @@ namespace DingTalk.Controllers
                         Dictionary<string, List<ProcedureInfo>> dic = new Dictionary<string, List<ProcedureInfo>>();
                         foreach (var drawingNo in commomModelList)
                         {
-                            List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.DrawingNo == drawingNo.msg.DrawingNo).ToList();
-                            dic.Add(drawingNo.msg.DrawingNo, ListProcedureInfo);
+                            List<ProcedureInfo> ListProcedureInfo = context.ProcedureInfo.Where(u => u.Id.ToString() == drawingNo.msg.Id).ToList();
+                            dic.Add(drawingNo.msg.Id, ListProcedureInfo);
                         }
                         return JsonConvert.SerializeObject(dic);
                     }
@@ -812,13 +811,13 @@ namespace DingTalk.Controllers
                     List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == "7" && (u.NodeId.ToString() == "2" || u.NodeId.ToString() == "3")).Select(u => u.PeopleId).ToList();
                     if (ListPeopleId.Contains(ApplyManId))
                     {
-                        List<Purchase> PurchaseList = context.Purchase.
+                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
                            Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
                         var Quary = from p in PurchaseList
                                     join s in ProcedureInfoList
-                                    on p.DrawingNo equals s.DrawingNo
+                                    on p.ProcedureId equals s.Id.ToString()
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureId
                                     select new
@@ -835,7 +834,6 @@ namespace DingTalk.Controllers
                                         s.ApplyManId,
                                         s.CreateTime,
                                         s.DefaultWorkTime,
-                                        s.DrawingNo,
                                         w.IsFinish,
                                         w.ProcedureId,
                                         w.StartTime,
@@ -855,7 +853,7 @@ namespace DingTalk.Controllers
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
                         var Quary = from p in PurchaseList
                                     join s in ProcedureInfoList
-                                    on p.DrawingNo equals s.DrawingNo
+                                    on p.ProcedureId equals s.Id.ToString()
                                     join w in WorkTimeInfoList
                                     on s.Id.ToString() equals w.ProcedureId
                                     where w.WorkerId == ApplyManId
@@ -873,7 +871,6 @@ namespace DingTalk.Controllers
                                         s.ApplyManId,
                                         s.CreateTime,
                                         s.DefaultWorkTime,
-                                        s.DrawingNo,
                                         w.IsFinish,
                                         w.ProcedureId,
                                         w.StartTime,
