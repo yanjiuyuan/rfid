@@ -314,8 +314,8 @@
                 console.log(data)
                 allData = data
                 if (data.ImageUrl && data.ImageUrl.length > 5) {
-                    var imageList = data.ImageUrl.split(',')
-                    for (let img of imageList) {
+                    var tempList = data.ImageUrl.split(',')
+                    for (let img of tempList) {
                         imageList.push({
                             name: 'hello.jpg',
                             url: document.location + (img.substring(2)).replace(/\\/g, "/")
