@@ -41,9 +41,17 @@
             <el-upload action=""
                        list-type="picture-card"
                        :on-preview="handlePictureCardPreview"
-                       :file-list="fileList"
+                       :file-list="imageList"
                        :disabled="true">
             </el-upload>
+        </el-form-item>
+        <el-form-item label="相关文件">
+            <el-card class="box-card">
+                <div v-for="file in fileList" :key="file" class="text item" v-on:click="clickFile">
+                    {{file }}
+                </div>
+            </el-card>
+
         </el-form-item>
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
@@ -75,6 +83,7 @@
         var Index = UrlObj.index
     }
     var allData = {}
+    var imageList = []
     var fileList = []
     var demo = new Vue({
         el: "#partPage",
@@ -83,7 +92,7 @@
             return {
                 preApprove: false,
                 preCopy: false,
-                imageList: [],
+                imageList: imageList,
                 fileList: fileList,
                 data: [],
                 items: {
@@ -307,13 +316,13 @@
                 if (data.ImageUrl && data.ImageUrl.length > 5) {
                     var imageList = data.ImageUrl.split(',')
                     for (let img of imageList) {
-                        fileList.push({
+                        imageList.push({
                             name: 'hello.jpg',
                             url: document.location + (img.substring(2)).replace(/\\/g, "/")
                         })
                     }
                 }
-                console.log(fileList)
+                console.log(imageList)
                 demo.ruleForm = allData
                 demo.getNodeInfo()
                 demo.getNodeList()

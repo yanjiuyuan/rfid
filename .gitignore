@@ -25,6 +25,7 @@ Thumbs.db
 *.sbr
 *.xls
 *.jpg
+*.pdf
 *.config
 obj/
 [Rr]elease*/

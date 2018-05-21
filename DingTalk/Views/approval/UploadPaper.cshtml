@@ -88,7 +88,7 @@
                         list-type="picture-card"
                         :file-list="imageList"
                         :on-preview="handlePictureCardPreview"
-                        :on-remove="handleRemove"
+                        :on-remove="handlePictureRemove"
                         :on-success="handlePictureCardSuccess"
                         :before-upload="beforePictureUpload">
                 <i class="el-icon-plus"></i>
@@ -96,6 +96,20 @@
             <el-dialog :visible.sync="dialogVisible">
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
+        </el-form-item>
+        <el-form-item label="上传文件">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="fileList"
+                       action="/drawingupload/Upload"
+                       :on-remove="handleFileRemove"
+                       :before-upload="beforeFileUpload"
+                       :on-success="handleFileCardSuccess"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">不超过2M</div>
+            </el-upload>
         </el-form-item>
 
         <!--添加审批人-->
@@ -141,6 +155,8 @@
                     remark: '',
                     ImageUrl: '',
                     OldImageUrl: '',
+                    FileUrl: '',
+                    OldFileUrl: '',
                     ProjectId: '',
                     copyers: ['小唐', '季老师'],
 
@@ -176,6 +192,8 @@
                             "State": "1",
                             "ImageUrl": that.ruleForm.ImageUrl,
                             "OldImageUrl": that.ruleForm.OldImageUrl,
+                            "FileUrl": that.ruleForm.FileUrl,
+                            "OldFileUrl": that.ruleForm.OldFileUrl,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
@@ -366,13 +384,19 @@
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
             },
-            handleRemove(file, fileList) {
+            handlePictureRemove(file, fileList) {
+                this.changePictureList(fileList)
+            },
+            handleFileRemove(file, fileList) {
                 this.changeFileList(fileList)
             },
             handlePictureCardSuccess(response, file, fileList) {
+                this.changePictureList(fileList)
+            },
+            handleFileCardSuccess(response, file, fileList) {
                 this.changeFileList(fileList)
             },
-            changeFileList(fileList) {
+            changePictureList(fileList) {
                 console.log(fileList)
                 this.ruleForm.ImageUrl = ''
                 this.ruleForm.OldImageUrl = ''
@@ -382,6 +406,18 @@
                     if (i == fileList.length - 1) break
                     this.ruleForm.ImageUrl += ','
                     this.ruleForm.OldImageUrl += ','
+                }
+            },
+            changeFileList(fileList) {
+                console.log(fileList)
+                this.ruleForm.FileUrl = ''
+                this.ruleForm.OldFileUrl = ''
+                for (var i = 0; i < fileList.length; i++) {
+                    this.ruleForm.FileUrl += fileList[i].response.Content
+                    this.ruleForm.OldFileUrl += fileList[i].name
+                    if (i == fileList.length - 1) break
+                    this.ruleForm.FileUrl += ','
+                    this.ruleForm.OldFileUrl += ','
                 }
             },
             beforePictureUpload(file) {
@@ -396,6 +432,17 @@
                     this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
                     return false
                 }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!')
+                    return false
+                }
+                return true
+            },
+            beforeFileUpload(file) {
+                console.log('before file')
+                console.log(file)
+                file.name = 'helloWorld'
+                const isLt2M = file.size / 1024 / 1024 < 2
                 if (!isLt2M) {
                     this.$message.error('上传图片大小不能超过 2MB!')
                     return false
