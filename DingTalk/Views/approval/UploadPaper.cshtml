@@ -349,10 +349,10 @@
             handleSuccess(response, file, fileList) {
                 console.log(response)
                 var tableData = response[0].Value
+                let BomId = ''
                 if (!(tableData && tableData.length > 0)) return
                 for (let i = 0; i < tableData.length; i++) {
                     let data = tableData[i]
-                    let BomId = ''
                     if (i == 0) {
                         this.items = {}
                         for (let c in data) {
@@ -380,6 +380,8 @@
                         }
                     }
                 }
+                console.log("upBom")
+                console.log(upBom)
                 this.totalRows = this.data.length
                 this.getData()
             },
