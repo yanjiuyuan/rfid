@@ -352,17 +352,22 @@
                 if (!(tableData && tableData.length > 0)) return
                 for (let i = 0; i < tableData.length; i++) {
                     let data = tableData[i]
+                    let BomId = ''
                     if (i == 0) {
                         this.items = {}
                         for (let c in data) {
                             if (c.substring(0, 6) == 'Column') {
                                 this.items[c] = data[c]
                             }
+                            else if (c.length > 10) {
+                                BomId = c
+                            }
                         }
                     } else {
                         if (data['Column1'] && data['Column1'] != "") {
                             this.data.push(data)
                             upBom.push({
+                                BomId: BomId,
                                 DrawingNo: data.Column1,
                                 Name: data.Column2,
                                 Count: data.Column3,
