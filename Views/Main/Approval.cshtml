@@ -3,74 +3,145 @@
 }
 
 <!--右侧实体内容-->
-<script src="~/Scripts/echarts-all.js"></script>
-<el-main id="partPage">
+<el-main id="partPage" style="margin-top:20px;">
+    <br />
+    <template>
+        <span>我是：</span>
+        <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">
+            <el-option v-for="item in userList"
+                       :key="item.PeopleId"
+                       :label="item.NodePeople"
+                       :value="item.PeopleId">
+            </el-option>
+        </el-select>
+    </template>
     <el-collapse v-model="activeNames">
-        <el-collapse-item name="1">
-            <template slot="title">
-                <span style="font-size:20px;">行政类（{{count}}）</span>
-            </template>
-            <div class="approval-box" onclick="loadPage('/approval/OfficeSupplies')">
-                <div class="approval-box-img" style="background-position: -774px -227px;"></div>
-                <p>办公用品申请</p>
-            </div>
-            <div class="approval-box" onclick="loadPage('/approval/UseCar')">
-                <div class="approval-box-img" style="background-position: -504px -407px;"></div>
-                <p>用车申请</p>
-            </div>
-        </el-collapse-item>
-        <el-collapse-item name="2">
-            <template slot="title">
-                <span style="font-size:20px;">出勤休假（{{count}}）</span>
-            </template>
-            <div class="approval-box" onclick="loadPage('/approval/WorkOvertime')">
-                <div class="approval-box-img" style="background-position: -594px -47px;"></div>
-                <p>加班申请</p>
-            </div>
-            <div class="approval-box">
-                <div class="approval-box-img" style="background-position: -234px -317px;"></div>
-                <p>提交周报</p>
-            </div>
-        </el-collapse-item>
-        <el-collapse-item name="3">
-            <template slot="title">
-                <span style="font-size:20px;">项目管理（{{count}}）</span>
-            </template>
-            <div class="approval-box">
-                <div class="approval-box-img" style="background-position: -594px -227px;"></div>
-                <p>立项申请</p>
-            </div>
-            <div class="approval-box">
-                <div class="approval-box-img" style="background-position: -684px -227px;"></div>
-                <p>图纸上传</p>
-            </div>
-            <div class="approval-box">
-                <div class="approval-box-img" style="background-position: -324px -227px;"></div>
-                <p>图纸下发</p>
-            </div>
+        <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
+        <template slot="title">
+            <span style="font-size:20px;">{{m.SORT_NAME}}</span>
+        </template>
+        <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url"  class="approval-box" v-on:click="toApprove(l.url,l.flowId)" style="cursor:pointer;">
+            <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
+            <p>{{l.flowName}}</p>
+        </div>
         </el-collapse-item>
     </el-collapse>
 </el-main>
 
 <script>
+    var imgConfig = [
+        {
+            flowId: 1,
+            sortId: 1,
+            url: '/approval/OfficeSupplies',
+            position: '-774px -227px'
+        },
+        {
+            flowId: 2,
+            sortId: 1,
+            url: '/approval/UseCar',
+            position: '-504px -407px'
+        },
+        {
+            flowId: 3,
+            sortId: 2,
+            url: '/approval/WorkOvertime',
+            position: '-594px -47px'
+        },
+        {
+            flowId: 4,
+            sortId: 2,
+            url: '/approval/UseCar',
+            position: '-234px -317px'
+        },
+        {
+            flowId: 5,
+            sortId: 3,
+            url: '/approval/UseCar',
+            position: '-594px -227px'
+        },
+        {
+            flowId: 6,
+            sortId: 3,
+            url: '/approval/UploadPaper',
+            position: '-684px -227px'
+        },
+        {
+            flowId: 7,
+            sortId: 3,
+            url: '/approval/DownloadPaper',
+            position: '-324px -227px'
+        }
+    ]
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: ['1','2','3'],
-                count:2
+                activeNames: [1,2,3],
+                count: 2,
+                menu: [],
+                list: [],
+                userList: userList,
+                userName: DingData.nickName
             }
         },
         methods: {
-
+            getMenu: function () {
+                var that = this
+                $.ajax({
+                    url: '/FlowInfo/LoadFlowSort?id=123',
+                    dataType: 'json',
+                    type: 'GET',
+                    cache: false,
+                    success: function (data) {
+                        that.menu = data
+                        $.ajax({
+                            url: '/FlowInfo/LoadFlowInfo?id=123',
+                            dataType: 'json',
+                            type: 'GET',
+                            cache: false,
+                            success: function (data) {
+                                that.list = _mergeObjectArr(data, imgConfig, 'flowId')
+                            }
+                        })
+                    }
+                })
+            },
+            toApprove: function (url, id) {
+                FlowId = id
+                loadPage(url)
+            },
+            loadPage: function (url) {
+                $("#tempPage").load(url)
+            },
+            selectUser: function (id) {
+                console.log(id)
+                for (var user of this.userList) {
+                    if (user.PeopleId == id) {
+                        DingData.userid = user.PeopleId
+                        DingData.nickName = user.NodePeople
+                    }
+                }
+            },
+            getUserInfo: function () {
+                var that = this 
+                $.ajax({
+                    url: '/FlowInfo/GetUserInfo',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log('获取用户数据')
+                        console.log(data)
+                        that.userList = data
+                    }
+                })
+            }
         },
         created: function () {
+            this.getMenu()
+            this.getUserInfo()
             loadHtml("mainPage", "partPage")
         }
     })
 
 </script>
-
-
-

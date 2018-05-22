@@ -4,21 +4,20 @@
     Layout = null;
 }
 
-<template>
+@*<template>*@
     @*滚动图片*@
-    <el-carousel>
+    @*<el-carousel>
         <el-carousel-item v-for="item in scollImages" :key="item">
             <img :src="item" style="width:100%;height:300px;"/>
         </el-carousel-item>
     </el-carousel>
-    <div>
+    <div>*@
         @*关于我们和案例*@
-        <el-row :gutter="20">
+        @*<el-row :gutter="20">
             <el-col :xs="24" :sm="17" >
                 <el-card class="card">
                     <div slot="header" class="clearfix">
                         <span class="cardButtonTitle">关于我们</span>
-                        @*<el-button style="float: right; padding: 3px 0" type="text">更多</el-button>*@
                     </div>
                     <div>
                         <img src="~/Content/images/card1.jpg" class="cardImage" />
@@ -35,7 +34,6 @@
                 <el-card class="card">
                     <div slot="header" class="clearfix">
                         <span class="cardPannelTitle">应用案例</span>
-                        @*<el-button style="float: right; padding: 3px 0" type="text">更多</el-button>*@
                     </div>
                     <div class="card-box clearfix">
                         <img src="~/Content/images/card2.jpg" class="card-box-image" />
@@ -60,9 +58,9 @@
                     </div>
                 </el-card>
             </el-col>
-        </el-row>
+        </el-row>*@
         @*新闻资讯*@
-        <el-row :gutter="20">
+        @*<el-row :gutter="20">
             <el-col :xs="24" :sm="9">
                 <el-card class="card">
                     <div slot="header" class="clearfix">
@@ -213,4 +211,4 @@
             </el-col>
         </el-row>
     </div>
-</template>
+</template>*@

@@ -7,7 +7,9 @@
     content: '';
     display: block;
 }
-
+.box-card {
+    width: 480px;
+}
 hr {
     height: 1px;
     border: none;

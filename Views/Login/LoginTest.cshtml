@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "LoginTest";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <h2 id="notice">正在登录...</h2>
+    <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="http://g.alicdn.com/dingding/open-develop/1.5.1/dingtalk.js"></script>
+    <script type="text/javascript">
+        var _config = [];
+        _config.agentId = "@ViewBag.AgentId";
+        _config.corpId = "@ViewBag.CorpId";
+        _config.timeStamp = "@ViewBag.TimeStamp";
+        _config.nonceStr = "@ViewBag.NonceStr";
+        _config.signature = "@ViewBag.Signature";
+
+        dd.config({
+            agentId: _config.agentId,
+            corpId: _config.corpId,
+            timeStamp: _config.timeStamp,
+            nonceStr: _config.nonceStr,
+            signature: _config.signature,
+            jsApiList: ['runtime.info', 'biz.contact.choose',
+                    'device.notification.confirm', 'device.notification.alert',
+                    'device.notification.prompt', 'biz.ding.post',
+                    'biz.util.openLink']
+        });
+
+        dd.ready(function () {
+            dd.runtime.info({
+                onSuccess: function (info) {
+                    logger.e('runtime info: ' + JSON.stringify(info));
+                },
+                onFail: function (err) {
+                    logger.e('fail: ' + JSON.stringify(err));
+                }
+            });
+
+            dd.runtime.permission.requestAuthCode({
+                corpId: _config.corpId,
+                onSuccess: function (info) {//成功获得code值,code值在info中
+                    //alert('authcode: ' + info.code);
+                    //alert('token: @ViewBag.AccessToken');
+                    /*
+                    *$.ajax的是用来使得当前js页面和后台服务器交互的方法
+                    *参数url:是需要交互的后台服务器处理代码，这里的userinfo对应WEB-INF -> classes文件中的UserInfoServlet处理程序
+                    *参数type:指定和后台交互的方法，因为后台servlet代码中处理Get和post的doGet和doPost
+                    *原本需要传输的参数可以用data来存储的，格式为data:{"code":info.code,"corpid":_config.corpid}
+                    *其中success方法和error方法是回调函数，分别表示成功交互后和交互失败情况下处理的方法
+                    */
+                    $.ajax({
+                        url: '@Url.Action("GetUserInfo", "DD")?code=' + info.code + '&accessToken=@ViewBag.AccessToken',//userinfo为本企业应用服务器后台处理程序
+                        type: 'GET',
+                        /*
+                        *ajax中的success为请求得到相应后的回调函数，function(response,status,xhr)
+                        *response为响应的数据，status为请求状态，xhr包含XMLHttpRequest对象
+                        */
+                        success: function (data, status, xhr) {
+                            alert(data);
+                            var info = JSON.parse(data);
+                            if (info.errcode != 0) {
+                                alert(data);
+                            } else {
+                                //alert("当前用户:" + info.name);
+                                $('#notice').text("欢迎您：" + info.name + "。浏览器正在自动跳转...");
+                                location.href = "@Url.Action("Index", "Home")";
+                            }
+                        },
+                        error: function (xhr, errorType, error) {
+                            logger.e("尝试获取用户信息失败:" + info.code);
+                            alert(errorType + ', ' + error);
+                        }
+                    });
+
+                },
+                onFail: function (err) {//获得code值失败
+                    alert('fail: ' + JSON.stringify(err));
+                }
+            });
+        });
+        dd.error(function (err) {
+            alert('dd error: ' + JSON.stringify(err));
+        });
+    </script>
+</body>
+</html>
+
