@@ -1,33 +1,47 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
     @Scripts.Render("~/bundles/modernizr")
 
-    <link rel="stylesheet" href="~/Content/element.css"/>
+    <link rel="stylesheet" href="~/Content/element.css" />
     <link rel="stylesheet" href="~/Content/display.css" />
     <link rel="stylesheet" href="~/Content/site.css" />
     <script src="~/Scripts/jquery-3.2.1.min.js"></script>
     <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/element.js"></script>
+    <script src="~/Scripts/pdf.js"></script>
+    <script src="~/Scripts/pdf.worker.js"></script>
     <script src="~/Scripts/lib.js"></script>
+    <script src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
+    @*<script src="http://g.alicdn.com/dingding/open-develop/1.6.9/dingtalk.js"></script>*@
     <script>
-        var userObj = getLocalObj('user')
-        if (!userObj) {
-            location.href="/login"
-        }
-        mixin.data.user = userObj
+        //var userObj = getLocalObj('user')
+        //if (!userObj) {
+        //    location.href="/login"
+        //}
+        //mixin.data.user = userObj
+        //全局变量
+        var needLogin = '@ViewBag.needLogin'
+        var DingData = {}
+        var userList = [
+            { name: '张鹏辉', id: '100328051024695354' },
+            { name: '肖民生', id: '073110326032521796' },
+            { name: '黄龙贤', id: '020821466340361583' },
+            { name: '蔡兴桐', id: '083452125733424957' },
+            { name: '黄浩炜', id: 'manager325' }
+        ]
     </script>
 </head>
 <body>
     
     <div id="app">
-        <el-header>
+        @*<el-header>
             @RenderPage("~/Views/Shared/Head_login.cshtml")
-        </el-header>
+        </el-header>*@
         <el-container>
             <el-main>
                 @RenderBody()
@@ -47,6 +61,85 @@
 </script>
 
 <script>
-    var needLogin = '@ViewBag.needLogin'
+    //登录钉钉
+    $.ajax({
+        //url: 'http://17e245o364.imwork.net/signature/',
+        url: '/Login/BeginDDAutoLogin',
+        dataType: 'json',
+        type:'GET',
+        cache:false,
+        success: function (data) {
+            DingData = data
+            DingData.userid = 'manager325'
+            DingData.nickName = '黄浩炜'
+            //var a = 11
+            //if (a == 1) {
+            //    DingData.userid = 'manager325'
+            //    DingData.nickName = '蔡兴桐'
+            //}
+            //if (a == 2) {
+            //    DingData.userid = '1209662535974958'
+            //    DingData.nickName = '小威'
+            //}
+            //if (a == 3) {
+            //    DingData.userid = '111'
+            //    DingData.nickName = '王老师'
+            //}
+            console.log("你好，" + DingData.nickName)
+            var configObj = {
+                jsticket: DingData.JsApiTicket,
+                agentId: DingData.AgentId,
+                corpId: DingData.CorpId,
+                timeStamp: DingData.TimeStamp,
+                signature: DingData.Signature,
+                nonceStr: DingData.NonceStr,
+                jsApiList: [
+                    'runtime.info',
+                    'biz.contact.choose',
+                    'device.notification.alert',
+                    'device.notification.confirm',
+                    'biz.user.get']
+            }
+            //console.log(configObj)
+            DingTalkPC.config(configObj);
+        },
+        error: function (err) {
+            console.error(err)
+        }
+    })
+    //DingTalkPC.ready回调函数
+    DingTalkPC.ready(function () {
+        //PC版获取免登授权码
+        DingTalkPC.runtime.permission.requestAuthCode({
+            corpId: DingData.CorpId, //企业id
+            agentId: DingData.AgentId,//应用id
+            onSuccess: function (result) {
+                //console.log(result);
+                Window.authcode = result.code;
+            },
+            onFail: function (err) {
+                console.log('requestAuthCode fail: ' + JSON.stringify(err));
+            }
+        });
+
+        DingTalkPC.biz.user.get({
+            onSuccess: function (result) {
+                console.log(result);
+                DingData.userid = result.emplId
+                DingData.isManager = result.isManager
+                DingData.nickName = result.nickName
+                console.log('免登成功')
+                console.log("你好，" + DingData.nickName)
+            },
+            onFail: function (err) {
+                console.log('userinfo fail: ' + JSON.stringify(err));
+            }
+        });
+    }); 
+    
+
+    DingTalkPC.error(function (err) {
+        console.log('dd error: ' + JSON.stringify(err));
+    });
     
 </script>

@@ -1,0 +1,620 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        下发图纸
+    </div>
+
+    <!--项目选择部分-->
+    <template v-if="project.length == 0">
+        <h4>选择项目</h4>
+        <!--表格實體-->
+        <el-table :data="tableData" stripe border>
+            <el-table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button v-on:click.native.prevent="selectProject(scope.$index, tableData)"
+                               type="pirmary" size="small">
+                        选择项目
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:size-change="handleSizeChange"
+                           v-on:current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="5"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="totalRows">
+            </el-pagination>
+        </div>
+    </template>
+    <template v-else>
+        <el-table :data="project" stripe border>
+            <el-table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button v-on:click.native.prevent="project = []"
+                               type="pirmary" size="small">
+                        重新选择
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+
+    <!--部件编辑部分-->
+    <el-table :data="tableParts"
+              style="width: 100%;margin-top:100px;">
+        <el-table-column label="代号" prop="DrawingNo"></el-table-column>
+        <el-table-column label="名称" prop="Name"></el-table-column>
+        @*<el-table-column label="材料" prop="MaterialScience"></el-table-column>
+            <el-table-column label="品牌" prop="Brand"></el-table-column>*@
+        <el-table-column label="数量" prop="Count"></el-table-column>
+        <el-table-column label="单位" prop="Unit"></el-table-column>
+        <el-table-column label="类别" prop="Sorts"></el-table-column>
+        <el-table-column label="备注" prop="Mark"></el-table-column>
+        <el-table-column type="expand">
+            <template slot-scope="scope">
+                <el-collapse accordion>
+                    <el-collapse-item v-for="(flow,index) in scope.row.flows" :key="flow.id" :title="flow.ProcedureName">
+                        <!--工序列表-->
+                        <el-form :inline="true">
+                            <el-form-item label="工序名称">
+                                <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.ProcedureId)" type="danger" class="tableRight">删除工序</el-button>
+                            </el-form-item>
+                        </el-form>
+                        <!--工作分配列表-->
+                        <el-form v-for="(work,i) in scope.row.flows[index].works" :inline="true" class="demo-form-inline form" size="mini">
+                            <el-form-item label="执行人">
+                                <el-input v-model="work.name" style="width:100px;" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="开始时间">
+                                <el-input v-model="work.startTime" style="width:100px;" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="结束时间">
+                                <el-input v-model="work.endTime" style="width:100px;" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button v-on:click="deleteWork(scope.row.DrawingNo,flow.ProcedureId,i)">删除工作</el-button>
+                            </el-form-item>
+                        </el-form>
+                        <!--添加工作分配-->
+                        <el-form :id="scope.row.DrawingNo+index" :inline="true" class="demo-form-inline form" size="mini">
+                            <el-form-item label="执行人">
+                                <el-select name="name" v-model="value" placeholder="请选择" >
+                                    <el-option v-for="e in employees"
+                                               :key="e.WorkerId"
+                                               :label="e.WorkerName"
+                                               :value="e.WorkerId">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="开始时间">
+                                <el-input name="startTime" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="结束时间">
+                                <el-input name="endTime" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-collapse-item>
+                </el-collapse>
+                <!--添加工序-->
+                <el-form :inline="true">
+                    <el-form-item label="工序名称" prop="ProcedureName">
+                        <el-input :id="scope.row.DrawingNo"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button size="mini" type="primary" class="tableRight"
+                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)">添加工序</el-button>
+                    </el-form-item>
+                </el-form>
+            </template>
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="partsSizeChange"
+                       v-on:current-change="partsCurrentChange"
+                       :current-page="partsCurrentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="partsRows">
+        </el-pagination>
+    </div>
+
+    <div>
+        <el-button style="margin:40px 0 0 40%" type="primary"
+                 @*:disabled="disabled"*@  v-on:click="onSubmit">确定下发</el-button>
+    </div>
+
+</el-main>
+
+<script>
+    var editParts = []
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                //项目列表相关参数
+                data: [],
+                tableData: [],
+                projectItems: {
+                    ProjectId: '项目编号',
+                    ProjectName: '项目名称',
+                    ApplyMan: '创建人',
+                    CreateTime: '创建时间',
+                    DeptName: '所属部门'
+                },
+                totalRows: 0,
+                project: [],
+                //零件列表相关参数
+                parts: [],
+                tableParts: [],
+                partsRows: 0,
+                partsCurrentPage: 1,
+                partsPageSize: 5,
+
+                flowList: [],
+                workList: [],
+                employees: [],
+                ruleForm: {
+                    name: '',
+                    reson: '',
+                },
+                value: '',
+                disabled: false
+            }
+        },
+        methods: {
+            onSubmit() {
+                var that = this
+                this.disabled = true
+                console.log(this.parts)
+                var count = 0
+                for (let part of this.parts) {
+                    var fullInput = false
+                    if (!part.flows || part.flows.length == 0) continue
+                    for (let flow of part.flows) {
+                        if (!flow.works || flow.works.length == 0) continue
+                        for (let work of flow.works) {
+                            if (work.name || work.startTime || work.endTime) {
+                                count++
+                                let tmpFlows = _cloneArr(part.flows)
+                                for (let f of tmpFlows) {
+                                    if (!f.works || f.works.length == 0) {
+                                        this.$alert('您有未编辑完成的部件', '提交错误', {
+                                            confirmButtonText: '确定',
+                                            callback: action => {
+
+                                            }
+                                        });
+                                        return
+                                    }
+                                }
+                                fullInput = true
+                                editParts.push(part)
+                            }
+                            if (fullInput) continue
+                        }
+                        if (fullInput) continue
+                    }
+                }
+                if (count == 0) {
+                    this.$alert('您未编辑任何部件', '提交错误', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
+                    });
+                    return
+                }
+                count = 0
+                var paramArr = []
+                paramArr.push({
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": "0",
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId + '',
+                    "Remark": "",
+                    "IsSend": false,
+                    "State": "1",
+                    "ProjectId": this.project[0].ProjectId
+                }) 
+                for (let part of this.parts) {
+                    if (!part.flows || part.flows.length == 0) continue
+                    for (let flow of part.flows) {
+                        if (!flow.works || flow.works.length == 0) continue
+                        for (let work of flow.works) {
+                            count++
+                            paramArr.push({
+                                "ApplyMan": work.name,
+                                "ApplyManId": work.id,
+                                "NodeId": "1",
+                                "IsEnable": "1",
+                                "FlowId": FlowId + '',
+                                "Remark": "",
+                                "IsSend": false,
+                                "State": "1",
+                                "ProjectId": this.project[0].ProjectId
+                            })
+                        }
+                    }
+                }
+                console.log("提交审批 paramArr ")
+                console.log(paramArr)
+                $.ajax({
+                    url: '/FlowInfo/CreateTaskInfo',
+                    type: 'POST',
+                    data: JSON.stringify(paramArr),
+                    success: function (data) {
+                        console.log("提交审批ok")
+                        var taskId = JSON.parse(data).Content
+                        console.log(taskId)
+                        that.SubmitDrawingDown(taskId)
+                    }
+                })
+            },
+            //提交下发表单
+            SubmitDrawingDown(taskId) {
+                var that = this
+                var part = this.parts[0]
+                var param = []
+                var paramWork = []
+                for (let part of editParts) {
+                    for (let flow of part.flows) {
+                        param.push({
+                            "Id": part.DrawingNoId,
+                            "TaskId": taskId,
+                            "OldTaskId": part.TaskId,
+                            "DrawingNo": part.DrawingNo,
+                            "CodeNo": "2",
+                            "Name": part.TaskId,
+                            "Count": part.TaskId,
+                            "MaterialScience": part.TaskId,
+                            "Unit": part.TaskId,
+                            "Brand": part.TaskId,
+                            "Sorts": part.TaskId,
+                            "Mark": part.TaskId,
+                            "IsDown": true,
+                            "ProcedureId": flow.ProcedureId,
+                            "FlowType": "0"
+                        })
+                        for (let w of flow.works) {
+                            paramWork.push({
+                                "ProcedureId": flow.ProcedureId,
+                                "IsFinish": false,
+                                "Worker": w.name,
+                                "WorkerId": w.id,
+                                "StartTime": w.startTime,
+                                "EndTime": w.endTime,
+                                "UseTime": w.endTime - w.endTime
+                            })
+                        }
+                    }
+                }
+                console.log("提交下发表单 param ")
+                console.log(param)
+                $.ajax({
+                    url: "/DrawingDown/AddWorkTime",
+                    type: "POST",
+                    data: JSON.stringify(paramWork),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工时接口")
+                        console.log(paramWork)
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+                $.ajax({
+                    url: "/DrawingDown/SubmitDrawingDown",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        that.disabled = false
+                        console.log("提交下发表单ok")
+                        console.log(data)
+                        that.$alert('提交审批成功', '提交成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/main/Approval')
+                            }
+                        });
+                    },
+                    error: function (err) {
+                        console.log(err)
+                        that.disabled = false
+                    }
+                })
+            },
+            //为部件添加工序，删除工序
+            addFlow(row, DrawingNo) {
+                var that = this 
+                var procName = $("#" + DrawingNo).val().trim()
+                if (procName.length < 1) {
+                    this.$alert('必须输入工序名称', '提交错误', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
+                    });
+                    return
+                }
+                var param = [
+                {
+                    "DrawingNo": DrawingNo,
+                    "ProcedureName": $("#" + DrawingNo).val(),
+                    "DefaultWorkTime": "1",
+                    "State": "0",
+                    "CreateTime": _getTime(),
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid
+                }]
+                
+                $.ajax({
+                    url: "/DrawingDown/AddProcedure",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工序接口")
+                        var flowId = JSON.parse(data.Content)[0]
+                        console.log(flowId)
+                        for (let part of that.parts) {
+                            if (part.Id == row.Id) {
+                                if (!part.flows) part["flows"] = []
+                                part.flows.push({
+                                    Id: flowId,
+                                    ProcedureName: $("#" + DrawingNo).val(),
+                                    DrawingNo: part.DrawingNo,
+                                    DefaultWorkTime: ''
+                                })
+                                break
+                            }
+                        }
+                        console.log(that.parts)
+                        that.getPartsData()
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            deleteFlow(DrawingNo, index, ProcedureId) {
+                var that = this
+                for (let part of this.parts) {
+                    if (part.DrawingNo == DrawingNo) {
+                        part.flows.splice(index, 1)
+                        break
+                    }
+                }
+                this.getData()
+                $.ajax({
+                    url: "/DrawingDown/DeleteProcedure?Id=" + ProcedureId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("删除工序")
+                        console.log(data)
+                        that.$notify({
+                            title: '删除成功',
+                            message: '成功删除工序' + ProcedureId,
+                            type: 'success'
+                        });
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            //添加工时，删除工时
+            addWork(row, id, index) {
+                var param = []
+                var workArr = $("#" + id + index).serializeArray()
+                var workObj = {}
+                for (let obj of workArr) {
+                    if (obj.value == "") {
+                        this.$alert('内容不能为空', '提交错误', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
+                        return
+                    }
+                    workObj[obj.name] = obj.value
+                }
+                for (let e of this.employees) {
+                    if (e.WorkerName == workObj.name) {
+                        workObj["id"] = e.WorkerId
+                    }
+                }
+                for (let part of this.parts) {
+                    if (part.DrawingNoId == row.DrawingNoId) {
+                        console.log(part.flows)
+                        console.log(part.flows[index])
+                        if (!part.flows[index].works) part.flows[index]["works"] = []
+                        part.flows[index]["works"].push({
+                            name: workObj.name,
+                            id: workObj.id,
+                            startTime: workObj.startTime,
+                            endTime: workObj.endTime
+                        })
+                    }
+                }
+                this.getPartsData()
+                
+            },
+            deleteWork(DrawingNo, ProcedureId, index) {
+                var that = this
+                var ifDone = false
+                for (let part of this.parts) {
+                    if (part.DrawingNo == DrawingNo) {
+                        for (let flow of part.flows) {
+                            if (flow.ProcedureId == ProcedureId) {
+                                console.log("删除工时")
+                                console.log(flow.works)
+                                flow.works.splice(index, 1)
+                                console.log(flow.works)
+                                ifDone = true
+                                break
+                            }
+                        }
+                        if(ifDone) break
+                    }
+                }
+                this.getData()
+            },
+            //获取项目列表
+            getProject() {
+                var that = this
+                $.ajax({
+                    url: "/Project/GetAllProJect",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取项目列表")
+                        console.log(data)
+                        that.totalRows = data.length
+                        that.data = data
+                        that.getData()
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            //选择项目
+            selectProject(index, data) {
+                this.project.push(data[index])
+                this.loadProject(data[index].ProjectId)
+            },
+            //加载项目信息
+            loadProject(id) {
+                var that = this
+                $.ajax({
+                    url: "/DrawingDown/GetDrawingDownInfo?ProjectId="+id+"&ApplyManId=123456",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("加载项目信息!-" + "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=123456")
+                        console.log(data)
+
+                        that.parts = []
+                        for (let a1 of data) {
+                            var ifHad = false
+                            for (let part of that.parts) {
+                                if (part.DrawingNoId == a1.DrawingNoId) ifHad = true
+                            }
+                            if (!ifHad) {
+                                let tmpObj = _cloneObj(a1)
+                                delete tmpObj.ProList
+                                that.parts.push(tmpObj)
+                            } 
+                        }
+                        for (let part of that.parts)
+                            for (let a1 of data)
+                                if (part.DrawingNoId == a1.DrawingNoId) {
+                                    if (!part.flows) part["flows"] = []
+                                    part.flows.push(a1.ProList[0])
+                                }
+                        console.log(that.parts)
+                        that.partsRows = that.parts.length
+                        that.getPartsData()
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            getProcedureInfo() {
+                var param = [] 
+                for (let part of this.parts) {
+                    param.push({
+                        DrawingNo: part.DrawingNo
+                    })
+                }
+                $.ajax({
+                    url: "/DrawingDown/GetProcedureInfo",
+                    type: "POST",
+                    data: JSON.stringify(paramObj),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("添加工时接口")
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            //部件列表翻页功能
+            getPartsData() {
+                console.log('get part data')
+                var start = this.partsPageSize * (this.partsCurrentPage - 1)
+                this.tableParts = this.parts.slice(start, start + this.partsPageSize)
+            },
+            partsSizeChange: function (val) {
+                console.log('part size change')
+                this.partsCurrentPage = 1
+                this.partsPageSize = val
+                this.getPartsData()
+            },
+            partsCurrentChange: function (val) {
+                console.log('part current change')
+                this.partsCurrentPage = val
+                this.getPartsData()
+            },
+            //获取员工列表
+            getEmployees() {
+                var that = this
+                $.ajax({
+                    url: "/DrawingDown/GetWorkerInfo",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取员工列表")
+                        console.log(data)
+                        that.employees = data
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+        },
+        created: function () {
+            this.getProject()
+            this.getEmployees()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>
+
+
+

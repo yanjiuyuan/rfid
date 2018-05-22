@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>钉钉服务接口调试</title>
+    <script type="text/javascript" src="Scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="content/bootstrap.css" media="screen" />
+    <style>
+        body {
+            margin: 20px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">部门接口</h3>
+        </div>
+        <div class="panel-body">
+            <div class="method-margin col-md-12">
+                <div style="margin-bottom:5px;">
+                    <!--<embed width="800" height="600" src="1.pdf">-->
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="accessToken">获取accessToken</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getJsapiTicket">获取jsapi_ticket</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="departmentList">获取部门列表</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="singleDepartment">获取单个部门</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="addDepartment">新建一个部门</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="delDepartment">删除一个部门</button>
+                </div>
+                <div class="method-output-padding">
+                    <div class="logs-margin alert alert-danger alert-dismissible" role="alert" name="showErrorAlert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <span name="errorText"></span>
+                    </div>
+                    <div class="logs-margin alert alert-success alert-dismissible" role="alert" name="showInfoAlert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <span name="successText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+            <h3 class="panel-title">用户接口</h3>
+        </div>
+        <div class="panel-body">
+            <div class="method-margin col-md-12">
+                <div style="margin-bottom:5px;">
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getUserDetail">获取用户详情</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="createUser">创建用户</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="updateUser">更新用户</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="deleteUser">删除用户</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="batchDeleteUser">批量删除用户</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getDepartmentUserList">获取部门用户</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getDepartmentUserDetailList">获取部门用户（详情)</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getAttendanceList">获取考勤数据</button>
+                </div>
+                <div class="method-output-padding">
+                    <div class="logs-margin alert alert-danger alert-dismissible" role="alert" name="showErrorAlert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <span name="errorText"></span>
+                    </div>
+                    <div class="logs-margin alert alert-success alert-dismissible" role="alert" name="showInfoAlert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <span name="successText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">企业消息接口</h3>
+        </div>
+        <div class="panel-body">
+            <div class="method-margin col-md-12">
+                <!--<div style="margin-bottom:5px;">-->
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="uploadMedia">上传媒体文件</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="downloadFile">下载媒体文件</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendTextMessage">发送文本消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendImageMessage">发送图片消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendVoiceMessage">发送声音消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendFileMessage">发送文件消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendLinkMessage">发送超链接消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendOaMessage">发送OA接消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="sendMessageByCode">根据临时授权码发送企业消息</button>
+                <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getMessageStatus">获取企业消息已读未读状态</button>
+            </div>
+            <div class="method-output-padding">
+                <div class="logs-margin alert alert-danger alert-dismissible" role="alert" name="showErrorAlert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <span name="errorText"></span>
+                </div>
+                <div class="logs-margin alert alert-success alert-dismissible" role="alert" name="showInfoAlert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <span name="successText"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $("div[name='showInfoAlert']").hide();
+            $("div[name='showErrorAlert']").hide();
+            Date.prototype.Format = function (fmt) {
+                var o = {
+                    "M+": this.getMonth() + 1, //月份
+                    "d+": this.getDate(), //日
+                    "h+": this.getHours(), //小时
+                    "m+": this.getMinutes(), //分
+                    "s+": this.getSeconds(), //秒
+                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                    "S": this.getMilliseconds() //毫秒
+                };
+                if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                return fmt;
+            }
+
+            $(".btn-default").each(function (index, el) {
+                var actionName = el.id;
+                var parentDiv = $(el).parents(".method-margin").first();
+                $(el).click(function (e) {
+                    $.ajax({
+                        type: "post",
+                        //contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                        dataType: "text",
+                        url: "api/dt/" + actionName,
+                        //url: "DingTalkServer/" + actionName,
+                        beforeSend: function () {
+                            $(el).button('loading').delay();
+                        },
+                        success: function (result) {
+                            var alertInfo = parentDiv.find("div[name='showInfoAlert']").first();
+                            var textInfo = parentDiv.find("span[name='successText']").first();
+                            ShowInfo(result, alertInfo, textInfo);
+                            $(el).button('reset');
+
+                        },
+
+                        error: function (error) {
+                            var alertInfo = parentDiv.find("div[name='showErrorAlert']").first();
+                            var textInfo = parentDiv.find("span[name='errorText']").first();
+                            ShowInfo(error, alertInfo, textInfo);
+                            $(el).button('reset');
+                        }
+                    })
+                })
+            });
+        });
+
+
+        function ShowInfo(result, alertEl, textEl) {
+            var result = new Date().Format("hh:mm:ss") + " 返回结果:" + result;
+            alertEl.show();
+            textEl.text(result);
+        }
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+

@@ -13,17 +13,60 @@
 
 @section scripts{
     <script>
+        
         var index = new Vue({
             el: '#app',
             mixins: [mixin],
             data: function () {
                 return {
                     activeIndex: '1',
-                    scollImages: []
+                    scollImages: [],
+                    isCollapse: false,
+                    DingData: DingData,
+                    menuStatus: {
+                        ApproveCount: 0,
+                        MyPostCount: 0,
+                        SendMyCount: 0
+                    }
                 }
+            },
+            computed: {
+                menuStatusComputed: function () {
+                    console.log('menuStates')
+                    if(this.DingData)
+                        this.loadMenuData(this.DingData.agentId)
+                    return 1
+                }
+            },
+            methods: {
+              handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+              },
+              handleClose(key, keyPath) {
+                console.log(key, keyPath);
+              },
+              //菜单数据加载
+              loadMenuData(id) {
+                  var that = this
+                  $.ajax({
+                      url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
+                      datatype:'json',
+                      success: function (data) {
+                          that.menuStatus = JSON.parse(data)
+                      }
+                  })
+              }
+            },
+            created: function () {
+                var that = this
+                this.loadMenuData(DingData.userid)
+                
+                window.setInterval(function () {
+                    that.loadMenuData(DingData.userid)
+                },5000)
             }
         })
-        $("#tempPage").load('/Home/partHome')
+        $("#tempPage").load('/Main/approval')
 
         //首页JS
         var scollImages = []
@@ -31,5 +74,13 @@
             scollImages.push("Content/images/scoll" + i + ".jpg")
         }
         index.scollImages = scollImages
+
+        
     </script>
+
+    <style>
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            z-index:666;
+        }
+    </style>
 }

@@ -1,0 +1,21 @@
+﻿{
+  "GetAccessTokenUrl": "https://oapi.dingtalk.com/gettoken",
+  "GetJsapiTicketUrl": "https://oapi.dingtalk.com/get_jsapi_ticket",
+  "GetDepartmentListUrl": "https://oapi.dingtalk.com/department/list",
+  "GetDepartmentDetailUrl": "https://oapi.dingtalk.com/department/get",
+  "CreateDepartmentUrl": "https://oapi.dingtalk.com/department/create",
+  "UpdateDepartmentUrl": "https://oapi.dingtalk.com/department/update",
+  "DeleteDepartmentUrl": "https://oapi.dingtalk.com/department/delete",
+  "GetDepartmentUserListUrl": "https://oapi.dingtalk.com/user/simplelist",
+  "GetUserDetailUrl": "https://oapi.dingtalk.com/user/get",
+  "CreateUserUrl": "https://oapi.dingtalk.com/user/create",
+  "UpdateUserUrl": "https://oapi.dingtalk.com/user/update",
+  "DeleteUserUrl": "https://oapi.dingtalk.com/user/delete",
+  "BatchDeleteUserUrl": "https://oapi.dingtalk.com/user/batchdelete",
+  "GetDepartmentUserDetailListUrl": "https://oapi.dingtalk.com/user/list",
+  "GetAttendanceListUrl": "https://oapi.dingtalk.com/attendance/list",
+  "SendMessageUrl": "https://oapi.dingtalk.com/message/send",
+  "UploadMediaUrl": "https://oapi.dingtalk.com/media/upload",
+  "DownloadFileUrl": "https://oapi.dingtalk.com/media/downloadFile",
+  "GetMessageListStatusUrl": "https://oapi.dingtalk.com/message/list_message_status"
+}
