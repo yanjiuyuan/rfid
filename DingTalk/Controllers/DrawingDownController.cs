@@ -77,7 +77,8 @@ namespace DingTalk.Controllers
                                         p.Brand,
                                         p.Count,
                                         p.Unit,
-                                        p.Mark
+                                        p.Mark,
+                                        p.BomId
                                     };
 
                         var PurchaseProcedureInfo = context.PurchaseProcedureInfo;
@@ -103,6 +104,7 @@ namespace DingTalk.Controllers
                                            Count = q.Count,
                                            Unit = q.Unit,
                                            Mark = q.Mark,
+                                           BomId=q.BomId,
                                            ProList = new List<Pro>()
                                            {
                                                new Pro(){
