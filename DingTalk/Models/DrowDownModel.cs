@@ -18,13 +18,19 @@ namespace DingTalk.Models
         public string Mark { get; set; }
 
         public List<Pro> ProList { get; set; }
-     }
+    }
 
     public class Pro
     {
-        public string ProcedureId { get; set; }
         public string ProcedureName { get; set; }
-        public string CreateTime { get; set; }
-        public string ApplyMan { get; set; }
+        public string ProcedureId { get; set; }
+        public List<WorkTimes> WorkTimeList { get; set; }
+    }
+
+    public class WorkTimes
+    {
+        public string Worker { get; set; }
+        public string WorkerId { get; set; }
+        public string UseTime { get; set; }
     }
 }

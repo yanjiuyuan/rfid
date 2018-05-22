@@ -84,35 +84,13 @@ namespace DingTalk.Controllers
                         var ProcedureInfo = context.ProcedureInfo;
                         var WorkTime = context.WorkTime;
 
-                        var QuaryPro = from q in Quary
-                                       join pp in PurchaseProcedureInfo
-                                       on q.DrawingNo equals pp.DrawingNo
-                                       join p in ProcedureInfo
-                                       on pp.ProcedureInfoId equals p.Id.ToString()
-                                       join w in WorkTime
-                                       on pp.Id.ToString() equals w.PurchaseProcedureInfoId
-                                       select new
-                                       {
-                                           DrawingNoId = q.Id,
-                                           DrawingNo = q.DrawingNo,
-                                           Name = q.Name,
-                                           Sorts = q.Sorts,
-                                           TaskId = q.TaskId,
-                                           MaterialScience = q.MaterialScience,
-                                           Brand = q.Brand,
-                                           Count = q.Count,
-                                           Unit = q.Unit,
-                                           Mark = q.Mark,
-                                           ProcedureName = p.ProcedureName,
-                                           w.Worker,
-                                           w.WorkerId,
-                                       };
-                        //var Procedure = context.ProcedureInfo;
                         //var QuaryPro = from q in Quary
-                        //               join p in Procedure
-                        //               on q.ProcedureId equals p.Id.ToString()
-                        //               into temp
-                        //               from pp in temp.DefaultIfEmpty()
+                        //               join pp in PurchaseProcedureInfo
+                        //               on q.DrawingNo equals pp.DrawingNo
+                        //               join p in ProcedureInfo
+                        //               on pp.ProcedureInfoId equals p.Id.ToString()
+                        //               join w in WorkTime
+                        //               on pp.Id.ToString() equals w.PurchaseProcedureInfoId
                         //               select new
                         //               {
                         //                   DrawingNoId = q.Id,
@@ -125,82 +103,82 @@ namespace DingTalk.Controllers
                         //                   Count = q.Count,
                         //                   Unit = q.Unit,
                         //                   Mark = q.Mark,
-
                         //                   ProList = new List<Pro>()
                         //                   {
-                        //                       new Pro{
-                        //                           ProcedureId = pp == null ? "" : pp.Id.ToString(),
-                        //                           ProcedureName = pp == null ? "" : pp.ProcedureName,
-                        //                           CreateTime = pp == null ? "" : pp.CreateTime,
-                        //                           ApplyMan = pp == null ? "" : pp.ApplyMan
+                        //                       new Pro(){
+                        //                            ProcedureId= p.Id.ToString(),
+                        //                            ProcedureName = p.ProcedureName,
+                        //                            WorkTimeList=new List<WorkTimes>(){
+                        //                                new WorkTimes(){
+                        //                                   Worker= w.Worker,
+                        //                                   WorkerId=w.WorkerId,
+                        //                                   UseTime=w.UseTime
+                        //                                }
+
+                        //                            }
                         //                       }
                         //                   },
                         //               };
 
+                        var oPProcInfo = from pp in PurchaseProcedureInfo
+                                         join p in ProcedureInfo
+                                         on pp.ProcedureInfoId equals p.Id.ToString()
+                                         join w in WorkTime
+                                         on pp.Id.ToString() equals w.PurchaseProcedureInfoId
+                                         select new
+                                         {
+                                             DrawingNo = pp.DrawingNo,
+                                             ProList = new List<Pro>() {
+                                                new Pro()
+                                                {
+                                                    ProcedureName = p.ProcedureName,
+                                                    ProcedureId = p.Id.ToString(),
+                                                    WorkTimeList = new List<WorkTimes>()
+                                                    {
+                                                        new WorkTimes(){
+                                                        Worker= w.Worker,
+                                                        WorkerId=w.WorkerId,
+                                                        UseTime= w.UseTime
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                         };
 
-                        //List<DrowDownModel> DrowDownModelList = new List<DrowDownModel>();
+                        var QuaryPro = from q in Quary
+                                       join pp in oPProcInfo
+                                       on q.DrawingNo equals pp.DrawingNo
+                                       select new
+                                       {
+                                           DrawingNo = q.DrawingNo,
+                                           Name = q.Name,
+                                           Sorts = q.Sorts,
+                                           TaskId = q.TaskId,
+                                           MaterialScience = q.MaterialScience,
+                                           Brand = q.Brand,
+                                           Count = q.Count,
+                                           Unit = q.Unit,
+                                           Mark = q.Mark,
+                                           ProList = pp.ProList,
+                                       };
 
-                        //foreach (var item in QuaryPro)
-                        //{
-                        //    DrowDownModel drowDownModel = new DrowDownModel();
-                        //    Pro pro = new Pro();
-                        //    List<Pro> proList = new List<Pro>();
-                        //    drowDownModel.DrawingNo = item.DrawingNo;
-                        //    drowDownModel.Name = item.Name;
-                        //    drowDownModel.Sorts = item.Sorts;
-                        //    drowDownModel.TaskId = item.TaskId;
-                        //    drowDownModel.MaterialScience = item.MaterialScience;
-                        //    drowDownModel.Brand = item.Brand;
-                        //    drowDownModel.Count = item.Count;
-                        //    drowDownModel.Unit = item.Unit;
-                        //    drowDownModel.Mark = item.Mark;
-                        //    pro.ProcedureId = item.ProList[0].ProcedureId ;
-                        //    pro.ProcedureName = item.ProList[0].ProcedureName;
-                        //    pro.CreateTime = item.ProList[0].CreateTime;
-                        //    pro.ApplyMan = item.ProList[0].ApplyMan;
-                        //    proList.Add(pro);
-                        //    drowDownModel.ProList = proList;
-                        //    DrowDownModelList.Add(drowDownModel);
-                        //}
+                        var QuaryPros = from q in QuaryPro
+                                        group new
+                                        {
+                                            q.DrawingNo,
+                                            q.Name,
+                                            q.Sorts,
+                                            q.TaskId,
+                                            q.MaterialScience,
+                                            q.Brand,
+                                            q.Count,
+                                            q.Unit,
+                                            q.Mark,
+                                            q.ProList
+                                        } by q.DrawingNo into g
+                                        select g;
 
-
-
-                        //List<DrowDownModel> DrowDownModelListTest = new List<DrowDownModel>();
-
-                        //foreach (DrowDownModel drowDownModel in DrowDownModelList)
-                        //{
-                        //    List<Pro> ProList = new List<Pro>();
-                        //    foreach (DrowDownModel drowDownModelT in DrowDownModelList)
-                        //    {
-                        //        if (drowDownModel.DrawingNo == drowDownModelT.DrawingNo && drowDownModel!= drowDownModelT)
-                        //        {
-                        //            foreach (Pro pro in drowDownModel.ProList)
-                        //            {
-                        //                ProList.Add(pro);
-                        //            }
-                        //            foreach (Pro proT in drowDownModelT.ProList)
-                        //            {
-                        //                ProList.Add(proT);
-                        //            }
-                        //        }
-                        //    }
-
-                        //    DrowDownModel drowDownModelTest = new DrowDownModel();
-                        //    drowDownModelTest.ProList = ProList;
-                        //    drowDownModelTest.DrawingNo = drowDownModel.DrawingNo;
-                        //    drowDownModelTest.Name = drowDownModel.Name;
-                        //    drowDownModelTest.Sorts = drowDownModel.Sorts;
-                        //    drowDownModelTest.TaskId = drowDownModel.TaskId;
-                        //    drowDownModelTest.MaterialScience = drowDownModel.MaterialScience;
-                        //    drowDownModelTest.Brand = drowDownModel.Brand;
-                        //    drowDownModelTest.Count = drowDownModel.Count;
-                        //    drowDownModelTest.Unit = drowDownModel.Unit;
-                        //    drowDownModelTest.Mark = drowDownModel.Mark;
-                        //    DrowDownModelListTest.Add(drowDownModelTest);
-                        //}
-
-
-                        return JsonConvert.SerializeObject(QuaryPro);
+                        return JsonConvert.SerializeObject(QuaryPros);
                     }
                 }
             }
@@ -373,6 +351,32 @@ namespace DingTalk.Controllers
                         errorMessage = "保存成功",
                         Content = JsonConvert.SerializeObject(ProcedureIdList)
                     });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据：/DrawingDown/QuaryAllProcedure
+        [HttpGet]
+        public string QuaryAllProcedure()
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<ProcedureInfo> procedureInfo = context.ProcedureInfo.ToList();
+                    return JsonConvert.SerializeObject(procedureInfo);
                 }
             }
             catch (Exception ex)
