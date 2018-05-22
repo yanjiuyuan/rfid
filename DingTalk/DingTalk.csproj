@@ -237,6 +237,7 @@
     <Compile Include="Models\DbModels\ProjectInfo.cs" />
     <Compile Include="Models\DbModels\Purchase.cs" />
     <Compile Include="Models\DbModels\PurchaseDown.cs" />
+    <Compile Include="Models\DbModels\PurchaseProcedureInfo.cs" />
     <Compile Include="Models\DbModels\Roles.cs" />
     <Compile Include="Models\DbModels\Tasks.cs" />
     <Compile Include="Models\DbModels\UserInfo.cs" />
