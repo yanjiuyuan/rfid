@@ -130,7 +130,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button size="mini" type="primary" class="tableRight"
-                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)">添加工序</el-button>
+                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)"> 绑定工序</el-button>
                     </el-form-item>
                 </el-form>
             </template>
@@ -374,18 +374,19 @@
                     return
                 }
                 var param = [
-                {
-                    "DrawingNo": DrawingNo,
-                    "ProcedureName": $("#" + DrawingNo).val(),
-                    "DefaultWorkTime": "1",
-                    "State": "0",
-                    "CreateTime": _getTime(),
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid
-                }]
+                    {
+                        "DrawingNo": DrawingNo,
+                        "ProcedureName": $("#" + DrawingNo).val(),
+                        "DefaultWorkTime": "1",
+                        "State": "0",
+                        "CreateTime": _getTime(),
+                        "ApplyMan": DingData.nickName,
+                        "ApplyManId": DingData.userid,
+                        "ProcedureInfoId": this.flowValue
+                    }]
                 
                 $.ajax({
-                    url: "/DrawingDown/AddProcedure",
+                    url: "/DrawingDown/BindProcedure",
                     type: "POST",
                     data: JSON.stringify(param),
                     dataType: "json",
