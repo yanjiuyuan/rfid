@@ -26,6 +26,7 @@ namespace DingTalk.Models.DbModels
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
+        public virtual DbSet<PurchaseProcedureInfo> PurchaseProcedureInfo { get; set; }
         public virtual DbSet<Worker> Worker { get; set; }
         public virtual DbSet<WorkTime> WorkTime { get; set; }
 
@@ -459,6 +460,26 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.FlowType)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<PurchaseProcedureInfo>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<PurchaseProcedureInfo>()
+                .Property(e => e.DrawingNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseProcedureInfo>()
+                .Property(e => e.ProcedureInfoId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseProcedureInfo>()
+                .Property(e => e.CreateManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseProcedureInfo>()
+                .Property(e => e.CreateTime)
+                .IsUnicode(false);
+
             modelBuilder.Entity<Worker>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -484,7 +505,7 @@ namespace DingTalk.Models.DbModels
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<WorkTime>()
-                .Property(e => e.ProcedureId)
+                .Property(e => e.PurchaseProcedureInfoId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<WorkTime>()

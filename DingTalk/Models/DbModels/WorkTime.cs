@@ -13,8 +13,8 @@ namespace DingTalk.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
-        [StringLength(100)]
-        public string ProcedureId { get; set; }
+        [StringLength(500)]
+        public string PurchaseProcedureInfoId { get; set; }
 
         public bool? IsFinish { get; set; }
 
