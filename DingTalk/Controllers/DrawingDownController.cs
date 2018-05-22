@@ -133,14 +133,14 @@ namespace DingTalk.Controllers
                                                 {
                                                     ProcedureName = p.ProcedureName,
                                                     ProcedureId = p.Id.ToString(),
-                                                    WorkTimeList = new List<WorkTimes>()
-                                                    {
-                                                        new WorkTimes(){
-                                                        Worker= w.Worker,
-                                                        WorkerId=w.WorkerId,
-                                                        UseTime= w.UseTime
-                                                        }
-                                                    }
+                                                    //WorkTimeList = new List<WorkTimes>()
+                                                    //{
+                                                    //    new WorkTimes(){
+                                                    //    Worker= w.Worker,
+                                                    //    WorkerId=w.WorkerId,
+                                                    //    UseTime= w.UseTime
+                                                    //    }
+                                                    //}
                                                 }
                                             }
                                          };
