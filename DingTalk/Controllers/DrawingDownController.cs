@@ -90,8 +90,8 @@ namespace DingTalk.Controllers
                                        on q.DrawingNo equals pp.DrawingNo
                                        join p in ProcedureInfo
                                        on pp.ProcedureInfoId equals p.Id.ToString()
-                                       join w in WorkTime
-                                       on pp.Id.ToString() equals w.PurchaseProcedureInfoId
+                                       //join w in WorkTime
+                                       //on pp.Id.ToString() equals w.PurchaseProcedureInfoId
                                        select new
                                        {
                                            DrawingNoId = q.Id,
@@ -366,7 +366,7 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 
+        /// 查询工序
         /// </summary>
         /// <returns></returns>
         /// 测试数据：/DrawingDown/QuaryAllProcedure
