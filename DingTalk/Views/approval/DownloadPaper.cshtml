@@ -306,7 +306,8 @@
                             "Mark": part.TaskId,
                             "IsDown": true,
                             "ProcedureId": flow.ProcedureId,
-                            "FlowType": "0"
+                            "FlowType": "0",
+                            "BomId": part.BomId
                         })
                         for (let w of flow.works) {
                             paramWork.push({
