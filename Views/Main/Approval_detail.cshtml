@@ -57,6 +57,9 @@
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
+
+
+
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="copyers">
             </sam-addapprover>*@
@@ -71,13 +74,15 @@
             </el-form-item>
         </template>
     </el-form>
+
+    <!--显示PDF-->
     <div v-show="frameShow">
-        <iframe :src="frameUrl"
-                style="position:fixed;left:0;top:0;width:90%;height:100%;z-index:10086;"></iframe>
+        <canvas id="the-canvas"
+                 style="position:fixed;left:0;top:0;width:80%;height:100%;z-index:10086;"></canvas>
         <i class="el-icon-circle-close" v-on:click="hideFrame"
            style="position:fixed;right:10px;top:10px;z-index:10086;font-size:100px;"></i>
     </div>
-    
+
 </el-main>
 
 <script>
@@ -305,11 +310,12 @@
             },
             //文件点击操作
             clickFile(fileUrl) {
-                if (fileUrl.substring(fileUrl.length - 3) == 'pdf') {
-                    this.frameUrl = fileUrl
+                console.log(fileUrl)
+                if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
+                    showPdf(fileUrl)
                     this.frameShow = true
                 }
-                console.log(fileUrl)
+            
             },
             hideFrame() {
                 this.frameShow = false
@@ -363,6 +369,38 @@
                 console.log(XMLHttpRequest.status);
             }
         })
+    }
+
+    function showPdf(url) {
+
+        PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+        PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
+            //
+            // 获取第一页数据
+            //
+            pdf.getPage(1).then(function getPageHelloWorld(page) {
+                var scale = 1.5;
+                var viewport = page.getViewport(scale);
+
+                //
+                // Prepare canvas using PDF page dimensions
+                //
+                var canvas = document.getElementById('the-canvas');
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                //
+                // Render PDF page into canvas context
+                //
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        });
+
     }
 
 </script>
