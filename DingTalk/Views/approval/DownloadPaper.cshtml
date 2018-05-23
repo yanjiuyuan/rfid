@@ -317,13 +317,13 @@
                             "OldTaskId": part.TaskId,
                             "DrawingNo": part.DrawingNo,
                             "CodeNo": "2",
-                            "Name": part.TaskId,
-                            "Count": part.TaskId,
-                            "MaterialScience": part.TaskId,
-                            "Unit": part.TaskId,
-                            "Brand": part.TaskId,
-                            "Sorts": part.TaskId,
-                            "Mark": part.TaskId,
+                            "Name": part.Name,
+                            "Count": part.Count,
+                            "MaterialScience": part.MaterialScience,
+                            "Unit": part.Unit,
+                            "Brand": part.Brand,
+                            "Sorts": part.Sorts,
+                            "Mark": part.Mark,
                             "IsDown": true,
                             "ProcedureId": flow.ProcedureId,
                             "FlowType": "0",
@@ -574,7 +574,8 @@
                             for (let a1 of data)
                                 if (part.DrawingNoId == a1.DrawingNoId) {
                                     if (!part.flows) part["flows"] = []
-                                    part.flows.push(a1.ProList[0])
+                                    if (a1.ProList[0]!=null)
+                                        part.flows.push(a1.ProList[0])
                                 }
                         console.log(that.parts)
                         that.partsRows = that.parts.length
