@@ -52,7 +52,7 @@ namespace DingTalk.Models.DbModels
         public bool? IsDown { get; set; }
 
         [StringLength(500)]
-        public string ProcedureId { get; set; }
+        public string PurchaseProcedureInfoId { get; set; }
 
         [StringLength(500)]
         public string FlowType { get; set; }

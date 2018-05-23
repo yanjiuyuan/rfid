@@ -453,7 +453,7 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<PurchaseDown>()
-                .Property(e => e.ProcedureId)
+                .Property(e => e.PurchaseProcedureInfoId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<PurchaseDown>()
