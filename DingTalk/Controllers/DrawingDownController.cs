@@ -351,12 +351,13 @@ namespace DingTalk.Controllers
                         foreach (PurchaseDown purchaseDown in procedureInfoList)
                         {
                             context.PurchaseDown.Add(purchaseDown);
+                            context.SaveChanges();
                             //修改下发状态
                             Purchase purchase = context.Purchase.Where(u => u.DrawingNo == purchaseDown.DrawingNo).First();
                             purchase.IsDown = true;
                             context.Entry<Purchase>(purchase).State = EntityState.Modified;
+                            context.SaveChanges();
                         }
-                        context.SaveChanges();
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -466,7 +467,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/BindProcedure
-        ///  var PurchaseList = var BindPurchaseList = [{ "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456" }, { "DrawingNo": "DTE-801B-PT-14", "ProcedureInfoId": "2", "CreateManId": "123456" }, { "DrawingNo": "DTE-801B-PT-13", "ProcedureInfoId": "4", "CreateManId": "123456" }]
+        ///  var BindPurchaseList = [{ "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456" }, { "DrawingNo": "DTE-801B-PT-14", "ProcedureInfoId": "2", "CreateManId": "123456" }, { "DrawingNo": "DTE-801B-PT-13", "ProcedureInfoId": "4", "CreateManId": "123456" }]
         [HttpPost]
         public string BindProcedure()
         {
