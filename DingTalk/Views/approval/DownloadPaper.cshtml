@@ -574,7 +574,8 @@
                             for (let a1 of data)
                                 if (part.DrawingNoId == a1.DrawingNoId) {
                                     if (!part.flows) part["flows"] = []
-                                    part.flows.push(a1.ProList[0])
+                                    if (a1.ProList[0]!=null)
+                                        part.flows.push(a1.ProList[0])
                                 }
                         console.log(that.parts)
                         that.partsRows = that.parts.length
