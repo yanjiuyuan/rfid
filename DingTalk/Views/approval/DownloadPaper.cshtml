@@ -456,6 +456,7 @@
                             message: '成功删除工序' + ProcedureId,
                             type: 'success'
                         });
+                        that.getPartsData()
                     },
                     error: function (err) {
                         console.log(err);
@@ -519,7 +520,7 @@
                         if(ifDone) break
                     }
                 }
-                this.getData()
+                this.getPartsData()
             },
             //获取项目列表
             getProject() {
