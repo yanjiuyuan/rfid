@@ -81,6 +81,7 @@
                             <el-form-item label="执行人">
                                 <el-input v-model="work.name" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
+
                             <el-form-item label="开始时间">
                                 <el-input v-model="work.startTime" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
@@ -94,7 +95,7 @@
                         <!--添加工作分配-->
                         <el-form :id="scope.row.DrawingNo+index" :inline="true" class="demo-form-inline form" size="mini">
                             <el-form-item label="执行人">
-                                <el-select name="name" v-model="value" placeholder="请选择" >
+                                <el-select name="name" v-model="value" placeholder="请选择">
                                     <el-option v-for="e in employees"
                                                :key="e.WorkerId"
                                                :label="e.WorkerName"
@@ -102,12 +103,28 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="开始时间">
-                                <el-input name="startTime" style="width:100px;"></el-input>
+                            <el-form-item label="工作时间">
+                                <el-input name="UseTime" style="width:100px;"></el-input>分钟
                             </el-form-item>
-                            <el-form-item label="结束时间">
-                                <el-input name="endTime" style="width:100px;"></el-input>
+                            <el-form-item label="限定日期">
+                                <el-date-picker v-model="date"
+                                                :name="['startTime','endTime']"
+                                                type="daterange"
+                                                align="right"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                :picker-options="pickerOptions">
+                                </el-date-picker>
                             </el-form-item>
+
+                            @*<el-form-item label="开始时间">
+            <el-input name="startTime" style="width:100px;"></el-input>
+        </el-form-item>
+        <el-form-item label="结束时间">
+            <el-input name="endTime" style="width:100px;"></el-input>
+        </el-form-item>*@
                             <el-form-item>
                                 <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
                             </el-form-item>
@@ -188,6 +205,7 @@
                     reson: '',
                 },
                 value: '',
+                date:'',
                 flowValue: '',
                 disabled: false
             }
