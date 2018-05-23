@@ -81,7 +81,9 @@
                             <el-form-item label="执行人">
                                 <el-input v-model="work.name" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
-
+                            <el-form-item label="工作时间">
+                                <el-input v-model="work.useTime" style="width:100px;" :disabled="true"></el-input>分钟
+                            </el-form-item>
                             <el-form-item label="开始时间">
                                 <el-input v-model="work.startTime" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
@@ -120,11 +122,11 @@
                             </el-form-item>
 
                             @*<el-form-item label="开始时间">
-            <el-input name="startTime" style="width:100px;"></el-input>
-        </el-form-item>
-        <el-form-item label="结束时间">
-            <el-input name="endTime" style="width:100px;"></el-input>
-        </el-form-item>*@
+                                <el-input name="startTime" style="width:100px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="结束时间">
+                                <el-input name="endTime" style="width:100px;"></el-input>
+                            </el-form-item>*@
                             <el-form-item>
                                 <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
                             </el-form-item>
@@ -222,7 +224,7 @@
                     for (let flow of part.flows) {
                         if (!flow.works || flow.works.length == 0) continue
                         for (let work of flow.works) {
-                            if (work.name || work.startTime || work.endTime) {
+                            if (work.name || work.startTime || work.endTime || work.useTime) {
                                 count++
                                 let tmpFlows = _cloneArr(part.flows)
                                 for (let f of tmpFlows) {
@@ -335,7 +337,7 @@
                                 "WorkerId": w.id,
                                 "StartTime": w.startTime,
                                 "EndTime": w.endTime,
-                                "UseTime": w.endTime - w.endTime
+                                "UseTime": w.useTime
                             })
                         }
                     }
@@ -491,7 +493,8 @@
                             name: workObj.name,
                             id: workObj.id,
                             startTime: workObj.startTime,
-                            endTime: workObj.endTime
+                            endTime: workObj.endTime,
+                            useTime: workObj.useTime
                         })
                     }
                 }
