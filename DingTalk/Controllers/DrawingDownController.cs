@@ -81,17 +81,48 @@ namespace DingTalk.Controllers
                                         p.BomId
                                     };
 
-                        var PurchaseProcedureInfo = context.PurchaseProcedureInfo;
-                        var ProcedureInfo = context.ProcedureInfo;
-                        var WorkTime = context.WorkTime;
+                        var PurchaseProcedureInfo = context.PurchaseProcedureInfo.ToList();
+                        if (PurchaseProcedureInfo.Count == 0)
+                        {
+                            var QuaryEmpty = from q in Quary
+                                             select new
+                                             {
+                                                 DrawingNoId = q.Id,
+                                                 DrawingNo = q.DrawingNo,
+                                                 Name = q.Name,
+                                                 Sorts = q.Sorts,
+                                                 TaskId = q.TaskId,
+                                                 MaterialScience = q.MaterialScience,
+                                                 Brand = q.Brand,
+                                                 Count = q.Count,
+                                                 Unit = q.Unit,
+                                                 Mark = q.Mark,
+                                                 BomId = q.BomId,
+                                                 ProList = new List<Pro>()
+                                                   {
+                                                       new Pro(){
+
+                                                       }
+                                                   },
+                                             };
+                            return JsonConvert.SerializeObject(QuaryEmpty);
+                        }
+                        var ProcedureInfo = context.ProcedureInfo.ToList();
+                        var WorkTime = context.WorkTime.ToList();
+
+
 
                         var QuaryPro = from q in Quary
                                        join pp in PurchaseProcedureInfo
                                        on q.DrawingNo equals pp.DrawingNo
-                                       join p in ProcedureInfo
-                                       on pp.ProcedureInfoId equals p.Id.ToString()
-                                       //join w in WorkTime
-                                       //on pp.Id.ToString() equals w.PurchaseProcedureInfoId
+                                       into temp
+                                       from tt in temp.DefaultIfEmpty()
+                                       //join p in ProcedureInfo
+                                       //on tt.ProcedureInfoId equals p.Id.ToString()
+                                       //into temps
+                                       //from ss in temps.DefaultIfEmpty()
+                                           //join w in WorkTime
+                                           //on pp.Id.ToString() equals w.PurchaseProcedureInfoId
                                        select new
                                        {
                                            DrawingNoId = q.Id,
@@ -104,23 +135,61 @@ namespace DingTalk.Controllers
                                            Count = q.Count,
                                            Unit = q.Unit,
                                            Mark = q.Mark,
-                                           BomId=q.BomId,
-                                           ProList = new List<Pro>()
-                                           {
-                                               new Pro(){
-                                                    ProcedureId= p.Id.ToString(),
-                                                    ProcedureName = p.ProcedureName,
-                                                    //WorkTimeList=new List<WorkTimes>(){
-                                                    //    new WorkTimes(){
-                                                    //       Worker= w.Worker,
-                                                    //       WorkerId=w.WorkerId,
-                                                    //       UseTime=w.UseTime
-                                                    //    }
+                                           BomId = q.BomId,
+                                           ProcedureInfoId= tt==null?"":tt.ProcedureInfoId
+                                           //ProList = new List<Pro>()
+                                           //{
+                                           //new Pro(){
+                                           //     ProcedureId= ss==null?"": ss.Id.ToString(),
+                                           //     ProcedureName = ss==null?"":ss.ProcedureName,
+                                           //     //WorkTimeList=new List<WorkTimes>(){
+                                           //     //    new WorkTimes(){
+                                           //     //       Worker= w.Worker,
+                                           //     //       WorkerId=w.WorkerId,
+                                           //     //       UseTime=w.UseTime
+                                           //     //    }
 
-                                                    //}
-                                               }
-                                           },
+                                           //     //}
+                                           //}
+                                           //},
                                        };
+
+                        var QuaryPros = from q in QuaryPro
+                                        join p in ProcedureInfo
+                                        on q.ProcedureInfoId equals p.Id.ToString()
+                                        into temp
+                                        from tt in temp.DefaultIfEmpty()
+                                        select new
+                                        {
+                                            DrawingNoId = q.DrawingNoId,
+                                            DrawingNo = q.DrawingNo,
+                                            Name = q.Name,
+                                            Sorts = q.Sorts,
+                                            TaskId = q.TaskId,
+                                            MaterialScience = q.MaterialScience,
+                                            Brand = q.Brand,
+                                            Count = q.Count,
+                                            Unit = q.Unit,
+                                            Mark = q.Mark,
+                                            BomId = q.BomId,
+                                            ProcedureInfoId = q.ProcedureInfoId,
+                                            ProList = new List<Pro>()
+                                            {
+                                            new Pro(){
+                                                 ProcedureId= tt==null?"": tt.Id.ToString(),
+                                                 ProcedureName = tt==null?"":tt.ProcedureName,
+                                                 //WorkTimeList=new List<WorkTimes>(){
+                                                 //    new WorkTimes(){
+                                                 //       Worker= w.Worker,
+                                                 //       WorkerId=w.WorkerId,
+                                                 //       UseTime=w.UseTime
+                                                 //    }
+
+                                                 //}
+                                            }
+                                            },
+                                        };
+
 
                         //var oPProcInfo = from pp in PurchaseProcedureInfo
                         //                 join p in ProcedureInfo
@@ -147,40 +216,40 @@ namespace DingTalk.Controllers
                         //                    }
                         //                 };
 
-                        //var QuaryPro = from q in Quary
-                        //               join pp in oPProcInfo
-                        //               on q.DrawingNo equals pp.DrawingNo
-                        //               select new
-                        //               {
-                        //                   DrawingNo = q.DrawingNo,
-                        //                   Name = q.Name,
-                        //                   Sorts = q.Sorts,
-                        //                   TaskId = q.TaskId,
-                        //                   MaterialScience = q.MaterialScience,
-                        //                   Brand = q.Brand,
-                        //                   Count = q.Count,
-                        //                   Unit = q.Unit,
-                        //                   Mark = q.Mark,
-                        //                   ProList = pp.ProList,
-                        //               };
+                                       //var QuaryPro = from q in Quary
+                                       //               join pp in oPProcInfo
+                                       //               on q.DrawingNo equals pp.DrawingNo
+                                       //               select new
+                                       //               {
+                                       //                   DrawingNo = q.DrawingNo,
+                                       //                   Name = q.Name,
+                                       //                   Sorts = q.Sorts,
+                                       //                   TaskId = q.TaskId,
+                                       //                   MaterialScience = q.MaterialScience,
+                                       //                   Brand = q.Brand,
+                                       //                   Count = q.Count,
+                                       //                   Unit = q.Unit,
+                                       //                   Mark = q.Mark,
+                                       //                   ProList = pp.ProList,
+                                       //               };
 
-                        //var QuaryPros = from q in QuaryPro
-                        //                group new
-                        //                {
-                        //                    q.DrawingNo,
-                        //                    q.Name,
-                        //                    q.Sorts,
-                        //                    q.TaskId,
-                        //                    q.MaterialScience,
-                        //                    q.Brand,
-                        //                    q.Count,
-                        //                    q.Unit,
-                        //                    q.Mark,
-                        //                    q.ProList
-                        //                } by q.DrawingNo into g
-                        //                select g;
+                                       //var QuaryPros = from q in QuaryPro
+                                       //                group new
+                                       //                {
+                                       //                    q.DrawingNo,
+                                       //                    q.Name,
+                                       //                    q.Sorts,
+                                       //                    q.TaskId,
+                                       //                    q.MaterialScience,
+                                       //                    q.Brand,
+                                       //                    q.Count,
+                                       //                    q.Unit,
+                                       //                    q.Mark,
+                                       //                    q.ProList
+                                       //                } by q.DrawingNo into g
+                                       //                select g;
 
-                        return JsonConvert.SerializeObject(QuaryPro);
+                        return JsonConvert.SerializeObject(QuaryPros);
                     }
                 }
             }
