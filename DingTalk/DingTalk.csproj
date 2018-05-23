@@ -192,6 +192,7 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
+    <Compile Include="Controllers\PurchaseManageController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Controllers\DingTalkServersController.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="Models\DbModels\Purchase.cs" />
     <Compile Include="Models\DbModels\PurchaseDown.cs" />
     <Compile Include="Models\DbModels\PurchaseProcedureInfo.cs" />
+    <Compile Include="Models\DbModels\PurchaseTable.cs" />
     <Compile Include="Models\DbModels\Roles.cs" />
     <Compile Include="Models\DbModels\Tasks.cs" />
     <Compile Include="Models\DbModels\UserInfo.cs" />
@@ -344,6 +346,7 @@
     <Folder Include="Views\DrawingDown\" />
     <Folder Include="Views\FlowInfo\" />
     <Folder Include="Views\Project\" />
+    <Folder Include="Views\PurchaseManage\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

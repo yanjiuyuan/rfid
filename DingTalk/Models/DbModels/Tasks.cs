@@ -20,6 +20,9 @@ namespace DingTalk.Models.DbModels
         [StringLength(500)]
         public string ApplyManId { get; set; }
 
+        [StringLength(200)]
+        public string Dept { get; set; }
+
         [StringLength(30)]
         public string ApplyTime { get; set; }
 
