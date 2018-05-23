@@ -307,14 +307,14 @@ Vue.component('sam-approver-list', {
         addPeople(nodeid) {
             var that = this
              console.log('addPeople')
-            for (let node of that.nodelist) {
-                if (node.NodeId != that.nodeid + 1)
-                    continue
-                node.AddPeople.push({
-                    emplId: "manager325",
-                    name: "詹姆斯"
-                })
-            }
+            //for (let node of that.nodelist) {
+            //    if (node.NodeId != that.nodeid + 1)
+            //        continue
+            //    node.AddPeople.push({
+            //        emplId: "manager325",
+            //        name: "詹姆斯"
+            //    })
+            //}
            
             DingTalkPC.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
