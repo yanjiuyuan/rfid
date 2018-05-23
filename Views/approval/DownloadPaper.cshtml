@@ -81,6 +81,9 @@
                             <el-form-item label="执行人">
                                 <el-input v-model="work.name" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
+                            <el-form-item label="工作时间">
+                                <el-input v-model="work.useTime" style="width:100px;" :disabled="true"></el-input>分钟
+                            </el-form-item>
                             <el-form-item label="开始时间">
                                 <el-input v-model="work.startTime" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
@@ -94,7 +97,7 @@
                         <!--添加工作分配-->
                         <el-form :id="scope.row.DrawingNo+index" :inline="true" class="demo-form-inline form" size="mini">
                             <el-form-item label="执行人">
-                                <el-select name="name" v-model="value" placeholder="请选择" >
+                                <el-select name="name" v-model="value" placeholder="请选择">
                                     <el-option v-for="e in employees"
                                                :key="e.WorkerId"
                                                :label="e.WorkerName"
@@ -102,12 +105,28 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="开始时间">
+                            <el-form-item label="工作时间">
+                                <el-input name="useTime" style="width:100px;"></el-input>分钟
+                            </el-form-item>
+                            <el-form-item label="限定日期">
+                                <el-date-picker v-model="date"
+                                                :name="['startTime','endTime']"
+                                                type="daterange"
+                                                align="right"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                :picker-options="pickerOptions">
+                                </el-date-picker>
+                            </el-form-item>
+
+                            @*<el-form-item label="开始时间">
                                 <el-input name="startTime" style="width:100px;"></el-input>
                             </el-form-item>
                             <el-form-item label="结束时间">
                                 <el-input name="endTime" style="width:100px;"></el-input>
-                            </el-form-item>
+                            </el-form-item>*@
                             <el-form-item>
                                 <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
                             </el-form-item>
@@ -116,12 +135,21 @@
                 </el-collapse>
                 <!--添加工序-->
                 <el-form :inline="true">
-                    <el-form-item label="工序名称" prop="ProcedureName">
+                    @*<el-form-item label="工序名称" prop="ProcedureName">
                         <el-input :id="scope.row.DrawingNo"></el-input>
+                    </el-form-item>*@
+                    <el-form-item label="工序名称">
+                        <el-select :id="scope.row.DrawingNo" v-model="flowValue" placeholder="请选择">
+                            <el-option v-for="e in flowList"
+                                       :key="e.Id"
+                                       :label="e.ProcedureName"
+                                       :value="e.Id">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item>
                         <el-button size="mini" type="primary" class="tableRight"
-                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)">添加工序</el-button>
+                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)"> 绑定工序</el-button>
                     </el-form-item>
                 </el-form>
             </template>
@@ -173,13 +201,14 @@
                 partsPageSize: 5,
 
                 flowList: [],
-                workList: [],
                 employees: [],
                 ruleForm: {
                     name: '',
                     reson: '',
                 },
                 value: '',
+                date:'',
+                flowValue: '',
                 disabled: false
             }
         },
@@ -195,7 +224,7 @@
                     for (let flow of part.flows) {
                         if (!flow.works || flow.works.length == 0) continue
                         for (let work of flow.works) {
-                            if (work.name || work.startTime || work.endTime) {
+                            if (work.name || work.startTime || work.endTime || work.useTime) {
                                 count++
                                 let tmpFlows = _cloneArr(part.flows)
                                 for (let f of tmpFlows) {
@@ -288,26 +317,27 @@
                             "OldTaskId": part.TaskId,
                             "DrawingNo": part.DrawingNo,
                             "CodeNo": "2",
-                            "Name": part.TaskId,
-                            "Count": part.TaskId,
-                            "MaterialScience": part.TaskId,
-                            "Unit": part.TaskId,
-                            "Brand": part.TaskId,
-                            "Sorts": part.TaskId,
-                            "Mark": part.TaskId,
+                            "Name": part.Name,
+                            "Count": part.Count,
+                            "MaterialScience": part.MaterialScience,
+                            "Unit": part.Unit,
+                            "Brand": part.Brand,
+                            "Sorts": part.Sorts,
+                            "Mark": part.Mark,
                             "IsDown": true,
                             "ProcedureId": flow.ProcedureId,
-                            "FlowType": "0"
+                            "FlowType": "0",
+                            "BomId": part.BomId
                         })
                         for (let w of flow.works) {
                             paramWork.push({
-                                "ProcedureId": flow.ProcedureId,
+                                "PurchaseProcedureInfoId": flow.ProcedureId,
                                 "IsFinish": false,
                                 "Worker": w.name,
                                 "WorkerId": w.id,
                                 "StartTime": w.startTime,
                                 "EndTime": w.endTime,
-                                "UseTime": w.endTime - w.endTime
+                                "UseTime": w.useTime
                             })
                         }
                     }
@@ -364,27 +394,30 @@
                     return
                 }
                 var param = [
-                {
-                    "DrawingNo": DrawingNo,
-                    "ProcedureName": $("#" + DrawingNo).val(),
-                    "DefaultWorkTime": "1",
-                    "State": "0",
-                    "CreateTime": _getTime(),
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid
-                }]
+                    {
+                        "DrawingNo": DrawingNo,
+                        "ProcedureName": $("#" + DrawingNo).val(),
+                        "DefaultWorkTime": "1",
+                        "State": "0",
+                        "CreateTime": _getTime(),
+                        "ApplyMan": DingData.nickName,
+                        "ApplyManId": DingData.userid,
+                        "ProcedureInfoId": this.flowValue
+                    }]
                 
                 $.ajax({
-                    url: "/DrawingDown/AddProcedure",
+                    url: "/DrawingDown/BindProcedure",
                     type: "POST",
                     data: JSON.stringify(param),
                     dataType: "json",
                     success: function (data) {
                         console.log("添加工序接口")
+                        console.log(param)
+                        console.log(data)
                         var flowId = JSON.parse(data.Content)[0]
                         console.log(flowId)
                         for (let part of that.parts) {
-                            if (part.Id == row.Id) {
+                            if (part.DrawingNo == row.DrawingNo) {
                                 if (!part.flows) part["flows"] = []
                                 part.flows.push({
                                     Id: flowId,
@@ -424,6 +457,7 @@
                             message: '成功删除工序' + ProcedureId,
                             type: 'success'
                         });
+                        that.getPartsData()
                     },
                     error: function (err) {
                         console.log(err);
@@ -461,7 +495,8 @@
                             name: workObj.name,
                             id: workObj.id,
                             startTime: workObj.startTime,
-                            endTime: workObj.endTime
+                            endTime: workObj.endTime,
+                            useTime: workObj.useTime
                         })
                     }
                 }
@@ -486,7 +521,7 @@
                         if(ifDone) break
                     }
                 }
-                this.getData()
+                this.getPartsData()
             },
             //获取项目列表
             getProject() {
@@ -539,7 +574,8 @@
                             for (let a1 of data)
                                 if (part.DrawingNoId == a1.DrawingNoId) {
                                     if (!part.flows) part["flows"] = []
-                                    part.flows.push(a1.ProList[0])
+                                    if (a1.ProList[0]!=null)
+                                        part.flows.push(a1.ProList[0])
                                 }
                         console.log(that.parts)
                         that.partsRows = that.parts.length
@@ -605,10 +641,28 @@
                     }
                 })
             },
+            //获取工序列表
+            getFlows() {
+                var that = this
+                $.ajax({
+                    url: "/DrawingDown/QuaryAllProcedure",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取工序列表")
+                        console.log(data)
+                        that.flowList = data
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            }
         },
         created: function () {
             this.getProject()
             this.getEmployees()
+            this.getFlows()
             loadHtml("mainPage", "partPage")
         }
     })
