@@ -175,7 +175,7 @@ namespace DingTalk.Controllers
                                             ProcedureInfoId = q.ProcedureInfoId,
                                             ProList = new List<Pro>()
                                             {
-                                                tt == null ? null :
+                                                tt == null ? null:
                                                       new Pro(){
                                                  ProcedureId= tt==null?"": tt.Id.ToString(),
                                                  ProcedureName = tt==null?"":tt.ProcedureName,

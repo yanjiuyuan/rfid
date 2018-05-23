@@ -27,6 +27,7 @@ namespace DingTalk.Models.DbModels
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
         public virtual DbSet<PurchaseProcedureInfo> PurchaseProcedureInfo { get; set; }
+        public virtual DbSet<PurchaseTable> PurchaseTable { get; set; }
         public virtual DbSet<Worker> Worker { get; set; }
         public virtual DbSet<WorkTime> WorkTime { get; set; }
 
@@ -281,6 +282,10 @@ namespace DingTalk.Models.DbModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<Tasks>()
+                .Property(e => e.Dept)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
                 .Property(e => e.ApplyTime)
                 .IsUnicode(false);
 
@@ -478,6 +483,50 @@ namespace DingTalk.Models.DbModels
 
             modelBuilder.Entity<PurchaseProcedureInfo>()
                 .Property(e => e.CreateTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.CodeNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Standard)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Unit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Count)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Price)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Purpose)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.UrgentDate)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PurchaseTable>()
+                .Property(e => e.Mark)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Worker>()
