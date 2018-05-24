@@ -422,6 +422,7 @@
                 that.getPartsData()
             },
             bindFlow(taskId, flow) {
+                var that = this
                 var param = []
                 for (let part of that.parts) {
                     for (let flow of part.flows) {
