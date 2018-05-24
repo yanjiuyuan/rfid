@@ -74,7 +74,7 @@
                                 <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.ProcedureId)" type="danger" class="tableRight">删除工序</el-button>
+                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.ProcedureInfoId)" type="danger" class="tableRight">删除工序</el-button>
                             </el-form-item>
                         </el-form>
                         <!--工作分配列表-->
@@ -92,7 +92,7 @@
                                 <el-input v-model="work.endTime" style="width:100px;" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button v-on:click="deleteWork(scope.row.DrawingNo,flow.ProcedureId,i)">删除工作</el-button>
+                                <el-button v-on:click="deleteWork(scope.row.DrawingNo,flow.ProcedureInfoId,i)">删除工作</el-button>
                             </el-form-item>
                         </el-form>
                         <!--添加工作分配-->
@@ -301,8 +301,8 @@
                         console.log("提交审批ok")
                         var taskId = JSON.parse(data).Content
                         console.log(taskId)
-                        that.SubmitDrawingDown(taskId)
                         that.bindAll(taskId)
+                        //that.SubmitDrawingDown(taskId)
                         //that.bindFlow(taskId)
                     }
                 })
@@ -333,41 +333,15 @@
                             "Sorts": part.Sorts,
                             "Mark": part.Mark,
                             "IsDown": true,
-                            //"ProcedureId": flow.ProcedureId,
+                            //"ProcedureId": flow.ProcedureInfoId,
                             "FlowType": "0",
-                            "PurchaseProcedureInfoId": flow.ProcedureId,
                             "BomId": part.BomId
                         })
-                        //for (let w of flow.works) {
-                        //    paramWork.push({
-                        //        "PurchaseProcedureInfoId": flow.ProcedureId,
-                        //        "IsFinish": false,
-                        //        "Worker": w.name,
-                        //        "WorkerId": w.id,
-                        //        "StartTime": w.startTime,
-                        //        "EndTime": w.endTime,
-                        //        "UseTime": w.useTime
-                        //    })
-                        //}
+                 
                     }
                 }
                 console.log("提交下发表单 param ")
                 console.log(param)
-                //console.log(paramWork)
-                //$.ajax({
-                //    url: "/DrawingDown/AddWorkTime",
-                //    type: "POST",
-                //    data: JSON.stringify(paramWork),
-                //    dataType: "json",
-                //    success: function (data) {
-                //        console.log("添加工时接口")
-                //        console.log(paramWork)
-                //        console.log(data)
-                //    },
-                //    error: function (err) {
-                //        console.log(err);
-                //    }
-                //})
                 $.ajax({
                     url: "/DrawingDown/SubmitDrawingDown",
                     type: "POST",
@@ -399,6 +373,7 @@
                 var param = []
                 for (let part of that.parts) {
                     for (let flow of part.flows) {
+                        if (!flow.works || flow.works.length == 0) continue
                         for (let w of flow.works) {
                             param.push({
                                 "Worker": w.name,
@@ -515,7 +490,7 @@
                     }
                 })
             },
-            deleteFlow(DrawingNo, index, ProcedureId) {
+            deleteFlow(DrawingNo, index, ProcedureInfoId) {
                 var that = this
                 for (let part of this.parts) {
                     if (part.DrawingNo == DrawingNo) {
@@ -525,7 +500,7 @@
                 }
                 this.getData()
                 $.ajax({
-                    url: "/DrawingDown/DeleteProcedure?Id=" + ProcedureId,
+                    url: "/DrawingDown/DeleteProcedure?Id=" + ProcedureInfoId,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
@@ -533,7 +508,7 @@
                         console.log(data)
                         that.$notify({
                             title: '删除成功',
-                            message: '成功删除工序' + ProcedureId,
+                            message: '成功删除工序' + ProcedureInfoId,
                             type: 'success'
                         });
                         that.getPartsData()
@@ -582,15 +557,14 @@
                 this.getPartsData()
                 
             },
-            deleteWork(DrawingNo, ProcedureId, index) {
+            deleteWork(DrawingNo, ProcedureInfoId, index) {
                 var that = this
                 var ifDone = false
                 for (let part of this.parts) {
                     if (part.DrawingNo == DrawingNo) {
                         for (let flow of part.flows) {
-                            if (flow.ProcedureId == ProcedureId) {
+                            if (flow.ProcedureInfoId == ProcedureInfoId) {
                                 console.log("删除工时")
-                                console.log(flow.works)
                                 flow.works.splice(index, 1)
                                 console.log(flow.works)
                                 ifDone = true
