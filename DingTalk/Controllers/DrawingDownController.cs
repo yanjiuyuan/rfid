@@ -1113,19 +1113,15 @@ namespace DingTalk.Controllers
                                         p.Name,
                                         p.Sorts,
                                         p.Count,
-
-                                        //s.ApplyMan,
-                                        //s.ApplyManId,
                                         s.CreateTime,
                                         pd.ProcedureName,
-                                        //s.DefaultWorkTime,
                                         w.IsFinish,
-                                        //w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId
+                                        w.WorkerId,
+                                        Id = w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
@@ -1154,19 +1150,15 @@ namespace DingTalk.Controllers
                                         p.Name,
                                         p.Sorts,
                                         p.Count,
-
-                                        //s.ApplyMan,
-                                        //s.ApplyManId,
                                         s.CreateTime,
                                         pd.ProcedureName,
-                                        //s.DefaultWorkTime,
                                         w.IsFinish,
-                                        //w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId
+                                        w.WorkerId,
+                                        Id = w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
