@@ -99,9 +99,9 @@ namespace DingTalk.Controllers
                                                  Mark = q.Mark,
                                                  BomId = q.BomId,
                                                  ProList = new List<Pro>()
-                                                   {
-                                                      
-                                                   },
+                                                 {
+
+                                                 },
                                              };
                             return JsonConvert.SerializeObject(QuaryEmpty);
                         }
@@ -171,7 +171,7 @@ namespace DingTalk.Controllers
                                             Mark = q.Mark,
                                             BomId = q.BomId,
                                             ProcedureInfoId = q.ProcedureInfoId,
-                                            
+
                                             ProList = new List<Pro>()
                                             {
                                                 tt == null ? null:
@@ -462,7 +462,7 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
-                    
+
                     List<PurchaseProcedureInfo> procedureInfoList = new List<PurchaseProcedureInfo>();
                     procedureInfoList = JsonHelper.JsonToObject<List<PurchaseProcedureInfo>>(List);
 
@@ -471,7 +471,7 @@ namespace DingTalk.Controllers
                     {
                         foreach (var item in procedureInfoList)
                         {
-                           string Id= context.PurchaseProcedureInfo.Where(u => u.DrawingNo==item.DrawingNo && u.ProcedureInfoId==item.ProcedureInfoId && u.TaskId==item.TaskId).Select(q=>q.Id).DefaultIfEmpty().First().ToString();
+                            string Id = context.PurchaseProcedureInfo.Where(u => u.DrawingNo == item.DrawingNo && u.ProcedureInfoId == item.ProcedureInfoId && u.TaskId == item.TaskId).Select(q => q.Id).DefaultIfEmpty().First().ToString();
                             if (!string.IsNullOrEmpty(Id))
                             {
                                 stringList.Add(Id);
@@ -517,13 +517,14 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 绑定工时和工序
+        /// 绑定工时和工序以及表单
         /// </summary>
         /// <returns></returns>
         /// 测试数据:/DrawingDown/BindWorkTimeAndPro
-        ///  var WorkTimeAndProList = [{  "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456","TaskId":"4"},
-        ///  {  "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "2", "CreateManId": "123456","TaskId":"4"},
-        ///  {  "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "3", "CreateManId": "123456","TaskId":"4"}] 
+        ///  var WorkTimeAndProList = [{  "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456","TaskId":"4","OldTaskId":"123","OldTaskId":"1","CodeNo":"1","Name":"11", "Count":"1",   "MaterialScience":"1","Unit":"1","Brand":"1","Sorts":"1","FlowType":"1","BomId":"123"},
+        ///  {  "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "2", "CreateManId": "123456","TaskId":"4","OldTaskId":"123", "OldTaskId":"1","CodeNo":"1","Name":"11", "Count":"1","MaterialScience":"1","Unit":"1","Brand":"1","Sorts":"1","FlowType":"1","BomId":"123"},
+        ///  {  "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "3", "CreateManId": "123456","TaskId":"4","OldTaskId":"123", "OldTaskId":"1","CodeNo":"1","Name":"11", "Count":"1","MaterialScience":"1","Unit":"1","Brand":"1","Sorts":"1","FlowType":"1","BomId":"123"}] 
+
         [HttpPost]
         public string BindWorkTimeAndPro()
         {
@@ -550,7 +551,7 @@ namespace DingTalk.Controllers
                         foreach (var item in WorkTimeAndPurList)
                         {
                             //绑定工序
-                            PurchaseProcedureInfo purchaseProcedureInfo  =new PurchaseProcedureInfo
+                            PurchaseProcedureInfo purchaseProcedureInfo = new PurchaseProcedureInfo
                             {
                                 DrawingNo = item.DrawingNo,
                                 ProcedureInfoId = item.ProcedureInfoId,
@@ -559,19 +560,40 @@ namespace DingTalk.Controllers
                             };
                             context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
                             context.SaveChanges();
-                     
+
                             //绑定工时
                             WorkTime workTime = new WorkTime()
                             {
                                 IsFinish = false,
-                                PurchaseProcedureInfoId= purchaseProcedureInfo.Id.ToString(),
-                                StartTime=item.StartTime,
-                                EndTime=item.EndTime,
-                                UseTime=item.UseTime,
-                                Worker=item.Worker,
-                                WorkerId=item.WorkerId
+                                PurchaseProcedureInfoId = purchaseProcedureInfo.Id.ToString(),
+                                StartTime = item.StartTime,
+                                EndTime = item.EndTime,
+                                UseTime = item.UseTime,
+                                Worker = item.Worker,
+                                WorkerId = item.WorkerId
                             };
                             context.WorkTime.Add(workTime);
+                            context.SaveChanges();
+
+                            //绑定Bom表单
+                            PurchaseDown purchaseDown = new PurchaseDown()
+                            {
+                                PurchaseProcedureInfoId= purchaseProcedureInfo.Id.ToString(),
+                                DrawingNo=item.DrawingNo,
+                                OldTaskId = item.OldTaskId,
+                                TaskId=item.TaskId,
+                                BomId = item.BomId,
+                                CodeNo = item.CodeNo,
+                                Name = item.Name,
+                                Count = item.Count,
+                                MaterialScience = item.MaterialScience,
+                                Unit = item.Unit,
+                                Brand = item.Brand,
+                                Sorts = item.Sorts,
+                                IsDown =true,
+                                FlowType = item.FlowType
+                            };
+                            context.PurchaseDown.Add(purchaseDown);
                             context.SaveChanges();
                         }
                     }
@@ -660,7 +682,7 @@ namespace DingTalk.Controllers
                                 }
                             }
                         }
-                      
+
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
@@ -897,7 +919,7 @@ namespace DingTalk.Controllers
 
         #region Bom表、工序、工时数据读取
 
-      
+
 
         /// <summary>
         /// Bom表、工序、工时数据读取
@@ -1058,7 +1080,7 @@ namespace DingTalk.Controllers
         /// <param name="ApplyManId">当前用户Id<param>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=100328051024695354&TaskId=7
+        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=100328051024695354&TaskId=4
         [HttpGet]
         public string GetFinishInfo(string ApplyManId, string TaskId)
         {
@@ -1117,7 +1139,7 @@ namespace DingTalk.Controllers
                                     s.ProcedureInfoId equals pd.Id.ToString()
                                     join w in WorkTimeInfoList on
                                     p.PurchaseProcedureInfoId equals w.PurchaseProcedureInfoId
-                                    where w.WorkerId==ApplyManId
+                                    where w.WorkerId == ApplyManId
                                     select new
                                     {
                                         p.TaskId,
@@ -1155,8 +1177,8 @@ namespace DingTalk.Controllers
         #endregion
 
         #region 图纸管理
-        
+
         #endregion
-        
+
     }
 }

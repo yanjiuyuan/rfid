@@ -29,5 +29,27 @@ namespace DingTalk.Models
         
         public string TaskId { get; set; }
 
+
+        //以下为表单字段
+        public string OldTaskId { get; set; }
+
+        public string BomId { get; set; }
+
+        public string CodeNo { get; set; }
+
+        public string Name { get; set; }
+
+        public string Count { get; set; }
+
+        public string MaterialScience { get; set; }
+
+        public string Unit { get; set; }
+
+        public string Brand { get; set; }
+        public string Sorts { get; set; }
+        public bool IsDown { get; set; }
+        public string FlowType { get; set; }
+
+        
     }
 }
