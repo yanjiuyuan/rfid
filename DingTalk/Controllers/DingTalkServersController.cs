@@ -95,7 +95,7 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> GetDepartmentUserList()
         {
-            string dptId = "56943182";
+            string dptId = "1";
             var result = await dtManager.GetDepartmentUserList(dptId);
             return result;
         }
@@ -104,7 +104,7 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> GetDepartmentUserDetailList()
         {
-            string dptId = "1";
+            string dptId = "34894112";
             var result = await dtManager.GetDepartmentUserDetailList(dptId);
             return result;
         }
