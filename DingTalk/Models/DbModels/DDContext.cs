@@ -485,6 +485,10 @@ namespace DingTalk.Models.DbModels
                 .Property(e => e.CreateTime)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<PurchaseProcedureInfo>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<PurchaseTable>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
