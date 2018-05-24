@@ -215,6 +215,7 @@
         },
         methods: {
             onSubmit() {
+                State = 0
                 var that = this
                 this.disabled = true
                 console.log(this.parts)
@@ -301,6 +302,7 @@
                         var taskId = JSON.parse(data).Content
                         console.log(taskId)
                         that.SubmitDrawingDown(taskId)
+                        that.bindFlow(taskId)
                     }
                 })
             },
@@ -374,12 +376,15 @@
                         that.disabled = false
                         console.log("提交下发表单ok")
                         console.log(data)
-                        that.$alert('提交审批成功', '提交成功', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                loadPage('/main/Approval')
-                            }
-                        });
+                        State++
+                        if (State > 1) {
+                            that.$alert('提交审批成功', '提交成功', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    loadPage('/main/Approval')
+                                }
+                            });
+                        }
                     },
                     error: function (err) {
                         console.log(err)
@@ -400,19 +405,39 @@
                     });
                     return
                 }
-                var param = [
-                    {
-                        "DrawingNo": DrawingNo,
-                        "ProcedureName": $("#" + DrawingNo).val(),
-                        "DefaultWorkTime": "1",
-                        "State": "0",
-                        "CreateTime": _getTime(),
-                        "ApplyMan": DingData.nickName,
-                        "ApplyManId": DingData.userid,
-                        "ProcedureInfoId": this.flowValue,
-                        "TaskId": row.TaskId
-                    }]
-                
+                let ProcedureInfoId = this.flowValue
+                for (let part of that.parts) {
+                    if (part.DrawingNo == row.DrawingNo) {
+                        if (!part.flows) part["flows"] = []
+                        part.flows.push({
+                            DrawingNo: part.DrawingNo,
+                            ProcedureName: $("#" + DrawingNo).val(),
+                            ProcedureInfoId: ProcedureInfoId,
+                            DefaultWorkTime: ''
+                        })
+                        break
+                    }
+                }
+                console.log(that.parts)
+                that.getPartsData()
+            },
+            bindFlow(taskId, flow) {
+                var param = []
+                for (let part of that.parts) {
+                    for (let flow of part.flows) {
+                        param.push({
+                            "DrawingNo": flow.DrawingNo,
+                            "ProcedureName": flow.ProcedureName,
+                            "DefaultWorkTime": "1",
+                            "State": "0",
+                            "CreateTime": _getTime(),
+                            "ApplyMan": DingData.nickName,
+                            "ApplyManId": DingData.userid,
+                            "ProcedureInfoId": flow.ProcedureInfoId,
+                            "TaskId": taskId
+                        })
+                    }
+                }
                 $.ajax({
                     url: "/DrawingDown/BindProcedure",
                     type: "POST",
@@ -422,22 +447,15 @@
                         console.log("添加工序接口")
                         console.log(param)
                         console.log(data)
-                        var flowId = JSON.parse(data.Content)[0]
-                        console.log(flowId)
-                        for (let part of that.parts) {
-                            if (part.DrawingNo == row.DrawingNo) {
-                                if (!part.flows) part["flows"] = []
-                                part.flows.push({
-                                    Id: flowId,
-                                    ProcedureName: $("#" + DrawingNo).val(),
-                                    DrawingNo: part.DrawingNo,
-                                    DefaultWorkTime: ''
-                                })
-                                break
-                            }
+                        State++
+                        if (State > 1) {
+                            that.$alert('提交审批成功', '提交成功', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    loadPage('/main/Approval')
+                                }
+                            });
                         }
-                        console.log(that.parts)
-                        that.getPartsData()
                     },
                     error: function (err) {
                         console.log(err);
