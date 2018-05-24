@@ -100,9 +100,7 @@ namespace DingTalk.Controllers
                                                  BomId = q.BomId,
                                                  ProList = new List<Pro>()
                                                    {
-                                                       new Pro(){
-
-                                                       }
+                                                      
                                                    },
                                              };
                             return JsonConvert.SerializeObject(QuaryEmpty);
@@ -1082,7 +1080,6 @@ namespace DingTalk.Controllers
         #region 图纸管理
         
         #endregion
-
-
+        
     }
 }
