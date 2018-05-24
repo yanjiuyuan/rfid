@@ -302,7 +302,8 @@
                         var taskId = JSON.parse(data).Content
                         console.log(taskId)
                         that.SubmitDrawingDown(taskId)
-                        that.bindFlow(taskId)
+                        that.bindAll(taskId)
+                        //that.bindFlow(taskId)
                     }
                 })
             },
@@ -337,36 +338,36 @@
                             "PurchaseProcedureInfoId": flow.ProcedureId,
                             "BomId": part.BomId
                         })
-                        for (let w of flow.works) {
-                            paramWork.push({
-                                "PurchaseProcedureInfoId": flow.ProcedureId,
-                                "IsFinish": false,
-                                "Worker": w.name,
-                                "WorkerId": w.id,
-                                "StartTime": w.startTime,
-                                "EndTime": w.endTime,
-                                "UseTime": w.useTime
-                            })
-                        }
+                        //for (let w of flow.works) {
+                        //    paramWork.push({
+                        //        "PurchaseProcedureInfoId": flow.ProcedureId,
+                        //        "IsFinish": false,
+                        //        "Worker": w.name,
+                        //        "WorkerId": w.id,
+                        //        "StartTime": w.startTime,
+                        //        "EndTime": w.endTime,
+                        //        "UseTime": w.useTime
+                        //    })
+                        //}
                     }
                 }
                 console.log("提交下发表单 param ")
                 console.log(param)
-                console.log(paramWork)
-                $.ajax({
-                    url: "/DrawingDown/AddWorkTime",
-                    type: "POST",
-                    data: JSON.stringify(paramWork),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("添加工时接口")
-                        console.log(paramWork)
-                        console.log(data)
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                //console.log(paramWork)
+                //$.ajax({
+                //    url: "/DrawingDown/AddWorkTime",
+                //    type: "POST",
+                //    data: JSON.stringify(paramWork),
+                //    dataType: "json",
+                //    success: function (data) {
+                //        console.log("添加工时接口")
+                //        console.log(paramWork)
+                //        console.log(data)
+                //    },
+                //    error: function (err) {
+                //        console.log(err);
+                //    }
+                //})
                 $.ajax({
                     url: "/DrawingDown/SubmitDrawingDown",
                     type: "POST",
@@ -392,7 +393,48 @@
                     }
                 })
             },
-            //为部件添加工序，删除工序
+            //为部件添加工序，删除工序，绑定工序和工时
+            bindAll(taskId) {
+                var that = this
+                var param = []
+                for (let part of that.parts) {
+                    for (let flow of part.flows) {
+                        for (let w of flow.works) {
+                            param.push({
+                                "Worker": w.name,
+                                "WorkerId": w.id,
+                                "StartTime": w.startTime,
+                                "EndTime": w.endTime,
+                                "UseTime": w.useTime,
+                                "ProcedureInfoId": flow.ProcedureId,
+                                "CreateManId": DingData.userid,
+                                "TaskId": taskId
+                            })
+                        }
+                    }
+                }
+                $.ajax({
+                    url: "/DrawingDown/BindWorkTimeAndPro",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("绑定工序和工时接口")
+                        console.log(param)
+                        console.log(data)
+                        that.$alert('提交审批成功', '提交成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/main/Approval')
+                            }
+                        });
+
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+             },
             addFlow(row, DrawingNo) {
                 var that = this 
                 var procName = $("#" + DrawingNo).val().trim()
