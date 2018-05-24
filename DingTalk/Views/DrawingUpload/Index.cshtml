@@ -26,6 +26,7 @@
 <h2>图纸下发接口</h2>
 <input id="btn6" type="button" value="添加工序" />
 <input id="btn11" type="button" value="绑定工序" />
+<input id="btn13" type="button" value="绑定工时和工序" />
 <input id="btn12" type="button" value="工序关系表Id查询" />
 <input id="btn10" type="button" value="添加查询" />
 <input id="btn7" type="button" value="添加工时" />
@@ -336,6 +337,28 @@
             dataType: "json",
             async: false,
             data: JSON.stringify(GetProcedureIdList),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    var WorkTimeAndProList = [{ "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2", "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456", "TaskId": "4" },
+    { "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3", "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "2", "CreateManId": "123456", "TaskId": "4" },
+    { "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3", "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "3", "CreateManId": "123456", "TaskId": "4" }]
+
+    $("#btn13").click(function () {
+        $.ajax({
+            url: "/DrawingDown/BindWorkTimeAndPro",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            data: JSON.stringify(WorkTimeAndProList),
             success: function (data) {
                 console.log(data);
             },

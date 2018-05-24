@@ -516,6 +516,83 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 绑定工时和工序
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据:/DrawingDown/BindWorkTimeAndPro
+        ///  var WorkTimeAndProList = [{  "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456","TaskId":"4"},
+        ///  {  "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "2", "CreateManId": "123456","TaskId":"4"},
+        ///  {  "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "3", "CreateManId": "123456","TaskId":"4"}] 
+        [HttpPost]
+        public string BindWorkTimeAndPro()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    List<WorkTimeAndPur> WorkTimeAndPurList = new List<WorkTimeAndPur>();
+                    WorkTimeAndPurList = JsonHelper.JsonToObject<List<WorkTimeAndPur>>(List);
+                    List<string> ProcedureIdList = new List<string>();
+
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (var item in WorkTimeAndPurList)
+                        {
+                            //绑定工序
+                            PurchaseProcedureInfo purchaseProcedureInfo  =new PurchaseProcedureInfo
+                            {
+                                DrawingNo = item.DrawingNo,
+                                ProcedureInfoId = item.ProcedureInfoId,
+                                TaskId = item.TaskId,
+                                CreateTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")
+                            };
+                            context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
+                            context.SaveChanges();
+                     
+                            //绑定工时
+                            WorkTime workTime = new WorkTime()
+                            {
+                                IsFinish = false,
+                                PurchaseProcedureInfoId= purchaseProcedureInfo.Id.ToString(),
+                                StartTime=item.StartTime,
+                                EndTime=item.EndTime,
+                                UseTime=item.UseTime,
+                                Worker=item.Worker,
+                                WorkerId=item.WorkerId
+                            };
+                            context.WorkTime.Add(workTime);
+                            context.SaveChanges();
+                        }
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功",
+                        Content = JsonConvert.SerializeObject(ProcedureIdList)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
 
         /// <summary>
         /// 绑定工序

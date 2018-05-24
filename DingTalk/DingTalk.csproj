@@ -263,6 +263,7 @@
     <Compile Include="Models\UploadMediaRequestModel.cs" />
     <Compile Include="Models\UploadMediaType.cs" />
     <Compile Include="Models\VoiceMsgModel.cs" />
+    <Compile Include="Models\WorkTimeAndPur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
