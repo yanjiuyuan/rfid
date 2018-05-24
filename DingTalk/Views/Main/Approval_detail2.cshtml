@@ -40,6 +40,11 @@
         </el-pagination>
     </div>
 
+    <!--添加审批人-->
+    @*<sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+                       :nodeid="nodeInfo.NodeId">
+    </sam-approver-list>*@
+
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <template v-if="index==0">
@@ -71,6 +76,10 @@
         mixins: [mixin],
         data: function () {
             return {
+                preApprove: false,
+                preCopy: false,
+                nodeList: [],
+
                 data: [],
                 items: {
                     DrawingNo: '代号',
@@ -90,7 +99,7 @@
                 isBack: false,
                 index: Index,
                 allDone: true,
-                hideEdit: DingData.nickName == '胡锡涛'||'胡工'? true : false
+                hideEdit: DingData.nickName == ('胡锡涛'||'胡工')? true : false
             }
         },
         methods: {
@@ -167,7 +176,52 @@
             returnSubmit() {
                 
             },
+            //获取节点数据GetNodeInfo
+            getNodeInfo() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取节点数据GetNodeInfo")
+                        console.log(data)
+                        if (!data) return
+                        that.nodeInfo = data[0]
+                        that.preApprove = (!data[0].IsNeedChose) || (Index > 0)
+                        that.preCopy = !data[0].IsSendChose
+                        that.isBack = data[0].IsBack
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
 
+            },
+            //获取审批/抄送 相关人员列表GetFlowProgress
+            getNodeList() {
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        for (let d of data[0]) {
+                            if (d.ApplyMan)
+                                d["NodePeople"] = d.ApplyMan.split(',')
+                            if (d.NodeId == 0)
+                                d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
+                            d['AddPeople'] = []
+                        }
+                        console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
+                        console.log(data)
+                        that.nodeList = data[0]
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
             //获取bom表信息-任务零件列表
             getBomInfo() {
                 var that = this
