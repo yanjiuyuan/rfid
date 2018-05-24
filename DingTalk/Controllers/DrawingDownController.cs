@@ -550,28 +550,42 @@ namespace DingTalk.Controllers
                     {
 
                         List<PurchaseProcedureInfo> QuaryprocedureInfoList = context.PurchaseProcedureInfo.ToList();
-                        foreach (PurchaseProcedureInfo purchaseProcedureInfo in procedureInfoList)
+                        if (QuaryprocedureInfoList.Count == 0)
                         {
-                            foreach (var item in QuaryprocedureInfoList)
+                            foreach (PurchaseProcedureInfo purchaseProcedureInfo in procedureInfoList)
                             {
-                                if (item.TaskId == purchaseProcedureInfo.TaskId && item.ProcedureInfoId == purchaseProcedureInfo.ProcedureInfoId && item.DrawingNo == purchaseProcedureInfo.DrawingNo)
+                                purchaseProcedureInfo.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
+                                context.SaveChanges();
+                                ProcedureIdList.Add(purchaseProcedureInfo.Id.ToString());
+                            }
+                        }
+                        else
+                        {
+                            foreach (PurchaseProcedureInfo purchaseProcedureInfo in procedureInfoList)
+                            {
+                                foreach (var item in QuaryprocedureInfoList)
                                 {
-                                    return JsonConvert.SerializeObject(new ErrorModel
+                                    if (item.TaskId == purchaseProcedureInfo.TaskId && item.ProcedureInfoId == purchaseProcedureInfo.ProcedureInfoId && item.DrawingNo == purchaseProcedureInfo.DrawingNo)
                                     {
-                                        errorCode = 1,
-                                        errorMessage = "插入数据有误"
-                                    });
-                                }
-                                else
-                                {
-                                    purchaseProcedureInfo.IsFinish = false;
-                                    purchaseProcedureInfo.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                    context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
-                                    context.SaveChanges();
-                                    ProcedureIdList.Add(purchaseProcedureInfo.Id.ToString());
+                                        return JsonConvert.SerializeObject(new ErrorModel
+                                        {
+                                            errorCode = 1,
+                                            errorMessage = "插入数据有误",
+                                            Content = string.Format("Index:{0}", procedureInfoList.IndexOf(purchaseProcedureInfo).ToString())
+                                        });
+                                    }
+                                    else
+                                    {
+                                        purchaseProcedureInfo.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                        context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
+                                        context.SaveChanges();
+                                        ProcedureIdList.Add(purchaseProcedureInfo.Id.ToString());
+                                    }
                                 }
                             }
                         }
+                      
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
                     {

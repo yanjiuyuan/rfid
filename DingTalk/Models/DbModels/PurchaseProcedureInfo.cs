@@ -27,7 +27,5 @@ namespace DingTalk.Models.DbModels
 
         [StringLength(300)]
         public string TaskId { get; set; }
-
-        public bool? IsFinish { get; set; }
     }
 }
