@@ -55,10 +55,11 @@
     <!--部件编辑部分-->
     <el-table :data="tableParts"
               style="width: 100%;margin-top:100px;">
+        <el-table-column label="流水号" prop="TaskId"></el-table-column>
         <el-table-column label="代号" prop="DrawingNo"></el-table-column>
         <el-table-column label="名称" prop="Name"></el-table-column>
         @*<el-table-column label="材料" prop="MaterialScience"></el-table-column>
-            <el-table-column label="品牌" prop="Brand"></el-table-column>*@
+        <el-table-column label="品牌" prop="Brand"></el-table-column>*@
         <el-table-column label="数量" prop="Count"></el-table-column>
         <el-table-column label="单位" prop="Unit"></el-table-column>
         <el-table-column label="类别" prop="Sorts"></el-table-column>
@@ -149,7 +150,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button size="mini" type="primary" class="tableRight"
-                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)"> 绑定工序</el-button>
+                                   v-on:click="addFlow(scope.row,scope.row.DrawingNo)">绑定工序</el-button>
                     </el-form-item>
                 </el-form>
             </template>
@@ -409,7 +410,8 @@
                         "CreateTime": _getTime(),
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
-                        "ProcedureInfoId": this.flowValue
+                        "ProcedureInfoId": this.flowValue,
+                        "TaskId": row.TaskId
                     }]
                 
                 $.ajax({
