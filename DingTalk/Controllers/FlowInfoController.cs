@@ -851,7 +851,7 @@ namespace DingTalk.Controllers
             List<Object> listQuary = new List<object>();
             foreach (int TaskId in ListTasks)
             {
-                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId && u.State==0).Select(u => u.NodeId).First();
+                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).Select(u => u.NodeId).ToList().First();
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
