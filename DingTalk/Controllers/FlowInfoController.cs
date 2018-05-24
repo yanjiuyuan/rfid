@@ -551,6 +551,7 @@ namespace DingTalk.Controllers
                         Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
+
                             //保存任务流
                             Tasks newTask = new Tasks()
                             {
@@ -571,7 +572,16 @@ namespace DingTalk.Controllers
                                 IsPost = false,
                                 ProjectId = Task.ProjectId,
                             };
-                            context.Tasks.Add(newTask);
+                            ////判断重复推送
+                            //List<Tasks> TasksList=  context.Tasks.Where(u => u.TaskId == newTask.TaskId && u.ApplyManId == ApplyManId && u.NodeId== newTask.NodeId).ToList();
+                            //if (TasksList.Count > 0)
+                            //{
+                            //    return dic;
+                            //}
+                            //else
+                            //{
+                            //    context.Tasks.Add(newTask);
+                            //}
                         }
                         context.SaveChanges();
                     }

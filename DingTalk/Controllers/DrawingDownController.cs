@@ -574,6 +574,7 @@ namespace DingTalk.Controllers
                             };
                             context.WorkTime.Add(workTime);
                             context.SaveChanges();
+                            
 
                             //绑定Bom表单
                             PurchaseDown purchaseDown = new PurchaseDown()
@@ -594,6 +595,12 @@ namespace DingTalk.Controllers
                                 FlowType = item.FlowType
                             };
                             context.PurchaseDown.Add(purchaseDown);
+                            context.SaveChanges();
+
+                            //修改下发状态
+                            Purchase purchase = context.Purchase.Where(u => u.DrawingNo == item.DrawingNo).First();
+                            purchase.IsDown = true;
+                            context.Entry<Purchase>(purchase).State = EntityState.Modified;
                             context.SaveChanges();
                         }
                     }
