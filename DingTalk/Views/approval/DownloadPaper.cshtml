@@ -241,12 +241,12 @@
                                     }
                                 }
                                 fullInput = true
-                                editParts.push(part)
                             }
                             if (fullInput) continue
                         }
                         if (fullInput) continue
                     }
+                    if (fullInput) editParts.push(part)
                 }
                 if (count == 0) {
                     this.$alert('您未编辑任何部件', '提交错误', {
@@ -445,18 +445,17 @@
                     data: JSON.stringify(param),
                     dataType: "json",
                     success: function (data) {
-                        console.log("添加工序接口")
+                        console.log("绑定工序接口")
                         console.log(param)
                         console.log(data)
-                        State++
-                        if (State > 1) {
-                            that.$alert('提交审批成功', '提交成功', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    loadPage('/main/Approval')
-                                }
-                            });
-                        }
+
+                        that.$alert('提交审批成功', '提交成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/main/Approval')
+                            }
+                        });
+
                     },
                     error: function (err) {
                         console.log(err);
