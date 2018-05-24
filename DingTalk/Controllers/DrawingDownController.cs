@@ -1107,13 +1107,17 @@ namespace DingTalk.Controllers
                                     {
                                         p.TaskId,
                                         p.IsDown,
+                                        p.DrawingNo,
                                         p.Mark,
                                         p.MaterialScience,
                                         p.Name,
                                         p.Sorts,
+                                        p.Count,
+
                                         //s.ApplyMan,
                                         //s.ApplyManId,
                                         s.CreateTime,
+                                        pd.ProcedureName,
                                         //s.DefaultWorkTime,
                                         w.IsFinish,
                                         //w.ProcedureId,
