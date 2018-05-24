@@ -1121,7 +1121,7 @@ namespace DingTalk.Controllers
                                         w.UseTime,
                                         w.Worker,
                                         w.WorkerId,
-                                        WorkTime=w.Id
+                                        Id = w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
@@ -1158,7 +1158,7 @@ namespace DingTalk.Controllers
                                         w.UseTime,
                                         w.Worker,
                                         w.WorkerId,
-                                        WorkTime = w.Id
+                                        Id = w.Id
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
