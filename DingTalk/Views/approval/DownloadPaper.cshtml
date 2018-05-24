@@ -311,6 +311,10 @@
                 var paramWork = []
                 for (let part of editParts) {
                     for (let flow of part.flows) {
+                        console.log(1111111111)
+                        console.log(editParts)
+                        console.log(part)
+                        console.log(flow)
                         param.push({
                             "Id": part.DrawingNoId,
                             "TaskId": taskId,
@@ -325,7 +329,7 @@
                             "Sorts": part.Sorts,
                             "Mark": part.Mark,
                             "IsDown": true,
-                            "ProcedureId": flow.ProcedureId,
+                            //"ProcedureId": flow.ProcedureId,
                             "FlowType": "0",
                             "PurchaseProcedureInfoId": flow.ProcedureId,
                             "BomId": part.BomId
@@ -345,6 +349,8 @@
                 }
                 console.log("提交下发表单 param ")
                 console.log(param)
+                console.log(paramWork)
+                return
                 $.ajax({
                     url: "/DrawingDown/AddWorkTime",
                     type: "POST",
@@ -552,11 +558,11 @@
             loadProject(id) {
                 var that = this
                 $.ajax({
-                    url: "/DrawingDown/GetDrawingDownInfo?ProjectId="+id+"&ApplyManId=123456",
+                    url: "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=" + DingData.userid,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("加载项目信息!-" + "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=123456")
+                        console.log("加载项目信息!-" + "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=" + DingData.userid)
                         console.log(data)
 
                         that.parts = []
