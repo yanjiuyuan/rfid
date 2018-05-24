@@ -173,6 +173,7 @@ namespace DingTalk.Controllers
                                             Mark = q.Mark,
                                             BomId = q.BomId,
                                             ProcedureInfoId = q.ProcedureInfoId,
+                                            
                                             ProList = new List<Pro>()
                                             {
                                                 tt == null ? null:
@@ -435,6 +436,62 @@ namespace DingTalk.Controllers
             }
         }
 
+
+
+
+        /// <summary>
+        /// 工序关系表Id查询
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据：
+        ///  /DrawingDown/GetProcedureId
+        ///   var GetProcedureIdList =  [{"DrawingNo":"DTE-801B-PT-13","ProcedureInfoId":"1","TaskId":"3"}]
+
+
+        public string GetProcedureId()
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(Request.InputStream);
+                string List = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(List))
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "请传递参数"
+                    });
+                }
+                else
+                {
+                    
+                    List<PurchaseProcedureInfo> procedureInfoList = new List<PurchaseProcedureInfo>();
+                    procedureInfoList = JsonHelper.JsonToObject<List<PurchaseProcedureInfo>>(List);
+
+                    List<string> stringList = new List<string>();
+                    using (DDContext context = new DDContext())
+                    {
+                        foreach (var item in procedureInfoList)
+                        {
+                           string Id= context.PurchaseProcedureInfo.Where(u => u.DrawingNo==item.DrawingNo && u.ProcedureInfoId==item.ProcedureInfoId && u.TaskId==item.TaskId).Select(q=>q.Id).DefaultIfEmpty().First().ToString();
+                            if (!string.IsNullOrEmpty(Id))
+                            {
+                                stringList.Add(Id);
+                            }
+                        }
+                    }
+                    return JsonConvert.SerializeObject(stringList);
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                });
+            }
+        }
         /// <summary>
         /// 查询工序
         /// </summary>
@@ -467,7 +524,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据: /DrawingDown/BindProcedure
-        ///  var BindPurchaseList = [{ "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456" }, { "DrawingNo": "DTE-801B-PT-14", "ProcedureInfoId": "2", "CreateManId": "123456" }, { "DrawingNo": "DTE-801B-PT-13", "ProcedureInfoId": "4", "CreateManId": "123456" }]
+        ///  var BindPurchaseList = [{ "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456","TaskId":"4" }, { "DrawingNo": "DTE-801B-PT-14", "ProcedureInfoId": "2", "CreateManId": "123456","TaskId":"4"  }, { "DrawingNo": "DTE-801B-PT-13", "ProcedureInfoId": "4", "CreateManId": "123456","TaskId":"4"  }]
         [HttpPost]
         public string BindProcedure()
         {
@@ -488,14 +545,31 @@ namespace DingTalk.Controllers
                     List<PurchaseProcedureInfo> procedureInfoList = new List<PurchaseProcedureInfo>();
                     procedureInfoList = JsonHelper.JsonToObject<List<PurchaseProcedureInfo>>(List);
                     List<string> ProcedureIdList = new List<string>();
+
                     using (DDContext context = new DDContext())
                     {
+
+                        List<PurchaseProcedureInfo> QuaryprocedureInfoList = context.PurchaseProcedureInfo.ToList();
                         foreach (PurchaseProcedureInfo purchaseProcedureInfo in procedureInfoList)
                         {
-                            purchaseProcedureInfo.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                            context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
-                            context.SaveChanges();
-                            ProcedureIdList.Add(purchaseProcedureInfo.Id.ToString());
+                            foreach (var item in QuaryprocedureInfoList)
+                            {
+                                if (item.TaskId == purchaseProcedureInfo.TaskId && item.ProcedureInfoId == purchaseProcedureInfo.ProcedureInfoId && item.DrawingNo == purchaseProcedureInfo.DrawingNo)
+                                {
+                                    return JsonConvert.SerializeObject(new ErrorModel
+                                    {
+                                        errorCode = 1,
+                                        errorMessage = "插入数据有误"
+                                    });
+                                }
+                                else
+                                {
+                                    purchaseProcedureInfo.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                    context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
+                                    context.SaveChanges();
+                                    ProcedureIdList.Add(purchaseProcedureInfo.Id.ToString());
+                                }
+                            }
                         }
                     }
                     return JsonConvert.SerializeObject(new ErrorModel
@@ -952,12 +1026,12 @@ namespace DingTalk.Controllers
         #region 绑定数据读取(用于下发审批页面数据读取)
         /// <summary>
         /// 绑定数据读取
-        /// </summary>
+        /// </summary>s
         /// <param name="ApplyManId">当前用户Id<param>
         /// <param name="IsFinished">是否完成(不传默认未完成)</param>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
-        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=100328051024695354&TaskId=4
+        /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=100328051024695354&TaskId=7
         [HttpGet]
         public string GetFinishInfo(string ApplyManId, string TaskId)
         {
