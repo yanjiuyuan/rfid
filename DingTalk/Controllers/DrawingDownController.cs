@@ -379,7 +379,7 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        #region 添加、删除工序与工时
+        #region 添加、绑定、删除工序与工时
 
         /// <summary>
         /// 添加工序
@@ -564,6 +564,7 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
+                                    purchaseProcedureInfo.IsFinish = false;
                                     purchaseProcedureInfo.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     context.PurchaseProcedureInfo.Add(purchaseProcedureInfo);
                                     context.SaveChanges();
@@ -807,75 +808,10 @@ namespace DingTalk.Controllers
 
         #region Bom表、工序、工时数据读取
 
-        /// <summary>
-        /// Bom表、工序、工时数据读取(胡工)
-        /// </summary>
-        /// <param name="TaskId">流水号</param>
-        /// <returns></returns>
-        /// 测试数据: /DrawingDown/GetAllInfo?TaskId=2
-        [HttpGet]
-        public string GetAllInfo(int TaskId = 0)
-        {
-            try
-            {
-                if (TaskId == 0)
-                {
-                    return JsonConvert.SerializeObject(new ErrorModel
-                    {
-                        errorCode = 1,
-                        errorMessage = "请传递参数"
-                    });
-                }
-                else
-                {
-                    using (DDContext context = new DDContext())
-                    {
-                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
-                            Where(u => u.TaskId == TaskId.ToString()).ToList();
-                        List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
-                        List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
-                        var Quary = "";//from p in PurchaseList
-                        //            join s in ProcedureInfoList
-                        //            on p.ProcedureId equals s.Id.ToString()
-                        //            join w in WorkTimeInfoList
-                        //            on s.Id.ToString() equals w.ProcedureId
-                        //            select new
-                        //            {
-                        //                p.TaskId,
-                        //                p.IsDown,
-                        //                p.Mark,
-                        //                p.MaterialScience,
-                        //                p.Name,
-                        //                p.Sorts,
-                        //                s.ApplyMan,
-                        //                s.ApplyManId,
-                        //                s.CreateTime,
-                        //                s.DefaultWorkTime,
-                        //                w.IsFinish,
-                        //                w.ProcedureId,
-                        //                w.StartTime,
-                        //                w.EndTime,
-                        //                w.UseTime,
-                        //                w.Worker,
-                        //                w.WorkerId
-                        //            };
-                        return JsonConvert.SerializeObject(Quary);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 2,
-                    errorMessage = ex.Message
-                });
-            }
-        }
-
+      
 
         /// <summary>
-        /// Bom表、工序、工时数据读取(胡工)
+        /// Bom表、工序、工时数据读取
         /// </summary>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
@@ -897,36 +833,39 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
+                        List<PurchaseDown> PurchaseDownList = context.PurchaseDown.
                             Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
+                        List<PurchaseProcedureInfo> PurchaseProcedureInfoList = context.PurchaseProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
-                        //var Quary = from p in PurchaseList
-                        //            join s in ProcedureInfoList
-                        //            on p.ProcedureId equals s.Id.ToString()
-                        //            join w in WorkTimeInfoList
-                        //            on s.Id.ToString() equals w.ProcedureId
-                        //            select new
-                        //            {
-                        //                p.TaskId,
-                        //                p.IsDown,
-                        //                p.Mark,
-                        //                p.MaterialScience,
-                        //                p.Name,
-                        //                p.Sorts,
-                        //                s.ApplyMan,
-                        //                s.ApplyManId,
-                        //                s.CreateTime,
-                        //                s.DefaultWorkTime,
-                        //                w.IsFinish,
-                        //                w.ProcedureId,
-                        //                w.StartTime,
-                        //                w.EndTime,
-                        //                w.UseTime,
-                        //                w.Worker,
-                        //                w.WorkerId
-                        //            };
-                        return JsonConvert.SerializeObject("");
+                        var Quary = from p in PurchaseDownList
+                                    join s in PurchaseProcedureInfoList on
+                                    p.PurchaseProcedureInfoId equals s.Id.ToString()
+                                    join pd in ProcedureInfoList on
+                                    s.ProcedureInfoId equals pd.Id.ToString()
+                                    join w in WorkTimeInfoList on
+                                    p.PurchaseProcedureInfoId equals w.PurchaseProcedureInfoId
+                                    select new
+                                    {
+                                        p.TaskId,
+                                        p.IsDown,
+                                        p.Mark,
+                                        p.MaterialScience,
+                                        p.Name,
+                                        p.Sorts,
+                                        //s.ApplyMan,
+                                        //s.ApplyManId,
+                                        s.CreateTime,
+                                        //s.DefaultWorkTime,
+                                        w.IsFinish,
+                                        //w.ProcedureId,
+                                        w.StartTime,
+                                        w.EndTime,
+                                        w.UseTime,
+                                        w.Worker,
+                                        w.WorkerId
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
                     }
                 }
             }
@@ -1028,7 +967,6 @@ namespace DingTalk.Controllers
         /// 绑定数据读取
         /// </summary>s
         /// <param name="ApplyManId">当前用户Id<param>
-        /// <param name="IsFinished">是否完成(不传默认未完成)</param>
         /// <param name="TaskId">流水号</param>
         /// <returns></returns>
         /// 测试数据：/DrawingDown/GetFinishInfo?ApplyManId=100328051024695354&TaskId=7
@@ -1042,81 +980,74 @@ namespace DingTalk.Controllers
                     List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == "7" && (u.NodeId.ToString() == "2" || u.NodeId.ToString() == "3")).Select(u => u.PeopleId).ToList();
                     if (ListPeopleId.Contains(ApplyManId))
                     {
-                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
-                       Where(u => u.TaskId == TaskId.ToString()).ToList();
+                        List<PurchaseDown> PurchaseDownList = context.PurchaseDown.
+                             Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
+                        List<PurchaseProcedureInfo> PurchaseProcedureInfoList = context.PurchaseProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
-                        List<PurchaseProcedureInfo> purchaseProcedureInfoList = context.PurchaseProcedureInfo.ToList();
-
-                        var Quary = from pp in purchaseProcedureInfoList
-                                    join p in PurchaseList on
-                                    pp.DrawingNo equals p.DrawingNo
+                        var Quary = from p in PurchaseDownList
+                                    join s in PurchaseProcedureInfoList on
+                                    p.PurchaseProcedureInfoId equals s.Id.ToString()
+                                    join pd in ProcedureInfoList on
+                                    s.ProcedureInfoId equals pd.Id.ToString()
                                     join w in WorkTimeInfoList on
-                                    pp.Id.ToString() equals w.PurchaseProcedureInfoId
+                                    p.PurchaseProcedureInfoId equals w.PurchaseProcedureInfoId
                                     select new
                                     {
                                         p.TaskId,
                                         p.IsDown,
                                         p.Mark,
-                                        p.Count,
-                                        p.Unit,
                                         p.MaterialScience,
                                         p.Name,
-                                        //p.Sorts,
-                                        //pp.ApplyMan,
-                                        //p.ApplyManId,
-                                        //p.CreateTime,
-                                        //p.DefaultWorkTime,
-                                        //w.IsFinish,
+                                        p.Sorts,
+                                        //s.ApplyMan,
+                                        //s.ApplyManId,
+                                        s.CreateTime,
+                                        //s.DefaultWorkTime,
+                                        w.IsFinish,
                                         //w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId,
-                                        w.Id
+                                        w.WorkerId
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
                     else
                     {
-                        List<PurchaseDown> PurchaseList = context.PurchaseDown.
-                       Where(u => u.TaskId == TaskId.ToString()).ToList();
+                        List<PurchaseDown> PurchaseDownList = context.PurchaseDown.
+                             Where(u => u.TaskId == TaskId.ToString()).ToList();
                         List<ProcedureInfo> ProcedureInfoList = context.ProcedureInfo.ToList();
+                        List<PurchaseProcedureInfo> PurchaseProcedureInfoList = context.PurchaseProcedureInfo.ToList();
                         List<WorkTime> WorkTimeInfoList = context.WorkTime.ToList();
-                        List<PurchaseProcedureInfo> purchaseProcedureInfoList = context.PurchaseProcedureInfo.ToList();
-
-                        var Quary = from pp in purchaseProcedureInfoList
-                                    join w in WorkTimeInfoList
-                                    on pp.Id.ToString() equals w.PurchaseProcedureInfoId
-                                    join p in ProcedureInfoList
-                                    on pp.ProcedureInfoId equals p.Id.ToString()
-                                    join pu in PurchaseList
-                                    on pp.Id.ToString() equals pu.PurchaseProcedureInfoId
-                                    where w.WorkerId == ApplyManId
+                        var Quary = from p in PurchaseDownList
+                                    join s in PurchaseProcedureInfoList on
+                                    p.PurchaseProcedureInfoId equals s.Id.ToString()
+                                    join pd in ProcedureInfoList on
+                                    s.ProcedureInfoId equals pd.Id.ToString()
+                                    join w in WorkTimeInfoList on
+                                    p.PurchaseProcedureInfoId equals w.PurchaseProcedureInfoId
+                                    where w.WorkerId==ApplyManId
                                     select new
                                     {
-                                        pu.TaskId,
-                                        pu.IsDown,
-                                        pu.Mark,
-                                        pu.Count,
-                                        pu.Unit,
-                                        pu.MaterialScience,
-                                        pu.Name,
-                                        //p.Sorts,
-                                        p.ProcedureName,
-                                        p.ApplyMan,
-                                        p.ApplyManId,
-                                        p.CreateTime,
-                                        p.DefaultWorkTime,
+                                        p.TaskId,
+                                        p.IsDown,
+                                        p.Mark,
+                                        p.MaterialScience,
+                                        p.Name,
+                                        p.Sorts,
+                                        //s.ApplyMan,
+                                        //s.ApplyManId,
+                                        s.CreateTime,
+                                        //s.DefaultWorkTime,
                                         w.IsFinish,
-                                        w.PurchaseProcedureInfoId,
+                                        //w.ProcedureId,
                                         w.StartTime,
                                         w.EndTime,
                                         w.UseTime,
                                         w.Worker,
-                                        w.WorkerId,
-                                        w.Id
+                                        w.WorkerId
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
@@ -1135,9 +1066,7 @@ namespace DingTalk.Controllers
         #endregion
 
         #region 图纸管理
-
-
-
+        
         #endregion
 
 
