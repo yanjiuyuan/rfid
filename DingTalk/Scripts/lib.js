@@ -177,6 +177,12 @@ var mixin = {
             ],
             ProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
+            ],
+            inputProjectId: [
+                { required: true, message: '内容不能为空！', trigger: 'change' }
+            ],
+            inputProjectName: [
+                { required: true, message: '内容不能为空！', trigger: 'change' }
             ]
         },
         pickerOptions: pickerOptions,

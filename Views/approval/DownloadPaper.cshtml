@@ -599,12 +599,14 @@
             //加载项目信息
             loadProject(id) {
                 var that = this
+                var ajaxUrl = "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=" + DingData.userid
+                ajaxUrl = "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=100129143832917819"
                 $.ajax({
-                    url: "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=" + DingData.userid,
+                    url: ajaxUrl,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("加载项目信息!-" + "/DrawingDown/GetDrawingDownInfo?ProjectId=" + id + "&ApplyManId=" + DingData.userid)
+                        console.log(ajaxUrl)
                         console.log(data)
 
                         that.parts = []

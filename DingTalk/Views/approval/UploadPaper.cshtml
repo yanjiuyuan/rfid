@@ -56,11 +56,11 @@
         </el-form-item>
         
         <template v-if="showAddProject">
-            <el-form-item label="项目名称" prop="ProjectName">
-                <el-input v-model="ruleForm.ProjectName"></el-input>
+            <el-form-item label="项目名称" prop="inputProjectName">
+                <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            <el-form-item label="项目编号" prop="ProjectName">
-                <el-input v-model="ruleForm.ProjectId"></el-input>
+            <el-form-item label="项目编号" prop="inputProjectId">
+                <el-input v-model="ruleForm.inputProjectId"></el-input>
             </el-form-item>
             <el-form-item label="开始日期">
                 <el-date-picker v-model="ruleForm.Time"
@@ -157,7 +157,8 @@
                     OldImageUrl: '',
                     FileUrl: '',
                     OldFileUrl: '',
-                    ProjectId: '',
+                    inputProjectName: '',
+                    inputProjectId: '',
                     copyers: ['小唐', '季老师'],
 
                     ProjectName: '',
@@ -466,7 +467,7 @@
             addProject() {
                 var that = this
                 var param = {
-                    "ProjectName": this.ruleForm.ProjectName,
+                    "ProjectName": this.ruleForm.inputProjectName,
                     "CreateTime": _getTime(),
                     "IsEnable": true,
                     "IsFinish": false,
@@ -475,7 +476,7 @@
                     "ApplyManId": DingData.userid,
                     "StartTime": _dateToString(this.ruleForm.Time[0]),
                     "EndTime": _dateToString(this.ruleForm.Time[1]),
-                    "ProjectId": this.ruleForm.ProjectId
+                    "ProjectId": this.ruleForm.inputProjectId
                 }
                 console.log(param)
                 $.ajax({
@@ -486,8 +487,8 @@
                     data: JSON.stringify(param),
                     success: function (data) {
                         that.projestList.push({
-                            ProjectId: that.ruleForm.ProjectId,
-                            ProjectName: that.ruleForm.ProjectName
+                            ProjectId: that.ruleForm.inputProjectId,
+                            ProjectName: that.ruleForm.inputProjectName
                         })
                         console.log(data);
                         that.showAddProject = false
