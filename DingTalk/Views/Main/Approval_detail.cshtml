@@ -69,7 +69,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+                @*<el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>*@
                 <el-button type="danger" :disabled="disablePage">不同意</el-button>
             </el-form-item>
         </template>

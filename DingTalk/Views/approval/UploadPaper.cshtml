@@ -108,7 +108,7 @@
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">不超过2M</div>
+                <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
 
@@ -450,9 +450,9 @@
                 console.log('before file')
                 console.log(file)
                 file.name = 'helloWorld'
-                const isLt2M = file.size / 1024 / 1024 < 2
+                const isLt2M = file.size / 1024 / 1024 < 30
                 if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 2MB!')
+                    this.$message.error('上传图片大小不能超过 30MB!')
                     return false
                 }
                 return true
