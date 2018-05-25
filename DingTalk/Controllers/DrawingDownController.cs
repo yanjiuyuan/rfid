@@ -965,6 +965,7 @@ namespace DingTalk.Controllers
                                     p.PurchaseProcedureInfoId equals w.PurchaseProcedureInfoId
                                     select new
                                     {
+
                                         p.TaskId,
                                         p.IsDown,
                                         p.Mark,
