@@ -1,8 +1,10 @@
-﻿using DingTalkServer;
+﻿using DingTalk.Models;
+using DingTalkServer;
 using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,7 +15,7 @@ using System.Web.Http;
 
 namespace DingTalk.Controllers
 {
-    [RoutePrefix("api/dt")]
+    [RoutePrefix("DingTalkServers")]
     //[EnableCors(origins: "*", headers: "*", methods: "*")]
 
     public class DingTalkServersController : ApiController
@@ -95,16 +97,20 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> GetDepartmentUserList()
         {
-            string dptId = "1";
+            string dptId = "34894112";
             var result = await dtManager.GetDepartmentUserList(dptId);
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Route("getDepartmentUserDetailList")]
         [HttpPost]
         public async Task<string> GetDepartmentUserDetailList()
         {
-            string dptId = "34894112";
+            string dptId = "56943182";
             var result = await dtManager.GetDepartmentUserDetailList(dptId);
             return result;
         }
@@ -200,16 +206,17 @@ namespace DingTalk.Controllers
         #endregion
 
         #region 发送企业消息
+        
         [Route("sendTextMessage")]
         [HttpPost]
         public async Task<string> SendTextMessage()
         {
             var msgModel = new TextMsgModel()
             {
-                Agentid = DTConfig.AgentId,
+                agentid = DTConfig.AgentId,
                 Content = "测试一条消息",
                 //Toparty = "32760351"
-                Touser = "manager3312",
+                touser = "manager3312",
             };
             return await dtManager.SendMessage(msgModel);
         }
@@ -220,9 +227,9 @@ namespace DingTalk.Controllers
         {
             var msgModel = new ImageMsgModel()
             {
-                Agentid = "86624962",
+                agentid = "86624962",
                 MediaId = "@lADOuMXP4cyWzMg",
-                Touser = "manager9585"
+                touser = "manager9585"
             };
             return await dtManager.SendMessage(msgModel);
         }
@@ -233,25 +240,39 @@ namespace DingTalk.Controllers
             var voiceFileName = HttpContext.Current.Server.MapPath("~/测试媒体文件/声音测试.amr");
             var msgModel = new VoiceMsgModel()
             {
-                Agentid = "86624962",
+                agentid = "86624962",
                 Voice = new Voice()
                 {
                     Media_id = "@lATOuNF5hM5IqrCXzi8wWuE",
                     Duration = dtManager.GetAMRFileDuration(voiceFileName).ToString()
                 },
-                Touser = "manager9585"
+                touser = "manager9585"
             };
             return await dtManager.SendMessage(msgModel);
         }
+
+
+        /// <summary>
+        /// 向用户推送文件消息
+        /// </summary>
+        /// <returns></returns>
+        /// 测试数据： DingTalkServers/sendFileMessage
+        /// UserId 用户Id   MediaId 盯盘文件唯一Id
+        /// data:{ "UserId":"manager325","MediaId":"@@lAjPBY0V43mDr87ODCczbc5-853G"}
         [Route("sendFileMessage")]
         [HttpPost]
-        public async Task<string> SendFileMessage()
+        public async Task<string> SendFileMessage([FromBody]FileSendModel fileSendModel)
         {
+            DingTalkConfig dingTalkConfig = new DingTalkConfig();
             var msgModel = new FileMsgModel()
             {
-                Agentid = "86624962",
-                MediaId = "@lAjOuNSfk84SSGNIzhXriIw",
-                Touser = "manager9585"
+                agentid = dingTalkConfig.AgentId,
+                file = new file
+                {
+                    media_id = fileSendModel.Media_Id
+                },
+                touser = fileSendModel.UserId,
+                messageType = MessageType.File
             };
             return await dtManager.SendMessage(msgModel);
         }
@@ -262,7 +283,7 @@ namespace DingTalk.Controllers
         {
             var msgModel = new LinkMsgModel()
             {
-                Agentid = "86624962",
+                agentid = "86624962",
                 Link = new Link()
                 {
                     MessageUrl = "http://test.xiaogj.com",
@@ -270,7 +291,7 @@ namespace DingTalk.Controllers
                     Title = "测试",
                     Text = "测试内容"
                 },
-                Touser = "manager9585"
+                touser = "manager9585"
             };
             return await dtManager.SendMessage(msgModel);
         }
@@ -284,39 +305,46 @@ namespace DingTalk.Controllers
             return await dtManager.GetMessageStatus(messageId);
         }
 
+
+        /// <summary>
+        /// 盯盘文件上传
+        /// </summary>
+        /// <returns>media_Id: 返回唯一盯盘唯一Id</returns>
+        /// 测试数据 api/dt/uploadMedia/
+        /// Json : data:{"":"~/测试媒体文件/图片测试.jpg"}
         [Route("uploadMedia")]
         [HttpPost]
-        public async Task<string> UploadMedia()
+        public async Task<string> UploadMedia([FromBody] string Path)
         {
-
-            //var imageFileName =HttpContext.Current.Server.MapPath("~/测试媒体文件/图片测试.jpg");
-            //var uploadModel = new UploadMediaRequestModel()
-            //{
-            //    FileName = imageFileName,
-            //    MediaType = UploadMediaType.Image
-            //};
-
-            //var voiceFileName = HttpContext.Current.Server.MapPath("~/测试媒体文件/声音测试.amr");
-            //var uploadVoiceModel = new UploadMediaRequestModel()
-            //{
-            //    FileName = voiceFileName,
-            //    MediaType = UploadMediaType.Voice
-            //};
-
-            var fileName = HttpContext.Current.Server.MapPath("~/测试媒体文件/测试文本.txt");
-            var uploadVoiceModel = new UploadMediaRequestModel()
+            var fileName = "";
+            if (string.IsNullOrEmpty(Path))  //测试数据
+            {
+                fileName = HttpContext.Current.Server.MapPath("~/测试媒体文件/测试文本123.txt");
+            }
+            else
+            {
+                fileName = HttpContext.Current.Server.MapPath(Path);
+            }
+            var uploadFileModel = new UploadMediaRequestModel()
             {
                 FileName = fileName,
                 MediaType = UploadMediaType.File
             };
-            return await dtManager.UploadFile(uploadVoiceModel);
+            return await dtManager.UploadFile(uploadFileModel);
         }
+
+        /// <summary>
+        /// 盯盘文件下载
+        /// </summary>
+        /// <returns>media_Id: 返回唯一盯盘唯一Id</returns>
+        /// 测试数据 api/dt/downloadFile/
+        /// Json : data:{"":"~/测试媒体文件/图片测试.jpg"}
         [Route("downloadFile")]
         [HttpPost]
         public async Task<string> DownloadFile()
         {
-            var fileName = HttpContext.Current.Server.MapPath("~/down.jpg");
-            string mediaId = "@lADOuMXP4cyWzMg";
+            var fileName = HttpContext.Current.Server.MapPath("~/测试媒体文件/测试文本1.txt");
+            string mediaId = "@lAjPBY0V43XEsAzOUTGfZ84EXA46";
             var result = await dtManager.DownloadFile(mediaId, fileName);
             return result;
         }

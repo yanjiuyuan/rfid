@@ -253,6 +253,7 @@
     <Compile Include="Models\DrowDownModel.cs" />
     <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\FileMsgModel.cs" />
+    <Compile Include="Models\FileSendModel.cs" />
     <Compile Include="Models\ImageMsgModel.cs" />
     <Compile Include="Models\LinkMsgModel.cs" />
     <Compile Include="Models\MessageRequestBaseModel.cs" />
@@ -274,6 +275,7 @@
     <Content Include="Content\gif\dt-5.gif" />
     <Content Include="Content\gif\dt-6.gif" />
     <Content Include="Content\gif\more.gif" />
+    <Content Include="Content\images\approve.png" />
     <Content Include="Content\images\card1.jpg" />
     <Content Include="Content\images\card2.jpg" />
     <Content Include="Content\images\card3.jpg" />
@@ -288,6 +290,7 @@
     <Content Include="Content\images\scoll5.jpg" />
     <Content Include="Content\images\scoll6.jpg" />
     <Content Include="Content\images\title.png" />
+    <Content Include="Content\images\受控章.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

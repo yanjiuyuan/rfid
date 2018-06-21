@@ -17,7 +17,6 @@ namespace DingTalkServer
             _client.QueryString.Add("userid", userId);
             var url = _addressConfig.GetUserDetailUrl;
             var result = await _client.Get(url);
-
             return result;
 
         }
@@ -28,7 +27,6 @@ namespace DingTalkServer
             var url = _addressConfig.GetDepartmentUserListUrl;
             var result = await _client.Get(url);
             return result;
-
         }
 
         public  Task<string> GetDepartmentUserDetailList(string dptId)
@@ -45,7 +43,6 @@ namespace DingTalkServer
             var url = _addressConfig.CreateUserUrl;
             var result =  _client.UploadModel(url,user);
             return result;
-
         }
 
         public Task<string> UpdateUser(AddUserRequestModel user)
@@ -61,7 +58,6 @@ namespace DingTalkServer
             _client.QueryString.Add("userid", userId);
             var result = _client.Get(url);
             return result;
-
         }
 
         public Task<string> BatchDeleteUser(BatchDeleteUserModel deleteModel)

@@ -9,7 +9,7 @@ namespace DingTalkServer.Models
     {
         public LinkMsgModel()
         {
-            this.MessageType = MessageType.Link;
+            this.messageType = MessageType.Link;
         }
         public Link Link { get; set; }
 

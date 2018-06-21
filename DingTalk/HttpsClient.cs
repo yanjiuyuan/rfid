@@ -56,7 +56,7 @@ namespace DingTalkServer
             //var 
             await this.DownloadFileTaskAsync(_url, fileName);
             this.Dispose();
-            return "下载失败";
+            return "下载成功";
         }
 
         public Task<string> UploadModel<T>(string url, T data)

@@ -11,7 +11,7 @@ namespace DingTalkServer.Models
         //private string _content;
         public TextMsgModel()
         {
-            this.MessageType = MessageType.Text;
+            this.messageType = MessageType.Text;
         }
         [JsonIgnore]
         public string Content

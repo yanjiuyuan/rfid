@@ -9,7 +9,7 @@ namespace DingTalkServer.Models
     {
         public VoiceMsgModel()
         {
-            this.MessageType = MessageType.Voice;
+            this.messageType = MessageType.Voice;
         }
         public Voice Voice { get; set; }
 

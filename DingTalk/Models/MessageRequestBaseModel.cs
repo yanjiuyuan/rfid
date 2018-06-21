@@ -9,13 +9,13 @@ namespace DingTalkServer.Models
 {
     public class MessageRequestBaseModel
     {
-        public string Touser { get; set; }
-        public string Toparty { get; set; }
+        public string touser { get; set; }
+        public string toparty { get; set; }
         [Required]
-        public string Agentid { get; set; }
+        public string agentid { get; set; }
         [JsonIgnore]
-        public MessageType MessageType { get; set; } = MessageType.Text;
-        public string Msgtype { get { return GetDispayName(MessageType); } }
+        public MessageType messageType { get; set; } = MessageType.Text;
+        public string msgtype { get { return GetDispayName(messageType); } }
         public string GetDispayName(MessageType type)
         {
             return type.ToString().ToLower();
@@ -36,8 +36,6 @@ namespace DingTalkServer.Models
         Link,
         [Display(Name ="oa")]
         Oa
-
-
     }
 
     
