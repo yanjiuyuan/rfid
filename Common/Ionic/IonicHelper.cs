@@ -43,6 +43,7 @@ namespace Common.Ionic
                     }
                     catch
                     {
+
                     }
                 }
             }
@@ -77,6 +78,7 @@ namespace Common.Ionic
                 }
                 catch
                 {
+
                 }
             }
             return decompressedStream;

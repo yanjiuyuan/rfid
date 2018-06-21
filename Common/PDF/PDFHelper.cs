@@ -47,7 +47,7 @@ namespace Common.PDF
         /// <param name="dtApproveView">审批意见数据</param>
         public string GeneratePDF(string FlowName, string TaskId, string ApplyName,
             string ApplyTime, string ProjectName, string ImageNo
-            ,DataTable dtSourse, DataTable dtApproveView)
+            , DataTable dtSourse, DataTable dtApproveView)
         {
             doc = new Document(PageSize.A4);
             try
@@ -160,7 +160,7 @@ namespace Common.PDF
 
                 #region 打印审批人
 
-                int iResult = 3;  //每行打印数量
+                int iResult = 2;  //每行打印数量
 
                 if (dtApproveView.Rows.Count > 0)
                 {
@@ -175,7 +175,7 @@ namespace Common.PDF
                         content.Add(2 * j + 1, chunkText);
                         content.Alignment = 10;
                         j++;
-                        if (i % iResult == 0)
+                        if (i != 0 && i % iResult == 0)
                         {
                             doc.Add(content);
                             j = 0;

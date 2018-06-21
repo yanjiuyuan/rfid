@@ -306,8 +306,10 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 打印表单数据、盖章、推送
         /// </summary>
-        /// 测试数据 /DrawingUpload/PDFTest?UserId=020821466340361583&TaskId=3&OldPath=~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF
+        /// 测试数据 /DrawingUpload/PDFTest?UserId=083452125733424957&TaskId=3&OldPath=~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF
         [HttpGet]
+        //public async Task<string> PDFTest(string UserId, string TaskId, string OldPath)
+
         public async Task<string> PDFTest(string UserId, string TaskId, string OldPath)
         {
             PDFHelper pdfHelper = new PDFHelper();
@@ -358,12 +360,12 @@ namespace DingTalk.Controllers
                 //上传盯盘获取MediaId
                 var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
                 SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
-                var results = await otherController.UploadMedia(SavePath);
+                var resultUploadMedia = await otherController.UploadMedia(SavePath);
                 //推送用户
-                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(results);
+                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                 fileSendModel.UserId = UserId;
                 var result = await otherController.SendFileMessage(fileSendModel);
-                return results;
+                return result;
             }
         }
 
