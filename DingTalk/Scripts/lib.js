@@ -187,6 +187,7 @@ var mixin = {
         },
         pickerOptions: pickerOptions,
         currentPage: 1,
+        totalRows: 0,
         pageSize: 5
     },
     methods: {
@@ -341,6 +342,15 @@ Vue.component('sam-approver-list', {
                             if (dontExist) node.AddPeople.push(d)
                         }
                     }
+                    DingTalkPC.device.notification.alert({
+                        message: JSON.stringify(data),
+                        title: "提示",//可传空
+                        buttonName: "收到",
+                        onSuccess: function () {
+                            /*回调*/
+                        },
+                        onFail: function (err) { }
+                    });
                     console.log(data)
                     console.log(that.nodelist)
                 },
