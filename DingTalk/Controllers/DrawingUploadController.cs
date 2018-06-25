@@ -306,66 +306,83 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 打印表单数据、盖章、推送
         /// </summary>
-        /// 测试数据 /DrawingUpload/PDFTest?UserId=083452125733424957&TaskId=3&OldPath=~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF
-        [HttpGet]
-        //public async Task<string> PDFTest(string UserId, string TaskId, string OldPath)
-
-        public async Task<string> PDFTest(string UserId, string TaskId, string OldPath)
+        /// 测试数据   /DrawingUpload/PrintAndSend
+        /// data:{ "UserId":"083452125733424957","TaskId":"3","OldPath":"~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF" }
+        [HttpPost]
+        public async Task<string> PrintAndSend()
         {
-            PDFHelper pdfHelper = new PDFHelper();
-            using (DDContext context = new DDContext())
+            StreamReader reader = new StreamReader(Request.InputStream);
+            string PrintAndSendJson = reader.ReadToEnd();
+            if (string.IsNullOrEmpty(PrintAndSendJson))
             {
-                //获取表单信息
-                Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
-                string FlowId = tasks.FlowId.ToString();
-                string ProjectId = tasks.ProjectId;
-                List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
-                DataTable dtSourse = ToDataTable(PurchaseList);
-                List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
-                foreach (NodeInfo nodeInfo in NodeInfoList)
+                return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    if (string.IsNullOrEmpty(nodeInfo.NodePeople))
+                    errorCode = 1,
+                    errorMessage = "载入数据不能为空！"
+                });
+            }
+            else
+            {
+                PrintAndSendModel printAndSendModel = JsonConvert.DeserializeObject<PrintAndSendModel>(PrintAndSendJson);
+                string TaskId = printAndSendModel.TaskId;
+                string UserId = printAndSendModel.UserId;
+                string OldPath = printAndSendModel.OldPath;
+                PDFHelper pdfHelper = new PDFHelper();
+                using (DDContext context = new DDContext())
+                {
+                    //获取表单信息
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
+                    string FlowId = tasks.FlowId.ToString();
+                    string ProjectId = tasks.ProjectId;
+                    List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
+                    DataTable dtSourse = ToDataTable(PurchaseList);
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
+                    foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
-                        string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
-                        nodeInfo.NodePeople = strNodePeople;
+                        if (string.IsNullOrEmpty(nodeInfo.NodePeople))
+                        {
+                            string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
+                            nodeInfo.NodePeople = strNodePeople;
+                        }
                     }
-                }
-                DataTable dtApproveView = ToDataTable(NodeInfoList);
-                string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
-                string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
-                //绘制BOM表单PDF
-                string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                ProjectName, "1", dtSourse, dtApproveView);
-                string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
-             
-                string[] Paths = OldPath.Split(',');
+                    DataTable dtApproveView = ToDataTable(NodeInfoList);
+                    string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
+                    string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
+                    //绘制BOM表单PDF
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
+                    ProjectName, "1", dtSourse, dtApproveView);
+                    string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
-                List<string> newPaths = new List<string>();
-                RelativePath= AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/','\\');
-                newPaths.Add(RelativePath);
-                foreach (string pathChild in Paths)
-                {
-                    string AbPath = AppDomain.CurrentDomain.BaseDirectory + pathChild.Substring(2, pathChild.Length - 2);
-                    //PDF盖章 保存路径
-                    newPaths.Add(pdfHelper.PDFWatermark(AbPath,
-                    string.Format(@"{0}\UploadFile\PDF\{1}",
-                    AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(pathChild)),
-                    string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
-                    100, 100));
-                }
-                string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
-                //文件压缩打包
-                IonicHelper.CompressMulti(newPaths, SavePath, false);
+                    string[] Paths = OldPath.Split(',');
 
-                //上传盯盘获取MediaId
-                var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
-                SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
-                var resultUploadMedia = await otherController.UploadMedia(SavePath);
-                //推送用户
-                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                fileSendModel.UserId = UserId;
-                var result = await otherController.SendFileMessage(fileSendModel);
-                return result;
+                    List<string> newPaths = new List<string>();
+                    RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
+                    newPaths.Add(RelativePath);
+                    foreach (string pathChild in Paths)
+                    {
+                        string AbPath = AppDomain.CurrentDomain.BaseDirectory + pathChild.Substring(2, pathChild.Length - 2);
+                        //PDF盖章 保存路径
+                        newPaths.Add(pdfHelper.PDFWatermark(AbPath,
+                        string.Format(@"{0}\UploadFile\PDF\{1}",
+                        AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(pathChild)),
+                        string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
+                        100, 100));
+                    }
+                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                    //文件压缩打包
+                    IonicHelper.CompressMulti(newPaths, SavePath, false);
+
+                    //上传盯盘获取MediaId
+                    var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
+                    SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
+                    var resultUploadMedia = await otherController.UploadMedia(SavePath);
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = UserId;
+                    var result = await otherController.SendFileMessage(fileSendModel);
+                    return result;
+                }
+
             }
         }
 

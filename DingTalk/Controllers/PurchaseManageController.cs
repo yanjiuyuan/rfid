@@ -1,5 +1,6 @@
 ﻿using DingTalk.Models;
 using DingTalk.Models.DbModels;
+using DingTalk.Models.KisModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,43 @@ namespace DingTalk.Controllers
                 {
                     errorCode = 1,
                     errorMessage = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// 金蝶产品信息读取
+        /// </summary>
+        /// <param name="Key">查询关键字</param>
+        /// <returns></returns>
+        /// 测试数据 /Purchase/GetICItem?Key=电
+        [Route("GetICItem")]
+        [HttpGet]
+        public string GetICItem(string Key)
+        {
+            try
+            {
+                using (KisContext context=new KisContext ())
+                {
+                    var ICItemList = context.t_ICItem.ToList();
+                    var Quary = from t in ICItemList
+                                where t.FName.Contains(Key) || t.FNumber.Contains(Key)
+                                select new
+                                {
+                                    t.FNumber, //物料编码
+                                    t.FName,  //物料名称
+                                    t.FModel, //规格
+                                    t.FOrderPrice  //单价
+                                };
+                    return JsonConvert.SerializeObject(Quary);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel() {
+                    errorCode=1,
+                    errorMessage=ex.Message
                 });
             }
         }
