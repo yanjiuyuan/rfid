@@ -38,10 +38,8 @@ namespace DingTalk.Models.DbModels
 
         public int? State { get; set; }
 
-        [StringLength(500)]
         public string ImageUrl { get; set; }
 
-        [StringLength(500)]
         public string FileUrl { get; set; }
 
         public string Title { get; set; }
@@ -51,12 +49,12 @@ namespace DingTalk.Models.DbModels
 
         public bool? IsPost { get; set; }
 
-        [StringLength(500)]
         public string OldImageUrl { get; set; }
 
-        [StringLength(500)]
         public string OldFileUrl { get; set; }
 
         public bool? IsBack { get; set; }
+
+        public string MediaId { get; set; }
     }
 }

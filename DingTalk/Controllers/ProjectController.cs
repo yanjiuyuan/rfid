@@ -1,11 +1,17 @@
 ﻿using Common.JsonHelper;
+using Common.PDF;
 using DingTalk.Models;
 using DingTalk.Models.DbModels;
+using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -120,6 +126,44 @@ namespace DingTalk.Controllers
                     errorCode = 2,
                     errorMessage = ex.Message
                 });
+            }
+        }
+        
+        /// <summary>
+        /// 文件下载
+        /// </summary>
+        /// 测试数据 /Project/PDFReadTest
+        public void PDFReadTest()
+        {
+            PDFHelper pdfHelper = new PDFHelper();
+            pdfHelper.PDFWatermark(string.Format(@"{0}\UploadFile\PDF\123.PDF", AppDomain.CurrentDomain.BaseDirectory),
+                string.Format(@"{0}\UploadFile\PDF\321.PDF", AppDomain.CurrentDomain.BaseDirectory),
+                string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
+                100, 100
+            );
+            DownloadFile(string.Format("{0}.pdf", DateTime.Now.ToString("yyyyMMdd hh:mm:ss")), string.Format(@"{0}\UploadFile\PDF\321.PDF", AppDomain.CurrentDomain.BaseDirectory));
+        }
+
+        public void DownloadFile(string flieName, string filePath)
+        {
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(filePath);
+            if (fileInfo.Exists == true)
+            {
+                const long ChunkSize = 102400;//100K 每次读取文件，只读取100K，这样可以缓解服务器的压力
+                byte[] buffer = new byte[ChunkSize];
+                Response.Clear();
+                System.IO.FileStream iStream = System.IO.File.OpenRead(filePath);
+                long dataLengthToRead = iStream.Length;//获取下载的文件总大小
+                Response.ContentType = "application/octet-stream";
+                Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(flieName));
+                while (dataLengthToRead > 0 && Response.IsClientConnected)
+                {
+                    int lengthRead = iStream.Read(buffer, 0, Convert.ToInt32(ChunkSize));//读取的大小
+                    Response.OutputStream.Write(buffer, 0, lengthRead);
+                    Response.Flush();
+                    dataLengthToRead = dataLengthToRead - lengthRead;
+                }
+                Response.Close();
             }
         }
     }

@@ -10,7 +10,7 @@ namespace DingTalkServer.Models
     {
         public ImageMsgModel()
         {
-            this.MessageType = MessageType.Image;
+            this.messageType = MessageType.Image;
         }
         [JsonIgnore]
         public string MediaId { get; set; }

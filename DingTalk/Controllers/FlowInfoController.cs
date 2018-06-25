@@ -5,6 +5,7 @@ using DingTalk.Models.DbModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace DingTalk.Controllers
                         tasks.TaskId = TaskId;
                         using (DDContext context = new DDContext())
                         {
-                           
+
                             //修改任务流状态
                             if (taskList.IndexOf(tasks) == 0)
                             {
@@ -149,7 +150,7 @@ namespace DingTalk.Controllers
                 else
                 {
                     List<Tasks> taskList = JsonHelper.JsonToObject<List<Tasks>>(stream);
-                     
+
 
                     //调用寻人接口
                     Tasks Findtasks = taskList[0];
@@ -472,7 +473,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId== NodeId).PreNodeId;
+                string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == NodeId).PreNodeId;
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodeName;
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
@@ -1097,7 +1098,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                List<PurchaseProcedureInfo> purchaseDown = context.PurchaseProcedureInfo.ToList();
+                List<PurchaseTable> purchaseDown = context.PurchaseTable.ToList();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
@@ -1214,6 +1215,6 @@ namespace DingTalk.Controllers
             return j;
         }
         #endregion
-
+        
     }
 }
