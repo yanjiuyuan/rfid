@@ -155,6 +155,7 @@
                     OldImageUrl: '',
                     FileUrl: '',
                     OldFileUrl: '',
+                    MediaId: '',
                     inputProjectName: '',
                     inputProjectId: '',
                     copyers: ['小唐', '季老师'],
@@ -197,8 +198,8 @@
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
                         
-                        for (let node of this.nodeList) {
-                            if (node.NodeId == (this.nodeInfo.NodeId + 1)) {
+                        for (let node of that.nodeList) {
+                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
                                 console.log(node)
                                 console.log(node.AddPeople)
                                 if (!that.preApprove && node.AddPeople.length == 0) {
