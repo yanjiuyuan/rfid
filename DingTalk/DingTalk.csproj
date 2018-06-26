@@ -408,6 +408,7 @@
     <Content Include="Views\Main\Approval_detail2.cshtml" />
     <Content Include="Scripts\pdf.js.map" />
     <Content Include="Scripts\pdf.worker.js.map" />
+    <Content Include="Views\approval\Purchase.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

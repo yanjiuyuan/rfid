@@ -186,7 +186,9 @@ var mixin = {
             ]
         },
         pickerOptions: pickerOptions,
+        showAddProject: false,
         currentPage: 1,
+        totalRows: 0,
         pageSize: 5
     },
     methods: {
@@ -206,7 +208,77 @@ var mixin = {
         handleCurrentChange: function (val) {
             this.currentPage = val
             this.getData()
-        }
+        },
+        //添加项目
+        addProject() {
+            var that = this
+            var param = {
+                "ProjectName": this.ruleForm.inputProjectName,
+                "CreateTime": _getTime(),
+                "IsEnable": true,
+                "IsFinish": false,
+                "DeptName": "智慧工厂事业部",
+                "ApplyMan": DingData.nickName,
+                "ApplyManId": DingData.userid,
+                "StartTime": _dateToString(this.ruleForm.Time[0]),
+                "EndTime": _dateToString(this.ruleForm.Time[1]),
+                "ProjectId": this.ruleForm.inputProjectId
+            }
+            console.log(param)
+            $.ajax({
+                url: "/Project/AddProject",
+                type: "POST",
+                dataType: "json",
+                async: false,
+                data: JSON.stringify(param),
+                success: function (data) {
+                    that.projestList.push({
+                        ProjectId: that.ruleForm.inputProjectId,
+                        ProjectName: that.ruleForm.inputProjectName
+                    })
+                    console.log(data);
+                    that.showAddProject = false
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                }
+            })
+        },
+        //获取节点数据GetNodeInfo
+        getNodeInfo() {
+            var that = this
+            $.ajax({
+                url: "/FlowInfo/GetNodeInfo?NodeId=0&FlowId=" + FlowId,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log("获取节点数据 GetNodeInfo")
+                    console.log("/FlowInfo/GetNodeInfo?NodeId=0&FlowId=" + FlowId)
+                    console.log(data)
+                    that.nodeInfo = data[0]
+                    that.preApprove = !data[0].IsNeedChose
+                    that.preCopy = !data[0].IsSendChose
+                    console.log(that.nodeInfo)
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                }
+            })
+            console.log("/Project/GetAllProJect?ApplyManId=" + DingData.userid)
+            $.ajax({
+                url: "/Project/GetAllProJect?ApplyManId=" + DingData.userid,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log("获取项目列表数据 GetAllProJect")
+                    console.log(data)
+                    that.projestList = data
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                }
+            })
+        },
     }
 }
 
@@ -341,6 +413,15 @@ Vue.component('sam-approver-list', {
                             if (dontExist) node.AddPeople.push(d)
                         }
                     }
+                    DingTalkPC.device.notification.alert({
+                        message: JSON.stringify(data),
+                        title: "提示",//可传空
+                        buttonName: "收到",
+                        onSuccess: function () {
+                            /*回调*/
+                        },
+                        onFail: function (err) { }
+                    });
                     console.log(data)
                     console.log(that.nodelist)
                 },
