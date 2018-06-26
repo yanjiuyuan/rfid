@@ -27,6 +27,7 @@ Thumbs.db
 *.xlsx
 *.jpg
 *.pdf
+DingTalk/*.config
 *.config
 obj/
 [Rr]elease*/
