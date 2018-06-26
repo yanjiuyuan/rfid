@@ -31,19 +31,11 @@
 <script>
     var imgConfig = [
         {
-            flowId: 8,
+            flowId: 1,
             sortId: 1,
-            url: '',
-            url: '/approval/Purchase',
+            //url: '/approval/officesupplies',
             position: '-774px -227px'
         },
-        //{
-        //    flowId: 1,
-        //    sortId: 1,
-        //    url: '',
-        //    url: '/approval/OfficeSupplies',
-        //    position: '-414px -137px'
-        //},
         {
             flowId: 2,
             sortId: 1,
@@ -83,6 +75,12 @@
             sortId: 3,
             url: '/approval/DownloadPaper',
             position: '-324px -227px'
+        },
+        {
+            flowId: 8,
+            sortId: 4,
+            url: '/approval/Purchase',
+            position: '-414px -137px'
         }
     ]
     var demo = new Vue({
@@ -90,7 +88,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [1,2,3],
+                activeNames: [1,2,3,4],
                 count: 2,
                 menu: [],
                 list: [],
@@ -108,6 +106,8 @@
                     cache: false,
                     success: function (data) {
                         that.menu = data
+                        console.log('/FlowInfo/LoadFlowSort?id=123')
+                        console.log(that.menu)
                         $.ajax({
                             url: '/FlowInfo/LoadFlowInfo?id=123',
                             dataType: 'json',
@@ -115,6 +115,9 @@
                             cache: false,
                             success: function (data) {
                                 that.list = _mergeObjectArr(data, imgConfig, 'flowId')
+                                console.log()
+                                console.log('/FlowInfo/LoadFlowInfo?id=123')
+                                console.log(that.list)
                             }
                         })
                     }
