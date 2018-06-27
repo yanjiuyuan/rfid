@@ -194,11 +194,14 @@
             onSubmit(formName) {
                 var that = this
                 this.$refs[formName].validate((valid) => {
-                    if (valid && that.purchaseList.length>0) {
+                    if (valid && that.purchaseList.length > 0) {
+                        var title
+                        for (let p of that.projestList) {
+                            if (p.ProjectId == that.ruleForm.ProjectId) {
+                                title = p.ProjectName
+                            }
+                        }
                         var paramArr = []
-                        console.log(DingData.nickName)
-                        console.log(FlowId)
-                        console.log(that.ruleForm.ProjectId)
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
@@ -209,6 +212,7 @@
                             "Remark": "",
                             "IsSend": false,
                             "State": "1",
+                            "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         })
                         for (let node of that.nodeList) {
@@ -265,7 +269,6 @@
                         return false;
                     }
                 });
-                
             },
             bindAll(taskId) {
                 var that = this
@@ -279,6 +282,7 @@
                 $.ajax({
                     url: '/Purchase/SavePurchaseTable',
                     type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify(paramArr),
                     success: function (data) {
                         console.log("采购表单批量保存ok")
