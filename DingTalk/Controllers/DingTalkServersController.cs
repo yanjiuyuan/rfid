@@ -310,7 +310,7 @@ namespace DingTalk.Controllers
         /// 盯盘文件上传
         /// </summary>
         /// <returns>media_Id: 返回唯一盯盘唯一Id</returns>
-        /// 测试数据 api/dt/uploadMedia/
+        /// 测试数据 /DingTalkServers/uploadMedia/
         /// Json : data:{"":"~/测试媒体文件/图片测试.jpg"}
         [Route("uploadMedia")]
         [HttpPost]
