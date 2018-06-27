@@ -138,6 +138,7 @@
                 preCopy: false,
                 fileList: [],
                 imageList: [],
+                mediaList: {},
                 data: [],
                 items: [],
                 tableData: [],
@@ -159,7 +160,6 @@
                     inputProjectName: '',
                     inputProjectId: '',
                     copyers: ['小唐', '季老师'],
-
                     ProjectName: '',
                     ProjectId: null,
                     Time: ''
@@ -194,10 +194,10 @@
                             "OldImageUrl": that.ruleForm.OldImageUrl,
                             "FileUrl": that.ruleForm.FileUrl,
                             "OldFileUrl": that.ruleForm.OldFileUrl,
+                            "MediaId": that.ruleForm.MediaId,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
-                        
                         for (let node of that.nodeList) {
                             if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
                                 console.log(node)
@@ -228,8 +228,6 @@
                                 }
                             }
                         }
-                        console.log("paramArr")
-                        console.log(paramArr)
                         $.ajax({
                             url: '/FlowInfo/CreateTaskInfo',
                             type: 'POST',
@@ -237,6 +235,7 @@
                             success: function (data) {
                                 console.log("提交审批ok")
                                 var taskId = JSON.parse(data).Content
+                                console.log(paramArr)
                                 console.log(taskId)
                                 that.bindData(taskId)
                                 //that.addApprover(taskId)
@@ -402,7 +401,28 @@
                 this.changePictureList(fileList)
             },
             handleFileCardSuccess(response, file, fileList) {
-                this.changeFileList(fileList)
+                var that = this
+                var paramObj = {
+                    "": file.response.Content
+                }
+                $.ajax({
+                    url: '/DingTalkServers/UploadMedia/',
+                    type: 'POST',
+                    data: JSON.stringify(paramObj),
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log('上传文件到钉盘')
+                        console.log('/api/dt/uploadMedia/')
+                        console.log(paramObj)
+                        if (data.media_id) {
+                            console.log(data.media_id)
+                            that.mediaList[file.response.Content] = data.media_id
+                        } else {
+                            console.log('无media_di')
+                        }
+                        that.changeFileList(fileList)
+                    }
+                })
             },
             changePictureList(fileList) {
                 console.log(fileList)
@@ -420,12 +440,15 @@
                 console.log(fileList)
                 this.ruleForm.FileUrl = ''
                 this.ruleForm.OldFileUrl = ''
+                this.ruleForm.MediaId = ''
                 for (var i = 0; i < fileList.length; i++) {
                     this.ruleForm.FileUrl += fileList[i].response.Content
                     this.ruleForm.OldFileUrl += fileList[i].name
+                    this.ruleForm.MediaId += this.mediaList[fileList[i].response.Content]
                     if (i == fileList.length - 1) break
                     this.ruleForm.FileUrl += ','
                     this.ruleForm.OldFileUrl += ','
+                    this.ruleForm.MediaId += ','
                 }
             },
             beforePictureUpload(file) {
@@ -461,44 +484,7 @@
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
-            //获取审批/抄送 相关人员列表GetFlowProgress
-            getNodeList() {
-                var that = this
-                $.ajax({
-                    url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("获取审批/抄送 相关人员列表ok")
-                        for (let d of data) {
-                            if (d.NodePeople)
-                                d.NodePeople = d.NodePeople.split(',')
-                            if (d.NodeId == 0) 
-                                d.NodePeople = [DingData.nickName]
-                            d['AddPeople'] = []
-                        }
-                        console.log(data)
-                        that.nodeList = data
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
-            //审批所有流程通过，后续处理
-            doneSubmit() {
-                this.$alert('提交审批成功', '提交成功', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                        loadPage('/main/Approval')
-                    }
-                });
-                //var allState = 2
-                //State++
-                //if (State >= allState) {
-                //    State = 0
-                //}
-            }
+            
         },
         created: function () {
             this.getNodeInfo()

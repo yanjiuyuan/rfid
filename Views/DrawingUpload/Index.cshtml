@@ -31,6 +31,10 @@
 <input id="btn10" type="button" value="添加查询" />
 <input id="btn7" type="button" value="添加工时" />
 <input id="btn8" type="button" value="图纸下发表单提交接口" />
+<input id="btn14" type="button" value="盯盘文件上传" />
+<input id="btn15" type="button" value="发送钉钉附件消息" /><br>
+<input id="btn16" type="button" value="采购单保存" />
+<input id="btn17" type="button" value="打印表单数据、盖章、推送" />
 <script type="text/javascript">
     var FlowTest = [{ "ApplyMan": "小威", "ApplyManId": "1209662535974958", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 0, "Remark": "6666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
     { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
@@ -348,9 +352,9 @@
         })
     });
 
-    var WorkTimeAndProList =  [{  "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456","TaskId":"4","OldTaskId":"123","OldTaskId":"1","CodeNo":"1","Name":"11", "Count":"1",   "MaterialScience":"1","Unit":"1","Brand":"1","Sorts":"1","FlowType":"1"},
-        {  "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "2", "CreateManId": "123456","TaskId":"4","OldTaskId":"123", "OldTaskId":"1","CodeNo":"1","Name":"11", "Count":"1","MaterialScience":"1","Unit":"1","Brand":"1","Sorts":"1","FlowType":"1"},
-      {  "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3","DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "3", "CreateManId": "123456","TaskId":"4","OldTaskId":"123", "OldTaskId":"1","CodeNo":"1","Name":"11", "Count":"1","MaterialScience":"1","Unit":"1","Brand":"1","Sorts":"1","FlowType":"1"}] 
+    var WorkTimeAndProList = [{ "IsFinish": false, "Worker": "小红", "WorkerId": "666", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "2", "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "1", "CreateManId": "123456", "TaskId": "4", "OldTaskId": "123", "OldTaskId": "1", "CodeNo": "1", "Name": "11", "Count": "1", "MaterialScience": "1", "Unit": "1", "Brand": "1", "Sorts": "1", "FlowType": "1" },
+    { "IsFinish": false, "Worker": "小滨", "WorkerId": "777", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3", "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "2", "CreateManId": "123456", "TaskId": "4", "OldTaskId": "123", "OldTaskId": "1", "CodeNo": "1", "Name": "11", "Count": "1", "MaterialScience": "1", "Unit": "1", "Brand": "1", "Sorts": "1", "FlowType": "1" },
+    { "IsFinish": true, "Worker": "小雨", "WorkerId": "888", "StartTime": "2018-04-24 15:48", "EndTime": "2018-04-25 15:48", "UseTime": "3", "DrawingNo": "DTE-801B-WX-01A", "ProcedureInfoId": "3", "CreateManId": "123456", "TaskId": "4", "OldTaskId": "123", "OldTaskId": "1", "CodeNo": "1", "Name": "11", "Count": "1", "MaterialScience": "1", "Unit": "1", "Brand": "1", "Sorts": "1", "FlowType": "1" }]
 
     $("#btn13").click(function () {
         $.ajax({
@@ -359,6 +363,83 @@
             dataType: "json",
             async: false,
             data: JSON.stringify(WorkTimeAndProList),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn14").click(function () {
+        $.ajax({
+            url: "/DingTalkServers/uploadMedia",
+            type: "Post",
+            dataType: "json",
+            async: true,
+            data: { "": "~/测试媒体文件/测试文本123.txt" },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+
+    $("#btn15").click(function () {
+        $.ajax({
+            url: "/DingTalkServers/sendFileMessage",
+            type: "Post",
+            dataType: "json",
+            async: true,
+            data: { "UserId": "083452125733424957", "MediaId": "@@lAjPBY0V43mDr87ODCczbc5-853G" },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    var PurTableList = [{ "Id": 1.0, "TaskId": "流水号", "CodeNo": "物料编码", "Name": "苹果", "Standard": "型号", "Unit": "单位", "Count": "数量", "Price": "单价", "Purpose": "用途", "UrgentDate": "需用日期", "Mark": "备注" }, { "Id": 2.0, "TaskId": "流水号2", "CodeNo": "物料编码2", "Name": "苹果2", "Standard": "型号2", "Unit": "单位2", "Count": "数量2", "Price": "单价2", "Purpose": "用途2", "UrgentDate": "需用日期2", "Mark": "备注2" }];
+    var PurTable = { "Id": 1.0, "TaskId": "流水号", "CodeNo": "物料编码", "Name": "苹果", "Standard": "型号", "Unit": "单位", "Count": "数量", "Price": "单价", "Purpose": "用途", "UrgentDate": "需用日期", "Mark": "备注" };
+    $("#btn16").click(function () {
+        $.ajax({
+            url: "/PurchaseManage/PurchaseTableSave",
+            type: "Post",
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',//将json数据以request payload的形式发起请求  
+            async: false,
+            data: JSON.stringify(PurTableList),
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn17").click(function () {
+        $.ajax({
+            url: "/DrawingUpload/PrintAndSend",
+            type: "Post",
+            //contentType: 'application/json; charset=utf-8',//将json数据以request payload的形式发起请求  
+            dataType: "json",
+            async: true,
+            data: JSON.stringify({ "UserId": "083452125733424957", "TaskId": "3", "OldPath": "~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF" }),
             success: function (data) {
                 console.log(data);
             },

@@ -279,6 +279,39 @@ var mixin = {
                 }
             })
         },
+        //获取审批/抄送 相关人员列表GetFlowProgress
+        getNodeList() {
+            var that = this
+            $.ajax({
+                url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log("获取审批/抄送 相关人员列表ok")
+                    for (let d of data) {
+                        if (d.NodePeople)
+                            d.NodePeople = d.NodePeople.split(',')
+                        if (d.NodeId == 0)
+                            d.NodePeople = [DingData.nickName]
+                        d['AddPeople'] = []
+                    }
+                    console.log(data)
+                    that.nodeList = data
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                }
+            })
+        },
+        //审批所有流程通过，后续处理
+        doneSubmit() {
+            this.$alert('提交审批成功', '提交成功', {
+                confirmButtonText: '确定',
+                callback: action => {
+                    loadPage('/main/Approval')
+                }
+            });
+        }
     }
 }
 

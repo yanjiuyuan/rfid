@@ -47,8 +47,9 @@
         </el-form-item>
         <el-form-item label="相关文件">
             <el-card class="box-card">
-                <div v-for="f in fileList" :key="f.name" class="text item" v-on:click="clickFile(f.url)">
-                    {{ f.name }}
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span v-on:click="clickFile(f.url)">{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
             </el-card>
 
@@ -319,6 +320,30 @@
             },
             hideFrame() {
                 this.frameShow = false
+            },
+            //钉钉推送文件
+            downloadFile(mediaId) {
+                var that = this
+                var param = {
+                        UserId: DingData.userid,
+                        MediaId: mediaId
+                    }
+                $.ajax({
+                    url: '/DingTalkServers/sendFileMessage',
+                    type: 'POST',
+                    data: JSON.stringify(param),
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log('钉钉推送文件')
+                        console.log(param)
+                        console.log(data)
+                        if (!data.Content) {
+                            that.$alert(data.errorMessage,'获取文件失败',  {
+                                confirmButtonText: '确定'
+                            });
+                        }
+                    }
+                })
             }
         },
         created: function () {
@@ -351,10 +376,12 @@
                 if (data.FileUrl && data.FileUrl.length > 5) {
                     var urlList = data.FileUrl.split(',')
                     var oldUrlList = data.OldFileUrl.split(',')
+                    var MediaIdList = data.MediaId?data.MediaId.split(','):[]
                     for (var i = 0; i < urlList.length; i++) {
                         fileList.push({
                             name: oldUrlList[i],
-                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/")
+                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                            mediaId: MediaIdList[i]
                         })
                     }
                 }

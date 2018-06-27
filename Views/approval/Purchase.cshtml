@@ -148,10 +148,6 @@
         <el-form-item label="意见" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
-                           :nodeid="nodeInfo.NodeId">
-        </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -171,9 +167,6 @@
                 purchaseList: [],
                 projestList: [],
                 good: {},
-                preApprove: false,
-                nodeList: [],
-                nodeInfo: {},
                 dialogFormVisible: false,
                 searchForm: {
                     string:'',
@@ -211,36 +204,6 @@
                             "State": "1",
                             "ProjectId": that.ruleForm.ProjectId
                         })
-                        for (let node of that.nodeList) {
-                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
-                                console.log(node)
-                                console.log(node.AddPeople)
-                                if (!that.preApprove && node.AddPeople.length == 0) {
-                                    this.$alert('您尚未选择审批人', '提交错误', {
-                                        confirmButtonText: '确定',
-                                        callback: action => {
-
-                                        }
-                                    });
-                                    that.disablePage = false
-                                    return
-                                }
-                                for (let a of node.AddPeople) {
-                                    paramArr.push({
-                                        "ApplyMan": a.name,
-                                        "ApplyManId": a.emplId,
-                                        "IsEnable": 1,
-                                        "FlowId": FlowId,
-                                        "NodeId": node.NodeId,
-                                        "IsSend": false,
-                                        "State": 0,
-                                        "ProjectId": that.ruleForm.ProjectId,
-                                        "OldFileUrl": null,
-                                        "IsBack": null
-                                    })
-                                }
-                            }
-                        }
                         console.log("提交审批 paramArr ")
                         console.log(paramArr)
                         $.ajax({
@@ -256,19 +219,13 @@
                             }
                         })
                     } else {
-                        this.$alert('请填写完整信息', '提交错误', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-
-                            }
-                        });
+                        alert('请填写完整信息')
                         return false;
                     }
                 });
                 
             },
             bindAll(taskId) {
-                var that = this
                 var paramArr = []
                 for (let p of this.purchaseList) {
                     p.TaskId = taskId
@@ -284,7 +241,6 @@
                         console.log("采购表单批量保存ok")
                         console.log()
                         console.log(data)
-                        that.doneSubmit()
                     }
                 })
             },
@@ -351,7 +307,6 @@
         },
         created: function () {
             this.getNodeInfo()
-            this.getNodeList()
             this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
         }
