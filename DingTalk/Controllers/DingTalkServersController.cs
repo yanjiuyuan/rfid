@@ -258,7 +258,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         /// 测试数据： DingTalkServers/sendFileMessage
         /// UserId 用户Id   MediaId 盯盘文件唯一Id
-        /// data:{ "UserId":"manager325","MediaId":"@@lAjPBY0V43mDr87ODCczbc5-853G"}
+        /// data:{ "UserId":"manager325","Media_Id":"@@lAjPBY0V43mDr87ODCczbc5-853G"}
         [Route("sendFileMessage")]
         [HttpPost]
         public async Task<string> SendFileMessage([FromBody]FileSendModel fileSendModel)
