@@ -110,7 +110,6 @@ namespace DingTalk.Controllers
                                 };
                     return JsonConvert.SerializeObject(Quary);
                 }
-
             }
             catch (Exception ex)
             {
@@ -119,6 +118,22 @@ namespace DingTalk.Controllers
                     errorMessage=ex.Message
                 });
             }
+        }
+
+
+
+        public async Task<string> PrintReport()
+        {
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return "";
         }
     }
 }
