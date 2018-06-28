@@ -418,7 +418,7 @@
             url: "/PurchaseManage/PurchaseTableSave",
             type: "Post",
             dataType: "json",
-            contentType: 'application/json; charset=utf-8',//将json数据以request payload的形式发起请求  
+            contentType: 'application/json; charset=utf-8',//将json数据以request payload的形式发起请求
             async: false,
             data: JSON.stringify(PurTableList),
             success: function (data) {
@@ -436,10 +436,10 @@
         $.ajax({
             url: "/DrawingUpload/PrintAndSend",
             type: "Post",
-            //contentType: 'application/json; charset=utf-8',//将json数据以request payload的形式发起请求  
+            //contentType: 'application/json; charset=utf-8',//将json数据以request payload的形式发起请求
             dataType: "json",
             async: true,
-            data: JSON.stringify({ "UserId": "083452125733424957", "TaskId": "3", "OldPath": "~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF" }),
+            data: { "UserId": "083452125733424957", "TaskId": "3", "OldPath": "~\\UploadFile\\Flies\\20180621103649.PDF,~\\UploadFile\\Flies\\20180621103648.PDF" },
             success: function (data) {
                 console.log(data);
             },

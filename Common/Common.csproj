@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassChange\ClassChangeHelper.cs" />
     <Compile Include="Code\ValidateCode.cs" />
     <Compile Include="Code\YzmClass.cs" />
     <Compile Include="DbHelper\MySqlHelper.cs" />

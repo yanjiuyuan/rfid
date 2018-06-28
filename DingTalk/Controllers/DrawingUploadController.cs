@@ -1,9 +1,11 @@
-﻿using Common.Excel;
+﻿using Common.ClassChange;
+using Common.Excel;
 using Common.Ionic;
 using Common.JsonHelper;
 using Common.PDF;
 using DingTalk.Models;
 using DingTalk.Models.DbModels;
+using iTextSharp.text.pdf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -307,152 +309,256 @@ namespace DingTalk.Controllers
         /// 打印表单数据、盖章、推送
         /// </summary>
         /// 测试数据   /DrawingUpload/PrintAndSend
-        /// data: JSON.stringify({ "UserId":"083452125733424957","TaskId":"3","OldPath":"~\UploadFile\Flies\20180621103648.PDF,~\UploadFile\Flies\20180621103649.PDF" })
+        /// data: { "UserId":"083452125733424957","TaskId":"3","OldPath":"~\\UploadFile\\Flies\\20180621103648.PDF,~\\UploadFile\\Flies\\20180621103649.PDF" }
         [HttpPost]
-        public async Task<string> PrintAndSend()
+        public async Task<string> PrintAndSend(PrintAndSendModel printAndSendModel)
         {
             try
             {
-                StreamReader reader = new StreamReader(Request.InputStream);
-                string PrintAndSendJson = reader.ReadToEnd();
-                if (string.IsNullOrEmpty(PrintAndSendJson))
+                //PrintAndSendModel printAndSendModel = JsonConvert.DeserializeObject<PrintAndSendModel>(PrintAndSendJson);
+                string TaskId = printAndSendModel.TaskId;
+                string UserId = printAndSendModel.UserId;
+                string OldPath = printAndSendModel.OldPath;
+                PDFHelper pdfHelper = new PDFHelper();
+                using (DDContext context = new DDContext())
                 {
-                    return JsonConvert.SerializeObject(new ErrorModel
+                    //获取表单信息
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
+                    string FlowId = tasks.FlowId.ToString();
+                    string ProjectId = tasks.ProjectId;
+                    List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
+
+                    var SelectPurchaseList = from p in PurchaseList
+                                             select new
+                                             {
+                                                 p.DrawingNo,
+                                                 p.Name,
+                                                 p.Count,
+                                                 p.MaterialScience,
+                                                 p.Unit,
+                                                 p.Brand,
+                                                 p.Sorts,
+                                                 p.Mark
+                                             };
+
+                    DataTable dtSourse = SelectPurchaseList.CopyToDataTable();
+                        //ClassChangeHelper.ToDataTable(SelectPurchaseList);
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
+                    foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
-                        errorCode = 1,
-                        errorMessage = "载入数据不能为空！"
-                    });
-                }
-                else
-                {
-                    PrintAndSendModel printAndSendModel = JsonConvert.DeserializeObject<PrintAndSendModel>(PrintAndSendJson);
-                    string TaskId = printAndSendModel.TaskId;
-                    string UserId = printAndSendModel.UserId;
-                    string OldPath = printAndSendModel.OldPath;
-                    PDFHelper pdfHelper = new PDFHelper();
-                    using (DDContext context = new DDContext())
-                    {
-                        //获取表单信息
-                        Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
-                        string FlowId = tasks.FlowId.ToString();
-                        string ProjectId = tasks.ProjectId;
-                        List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
-                        DataTable dtSourse = ToDataTable(PurchaseList);
-                        List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
-                        foreach (NodeInfo nodeInfo in NodeInfoList)
+                        if (string.IsNullOrEmpty(nodeInfo.NodePeople))
                         {
-                            if (string.IsNullOrEmpty(nodeInfo.NodePeople))
-                            {
-                                string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
-                                nodeInfo.NodePeople = strNodePeople;
-                            }
+                            string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
+                            nodeInfo.NodePeople = strNodePeople;
                         }
-                        DataTable dtApproveView = ToDataTable(NodeInfoList);
-                        string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
-                        string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
-                        //绘制BOM表单PDF
-                        string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                        ProjectName, "1", dtSourse, dtApproveView);
-                        string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
-
-                        string[] Paths = OldPath.Split(',');
-
-                        List<string> newPaths = new List<string>();
-                        RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
-                        newPaths.Add(RelativePath);
-                        foreach (string pathChild in Paths)
-                        {
-                            string AbPath = AppDomain.CurrentDomain.BaseDirectory + pathChild.Substring(2, pathChild.Length - 2);
-                            //PDF盖章 保存路径
-                            newPaths.Add(pdfHelper.PDFWatermark(AbPath,
-                            string.Format(@"{0}\UploadFile\PDF\{1}",
-                            AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(pathChild)),
-                            string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
-                            100, 100));
-                        }
-                        string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
-                        //文件压缩打包
-                        IonicHelper.CompressMulti(newPaths, SavePath, false);
-
-                        //上传盯盘获取MediaId
-                        var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
-                        SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
-                        var resultUploadMedia = await otherController.UploadMedia(SavePath);
-                        //推送用户
-                        FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                        fileSendModel.UserId = UserId;
-                        var result = await otherController.SendFileMessage(fileSendModel);
-                        return result;
                     }
+                    DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
+                    string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
+                    string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
+                    //绘制BOM表单PDF
+                    List<string> contentList = new List<string>()
+                        {
+                            "序号","代号","名称","数量","材料","单位","品牌","类别","备注"
+                        };
+
+                    float[] contentWithList = new float[]
+                    {
+                            50, 60, 60, 60, 60, 60, 60, 60, 60
+                    };
+
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
+                    ProjectName, "1", contentList, contentWithList, dtSourse, dtApproveView);
+                    string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
+
+                    string[] Paths = OldPath.Split(',');
+
+                    List<string> newPaths = new List<string>();
+                    RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
+                    newPaths.Add(RelativePath);
+                    foreach (string pathChild in Paths)
+                    {
+                        string AbPath = AppDomain.CurrentDomain.BaseDirectory + pathChild.Substring(2, pathChild.Length - 2);
+                        //PDF盖章 保存路径
+                        newPaths.Add(pdfHelper.PDFWatermark(AbPath,
+                        string.Format(@"{0}\UploadFile\PDF\{1}",
+                        AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(pathChild)),
+                        string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
+                        100, 100));
+                    }
+                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                    //文件压缩打包
+                    IonicHelper.CompressMulti(newPaths, SavePath, false);
+
+                    //上传盯盘获取MediaId
+                    var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
+                    SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
+                    var resultUploadMedia = await otherController.UploadMedia(SavePath);
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = UserId;
+                    var result = await otherController.SendFileMessage(fileSendModel);
+                    return result;
                 }
             }
-            catch (Exception  ex)
+            catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel {
-                    errorCode=1,
-                    errorMessage=ex.Message
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
                 });
             }
 
         }
+    }
 
-        private DataTable ToDataTable<T>(List<T> items)
+    public static class DataSetLinqOperators
+    {
+        public static DataTable CopyToDataTable<T>(this IEnumerable<T> source)
         {
-            var tb = new DataTable(typeof(T).Name);
-
-            PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            foreach (PropertyInfo prop in props)
-            {
-                Type t = GetCoreType(prop.PropertyType);
-                tb.Columns.Add(prop.Name, t);
-            }
-
-            foreach (T item in items)
-            {
-                var values = new object[props.Length];
-
-                for (int i = 0; i < props.Length; i++)
-                {
-                    values[i] = props[i].GetValue(item, null);
-                }
-
-                tb.Rows.Add(values);
-            }
-
-            return tb;
+            return new ObjectShredder<T>().Shred(source, null, null);
         }
 
-        /// <summary>
-        /// Determine of specified type is nullable
-        /// </summary>
-        public static bool IsNullable(Type t)
+        public static DataTable CopyToDataTable<T>(this IEnumerable<T> source,
+                                                    DataTable table, LoadOption? options)
         {
-            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+            return new ObjectShredder<T>().Shred(source, table, options);
         }
 
-        /// <summary>
-        /// Return underlying type if type is Nullable otherwise return the type
-        /// </summary>
-        public static Type GetCoreType(Type t)
+    }
+
+    public class ObjectShredder<T>
+    {
+        private FieldInfo[] _fi;
+        private PropertyInfo[] _pi;
+        private Dictionary<string, int> _ordinalMap;
+        private Type _type;
+
+        public ObjectShredder()
         {
-            if (t != null && IsNullable(t))
-            {
-                if (!t.IsValueType)
-                {
-                    return t;
-                }
-                else
-                {
-                    return Nullable.GetUnderlyingType(t);
-                }
-            }
-            else
-            {
-                return t;
-            }
+            _type = typeof(T);
+            _fi = _type.GetFields();
+            _pi = _type.GetProperties();
+            _ordinalMap = new Dictionary<string, int>();
         }
 
+        public DataTable Shred(IEnumerable<T> source, DataTable table, LoadOption? options)
+        {
+            if (typeof(T).IsPrimitive)
+            {
+                return ShredPrimitive(source, table, options);
+            }
 
+
+            if (table == null)
+            {
+                table = new DataTable(typeof(T).Name);
+            }
+
+            // now see if need to extend datatable base on the type T + build ordinal map
+            table = ExtendTable(table, typeof(T));
+
+            table.BeginLoadData();
+            using (IEnumerator<T> e = source.GetEnumerator())
+            {
+                while (e.MoveNext())
+                {
+                    if (options != null)
+                    {
+                        table.LoadDataRow(ShredObject(table, e.Current), (LoadOption)options);
+                    }
+                    else
+                    {
+                        table.LoadDataRow(ShredObject(table, e.Current), true);
+                    }
+                }
+            }
+            table.EndLoadData();
+            return table;
+        }
+
+        public DataTable ShredPrimitive(IEnumerable<T> source, DataTable table, LoadOption? options)
+        {
+            if (table == null)
+            {
+                table = new DataTable(typeof(T).Name);
+            }
+
+            if (!table.Columns.Contains("Value"))
+            {
+                table.Columns.Add("Value", typeof(T));
+            }
+
+            table.BeginLoadData();
+            using (IEnumerator<T> e = source.GetEnumerator())
+            {
+                Object[] values = new object[table.Columns.Count];
+                while (e.MoveNext())
+                {
+                    values[table.Columns["Value"].Ordinal] = e.Current;
+
+                    if (options != null)
+                    {
+                        table.LoadDataRow(values, (LoadOption)options);
+                    }
+                    else
+                    {
+                        table.LoadDataRow(values, true);
+                    }
+                }
+            }
+            table.EndLoadData();
+            return table;
+        }
+
+        public DataTable ExtendTable(DataTable table, Type type)
+        {
+            // value is type derived from T, may need to extend table.
+            foreach (FieldInfo f in type.GetFields())
+            {
+                if (!_ordinalMap.ContainsKey(f.Name))
+                {
+                    DataColumn dc = table.Columns.Contains(f.Name) ? table.Columns[f.Name]
+                        : table.Columns.Add(f.Name, f.FieldType);
+                    _ordinalMap.Add(f.Name, dc.Ordinal);
+                }
+            }
+            foreach (PropertyInfo p in type.GetProperties())
+            {
+                if (!_ordinalMap.ContainsKey(p.Name))
+                {
+                    DataColumn dc = table.Columns.Contains(p.Name) ? table.Columns[p.Name]
+                        : table.Columns.Add(p.Name, p.PropertyType);
+                    _ordinalMap.Add(p.Name, dc.Ordinal);
+                }
+            }
+            return table;
+        }
+
+        public object[] ShredObject(DataTable table, T instance)
+        {
+
+            FieldInfo[] fi = _fi;
+            PropertyInfo[] pi = _pi;
+
+            if (instance.GetType() != typeof(T))
+            {
+                ExtendTable(table, instance.GetType());
+                fi = instance.GetType().GetFields();
+                pi = instance.GetType().GetProperties();
+            }
+
+            Object[] values = new object[table.Columns.Count];
+            foreach (FieldInfo f in fi)
+            {
+                values[_ordinalMap[f.Name]] = f.GetValue(instance);
+            }
+
+            foreach (PropertyInfo p in pi)
+            {
+                values[_ordinalMap[p.Name]] = p.GetValue(instance, null);
+            }
+            return values;
+        }
     }
 }

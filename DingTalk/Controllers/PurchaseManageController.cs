@@ -84,6 +84,8 @@ namespace DingTalk.Controllers
             }
         }
 
+
+        #region 金蝶产品信息读取
         /// <summary>
         /// 金蝶产品信息读取
         /// </summary>
@@ -96,11 +98,11 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (KisContext context=new KisContext ())
+                using (KisContext context = new KisContext())
                 {
                     var ICItemList = context.t_ICItem.ToList();
                     var Quary = from t in ICItemList
-                                where t.FName.Contains(Key) || t.FNumber.Contains(Key)
+                                where t.FName.Contains(Key) || t.FNumber.Contains(Key) || t.FModel.Contains(Key)
                                 select new
                                 {
                                     t.FNumber, //物料编码
@@ -113,27 +115,26 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel() {
-                    errorCode=1,
-                    errorMessage=ex.Message
+                return JsonConvert.SerializeObject(new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
                 });
             }
         }
-
-
-
+        #endregion
+        
         public async Task<string> PrintReport()
         {
             try
             {
-
+                return "";
             }
             catch (Exception)
             {
 
                 throw;
             }
-            return "";
         }
     }
 }

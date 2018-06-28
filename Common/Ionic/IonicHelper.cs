@@ -116,7 +116,7 @@ namespace Common.Ionic
                         }
                         if (File.Exists(path))//如果是文件
                         {
-                            zip.AddFile(path, "imges");
+                            zip.AddFile(path, "files");
                         }
                     }
                     zip.Save(strZipName);//压缩

@@ -43,10 +43,13 @@ namespace Common.PDF
         /// <param name="ProjectName">项目名</param>
         /// <param name="FlowId">流程Id</param>
         /// <param name="FilePath">水印图片路径</param>
+        /// <param name="contentList">表单头数组</param>
+        /// <param name="contentWithList">表单宽度数组</param>
         /// <param name="dtSourse">表单数据</param>
         /// <param name="dtApproveView">审批意见数据</param>
         public string GeneratePDF(string FlowName, string TaskId, string ApplyName,
             string ApplyTime, string ProjectName, string ImageNo
+            , List<string> contentList, float[] contentWithList
             , DataTable dtSourse, DataTable dtApproveView)
         {
             doc = new Document(PageSize.A4);
@@ -87,73 +90,48 @@ namespace Common.PDF
 
 
                 #region 生成表格数据
-                PdfPTable table = new PdfPTable(9);//8列的table
-                                                   //添加表格列头               
-                table.SetTotalWidth(new float[] { 50, 60, 60, 60, 60, 60, 60, 60, 60 });
-                table.AddCell(GetPdfCell("序号", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("代号", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("名称", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("数量", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("材料", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("单位", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("品牌", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("类别", fontSmallNoBold, Element.ALIGN_CENTER));
-                table.AddCell(GetPdfCell("备注", fontSmallNoBold, Element.ALIGN_CENTER));
 
-                int emptyRow = 20;//如果table的行数小于20行，那么剩余部分显示空白行
-                #region 构造数据源
-                //DataTable tableSource = new DataTable();
-                //tableSource.Columns.Add(new DataColumn("aa"));
-                //tableSource.Columns.Add(new DataColumn("bb"));
-                //tableSource.Columns.Add(new DataColumn("cc"));
-                //tableSource.Columns.Add(new DataColumn("dd"));
-                //tableSource.Columns.Add(new DataColumn("ee"));
-                //tableSource.Columns.Add(new DataColumn("ff"));
-                //tableSource.Columns.Add(new DataColumn("gg"));
-                //tableSource.Columns.Add(new DataColumn("hh"));
-                //for (int i = 0; i < 15; i++)
-                //{
-                //    DataRow row = tableSource.NewRow();
-                //    row["aa"] = "aa";
-                //    row["bb"] = "bb";
-                //    row["cc"] = "cc";
-                //    row["dd"] = "dd";
-                //    row["ee"] = "ee";
-                //    row["ff"] = "ff";
-                //    row["gg"] = "gg";
-                //    row["hh"] = "hh";
-                //    tableSource.Rows.Add(row);
-                //}
-                #endregion
+
+
+                PdfPTable table = new PdfPTable(contentList.Count);
+
+                //添加表格列头   
+                foreach (var item in contentList)
+                {
+                    table.AddCell(GetPdfCell(item, fontSmallNoBold, Element.ALIGN_CENTER));
+                }
+                //添加表格列头宽度   
+                table.SetTotalWidth(contentWithList);
+
                 if (dtSourse.Rows.Count > 0)
                 {
-                    emptyRow = emptyRow - dtSourse.Rows.Count;//如果为负数，说明不需要生成空白行
                     for (int i = 0; i < dtSourse.Rows.Count; i++)
                     {
-                        DataRow row = dtSourse.Rows[i];
+                        //DataRow row = dtSourse.Rows[i];
+                        //table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
                         table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["DrawingNo"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["Name"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["Count"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["MaterialScience"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["Unit"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["Brand"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["Sorts"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell(row["Mark"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                        for (int j = 0; j < dtSourse.Columns.Count; j++)
+                        {
+                            table.AddCell(GetPdfCell((dtSourse.Rows[i][j]).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                        }
                     }
                 }
-                //if (emptyRow > 0)//说明数据源不足20行
+                //for (int i = 0; i < dtSourse.Rows.Count; i++)
                 //{
-                //    for (int i = 0; i < emptyRow; i++)
-                //    {
-                //        table.AddCell(GetPdfCell(((20 - emptyRow) + i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //        table.AddCell(GetPdfCell("", fontSmallNoBold, Element.ALIGN_CENTER));
-                //        table.AddCell(GetPdfCell("", fontSmallNoBold, Element.ALIGN_CENTER));
-                //        table.AddCell(GetPdfCell("", fontSmallNoBold, Element.ALIGN_CENTER));
-                //        table.AddCell(GetPdfCell("", fontSmallNoBold, Element.ALIGN_CENTER));
-                //        table.AddCell(GetPdfCell("", fontSmallNoBold, Element.ALIGN_CENTER));
-                //    }
+                //    DataRow row = dtSourse.Rows[i];
+                //    table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+
+                //    table.AddCell(GetPdfCell(row["DrawingNo"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["Name"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["Count"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["MaterialScience"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["Unit"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["Brand"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["Sorts"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                //    table.AddCell(GetPdfCell(row["Mark"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
                 //}
+
+
                 doc.Add(table);
                 #endregion
 
@@ -255,9 +233,9 @@ namespace Common.PDF
                 iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(ModelPicName);
 
                 image.GrayFill = 80;//透明度，灰色填充
-                //image.Rotation = 40;//旋转
-                //image.RotationDegrees = 40;//旋转角度
-                //水印的位置 
+                                    //image.Rotation = 40;//旋转
+                                    //image.RotationDegrees = 40;//旋转角度
+                                    //水印的位置 
                 if (left < 0)
                 {
                     left = width / 2 - image.Width + left;
@@ -271,7 +249,7 @@ namespace Common.PDF
                 for (int i = 1; i <= numberOfPages; i++)
                 {
                     waterMarkContent = pdfStamper.GetUnderContent(i);//内容下层加水印
-                    //waterMarkContent = pdfStamper.GetOverContent(i);//内容上层加水印
+                                                                     //waterMarkContent = pdfStamper.GetOverContent(i);//内容上层加水印
                     waterMarkContent.AddImage(image);
                 }
 
@@ -338,7 +316,7 @@ namespace Common.PDF
         public static void AddPartnerContents(string FieldName, string FieldValue)
         {
             fontMiddle.SetStyle(Font.UNDERLINE);//文字下划线
-            //IndentationLeft = IndentationLeft + 10;
+                                                //IndentationLeft = IndentationLeft + 10;
             Paragraph content = new Paragraph();
             content.IndentationLeft = IndentationLeft;
             Chunk chunkName = new Chunk(FieldName + ":", fontSmallNoBold);
