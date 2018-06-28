@@ -52,7 +52,7 @@
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
             </el-card>
-
+            <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
         </el-form-item>
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
@@ -63,7 +63,7 @@
 
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-            </sam-addapprover>*@
+        </sam-addapprover>*@
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.mark"></el-input>
@@ -99,6 +99,7 @@
     var allData = {}
     var imageList = []
     var fileList = []
+    var FileUrl = ''
     var bomUrl = ''
     switch (FlowId) {
         case '6':
@@ -149,6 +150,7 @@
                 isBack: false,
                 index: Index,
                 frameUrl: '',
+                ifShowStamppBtn: false,
                 frameShow: false
             }
         },
@@ -261,7 +263,37 @@
                     }
                 })
             },
-
+            //盖章并获取文件
+            stampAndGet() {
+                FileUrl = FileUrl.replace(/\\/g,'\\\\')
+                var paramObj = {
+                    UserId: DingData.userid,
+                    TaskId: TaskId,
+                    OldPath: FileUrl
+                }
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/SubmitTaskInfo",
+                    type: "POST",
+                    data: JSON.stringify(paramObj),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(paramObj)
+                        console.log(data)
+                        //if (data && data.errorCode == 0) {
+                        //    that.$alert('审批成功', '操作成功', {
+                        //        confirmButtonText: '确定',
+                        //        callback: action => {
+                        //            loadPage('/main/Approval')
+                        //        }
+                        //    });
+                        //}
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
             //获取节点数据GetNodeInfo
             getNodeInfo() {
                 var that = this
@@ -369,6 +401,7 @@
             }
         },
         created: function () {
+            if (Index == '1') this.ifShowStamppBtn = true
             loadHtml("mainPage", "partPage")
         }
     })
@@ -396,6 +429,7 @@
                     }
                 }
                 if (data.FileUrl && data.FileUrl.length > 5) {
+                    FileUrl = data.FileUrl
                     var urlList = data.FileUrl.split(',')
                     var oldUrlList = data.OldFileUrl.split(',')
                     var MediaIdList = data.MediaId?data.MediaId.split(','):[]
