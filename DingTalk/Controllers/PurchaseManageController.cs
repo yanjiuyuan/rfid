@@ -135,9 +135,10 @@ namespace DingTalk.Controllers
         /// 打印表单数据、盖章、推送
         /// </summary>
         /// 测试数据   /Purchase/PrintAndSend
-        /// data: { "UserId":"083452125733424957","TaskId":"3"}
+        /// data: { "UserId":"083452125733424957","TaskId":"20"}
         [HttpPost]
-        public async Task<string> PrintAndSend(PrintAndSendModel printAndSendModel)
+        [Route("PrintAndSend")]
+        public async Task<string> PrintAndSend([FromBody]PrintAndSendModel printAndSendModel)
         {
             try
             {
@@ -152,7 +153,7 @@ namespace DingTalk.Controllers
                     string ProjectId = tasks.ProjectId;
 
                     //判断是否有权限触发按钮
-                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
+                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "院领导审核" && n.FlowId == FlowId).First().PeopleId;
                     if (UserId != PeopleId)
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
@@ -195,10 +196,11 @@ namespace DingTalk.Controllers
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
                     string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
+                    
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                            "序号","物料编码","物料名称","规格型号/国标号","单位","数量","单价（预计）","用途","需用日期","备注"
+                            "序号","物料编码","物料名称","规格型号","单位","数量","单价","用途","需用日期","备注"
                         };
 
                     float[] contentWithList = new float[]
@@ -207,14 +209,14 @@ namespace DingTalk.Controllers
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "1",300,650, contentList, contentWithList, dtSourse, dtApproveView);
+                    ProjectName, "2",300,650, contentList, contentWithList, dtSourse, dtApproveView);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
 
                     List<string> newPaths = new List<string>();
                     RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
                     newPaths.Add(RelativePath);
-                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, FlowName + DateTime.Now.ToString("yyyyMMddHHmmss"));
                     //文件压缩打包
                     IonicHelper.CompressMulti(newPaths, SavePath, false);
 

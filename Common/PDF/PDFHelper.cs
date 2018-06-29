@@ -89,7 +89,7 @@ namespace Common.PDF
                     }
                     if (ImageNo == "2")
                     {
-                        ImgaePath = string.Format(@"{0}\Content\images\approve.png", AppDomain.CurrentDomain.BaseDirectory);
+                        ImgaePath = string.Format(@"{0}\Content\images\approveSmall.png", AppDomain.CurrentDomain.BaseDirectory);
                     }
                     iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(ImgaePath);
                     //image.SetAbsolutePosition(300, 650);
@@ -148,6 +148,8 @@ namespace Common.PDF
 
                 #region 打印审批人
 
+                CreateEmptyRow(1);//生成一行空行
+
                 int iResult = 2;  //每行打印数量
 
                 if (dtApproveView.Rows.Count > 0)
@@ -169,6 +171,11 @@ namespace Common.PDF
                             j = 0;
                             content.Clear();
                         }
+                    }
+                    if (dtApproveView.Rows.Count <= iResult)
+                    {
+                        doc.Add(content);
+                        content.Clear();
                     }
                 }
 
