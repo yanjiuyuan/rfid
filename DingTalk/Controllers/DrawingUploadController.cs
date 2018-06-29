@@ -1,4 +1,5 @@
 ﻿using Common.ClassChange;
+using Common.DTChange;
 using Common.Excel;
 using Common.Ionic;
 using Common.JsonHelper;
@@ -315,7 +316,6 @@ namespace DingTalk.Controllers
         {
             try
             {
-                //PrintAndSendModel printAndSendModel = JsonConvert.DeserializeObject<PrintAndSendModel>(PrintAndSendJson);
                 string TaskId = printAndSendModel.TaskId;
                 string UserId = printAndSendModel.UserId;
                 string OldPath = printAndSendModel.OldPath;
@@ -326,6 +326,29 @@ namespace DingTalk.Controllers
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
+
+                    //判断是否有权限触发按钮
+                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId== FlowId).First().PeopleId;
+                    if (UserId != PeopleId)
+                    {
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 1,
+                            errorMessage = "没有权限"
+                        });
+                    }
+                    //判断流程是否已结束
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0).ToList();
+                    if (tasksList.Count > 0)
+                    {
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 2,
+                            errorMessage = "流程未结束"
+                        });
+                    }
+
+                  
                     List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
 
                     var SelectPurchaseList = from p in PurchaseList
@@ -341,8 +364,8 @@ namespace DingTalk.Controllers
                                                  p.Mark
                                              };
 
-                    DataTable dtSourse = SelectPurchaseList.CopyToDataTable();
-                        //ClassChangeHelper.ToDataTable(SelectPurchaseList);
+                    DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
+                    //ClassChangeHelper.ToDataTable(SelectPurchaseList);
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
@@ -360,10 +383,10 @@ namespace DingTalk.Controllers
                         {
                             "序号","代号","名称","数量","材料","单位","品牌","类别","备注"
                         };
-
+                   
                     float[] contentWithList = new float[]
                     {
-                            50, 60, 60, 60, 60, 60, 60, 60, 60
+                        50, 60, 60, 60, 60, 60, 60, 60, 60
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
@@ -404,161 +427,11 @@ namespace DingTalk.Controllers
             {
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    errorCode = 1,
+                    errorCode = 3,
                     errorMessage = ex.Message
                 });
             }
 
-        }
-    }
-
-    public static class DataSetLinqOperators
-    {
-        public static DataTable CopyToDataTable<T>(this IEnumerable<T> source)
-        {
-            return new ObjectShredder<T>().Shred(source, null, null);
-        }
-
-        public static DataTable CopyToDataTable<T>(this IEnumerable<T> source,
-                                                    DataTable table, LoadOption? options)
-        {
-            return new ObjectShredder<T>().Shred(source, table, options);
-        }
-
-    }
-
-    public class ObjectShredder<T>
-    {
-        private FieldInfo[] _fi;
-        private PropertyInfo[] _pi;
-        private Dictionary<string, int> _ordinalMap;
-        private Type _type;
-
-        public ObjectShredder()
-        {
-            _type = typeof(T);
-            _fi = _type.GetFields();
-            _pi = _type.GetProperties();
-            _ordinalMap = new Dictionary<string, int>();
-        }
-
-        public DataTable Shred(IEnumerable<T> source, DataTable table, LoadOption? options)
-        {
-            if (typeof(T).IsPrimitive)
-            {
-                return ShredPrimitive(source, table, options);
-            }
-
-
-            if (table == null)
-            {
-                table = new DataTable(typeof(T).Name);
-            }
-
-            // now see if need to extend datatable base on the type T + build ordinal map
-            table = ExtendTable(table, typeof(T));
-
-            table.BeginLoadData();
-            using (IEnumerator<T> e = source.GetEnumerator())
-            {
-                while (e.MoveNext())
-                {
-                    if (options != null)
-                    {
-                        table.LoadDataRow(ShredObject(table, e.Current), (LoadOption)options);
-                    }
-                    else
-                    {
-                        table.LoadDataRow(ShredObject(table, e.Current), true);
-                    }
-                }
-            }
-            table.EndLoadData();
-            return table;
-        }
-
-        public DataTable ShredPrimitive(IEnumerable<T> source, DataTable table, LoadOption? options)
-        {
-            if (table == null)
-            {
-                table = new DataTable(typeof(T).Name);
-            }
-
-            if (!table.Columns.Contains("Value"))
-            {
-                table.Columns.Add("Value", typeof(T));
-            }
-
-            table.BeginLoadData();
-            using (IEnumerator<T> e = source.GetEnumerator())
-            {
-                Object[] values = new object[table.Columns.Count];
-                while (e.MoveNext())
-                {
-                    values[table.Columns["Value"].Ordinal] = e.Current;
-
-                    if (options != null)
-                    {
-                        table.LoadDataRow(values, (LoadOption)options);
-                    }
-                    else
-                    {
-                        table.LoadDataRow(values, true);
-                    }
-                }
-            }
-            table.EndLoadData();
-            return table;
-        }
-
-        public DataTable ExtendTable(DataTable table, Type type)
-        {
-            // value is type derived from T, may need to extend table.
-            foreach (FieldInfo f in type.GetFields())
-            {
-                if (!_ordinalMap.ContainsKey(f.Name))
-                {
-                    DataColumn dc = table.Columns.Contains(f.Name) ? table.Columns[f.Name]
-                        : table.Columns.Add(f.Name, f.FieldType);
-                    _ordinalMap.Add(f.Name, dc.Ordinal);
-                }
-            }
-            foreach (PropertyInfo p in type.GetProperties())
-            {
-                if (!_ordinalMap.ContainsKey(p.Name))
-                {
-                    DataColumn dc = table.Columns.Contains(p.Name) ? table.Columns[p.Name]
-                        : table.Columns.Add(p.Name, p.PropertyType);
-                    _ordinalMap.Add(p.Name, dc.Ordinal);
-                }
-            }
-            return table;
-        }
-
-        public object[] ShredObject(DataTable table, T instance)
-        {
-
-            FieldInfo[] fi = _fi;
-            PropertyInfo[] pi = _pi;
-
-            if (instance.GetType() != typeof(T))
-            {
-                ExtendTable(table, instance.GetType());
-                fi = instance.GetType().GetFields();
-                pi = instance.GetType().GetProperties();
-            }
-
-            Object[] values = new object[table.Columns.Count];
-            foreach (FieldInfo f in fi)
-            {
-                values[_ordinalMap[f.Name]] = f.GetValue(instance);
-            }
-
-            foreach (PropertyInfo p in pi)
-            {
-                values[_ordinalMap[p.Name]] = p.GetValue(instance, null);
-            }
-            return values;
         }
     }
 }
