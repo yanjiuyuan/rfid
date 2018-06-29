@@ -273,13 +273,23 @@
                 }
                 var that = this
                 $.ajax({
-                    url: "/FlowInfo/SubmitTaskInfo",
+                    url: "/DrawingUpload/PrintAndSend",
                     type: "POST",
-                    data: JSON.stringify(paramObj),
+                    data: paramObj,
                     dataType: "json",
                     success: function (data) {
+                        //data = JSON.parse(data)
+                        console.log("/DrawingUpload/PrintAndSend1")
                         console.log(paramObj)
                         console.log(data)
+                        var alertStr = ''
+                        data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
+                        that.$alert(alertStr, '提交', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
                         //if (data && data.errorCode == 0) {
                         //    that.$alert('审批成功', '操作成功', {
                         //        confirmButtonText: '确定',
