@@ -37,7 +37,7 @@
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
-        <el-form-item label="相关图片">
+        <el-form-item v-if="imageList.length > 0" label="相关图片">
             <el-upload action=""
                        list-type="picture-card"
                        :on-preview="handlePictureCardPreview"
@@ -45,14 +45,14 @@
                        :disabled="true">
             </el-upload>
         </el-form-item>
-        <el-form-item label="相关文件">
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
                 <div v-for="f in fileList" :key="f.name" class="text item">
                     <span v-on:click="clickFile(f.url)">{{ f.name }}</span>
-                    <el-button type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
             </el-card>
-
+            <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
         </el-form-item>
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
@@ -63,7 +63,7 @@
 
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-            </sam-addapprover>*@
+        </sam-addapprover>*@
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.mark"></el-input>
@@ -95,9 +95,41 @@
         Id = UrlObj.id
         var Index = UrlObj.index
     }
+    var items = {}
     var allData = {}
     var imageList = []
     var fileList = []
+    var FileUrl = ''
+    var bomUrl = ''
+    switch (FlowId) {
+        case '6':
+            items = {
+                DrawingNo: '代号',
+                Name: '名称',
+                Count: '数量',
+                MaterialScience: '材料',
+                Unit: '单位',
+                Brand: '品牌',
+                Sorts: '类别',
+                Mark: '备注'
+            }
+            bomUrl = "/DrawingUpload/GetPurchase?TaskId=" + TaskId
+            break;
+        case '8':
+            items = {
+                CodeNo: '物料编码',
+                Name: '物料名称',
+                Standard: '规格型号',
+                Unit: '单位',
+                Count: '数量',
+                Price: '单价',
+                Purpose: '用途',
+                UrgentDate: '需用日期',
+                Mark: '备注'
+            }
+            bomUrl = "/Purchase/ReadPurchaseTable?TaskId=" + TaskId
+            break;
+    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -108,16 +140,7 @@
                 imageList: imageList,
                 fileList: fileList,
                 data: [],
-                items: {
-                    DrawingNo: '代号',
-                    Name: '名称',
-                    Count: '数量',
-                    MaterialScience: '材料',
-                    Unit: '单位',
-                    Brand: '品牌',
-                    Sorts: '类别',
-                    Mark: '备注'
-                },
+                items: items,
                 tableData: [],
                 totalRows: 0,
                 nodeInfo: {},
@@ -127,6 +150,7 @@
                 isBack: false,
                 index: Index,
                 frameUrl: '',
+                ifShowStamppBtn: false,
                 frameShow: false
             }
         },
@@ -239,7 +263,37 @@
                     }
                 })
             },
-
+            //盖章并获取文件
+            stampAndGet() {
+                FileUrl = FileUrl.replace(/\\/g,'\\\\')
+                var paramObj = {
+                    UserId: DingData.userid,
+                    TaskId: TaskId,
+                    OldPath: FileUrl
+                }
+                var that = this
+                $.ajax({
+                    url: "/FlowInfo/SubmitTaskInfo",
+                    type: "POST",
+                    data: JSON.stringify(paramObj),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(paramObj)
+                        console.log(data)
+                        //if (data && data.errorCode == 0) {
+                        //    that.$alert('审批成功', '操作成功', {
+                        //        confirmButtonText: '确定',
+                        //        callback: action => {
+                        //            loadPage('/main/Approval')
+                        //        }
+                        //    });
+                        //}
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
             //获取节点数据GetNodeInfo
             getNodeInfo() {
                 var that = this
@@ -290,15 +344,15 @@
             getBomInfo() {
                 var that = this
                 $.ajax({
-                    url: "/DrawingUpload/GetPurchase?TaskId=" + TaskId,
+                    url: bomUrl,
                     type: "GET",
-                    dataType: "json",
                     success: function (data) {
                         console.log("获取bom表信息ok")
+                        console.log(bomUrl)
                         console.log(data)
-                        that.data = data
+                        that.data = JSON.parse(data)
                         that.getData()
-                        that.totalRows = data.length
+                        that.totalRows = that.data.length
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -326,18 +380,18 @@
                 var that = this
                 var param = {
                         UserId: DingData.userid,
-                        MediaId: mediaId
+                        Media_Id: mediaId
                     }
                 $.ajax({
                     url: '/DingTalkServers/sendFileMessage',
-                    tupe: 'POST',
-                    data: JSON.stringify(param),
+                    type: 'POST',
+                    data: param,
                     success: function (data) {
                         data = JSON.parse(data)
                         console.log('钉钉推送文件')
                         console.log(param)
                         console.log(data)
-                        if (!data.Content) {
+                        if (data.errmsg!='ok') {
                             that.$alert(data.errorMessage,'获取文件失败',  {
                                 confirmButtonText: '确定'
                             });
@@ -347,6 +401,7 @@
             }
         },
         created: function () {
+            if (Index == '1') this.ifShowStamppBtn = true
             loadHtml("mainPage", "partPage")
         }
     })
@@ -374,6 +429,7 @@
                     }
                 }
                 if (data.FileUrl && data.FileUrl.length > 5) {
+                    FileUrl = data.FileUrl
                     var urlList = data.FileUrl.split(',')
                     var oldUrlList = data.OldFileUrl.split(',')
                     var MediaIdList = data.MediaId?data.MediaId.split(','):[]

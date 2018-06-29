@@ -148,6 +148,10 @@
         <el-form-item label="意见" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -167,6 +171,9 @@
                 purchaseList: [],
                 projestList: [],
                 good: {},
+                preApprove: false,
+                nodeList: [],
+                nodeInfo: {},
                 dialogFormVisible: false,
                 searchForm: {
                     string:'',
@@ -187,11 +194,14 @@
             onSubmit(formName) {
                 var that = this
                 this.$refs[formName].validate((valid) => {
-                    if (valid && that.purchaseList.length>0) {
+                    if (valid && that.purchaseList.length > 0) {
+                        var title
+                        for (let p of that.projestList) {
+                            if (p.ProjectId == that.ruleForm.ProjectId) {
+                                title = p.ProjectName
+                            }
+                        }
                         var paramArr = []
-                        console.log(DingData.nickName)
-                        console.log(FlowId)
-                        console.log(that.ruleForm.ProjectId)
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
@@ -199,11 +209,42 @@
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
                             "FlowId": FlowId + '',
-                            "Remark": "",
+                            "Remark": that.ruleForm.remark,
                             "IsSend": false,
                             "State": "1",
+                            "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         })
+                        for (let node of that.nodeList) {
+                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
+                                console.log(node)
+                                console.log(node.AddPeople)
+                                if (!that.preApprove && node.AddPeople.length == 0) {
+                                    this.$alert('您尚未选择审批人', '提交错误', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+
+                                        }
+                                    });
+                                    that.disablePage = false
+                                    return
+                                }
+                                for (let a of node.AddPeople) {
+                                    paramArr.push({
+                                        "ApplyMan": a.name,
+                                        "ApplyManId": a.emplId,
+                                        "IsEnable": 1,
+                                        "FlowId": FlowId,
+                                        "NodeId": node.NodeId,
+                                        "IsSend": false,
+                                        "State": 0,
+                                        "ProjectId": that.ruleForm.ProjectId,
+                                        "OldFileUrl": null,
+                                        "IsBack": null
+                                    })
+                                }
+                            }
+                        }
                         console.log("提交审批 paramArr ")
                         console.log(paramArr)
                         $.ajax({
@@ -219,13 +260,18 @@
                             }
                         })
                     } else {
-                        alert('请填写完整信息')
+                        this.$alert('请填写完整信息', '提交错误', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
                         return false;
                     }
                 });
-                
             },
             bindAll(taskId) {
+                var that = this
                 var paramArr = []
                 for (let p of this.purchaseList) {
                     p.TaskId = taskId
@@ -236,11 +282,13 @@
                 $.ajax({
                     url: '/Purchase/SavePurchaseTable',
                     type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify(paramArr),
                     success: function (data) {
                         console.log("采购表单批量保存ok")
                         console.log()
                         console.log(data)
+                        that.doneSubmit()
                     }
                 })
             },
@@ -307,6 +355,7 @@
         },
         created: function () {
             this.getNodeInfo()
+            this.getNodeList()
             this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
         }
