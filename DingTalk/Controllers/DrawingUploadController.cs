@@ -328,7 +328,7 @@ namespace DingTalk.Controllers
                     string ProjectId = tasks.ProjectId;
 
                     //判断是否有权限触发按钮
-                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId== FlowId).First().PeopleId;
+                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
                     if (UserId != PeopleId)
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
@@ -348,7 +348,7 @@ namespace DingTalk.Controllers
                         });
                     }
 
-                  
+
                     List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
 
                     var SelectPurchaseList = from p in PurchaseList
@@ -383,14 +383,14 @@ namespace DingTalk.Controllers
                         {
                             "序号","代号","名称","数量","材料","单位","品牌","类别","备注"
                         };
-                   
+
                     float[] contentWithList = new float[]
                     {
                         50, 60, 60, 60, 60, 60, 60, 60, 60
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "1", contentList, contentWithList, dtSourse, dtApproveView);
+                    ProjectName, "1", 300, 650, contentList, contentWithList, dtSourse, dtApproveView);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     string[] Paths = OldPath.Split(',');

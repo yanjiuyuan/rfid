@@ -1,9 +1,15 @@
-﻿using DingTalk.Models;
+﻿using Common.ClassChange;
+using Common.DTChange;
+using Common.Ionic;
+using Common.PDF;
+using DingTalk.Models;
 using DingTalk.Models.DbModels;
 using DingTalk.Models.KisModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -102,7 +108,7 @@ namespace DingTalk.Controllers
                 {
                     var ICItemList = context.t_ICItem.ToList();
                     var Quary = from t in ICItemList
-                                where t.FName.Contains(Key) || t.FNumber.Contains(Key) || t.FModel.Contains(Key)
+                                where t.FName.Contains(Key) || t.FNumber.Contains(Key) 
                                 select new
                                 {
                                     t.FNumber, //物料编码
@@ -123,18 +129,115 @@ namespace DingTalk.Controllers
             }
         }
         #endregion
-        
-        public async Task<string> PrintReport()
+
+
+        /// <summary>
+        /// 打印表单数据、盖章、推送
+        /// </summary>
+        /// 测试数据   /Purchase/PrintAndSend
+        /// data: { "UserId":"083452125733424957","TaskId":"3"}
+        [HttpPost]
+        public async Task<string> PrintAndSend(PrintAndSendModel printAndSendModel)
         {
             try
             {
-                return "";
-            }
-            catch (Exception)
-            {
+                string TaskId = printAndSendModel.TaskId;
+                string UserId = printAndSendModel.UserId;
+                PDFHelper pdfHelper = new PDFHelper();
+                using (DDContext context = new DDContext())
+                {
+                    //获取表单信息
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
+                    string FlowId = tasks.FlowId.ToString();
+                    string ProjectId = tasks.ProjectId;
 
-                throw;
+                    //判断是否有权限触发按钮
+                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
+                    if (UserId != PeopleId)
+                    {
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 1,
+                            errorMessage = "没有权限"
+                        });
+                    }
+                    //判断流程是否已结束
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0).ToList();
+                    if (tasksList.Count > 0)
+                    {
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 2,
+                            errorMessage = "流程未结束"
+                        });
+                    }
+
+
+                    List<PurchaseTable> PurchaseTableList = context.PurchaseTable.Where(u => u.TaskId == TaskId).ToList();
+
+                    var SelectPurchaseList = from p in PurchaseTableList
+                                             select new
+                                             {
+                                                 p.CodeNo,p.Name,p.Standard,p.Unit,
+                                                 p.Count,p.Price,p.Purpose,p.UrgentDate,p.Mark
+                                             };
+                    DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
+                    //ClassChangeHelper.ToDataTable(SelectPurchaseList);
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
+                    foreach (NodeInfo nodeInfo in NodeInfoList)
+                    {
+                        if (string.IsNullOrEmpty(nodeInfo.NodePeople))
+                        {
+                            string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
+                            nodeInfo.NodePeople = strNodePeople;
+                        }
+                    }
+                    DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
+                    string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
+                    string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
+                    //绘制BOM表单PDF
+                    List<string> contentList = new List<string>()
+                        {
+                            "序号","物料编码","物料名称","规格型号/国标号","单位","数量","单价（预计）","用途","需用日期","备注"
+                        };
+
+                    float[] contentWithList = new float[]
+                    {
+                        50, 60, 60, 60, 60, 60, 60, 60, 60,60
+                    };
+
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
+                    ProjectName, "1",300,650, contentList, contentWithList, dtSourse, dtApproveView);
+                    string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
+
+
+                    List<string> newPaths = new List<string>();
+                    RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
+                    newPaths.Add(RelativePath);
+                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                    //文件压缩打包
+                    IonicHelper.CompressMulti(newPaths, SavePath, false);
+
+                    ///上传盯盘获取MediaId
+                    SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = UserId;
+                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                    return result;
+                }
             }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 3,
+                    errorMessage = ex.Message
+                });
+            }
+
         }
     }
 }

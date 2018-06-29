@@ -41,6 +41,9 @@ namespace Common.PDF
         /// <param name="ApplyName">申请人</param>
         /// <param name="ApplyTime">申请时间</param>
         /// <param name="ProjectName">项目名</param>
+        /// <param name="ImageNo">图片编号</param>
+        /// <param name="ImageX">盖章X轴</param>
+        /// <param name="ImageY">盖章Y轴</param>
         /// <param name="FlowId">流程Id</param>
         /// <param name="FilePath">水印图片路径</param>
         /// <param name="contentList">表单头数组</param>
@@ -48,7 +51,7 @@ namespace Common.PDF
         /// <param name="dtSourse">表单数据</param>
         /// <param name="dtApproveView">审批意见数据</param>
         public string GeneratePDF(string FlowName, string TaskId, string ApplyName,
-            string ApplyTime, string ProjectName, string ImageNo
+            string ApplyTime, string ProjectName, string ImageNo,float ImageX, float ImageY
             , List<string> contentList, float[] contentWithList
             , DataTable dtSourse, DataTable dtApproveView)
         {
@@ -79,13 +82,20 @@ namespace Common.PDF
                 //设置审批水印
                 if (!string.IsNullOrEmpty(filePath))
                 {
+                    string ImgaePath = "";
                     if (ImageNo == "1")
                     {
-                        string ImgaePath = string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory);
-                        iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(ImgaePath);
-                        image.SetAbsolutePosition(300, 650);
-                        writer.DirectContent.AddImage(image);
+                         ImgaePath = string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory);
                     }
+                    if (ImageNo == "2")
+                    {
+                        ImgaePath = string.Format(@"{0}\Content\images\approve.png", AppDomain.CurrentDomain.BaseDirectory);
+                    }
+                    iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(ImgaePath);
+                    //image.SetAbsolutePosition(300, 650);
+                    image.SetAbsolutePosition(ImageX, ImageY);
+                    
+                    writer.DirectContent.AddImage(image);
                 }
 
 
