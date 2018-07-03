@@ -337,12 +337,12 @@
             //编辑审批物料
             showEditGood(index, good) {
                 this.dialogFormVisible = true
-                this.good = _cloneObj(good)
+                this.good = $.extend({}, good)
                 this.good.index = index
             },
             editGood() {
                 this.dialogFormVisible = false
-                let tmpGood = _cloneObj(this.good)
+                let tmpGood = $.extend({}, good)
                 tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
                 this.purchaseList[this.good.index] = tmpGood
                 let tmpArr = _cloneArr(this.purchaseList)
