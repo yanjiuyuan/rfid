@@ -26,6 +26,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult FileManager()
+        {
+            return View();
+        }
         public ActionResult WorkOvertime()
         {
             return View();
