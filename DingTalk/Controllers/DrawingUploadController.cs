@@ -5,7 +5,7 @@ using Common.Ionic;
 using Common.JsonHelper;
 using Common.PDF;
 using DingTalk.Models;
-using DingTalk.Models.DbModels;
+using DingTalk.Models.DingModels;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
 using System;

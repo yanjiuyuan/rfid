@@ -275,7 +275,6 @@ namespace Common.PDF
             catch (Exception ex)
             {
                 throw ex;
-
             }
             finally
             {

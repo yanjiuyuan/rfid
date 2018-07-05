@@ -1,4 +1,4 @@
-namespace DingTalk.Models.DbModels
+namespace DingTalk.Models.DingModels
 {
     using System;
     using System.Collections.Generic;
