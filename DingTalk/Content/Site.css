@@ -276,6 +276,7 @@ ol li {
 .el-main{
     padding:0px;
     overflow:hidden;
+    margin-left:1%;
 }
 .head-fixed{
     font-size:1.2rem;
