@@ -187,13 +187,11 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 获取项目目录下的文件信息
         /// </summary>
-        /// <param name="Path">绝对路径</param>
         /// <returns></returns>
-        /// 测试数据：/Project/GetFileMsg?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile
         [HttpGet]
-        public string GetFileMsg(string Path)
+        public string GetFileMsg()
         {
-            //string Path = string.Format(@"{0}UploadFile\Excel", AppDomain.CurrentDomain.BaseDirectory);           
+            string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);
             return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
         }
 
