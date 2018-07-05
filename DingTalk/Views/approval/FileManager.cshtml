@@ -1,0 +1,199 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        文件管理
+    </div>
+    <!--文件夹树状图-->
+    <el-tree :data="lineTree"
+             default-expand-all
+             :expand-on-click-node="ifExtend"
+             v-on:node-click="clickNode"
+             node-key="id"
+             ref="tree"
+             highlight-current
+             style="width:20%;float:left;"
+             :props="defaultProps">
+    </el-tree>
+
+    <div style="width:80%;float:left;">
+        <!--项目信息表格-->
+        <h3>项目信息表格</h3>
+        <el-table :data="tableData" stripe border>
+            <el-table-column prop="ProductLineId" label="产线编号"></el-table-column>
+            <el-table-column prop="ProductLineName" label="产线名称"></el-table-column>
+        </el-table>
+        <!--文件夹列表-->
+        <h3>文件夹列表</h3>
+        <div v-for="f in folderList" class="folder-box" v-on:click="openFolder(f.url)" style="cursor:pointer;">
+            <div class="approval-box-img" style="backgroundPosition:-774px -227px;"></div>
+            <p>{{f.name}}</p>
+        </div>
+        <!--文件列表-->
+        <h3 style="clear:left;">文件列表</h3>
+        <el-table :data="tableData" stripe border>
+            <el-table-column prop="ProductLineId" label="产线编号"></el-table-column>
+            <el-table-column prop="ProductLineName" label="产线名称"></el-table-column>
+            <el-table-column label="操作" width="150">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-on:click="downloadFile(scope.$index, scope.row)">下载</el-button>
+                    <el-button size="mini" type="danger" v-on:click="deleteFile(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+    <!--文件管理-->
+    <h3>文件管理</h3>
+    <el-upload class="upload-demo" stule="width:30%;float:left;"
+               action="https://jsonplaceholder.typicode.com/posts/"
+               :on-change="handleChange"
+               :file-list="fileList">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+    </el-upload>
+    <el-button v-on:click="dialogFormVisible == true" size="small" type="primary">新建文件夹</el-button>
+    <!--新建文件夹表单-->
+    <el-dialog title="编辑物料" :visible.sync="dialogFormVisible">
+        <el-form :model="formInline" class="demo-form-inline"
+                 size="medium">
+            <el-form-item label="名称">
+                <el-input v-model="formInline.name"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" v-on:click="createFolder">创 建</el-button>
+        </div>
+    </el-dialog>
+</el-main>
+
+<script>
+    new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                tableData: [
+                    {
+                        ProductLineId: '123',
+                        ProductLineName: 'hello'
+                    }, {
+                        ProductLineId: '456',
+                        ProductLineName: 'world'
+                    }],
+                folderList: [
+                    {
+                        url: 'baidu',
+                        name: '百度'
+                    },
+                    {
+                        url: 'qq',
+                        name: '腾讯'
+                    }
+                ],
+                dialogFormVisible: false,
+                fileList: [],
+                lineTree: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                formInline: {
+                    name: ''
+                },
+                ifExtend: false
+            }
+        },
+        methods: {
+            //获取文件树数据
+            getFolderData: function (obj) {
+                var that = this
+                that.lineTree = [
+                    {
+                        id: '1',
+                        label: '一级 1',
+                        children: [{
+                            id: '1',
+                            label: '二级 1-1',
+                            children: [{
+                                id: '1',
+                                label: '三级 1-1-1'
+                            }]
+                        }]
+                    },
+                    {
+                        id: '2',
+                        label: '一级 2',
+                        children: [{
+                            id: '2',
+                            label: '二级 2-1',
+                            children: [{
+                                id: '2',
+                                label: '三级 2-1-1'
+                            }]
+                        }, {
+                                id: '2',
+                                label: '二级 2-2',
+                                children: [{
+                                    id: '2',
+                                label: '三级 2-2-1'
+                            }]
+                        }]
+                    }]
+                console.log(that.lineTree)
+                return
+                url = "/ProductionLines/ProductionLinesData" + _formatQueryStr(obj)
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log('/获取文件树数据')
+                        console.log(url)
+                        console.log(data)
+                    },
+                    error: function (err) {
+                        console.error(err)
+                    }
+                })
+            },
+            //打开某文件夹相关操作
+            openFolder: function (url) {
+                //改变路径，加载新的文件夹、表单数据、切换相关变量
+                
+            },
+            //下载文件
+            downloadFile: function (index,row) {
+                
+            },
+            //删除文件
+            deleteFile: function (index,row) {
+                
+            },
+            //上传文件
+            handleChange: function () {
+
+            },
+            //新建文件夹
+            createFolder: function () {
+
+            },
+            //点击节点跳转文件夹
+            clickNode: function (obj) {
+                console.log(obj)
+            }
+        },
+        created: function () {
+            this.getFolderData()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+
+

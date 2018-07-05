@@ -160,12 +160,12 @@ ol {
     margin: 0px;
 }
 
-    ol li {
-        height: 28px;
-        font-size: 12px;
-        line-height: 28px;
-        overflow: hidden;
-    }
+ol li {
+    height: 28px;
+    font-size: 12px;
+    line-height: 28px;
+    overflow: hidden;
+}
 
 /*审批列表*/
 .approval-box {
@@ -178,7 +178,20 @@ ol {
     margin-bottom: 20px;
     text-align: center;
 }
-
+.folder-box {
+    width: 80px;
+    height: 80px;
+    padding: 10px;
+    float: left;
+    border: 1px solid rgba(41, 255, 255, 0);
+    text-align: center;
+}
+.folder-box p{
+    margin-top:2px;
+}
+.folder-box:hover {
+    border: 1px solid rgba(41, 255, 255, 0.74);
+}
 .approval-box-img {
     width: 60px;
     height: 60px;
