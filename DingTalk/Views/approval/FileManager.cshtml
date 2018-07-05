@@ -23,7 +23,7 @@
 
     <div style="width:80%;float:left;">
         <!--项目信息表格-->
-        <h3>项目信息表格</h3>
+        <h3>项目信息表格</h3><el-button v-on:click="addProjectFormVisible = true" size="small" type="primary">添加项目</el-button>
         <el-table :data="tableData" stripe border>
             <el-table-column prop="ProductLineId" label="产线编号"></el-table-column>
             <el-table-column prop="ProductLineName" label="产线名称"></el-table-column>
@@ -49,16 +49,16 @@
     </div>
     <!--文件管理-->
     <h3>文件管理</h3>
-    <el-upload class="upload-demo" stule="width:30%;float:left;"
+    <el-upload class="upload-demo" style="width:30%;float:left;"
                action="https://jsonplaceholder.typicode.com/posts/"
                :on-change="handleChange"
                :file-list="fileList">
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
     </el-upload>
-    <el-button v-on:click="dialogFormVisible == true" size="small" type="primary">新建文件夹</el-button>
+    <el-button v-on:click="dialogFormVisible = true" size="small" type="primary">新建文件夹</el-button>
     <!--新建文件夹表单-->
-    <el-dialog title="编辑物料" :visible.sync="dialogFormVisible">
+    <el-dialog title="新建文件夹" :visible.sync="dialogFormVisible">
         <el-form :model="formInline" class="demo-form-inline"
                  size="medium">
             <el-form-item label="名称">
@@ -68,6 +68,31 @@
         <div slot="footer" class="dialog-footer">
             <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" v-on:click="createFolder">创 建</el-button>
+        </div>
+    </el-dialog>
+    <!--新建项目表单-->
+    <el-dialog title="添加项目" :visible.sync="addProjectFormVisible">
+        <el-form :model="formProject" class="demo-form-inline" :rules="rules"
+                 size="medium">
+            <el-form-item label="项目名称" prop="inputProjectName">
+                <el-input v-model="formProject.inputProjectName"></el-input>
+            </el-form-item>
+            <el-form-item label="项目编号" prop="inputProjectId">
+                <el-input v-model="formProject.inputProjectId"></el-input>
+            </el-form-item>
+            <el-form-item label="开始日期">
+                <el-date-picker v-model="formProject.Time"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button v-on:click="addProjectFormVisible = false">取 消</el-button>
+            <el-button type="primary" v-on:click="addProject">创 建</el-button>
         </div>
     </el-dialog>
 </el-main>
@@ -97,6 +122,7 @@
                     }
                 ],
                 dialogFormVisible: false,
+                addProjectFormVisible: false,
                 fileList: [],
                 lineTree: [],
                 defaultProps: {
@@ -105,6 +131,11 @@
                 },
                 formInline: {
                     name: ''
+                },
+                formProject: {
+                    inputProjectName: '',
+                    inputProjectId: '',
+                    Time: ''
                 },
                 ifExtend: false
             }
@@ -180,6 +211,10 @@
             },
             //新建文件夹
             createFolder: function () {
+
+            },
+            //新建项目
+            createProject: function () {
 
             },
             //点击节点跳转文件夹
