@@ -1,4 +1,4 @@
-﻿using DingTalk.Models.DbModels;
+﻿using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

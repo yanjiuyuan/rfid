@@ -82,7 +82,7 @@ namespace DingTalk.Controllers
 
         #region user curd
         [Route("getUserDetail")]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public async Task<string> GetUserDetail()
         {
             //string dptId = "0935455445756597";
@@ -94,7 +94,7 @@ namespace DingTalk.Controllers
             return result;
         }
         [Route("getDepartmentUserList")]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public async Task<string> GetDepartmentUserList()
         {
             string dptId = "34894112";

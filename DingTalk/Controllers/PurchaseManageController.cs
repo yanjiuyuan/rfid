@@ -3,7 +3,7 @@ using Common.DTChange;
 using Common.Ionic;
 using Common.PDF;
 using DingTalk.Models;
-using DingTalk.Models.DbModels;
+using DingTalk.Models.DingModels;
 using DingTalk.Models.KisModels;
 using Newtonsoft.Json;
 using System;
@@ -172,8 +172,7 @@ namespace DingTalk.Controllers
                             errorMessage = "流程未结束"
                         });
                     }
-
-
+                    
                     List<PurchaseTable> PurchaseTableList = context.PurchaseTable.Where(u => u.TaskId == TaskId).ToList();
 
                     var SelectPurchaseList = from p in PurchaseTableList
@@ -239,7 +238,6 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
-
         }
     }
 }

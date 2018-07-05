@@ -1,7 +1,8 @@
-﻿using Common.JsonHelper;
+﻿using Common.Flie;
+using Common.JsonHelper;
 using Common.PDF;
 using DingTalk.Models;
-using DingTalk.Models.DbModels;
+using DingTalk.Models.DingModels;
 using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
@@ -76,6 +77,22 @@ namespace DingTalk.Controllers
                         {
                             context.ProjectInfo.Add(projectInfo);
                             context.SaveChanges();
+
+                            //建立项目文件夹及其子文件
+                            string Path = string.Format("{0}UploadFile\\ProjectFile\\{1}",
+                                AppDomain.CurrentDomain.BaseDirectory, projectInfo.ProjectName);
+                            FileHelper.CreateDirectory(Path);
+                            FileHelper.CreateDirectory(Path + "\\1需求分析");
+                            FileHelper.CreateDirectory(Path + "\\2进度计划");
+                            FileHelper.CreateDirectory(Path + "\\3立项书");
+                            FileHelper.CreateDirectory(Path + "\\4方案设计");
+                            FileHelper.CreateDirectory(Path + "\\5机械图纸");
+                            FileHelper.CreateDirectory(Path + "\\6电气图纸");
+                            FileHelper.CreateDirectory(Path + "\\7采购单");
+                            FileHelper.CreateDirectory(Path + "\\8源代码");
+                            FileHelper.CreateDirectory(Path + "\\9中试");
+                            FileHelper.CreateDirectory(Path + "\\10验收报告");
+                            FileHelper.CreateDirectory(Path + "\\11使用说明书");
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 0,
@@ -128,7 +145,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-        
+
         /// <summary>
         /// 文件下载
         /// </summary>
@@ -166,5 +183,126 @@ namespace DingTalk.Controllers
                 Response.Close();
             }
         }
+
+
+        /// <summary>
+        /// 获取项目目录下的文件夹信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public string GetProjectFileMsg()
+        {
+            string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);           
+            return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
+        }
+
+        /// <summary>
+        /// 获取目录下的文件夹信息
+        /// </summary>
+        /// <param name="Path">绝对路径</param>
+        /// <returns></returns>
+        /// 测试数据：/Project/GetFileMsg?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile
+        [HttpGet]
+        public string GetFileMsg(string Path)
+        {
+            //string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);           
+            return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
+        }
+
+        /// <summary>
+        /// 获取参数路径下的所有文件信息
+        /// </summary>
+        /// <param name="Path">路径</param>
+        /// <returns></returns>
+        /// 测试数据：/Project/GetAllFilePath?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile
+        [HttpGet]
+        public string GetAllFilePath(string Path)
+        {
+            return JsonConvert.SerializeObject(FileHelper.GetDirectories(Path));
+        }
+
+        /// <summary>
+        /// 修改项目文件
+        /// </summary>
+        /// <param name="Path">当前路径</param>
+        /// <param name="MovePath">修改文件名时的新路径</param>
+        /// <param name="UserId">用户Id</param>
+        /// <param name="ProjectId">项目Id</param>
+        /// <param name="ChangeType">修改类型( 0:新建  1:删除  2:修改(需要多传一个MovePath参数) )</param>
+        /// <returns></returns>
+        /// 测试数据：/Project/ChangeFile?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile\news&UserId=manager325&ChangeType=0&ProjectId=1111111
+        [HttpGet]
+        public string ChangeFile(string Path, string MovePath, string UserId, string ProjectId, int ChangeType)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    //判断权限
+                    bool IsSuperPower = (context.Roles.Where(r => r.UserId == UserId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
+                    if (IsSuperPower)
+                    {
+                        switch (ChangeType)
+                        {
+                            case 0:
+                                FileHelper.CreateDirectory(Path);
+                                break;
+                            case 1:
+                                FileHelper.DeleteDirectory(Path);
+                                break;
+                            case 2:
+                                FileHelper.Move(Path, MovePath);
+                                break;
+                        }
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 0,
+                            errorMessage = "操作成功"
+                        });
+                    }
+                    else
+                    {
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ProjectId == ProjectId && p.ApplyManId == UserId).ToList().Count() >= 1) ? true : false;
+                        if (IsComPower)
+                        {
+                            switch (ChangeType)
+                            {
+                                case 0:
+                                    FileHelper.CreateDirectory(Path);
+                                    break;
+                                case 1:
+                                    FileHelper.DeleteDirectory(Path);
+                                    break;
+                                case 2:
+                                    FileHelper.Move(Path, MovePath);
+                                    break;
+                            }
+                            return JsonConvert.SerializeObject(new ErrorModel
+                            {
+                                errorCode = 0,
+                                errorMessage = "操作成功"
+                            });
+                        }
+                        else
+                        {
+                            return JsonConvert.SerializeObject(new ErrorModel
+                            {
+                                errorCode = 0,
+                                errorMessage = "用户没有权限进行操作"
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-namespace DingTalk.Models.DbModels
+namespace DingTalk.Models.DingModels
 {
     using System;
     using System.Collections.Generic;
@@ -12,12 +12,21 @@ namespace DingTalk.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
-        [StringLength(100)]
-        public string FlowId { get; set; }
+        [StringLength(200)]
+        public string RoleName { get; set; }
 
         [StringLength(200)]
-        public string NodeName { get; set; }
+        public string CreateMan { get; set; }
 
-        public int? IsEnable { get; set; }
+        [StringLength(200)]
+        public string CreateManId { get; set; }
+
+        [StringLength(200)]
+        public string UserName { get; set; }
+
+        [StringLength(200)]
+        public string UserId { get; set; }
+
+        public bool? IsEnable { get; set; }
     }
 }

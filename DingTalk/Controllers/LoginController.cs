@@ -2,7 +2,7 @@
 using Common.JsonHelper;
 using DingTalk.DingTalkHelper;
 using DingTalk.Models;
-using DingTalk.Models.DbModels;
+using DingTalk.Models.DingModels;
 using DingTalkServer;
 using Newtonsoft.Json;
 using System;

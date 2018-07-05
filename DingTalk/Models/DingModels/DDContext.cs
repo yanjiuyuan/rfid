@@ -1,4 +1,4 @@
-namespace DingTalk.Models.DbModels
+namespace DingTalk.Models.DingModels
 {
     using System;
     using System.Data.Entity;
@@ -262,11 +262,23 @@ namespace DingTalk.Models.DbModels
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<Roles>()
-                .Property(e => e.FlowId)
+                .Property(e => e.RoleName)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Roles>()
-                .Property(e => e.NodeName)
+                .Property(e => e.CreateMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Roles>()
+                .Property(e => e.CreateManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Roles>()
+                .Property(e => e.UserName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Roles>()
+                .Property(e => e.UserId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Tasks>()
