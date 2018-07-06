@@ -89,13 +89,19 @@
             </el-pagination>
         </div>
         <!--上传文件-->
-        <el-upload class="upload-demo" style="width:30%;float:left;"
-                   action="https://jsonplaceholder.typicode.com/posts/"
-                   :on-change="handleChange"
-                   :file-list="fileList">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        <el-upload class="upload-demo"
+                   drag
+                   :file-list="fileList"
+                   :action="uploadUrl"
+                   :on-remove="handleFileRemove"
+                   :before-upload="beforeFileUpload"
+                   :on-success="handleFileCardSuccess"
+                   multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">不超过30M</div>
         </el-upload>
+
     </div>
 
     <!--新建文件夹表单-->
@@ -165,7 +171,8 @@
                     inputProjectId: '',
                     Time: ''
                 },
-                ifExtend: false
+                ifExtend: false,
+                uploadUrl: ''
             }
         },
         methods: {
@@ -173,8 +180,10 @@
             getFileData: function () {
                 var that = this
                 var url = "/Project/GetFileMsg?path=\\UploadFile"
+                this.uploadUrl = "/drawingupload/Upload?path=\\UploadFile"
                 for (let p of this.pathList) {
                     url = url + '\\' + p
+                    this.uploadUrl = this.uploadUrl + '\\' + p
                 }
                 $.ajax({
                     url: url,

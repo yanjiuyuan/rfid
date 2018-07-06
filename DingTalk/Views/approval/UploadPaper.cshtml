@@ -101,7 +101,7 @@
                 <el-upload class="upload-demo"
                            drag
                            :file-list="pdfList"
-                           action="/drawingupload/Upload"
+                           action="/drawingupload/Upload?path=hello"
                            :on-remove="handleFileRemove"
                            :before-upload="beforeFileUpload"
                            :on-success="handleFileCardSuccess"
