@@ -4,6 +4,32 @@
 
 <!--右侧实体内容-->
 <div id="partPage">
+    <el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+    <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>
+    <!--创建项目表单-->
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        <template v-if="showAddProject">
+            <el-form-item label="项目名称" prop="inputProjectName">
+                <el-input v-model="ruleForm.inputProjectName"></el-input>
+            </el-form-item>
+            <el-form-item label="项目编号" prop="inputProjectId">
+                <el-input v-model="ruleForm.inputProjectId"></el-input>
+            </el-form-item>
+            <el-form-item label="开始日期">
+                <el-date-picker v-model="ruleForm.Time"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="addProject">添加</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
         <el-table-column prop="ProjectId" label="项目Id"></el-table-column>
@@ -43,12 +69,12 @@
             return {
                 data: [],
                 tableData: [],
-                formInline: {
-                    user: '',
-                    region: '',
-                    startDate: '',
-                    endDate: '',
-                    state:0
+                ruleForm: {
+                    inputProjectName: '',
+                    inputProjectId: '',
+                    ProjectName: '',
+                    ProjectId: null,
+                    Time: ''
                 },
                 items: { TaskId: '审批编号' ,ApplyMan:'审批人'}
             }
