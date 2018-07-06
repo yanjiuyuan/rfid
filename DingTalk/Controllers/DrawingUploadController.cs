@@ -115,7 +115,8 @@ namespace DingTalk.Controllers
                     {
                         errorCode = 0,
                         errorMessage = "上传成功",
-                        Content = strPath + newFileName + strExtension
+
+                        Content = Path //strPath + newFileName + strExtension
                     });
                 }
             }
