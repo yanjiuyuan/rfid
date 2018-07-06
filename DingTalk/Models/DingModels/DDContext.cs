@@ -386,6 +386,10 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.LastModifyState)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.MediaId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<ProcedureInfo>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
