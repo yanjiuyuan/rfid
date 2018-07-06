@@ -93,8 +93,8 @@
                    drag
                    :file-list="fileList"
                    :action="uploadUrl"
-                   :on-remove="handleFileRemove"
-                   :before-upload="beforeFileUpload"
+                   @*:on-remove="handleFileRemove"*@
+                   @*:before-upload="beforeFileUpload"*@
                    :on-success="handleFileCardSuccess"
                    multiple>
             <i class="el-icon-upload"></i>
@@ -254,6 +254,32 @@
                 })
             },
             //上传文件
+            handleFileCardSuccess(response, file, fileList) {
+                console.log('上传文件返回结果')
+                console.log(response)
+                return
+                var that = this
+                var paramObj = {
+                    "": file.response.Content
+                }
+                $.ajax({
+                    url: '/DingTalkServers/UploadMedia/',
+                    type: 'POST',
+                    data: JSON.stringify(paramObj),
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log('上传文件到钉盘')
+                        console.log(paramObj)
+                        if (data.media_id) {
+                            console.log(data.media_id)
+                            that.mediaList[file.response.Content] = data.media_id
+                        } else {
+                            console.log('无media_di')
+                        }
+                        //that.changeFileList(fileList)
+                    }
+                })
+            },
             handleChange: function () {
 
             },
