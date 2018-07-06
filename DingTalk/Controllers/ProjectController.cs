@@ -223,6 +223,7 @@ namespace DingTalk.Controllers
             {
                 string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
                 List<string> RePathList = new List<string>();
+
                 foreach (var item in AbPathList)
                 {
                     //绝对路径转相对
@@ -290,6 +291,8 @@ namespace DingTalk.Controllers
         {
             try
             {
+                //判断是否是文件
+                bool IsFile = Path.GetFileName(path).Contains(".");
                 using (DDContext context = new DDContext())
                 {
                     FileInfos fileInfos = new FileInfos()
@@ -309,19 +312,32 @@ namespace DingTalk.Controllers
                         switch (ChangeType)
                         {
                             case 0:
-                                FileHelper.CreateDirectory(path);
+                                if (IsFile)
+                                {
+                                    System.IO.File.Create(path);
+                                }
+                                else
+                                {
+                                    Directory.CreateDirectory(path);
+                                }
                                 context.FileInfos.Add(fileInfos);
                                 context.SaveChanges();
                                 break;
                             case 1:
-                                FileHelper.DeleteDirectory(path);
+                                if (IsFile)
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                else
+                                {
+                                    Directory.Delete(path);
+                                }
                                 var f = context.FileInfos.Where(u=>u.FilePath== RePath).FirstOrDefault();
                                 context.FileInfos.Remove(f);
                                 context.SaveChanges();
                                 break;
                             case 2:
-                                FileHelper.Move(path, Server.MapPath(MovePath));
-                                
+                                Directory.Move(path, Server.MapPath(MovePath));
                                 var fs = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
                                 context.FileInfos.Remove(fs);
                                 context.SaveChanges();
