@@ -26,5 +26,8 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(200)]
         public string LastModifyState { get; set; }
+
+        [StringLength(200)]
+        public string MediaId { get; set; }
     }
 }

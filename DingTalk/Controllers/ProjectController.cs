@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 
 namespace DingTalk.Controllers
@@ -281,13 +282,13 @@ namespace DingTalk.Controllers
         /// <param name="MovePath">修改文件名时的新路径</param>
         /// <param name="ApplyMan">用户名</param>
         /// <param name="ApplyManId">用户Id</param>
-        /// <param name="ProjectId">项目Id</param>
         /// <param name="ChangeType">修改类型( 0:新建  1:删除  2:修改(需要多传一个MovePath参数) )</param>
+        /// <param name="MediaId">盯盘唯一Id</param>
         /// <returns></returns>
-        /// 测试数据：/Project/ChangeFile?Path=\UploadFile\ProjectFile\白金刚\123&MovePath=\UploadFile\ProjectFile\白金刚\321&ApplyManId=manager325&ApplyMan=黄浩伟&ChangeType=2&ProjectId=1111111
+        /// 测试数据：/Project/ChangeFile?Path=\UploadFile\ProjectFile\白金刚\123&MovePath=\UploadFile\ProjectFile\白金刚\321&ApplyManId=manager325&ApplyMan=黄浩伟&ChangeType=2
 
         [HttpGet]
-        public string ChangeFile(string path, string MovePath, string ApplyMan, string ApplyManId, string ProjectId, int ChangeType)
+        public string ChangeFile(string path, string MovePath, string ApplyMan, string ApplyManId, int ChangeType, string MediaId)
         {
             try
             {
@@ -332,7 +333,7 @@ namespace DingTalk.Controllers
                                 {
                                     Directory.Delete(path);
                                 }
-                                var f = context.FileInfos.Where(u=>u.FilePath== RePath).FirstOrDefault();
+                                var f = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
                                 context.FileInfos.Remove(f);
                                 context.SaveChanges();
                                 break;
@@ -354,7 +355,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        bool IsComPower = (context.ProjectInfo.Where(p => p.ProjectId == ProjectId && p.ApplyManId == ApplyManId).ToList().Count() >= 1) ? true : false;
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ApplyManId == ApplyManId).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
                             switch (ChangeType)
@@ -394,6 +395,23 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
+        }
+
+        /// <summary>
+        /// 根据路径上传文件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="path"></param>
+        /// <returns>返回文件路径</returns>
+        /// 测试数据：/Project/Save
+        [HttpPost]
+        public static string Save(HttpPostedFileBase file, string path)
+        {
+            var phicyPath = HostingEnvironment.MapPath(path);
+            Directory.CreateDirectory(phicyPath);
+            var fileName = DateTime.Now.ToString();
+            file.SaveAs(phicyPath + fileName);
+            return fileName;
         }
 
     }

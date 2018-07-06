@@ -7,7 +7,7 @@
 <h2>上传文件</h2>
 <br />
 <br />
-@using (Html.BeginForm("UploadAndGetInfo", "DrawingUpload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Upload", "DrawingUpload", new { path = "~\\UploadFile\\ProjectFile\\123.txt" },FormMethod.Post, new { enctype = "multipart/form-data"}))
 {
     <text>选择上传文件：</text><input name="file" type="file" id="file" />
     <br />

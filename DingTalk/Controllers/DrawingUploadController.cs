@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
         /// <param name="form"></param>
         /// <returns>返回文件保存路径</returns>
         [HttpPost]
-        public string Upload(FormCollection form)
+        public string Upload(FormCollection form,string path)
         {
             try
             {
@@ -75,32 +75,40 @@ namespace DingTalk.Controllers
                         strExtension = FileName.Substring(nIndex);
                     }
 
-                    switch (strExtension)
+                    if (string.IsNullOrEmpty(path))
                     {
-                        //Image
-                        case ".jpg":
-                            strPath = @"~\UploadFile\Images\";
-                            Path = Server.MapPath(strPath + newFileName + strExtension);
-                            break;
-                        case ".png":
-                            strPath = @"~\UploadFile\Images\";
-                            Path = Server.MapPath(strPath + newFileName + strExtension);
-                            break;
-                        //Excel
-                        case ".xls":
-                            strPath = @"~\UploadFile\Excel\";
-                            Path = Server.MapPath(strPath + newFileName + strExtension);
-                            break;
-                        case ".xlsx":
-                            strPath = @"~\UploadFile\Excel\";
-                            Path = Server.MapPath(strPath + newFileName + strExtension);
-                            break;
-                        //其他文件
-                        default:
-                            strPath = @"~\UploadFile\Flies\";
-                            Path = Server.MapPath(strPath + newFileName + strExtension);
-                            break;
+                        switch (strExtension)
+                        {
+                            //Image
+                            case ".jpg":
+                                strPath = @"~\UploadFile\Images\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
+                            case ".png":
+                                strPath = @"~\UploadFile\Images\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
+                            //Excel
+                            case ".xls":
+                                strPath = @"~\UploadFile\Excel\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
+                            case ".xlsx":
+                                strPath = @"~\UploadFile\Excel\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
+                            //其他文件
+                            default:
+                                strPath = @"~\UploadFile\Flies\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
+                        }
                     }
+                    else
+                    {
+                        Path = Server.MapPath(path);
+                    }
+                   
                     //保存文件
                     files.SaveAs(Path);
                     return JsonConvert.SerializeObject(new ErrorModel
