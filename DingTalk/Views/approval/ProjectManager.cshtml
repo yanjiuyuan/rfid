@@ -1,0 +1,104 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="ProjectId" label="项目Id"></el-table-column>
+        <el-table-column prop="ProjectName" label="项目名称"></el-table-column>
+        <el-table-column prop="DeptName" label="部门名称"></el-table-column>
+        <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
+        <el-table-column prop="CreateTime" label="创建时间"></el-table-column>
+        <el-table-column prop="StartTime" label="开始时间"></el-table-column>
+        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
+                @*<el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">同意</el-button>*@
+            </template>
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+</div>
+
+
+<script>
+    var Index = 0
+    new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                tableData: [],
+                formInline: {
+                    user: '',
+                    region: '',
+                    startDate: '',
+                    endDate: '',
+                    state:0
+                },
+                items: { TaskId: '审批编号' ,ApplyMan:'审批人'}
+            }
+        },
+        methods: {
+            //获取项目列表
+            getApproveList() {
+                var that = this 
+                $.ajax({
+                    url: 'FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (data) {
+                        console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
+                        console.log(data)
+                        for (let d of data) {
+                            that.data.push(d[0])
+                        }
+                        //that.tableData = data
+                        that.getData()
+                        that.totalRows = data.length
+                    },
+                    error: function (err) {
+                        console.error(err)
+                    }
+                })
+            },
+            //表单操作
+            handleEdit(index, row) {
+                console.log(index, row);
+                if (row.TaskId && row.FlowId) {
+                    if (row.FlowId == 7) {
+                        loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
+                        return
+                    }
+                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
+                }
+            },
+            handleDelete(index, row) {
+                console.log(index, row);
+            }
+        },
+        created: function () {
+            console.log('UrlObj')
+            console.log(UrlObj)
+            Index = UrlObj.Index
+            this.getApproveList()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>

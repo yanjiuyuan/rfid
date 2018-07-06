@@ -224,7 +224,25 @@
             },
             //删除文件
             deleteFile: function (index, row) {
-
+                var that = this
+                var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
+                for (let p of this.pathList) {
+                    url = url + '\\' + p
+                }
+                url = url + '\\' + row.name
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log('/删除文件')
+                        console.log(url)
+                        console.log(data)
+                        that.getFileData()
+                    },
+                    error: function (err) {
+                        console.error(err)
+                    }
+                })
             },
             //上传文件
             handleChange: function () {
@@ -235,7 +253,7 @@
                 this.$refs['formInline'].validate((valid) => {
                     if (valid) {
                         var that = this
-                        var url = "/Project/ChangeFile?UserId=" + DingData.userid + "&ChangeType=0&Path="
+                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
                         for (let p of this.pathList) {
                             url = url + '\\' + p
                         }
@@ -248,6 +266,7 @@
                                 console.log(url)
                                 console.log(data)
                                 that.getFileData()
+                                that.dialogFormVisible = false
                             },
                             error: function (err) {
                                 console.error(err)
