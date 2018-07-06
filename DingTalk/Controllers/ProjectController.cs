@@ -76,8 +76,8 @@ namespace DingTalk.Controllers
                         else
                         {
                             //建立项目文件夹及其子文件
-                            string Path = string.Format("{0}UploadFile\\ProjectFile\\{1}",
-                                AppDomain.CurrentDomain.BaseDirectory, projectInfo.ProjectName);
+                            string Path = string.Format("\\UploadFile\\ProjectFile\\{0}",
+                                projectInfo.ProjectName);
                             projectInfo.FilePath = Path;
                             context.ProjectInfo.Add(projectInfo);
                             FileHelper.CreateDirectory(Path);
