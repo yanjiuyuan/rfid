@@ -54,25 +54,23 @@
             }
         },
         methods: {
-            //获取项目列表
-            getApproveList() {
-                var that = this 
+            //获取项目数据getProject
+            getProject() {
+                var that = this
+                url = "/Project/GetAllProJect?ApplyManId=" + DingData.userid
                 $.ajax({
-                    url: 'FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid,
-                    dataType: 'json',
-                    type: 'GET',
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
                     success: function (data) {
-                        console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
+                        console.log("获取项目列表数据 GetAllProJect")
                         console.log(data)
-                        for (let d of data) {
-                            that.data.push(d[0])
-                        }
-                        //that.tableData = data
-                        that.getData()
+                        that.data = data
                         that.totalRows = data.length
+                        that.getData()
                     },
-                    error: function (err) {
-                        console.error(err)
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
                     }
                 })
             },
@@ -92,10 +90,7 @@
             }
         },
         created: function () {
-            console.log('UrlObj')
-            console.log(UrlObj)
-            Index = UrlObj.Index
-            this.getApproveList()
+            this.getProject()
             loadHtml("mainPage", "partPage")
         }
     })

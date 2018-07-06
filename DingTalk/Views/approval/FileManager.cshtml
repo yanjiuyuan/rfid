@@ -88,6 +88,7 @@
                            :total="totalRows">
             </el-pagination>
         </div>
+        <!--上传文件-->
         <el-upload class="upload-demo" style="width:30%;float:left;"
                    action="https://jsonplaceholder.typicode.com/posts/"
                    :on-change="handleChange"
@@ -224,7 +225,7 @@
             //删除文件
             deleteFile: function (index, row) {
                 var that = this
-                var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
+                var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path=\\UploadFile"
                 for (let p of this.pathList) {
                     url = url + '\\' + p
                 }
@@ -252,7 +253,7 @@
                 this.$refs['formInline'].validate((valid) => {
                     if (valid) {
                         var that = this
-                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
+                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path=\\UploadFile"
                         for (let p of this.pathList) {
                             url = url + '\\' + p
                         }
