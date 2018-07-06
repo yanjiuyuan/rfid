@@ -23,6 +23,7 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
+        public virtual DbSet<FileInfos> FileInfos { get; set; }
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
@@ -359,6 +360,30 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.FinnalLoginTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.ApplyManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.FilePath)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.LastModifyTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FileInfos>()
+                .Property(e => e.LastModifyState)
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProcedureInfo>()

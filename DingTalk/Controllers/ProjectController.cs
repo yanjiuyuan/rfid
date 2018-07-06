@@ -76,22 +76,23 @@ namespace DingTalk.Controllers
                         else
                         {
                             //建立项目文件夹及其子文件
-                            string Path = string.Format("\\UploadFile\\ProjectFile\\{0}",
+                            string path = string.Format("\\UploadFile\\ProjectFile\\{0}",
                                 projectInfo.ProjectName);
-                            projectInfo.FilePath = Path;
+                            projectInfo.FilePath = path;
                             context.ProjectInfo.Add(projectInfo);
-                            FileHelper.CreateDirectory(Path);
-                            FileHelper.CreateDirectory(Path + "\\1需求分析");
-                            FileHelper.CreateDirectory(Path + "\\2进度计划");
-                            FileHelper.CreateDirectory(Path + "\\3立项书");
-                            FileHelper.CreateDirectory(Path + "\\4方案设计");
-                            FileHelper.CreateDirectory(Path + "\\5机械图纸");
-                            FileHelper.CreateDirectory(Path + "\\6电气图纸");
-                            FileHelper.CreateDirectory(Path + "\\7采购单");
-                            FileHelper.CreateDirectory(Path + "\\8源代码");
-                            FileHelper.CreateDirectory(Path + "\\9中试");
-                            FileHelper.CreateDirectory(Path + "\\10验收报告");
-                            FileHelper.CreateDirectory(Path + "\\11使用说明书");
+                            path = Server.MapPath(path);
+                            FileHelper.CreateDirectory(path);
+                            FileHelper.CreateDirectory(path + "\\1需求分析");
+                            FileHelper.CreateDirectory(path + "\\2进度计划");
+                            FileHelper.CreateDirectory(path + "\\3立项书");
+                            FileHelper.CreateDirectory(path + "\\4方案设计");
+                            FileHelper.CreateDirectory(path + "\\5机械图纸");
+                            FileHelper.CreateDirectory(path + "\\6电气图纸");
+                            FileHelper.CreateDirectory(path + "\\7采购单");
+                            FileHelper.CreateDirectory(path + "\\8源代码");
+                            FileHelper.CreateDirectory(path + "\\9中试");
+                            FileHelper.CreateDirectory(path + "\\10验收报告");
+                            FileHelper.CreateDirectory(path + "\\11使用说明书");
 
                             context.SaveChanges();
                             return JsonConvert.SerializeObject(new ErrorModel
@@ -218,14 +219,13 @@ namespace DingTalk.Controllers
         [HttpGet]
         public string GetFileMsg(string path)
         {
-
             try
             {
                 string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
                 List<string> RePathList = new List<string>();
                 foreach (var item in AbPathList)
                 {
-                        //绝对路径转相对
+                    //绝对路径转相对
                     string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
                     string FileName = Path.GetFileName(RelativePath);
                     RePathList.Add(FileName);
@@ -278,20 +278,30 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="Path">当前路径</param>
         /// <param name="MovePath">修改文件名时的新路径</param>
-        /// <param name="UserId">用户Id</param>
+        /// <param name="ApplyMan">用户名</param>
+        /// <param name="ApplyManId">用户Id</param>
         /// <param name="ProjectId">项目Id</param>
         /// <param name="ChangeType">修改类型( 0:新建  1:删除  2:修改(需要多传一个MovePath参数) )</param>
         /// <returns></returns>
         /// 测试数据：/Project/ChangeFile?Path=\UploadFile\ProjectFile\news&UserId=manager325&ChangeType=0&ProjectId=1111111
+
         [HttpGet]
-        public string ChangeFile(string path, string MovePath, string UserId, string ProjectId, int ChangeType)
+        public string ChangeFile(string path, string MovePath, string ApplyMan, string ApplyManId, string ProjectId, int ChangeType)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
+                    FileInfos fileInfos = new FileInfos()
+                    {
+                        ApplyMan = ApplyMan,
+                        ApplyManId = ApplyManId,
+                        FilePath = path,
+                        LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:hh:ss"),
+                        LastModifyState = ChangeType.ToString()
+                    };
                     //判断权限
-                    bool IsSuperPower = (context.Roles.Where(r => r.UserId == UserId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
+                    bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
                     path = Server.MapPath(path);
                     if (IsSuperPower)
                     {
@@ -299,14 +309,25 @@ namespace DingTalk.Controllers
                         {
                             case 0:
                                 FileHelper.CreateDirectory(path);
+                                context.FileInfos.Add(fileInfos);
+                                context.SaveChanges();
                                 break;
                             case 1:
                                 FileHelper.DeleteDirectory(path);
+                                var f = context.FileInfos.Where(u=>u.FilePath== path).FirstOrDefault();
+                                context.FileInfos.Remove(f);
+                                context.SaveChanges();
                                 break;
                             case 2:
-                                FileHelper.Move(path, MovePath);
+                                FileHelper.Move(path, Server.MapPath(MovePath));
+                                var fs = context.FileInfos.Where(u => u.FilePath == path).FirstOrDefault();
+                                context.FileInfos.Remove(fs);
+                                context.SaveChanges();
+                                context.FileInfos.Add(fileInfos);
+                                context.SaveChanges();
                                 break;
                         }
+
                         return JsonConvert.SerializeObject(new ErrorModel
                         {
                             errorCode = 0,
@@ -315,7 +336,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        bool IsComPower = (context.ProjectInfo.Where(p => p.ProjectId == ProjectId && p.ApplyManId == UserId).ToList().Count() >= 1) ? true : false;
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ProjectId == ProjectId && p.ApplyManId == ApplyManId).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
                             switch (ChangeType)
@@ -327,7 +348,7 @@ namespace DingTalk.Controllers
                                     FileHelper.DeleteDirectory(path);
                                     break;
                                 case 2:
-                                    FileHelper.Move(path, MovePath);
+                                    FileHelper.Move(path, Server.MapPath(MovePath));
                                     break;
                             }
                             return JsonConvert.SerializeObject(new ErrorModel

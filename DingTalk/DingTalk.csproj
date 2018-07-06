@@ -362,6 +362,7 @@
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\DDContext.cs" />
+    <Compile Include="Models\DingModels\FileInfos.cs" />
     <Compile Include="Models\DingModels\FlowMan.cs" />
     <Compile Include="Models\DingModels\FlowProgress.cs" />
     <Compile Include="Models\DingModels\FlowQx.cs" />

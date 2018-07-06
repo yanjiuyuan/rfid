@@ -813,19 +813,19 @@ namespace DingTalk.Controllers
                     {
                         case 0:
                             //待审批的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         case 1:
                             //我已审批
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         case 2:
                             //我发起的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         case 3:
                             //抄送我的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true && u.ApplyTime == null).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
@@ -850,6 +850,7 @@ namespace DingTalk.Controllers
         public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId)
         {
             List<Object> listQuary = new List<object>();
+            
             foreach (int TaskId in ListTasks)
             {
                 int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).Select(u => u.NodeId).ToList().First();
@@ -858,7 +859,7 @@ namespace DingTalk.Controllers
                 listQuary.Add(from t in ListTask
                               join f in ListFlows
                               on t.FlowId.ToString() equals f.FlowId.ToString()
-                              where t.NodeId == 0 && t.TaskId == TaskId
+                              where t.NodeId == 0 && t.TaskId == TaskId 
                               select new
                               {
                                   Id = t.Id + 1,
