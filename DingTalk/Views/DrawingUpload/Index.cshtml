@@ -36,6 +36,7 @@
 <input id="btn16" type="button" value="采购单保存" />
 <input id="btn17" type="button" value="打印表单数据、盖章、推送" />
 <input id="btn18" type="button" value="打印表单数据、盖章、推送(采购)" />
+<input id="btn19" type="button" value="盯盘文件上传(文件管理)" />
 <script type="text/javascript">
     var FlowTest = [{ "ApplyMan": "小威", "ApplyManId": "1209662535974958", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 0, "Remark": "6666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
     { "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
@@ -461,6 +462,24 @@
             dataType: "json",
             async: true,
             data: { "UserId": "083452125733424957", "TaskId": "20" },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn19").click(function () {
+        $.ajax({
+            url: "/DingTalkServers/uploadFile",
+            type: "Post",
+            dataType: "json",
+            async: true,
+            data: { ApplyMan: "蔡兴桐", ApplyManId: "083452125733424957", FilePath: "~/测试媒体文件/测试文本123.txt" },
             success: function (data) {
                 console.log(data);
             },
