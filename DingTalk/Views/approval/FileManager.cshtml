@@ -49,8 +49,8 @@
         </el-table>*@
         <!--文件夹列表-->
         <el-breadcrumb separator="/">
-            <el-breadcrumb-item v-for="(p,i) in pathList" :key="i">
-                <span v-show="i < pathList.length - 1" v-on:click="clickPath(i)">p</span>
+            <el-breadcrumb-item v-for="(p,i) in pathList" :key="i" v-show="i < pathList.length - 1">
+                <span v-on:click="clickPath(i)">{{p}}</span>
             </el-breadcrumb-item>
             <el-breadcrumb-item>{{pathList[pathList.length - 1]}}</el-breadcrumb-item>
         </el-breadcrumb>
@@ -201,11 +201,22 @@
             //打开某文件夹相关操作
             openFolder: function (folderName) {
                 //改变路径，加载新的文件夹、表单数据、切换相关变量
-                console.log(this.pathList)
                 this.pathList.push(folderName)
                 this.getFileData()
-                console.log(folderName)
                 console.log(this.pathList)
+            },
+            //点击路径跳转
+            clickPath: function (index) {
+                this.pathList.splice(index + 1)
+                this.getFileData()
+                console.log(this.pathList)
+                return
+                this.$alert('这是一段内容', '标题名称', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+
+                    }
+                });
             },
             //下载文件
             downloadFile: function (index, row) {
@@ -226,16 +237,6 @@
             //新建项目
             createProject: function () {
 
-            },
-            //点击路径跳转
-            clickPath: function () {
-                this.$alert('这是一段内容', '标题名称', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                        
-                    }
-                });
-                console.log('123')
             },
             //点击节点跳转文件夹
             clickNode: function (obj) {
