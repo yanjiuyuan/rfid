@@ -99,9 +99,9 @@
 
     <!--新建文件夹表单-->
     <el-dialog title="新建文件夹" :visible.sync="dialogFormVisible">
-        <el-form :model="formInline" class="demo-form-inline"
-                 size="medium">
-            <el-form-item label="名称">
+        <el-form :model="formInline" class="demo-form-inline" :rules="rules" ref="formInline"
+                 size="medium" >
+            <el-form-item label="名称" prop="name">
                 <el-input v-model="formInline.name"></el-input>
             </el-form-item>
         </el-form>
@@ -232,7 +232,29 @@
             },
             //新建文件夹
             createFolder: function () {
-
+                this.$refs['formInline'].validate((valid) => {
+                    if (valid) {
+                        var that = this
+                        var url = "/Project/ChangeFile?UserId=" + DingData.userid + "&ChangeType=0&Path="
+                        for (let p of this.pathList) {
+                            url = url + '\\' + p
+                        }
+                        url = url + '\\' + this.formInline.name
+                        $.ajax({
+                            url: url,
+                            success: function (data) {
+                                data = JSON.parse(data)
+                                console.log('/新建文件夹')
+                                console.log(url)
+                                console.log(data)
+                                that.getFileData()
+                            },
+                            error: function (err) {
+                                console.error(err)
+                            }
+                        })
+                    }
+                })
             },
             //新建项目
             createProject: function () {
