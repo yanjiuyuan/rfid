@@ -106,7 +106,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        Path = Server.MapPath(path);
+                        Path = Server.MapPath(path+ FileName);
                     }
                    
                     //保存文件
