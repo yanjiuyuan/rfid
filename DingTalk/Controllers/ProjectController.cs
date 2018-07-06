@@ -283,7 +283,7 @@ namespace DingTalk.Controllers
         /// <param name="ProjectId">项目Id</param>
         /// <param name="ChangeType">修改类型( 0:新建  1:删除  2:修改(需要多传一个MovePath参数) )</param>
         /// <returns></returns>
-        /// 测试数据：/Project/ChangeFile?Path=\UploadFile\ProjectFile\news&UserId=manager325&ChangeType=0&ProjectId=1111111
+        /// 测试数据：/Project/ChangeFile?Path=\UploadFile\ProjectFile\白金刚\123&MovePath=\UploadFile\ProjectFile\白金刚\321&ApplyManId=manager325&ApplyMan=黄浩伟&ChangeType=2&ProjectId=1111111
 
         [HttpGet]
         public string ChangeFile(string path, string MovePath, string ApplyMan, string ApplyManId, string ProjectId, int ChangeType)
@@ -302,6 +302,7 @@ namespace DingTalk.Controllers
                     };
                     //判断权限
                     bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
+                    string RePath = path;
                     path = Server.MapPath(path);
                     if (IsSuperPower)
                     {
@@ -314,13 +315,14 @@ namespace DingTalk.Controllers
                                 break;
                             case 1:
                                 FileHelper.DeleteDirectory(path);
-                                var f = context.FileInfos.Where(u=>u.FilePath== path).FirstOrDefault();
+                                var f = context.FileInfos.Where(u=>u.FilePath== RePath).FirstOrDefault();
                                 context.FileInfos.Remove(f);
                                 context.SaveChanges();
                                 break;
                             case 2:
                                 FileHelper.Move(path, Server.MapPath(MovePath));
-                                var fs = context.FileInfos.Where(u => u.FilePath == path).FirstOrDefault();
+                                
+                                var fs = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
                                 context.FileInfos.Remove(fs);
                                 context.SaveChanges();
                                 context.FileInfos.Add(fileInfos);

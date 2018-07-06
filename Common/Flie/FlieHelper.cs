@@ -374,6 +374,7 @@ namespace Common.Flie
                 }
                 //将文件移动到指定目录  
                 File.Move(sourceFilePath, descDirectoryPath + "\\" + sourceFileName);
+                
             }
         }
         #endregion
