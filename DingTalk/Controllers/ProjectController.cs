@@ -75,12 +75,11 @@ namespace DingTalk.Controllers
                         }
                         else
                         {
-                            context.ProjectInfo.Add(projectInfo);
-                            context.SaveChanges();
-
                             //建立项目文件夹及其子文件
                             string Path = string.Format("{0}UploadFile\\ProjectFile\\{1}",
                                 AppDomain.CurrentDomain.BaseDirectory, projectInfo.ProjectName);
+                            projectInfo.FilePath = Path;
+                            context.ProjectInfo.Add(projectInfo);
                             FileHelper.CreateDirectory(Path);
                             FileHelper.CreateDirectory(Path + "\\1需求分析");
                             FileHelper.CreateDirectory(Path + "\\2进度计划");
@@ -93,6 +92,8 @@ namespace DingTalk.Controllers
                             FileHelper.CreateDirectory(Path + "\\9中试");
                             FileHelper.CreateDirectory(Path + "\\10验收报告");
                             FileHelper.CreateDirectory(Path + "\\11使用说明书");
+
+                            context.SaveChanges();
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 0,
@@ -192,33 +193,46 @@ namespace DingTalk.Controllers
         [HttpGet]
         public string GetProjectFileMsg()
         {
-            string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);           
+            string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);
             return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
         }
 
         /// <summary>
         /// 获取目录下的文件夹信息
         /// </summary>
-        /// <param name="Path">绝对路径</param>
+        /// <param name="path">相对路径</param>
         /// <returns></returns>
-        /// 测试数据：/Project/GetFileMsg?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile
+        /// 测试数据：/Project/GetFileMsg?Path=\UploadFile\ProjectFile\宝发
         [HttpGet]
-        public string GetFileMsg(string Path)
+        public string GetFileMsg(string path)
         {
-            //string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);           
-            return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
+            string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
+            List<string> RePathList = new List<string> ();
+            foreach (var item in AbPathList)
+            {
+                //绝对路径转相对
+                RePathList.Add(FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item));
+            }
+            return JsonConvert.SerializeObject(RePathList);
         }
 
         /// <summary>
         /// 获取参数路径下的所有文件信息
         /// </summary>
-        /// <param name="Path">路径</param>
+        /// <param name="path">路径</param>
         /// <returns></returns>
-        /// 测试数据：/Project/GetAllFilePath?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile
+        /// 测试数据：/Project/GetAllFilePath?Path=\UploadFile\ProjectFile\宝发
         [HttpGet]
-        public string GetAllFilePath(string Path)
+        public string GetAllFilePath(string path)
         {
-            return JsonConvert.SerializeObject(FileHelper.GetDirectories(Path));
+            string[] AbPathList = FileHelper.GetDirectories(Server.MapPath(path));
+            List<string> RePathList = new List<string>();
+            foreach (var item in AbPathList)
+            {
+                //绝对路径转相对
+                RePathList.Add(FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item));
+            }
+            return JsonConvert.SerializeObject(RePathList);
         }
 
         /// <summary>
@@ -230,9 +244,9 @@ namespace DingTalk.Controllers
         /// <param name="ProjectId">项目Id</param>
         /// <param name="ChangeType">修改类型( 0:新建  1:删除  2:修改(需要多传一个MovePath参数) )</param>
         /// <returns></returns>
-        /// 测试数据：/Project/ChangeFile?Path=E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile\news&UserId=manager325&ChangeType=0&ProjectId=1111111
+        /// 测试数据：/Project/ChangeFile?Path=\UploadFile\ProjectFile\news&UserId=manager325&ChangeType=0&ProjectId=1111111
         [HttpGet]
-        public string ChangeFile(string Path, string MovePath, string UserId, string ProjectId, int ChangeType)
+        public string ChangeFile(string path, string MovePath, string UserId, string ProjectId, int ChangeType)
         {
             try
             {
@@ -240,18 +254,19 @@ namespace DingTalk.Controllers
                 {
                     //判断权限
                     bool IsSuperPower = (context.Roles.Where(r => r.UserId == UserId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
+                    path = Server.MapPath(path);
                     if (IsSuperPower)
                     {
                         switch (ChangeType)
                         {
                             case 0:
-                                FileHelper.CreateDirectory(Path);
+                                FileHelper.CreateDirectory(path);
                                 break;
                             case 1:
-                                FileHelper.DeleteDirectory(Path);
+                                FileHelper.DeleteDirectory(path);
                                 break;
                             case 2:
-                                FileHelper.Move(Path, MovePath);
+                                FileHelper.Move(path, MovePath);
                                 break;
                         }
                         return JsonConvert.SerializeObject(new ErrorModel
@@ -268,13 +283,13 @@ namespace DingTalk.Controllers
                             switch (ChangeType)
                             {
                                 case 0:
-                                    FileHelper.CreateDirectory(Path);
+                                    FileHelper.CreateDirectory(path);
                                     break;
                                 case 1:
-                                    FileHelper.DeleteDirectory(Path);
+                                    FileHelper.DeleteDirectory(path);
                                     break;
                                 case 2:
-                                    FileHelper.Move(Path, MovePath);
+                                    FileHelper.Move(path, MovePath);
                                     break;
                             }
                             return JsonConvert.SerializeObject(new ErrorModel

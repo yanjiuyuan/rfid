@@ -421,6 +421,10 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.ProjectId)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.FilePath)
+                .IsUnicode(false);
+
             modelBuilder.Entity<PurchaseDown>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);

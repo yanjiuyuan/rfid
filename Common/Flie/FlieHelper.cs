@@ -586,7 +586,50 @@ namespace Common.Flie
             }
         }
         #endregion
-        
-        
+
+        #region 绝对路径转相对路径
+
+        /// <summary>
+        /// 绝对路径转相对路径
+        /// </summary>
+        /// <param name="absolutePath">相对于某个路径的绝对路径</param>
+        /// <param name="relativeTo">绝对路径</param>
+        /// <returns></returns>
+        /// RelativePath(@"D:\MyProj\Release", @"D:\MyProj\Log\MyFile.txt");
+        public static string RelativePath(string absolutePath, string relativeTo)
+        {
+
+            string[] absoluteDirectories = absolutePath.Split('\\');
+            string[] relativeDirectories = relativeTo.Split('\\');
+
+            int length = absoluteDirectories.Length < relativeDirectories.Length ? absoluteDirectories.Length : relativeDirectories.Length;
+
+            int lastCommonRoot = -1;
+            int index;
+
+            for (index = 0; index < length; index++)
+                if (absoluteDirectories[index] == relativeDirectories[index])
+                    lastCommonRoot = index;
+                else
+                    break;
+
+            if (lastCommonRoot == -1)
+                throw new ArgumentException("Paths do not have a common base");
+
+            StringBuilder relativePath = new StringBuilder();
+
+            for (index = lastCommonRoot + 1; index < absoluteDirectories.Length; index++)
+                if (absoluteDirectories[index].Length > 0)
+                    relativePath.Append("..\\");
+
+            for (index = lastCommonRoot + 1; index < relativeDirectories.Length - 1; index++)
+                relativePath.Append(relativeDirectories[index] + "\\");
+            relativePath.Append(relativeDirectories[relativeDirectories.Length - 1]);
+
+            return relativePath.ToString();
+        }
+
+        #endregion
+
     }
 }

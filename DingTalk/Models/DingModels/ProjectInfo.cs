@@ -40,5 +40,7 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(200)]
         public string ProjectId { get; set; }
+
+        public string FilePath { get; set; }
     }
 }
