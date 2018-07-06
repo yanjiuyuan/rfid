@@ -1,4 +1,5 @@
 ﻿using DingTalk.Models;
+using DingTalk.Models.DingModels;
 using DingTalkServer;
 using DingTalkServer.Models;
 using Newtonsoft.Json;
@@ -206,7 +207,7 @@ namespace DingTalk.Controllers
         #endregion
 
         #region 发送企业消息
-        
+
         [Route("sendTextMessage")]
         [HttpPost]
         public async Task<string> SendTextMessage()
@@ -331,6 +332,43 @@ namespace DingTalk.Controllers
                 MediaType = UploadMediaType.File
             };
             return await dtManager.UploadFile(uploadFileModel);
+        }
+
+
+        /// <summary>
+        /// 盯盘文件上传(用于项目文件管理，直接绑定路径)
+        /// </summary>
+        /// <returns>media_Id: 返回唯一盯盘唯一Id</returns>
+        /// 测试数据 /DingTalkServers/uploadFile/
+        /// Json : data:{ApplyMan:"蔡兴桐",ApplyManId:"083452125733424957",FilePath:"~/测试媒体文件/图片测试.jpg"}
+        [Route("uploadFile")]
+        [HttpPost]
+        public async Task<string> uploadFile([FromBody] FileInfos fileInfos)
+        {
+            var fileName = HttpContext.Current.Server.MapPath(fileInfos.FilePath);
+            var uploadFileModel = new UploadMediaRequestModel()
+            {
+                FileName = fileName,
+                MediaType = UploadMediaType.File
+            };
+            string uploadModel = await dtManager.UploadFile(uploadFileModel);
+            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(uploadModel);
+
+            //绑定路径信息
+            fileInfos.MediaId = fileSendModel.Media_Id;
+            fileInfos.LastModifyState = "0";
+            fileInfos.LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            using (DDContext context=new DDContext())
+            {
+                context.FileInfos.Add(fileInfos);
+                context.SaveChanges();
+            }
+
+            return JsonConvert.SerializeObject(new ErrorModel
+            {
+                errorCode = 0,
+                errorMessage = "上传盯盘成功"
+            });
         }
 
         /// <summary>
