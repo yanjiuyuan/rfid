@@ -76,22 +76,23 @@ namespace DingTalk.Controllers
                         else
                         {
                             //建立项目文件夹及其子文件
-                            string Path = string.Format("\\UploadFile\\ProjectFile\\{0}",
+                            string path = string.Format("\\UploadFile\\ProjectFile\\{0}",
                                 projectInfo.ProjectName);
-                            projectInfo.FilePath = Path;
+                            projectInfo.FilePath = path;
                             context.ProjectInfo.Add(projectInfo);
-                            FileHelper.CreateDirectory(Path);
-                            FileHelper.CreateDirectory(Path + "\\1需求分析");
-                            FileHelper.CreateDirectory(Path + "\\2进度计划");
-                            FileHelper.CreateDirectory(Path + "\\3立项书");
-                            FileHelper.CreateDirectory(Path + "\\4方案设计");
-                            FileHelper.CreateDirectory(Path + "\\5机械图纸");
-                            FileHelper.CreateDirectory(Path + "\\6电气图纸");
-                            FileHelper.CreateDirectory(Path + "\\7采购单");
-                            FileHelper.CreateDirectory(Path + "\\8源代码");
-                            FileHelper.CreateDirectory(Path + "\\9中试");
-                            FileHelper.CreateDirectory(Path + "\\10验收报告");
-                            FileHelper.CreateDirectory(Path + "\\11使用说明书");
+                            path = Server.MapPath(path);
+                            FileHelper.CreateDirectory(path);
+                            FileHelper.CreateDirectory(path + "\\1需求分析");
+                            FileHelper.CreateDirectory(path + "\\2进度计划");
+                            FileHelper.CreateDirectory(path + "\\3立项书");
+                            FileHelper.CreateDirectory(path + "\\4方案设计");
+                            FileHelper.CreateDirectory(path + "\\5机械图纸");
+                            FileHelper.CreateDirectory(path + "\\6电气图纸");
+                            FileHelper.CreateDirectory(path + "\\7采购单");
+                            FileHelper.CreateDirectory(path + "\\8源代码");
+                            FileHelper.CreateDirectory(path + "\\9中试");
+                            FileHelper.CreateDirectory(path + "\\10验收报告");
+                            FileHelper.CreateDirectory(path + "\\11使用说明书");
 
                             context.SaveChanges();
                             return JsonConvert.SerializeObject(new ErrorModel
