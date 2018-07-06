@@ -320,6 +320,7 @@ namespace DingTalk.Controllers
                                 context.SaveChanges();
                                 break;
                             case 2:
+                                Directory.Move(path, Server.MapPath(MovePath));
                                 FileHelper.Move(path, Server.MapPath(MovePath));
                                 
                                 var fs = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
