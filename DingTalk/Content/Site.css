@@ -190,7 +190,7 @@ ol li {
     margin-top:2px;
 }
 .folder-box:hover {
-    border: 1px solid rgba(41, 255, 255, 0.74);
+    border: 1px solid rgba(64, 158, 255, 0.74);
 }
 .approval-box-img {
     width: 60px;
@@ -276,6 +276,7 @@ ol li {
 .el-main{
     padding:0px;
     overflow:hidden;
+    margin-left:1%;
 }
 .head-fixed{
     font-size:1.2rem;
