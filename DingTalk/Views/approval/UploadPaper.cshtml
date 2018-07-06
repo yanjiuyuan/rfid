@@ -51,8 +51,8 @@
                         <span style="float: right; color: #8492a6; font-size: 13px"></span>
                     </el-option>
                 </el-select>
-                @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+                <el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>
             </el-form-item>
 
             <template v-if="showAddProject">
@@ -150,6 +150,7 @@
             return {
                 preApprove: false,
                 preCopy: false,
+                pdfList: [],
                 fileList: [],
                 imageList: [],
                 mediaList: {},
