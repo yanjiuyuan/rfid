@@ -193,27 +193,53 @@ namespace DingTalk.Controllers
         [HttpGet]
         public string GetProjectFileMsg()
         {
-            string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);
-            return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
+            try
+            {
+                string Path = string.Format(@"{0}UploadFile\ProjectFile", AppDomain.CurrentDomain.BaseDirectory);
+                return JsonConvert.SerializeObject(FileHelper.GetFileNames(Path));
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
+
         }
 
         /// <summary>
         /// 获取目录下的文件夹信息
         /// </summary>
         /// <param name="path">相对路径</param>
-        /// <returns></returns>
+        /// <returns>返回文件名数组</returns>
         /// 测试数据：/Project/GetFileMsg?Path=\UploadFile\ProjectFile\宝发
         [HttpGet]
         public string GetFileMsg(string path)
         {
-            string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
-            List<string> RePathList = new List<string> ();
-            foreach (var item in AbPathList)
+
+            try
             {
-                //绝对路径转相对
-                RePathList.Add(FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item));
+                string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
+                List<string> RePathList = new List<string>();
+                foreach (var item in AbPathList)
+                {
+                        //绝对路径转相对
+                    string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
+                    string FileName = Path.GetFileName(RelativePath);
+                    RePathList.Add(FileName);
+                }
+                return JsonConvert.SerializeObject(RePathList);
             }
-            return JsonConvert.SerializeObject(RePathList);
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
         }
 
         /// <summary>
@@ -222,18 +248,30 @@ namespace DingTalk.Controllers
         /// <param name="path">路径</param>
         /// <returns></returns>
         /// 测试数据：/Project/GetAllFilePath?Path=\UploadFile\ProjectFile\宝发
-        [HttpGet]
-        public string GetAllFilePath(string path)
-        {
-            string[] AbPathList = FileHelper.GetDirectories(Server.MapPath(path));
-            List<string> RePathList = new List<string>();
-            foreach (var item in AbPathList)
-            {
-                //绝对路径转相对
-                RePathList.Add(FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item));
-            }
-            return JsonConvert.SerializeObject(RePathList);
-        }
+        //[HttpGet]
+        //public string GetAllFilePath(string path)
+        //{
+        //    try
+        //    {
+        //        string[] AbPathList = FileHelper.GetDirectories(Server.MapPath(path));
+        //        List<string> RePathList = new List<string>();
+        //        foreach (var item in AbPathList)
+        //        {
+        //            //绝对路径转相对
+        //            RePathList.Add(FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item));
+        //        }
+        //        return JsonConvert.SerializeObject(RePathList);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return JsonConvert.SerializeObject(new ErrorModel
+        //        {
+        //            errorCode = 1,
+        //            errorMessage = ex.Message
+        //        });
+        //    }
+
+        //}
 
         /// <summary>
         /// 修改项目文件
