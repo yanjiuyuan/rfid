@@ -60,7 +60,8 @@
             <el-button v-on:click="dialogFormVisible = true" size="small" type="primary">新建文件夹</el-button>
         </div>
         <div v-for="f in folderList" class="folder-box" v-on:click="openFolder(f)" style="cursor:pointer;">
-            <div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>
+            @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
+            <img src="~/Content/images/folder.png"/>
             <p>{{f}}</p>
         </div>
         <!--文件列表-->

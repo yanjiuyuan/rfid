@@ -406,6 +406,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\images\folder.png" />
     <Content Include="Content\gif\dt-5.gif" />
     <Content Include="Content\gif\dt-6.gif" />
     <Content Include="Content\gif\more.gif" />
@@ -413,6 +414,7 @@
     <Content Include="Content\images\card1.jpg" />
     <Content Include="Content\images\card2.jpg" />
     <Content Include="Content\images\card3.jpg" />
+    <Content Include="Content\images\folder_open.png" />
     <Content Include="Content\images\icon.png" />
     <Content Include="Content\images\icon900-540.png" />
     <Content Include="Content\images\miaov.png" />
