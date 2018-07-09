@@ -97,7 +97,7 @@
                     <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
             </el-form-item>
-            <el-form-item label="上传PDF">
+            <el-form-item label="上传PDF" required="required">
                 <el-upload class="upload-demo"
                            drag
                            :file-list="pdfList"
@@ -110,8 +110,16 @@
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">不超过30M</div>
                 </el-upload>
+
+                <el-upload class="upload-demo"
+                           action="/drawingupload/Upload?path=hello"
+                           :file-list="fileList3">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+
             </el-form-item>
-            <el-form-item label="上传模型">
+            <el-form-item label="上传模型" required="required">
                 <el-upload class="upload-demo"
                            drag
                            :file-list="fileList"
@@ -143,6 +151,7 @@
 <script>
     var FlowId = 6
     var upBom = []
+    let isPdfFile = false
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -437,7 +446,7 @@
                         } else {
                             console.log('无media_di')
                         }
-                        that.changeFileList(fileList)
+                        isPdfFile ? that.pdfList = fileList : that.fileList = fileList
                     }
                 })
             },
@@ -500,6 +509,7 @@
                     this.$message.error('上传图片大小不能超过 30MB!')
                     return false
                 }
+                isPdfFile = true
                 return true
             },
             beforeFileUpload(file) {
@@ -511,6 +521,7 @@
                     this.$message.error('上传图片大小不能超过 30MB!')
                     return false
                 }
+                isPdfFile = false
                 return true
             },
             handlePictureCardPreview(file) {

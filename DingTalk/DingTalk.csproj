@@ -568,6 +568,7 @@
     </Content>
     <Content Include="Views\approval\FileManager.cshtml" />
     <Content Include="Views\approval\ProjectManager.cshtml" />
+    <Content Include="Views\approval\AddProject.cshtml" />
     <Content Include="SwaggerUI\lib\.DS_Store" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
