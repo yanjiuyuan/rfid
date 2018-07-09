@@ -418,9 +418,12 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 文件下载接口(盯盘推送文件)
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="userId"></param>
+        /// <param name="path">相对路径</param>
+        /// <param name="userId">用户Id</param>
         /// <returns></returns>
+        /// 测试数据: /Project/DownloadFileModel/
+        /// data： {path:"~/测试媒体文件/测试文本123.txt",userId:"083452125733424957"}
+        [HttpPost]
         public async Task<string> DownloadFileModel(string path, string userId)
         {
             try
