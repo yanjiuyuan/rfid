@@ -356,19 +356,45 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        bool IsComPower = (context.ProjectInfo.Where(p => p.ApplyManId == ApplyManId).ToList().Count() >= 1) ? true : false;
+                        //检测路径
+                        string CheckPath = RePath.Substring(0, RePath.IndexOf("\\", 24));
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ApplyManId == ApplyManId && p.FilePath== CheckPath).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
                             switch (ChangeType)
                             {
                                 case 0:
-                                    FileHelper.CreateDirectory(path);
+                                    if (IsFile)
+                                    {
+                                        System.IO.File.Create(path);
+                                    }
+                                    else
+                                    {
+                                        Directory.CreateDirectory(path);
+                                    }
+                                    context.FileInfos.Add(fileInfos);
+                                    context.SaveChanges();
                                     break;
                                 case 1:
-                                    FileHelper.DeleteDirectory(path);
+                                    if (IsFile)
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    else
+                                    {
+                                        Directory.Delete(path);
+                                    }
+                                    var f = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
+                                    context.FileInfos.Remove(f);
+                                    context.SaveChanges();
                                     break;
                                 case 2:
-                                    FileHelper.Move(path, Server.MapPath(MovePath));
+                                    Directory.Move(path, Server.MapPath(MovePath));
+                                    var fs = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
+                                    context.FileInfos.Remove(fs);
+                                    context.SaveChanges();
+                                    context.FileInfos.Add(fileInfos);
+                                    context.SaveChanges();
                                     break;
                             }
                             return JsonConvert.SerializeObject(new ErrorModel
