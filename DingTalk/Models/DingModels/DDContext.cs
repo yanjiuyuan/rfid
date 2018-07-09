@@ -427,6 +427,10 @@ namespace DingTalk.Models.DingModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ProjectState)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
                 .Property(e => e.DeptName)
                 .IsUnicode(false);
 
@@ -452,6 +456,14 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<ProjectInfo>()
                 .Property(e => e.FilePath)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ResponsibleMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ResponsibleManId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<PurchaseDown>()
