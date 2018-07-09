@@ -463,5 +463,33 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 项目信息关键字查询
+        /// </summary>
+        /// <param name="key">查询关键字</param>
+        /// <returns></returns>
+        /// 测试数据：/Project/QuaryProjectInfo?key=钉钉
+        [HttpGet]
+        public string QuaryProjectInfo(string key)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<ProjectInfo> ProjectInfoList = context.ProjectInfo.Where(p => p.ApplyMan.Contains(key) ||
+                       p.DeptName.Contains(key) || p.ProjectName.Contains(key) ||
+                       p.ProjectId.Contains(key)).ToList();
+                    return JsonConvert.SerializeObject(ProjectInfoList);
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
+        }
     }
 }
