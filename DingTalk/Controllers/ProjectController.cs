@@ -450,7 +450,7 @@ namespace DingTalk.Controllers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
