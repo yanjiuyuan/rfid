@@ -32,18 +32,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据：/Project/AddProject
-        //var ProjectTest = {
-        //"ProjectName": "集成钉钉的信息管理系统",
-        //"CreateTime": "2018-04-20 14:40",
-        //"IsEnable":true,
-        //"IsFinish": false,
-        //"DeptName": "智慧工厂事业部",
-        //"ApplyMan": "蔡兴桐",
-        //"ApplyManId":"99f00dfc7badd72b00da35f211060176ae044d8b3b420106bb6ef6345be1ba9b",
-        //"StartTime":"2017-10-23",
-        //"EndTime":"2018-09-01",
-        //"ProjectNo":"2017ZL054"
-        //}
+        //var ProjectTest = { ProjectName":"集成钉钉的信息管理系统","CreateTime":"2018-04-20 14:40","IsEnable":true,"ProjectState":"在研","DeptName":"智慧工厂事业部","ApplyMan":"蔡兴桐","ApplyManId":"073110326032521796","StartTime":"2017-10-23","EndTime":"2018-09-01","ProjectId":"2017ZL054","FilePath":"项目路径","ResponsibleMan":"负责人","ResponsibleManId":"负责人Id"}
         [HttpPost]
         public string AddProject()
         {
@@ -356,9 +345,9 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        //检测路径
+                        //检测路径查询权限
                         string CheckPath = RePath.Substring(0, RePath.IndexOf("\\", 24));
-                        bool IsComPower = (context.ProjectInfo.Where(p => p.ApplyManId == ApplyManId && p.FilePath== CheckPath).ToList().Count() >= 1) ? true : false;
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ApplyManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
                             switch (ChangeType)
@@ -424,21 +413,51 @@ namespace DingTalk.Controllers
             }
         }
 
+
+
         /// <summary>
-        /// 根据路径上传文件
+        /// 文件下载接口(盯盘推送文件)
         /// </summary>
-        /// <param name="file"></param>
         /// <param name="path"></param>
-        /// <returns>返回文件路径</returns>
-        /// 测试数据：/Project/Save
-        [HttpPost]
-        public static string Save(HttpPostedFileBase file, string path)
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<string> DownloadFileModel(string path, string userId)
         {
-            var phicyPath = HostingEnvironment.MapPath(path);
-            Directory.CreateDirectory(phicyPath);
-            var fileName = DateTime.Now.ToString();
-            file.SaveAs(phicyPath + fileName);
-            return fileName;
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    //查找MediaId
+                    string mediaId = context.FileInfos.Where(f => f.FilePath == path).First().MediaId;
+                    if (string.IsNullOrEmpty(mediaId))
+                    {
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 0,
+                            errorMessage = "未找到该文件信息"
+                        });
+                    }
+                    else
+                    {
+                        var DingTaklServer = DependencyResolver.Current.GetService<DingTalkServersController>();
+                        FileSendModel fileSendModel = new FileSendModel()
+                        {
+                            Media_Id = mediaId,
+                            UserId = userId
+                        };
+                        string result = await DingTaklServer.SendFileMessage(fileSendModel);
+                        return result;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
         }
 
     }

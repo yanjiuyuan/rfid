@@ -1099,7 +1099,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                List<PurchaseTable> purchaseDown = context.PurchaseTable.ToList();
+                ProjectInfo purchaseDown = context.ProjectInfo.Where(p=>p.ProjectName== "集成钉钉的信息管理系统").First() ;
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }

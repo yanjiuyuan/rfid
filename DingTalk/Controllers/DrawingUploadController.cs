@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
         /// <param name="form"></param>
         /// <returns>返回文件保存路径</returns>
         [HttpPost]
-        public string Upload(FormCollection form,string path)
+        public string Upload(FormCollection form, string path)
         {
             try
             {
@@ -106,9 +106,9 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        Path = Server.MapPath(path+"\\"+ FileName);
+                        Path = Server.MapPath(path + "\\" + FileName);
                     }
-                   
+
                     //保存文件
                     files.SaveAs(Path);
                     return JsonConvert.SerializeObject(new ErrorModel
@@ -392,7 +392,7 @@ namespace DingTalk.Controllers
                         {
                             "序号","代号","名称","数量","材料","单位","品牌","类别","备注"
                         };
-                    
+
                     float[] contentWithList = new float[]
                     {
                         50, 60, 60, 60, 60, 60, 60, 60, 60

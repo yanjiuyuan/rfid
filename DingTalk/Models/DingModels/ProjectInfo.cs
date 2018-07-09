@@ -21,7 +21,8 @@ namespace DingTalk.Models.DingModels
 
         public bool? IsEnable { get; set; }
 
-        public bool? IsFinish { get; set; }
+        [StringLength(100)]
+        public string ProjectState { get; set; }
 
         [StringLength(200)]
         public string DeptName { get; set; }
@@ -42,5 +43,11 @@ namespace DingTalk.Models.DingModels
         public string ProjectId { get; set; }
 
         public string FilePath { get; set; }
+
+        [StringLength(200)]
+        public string ResponsibleMan { get; set; }
+
+        [StringLength(200)]
+        public string ResponsibleManId { get; set; }
     }
 }
