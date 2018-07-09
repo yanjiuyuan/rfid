@@ -258,7 +258,6 @@
                 console.log('上传文件返回结果')
                 console.log(response)
                 this.getFileData()
-                return
                 var that = this
                 var paramObj = {
                     "": file.response.Content
@@ -273,7 +272,6 @@
                         console.log(paramObj)
                         if (data.media_id) {
                             console.log(data.media_id)
-                            that.mediaList[file.response.Content] = data.media_id
                         } else {
                             console.log('无media_di')
                         }
