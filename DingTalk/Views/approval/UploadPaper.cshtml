@@ -103,7 +103,7 @@
                            :file-list="pdfList"
                            action="/drawingupload/Upload?path=hello"
                            :on-remove="handleFileRemove"
-                           :before-upload="beforeFileUpload"
+                           :before-upload="beforePdfFileUpload"
                            :on-success="handleFileCardSuccess"
                            multiple>
                     <i class="el-icon-upload"></i>
@@ -480,6 +480,19 @@
                 }
                 if (!isLt2M) {
                     this.$message.error('上传图片大小不能超过 2MB!')
+                    return false
+                }
+                return true
+            },
+            beforePdfFileUpload(file) {
+                console.log('before file')
+                console.log(file)
+                file.name = 'helloWorld'
+                const isJPG = file.type === 'image/jpeg'
+                const isPNG = file.type === 'image/png'
+                const isLt2M = file.size / 1024 / 1024 < 30
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 30MB!')
                     return false
                 }
                 return true
