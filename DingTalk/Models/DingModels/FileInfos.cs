@@ -1,5 +1,6 @@
 namespace DingTalk.Models.DingModels
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -11,7 +12,7 @@ namespace DingTalk.Models.DingModels
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
-
+        
         [StringLength(200)]
         public string ApplyMan { get; set; }
 
