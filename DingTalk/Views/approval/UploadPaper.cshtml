@@ -259,7 +259,9 @@
                             }
                         })
                     } else {
-                        alert('表单数据不全或有误')
+                        that.$alert('表单数据不全或有误', '提交错误', {
+                            confirmButtonText: '确定'
+                        });
                         DingTalkPC.device.notification.alert({
                             message: '表单数据不全或有误',
                             title: '提示信息',
@@ -488,9 +490,12 @@
                 console.log('before file')
                 console.log(file)
                 file.name = 'helloWorld'
-                const isJPG = file.type === 'image/jpeg'
-                const isPNG = file.type === 'image/png'
+                const isPdf = file.type === 'application/pdf'
                 const isLt2M = file.size / 1024 / 1024 < 30
+                if (!isPdf) {
+                    this.$message.error('上传图片只能是 PDF 格式!')
+                    return false
+                }
                 if (!isLt2M) {
                     this.$message.error('上传图片大小不能超过 30MB!')
                     return false
