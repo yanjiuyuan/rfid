@@ -208,7 +208,7 @@
                 $.ajax({
                     url: '/DingTalkServers/uploadFile/',
                     type: 'POST',
-                    data: JSON.stringify(paramObj),
+                    data: paramObj,
                     success: function (data) {
                         data = JSON.parse(data)
                         console.log('上传文件到钉盘')
