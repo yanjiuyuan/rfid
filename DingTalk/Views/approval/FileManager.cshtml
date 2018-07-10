@@ -169,7 +169,28 @@
             },
             //下载文件
             downloadFile: function (index, row) {
-
+                var that = this
+                var path = '\\'
+                for (let p of this.pathList) {
+                    path = path + p + '\\'
+                }
+                path += row.name
+                var paramObj = {
+                    "userId": DingData.userid,
+                    "path": path
+                }
+                console.log(paramObj)
+                $.ajax({
+                    url: '/Project/DownloadFileModel/',
+                    type: 'POST',
+                    dataType: "json",
+                    data: paramObj,
+                    success: function (data) {
+                        console.log('下载文件')
+                        console.log(data)
+                        
+                    }
+                })
             },
             //删除文件
             deleteFile: function (index, row) {
@@ -208,6 +229,7 @@
                 $.ajax({
                     url: '/DingTalkServers/uploadFile/',
                     type: 'POST',
+                    dataType: "json",
                     data: paramObj,
                     success: function (data) {
                         data = JSON.parse(data)
