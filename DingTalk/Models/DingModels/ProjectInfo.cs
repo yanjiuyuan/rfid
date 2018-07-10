@@ -49,5 +49,15 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(200)]
         public string ResponsibleManId { get; set; }
+
+        [StringLength(200)]
+        public string CompanyName { get; set; }
+
+        [StringLength(200)]
+        public string ProjectType { get; set; }
+
+        public string TeamMembers { get; set; }
+
+        public string TeamMembersId { get; set; }
     }
 }
