@@ -56,5 +56,9 @@ namespace DingTalk.Models.DingModels
         public bool? IsBack { get; set; }
 
         public string MediaId { get; set; }
+
+        public string FilePDFUrl { get; set; }
+
+        public string OldFilePDFUrl { get; set; }
     }
 }
