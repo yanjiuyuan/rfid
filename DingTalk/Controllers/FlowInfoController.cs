@@ -524,7 +524,7 @@ namespace DingTalk.Controllers
                     //taskNow.State = 1;
                     //taskNow.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     //context.Entry(taskNow).State = EntityState.Modified;
-                  
+
                     return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                 }
 
@@ -688,6 +688,45 @@ namespace DingTalk.Controllers
                 {
                     errorCode = 2,
                     errorMessage = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region 修改抄送状态为已阅
+
+        /// <summary>
+        /// 修改抄送状态为已阅
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <param name="UserId">用户Id</param>
+        /// <returns>{"errorCode":0,"errorMessage":"修改成功","Content":null,"IsError":false}</returns>
+        /// 测试数据：/FlowInfo/ChangeSendState?TaskId=24&UserId=1209662535974958
+        public string ChangeSendState(string TaskId, string UserId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Tasks task = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.ApplyManId == UserId
+                     && t.IsSend == true).First();
+                    task.State = 1;
+                    context.Entry<Tasks>(task).State = EntityState.Modified;
+                    context.SaveChanges();
+                    return JsonConvert.SerializeObject(new ErrorModel()
+                    {
+                        errorCode = 0,
+                        errorMessage = "修改成功"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel()
+                {
+                    errorCode=1,
+                    errorMessage=ex.Message
                 });
             }
         }
@@ -871,7 +910,7 @@ namespace DingTalk.Controllers
                             return Quary(context, ListTasks, ApplyManId);
                         case 3:
                             //抄送我的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
@@ -896,7 +935,7 @@ namespace DingTalk.Controllers
         public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId)
         {
             List<Object> listQuary = new List<object>();
-            
+
             foreach (int TaskId in ListTasks)
             {
                 int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).Select(u => u.NodeId).ToList().First();
@@ -905,7 +944,7 @@ namespace DingTalk.Controllers
                 listQuary.Add(from t in ListTask
                               join f in ListFlows
                               on t.FlowId.ToString() equals f.FlowId.ToString()
-                              where t.NodeId == 0 && t.TaskId == TaskId 
+                              where t.NodeId == 0 && t.TaskId == TaskId
                               select new
                               {
                                   Id = t.Id + 1,
@@ -1145,7 +1184,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                ProjectInfo purchaseDown = context.ProjectInfo.Where(p=>p.ProjectName== "集成钉钉的信息管理系统").First() ;
+                ProjectInfo purchaseDown = context.ProjectInfo.Where(p => p.ProjectName == "集成钉钉的信息管理系统").First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }
@@ -1262,6 +1301,6 @@ namespace DingTalk.Controllers
             return j;
         }
         #endregion
-        
+
     }
 }
