@@ -166,7 +166,7 @@ var mixin = {
         rules: {
             name: [
                 { required: true, message: '名称不能为空', trigger: 'blur' },
-                { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
+                { min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur' }
             ],
             string: [
                 { required: true, message: '内容不能为空', trigger: 'blur' },

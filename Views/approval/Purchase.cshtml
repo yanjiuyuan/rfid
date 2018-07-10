@@ -78,7 +78,7 @@
                 <el-input v-model="good.Standard" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="单价">
-                <el-input v-model="good.Price" :disabled="true"></el-input>
+                <el-input v-model="good.Price"></el-input>
             </el-form-item>
             <el-form-item label="单位">
                 <el-input v-model="good.Unit"></el-input>
@@ -117,8 +117,8 @@
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
-            <el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>
+            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
 
         <template v-if="showAddProject">
@@ -337,12 +337,12 @@
             //编辑审批物料
             showEditGood(index, good) {
                 this.dialogFormVisible = true
-                this.good = _cloneObj(good)
+                this.good = $.extend({}, good)
                 this.good.index = index
             },
             editGood() {
                 this.dialogFormVisible = false
-                let tmpGood = _cloneObj(this.good)
+                let tmpGood = $.extend({}, good)
                 tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
                 this.purchaseList[this.good.index] = tmpGood
                 let tmpArr = _cloneArr(this.purchaseList)

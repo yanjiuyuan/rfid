@@ -7,7 +7,7 @@
 <el-main id="partPage" style="position:relative;margin-left:1%;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        上传图纸-{{nodeInfo.NodeName}}
+        图纸审批-{{nodeInfo.NodeName}}
     </div>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
@@ -101,21 +101,15 @@
                 <el-upload class="upload-demo"
                            drag
                            :file-list="pdfList"
-                           action="/drawingupload/Upload?path=hello"
+                           action="/drawingupload/Upload"
                            :on-remove="handleFileRemove"
+                           :before-remove="isPdfFile = true"
                            :before-upload="beforePdfFileUpload"
                            :on-success="handleFileCardSuccess"
                            multiple>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">不超过30M</div>
-                </el-upload>
-
-                <el-upload class="upload-demo"
-                           action="/drawingupload/Upload?path=hello"
-                           :file-list="fileList3">
-                    <el-button size="small" type="primary">点击上传</el-button>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                 </el-upload>
 
             </el-form-item>
@@ -125,6 +119,7 @@
                            :file-list="fileList"
                            action="/drawingupload/Upload"
                            :on-remove="handleFileRemove"
+                           :before-remove="isPdfFile = false"
                            :before-upload="beforeFileUpload"
                            :on-success="handleFileCardSuccess"
                            multiple>
@@ -151,7 +146,6 @@
 <script>
     var FlowId = 6
     var upBom = []
-    let isPdfFile = false
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -159,6 +153,7 @@
             return {
                 preApprove: false,
                 preCopy: false,
+                isPdfFile: false,
                 pdfList: [],
                 fileList: [],
                 imageList: [],
@@ -203,6 +198,7 @@
                                 title = p.ProjectName
                             }
                         }
+                        that.fileListToUrl()
                         var paramArr = []
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
@@ -421,7 +417,7 @@
                 this.changePictureList(fileList)
             },
             handleFileRemove(file, fileList) {
-                this.changeFileList(fileList)
+                this.isPdfFile ? this.pdfList = fileList : this.fileList = fileList
             },
             handlePictureCardSuccess(response, file, fileList) {
                 this.changePictureList(fileList)
@@ -446,7 +442,7 @@
                         } else {
                             console.log('无media_di')
                         }
-                        isPdfFile ? that.pdfList = fileList : that.fileList = fileList
+                        that.isPdfFile ? that.pdfList = fileList : that.fileList = fileList
                     }
                 })
             },
@@ -462,20 +458,36 @@
                     this.ruleForm.OldImageUrl += ','
                 }
             },
-            changeFileList(fileList) {
-                console.log(fileList)
+            fileListToUrl() {
+                console.log('拼接文件url list')
+                console.log(this.fileList)
+                console.log(this.pdfList)
+
                 this.ruleForm.FileUrl = ''
                 this.ruleForm.OldFileUrl = ''
                 this.ruleForm.MediaId = ''
-                for (var i = 0; i < fileList.length; i++) {
-                    this.ruleForm.FileUrl += fileList[i].response.Content
-                    this.ruleForm.OldFileUrl += fileList[i].name
-                    this.ruleForm.MediaId += this.mediaList[fileList[i].response.Content]
-                    if (i == fileList.length - 1) break
+                for (let p of this.pdfList) {
+                    this.ruleForm.FileUrl += p.response.Content
+                    this.ruleForm.OldFileUrl += p.name
+                    this.ruleForm.MediaId += this.mediaList[p.response.Content]
                     this.ruleForm.FileUrl += ','
                     this.ruleForm.OldFileUrl += ','
                     this.ruleForm.MediaId += ','
                 }
+                for (var i = 0; i < this.fileList.length; i++) {
+                    this.ruleForm.FileUrl += this.fileList[i].response.Content
+                    this.ruleForm.OldFileUrl += this.fileList[i].name
+                    this.ruleForm.MediaId += this.mediaList[this.fileList[i].response.Content]
+                    if (i == this.fileList.length - 1) break
+                    this.ruleForm.FileUrl += ','
+                    this.ruleForm.OldFileUrl += ','
+                    this.ruleForm.MediaId += ','
+                }
+                console.log(this.ruleForm.FileUrl)
+                console.log(this.ruleForm.OldFileUrl)
+                console.log(this.ruleForm.MediaId)
+                console.log('拼接文件url list ok')
+                return true
             },
             beforePictureUpload(file) {
                 console.log('before file')
@@ -496,7 +508,7 @@
                 return true
             },
             beforePdfFileUpload(file) {
-                console.log('before file')
+                console.log('before pdf')
                 console.log(file)
                 file.name = 'helloWorld'
                 const isPdf = file.type === 'application/pdf'
@@ -509,7 +521,7 @@
                     this.$message.error('上传图片大小不能超过 30MB!')
                     return false
                 }
-                isPdfFile = true
+                this.isPdfFile = true
                 return true
             },
             beforeFileUpload(file) {
@@ -521,7 +533,7 @@
                     this.$message.error('上传图片大小不能超过 30MB!')
                     return false
                 }
-                isPdfFile = false
+                this.isPdfFile = false
                 return true
             },
             handlePictureCardPreview(file) {

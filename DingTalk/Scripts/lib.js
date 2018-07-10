@@ -209,41 +209,7 @@ var mixin = {
             this.currentPage = val
             this.getData()
         },
-        //添加项目
-        addProject() {
-            var that = this
-            var param = {
-                "ProjectName": this.ruleForm.inputProjectName,
-                "CreateTime": _getTime(),
-                "IsEnable": true,
-                "IsFinish": false,
-                "DeptName": "智慧工厂事业部",
-                "ApplyMan": DingData.nickName,
-                "ApplyManId": DingData.userid,
-                "StartTime": _dateToString(this.ruleForm.Time[0]),
-                "EndTime": _dateToString(this.ruleForm.Time[1]),
-                "ProjectId": this.ruleForm.inputProjectId
-            }
-            console.log(param)
-            $.ajax({
-                url: "/Project/AddProject",
-                type: "POST",
-                dataType: "json",
-                async: false,
-                data: JSON.stringify(param),
-                success: function (data) {
-                    that.projestList.push({
-                        ProjectId: that.ruleForm.inputProjectId,
-                        ProjectName: that.ruleForm.inputProjectName
-                    })
-                    console.log(data);
-                    that.showAddProject = false
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
-                }
-            })
-        },
+        
         //获取节点数据GetNodeInfo
         getNodeInfo() {
             var that = this
@@ -446,15 +412,15 @@ Vue.component('sam-approver-list', {
                             if (dontExist) node.AddPeople.push(d)
                         }
                     }
-                    DingTalkPC.device.notification.alert({
-                        message: JSON.stringify(data),
-                        title: "提示",//可传空
-                        buttonName: "收到",
-                        onSuccess: function () {
-                            /*回调*/
-                        },
-                        onFail: function (err) { }
-                    });
+                    //DingTalkPC.device.notification.alert({
+                    //    message: JSON.stringify(data),
+                    //    title: "提示",//可传空
+                    //    buttonName: "收到",
+                    //    onSuccess: function () {
+                    //        /*回调*/
+                    //    },
+                    //    onFail: function (err) { }
+                    //});
                     console.log(data)
                     console.log(that.nodelist)
                 },

@@ -54,6 +54,7 @@
             </el-card>
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
         </el-form-item>
+        <el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
                            :nodeid="nodeInfo.NodeId">
@@ -151,6 +152,7 @@
                 index: Index,
                 frameUrl: '',
                 ifShowStamppBtn: false,
+                ifShowStamppBtn2: false,
                 frameShow: false
             }
         },
@@ -273,21 +275,53 @@
                 }
                 var that = this
                 $.ajax({
-                    url: "/FlowInfo/SubmitTaskInfo",
+                    url: "/DrawingUpload/PrintAndSend",
                     type: "POST",
-                    data: JSON.stringify(paramObj),
+                    data: paramObj,
                     dataType: "json",
                     success: function (data) {
+                        //data = JSON.parse(data)
+                        console.log("/DrawingUpload/PrintAndSend1")
                         console.log(paramObj)
                         console.log(data)
-                        //if (data && data.errorCode == 0) {
-                        //    that.$alert('审批成功', '操作成功', {
-                        //        confirmButtonText: '确定',
-                        //        callback: action => {
-                        //            loadPage('/main/Approval')
-                        //        }
-                        //    });
-                        //}
+                        var alertStr = ''
+                        data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
+                        that.$alert(alertStr, '提交', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+            stampAndGet2() {
+                var paramObj = {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
+                }
+                var that = this
+                $.ajax({
+                    url: "/Purchase/PrintAndSend",
+                    type: "POST",
+                    data: paramObj,
+                    dataType: "json",
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log("/Purchase/PrintAndSend1")
+                        console.log(paramObj)
+                        console.log(data)
+                        var alertStr = ''
+                        data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
+                        that.$alert(alertStr, '消息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -401,7 +435,10 @@
             }
         },
         created: function () {
-            if (Index == '1') this.ifShowStamppBtn = true
+            if (Index == '1') {
+                this.ifShowStamppBtn = true
+                if (FlowId == '8') this.ifShowStamppBtn2 = true
+            }
             loadHtml("mainPage", "partPage")
         }
     })
