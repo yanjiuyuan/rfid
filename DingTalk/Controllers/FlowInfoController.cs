@@ -482,7 +482,42 @@ namespace DingTalk.Controllers
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
-                
+
+                if (NodeName == "抄送")
+                {
+                    string[] ListNodeName = NodeName.Split(',');
+                    string[] ListPeopleId = PeopleId.Split(',');
+                    string[] ListNodePeople = NodePeople.Split(',');
+
+                    Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                    for (int i = 0; i < ListPeopleId.Length; i++)
+                    {
+                        //保存任务流
+                        Tasks newTask = new Tasks()
+                        {
+                            TaskId = OldTaskId,
+                            ApplyMan = ListNodePeople[i],
+                            //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                            IsEnable = 1,
+                            NodeId = NodeId + 1,
+                            FlowId = Int32.Parse(FlowId),
+                            IsSend = true,
+                            ApplyManId = ListPeopleId[i],
+                            State = 0, //0 表示未审核 1表示已审核
+                            FileUrl = Task.FileUrl,
+                            OldFileUrl = Task.OldFileUrl,
+                            ImageUrl = Task.ImageUrl,
+                            OldImageUrl = Task.OldImageUrl,
+                            Title = Task.Title,
+                            IsPost = false,
+                            ProjectId = Task.ProjectId,
+                        };
+                        context.Tasks.Add(newTask);
+                    }
+                    context.SaveChanges();
+                    return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                }
+
                 if (NodeName == "结束")
                 {
                     return dic;

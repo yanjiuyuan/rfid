@@ -466,20 +466,90 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 项目信息关键字查询
         /// </summary>
-        /// <param name="key">查询关键字</param>
+        /// <param name="key">关键字</param>
+        /// <param name="startTime">开始时间</param>
+        /// <param name="endTime">结束时间</param>
+        /// <param name="ProjectState">项目状态</param>
         /// <returns></returns>
-        /// 测试数据：/Project/QuaryProjectInfo?key=钉钉
+        /// 测试数据 /Project/QuaryProjectInfo?key=高级项目&startTime=2018-05-17&endTime=2018-05-24&ProjectState=在研_123
         [HttpGet]
-        public string QuaryProjectInfo(string key)
+        public string QuaryProjectInfo(string key, string startTime, string endTime, string projectState)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    List<ProjectInfo> ProjectInfoList = context.ProjectInfo.Where(p => p.ApplyMan.Contains(key) ||
-                       p.DeptName.Contains(key) || p.ProjectName.Contains(key) ||
-                       p.ProjectId.Contains(key)).ToList();
-                    return JsonConvert.SerializeObject(ProjectInfoList);
+                    List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        ProjectInfoList = context.ProjectInfo.ToList();
+                    }
+                    else
+                    {
+                        ProjectInfoList = context.ProjectInfo.Where(p => p.ApplyMan.Contains(key) ||
+                      p.DeptName.Contains(key) || p.ProjectName.Contains(key) ||
+                      p.ProjectId.Contains(key)).ToList();
+                    }
+
+
+                    if (string.IsNullOrEmpty(startTime) && string.IsNullOrEmpty(endTime))
+                    {
+
+                        if (string.IsNullOrEmpty(projectState))
+                        {
+                            return JsonConvert.SerializeObject(ProjectInfoList);
+                        }
+                        else
+                        {
+                            string[] projectStateList = projectState.Split('_');
+
+                            List<ProjectInfo> pro = new List<ProjectInfo>();
+                            foreach (ProjectInfo projectInfo in ProjectInfoList)
+                            {
+                                foreach (string item in projectStateList)
+                                {
+                                    if (projectInfo.ProjectState == item)
+                                    {
+                                        pro.Add(projectInfo);
+                                    }
+                                }
+                            }
+                            return JsonConvert.SerializeObject(pro);
+                        }
+                    }
+                    else
+                    {
+                        var Quary =
+                            from p in ProjectInfoList
+                            where
+                           (Convert.ToDateTime(p.StartTime) >= Convert.ToDateTime(startTime))
+                            && (Convert.ToDateTime(p.EndTime) <= Convert.ToDateTime(endTime))
+                            select p;
+
+                        if (string.IsNullOrEmpty(projectState))
+                        {
+                            return JsonConvert.SerializeObject(Quary);
+                        }
+                        else
+                        {
+                            string[] projectStateList = projectState.Split('_');
+
+                            List<ProjectInfo> pro = new List<ProjectInfo>();
+                            foreach (ProjectInfo projectInfo in ProjectInfoList)
+                            {
+                                foreach (string item in projectStateList)
+                                {
+                                    if (projectInfo.ProjectState == item)
+                                    {
+                                        pro.Add(projectInfo);
+                                    }
+                                }
+                            }
+                            return JsonConvert.SerializeObject(pro);
+                        }
+                    }
+
+
                 }
             }
             catch (Exception ex)
