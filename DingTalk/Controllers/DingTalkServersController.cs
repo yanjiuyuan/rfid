@@ -365,7 +365,7 @@ namespace DingTalk.Controllers
                 fileInfos.LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 using (DDContext context = new DDContext())
                 {
-                    fileInfos.FilePath = fileInfos.FilePath.Replace(AppDomain.CurrentDomain.BaseDirectory,"");
+                    fileInfos.FilePath = @"\"+fileInfos.FilePath.Replace(AppDomain.CurrentDomain.BaseDirectory,"");
                     context.FileInfos.Add(fileInfos);
                     context.SaveChanges();
                 }
