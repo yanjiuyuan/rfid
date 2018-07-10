@@ -110,8 +110,8 @@
                             "DeptName": this.ruleForm.DeptName,
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
-                            "StartTime": _dateToString(this.ruleForm.Time[0]),
-                            "EndTime": _dateToString(this.ruleForm.Time[1]),
+                            "StartTime": this.ruleForm.Time[0]?_dateToString(this.ruleForm.Time[0]):'',
+                            "EndTime": this.ruleForm.Time[1]?_dateToString(this.ruleForm.Time[1]):'',
                             "ProjectId": this.ruleForm.inputProjectId,
                             "ResponsibleMan": this.ResponsibleMan[0].name,
                             "ResponsibleManId": this.ResponsibleMan[0].emplId,
@@ -121,7 +121,6 @@
                             "ProjectType": this.ruleForm.ProjectType
                         }
                         console.log(param)
-                        return
                         $.ajax({
                             url: "/Project/AddProject",
                             type: "POST",
