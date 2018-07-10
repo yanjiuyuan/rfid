@@ -13,34 +13,33 @@
     <el-form :inline="true" :model="formInline" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
-            <el-input v-model="formInline.keyword" style="width:200px;"
+            <el-input v-model="formInline.key" style="width:200px;"
                       placeholder="请输入搜索关键字"></el-input>
         </el-form-item>
         <!--高级检索-时间-->
         <template v-if="superSearch">
             <el-form-item label="开始日期">
-                <el-date-picker v-model="formInline.OrderTime"
+                <el-date-picker v-model="formInline.time"
                                 type="daterange"
                                 :picker-options="pickerOptions"
+                                value-format="yyyy-MM-dd"
                                 range-separator="至"
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
 
-            <el-form-item label="部门">
+            @*<el-form-item label="部门">
                 <el-select v-model="formInline.Customer">
                     <el-option label="全部" value=""></el-option>
                     <el-option v-for="c of Customer" :label="c" :value="c" key="c"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item>*@
 
             <!--高级检索-表单选项-->
             <el-form-item>
-                @*<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange">全选</el-checkbox>
-                <div style="margin: 15px 0;"></div>*@
-                <el-checkbox-group v-model="choosedOptions" :min="1">
-                    <el-checkbox v-for="(value,key) in tableOptions" :label="key" :key="key">{{value}}</el-checkbox>
+                <el-checkbox-group v-model="formInline.projectState" :min="1">
+                    <el-checkbox v-for="t in tableOptions" :label="t" :key="t">{{t}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
         </template>
@@ -73,13 +72,14 @@
         <el-table-column prop="DeptName" label="部门名称"></el-table-column>
         <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
         <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
-        <el-table-column label="操作" style="width:300px;">
+        <el-table-column prop="ProjectState" label="状态"></el-table-column>
+        @*<el-table-column label="操作" style="width:300px;">
             <template slot-scope="scope" style="width:300px;">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
                 <el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-table-column>
-    </el-table>
+    </el-table>*@
     <!--底部翻頁-->
     <div style="text-align:right">
         <el-pagination v-on:size-change="handleSizeChange"
@@ -96,16 +96,7 @@
 
 <script>
     var Index = 0
-    var tableOptions = {
-        OrderID: "在研",
-        OrderN: "已完成",
-        Customer: "终止"
-    }
-    var allOptions = []
-    for (var c in tableOptions) {
-        if (typeof (c) == 'string') allOptions.push(c)
-    }
-    new Vue({
+    var VUE = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
@@ -113,16 +104,12 @@
                 data: [],
                 tableData: [],
                 superSearch: false,
-                Customer: [],
                 formInline: {
-                    keyword: '',
-                    Customer: '',
-                    OrderTime: '',
-                    DeliveryTime: ''
+                    key: '',
+                    time: ['',''],
+                    projectState: ["在研", "已完成", "终止"]
                 },
-                checkAll: true,
-                choosedOptions: allOptions,
-                tableOptions: tableOptions,
+                tableOptions: ["在研", "已完成", "终止"],
                 isIndeterminate: true
             }
         },
@@ -130,13 +117,19 @@
             //获取项目数据getProject
             getProject() {
                 var that = this
-                url = "/Project/GetAllProJect?ApplyManId=" + DingData.userid
+                var param = {
+                    key: this.formInline.key,
+                    startTime: this.formInline.time[0],
+                    endTime: this.formInline.time[1],
+                    projectState: this.formInline.projectState.join('_')
+                }
+                url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
                 $.ajax({
                     url: url,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        console.log("获取项目列表数据 GetAllProJect")
+                        console.log("获取项目列表数据 QuaryProjectInfo")
                         console.log(url)
                         console.log(data)
                         that.data = data
@@ -155,16 +148,6 @@
             },
             handleDelete(index, row) {
                 console.log(index, row);
-            },
-            //筛选表单项
-            handleCheckAllChange: function (val) {
-                this.choosedOptions = val ? allOptions : [];
-                this.isIndeterminate = false;
-            },
-            handleCheckedOptionsChange: function (value) {
-                var checkedCount = value.length;
-                this.checkAll = checkedCount === allOptions.length;
-                this.isIndeterminate = checkedCount > 0 && checkedCount < allOptions.length;
             }
         },
         created: function () {
