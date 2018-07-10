@@ -131,6 +131,23 @@
             //表单操作
             handleEdit(index, row) {
                 console.log(index, row);
+                var that = this
+                if (Index == '3') {
+                    var url = '/FlowInfo/ChangeSendState?TaskId=' + row.TaskId + '&UserId=' + DingData.userid
+                    $.ajax({
+                        url: url, 
+                        success: function (data) {
+                            console.log('设置抄送审批为已读')
+                            console.log(url)
+                            console.log(data)
+                            that.loadPage(row)
+                        }
+                    })
+                } else {
+                    this.loadPage(row)
+                }
+            },
+            loadPage(row) {
                 if (row.TaskId && row.FlowId) {
                     if (row.FlowId == 7) {
                         loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
