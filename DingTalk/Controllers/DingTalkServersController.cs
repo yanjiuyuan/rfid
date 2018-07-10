@@ -345,7 +345,9 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> uploadFile([FromBody] FileInfos fileInfos)
         {
-            var fileName = HttpContext.Current.Server.MapPath(fileInfos.FilePath);
+            //var fileName = HttpContext.Current.Server.MapPath(fileInfos.FilePath);
+            var fileName = fileInfos.FilePath;
+            
             var uploadFileModel = new UploadMediaRequestModel()
             {
                 FileName = fileName,
