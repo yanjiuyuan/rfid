@@ -431,7 +431,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     //查找MediaId
-                    string mediaId = context.FileInfos.Where(f => f.FilePath == path.Replace("\\",@"\")).First().MediaId;
+                    string mediaId = context.FileInfos.Where(f => f.FilePath == path).First().MediaId;
                     if (string.IsNullOrEmpty(mediaId))
                     {
                         return JsonConvert.SerializeObject(new ErrorModel

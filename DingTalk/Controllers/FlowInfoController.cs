@@ -955,7 +955,8 @@ namespace DingTalk.Controllers
                                   ApplyMan = t.ApplyMan,
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
-                                  Title = t.Title
+                                  Title = t.Title,
+                                  State=t.State
                               });
             }
             return JsonConvert.SerializeObject(listQuary);
