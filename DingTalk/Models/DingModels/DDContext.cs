@@ -474,6 +474,22 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.ResponsibleManId)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.CompanyName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.ProjectType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.TeamMembers)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.TeamMembersId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<PurchaseDown>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);

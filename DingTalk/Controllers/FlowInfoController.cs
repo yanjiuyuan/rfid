@@ -513,8 +513,18 @@ namespace DingTalk.Controllers
                             ProjectId = Task.ProjectId,
                         };
                         context.Tasks.Add(newTask);
+                        context.SaveChanges();
                     }
-                    context.SaveChanges();
+                    //修改当前流程状态
+                    //修改流程状态
+
+                    //Tasks taskNow = context.Tasks.Where(t=>t.TaskId.ToString()==OldTaskId.ToString()
+                    //&& t.NodeId.ToString()==NodeId.ToString()).First();
+                    //taskNow.IsPost = false;
+                    //taskNow.State = 1;
+                    //taskNow.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    //context.Entry(taskNow).State = EntityState.Modified;
+                  
                     return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                 }
 

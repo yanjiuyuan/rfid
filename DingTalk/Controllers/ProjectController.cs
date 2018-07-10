@@ -66,8 +66,8 @@ namespace DingTalk.Controllers
                         else
                         {
                             //建立项目文件夹及其子文件
-                            string path = string.Format("\\UploadFile\\ProjectFile\\{0}",
-                                projectInfo.ProjectName);
+                            string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}",
+                                projectInfo.CompanyName, projectInfo.ProjectType, projectInfo.ProjectName);
                             projectInfo.FilePath = path;
                             context.ProjectInfo.Add(projectInfo);
                             path = Server.MapPath(path);
@@ -431,7 +431,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     //查找MediaId
-                    string mediaId = context.FileInfos.Where(f => f.FilePath == path).First().MediaId;
+                    string mediaId = context.FileInfos.Where(f => f.FilePath == path.Replace("\\",@"\")).First().MediaId;
                     if (string.IsNullOrEmpty(mediaId))
                     {
                         return JsonConvert.SerializeObject(new ErrorModel

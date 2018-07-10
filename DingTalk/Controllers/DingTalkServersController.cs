@@ -1,4 +1,5 @@
-﻿using DingTalk.Models;
+﻿using Common.Flie;
+using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using DingTalkServer;
 using DingTalkServer.Models;
@@ -345,32 +346,45 @@ namespace DingTalk.Controllers
         [HttpPost]
         public async Task<string> uploadFile([FromBody] FileInfos fileInfos)
         {
-            //var fileName = HttpContext.Current.Server.MapPath(fileInfos.FilePath);
-            var fileName = fileInfos.FilePath;
-            
-            var uploadFileModel = new UploadMediaRequestModel()
+            try
             {
-                FileName = fileName,
-                MediaType = UploadMediaType.File
-            };
-            string uploadModel = await dtManager.UploadFile(uploadFileModel);
-            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(uploadModel);
+                //var fileName = HttpContext.Current.Server.MapPath(fileInfos.FilePath);
+                var fileName = fileInfos.FilePath;
 
-            //绑定路径信息
-            fileInfos.MediaId = fileSendModel.Media_Id;
-            fileInfos.LastModifyState = "0";
-            fileInfos.LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            using (DDContext context=new DDContext())
+                var uploadFileModel = new UploadMediaRequestModel()
+                {
+                    FileName = fileName,
+                    MediaType = UploadMediaType.File
+                };
+                string uploadModel = await dtManager.UploadFile(uploadFileModel);
+                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(uploadModel);
+
+                //绑定路径信息
+                fileInfos.MediaId = fileSendModel.Media_Id;
+                fileInfos.LastModifyState = "0";
+                fileInfos.LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                using (DDContext context = new DDContext())
+                {
+                    fileInfos.FilePath = @"\"+fileInfos.FilePath.Replace(AppDomain.CurrentDomain.BaseDirectory,"");
+                    context.FileInfos.Add(fileInfos);
+                    context.SaveChanges();
+                }
+
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 0,
+                    errorMessage = "上传盯盘成功"
+                });
+            }
+            catch (Exception ex)
             {
-                context.FileInfos.Add(fileInfos);
-                context.SaveChanges();
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
             }
 
-            return JsonConvert.SerializeObject(new ErrorModel
-            {
-                errorCode = 0,
-                errorMessage = "上传盯盘成功"
-            });
         }
 
         /// <summary>
