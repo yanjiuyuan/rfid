@@ -39,7 +39,7 @@
             <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
         </el-upload>
     @*</el-form-item>*@
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
                  id="uploadForm" enctype="multipart/form-data">
             <el-form-item label="项目名" prop="ProjectId">
                 <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
@@ -174,6 +174,8 @@
                     ImageUrl: '',
                     OldImageUrl: '',
                     FileUrl: '',
+                    OldFilePDFUrl: '',
+                    FilePDFUrl: '',
                     OldFileUrl: '',
                     MediaId: '',
                     inputProjectName: '',
@@ -213,6 +215,8 @@
                             "State": "1",
                             "ImageUrl": that.ruleForm.ImageUrl,
                             "OldImageUrl": that.ruleForm.OldImageUrl,
+                            "FilePDFUrl": that.ruleForm.FilePDFUrl,
+                            "OldFilePDFUrl": that.ruleForm.OldFilePDFUrl,
                             "FileUrl": that.ruleForm.FileUrl,
                             "OldFileUrl": that.ruleForm.OldFileUrl,
                             //"MediaId": that.ruleForm.MediaId,
@@ -464,29 +468,29 @@
                 console.log(this.fileList)
                 console.log(this.pdfList)
 
+                this.ruleForm.FilePDFUrl = ''
+                this.ruleForm.OldFilePDFUrl = ''
+
                 this.ruleForm.FileUrl = ''
                 this.ruleForm.OldFileUrl = ''
-                this.ruleForm.MediaId = ''
-                for (let p of this.pdfList) {
-                    this.ruleForm.FileUrl += p.response.Content
-                    this.ruleForm.OldFileUrl += p.name
-                    this.ruleForm.MediaId += this.mediaList[p.response.Content]
-                    this.ruleForm.FileUrl += ','
-                    this.ruleForm.OldFileUrl += ','
-                    this.ruleForm.MediaId += ','
+                for (var i = 0; i < this.pdfList.length; i++) {
+                    this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
+                    this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
+                    if (i == this.pdfList.length - 1) break
+                    this.ruleForm.FilePDFUrl += ','
+                    this.ruleForm.OldFilePDFUrl += ','
                 }
                 for (var i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name
-                    this.ruleForm.MediaId += this.mediaList[this.fileList[i].response.Content]
                     if (i == this.fileList.length - 1) break
                     this.ruleForm.FileUrl += ','
                     this.ruleForm.OldFileUrl += ','
-                    this.ruleForm.MediaId += ','
                 }
+                console.log(this.ruleForm.FilePDFUrl)
+                console.log(this.ruleForm.OldFilePDFUrl)
                 console.log(this.ruleForm.FileUrl)
                 console.log(this.ruleForm.OldFileUrl)
-                console.log(this.ruleForm.MediaId)
                 console.log('拼接文件url list ok')
                 return true
             },
