@@ -96,7 +96,7 @@
                 folderList: [],
                 dialogFormVisible: false,
                 isRoot: true,
-                pathList: ['ProjectFile'],
+                pathList: ['UploadFile', 'ProjectFile'],
                 fileList: [],
                 lineTree: [],
                 defaultProps: {
@@ -119,8 +119,8 @@
             //获取文件数据
             getFileData: function () {
                 var that = this
-                var url = "/Project/GetFileMsg?path=\\UploadFile"
-                this.uploadUrl = "/drawingupload/Upload?path=\\UploadFile"
+                var url = "/Project/GetFileMsg?path="
+                this.uploadUrl = "/drawingupload/Upload?path="
                 for (let p of this.pathList) {
                     url = url + '\\' + p
                     this.uploadUrl = this.uploadUrl + '\\' + p

@@ -45,7 +45,7 @@
                 <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
                 <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
             </el-form-item>
-            <el-form-item label="项目周期">
+            <el-form-item label="项目周期" required="required">
                 <el-date-picker v-model="ruleForm.Time"
                                 type="daterange"
                                 :picker-options="pickerOptions"
@@ -94,7 +94,7 @@
             addProject() {
                 var that = this
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name) {
+                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name && this.ruleForm.Time[0]) {
                         let names = []
                         let ids = []
                         for (let p of this.groupPeople) {
