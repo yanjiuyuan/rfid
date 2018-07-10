@@ -22,16 +22,30 @@
             <el-form-item label="部门名称" style="width:300px;">
                 <el-input v-model="ruleForm.DeptName"></el-input>
             </el-form-item>
-            <el-form-item label="状态">
+            <el-form-item label="状态" required="required">
                 <el-select v-model="ruleForm.ProjectState">
                     <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="公司名称" required="required">
+                <el-select v-model="ruleForm.CompanyName">
+                    <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="项目类型" required="required">
+                <el-select v-model="ruleForm.ProjectType">
+                    <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="项目负责人" required="required">
-                <span>{{ResponsibleMan}}</span>
+                <span>{{ResponsibleMan[0].name}} &nbsp;</span>
                 <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
             </el-form-item>
-            <el-form-item label="开始日期">
+            <el-form-item label="项目组成员" required="required">
+                <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
+                <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+            </el-form-item>
+            <el-form-item label="项目周期">
                 <el-date-picker v-model="ruleForm.Time"
                                 type="daterange"
                                 :picker-options="pickerOptions"
@@ -50,13 +64,18 @@
 
 <script>
     var Index = 0
-    new Vue({
+    var ProjectTypes = ['自研项目', '纵向项目', '横向项目']
+    var CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
+    var VUE = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
                 status: ['在研', '已完成', '终止'],
-                ResponsibleMan: '',
+                ResponsibleMan: [{ name: '', emplId: '' }],
+                groupPeople: [{ name: '', emplId: '' }],
+                ProjectTypes: ProjectTypes,
+                CompanyNames: CompanyNames,
                 ruleForm: {
                     inputProjectName: '',
                     inputProjectId: '',
@@ -64,50 +83,71 @@
                     ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
-                    Time: ''
+                    Time: '',
+                    ProjectType: ProjectTypes[0],
+                    CompanyName: CompanyNames[0]
                 }
             }
         },
         methods: {
             //添加项目
-            addMan() {
+            addProject() {
                 var that = this
-                var param = {
-                    "ProjectName": this.ruleForm.inputProjectName,
-                    "CreateTime": _getTime(),
-                    "IsEnable": true,
-                    "ProjectState": this.ruleForm.ProjectState,
-                    "IsFinish": false,
-                    "DeptName": this.ruleForm.DeptName,
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid,
-                    "StartTime": _dateToString(this.ruleForm.Time[0]),
-                    "EndTime": _dateToString(this.ruleForm.Time[1]),
-                    "ProjectId": this.ruleForm.inputProjectId,
-                    "ResponsibleMan": '',
-                    "ResponsibleManId": ''
-                }
-                console.log(param)
-                $.ajax({
-                    url: "/Project/AddProject",
-                    type: "POST",
-                    dataType: "json",
-                    async: false,
-                    data: JSON.stringify(param),
-                    success: function (data) {
-                        that.projestList.push({
-                            ProjectId: that.ruleForm.inputProjectId,
-                            ProjectName: that.ruleForm.inputProjectName
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name) {
+                        let names = []
+                        let ids = []
+                        for (let p of this.groupPeople) {
+                            names.push(p.name)
+                            ids.push(p.emplId)
+                        }
+                        var param = {
+                            "ProjectName": this.ruleForm.inputProjectName,
+                            "CreateTime": _getTime(),
+                            "IsEnable": true,
+                            "ProjectState": this.ruleForm.ProjectState,
+                            "IsFinish": false,
+                            "DeptName": this.ruleForm.DeptName,
+                            "ApplyMan": DingData.nickName,
+                            "ApplyManId": DingData.userid,
+                            "StartTime": this.ruleForm.Time[0]?_dateToString(this.ruleForm.Time[0]):'',
+                            "EndTime": this.ruleForm.Time[1]?_dateToString(this.ruleForm.Time[1]):'',
+                            "ProjectId": this.ruleForm.inputProjectId,
+                            "ResponsibleMan": this.ResponsibleMan[0].name,
+                            "ResponsibleManId": this.ResponsibleMan[0].emplId,
+                            "TeamMembers": names.join(','),
+                            "TeamMembersId": ids.join(','),
+                            "CompanyName": this.ruleForm.CompanyName,
+                            "ProjectType": this.ruleForm.ProjectType
+                        }
+                        console.log(param)
+                        $.ajax({
+                            url: "/Project/AddProject",
+                            type: "POST",
+                            dataType: "json",
+                            async: false,
+                            data: JSON.stringify(param),
+                            success: function (data) {
+                                console.log("添加项目")
+                                console.log(data)
+                                that.$alert(data.errorMessage, '提示信息', {
+                                    confirmButtonText: '确定'
+                                })
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                console.log(XMLHttpRequest.status);
+                            }
                         })
-                        console.log(data);
-                        that.showAddProject = false
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
                     }
                 })
+                
             },
-            addPeople() {
+            addMan() {
                 var that = this
                 console.log('addPeople')
                 DingTalkPC.biz.contact.choose({
@@ -121,6 +161,20 @@
                     onFail: function (err) { }
                 });
             },
+            addGroup() {
+                var that = this
+                console.log('addGroup')
+                DingTalkPC.biz.contact.choose({
+                    multiple: true, //是否多选： true多选 false单选； 默认true
+                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                    corpId: DingData.CorpId, //企业id
+                    onSuccess: function (data) {
+                        that.groupPeople = data
+                        console.log(data)
+                    },
+                    onFail: function (err) { }
+                });
+            }
         },
         created: function () {
             loadHtml("mainPage", "partPage")

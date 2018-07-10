@@ -234,13 +234,7 @@
                     success: function (data) {
                         data = JSON.parse(data)
                         console.log('上传文件到钉盘')
-                        console.log(paramObj)
-                        if (data.media_id) {
-                            console.log(data.media_id)
-                        } else {
-                            console.log('无media_di')
-                        }
-                        //that.changeFileList(fileList)
+                        console.log(data)
                     }
                 })
             },
