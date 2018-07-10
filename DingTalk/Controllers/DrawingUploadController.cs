@@ -97,6 +97,10 @@ namespace DingTalk.Controllers
                                 strPath = @"~\UploadFile\Excel\";
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
+                            case ".pdf":
+                                strPath = @"~\UploadFile\PDF\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
                             //其他文件
                             default:
                                 strPath = @"~\UploadFile\Flies\";

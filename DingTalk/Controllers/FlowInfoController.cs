@@ -482,6 +482,7 @@ namespace DingTalk.Controllers
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
+                
                 if (NodeName == "结束")
                 {
                     return dic;
