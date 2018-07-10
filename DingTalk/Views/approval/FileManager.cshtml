@@ -83,31 +83,6 @@
             <el-button type="primary" v-on:click="createFolder">创 建</el-button>
         </div>
     </el-dialog>
-    <!--新建项目表单-->
-    <el-dialog title="添加项目" :visible.sync="addProjectFormVisible">
-        <el-form :model="formProject" class="demo-form-inline" :rules="rules"
-                 size="medium">
-            <el-form-item label="项目名称" prop="inputProjectName">
-                <el-input v-model="formProject.inputProjectName"></el-input>
-            </el-form-item>
-            <el-form-item label="项目编号" prop="inputProjectId">
-                <el-input v-model="formProject.inputProjectId"></el-input>
-            </el-form-item>
-            <el-form-item label="开始日期">
-                <el-date-picker v-model="formProject.Time"
-                                type="daterange"
-                                :picker-options="pickerOptions"
-                                range-separator="至"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期">
-                </el-date-picker>
-            </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button v-on:click="addProjectFormVisible = false">取 消</el-button>
-            <el-button type="primary" v-on:click="addProject">创 建</el-button>
-        </div>
-    </el-dialog>
 </el-main>
 
 <script>
@@ -120,7 +95,6 @@
                 tableData: [],
                 folderList: [],
                 dialogFormVisible: false,
-                addProjectFormVisible: false,
                 isRoot: true,
                 pathList: ['ProjectFile'],
                 fileList: [],
@@ -226,10 +200,13 @@
                 this.getFileData()
                 var that = this
                 var paramObj = {
-                    "": file.response.Content
+                    "applyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "FilePath": file.response.Content
                 }
+                console.log(paramObj)
                 $.ajax({
-                    url: '/DingTalkServers/UploadMedia/',
+                    url: '/DingTalkServers/uploadFile/',
                     type: 'POST',
                     data: JSON.stringify(paramObj),
                     success: function (data) {

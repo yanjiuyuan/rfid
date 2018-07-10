@@ -37,9 +37,9 @@
 
             <!--高级检索-表单选项-->
             <el-form-item>
-                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange">全选</el-checkbox>
-                <div style="margin: 15px 0;"></div>
-                <el-checkbox-group v-model="choosedOptions" v-on:change="handleCheckedOptionsChange">
+                @*<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange">全选</el-checkbox>
+                <div style="margin: 15px 0;"></div>*@
+                <el-checkbox-group v-model="choosedOptions" :min="1">
                     <el-checkbox v-for="(value,key) in tableOptions" :label="key" :key="key">{{value}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
@@ -53,13 +53,26 @@
     </el-form>
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
+        <el-table-column type="expand">
+            <template slot-scope="props">
+                <el-form label-position="left" inline class="table-expand">
+                    <el-form-item label="创建时间">
+                        <span>{{ props.row.CreateTime }}</span>
+                    </el-form-item>
+                    <el-form-item label="开始时间">
+                        <span>{{ props.row.StartTime }}</span>
+                    </el-form-item>
+                    <el-form-item label="结束时间">
+                        <span>{{ props.row.EndTime }}</span>
+                    </el-form-item>
+                </el-form>
+            </template>
+        </el-table-column>
         <el-table-column prop="ProjectId" label="项目编号"></el-table-column>
         <el-table-column prop="ProjectName" label="项目名称"></el-table-column>
         <el-table-column prop="DeptName" label="部门名称"></el-table-column>
         <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
-        <el-table-column prop="CreateTime" label="创建时间"></el-table-column>
-        <el-table-column prop="StartTime" label="开始时间"></el-table-column>
-        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
+        <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
         <el-table-column label="操作" style="width:300px;">
             <template slot-scope="scope" style="width:300px;">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
