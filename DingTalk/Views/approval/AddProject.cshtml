@@ -4,15 +4,32 @@
 
 <!--右侧实体内容-->
 <div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        添加项目
+    </div>
     <!--创建项目表单-->
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        <template v-if="showAddProject">
-            <el-form-item label="项目名称" prop="inputProjectName">
+        <template>
+            <el-form-item label="项目名称" prop="inputProjectName" style="width:300px;">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            <el-form-item label="项目编号" prop="inputProjectId">
+            <el-form-item label="项目编号" prop="inputProjectId" style="width:300px;">
                 <el-input v-model="ruleForm.inputProjectId"></el-input>
+            </el-form-item>
+            <el-form-item label="部门名称" style="width:300px;">
+                <el-input v-model="ruleForm.DeptName"></el-input>
+            </el-form-item>
+            <el-form-item label="状态">
+                <el-select v-model="ruleForm.ProjectState">
+                    <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="项目负责人" required="required">
+                <span>{{ResponsibleMan}}</span>
+                <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
             </el-form-item>
             <el-form-item label="开始日期">
                 <el-date-picker v-model="ruleForm.Time"
@@ -38,56 +55,74 @@
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                tableData: [],
+                status: ['在研', '已完成', '终止'],
+                ResponsibleMan: '',
                 ruleForm: {
                     inputProjectName: '',
                     inputProjectId: '',
+                    DeptName: '',
+                    ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
                     Time: ''
-                },
-                items: { TaskId: '审批编号' ,ApplyMan:'审批人'}
+                }
             }
         },
         methods: {
-            //获取项目数据getProject
-            getProject() {
+            //添加项目
+            addMan() {
                 var that = this
-                url = "/Project/GetAllProJect?ApplyManId=" + DingData.userid
+                var param = {
+                    "ProjectName": this.ruleForm.inputProjectName,
+                    "CreateTime": _getTime(),
+                    "IsEnable": true,
+                    "ProjectState": this.ruleForm.ProjectState,
+                    "IsFinish": false,
+                    "DeptName": this.ruleForm.DeptName,
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "StartTime": _dateToString(this.ruleForm.Time[0]),
+                    "EndTime": _dateToString(this.ruleForm.Time[1]),
+                    "ProjectId": this.ruleForm.inputProjectId,
+                    "ResponsibleMan": '',
+                    "ResponsibleManId": ''
+                }
+                console.log(param)
                 $.ajax({
-                    url: url,
-                    type: "GET",
+                    url: "/Project/AddProject",
+                    type: "POST",
                     dataType: "json",
+                    async: false,
+                    data: JSON.stringify(param),
                     success: function (data) {
-                        console.log("获取项目列表数据 GetAllProJect")
-                        console.log(data)
-                        that.data = data
-                        that.totalRows = data.length
-                        that.getData()
+                        that.projestList.push({
+                            ProjectId: that.ruleForm.inputProjectId,
+                            ProjectName: that.ruleForm.inputProjectName
+                        })
+                        console.log(data);
+                        that.showAddProject = false
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
                     }
                 })
             },
-            //表单操作
-            handleEdit(index, row) {
-                console.log(index, row);
-                if (row.TaskId && row.FlowId) {
-                    if (row.FlowId == 7) {
-                        loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
-                        return
-                    }
-                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
-                }
+            addPeople() {
+                var that = this
+                console.log('addPeople')
+                DingTalkPC.biz.contact.choose({
+                    multiple: false, //是否多选： true多选 false单选； 默认true
+                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                    corpId: DingData.CorpId, //企业id
+                    onSuccess: function (data) {
+                        that.ResponsibleMan = data
+                        console.log(data)
+                    },
+                    onFail: function (err) { }
+                });
             },
-            handleDelete(index, row) {
-                console.log(index, row);
-            }
         },
         created: function () {
-            this.getProject()
             loadHtml("mainPage", "partPage")
         }
     })
