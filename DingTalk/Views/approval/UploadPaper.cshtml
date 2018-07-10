@@ -97,7 +97,7 @@
                     <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
             </el-form-item>
-            <el-form-item label="上传PDF" required="required">
+            <el-form-item label="上传PDF图纸" required="required">
                 <el-upload class="upload-demo"
                            drag
                            :file-list="pdfList"
@@ -113,7 +113,7 @@
                 </el-upload>
 
             </el-form-item>
-            <el-form-item label="上传模型" required="required">
+            <el-form-item label="上传其他附件" required="required">
                 <el-upload class="upload-demo"
                            drag
                            :file-list="fileList"
@@ -189,6 +189,7 @@
             //提交审批
             onSubmit(formName) {
                 var that = this
+                that.fileListToUrl()
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
                         that.disablePage = true
@@ -198,7 +199,7 @@
                                 title = p.ProjectName
                             }
                         }
-                        that.fileListToUrl()
+                        
                         var paramArr = []
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
@@ -214,7 +215,7 @@
                             "OldImageUrl": that.ruleForm.OldImageUrl,
                             "FileUrl": that.ruleForm.FileUrl,
                             "OldFileUrl": that.ruleForm.OldFileUrl,
-                            "MediaId": that.ruleForm.MediaId,
+                            //"MediaId": that.ruleForm.MediaId,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
