@@ -183,6 +183,17 @@ var mixin = {
             ],
             inputProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
+            ],
+            Price: [
+                { required: true, message: '价格不能为空！', trigger: 'change' },
+                { type: 'number', message: '必须为数字值' }
+            ],
+            Unit: [
+                { required: true, message: '单位不能为空！', trigger: 'change' }
+            ],
+            Count: [
+                { required: true, message: '数量不能为空！', trigger: 'change' },
+                { type: 'number', message: '必须为数字值' }
             ]
         },
         pickerOptions: pickerOptions,
