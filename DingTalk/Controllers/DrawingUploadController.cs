@@ -477,7 +477,13 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
-
         }
+
+        //public int GetIndexOfString(string InputString, string CharString, int n)
+        //{
+        //    int i = InputString.IndexOf(CharString);
+           
+        //    GetIndexOfString(OutPutString, CharString,i);
+        //}
     }
 }
