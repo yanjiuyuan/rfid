@@ -488,7 +488,7 @@ namespace DingTalk.Controllers
                     {
                         ProjectInfoList = context.ProjectInfo.Where(p => p.ApplyMan.Contains(key) ||
                       p.DeptName.Contains(key) || p.ProjectName.Contains(key) ||
-                      p.ProjectId.Contains(key)).ToList();
+                      p.ProjectId.Contains(key) || p.FilePath.Contains(key)).ToList();
                     }
 
 
