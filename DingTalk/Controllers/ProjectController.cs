@@ -347,7 +347,7 @@ namespace DingTalk.Controllers
                     {
                         //检测路径查询权限
                         string CheckPath = RePath.Substring(0, RePath.IndexOf("\\", 24));
-                        bool IsComPower = (context.ProjectInfo.Where(p => p.ApplyManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
                             switch (ChangeType)
