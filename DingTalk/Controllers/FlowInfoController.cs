@@ -1201,7 +1201,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                var NodeInfoList = context.NodeInfo.Where(n => n.PeopleId != null && n.NodePeople != null);
+                var NodeInfoList = context.NodeInfo;
                 var Quary = from n in NodeInfoList
                             select new
                             {

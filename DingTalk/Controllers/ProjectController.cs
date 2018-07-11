@@ -396,7 +396,7 @@ namespace DingTalk.Controllers
                         {
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
-                                errorCode = 0,
+                                errorCode = 1,
                                 errorMessage = "用户没有权限进行操作"
                             });
                         }
