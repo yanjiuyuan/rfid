@@ -66,7 +66,7 @@
 
     <!--编辑物料表單-->
     <el-dialog title="编辑物料" :visible.sync="dialogFormVisible">
-        <el-form :model="good" class="demo-form-inline"
+        <el-form :model="good" class="demo-form-inline" :rules="rules" ref="good"
                  size="medium">
             <el-form-item label="物料编码">
                 <el-input v-model="good.CodeNo" :disabled="true"></el-input>
@@ -78,13 +78,13 @@
                 <el-input v-model="good.Standard" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="单价">
-                <el-input v-model="good.Price"></el-input>
+                <el-input v-model="good.Price" prop="Price"></el-input>
             </el-form-item>
             <el-form-item label="单位">
-                <el-input v-model="good.Unit"></el-input>
+                <el-input v-model="good.Unit" prop="Unit"></el-input>
             </el-form-item>
             <el-form-item label="数量">
-                <el-input v-model="good.Count"></el-input>
+                <el-input v-model="good.Count" prop="Count"></el-input>
             </el-form-item>
             <el-form-item label="用途">
                 <el-input v-model="good.Purpose"></el-input>
@@ -170,7 +170,11 @@
                 tableData: [],
                 purchaseList: [],
                 projestList: [],
-                good: {},
+                good: {
+                    Price: '',
+                    Unit: '',
+                    Count: ''
+                },
                 preApprove: false,
                 nodeList: [],
                 nodeInfo: {},
@@ -324,7 +328,7 @@
                     Standard: good.FModel,
                     Unit: '',
                     Price: good.FOrderPrice,
-                    Count: 0,
+                    Count: '',
                     Purpose: '',
                     UrgentDate: '',
                     Mark: ''
@@ -343,7 +347,7 @@
             editGood() {
                 this.dialogFormVisible = false
                 let tmpGood = $.extend({}, this.good)
-                tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
+                if (tmpGood.UrgentDate) tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
                 this.purchaseList[this.good.index] = tmpGood
                 let tmpArr = _cloneArr(this.purchaseList)
                 this.purchaseList = tmpArr
