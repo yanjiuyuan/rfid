@@ -157,7 +157,7 @@
                     url = url + '\\' + p
                     this.uploadUrl = this.uploadUrl + '\\' + p
                 }
-                this.uploadUrl = this.uploadUrl + '?ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
+                this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
                 $.ajax({
                     url: url,
                     success: function (data) {
