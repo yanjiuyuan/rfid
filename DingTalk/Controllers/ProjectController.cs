@@ -119,11 +119,11 @@ namespace DingTalk.Controllers
                     List<ProjectInfo> listProjectInfo = new List<ProjectInfo>();
                     if (string.IsNullOrEmpty(ApplyManId))
                     {
-                        listProjectInfo = context.ProjectInfo.ToList();
+                        listProjectInfo = context.ProjectInfo.Where(p=>p.ProjectState=="在研").ToList();
                     }
                     else
                     {
-                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId).ToList();
+                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId && u.ProjectState== "在研").ToList();
                     }
                     return JsonConvert.SerializeObject(listProjectInfo);
                 }
@@ -346,7 +346,8 @@ namespace DingTalk.Controllers
                     else
                     {
                         //检测路径查询权限
-                        string CheckPath = RePath.Substring(0, RePath.IndexOf("\\", 24));
+                        int k = GetIndexOfString(RePath, "\\", 6);
+                        string CheckPath = RePath.Substring(0, k-1);
                         bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
@@ -560,6 +561,25 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
+
+        }
+
+        public int GetIndexOfString(string InputString, string CharString, int n)
+        {
+            int count = 0;
+            int k = 0;
+            for (int i = 0; i < n; i++)
+            {
+                int j = InputString.IndexOf(CharString);
+                InputString = InputString.Substring(j + 1, InputString.Length - j - 1);
+                count++;
+                k = k + j + 1;
+                if (count == n)
+                {
+                    return k;
+                }
+            }
+            return 0;
         }
     }
 }

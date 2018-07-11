@@ -127,7 +127,8 @@ namespace DingTalk.Controllers
                         };
                         using (DDContext context = new DDContext())
                         {
-                            string CheckPath = path.Substring(0, path.IndexOf("\\", 45));
+                            int j = GetIndexOfString(path, "\\", 6);
+                            string CheckPath = path.Substring(0, j-1);
                             bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                             //判断权限
                             bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
@@ -477,7 +478,24 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
+        }
 
+        public int GetIndexOfString(string InputString, string CharString, int n)
+        {
+            int count = 0;
+            int k = 0;
+            for (int i = 0; i < n; i++)
+            {
+                int j = InputString.IndexOf(CharString);
+                InputString = InputString.Substring(j + 1, InputString.Length - j - 1);
+                count++;
+                k = k + j + 1;
+                if (count == n)
+                {
+                    return k;
+                }
+            }
+            return 0;
         }
     }
 }
