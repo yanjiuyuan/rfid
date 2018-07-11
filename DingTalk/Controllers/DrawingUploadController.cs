@@ -34,9 +34,12 @@ namespace DingTalk.Controllers
         /// 文件上传接口
         /// </summary>
         /// <param name="form"></param>
-        /// <returns>返回文件保存路径</returns>
+        /// <param name="path">文件路径</param>
+        /// <param name="ApplyMan">用户Id</param>
+        /// <param name="ApplyManId">用户Id</param>
+        /// <returns>返回文件路径</returns>
         [HttpPost]
-        public string Upload(FormCollection form, string path)
+        public string Upload(FormCollection form, string path, string ApplyMan, string ApplyManId)
         {
             try
             {
@@ -107,19 +110,49 @@ namespace DingTalk.Controllers
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
                         }
+
+                        //保存文件
+                        files.SaveAs(Path);
                     }
                     else
                     {
                         Path = Server.MapPath(path + "\\" + FileName);
+                        bool IsComPower = false;
+                        FileInfos fileInfos = new FileInfos()
+                        {
+                            ApplyMan = ApplyMan,
+                            ApplyManId = ApplyManId,
+                            FilePath = path,
+                            LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:hh:ss"),
+                            LastModifyState = "0"
+                        };
+                        using (DDContext context = new DDContext())
+                        {
+                            string CheckPath = path;
+                            IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
+
+                            if (IsComPower)
+                            {
+                                //保存文件
+                                files.SaveAs(Path);
+                                context.FileInfos.Add(fileInfos);
+                                context.SaveChanges();
+                            }
+                            else
+                            {
+                                return JsonConvert.SerializeObject(new ErrorModel
+                                {
+                                    errorCode = 0,
+                                    errorMessage = "用户没有权限进行操作"
+                                });
+                            }
+                        }
                     }
 
-                    //保存文件
-                    files.SaveAs(Path);
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
                         errorMessage = "上传成功",
-
                         Content = Path //strPath + newFileName + strExtension
                     });
                 }
