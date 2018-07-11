@@ -157,7 +157,7 @@
                     url = url + '\\' + p
                     this.uploadUrl = this.uploadUrl + '\\' + p
                 }
-                this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
+                this.uploadUrl = this.uploadUrl + '?ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
                 $.ajax({
                     url: url,
                     success: function (data) {
@@ -275,6 +275,8 @@
             //上传文件
             handleFileCardSuccess(response, file, fileList) {
                 console.log('上传文件返回结果')
+                console.log(this.uploadUrl)
+                console.log(file)
                 console.log(response)
                 this.$alert(response.errorMessage, '返回消息', {
                     confirmButtonText: '确定'
