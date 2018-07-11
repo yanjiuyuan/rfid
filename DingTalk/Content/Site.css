@@ -188,6 +188,7 @@ ol li {
 }
 .folder-box p{
     margin-top:2px;
+    font-size:0.8rem;
 }
 .folder-box:hover {
     border: 1px solid rgba(64, 158, 255, 0.74);

@@ -54,6 +54,7 @@
         <el-table-column prop="Title" label="标题"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
+        @*<el-table-column v-if="Index == '3'" prop="State" label="状态"></el-table-column>*@
         <el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
@@ -77,7 +78,7 @@
 
 <script>
     var Index = 0
-    new Vue({
+    var VUE = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
@@ -87,6 +88,7 @@
                 currentPage: 1,
                 totalRows: 0,
                 superSearch: false,
+                Index: UrlObj.Index,
                 formInline: {
                     user: '',
                     region: '',
@@ -140,14 +142,14 @@
                             console.log('设置抄送审批为已读')
                             console.log(url)
                             console.log(data)
-                            that.loadPage(row)
+                            that.loader(row)
                         }
                     })
                 } else {
-                    this.loadPage(row)
+                    this.loader(row)
                 }
             },
-            loadPage(row) {
+            loader(row) {
                 if (row.TaskId && row.FlowId) {
                     if (row.FlowId == 7) {
                         loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
