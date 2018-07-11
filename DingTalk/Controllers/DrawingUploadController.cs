@@ -39,7 +39,7 @@ namespace DingTalk.Controllers
         /// <param name="ApplyManId">用户Id</param>
         /// <returns>返回文件路径</returns>
         [HttpPost]
-        public string Upload(FormCollection form, string path, string ApplyMan, string ApplyManId)
+        public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId)
         {
             try
             {
@@ -121,14 +121,15 @@ namespace DingTalk.Controllers
                         {
                             ApplyMan = ApplyMan,
                             ApplyManId = ApplyManId,
-                            FilePath = path,
+                            FilePath = path + "\\" + FileName,
                             LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:hh:ss"),
                             LastModifyState = "0"
                         };
+                       
                         using (DDContext context = new DDContext())
                         {
                             int j = GetIndexOfString(path, "\\", 6);
-                            string CheckPath = path.Substring(0, j-1);
+                            string CheckPath = path.Substring(0, j - 1);
                             bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                             //判断权限
                             bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
@@ -136,6 +137,12 @@ namespace DingTalk.Controllers
                             {
                                 //保存文件
                                 files.SaveAs(Path);
+
+                                //上传盯盘获取MediaId
+                                var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
+                                var resultUploadMedia = await otherController.UploadMedia(fileInfos.FilePath);
+                                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                                fileInfos.MediaId = fileSendModel.Media_Id;
                                 context.FileInfos.Add(fileInfos);
                                 context.SaveChanges();
                             }
