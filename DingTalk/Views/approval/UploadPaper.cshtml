@@ -201,7 +201,12 @@
                                 title = p.ProjectName
                             }
                         }
-                        
+                        that.ruleForm.MediaId = ''
+                        var mediaArr = []
+                        for (let m in that.mediaList) {
+                            mediaArr.push(that.mediaList[m])
+                        }
+                        that.ruleForm.MediaId = mediaArr.join(',')
                         var paramArr = []
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
@@ -219,7 +224,7 @@
                             "OldFilePDFUrl": that.ruleForm.OldFilePDFUrl,
                             "FileUrl": that.ruleForm.FileUrl,
                             "OldFileUrl": that.ruleForm.OldFileUrl,
-                            //"MediaId": that.ruleForm.MediaId,
+                            "MediaId": that.ruleForm.MediaId,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 

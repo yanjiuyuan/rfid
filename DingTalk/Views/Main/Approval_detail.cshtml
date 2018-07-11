@@ -45,9 +45,10 @@
                        :disabled="true">
             </el-upload>
         </el-form-item>
-        <el-form-item v-if="fileList.length > 0" label="相关文件">
+        <!--PDF展示-->
+        <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
             <el-card class="box-card">
-                <div v-for="f in fileList" :key="f.name" class="text item">
+                <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span v-on:click="clickFile(f.url)">{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
@@ -55,6 +56,17 @@
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
         </el-form-item>
         <el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>
+        <!--相关文件-->
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
+            <el-card class="box-card">
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span v-on:click="clickFile(f.url)">{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                </div>
+            </el-card>
+            @*<el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>*@
+        </el-form-item>
+        @*<el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>*@
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
                            :nodeid="nodeInfo.NodeId">
@@ -100,6 +112,7 @@
     var allData = {}
     var imageList = []
     var fileList = []
+    var pdfList = []
     var FileUrl = ''
     var bomUrl = ''
     switch (FlowId) {
@@ -140,6 +153,7 @@
                 preCopy: false,
                 imageList: imageList,
                 fileList: fileList,
+                pdfList: pdfList,
                 data: [],
                 items: items,
                 tableData: [],
@@ -478,8 +492,22 @@
                         })
                     }
                 }
+                if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
+                    FileUrl = data.FilePDFUrl
+                    var urlList = data.FilePDFUrl.split(',')
+                    var oldUrlList = data.OldFilePDFUrl.split(',')
+                    var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
+                    for (var i = 0; i < urlList.length; i++) {
+                        pdfList.push({
+                            name: oldUrlList[i],
+                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                            mediaId: MediaIdList[i]
+                        })
+                    }
+                }
                 console.log(imageList)
                 console.log(fileList)
+                console.log(pdfList)
                 demo.ruleForm = allData
                 demo.getNodeInfo()
                 demo.getNodeList()
