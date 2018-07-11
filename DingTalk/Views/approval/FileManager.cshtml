@@ -14,7 +14,7 @@
     <div>
         <!--项目信息表格-->
         <el-breadcrumb separator="/">
-            <el-breadcrumb-item v-for="(p,i) in pathList" :key="i" v-show="i < pathList.length - 1">
+            <el-breadcrumb-item v-for="(p,i) in pathList" :key="i" v-show="i < pathList.length - 1 && i != 0">
                 <span v-on:click="clickPath(i)">{{p}}</span>
             </el-breadcrumb-item>
             <el-breadcrumb-item>{{pathList[pathList.length - 1]}}</el-breadcrumb-item>
@@ -29,6 +29,33 @@
             <img src="~/Content/images/folder.png"/>
             <p>{{f | substring}}</p>
         </div>
+        <!--项目详情-->
+        <template v-if="pathList.length == 3">
+            <span style="font-size:1.2rem;">项目详情</span>
+            <el-table :data="tableData" stripe border>
+                <el-table-column type="expand">
+                    <template slot-scope="props">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="创建时间">
+                                <span>{{ props.row.CreateTime }}</span>
+                            </el-form-item>
+                            <el-form-item label="开始时间">
+                                <span>{{ props.row.StartTime }}</span>
+                            </el-form-item>
+                            <el-form-item label="结束时间">
+                                <span>{{ props.row.EndTime }}</span>
+                            </el-form-item>
+                        </el-form>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ProjectId" label="项目编号"></el-table-column>
+                <el-table-column prop="ProjectName" label="项目名称"></el-table-column>
+                <el-table-column prop="DeptName" label="部门名称"></el-table-column>
+                <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
+                <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
+                <el-table-column prop="ProjectState" label="状态"></el-table-column>
+            </el-table>
+        </template>
         <!--文件列表-->
         <div style="clear:left;">
             <span style="font-size:1.2rem;">文件列表</span>
@@ -125,6 +152,7 @@
                     url = url + '\\' + p
                     this.uploadUrl = this.uploadUrl + '\\' + p
                 }
+                this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid
                 $.ajax({
                     url: url,
                     success: function (data) {
@@ -144,6 +172,30 @@
                     },
                     error: function (err) {
                         console.error(err)
+                    }
+                })
+            },
+            //获取项目数据getProject
+            getProject(filename) {
+                var that = this
+                var param = {
+                    key: this.pathList.join('\\') + '\\' + filename
+                }
+                url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取项目列表数据 QuaryProjectInfo")
+                        console.log(url)
+                        console.log(data)
+                        that.data = data
+                        that.totalRows = data.length
+                        that.getData()
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
                     }
                 })
             },
