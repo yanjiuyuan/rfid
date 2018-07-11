@@ -342,7 +342,7 @@
             },
             editGood() {
                 this.dialogFormVisible = false
-                let tmpGood = $.extend({}, good)
+                let tmpGood = $.extend({}, this.good)
                 tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
                 this.purchaseList[this.good.index] = tmpGood
                 let tmpArr = _cloneArr(this.purchaseList)

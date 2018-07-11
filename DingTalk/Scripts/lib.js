@@ -230,9 +230,8 @@ var mixin = {
                     console.log(XMLHttpRequest.status);
                 }
             })
-            console.log("/Project/GetAllProJect?ApplyManId=" + DingData.userid)
             $.ajax({
-                url: "/Project/GetAllProJect?ApplyManId=" + DingData.userid,
+                url: "/Project/GetAllProJect" ,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
