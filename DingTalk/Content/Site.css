@@ -278,6 +278,7 @@ ol li {
     padding:0px;
     overflow:hidden;
     margin-left:1%;
+    min-height:400px;
 }
 .head-fixed{
     font-size:1.2rem;
