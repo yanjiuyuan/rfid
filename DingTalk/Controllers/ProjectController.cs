@@ -119,11 +119,11 @@ namespace DingTalk.Controllers
                     List<ProjectInfo> listProjectInfo = new List<ProjectInfo>();
                     if (string.IsNullOrEmpty(ApplyManId))
                     {
-                        listProjectInfo = context.ProjectInfo.ToList();
+                        listProjectInfo = context.ProjectInfo.Where(p=>p.ProjectState=="在研").ToList();
                     }
                     else
                     {
-                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId).ToList();
+                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId && u.ProjectState== "在研").ToList();
                     }
                     return JsonConvert.SerializeObject(listProjectInfo);
                 }
