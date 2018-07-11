@@ -27,7 +27,7 @@
         <div v-for="f in folderList" class="folder-box" v-on:click="openFolder(f)" style="cursor:pointer;">
             @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
             <img src="~/Content/images/folder.png"/>
-            <p>{{f}}</p>
+            <p>{{f | substring}}</p>
         </div>
         <!--文件列表-->
         <div style="clear:left;">
@@ -275,6 +275,12 @@
             //点击节点跳转文件夹
             clickNode: function (obj) {
                 console.log(obj)
+            }
+        },
+        filters: {
+            substring: function (str) {
+                if (str.length <= 11) return str
+                return str.substring(0,10) + '...'
             }
         },
         created: function () {
