@@ -329,7 +329,7 @@ var tableData = [{
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
-    props: ['preset', 'nodelist', 'type' ,'nodeid'],
+    props: ['preset', 'nodelist', 'type' ,'nodeid', 'single'],
     template: `<div>
                     <el-form-item v-if="type=='approve'" label="审批人" style="margin-bottom:0px;">
                         <span v-if="preset" class="hint">审批人已由管理员预置,并将自动去重</span>
@@ -404,7 +404,7 @@ Vue.component('sam-approver-list', {
             //}
            
             DingTalkPC.biz.contact.choose({
-                multiple: true, //是否多选： true多选 false单选； 默认true
+                multiple: !that.single, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
