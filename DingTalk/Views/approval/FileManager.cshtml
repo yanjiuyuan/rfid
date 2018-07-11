@@ -45,6 +45,9 @@
                             <el-form-item label="结束时间">
                                 <span>{{ props.row.EndTime }}</span>
                             </el-form-item>
+                            <el-form-item label="小组成员">
+                                <span>{{ props.row.TeamMembers }}</span>
+                            </el-form-item>
                         </el-form>
                     </template>
                 </el-table-column>
@@ -113,6 +116,7 @@
 </el-main>
 
 <script>
+    var nowFile = ''
     var vue = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -272,6 +276,9 @@
             handleFileCardSuccess(response, file, fileList) {
                 console.log('上传文件返回结果')
                 console.log(response)
+                this.$alert(response.errorMessage, '返回消息', {
+                    confirmButtonText: '确定'
+                });
                 this.getFileData()
                 var that = this
                 var paramObj = {
