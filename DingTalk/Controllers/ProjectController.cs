@@ -119,11 +119,11 @@ namespace DingTalk.Controllers
                     List<ProjectInfo> listProjectInfo = new List<ProjectInfo>();
                     if (string.IsNullOrEmpty(ApplyManId))
                     {
-                        listProjectInfo = context.ProjectInfo.Where(p=>p.ProjectState=="在研").ToList();
+                        listProjectInfo = context.ProjectInfo.Where(p => p.ProjectState == "在研").ToList();
                     }
                     else
                     {
-                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId && u.ProjectState== "在研").ToList();
+                        listProjectInfo = context.ProjectInfo.Where(u => u.ApplyManId == ApplyManId && u.ProjectState == "在研").ToList();
                     }
                     return JsonConvert.SerializeObject(listProjectInfo);
                 }
@@ -347,7 +347,7 @@ namespace DingTalk.Controllers
                     {
                         //检测路径查询权限
                         int k = GetIndexOfString(RePath, "\\", 6);
-                        string CheckPath = RePath.Substring(0, k-1);
+                        string CheckPath = RePath.Substring(0, k - 1);
                         bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
                         {
@@ -520,12 +520,15 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        var Quary =
-                            from p in ProjectInfoList
-                            where
-                           (Convert.ToDateTime(p.StartTime) >= Convert.ToDateTime(startTime))
-                            && (Convert.ToDateTime(p.EndTime) <= Convert.ToDateTime(endTime))
-                            select p;
+                        //var Quary =
+                        //    from p in ProjectInfoList
+                        //    where
+                        //   (Convert.ToDateTime(startTime) >= Convert.ToDateTime(p.StartTime))
+                        //    && (Convert.ToDateTime(endTime) <= Convert.ToDateTime(p.EndTime))
+                        //    select p;
+
+                        var Quary = ProjectInfoList.Where(p => (Convert.ToDateTime(p.StartTime) >= Convert.ToDateTime(startTime))
+                                          && (Convert.ToDateTime(p.StartTime) <= Convert.ToDateTime(endTime)));
 
                         if (string.IsNullOrEmpty(projectState))
                         {
@@ -536,7 +539,7 @@ namespace DingTalk.Controllers
                             string[] projectStateList = projectState.Split('_');
 
                             List<ProjectInfo> pro = new List<ProjectInfo>();
-                            foreach (ProjectInfo projectInfo in ProjectInfoList)
+                            foreach (ProjectInfo projectInfo in Quary)
                             {
                                 foreach (string item in projectStateList)
                                 {
