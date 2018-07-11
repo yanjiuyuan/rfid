@@ -241,6 +241,7 @@
             //退回审批
             returnSubmit() {
                 this.disablePage = true
+                var that = this
                 var param = {
                     "Id": allData.Id,
                     "TaskId": TaskId,
@@ -266,12 +267,8 @@
                         console.log('退回')
                         console.log(param)
                         console.log(data)
-                        DingTalkPC.device.notification.alert({
-                            message: '提交成功',
-                            buttonName: '确定',
-                            onSuccess: function () {
-                                loadPage('/main/Approval')
-                            }
+                        that.$alert(data.errorMessage, '信息返回', {
+                            confirmButtonText: '确定'
                         })
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
