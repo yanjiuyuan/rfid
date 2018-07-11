@@ -24,15 +24,15 @@
             <span style="font-size:1.2rem;">文件夹列表</span>
             <el-button v-on:click="dialogFormVisible = true" size="small" type="primary">新建文件夹</el-button>
         </div>
-        <div v-for="f in folderList" class="folder-box" v-on:click="openFolder(f)" style="cursor:pointer;">
+        <div v-for="f in folderList" class="folder-box" v-on:click="openFolder(f)" v-on:mouseover="getProject(f)" style="cursor:pointer;">
             @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
             <img src="~/Content/images/folder.png"/>
             <p>{{f | substring}}</p>
         </div>
         <!--项目详情-->
-        <template v-if="pathList.length == 3">
+        <div v-if="pathList.length == 4" style="clear:left;">
             <span style="font-size:1.2rem;">项目详情</span>
-            <el-table :data="tableData" stripe border>
+            <el-table :data="projectInfo" stripe border>
                 <el-table-column type="expand">
                     <template slot-scope="props">
                         <el-form label-position="left" inline class="table-expand">
@@ -55,7 +55,7 @@
                 <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
                 <el-table-column prop="ProjectState" label="状态"></el-table-column>
             </el-table>
-        </template>
+        </div>
         <!--文件列表-->
         <div style="clear:left;">
             <span style="font-size:1.2rem;">文件列表</span>
@@ -120,6 +120,7 @@
             return {
                 data: [],
                 tableData: [],
+                projectInfo: [],
                 folderList: [],
                 dialogFormVisible: false,
                 isRoot: true,
@@ -177,6 +178,9 @@
             },
             //获取项目数据getProject
             getProject(filename) {
+                console.log('hover~~~')
+                if (this.pathList.length != 4)
+                    return
                 var that = this
                 var param = {
                     key: this.pathList.join('\\') + '\\' + filename
@@ -190,9 +194,7 @@
                         console.log("获取项目列表数据 QuaryProjectInfo")
                         console.log(url)
                         console.log(data)
-                        that.data = data
-                        that.totalRows = data.length
-                        that.getData()
+                        that.projectInfo = data
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         console.log(XMLHttpRequest.status);
@@ -247,7 +249,7 @@
             //删除文件
             deleteFile: function (index, row) {
                 var that = this
-                var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path=\\UploadFile"
+                var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
                 for (let p of this.pathList) {
                     url = url + '\\' + p
                 }
@@ -298,7 +300,7 @@
                 this.$refs['formInline'].validate((valid) => {
                     if (valid) {
                         var that = this
-                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path=\\UploadFile"
+                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
                         for (let p of this.pathList) {
                             url = url + '\\' + p
                         }
