@@ -24,9 +24,10 @@
             <span style="font-size:1.2rem;">文件夹列表</span>
             <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 4" size="small" type="primary">新建文件夹</el-button>
         </div>
-        <div v-for="f in folderList" class="folder-box" v-on:click="openFolder(f)" v-on:mouseover="getProject(f)" style="cursor:pointer;">
+        <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f)" style="cursor:pointer;">
             @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
-            <img src="~/Content/images/folder.png" />
+            <img v-on:click="openFolder(f)" src="~/Content/images/folder.png" />
+            @*<i class="el-icon-error" style="color:red;"></i>*@
             <p>{{f | substring}}</p>
         </div>
         <!--项目详情-->
