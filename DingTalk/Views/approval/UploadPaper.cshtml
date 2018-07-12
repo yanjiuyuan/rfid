@@ -130,7 +130,7 @@
             </el-form-item>
 
             <!--添加审批人-->
-            <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+            <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
                                :nodeid="nodeInfo.NodeId">
             </sam-approver-list>
             <!--添加抄送人-->
@@ -146,6 +146,7 @@
 <script>
     var FlowId = 6
     var upBom = []
+    var isPdf = false
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -158,6 +159,7 @@
                 fileList: [],
                 imageList: [],
                 mediaList: {},
+                mediaPdfList: [],
                 data: [],
                 items: [],
                 tableData: [],
@@ -178,6 +180,7 @@
                     FilePDFUrl: '',
                     OldFileUrl: '',
                     MediaId: '',
+                    MediaIdPDF: '',
                     inputProjectName: '',
                     inputProjectId: '',
                     copyers: ['小唐', '季老师'],
@@ -206,7 +209,12 @@
                         for (let m in that.mediaList) {
                             mediaArr.push(that.mediaList[m])
                         }
+                        var mediaPdfArr = []
+                        for (let m in that.mediaPdfList) {
+                            mediaPdfArr.push(that.mediaPdfList[m])
+                        }
                         that.ruleForm.MediaId = mediaArr.join(',')
+                        that.ruleForm.MediaIdPDF = mediaPdfArr.join(',')
                         var paramArr = []
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
@@ -225,6 +233,7 @@
                             "FileUrl": that.ruleForm.FileUrl,
                             "OldFileUrl": that.ruleForm.OldFileUrl,
                             "MediaId": that.ruleForm.MediaId,
+                            "MediaIdPDF": that.ruleForm.MediaIdPDF,
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
@@ -440,7 +449,7 @@
                 $.ajax({
                     url: '/DingTalkServers/UploadMedia/',
                     type: 'POST',
-                    data: JSON.stringify(paramObj),
+                    data: paramObj,
                     success: function (data) {
                         data = JSON.parse(data)
                         console.log('上传文件到钉盘')
@@ -448,7 +457,7 @@
                         console.log(paramObj)
                         if (data.media_id) {
                             console.log(data.media_id)
-                            that.mediaList[file.response.Content] = data.media_id
+                            isPdf ? that.mediaPdfList[file.response.Content] = data.media_id : that.mediaList[file.response.Content] = data.media_id
                         } else {
                             console.log('无media_di')
                         }
@@ -521,6 +530,7 @@
                 console.log('before pdf')
                 console.log(file)
                 file.name = 'helloWorld'
+                isPdf = true
                 const isPdf = file.type === 'application/pdf'
                 const isLt2M = file.size / 1024 / 1024 < 30
                 if (!isPdf) {
@@ -538,6 +548,7 @@
                 console.log('before file')
                 console.log(file)
                 file.name = 'helloWorld'
+                isPdf = false
                 const isLt2M = file.size / 1024 / 1024 < 30
                 if (!isLt2M) {
                     this.$message.error('上传图片大小不能超过 30MB!')
