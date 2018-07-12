@@ -442,7 +442,7 @@ namespace DingTalk.Controllers
                                 NodeId = T.NodeId,
                                 NodeName = T.NodeName,
                                 NodePeople = T.NodePeople
-                            });
+                            }).OrderBy(t=>t.NodeId);
                         return JsonConvert.SerializeObject(QuaryList);
                     }
                     else
@@ -451,7 +451,7 @@ namespace DingTalk.Controllers
                         var NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId);
                         var QuaryList = from a in TasksList
                                         join b in NodeInfoList
-                                        on a.NodeId equals b.NodeId
+                                        on a.NodeId equals b.NodeId orderby b.NodeId
                                         select new
                                         {
                                             NodeId = a.NodeId,
@@ -1040,7 +1040,7 @@ namespace DingTalk.Controllers
                                     join t in TaskList
                                     on n.NodeId equals t.NodeId
                                     into temp
-                                    from tt in temp.DefaultIfEmpty()
+                                    from tt in temp.DefaultIfEmpty() 
                                     select new
                                     {
                                         NodeId = n.NodeId,

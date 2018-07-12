@@ -27,10 +27,11 @@ namespace Common.PDF
         private static BaseFont bf = BaseFont.CreateFont(@"C://Windows/Fonts/simsun.ttc,0", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         //定义字体
-        private static Font fontBig = new Font(bf, 20, Font.BOLD);
+        private static Font fontBig = new Font(bf, 15, Font.BOLD);
         private static Font fontMiddle = new Font(bf, 13, Font.BOLD);
         private static Font fontSmall = new Font(bf, 13, Font.BOLD);
-        private static Font fontSmallNoBold = new Font(bf, 13);
+        private static Font fontSmallNoBold = new Font(bf, 12);
+        private static Font fontTableSmallNoBold = new Font(bf, 8);
         private static float IndentationLeft = 50;//距左边距
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace Common.PDF
         /// <param name="dtSourse">表单数据</param>
         /// <param name="dtApproveView">审批意见数据</param>
         public string GeneratePDF(string FlowName, string TaskId, string ApplyName,
-            string ApplyTime, string ProjectName, string ImageNo,float ImageX, float ImageY
+            string ApplyTime, string ProjectName, string ImageNo, float ImageX, float ImageY
             , List<string> contentList, float[] contentWithList
             , DataTable dtSourse, DataTable dtApproveView)
         {
@@ -65,10 +66,18 @@ namespace Common.PDF
                 writer.CloseStream = false;//把doc内容写入流中
                 doc.Open();
 
-                CreateLine();//生成一条下横线
-                CreateEmptyRow(1);//生成一行空行
+                iTextSharp.text.Image imageLogo = iTextSharp.text.Image.GetInstance(
+                    string.Format(@"{0}\Content\images\单位LOGO.jpg", AppDomain.CurrentDomain.BaseDirectory));
+                //imageLogo.Width = 100;
+                imageLogo.SetAbsolutePosition(80, 770);
+                writer.DirectContent.AddImage(imageLogo);
 
-                AddHeaderTitleContent(FlowName + "流程明细");//添加表头
+                AddHeaderTitleContent("泉州华中科技大学智能制造研究院", fontBig, 80);
+                CreateEmptyRow(1);//生成一行空行
+                CreateLine();//生成一条下横线
+                //CreateEmptyRow(1);//生成一行空行
+
+                AddHeaderTitleContent(FlowName + "流程明细", fontMiddle, IndentationLeft);//添加表头
                 CreateEmptyRow(1);//生成一行空行
 
                 AddPartnerContents("流水号", TaskId);
@@ -85,7 +94,7 @@ namespace Common.PDF
                     string ImgaePath = "";
                     if (ImageNo == "1")
                     {
-                         ImgaePath = string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory);
+                        ImgaePath = string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory);
                     }
                     if (ImageNo == "2")
                     {
@@ -94,7 +103,6 @@ namespace Common.PDF
                     iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(ImgaePath);
                     //image.SetAbsolutePosition(300, 650);
                     image.SetAbsolutePosition(ImageX, ImageY);
-                    
                     writer.DirectContent.AddImage(image);
                 }
 
@@ -119,10 +127,10 @@ namespace Common.PDF
                     {
                         //DataRow row = dtSourse.Rows[i];
                         //table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                        table.AddCell(GetPdfCell((i + 1).ToString(), fontTableSmallNoBold, Element.ALIGN_CENTER));
                         for (int j = 0; j < dtSourse.Columns.Count; j++)
                         {
-                            table.AddCell(GetPdfCell((dtSourse.Rows[i][j]).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
+                            table.AddCell(GetPdfCell((dtSourse.Rows[i][j]).ToString(), fontTableSmallNoBold, Element.ALIGN_CENTER));
                         }
                     }
                 }
@@ -150,33 +158,35 @@ namespace Common.PDF
 
                 CreateEmptyRow(1);//生成一行空行
 
-                int iResult = 2;  //每行打印数量
+                //int iResult = 1;  //每行打印数量
 
                 if (dtApproveView.Rows.Count > 0)
                 {
-                    int j = 0;
+                    //int j = 0;
                     Paragraph content = new Paragraph();
                     for (int i = 0; i < dtApproveView.Rows.Count; i++)
                     {
                         content.IndentationLeft = IndentationLeft;
                         Chunk chunkName = new Chunk(dtApproveView.Rows[i]["NodeName"].ToString() + ":", fontSmallNoBold);
-                        Chunk chunkText = new Chunk(dtApproveView.Rows[i]["NodePeople"].ToString() + "  ", fontSmallNoBold);
-                        content.Add(2 * j, chunkName);
-                        content.Add(2 * j + 1, chunkText);
-                        content.Alignment = 10;
-                        j++;
-                        if (i != 0 && i % iResult == 0)
-                        {
-                            doc.Add(content);
-                            j = 0;
-                            content.Clear();
-                        }
-                    }
-                    if (dtApproveView.Rows.Count <= iResult)
-                    {
+                        Chunk chunkText = new Chunk(dtApproveView.Rows[i]["NodePeople"].ToString(), fontSmallNoBold);
+                        content.Add(0, chunkName);
+                        content.Add(1, chunkText);
+                        content.Alignment = 30;
+                        //j++;
+                        //if (i != 0 && i % iResult == 0 && i!= iResult)
+                        //{
+                        //    doc.Add(content);
+                        //    j = 0;
+                        //    content.Clear();
+                        //}
                         doc.Add(content);
                         content.Clear();
                     }
+                    //if (dtApproveView.Rows.Count <= iResult)
+                    //{
+                    //    doc.Add(content);
+                    //    content.Clear();
+                    //}
                 }
 
                 #endregion
@@ -314,10 +324,10 @@ namespace Common.PDF
         #endregion
 
         #region 生成标题
-        private static void AddHeaderTitleContent(string content)
+        private static void AddHeaderTitleContent(string content, Font font, float indentationLeft)
         {
-            Paragraph p = new Paragraph(content, fontMiddle);
-            p.IndentationLeft = IndentationLeft;//距离左边距
+            Paragraph p = new Paragraph(content, font);
+            p.IndentationLeft = indentationLeft;//距离左边距
             doc.Add(p);
         }
         #endregion

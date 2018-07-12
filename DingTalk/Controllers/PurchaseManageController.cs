@@ -108,7 +108,7 @@ namespace DingTalk.Controllers
                 {
                     var ICItemList = context.t_ICItem.ToList();
                     var Quary = from t in ICItemList
-                                where t.FName.Contains(Key) || t.FNumber.Contains(Key) 
+                                where t.FName.Contains(Key) || t.FNumber.Contains(Key)
                                 select new
                                 {
                                     t.FNumber, //物料编码
@@ -163,7 +163,7 @@ namespace DingTalk.Controllers
                         });
                     }
                     //判断流程是否已结束
-                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend==false).ToList();
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
                     if (tasksList.Count > 0)
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
@@ -172,30 +172,43 @@ namespace DingTalk.Controllers
                             errorMessage = "流程未结束"
                         });
                     }
-                    
+
                     List<PurchaseTable> PurchaseTableList = context.PurchaseTable.Where(u => u.TaskId == TaskId).ToList();
 
                     var SelectPurchaseList = from p in PurchaseTableList
                                              select new
                                              {
-                                                 p.CodeNo,p.Name,p.Standard,p.Unit,
-                                                 p.Count,p.Price,p.Purpose,p.UrgentDate,p.Mark
+                                                 p.CodeNo,
+                                                 p.Name,
+                                                 p.Standard,
+                                                 p.Unit,
+                                                 p.Count,
+                                                 p.Price,
+                                                 p.Purpose,
+                                                 p.UrgentDate,
+                                                 p.Mark
                                              };
                     DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
                     //ClassChangeHelper.ToDataTable(SelectPurchaseList);
-                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
                         if (string.IsNullOrEmpty(nodeInfo.NodePeople))
                         {
                             string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
-                            nodeInfo.NodePeople = strNodePeople;
+                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                            nodeInfo.NodePeople = strNodePeople + "  " + ApplyTime;
+                        }
+                        else
+                        {
+                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                            nodeInfo.NodePeople = nodeInfo.NodePeople + "  " + ApplyTime;
                         }
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
                     string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
-                    
+
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
@@ -208,7 +221,7 @@ namespace DingTalk.Controllers
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "2",300,650, contentList, contentWithList, dtSourse, dtApproveView);
+                    ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
 
