@@ -619,7 +619,6 @@ namespace DingTalk.Controllers
                         Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
-
                             //保存任务流
                             Tasks newTask = new Tasks()
                             {
