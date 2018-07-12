@@ -12,6 +12,7 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+
         public ActionResult partHome()
         {
             return View();
