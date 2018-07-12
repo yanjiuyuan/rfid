@@ -300,7 +300,7 @@
                         console.log(data)
                         var alertStr = ''
                         data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
-                        that.$alert(alertStr, '提交', {
+                        that.$alert('盖章文件已推送到钉钉', '提交', {
                             confirmButtonText: '确定',
                             callback: action => {
 
@@ -330,7 +330,7 @@
                         console.log(data)
                         var alertStr = ''
                         data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
-                        that.$alert(alertStr, '消息', {
+                        that.$alert('盖章文件已推送到钉钉', '消息', {
                             confirmButtonText: '确定',
                             callback: action => {
 

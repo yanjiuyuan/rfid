@@ -149,7 +149,7 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="false"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <el-form-item>
@@ -360,7 +360,7 @@
         created: function () {
             this.getNodeInfo()
             this.getNodeList()
-            this.searchForm.string = '材'
+            //this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
         }
     })

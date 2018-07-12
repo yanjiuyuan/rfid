@@ -337,11 +337,11 @@ Vue.component('sam-approver-list', {
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
-                            <el-tag type="warning" class="nodeTitle" style="width:100px;text-align:center;">
+                            <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;">
                                 {{node.NodeName}}
                             </el-tag>
                             <template v-for="(p,a) in node.NodePeople">
-                                <span v-if="a>0" style="margin-left:107px;">&nbsp;</span>
+                                <span v-if="a>0" style="margin-left:137px;">&nbsp;</span>
                                 <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
