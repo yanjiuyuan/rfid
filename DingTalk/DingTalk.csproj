@@ -422,6 +422,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\images\approveSmall.png" />
     <Content Include="Content\images\folder.png" />
     <Content Include="Content\gif\dt-5.gif" />
     <Content Include="Content\gif\dt-6.gif" />
@@ -442,6 +443,7 @@
     <Content Include="Content\images\scoll5.jpg" />
     <Content Include="Content\images\scoll6.jpg" />
     <Content Include="Content\images\title.png" />
+    <Content Include="Content\images\单位LOGO.jpg" />
     <Content Include="Content\images\受控章.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
