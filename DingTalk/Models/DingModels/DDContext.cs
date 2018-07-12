@@ -342,6 +342,10 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.OldFilePDFUrl)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.MediaIdPDF)
+                .IsUnicode(false);
+
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.nickName)
                 .IsUnicode(false);
