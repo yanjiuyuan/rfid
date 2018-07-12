@@ -373,6 +373,7 @@ namespace DingTalk.Controllers
                 string TaskId = printAndSendModel.TaskId;
                 string UserId = printAndSendModel.UserId;
                 string OldPath = printAndSendModel.OldPath;
+
                 PDFHelper pdfHelper = new PDFHelper();
                 using (DDContext context = new DDContext())
                 {
