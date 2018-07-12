@@ -102,7 +102,7 @@
                 superSearch: false,
                 formInline: {
                     key: '',
-                    time: ['',''],
+                    time: '',
                     projectState: ["在研", "已完成", "终止"]
                 },
                 tableOptions: ["在研", "已完成", "终止"],
@@ -113,11 +113,19 @@
             //获取项目数据getProject
             getProject() {
                 var that = this
-                var param = {
-                    key: this.formInline.key,
-                    startTime: this.formInline.time[0],
-                    endTime: this.formInline.time[1],
-                    projectState: this.formInline.projectState.join('_')
+                if (this.formInline.time) {
+                    var param = {
+                        key: this.formInline.key,
+                        startTime: this.formInline.time[0],
+                        endTime: this.formInline.time[1],
+                        projectState: this.formInline.projectState.join('_')
+                    }
+                }
+                else {
+                    var param = {
+                        key: this.formInline.key,
+                        projectState: this.formInline.projectState.join('_')
+                    }
                 }
                 url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
                 $.ajax({
