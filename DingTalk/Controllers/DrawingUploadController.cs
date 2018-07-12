@@ -373,7 +373,6 @@ namespace DingTalk.Controllers
                 string TaskId = printAndSendModel.TaskId;
                 string UserId = printAndSendModel.UserId;
                 string OldPath = printAndSendModel.OldPath;
-
                 PDFHelper pdfHelper = new PDFHelper();
                 using (DDContext context = new DDContext())
                 {
@@ -393,7 +392,7 @@ namespace DingTalk.Controllers
                         });
                     }
                     //判断流程是否已结束
-                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0).ToList();
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsSend!=true &&t.State == 0).ToList();
                     if (tasksList.Count > 0)
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
