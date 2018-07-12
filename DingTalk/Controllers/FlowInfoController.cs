@@ -333,6 +333,28 @@ namespace DingTalk.Controllers
                             newTask.IsPost = true;
                             context.Tasks.Add(newTask);
                             context.SaveChanges();
+
+                            TopSDKTest top = new TopSDKTest();
+                            OATextModel oaTextModel = new OATextModel();
+                            oaTextModel.head = new head
+                            {
+                                bgcolor = "FFBBBBBB",
+                                text = "您有一条待审批的流程，请登入OA系统审批"
+                            };
+                            oaTextModel.body = new body
+                            {
+                                form = new form[] {
+                    new form{ key="审批人：",value=tasks.ApplyMan},
+                    new form{ key="审批时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
+                },
+                                title = string.Format("您有一条被退回的流程(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", tasks.TaskId),
+                                content = newTask.Remark
+                            };
+                            top.SendOaMessage(newTask.ApplyManId, oaTextModel);
+
+                            //SentCommonMsg(newTask.ApplyManId,
+                            //           string.Format("您有一条被退回的流程(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", tasks.TaskId),
+                            //           tasks.ApplyMan, tasks.Remark, null);
                         }
                         else
                         {
@@ -420,7 +442,7 @@ namespace DingTalk.Controllers
                                 NodeId = T.NodeId,
                                 NodeName = T.NodeName,
                                 NodePeople = T.NodePeople
-                            });
+                            }).OrderBy(t=>t.NodeId);
                         return JsonConvert.SerializeObject(QuaryList);
                     }
                     else
@@ -429,7 +451,7 @@ namespace DingTalk.Controllers
                         var NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId);
                         var QuaryList = from a in TasksList
                                         join b in NodeInfoList
-                                        on a.NodeId equals b.NodeId
+                                        on a.NodeId equals b.NodeId orderby b.NodeId
                                         select new
                                         {
                                             NodeId = a.NodeId,
@@ -521,7 +543,7 @@ namespace DingTalk.Controllers
                         context.Tasks.Add(newTask);
                         context.SaveChanges();
                     }
-                   
+
 
                     return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                 }
@@ -723,8 +745,8 @@ namespace DingTalk.Controllers
             {
                 return JsonConvert.SerializeObject(new ErrorModel()
                 {
-                    errorCode=1,
-                    errorMessage=ex.Message
+                    errorCode = 1,
+                    errorMessage = ex.Message
                 });
             }
         }
@@ -954,7 +976,7 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
-                                  State=t.State
+                                  State = t.State
                               });
             }
             return JsonConvert.SerializeObject(listQuary);
@@ -1018,7 +1040,7 @@ namespace DingTalk.Controllers
                                     join t in TaskList
                                     on n.NodeId equals t.NodeId
                                     into temp
-                                    from tt in temp.DefaultIfEmpty()
+                                    from tt in temp.DefaultIfEmpty() 
                                     select new
                                     {
                                         NodeId = n.NodeId,
