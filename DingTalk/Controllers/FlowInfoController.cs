@@ -1204,7 +1204,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                ProjectInfo purchaseDown = context.ProjectInfo.Where(p => p.ProjectName == "集成钉钉的信息管理系统").First();
+                Code purchaseDown = context.Code.First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }

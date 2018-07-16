@@ -23,6 +23,7 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
+        public virtual DbSet<Code> Code { get; set; }
         public virtual DbSet<FileInfos> FileInfos { get; set; }
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
@@ -372,6 +373,62 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.FinnalLoginTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.CodeNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.BigCode)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.SmallCode)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.Unit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.Standard)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.SurfaceTreatment)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.PerformanceLevel)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.StandardNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.Features)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.purpose)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Code>()
+                .Property(e => e.Remark)
                 .IsUnicode(false);
 
             modelBuilder.Entity<FileInfos>()
