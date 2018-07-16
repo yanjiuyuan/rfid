@@ -334,6 +334,7 @@
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\FlowInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ItemCodeAddController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
@@ -377,6 +378,7 @@
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
+    <Compile Include="Models\DingModels\Code.cs" />
     <Compile Include="Models\DingModels\DDContext.cs" />
     <Compile Include="Models\DingModels\FileInfos.cs" />
     <Compile Include="Models\DingModels\FlowMan.cs" />
