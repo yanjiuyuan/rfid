@@ -158,7 +158,7 @@
                 pdfList: [],
                 fileList: [],
                 imageList: [],
-                mediaList: {},
+                mediaList: [],
                 mediaPdfList: [],
                 data: [],
                 items: [],
@@ -204,17 +204,6 @@
                                 title = p.ProjectName
                             }
                         }
-                        that.ruleForm.MediaId = ''
-                        var mediaArr = []
-                        for (let m in that.mediaList) {
-                            mediaArr.push(that.mediaList[m])
-                        }
-                        var mediaPdfArr = []
-                        for (let m in that.mediaPdfList) {
-                            mediaPdfArr.push(that.mediaPdfList[m])
-                        }
-                        that.ruleForm.MediaId = mediaArr.join(',')
-                        that.ruleForm.MediaIdPDF = mediaPdfArr.join(',')
                         var paramArr = []
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
@@ -232,8 +221,8 @@
                             "OldFilePDFUrl": that.ruleForm.OldFilePDFUrl,
                             "FileUrl": that.ruleForm.FileUrl,
                             "OldFileUrl": that.ruleForm.OldFileUrl,
-                            "MediaId": that.ruleForm.MediaId,
-                            "MediaIdPDF": that.ruleForm.MediaIdPDF,
+                            "MediaId": that.mediaList.join(','),
+                            "MediaIdPDF": that.mediaPdfList.join(','),
                             "Title": title,
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
@@ -457,7 +446,7 @@
                         console.log(paramObj)
                         if (data.media_id) {
                             console.log(data.media_id)
-                            isPdf ? that.mediaPdfList[file.response.Content] = data.media_id : that.mediaList[file.response.Content] = data.media_id
+                            isPdf ? that.mediaPdfList.push(data.media_id) : that.mediaList.push(data.media_id)
                         } else {
                             console.log('无media_di')
                         }
@@ -531,9 +520,9 @@
                 console.log(file)
                 file.name = 'helloWorld'
                 isPdf = true
-                const isPdf = file.type === 'application/pdf'
+                const isPdfType = file.type === 'application/pdf'
                 const isLt2M = file.size / 1024 / 1024 < 30
-                if (!isPdf) {
+                if (!isPdfType) {
                     this.$message.error('上传图片只能是 PDF 格式!')
                     return false
                 }
