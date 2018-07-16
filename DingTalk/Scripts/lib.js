@@ -347,6 +347,7 @@ Vue.component('sam-approver-list', {
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
+                                        style="width:60px;text-align:center;"
                                         >
                                     {{p}}
                                 </el-tag>
@@ -362,6 +363,7 @@ Vue.component('sam-approver-list', {
                                         onclick="" v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
+                                        style="width:60px;text-align:center;"
                                         >
                                     {{ap.name}}
                                 </el-tag>

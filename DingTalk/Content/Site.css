@@ -246,6 +246,7 @@ ol li {
     color: gray;
     font-size: small;
     line-height: 14px;
+    margin-right: 30px;
 }
 .approve-arrow {
     font-size: 24px;

@@ -122,6 +122,7 @@
                 projectInfo: [],
                 folderList: [],
                 dialogFormVisible: false,
+                clockFolder: false,
                 isRoot: true,
                 pathList: ['UploadFile', 'ProjectFile'],
                 fileList: [],
@@ -145,6 +146,7 @@
         methods: {
             //获取文件数据
             getFileData: function () {
+                this.clockFolder = true
                 var that = this
                 var url = "/Project/GetFileMsg?path="
                 this.uploadUrl = "/drawingupload/Upload?path="
@@ -169,6 +171,7 @@
                         that.data = fileArr
                         that.totalRows = fileArr.length
                         that.getData()
+                        that.clockFolder = false
                     },
                     error: function (err) {
                         console.error(err)
@@ -203,6 +206,7 @@
             //打开某文件夹相关操作
             openFolder: function (folderName) {
                 //改变路径，加载新的文件夹、表单数据、切换相关变量
+                if (this.clockFolder) return
                 this.pathList.push(folderName)
                 this.getFileData()
                 console.log(this.pathList)
