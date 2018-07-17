@@ -402,6 +402,7 @@
     <Compile Include="Models\DownloadFileModel.cs" />
     <Compile Include="Models\DrowDownModel.cs" />
     <Compile Include="Models\ErrorModel.cs" />
+    <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\FileMsgModel.cs" />
     <Compile Include="Models\FileSendModel.cs" />
     <Compile Include="Models\ImageMsgModel.cs" />
