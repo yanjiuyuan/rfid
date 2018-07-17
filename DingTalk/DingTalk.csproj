@@ -402,7 +402,6 @@
     <Compile Include="Models\DownloadFileModel.cs" />
     <Compile Include="Models\DrowDownModel.cs" />
     <Compile Include="Models\ErrorModel.cs" />
-    <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\FileMsgModel.cs" />
     <Compile Include="Models\FileSendModel.cs" />
     <Compile Include="Models\ImageMsgModel.cs" />
@@ -427,6 +426,9 @@
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
     <Content Include="Content\images\approveSmall.png" />
+    <Content Include="Content\images\EraserTool.gif" />
+    <Content Include="Content\images\EraserTool.png" />
+    <Content Include="Content\images\EraserToolCursor.gif" />
     <Content Include="Content\images\folder.png" />
     <Content Include="Content\gif\dt-5.gif" />
     <Content Include="Content\gif\dt-6.gif" />
@@ -439,6 +441,10 @@
     <Content Include="Content\images\icon.png" />
     <Content Include="Content\images\icon900-540.png" />
     <Content Include="Content\images\miaov.png" />
+    <Content Include="Content\images\PencilToolCursor.gif" />
+    <Content Include="Content\images\PencilToolCursor.png" />
+    <Content Include="Content\images\pixel1.png" />
+    <Content Include="Content\images\pixel2.png" />
     <Content Include="Content\images\portrait.png" />
     <Content Include="Content\images\scoll1.jpg" />
     <Content Include="Content\images\scoll2.jpg" />
@@ -446,7 +452,9 @@
     <Content Include="Content\images\scoll4.jpg" />
     <Content Include="Content\images\scoll5.jpg" />
     <Content Include="Content\images\scoll6.jpg" />
+    <Content Include="Content\images\test.png" />
     <Content Include="Content\images\title.png" />
+    <Content Include="Content\images\ui-colorpicker.png" />
     <Content Include="Content\images\单位LOGO.jpg" />
     <Content Include="Content\images\受控章.png" />
     <Content Include="favicon.ico" />
@@ -459,12 +467,55 @@
     <Content Include="Content\fonts\element-icons.ttf" />
     <Content Include="Content\fonts\element-icons.woff" />
     <Content Include="Index.html" />
+    <Content Include="JqueryUI\colorpicker-master2\.gitignore" />
+    <Content Include="JqueryUI\colorpicker-master2\demo.html" />
+    <Content Include="JqueryUI\colorpicker-master2\i18n\jquery.ui.colorpicker-de.js" />
+    <Content Include="JqueryUI\colorpicker-master2\i18n\jquery.ui.colorpicker-en.js" />
+    <Content Include="JqueryUI\colorpicker-master2\i18n\jquery.ui.colorpicker-fr.js" />
+    <Content Include="JqueryUI\colorpicker-master2\i18n\jquery.ui.colorpicker-nl.js" />
+    <Content Include="JqueryUI\colorpicker-master2\i18n\jquery.ui.colorpicker-pt-br.js" />
+    <Content Include="JqueryUI\colorpicker-master2\i18n\jquery.ui.colorpicker-ru.js" />
+    <Content Include="JqueryUI\colorpicker-master2\images\128\bar-alpha.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\128\bar.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\128\map.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\bar-alpha.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\bar-opacity.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\bar-pointer.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\bar.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\map-opacity.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\map-pointer.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\map.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\preview-opacity.png" />
+    <Content Include="JqueryUI\colorpicker-master2\images\ui-colorpicker.png" />
+    <Content Include="JqueryUI\colorpicker-master2\index.html" />
+    <Content Include="JqueryUI\colorpicker-master2\jquery.colorpicker.css" />
+    <Content Include="JqueryUI\colorpicker-master2\jquery.colorpicker.js" />
+    <Content Include="JqueryUI\colorpicker-master2\parsers\jquery.ui.colorpicker-cmyk-parser.js" />
+    <Content Include="JqueryUI\colorpicker-master2\parsers\jquery.ui.colorpicker-cmyk-percentage-parser.js" />
+    <Content Include="JqueryUI\colorpicker-master2\parts\jquery.ui.colorpicker-memory.js" />
+    <Content Include="JqueryUI\colorpicker-master2\parts\jquery.ui.colorpicker-rgbslider.js" />
+    <Content Include="JqueryUI\colorpicker-master2\swatches\jquery.ui.colorpicker-crayola.js" />
+    <Content Include="JqueryUI\colorpicker-master2\swatches\jquery.ui.colorpicker-pantone.js" />
+    <Content Include="JqueryUI\colorpicker-master2\swatches\jquery.ui.colorpicker-ral-classic.js" />
+    <Content Include="JqueryUI\colorpicker-master2\test\events.js" />
+    <Content Include="JqueryUI\colorpicker-master2\test\index.html" />
+    <Content Include="JqueryUI\jquery-ui.css" />
+    <Content Include="JqueryUI\jquery-ui.js" />
+    <Content Include="JqueryUI\jquery-ui.min.css" />
+    <Content Include="JqueryUI\jquery-ui.min.js" />
+    <Content Include="JqueryUI\jquery-ui.structure.css" />
+    <Content Include="JqueryUI\jquery-ui.structure.min.css" />
+    <Content Include="JqueryUI\jquery-ui.theme.css" />
+    <Content Include="JqueryUI\jquery-ui.theme.min.css" />
+    <Content Include="Scripts\anyLine.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\canvas.js" />
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\jspdf.min.js" />
     <Content Include="Scripts\lib.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\pdf.js" />
@@ -505,6 +556,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="JqueryUI\external\" />
+    <Folder Include="JqueryUI\images\" />
     <Folder Include="UploadFile\Excel\" />
     <Folder Include="UploadFile\Flies\" />
     <Folder Include="UploadFile\Images\" />
@@ -556,6 +609,10 @@
     <Content Include="Views\Main\Main8.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="JqueryUI\colorpicker-master2\bower.json" />
+    <Content Include="JqueryUI\colorpicker-master2\jqcolorpicker.jquery.json" />
+    <Content Include="JqueryUI\colorpicker-master2\README.md" />
+    <Content Include="JqueryUI\colorpicker-master2\TODO" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Login\LoginTest.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
