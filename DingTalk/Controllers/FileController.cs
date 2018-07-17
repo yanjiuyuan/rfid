@@ -13,9 +13,9 @@ namespace DingTalk.Controllers
     public class FileController : ApiController
     {
         /// <summary>
-        /// 
+        /// Base64文件流上传
         /// </summary>
-        /// <param name="fileModel"></param>
+        /// <param name="fileModel">文件流对象</param>
         /// <returns></returns>
         [HttpPost]
         [Route("PostFile")]
