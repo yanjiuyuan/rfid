@@ -12,21 +12,34 @@ namespace DingTalk.Models.DingModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
 
+        /// <summary>
+        /// 角色名
+        /// </summary>
         [StringLength(200)]
         public string RoleName { get; set; }
-
+        /// <summary>
+        /// 创建人
+        /// </summary>
         [StringLength(200)]
         public string CreateMan { get; set; }
-
+        /// <summary>
+        /// 创建人Id
+        /// </summary>
         [StringLength(200)]
         public string CreateManId { get; set; }
-
+        /// <summary>
+        /// 角色人名
+        /// </summary>
         [StringLength(200)]
         public string UserName { get; set; }
-
+        /// <summary>
+        /// 角色人Id
+        /// </summary>
         [StringLength(200)]
         public string UserId { get; set; }
-
+        /// <summary>
+        /// 是否启用
+        /// </summary>
         public bool? IsEnable { get; set; }
     }
 }

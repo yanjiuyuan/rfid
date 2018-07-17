@@ -21,7 +21,6 @@ namespace DingTalk.Controllers
         [Route("PostFile")]
         public string PostFile(FileModel fileModel)
         {
-
             string result = "";
             if (fileModel != null)
             {
@@ -68,7 +67,6 @@ namespace DingTalk.Controllers
             try
             {
                 fstream = File.Create(filepath + "\\" + FileName, filecontent.Length);
-
                 fstream.Write(filecontent, 0, filecontent.Length);   //二进制转换成文件
             }
             catch (Exception ex)
