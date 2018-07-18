@@ -29,8 +29,8 @@ namespace DingTalk.Controllers
         /// 测试数据：/DrawingUpload/CreateTaskInfo
         //var FlowTest =
         //[{ "ApplyMan": "小威", "ApplyManId": "1209662535974958", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 0, "Remark": "6666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
-        //{ "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
-        //{ "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 3, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
+        //{ "ApplyMan": "蔡兴桐", "ApplyManId": "073110326032521796", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 1, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
+        //{ "ApplyMan": "张鹏辉", "ApplyManId": "100328051024695354", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 2, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null }
         //];
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
@@ -58,7 +58,6 @@ namespace DingTalk.Controllers
                         tasks.TaskId = TaskId;
                         using (DDContext context = new DDContext())
                         {
-
                             //修改任务流状态
                             if (taskList.IndexOf(tasks) == 0)
                             {
@@ -66,12 +65,21 @@ namespace DingTalk.Controllers
                                 tasks.FlowId.ToString();
                                 tasks.IsPost = true;
                                 tasks.State = 1;
+                                tasks.IsEnable = 1;  //判断任务流是否生效
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
                             }
                             else
                             {
+                                if (taskList.IndexOf(tasks) == 1)
+                                {
+                                    tasks.IsEnable = 1;
+                                }
+                                else
+                                {
+                                    tasks.IsEnable = 0;  //选人跨节点，任务流暂时失效
+                                }
                                 tasks.IsPost = false;
                                 tasks.State = 0;
                                 context.Tasks.Add(tasks);
@@ -91,7 +99,7 @@ namespace DingTalk.Controllers
                             }
                             else  //有选人
                             {
-                                if (taskList.IndexOf(tasks) > 0)
+                                if (taskList.IndexOf(tasks) == 1)
                                 {
                                     //获取申请人提交表单信息
                                     FlowInfoServer fServer = new FlowInfoServer();
@@ -150,15 +158,11 @@ namespace DingTalk.Controllers
                 else
                 {
                     List<Tasks> taskList = JsonHelper.JsonToObject<List<Tasks>>(stream);
-
-
                     //调用寻人接口
                     Tasks Findtasks = taskList[0];
                     Dictionary<string, string> dic = new Dictionary<string, string>();
                     dic = FindNextPeople(Findtasks.FlowId.ToString(), Findtasks.ApplyManId, true, Findtasks.IsSend,
                         Findtasks.TaskId, Findtasks.NodeId);
-
-
 
                     foreach (var tasks in taskList)
                     {
@@ -207,50 +211,10 @@ namespace DingTalk.Controllers
                                     //当前节点所有任务流已完成
                                     if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(), tasks.NodeId.ToString()).Count == 0)
                                     {
-                                        //推送任务流
-                                        //context.Tasks.Add(new Tasks
-                                        //{
-                                        //    TaskId = tasks.TaskId,
-                                        //    ApplyMan = dic["NodePeople"],
-                                        //    ApplyManId = dic["PeopleId"],
-                                        //    IsPost = false,
-                                        //    IsSend = false,
-                                        //    IsEnable = 1,
-                                        //    State = 0,
-                                        //});
-                                        //context.SaveChanges();
                                         //推送OA消息(寻人)
                                         SentCommonMsg(dic["PeopleId"].ToString(),
                                         string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                        taskNew.ApplyMan, taskNew.Remark, null);                                        //context.Tasks.Add(new Tasks
-                                        //{
-                                        //    TaskId = tasks.TaskId,
-                                        //    ApplyMan = dic["NodePeople"],
-                                        //    ApplyManId = dic["PeopleId"],
-                                        //    IsPost = false,
-                                        //    IsSend = false,
-                                        //    IsEnable = 1,
-                                        //    State = 0,
-                                        //});
-                                        //context.SaveChanges();
-                                        ////推送OA消息(寻人)
-                                        //SentCommonMsg(dic["PeopleId"].ToString(),
-                                        //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                        //taskNew.ApplyMan, taskNew.Remark, null);                                        //context.Tasks.Add(new Tasks
-                                        //{
-                                        //    TaskId = tasks.TaskId,
-                                        //    ApplyMan = dic["NodePeople"],
-                                        //    ApplyManId = dic["PeopleId"],
-                                        //    IsPost = false,
-                                        //    IsSend = false,
-                                        //    IsEnable = 1,
-                                        //    State = 0,
-                                        //});
-                                        //context.SaveChanges();
-                                        ////推送OA消息(寻人)
-                                        //SentCommonMsg(dic["PeopleId"].ToString(),
-                                        //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                        //taskNew.ApplyMan, taskNew.Remark, null);
+                                        taskNew.ApplyMan, taskNew.Remark, null);
                                     }
                                 }
                                 else
@@ -442,7 +406,7 @@ namespace DingTalk.Controllers
                                 NodeId = T.NodeId,
                                 NodeName = T.NodeName,
                                 NodePeople = T.NodePeople
-                            }).OrderBy(t=>t.NodeId);
+                            }).OrderBy(t => t.NodeId);
                         return JsonConvert.SerializeObject(QuaryList);
                     }
                     else
@@ -451,7 +415,8 @@ namespace DingTalk.Controllers
                         var NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId);
                         var QuaryList = from a in TasksList
                                         join b in NodeInfoList
-                                        on a.NodeId equals b.NodeId orderby b.NodeId
+                                        on a.NodeId equals b.NodeId
+                                        orderby b.NodeId
                                         select new
                                         {
                                             NodeId = a.NodeId,
@@ -504,7 +469,7 @@ namespace DingTalk.Controllers
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
-
+                
                 if (NodeName == "抄送")
                 {
                     string[] ListNodeName = NodeName.Split(',');
@@ -543,8 +508,6 @@ namespace DingTalk.Controllers
                         context.Tasks.Add(newTask);
                         context.SaveChanges();
                     }
-
-
                     return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                 }
 
@@ -552,20 +515,27 @@ namespace DingTalk.Controllers
                 {
                     return dic;
                 }
-                if (IsNeedChose == true)  //当前节点需要选人、停止找人
+
+                //节点表找不到人，任务表找
+                if (string.IsNullOrEmpty(NodePeople) && string.IsNullOrEmpty(PeopleId))
                 {
+                    string PreNodeId = context.NodeInfo.Where(f => f.NodeId == NodeId).First().PreNodeId;
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId == OldTaskId && t.NodeId.ToString() == PreNodeId).First();
+                    tasks.IsEnable = 1;
+                    context.Entry<Tasks>(tasks).State = EntityState.Modified;
+                    context.SaveChanges();
+
+                    dic["PeopleId"] = tasks.ApplyManId;
+                    dic["NodePeople"] = tasks.ApplyMan;
                     return dic;
                 }
-                if (PeopleId == "" && IsNeedChose == false)  //找不到人、且不需要找人时继续查找下一节点人员
+
+                if (PeopleId == null && IsNeedChose == false)  //找不到人、且不需要找人时继续查找下一节点人员
                 {
                     return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                 }
                 else
                 {
-                    //List<string> ListNodeName = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodeName).ToList();
-                    //List<string> ListPeopleId = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.PeopleId).ToList();
-                    //List<string> ListNodePeople = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId == (IsNext ? NodeId + 1 : NodeId)).Select(u => u.NodePeople).ToList();
-
                     //判断流程多人提交(当前步骤)
                     bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;
                     if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
@@ -624,7 +594,6 @@ namespace DingTalk.Controllers
                             {
                                 TaskId = OldTaskId,
                                 ApplyMan = ListNodePeople[i],
-                                //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
                                 IsEnable = 1,
                                 NodeId = NodeId + 1,
                                 FlowId = Int32.Parse(FlowId),
@@ -639,16 +608,6 @@ namespace DingTalk.Controllers
                                 IsPost = false,
                                 ProjectId = Task.ProjectId,
                             };
-                            ////判断重复推送
-                            //List<Tasks> TasksList=  context.Tasks.Where(u => u.TaskId == newTask.TaskId && u.ApplyManId == ApplyManId && u.NodeId== newTask.NodeId).ToList();
-                            //if (TasksList.Count > 0)
-                            //{
-                            //    return dic;
-                            //}
-                            //else
-                            //{
-                            //    context.Tasks.Add(newTask);
-                            //}
                         }
                         context.SaveChanges();
                     }
@@ -1039,7 +998,7 @@ namespace DingTalk.Controllers
                                     join t in TaskList
                                     on n.NodeId equals t.NodeId
                                     into temp
-                                    from tt in temp.DefaultIfEmpty() 
+                                    from tt in temp.DefaultIfEmpty()
                                     select new
                                     {
                                         NodeId = n.NodeId,
