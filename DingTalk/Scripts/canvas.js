@@ -2,9 +2,9 @@
  * 
  */
 
-    $(function(){
+
     
-		       (function(){
+	
 			      var x,y,endX,endY;
 		    	  
 			      //undo redo
@@ -24,8 +24,8 @@
 			      
 			      var flag = false;
 			      var ctx=document.getElementById("myCanvas").getContext("2d");
-			      var img=document.getElementById("img");
-				  ctx.drawImage(img,10,10);
+			      //var img=document.getElementById("img");
+				  //ctx.drawImage(img,10,10);
 			      /**
 			       * Every function in this app has a corresponding command code:
 			       * --------------------------------------------------
@@ -54,8 +54,7 @@
 			      $("#tools_pencil").trigger("click");
 			      commandCallbacks.fire(command);
 			      
-			      initUI();
-			      
+			      //initUI();
 			      
 			      
 			      // command emitter
@@ -80,8 +79,8 @@
 			    	  }	
 			      });
 			      
-			      $("#container").mousemove(mouseMoveEventHandler);
-			      
+                   $("#container").mousemove(mouseMoveEventHandler);
+
 			      /**
 			       * In different function circumstances, the Mouse Move Event should be handled in different behalf.
 			       */
@@ -202,11 +201,12 @@
 			      */
 			      function clearCanvas()
 			      {
-			      		ctx.fillStyle="#FFFFFF";
-						var width  = $("#myCanvas").attr("width");
-						var height  = $("#myCanvas").attr("height");
+                      ctx.fillStyle = "#FFFFFF";
+                      showPdf(pdfUrl)
+						//var width  = $("#myCanvas").attr("width");
+						//var height  = $("#myCanvas").attr("height");
 						//ctx.fillRect(0,0,width,height);	
-						ctx.drawImage(img,10,10);
+						//ctx.drawImage(img,10,10);
 			      }
 			      
 			      
@@ -257,7 +257,7 @@
 			            flag=false;
 			            
 			            // records operations history for undo or redo
-			            historyPush();	
+			            //historyPush();	
     					
 						switch(command)
 						{
@@ -270,11 +270,10 @@
 						}
 			      });
                   
-			      
+
 			      fontTip.blur(drawWords);
 			      $("#tools_undo").click(undo);
 			      $("#tools_redo").click(redo);
-			      
 			      
 			      
 			      /**
@@ -381,35 +380,47 @@
 				  
 				  //// define function
 				  function initUI()
-			      {
-				      				      //界面UI初始化，对话框
+                  {
+                      ctx = document.getElementById("myCanvas").getContext("2d")
+				      	//界面UI初始化，对话框
 				       $( "#dialog" ).dialog(
-				       			{
-									autoOpen: true,
-									show: {
-										effect: "blind",
-										duration: 920
-									},
-									hide: {
-										effect: "explode",
-										duration: 920
-									},
-									height:650,
-									width:990
-								});
+				       	    {
+                               autoOpen: true,
+                               closed: true,
+                               draggable: false,
+							   show: {
+								    effect: "blind",
+								    duration: 920
+                               },
+                               position:top,
+							   //hide: {
+								  //  effect: "explode",
+								  //  duration: 920
+							   //},
+							   height:630,
+							   width:980,
+                               //left: 227,
+                               close: function () {
+                                   console.log('1233333333')
+                                   $("#mask").hide()
+                               },
+                               load: function () {
+                                  console.log('1233333333')
+                               },
+						    });
 									
 					  //2. canvas 被拖动，重新设置画板大小（因为拖动是css效果，而实际画板大小是width 和height属性）				
-				      $("#myCanvas").resizable({
-					      stop:function(event,ui){
-					            var height =  $("#myCanvas").height();
-					            var width =$("#myCanvas").width();
-					            $("#myCanvas").attr("width",width);
-					            $("#myCanvas").attr("height",height);
-					            //画板大小改变，画笔也会被初始化，这里将画笔复原
-					            switchCanvasContext();
-					      },
-				      	grid: [ 20, 10 ]
-				      });
+				      //$("#myCanvas").resizable({
+					     // stop:function(event,ui){
+					     //       var height =  $("#myCanvas").height();
+					     //       var width =$("#myCanvas").width();
+					     //       $("#myCanvas").attr("width",width);
+					     //       $("#myCanvas").attr("height",height);
+					     //       //画板大小改变，画笔也会被初始化，这里将画笔复原
+					     //       switchCanvasContext();
+					     // },
+				      //	grid: [ 20, 10 ]
+				      //});
 				      
 				      //3. 工具条
 				      $("#tools_pencil").button({
@@ -537,7 +548,7 @@
 					  //5. Fill Color Picker
 					  $("#colorpicker-popup2").colorpicker({
 					     buttonColorize: true,
-					     alpha:          true,
+					     //alpha:          true,
 					     draggable:       true,
 				         showOn:         'both',
 				         close:fillColorEventListener
@@ -556,7 +567,8 @@
 			      }
 				  
 				  $("#italicOption").click(setFont);
-				  $("#boldOption").click(setFont);
+                   $("#boldOption").click(setFont);
+
 				  
 				  // 设置字体
 			      function setFont(){
@@ -573,29 +585,43 @@
 			    	  fontTip.css({"font-size":size,"font-family":type,color:color,"font-style":fontItalic,"font-weight":fontWeight});
 			      }
 				  
-				  $("#tools_save").click(saveItAsImage);
+				  $("#tools_save").click(saveItAsPdf);
 				  
 				  /**
-				   * save canvas content as image
+				   * save canvas content as pdf
 				   */
-				  function saveItAsImage()
+				  function saveItAsPdf()
 				  {
-					  var image = $("#myCanvas").get(0).toDataURL("image/png").replace("image/png", "image/octet-stream");
+					  //var image = $("#myCanvas").get(0).toDataURL("image/png").replace("image/png", "image/octet-stream");
 					  var a = $("#myCanvas").get(0).toDataURL("image/png")
-
-					  
-					  console.log(1)
+                      var param = {
+                          "FileName": pdfName,
+                          "Base64String": a,
+                          "OldMediaId": pdfMediaId
+                      }
+                      console.log(param)
 					  var doc = new jsPDF('p','mm')
-					  console.log(2)
 					  doc.addImage(a,'PNG',10,10)
-					  console.log(3)
+                      
 					  //console.log(doc)
 					  //console.log(doc.save('hello.pdf'))
-					  doc.save('hello.pdf')
-					  var datauri = doc.output('dataurlstring')
-					  var base64 = datauri.substring(28)
-					  console.log(datauri)
-					  console.log(4)
+					  //doc.save('hello.pdf')
+					  //var datauri = doc.output('dataurlstring')
+					  //var base64 = datauri.substring(28)
+                      console.log(a)
+                      console.log(4)
+                      $.ajax({
+                          url:'/File/PostFile',
+                          type: 'POST',
+                          data: JSON.stringify(param),
+                          success: function (data) {
+                              console.log('/File/PostFile')
+                              console.log(data)
+                          },
+                          error: function (XMLHttpRequest, textStatus, errorThrown) {
+                              console.log(XMLHttpRequest.status);
+                          }
+                      })
 					  //console.log(a)
 	    			  //locally save
 					  //window.location.href=image; 
@@ -682,6 +708,5 @@
 			         }
 			        
 			      }
-       
-       })(); 
-    });
+
+                //initUI()

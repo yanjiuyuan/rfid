@@ -30,6 +30,16 @@ form{
     color: #409EFF;
     cursor: pointer;
 }
+.mask {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(80,80,80,0.7);
+    width: 100%;
+    height: 100%;
+    z-index: 666;
+    overflow: hidden;
+}
 
 /*总体布局*/
 body {
@@ -298,4 +308,45 @@ ol li {
 }
 #partPage{
     margin-top:20px;
+}
+
+
+/*画图板样式*/
+* {
+    font-family: '微软雅黑';
+    font-size: 12px;
+}
+
+canvas {
+    border: 2px dashed gray;
+}
+
+.container_pencil {
+    cursor: url(images/PencilToolCursor.gif), pointer;
+}
+
+.container_eraser {
+    cursor: url(images/test.png), pointer;
+}
+
+.container_font {
+    cursor: crosshair;
+}
+
+.speed {
+    top: 15px;
+}
+
+.ui-selectmenu-text {
+    font-size: 12px;
+}
+
+.ui-dialog {
+    margin-left: 0%!important;
+    z-index:9999!important;
+    position:fixed!important;
+}
+
+#dialog{
+    
 }

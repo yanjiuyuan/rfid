@@ -94,7 +94,7 @@ class specified.
 If a buttonimage is specified, change the background color of the
 image when the color is changed.
 
-###	buttonImage ('images/ui-colorpicker.png')
+###	buttonImage ('Content/images/ui-colorpicker.png')
 Same as jQueryUI DatePicker.
 
 ###	buttonImageOnly (false)
