@@ -1,11 +1,17 @@
 ﻿using Common.PDF;
 using DingTalk.Models;
+using DingTalk.Models.DingModels;
+using DingTalkServer;
+using DingTalkServer.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -13,6 +19,9 @@ namespace DingTalk.Controllers
     [RoutePrefix("File")]
     public class FileController : ApiController
     {
+
+
+
         /// <summary>
         /// Base64文件流上传
         /// </summary>
@@ -21,35 +30,71 @@ namespace DingTalk.Controllers
         /// 测试数据：/File/PostFile
         [HttpPost]
         [Route("PostFile")]
-        public string PostFile(FileModel fileModel)
+        public async Task<object> PostFile(FileModel fileModel)
         {
-            string result = "";
-            if (fileModel != null)
+            try
             {
-                string Base64String = fileModel.Base64String.Replace("data:image/png;base64,", "");
-                byte[] FileContent = Convert.FromBase64String(Base64String);
-                string ImageFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Images\\ChangeImages\\";
-                string PdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Flies\\";
-                string FileName = Path.GetFileName(fileModel.FileName.Substring(0, fileModel.FileName.Length - 4));
-
-                string Err = "";
-                bool upres = WriteFile(ImageFilePath, FileContent, FileName + ".png", out Err);
-                if (upres)
+                string result = "";
+                if (fileModel != null)
                 {
-                    File.Delete(PdfFilePath + FileName + ".PDF");
-                    PDFHelper.ConvertJpgToPdf(ImageFilePath + FileName + ".png", PdfFilePath + FileName + ".PDF");
-                    result = (fileModel.FileName).Replace("\\", "/");
+                    string Base64String = fileModel.Base64String.Replace("data:image/png;base64,", "");
+                    byte[] FileContent = Convert.FromBase64String(Base64String);
+                    string ImageFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Images\\ChangeImages\\";
+                    string PdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Flies\\";
+                    string FileName = Path.GetFileName(fileModel.FileName.Substring(0, fileModel.FileName.Length - 4));
+                    string Err = "";
+                    bool upres = WriteFile(ImageFilePath, FileContent, FileName + ".png", out Err);
+                    if (upres)
+                    {
+                        //清除文件
+                        File.Delete(PdfFilePath + FileName + ".PDF");
+                        //生成PDF
+                        PDFHelper.ConvertJpgToPdf(ImageFilePath + FileName + ".png", PdfFilePath + FileName + ".PDF");
+                        //上盯盘
+                        string fileName =  PdfFilePath + FileName + ".PDF";
+                        
+                        var uploadFileModel = new UploadMediaRequestModel()
+                        {
+                            FileName = fileName,
+                            MediaType = UploadMediaType.File
+                        };
+                        DingTalkManager dingTalkManager = new DingTalkManager();
+                        string UploadFileResult = await dingTalkManager.UploadFile(uploadFileModel);
+                        FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(UploadFileResult);
+                        using (DDContext context = new DDContext())
+                        {
+                            Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == fileModel.TaskId && t.NodeId == 0).First();
+                            tasks.MediaIdPDF = tasks.MediaIdPDF.Replace(fileModel.OldMediaId, fileSendModel.Media_Id);
+                            context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                        }
+
+                        result = fileModel.FileName+"文件写入成功";
+                    }
+                    else
+                    {
+                        result = "上传文件写入失败：" + Err;
+                    }
                 }
                 else
                 {
-                    result = "上传文件写入失败：" + Err;
+                    result = "上传的文件信息不存在！";
                 }
+                
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = result
+                };
             }
-            else
+            catch (Exception ex)
             {
-                result = "上传的文件信息不存在！";
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
             }
-            return result;
         }
 
 
