@@ -20,8 +20,6 @@ namespace DingTalk.Controllers
     public class FileController : ApiController
     {
 
-
-
         /// <summary>
         /// Base64文件流上传
         /// </summary>
@@ -51,8 +49,8 @@ namespace DingTalk.Controllers
                         //生成PDF
                         PDFHelper.ConvertJpgToPdf(ImageFilePath + FileName + ".png", PdfFilePath + FileName + ".PDF");
                         //上盯盘
-                        string fileName =  PdfFilePath + FileName + ".PDF";
-                        
+                        string fileName = PdfFilePath + FileName + ".PDF";
+
                         var uploadFileModel = new UploadMediaRequestModel()
                         {
                             FileName = fileName,
@@ -61,15 +59,18 @@ namespace DingTalk.Controllers
                         DingTalkManager dingTalkManager = new DingTalkManager();
                         string UploadFileResult = await dingTalkManager.UploadFile(uploadFileModel);
                         FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(UploadFileResult);
+                        //替换数据库MediaId
                         using (DDContext context = new DDContext())
                         {
                             Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == fileModel.TaskId && t.NodeId == 0).First();
                             tasks.MediaIdPDF = tasks.MediaIdPDF.Replace(fileModel.OldMediaId, fileSendModel.Media_Id);
+
+                            result = tasks.MediaIdPDF;
                             context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
 
-                        result = fileModel.FileName+"文件写入成功";
+
                     }
                     else
                     {
@@ -80,11 +81,12 @@ namespace DingTalk.Controllers
                 {
                     result = "上传的文件信息不存在！";
                 }
-                
                 return new ErrorModel()
                 {
                     errorCode = 1,
-                    errorMessage = result
+                    errorMessage = "保存成功",
+                    Content = result
+
                 };
             }
             catch (Exception ex)
