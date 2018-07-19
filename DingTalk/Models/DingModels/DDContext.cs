@@ -259,6 +259,14 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.Mark)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.SingleWeight)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.AllWeight)
+                .IsUnicode(false);
+
             modelBuilder.Entity<Roles>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -345,6 +353,10 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<Tasks>()
                 .Property(e => e.MediaIdPDF)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.PdfState)
                 .IsUnicode(false);
 
             modelBuilder.Entity<UserInfo>()
