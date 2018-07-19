@@ -50,7 +50,6 @@ namespace DingTalk.Controllers
                         PDFHelper.ConvertJpgToPdf(ImageFilePath + FileName + ".png", PdfFilePath + FileName + ".PDF");
                         //上盯盘
                         string fileName = PdfFilePath + FileName + ".PDF";
-
                         var uploadFileModel = new UploadMediaRequestModel()
                         {
                             FileName = fileName,
@@ -64,13 +63,10 @@ namespace DingTalk.Controllers
                         {
                             Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == fileModel.TaskId && t.NodeId == 0).First();
                             tasks.MediaIdPDF = tasks.MediaIdPDF.Replace(fileModel.OldMediaId, fileSendModel.Media_Id);
-
                             result = tasks.MediaIdPDF;
                             context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
-
-
                     }
                     else
                     {
@@ -83,7 +79,7 @@ namespace DingTalk.Controllers
                 }
                 return new ErrorModel()
                 {
-                    errorCode = 1,
+                    errorCode = 0,
                     errorMessage = "保存成功",
                     Content = result
 
@@ -98,6 +94,43 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 图纸PDF状态更新
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <param name="PDFState">PDF状态</param>
+        /// <returns></returns>
+        /// 测试数据： /File/UpdatePDFState?TaskId=2&PDFState=0,1,0
+        [HttpGet]
+        [Route("UpdatePDFState")]
+        public object UpdatePDFState(string TaskId, string PDFState)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
+                    tasks.PdfState = PDFState;
+                    context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
+                    context.SaveChanges();
+                    return new ErrorModel()
+                    {
+                        errorCode = 0,
+                        errorMessage = "修改成功"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
 
 
 

@@ -62,5 +62,7 @@ namespace DingTalk.Models.DingModels
         public string OldFilePDFUrl { get; set; }
 
         public string MediaIdPDF { get; set; }
+
+        public string PdfState { get; set; }
     }
 }
