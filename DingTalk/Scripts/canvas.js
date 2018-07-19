@@ -569,7 +569,8 @@ function saveItAsPdf() {
     //var image = $("#myCanvas").get(0).toDataURL("image/png").replace("image/png", "image/octet-stream");
     var a = $("#myCanvas").get(0).toDataURL("image/png")
     var param = {
-        "FileName": pdfName,
+        "TaskId": taskId,
+        "FileName": fileUrl,
         "Base64String": a,
         "OldMediaId": pdfMediaId
     }

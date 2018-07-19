@@ -209,6 +209,7 @@
     var pdfUrl = ''
     var pdfName = ''
     var pdfMediaId = ''
+    var taskId = 0
 </script>
 <script src="~/Scripts/canvas.js"></script>
 <script>
@@ -537,6 +538,8 @@
                     pdfUrl = fileUrl
                     pdfName = name
                     pdfMediaId = mediaId
+                    console.log(name)
+                    console.log(fileUrl)
                     showPdf(fileUrl)
                     $("#mask").show()
                     this.frameShow = true
@@ -633,6 +636,7 @@
                         })
                     }
                 }
+                taskId = allData.TaskId
                 console.log(imageList)
                 console.log(fileList)
                 console.log(pdfList)
