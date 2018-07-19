@@ -563,7 +563,7 @@
     <Folder Include="JqueryUI\images\" />
     <Folder Include="UploadFile\Excel\" />
     <Folder Include="UploadFile\Flies\" />
-    <Folder Include="UploadFile\Images\" />
+    <Folder Include="UploadFile\Images\ChangeImages\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\DingTalkServers\" />
     <Folder Include="Views\DrawingDown\" />

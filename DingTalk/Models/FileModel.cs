@@ -12,5 +12,7 @@ namespace DingTalk.Models
         public string Base64String { get; set; }
 
         public string OldMediaId { get; set; }
+
+        public string TaskId { get; set; }
     }
 }

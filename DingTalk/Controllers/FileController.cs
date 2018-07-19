@@ -1,4 +1,5 @@
-﻿using DingTalk.Models;
+﻿using Common.PDF;
+using DingTalk.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="fileModel">文件流对象</param>
         /// <returns></returns>
+        /// 测试数据：/File/PostFile
         [HttpPost]
         [Route("PostFile")]
         public string PostFile(FileModel fileModel)
@@ -24,15 +26,19 @@ namespace DingTalk.Controllers
             string result = "";
             if (fileModel != null)
             {
-                byte[] FileContent = Convert.FromBase64String(fileModel.Base64String);
-                string Tpath = "/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                string FilePath = fileModel.FileName + "\\" + Tpath + "\\";
+                string Base64String = fileModel.Base64String.Replace("data:image/png;base64,", "");
+                byte[] FileContent = Convert.FromBase64String(Base64String);
+                string ImageFilePath = AppDomain.CurrentDomain.BaseDirectory+ "UploadFile\\Images\\ChangeImages\\";
+                string PdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Flies\\";
+                string FileName = fileModel.FileName.Substring(0, fileModel.FileName.Length - 4);
+                
                 string Err = "";
-                string FileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                bool upres = WriteFile(FilePath, FileContent, FileName, out Err);
+                bool upres = WriteFile(ImageFilePath, FileContent,FileName+ ".png", out Err);
                 if (upres)
                 {
-                    result = (Tpath + FileName).Replace("\\", "/");
+                    File.Delete(PdfFilePath + FileName + ".PDF");
+                    PDFHelper.ConvertJpgToPdf(ImageFilePath + FileName + ".png", PdfFilePath + FileName + ".PDF");
+                    result = (fileModel.FileName).Replace("\\", "/");
                 }
                 else
                 {

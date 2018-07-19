@@ -484,5 +484,36 @@ namespace Common.PDF
                 response.End();
             }
         }
+
+        /// <summary>
+        /// 图片转PDF
+        /// </summary>
+        /// <param name="sourse">原始图片路径</param>
+        /// <param name="output">输出图片路径</param>
+        public static void ConvertJpgToPdf(string sourse, string output)
+        {
+            try
+            {
+                iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(sourse);
+                using (FileStream fs = new FileStream(output, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    Document document = new Document(image);
+                    PdfWriter pdfWriter = PdfWriter.GetInstance(document, fs);
+                    pdfWriter.SetFullCompression();
+                    pdfWriter.SetPdfVersion(iTextSharp.text.pdf.PdfWriter.PDF_VERSION_1_7);
+                    document.Open();
+                    image.SetAbsolutePosition(0, 0);
+                    document.SetPageSize(new iTextSharp.text.Rectangle(0, 0, image.Width, image.Height));
+                    document.NewPage();
+                    pdfWriter.DirectContent.AddImage(image, false);
+                    document.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+           
+        }
     }
 }
