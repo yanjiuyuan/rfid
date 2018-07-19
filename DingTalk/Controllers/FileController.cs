@@ -19,6 +19,45 @@ namespace DingTalk.Controllers
     [RoutePrefix("File")]
     public class FileController : ApiController
     {
+        /// <summary>
+        /// 流程节点信息获取接口
+        /// </summary>
+        /// <param name="FlowId">流程Id</param>
+        /// <param name="NodeId">节点Id</param>
+        /// <returns></returns>
+        /// 测试数据: FlowInfo/GetNodeInfo?FlowId=6&NodeId=0
+        [HttpGet]
+        [Route("GetNodeInfo")]
+        public object GetNodeInfo(string FlowId, int NodeId = 0)
+        {
+            try
+            {
+                if (FlowId != null)
+                {
+                    using (DDContext context = new DDContext())
+                    {
+                        List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).ToList();
+                        return NodeInfoList;
+                    }
+                }
+                else
+                {
+                    return new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "参数未传递"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel
+                {
+                    errorCode = 2,
+                    errorMessage = ex.Message
+                };
+            }
+        }
 
         /// <summary>
         /// Base64文件流上传
@@ -95,6 +134,7 @@ namespace DingTalk.Controllers
             }
         }
 
+       
         /// <summary>
         /// 图纸PDF状态更新
         /// </summary>
