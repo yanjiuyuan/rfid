@@ -63,7 +63,7 @@
                     <span>{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)">预览</el-button>
-         
+
                     <el-switch v-if="index == 0" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
                                active-text="通过" inactive-text="不通过"
@@ -94,7 +94,7 @@
 
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-            </sam-addapprover>*@
+        </sam-addapprover>*@
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.mark"></el-input>
@@ -109,6 +109,11 @@
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
                 <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -410,6 +415,24 @@
                         console.log(err);
                     }
                 })
+            },
+            //重新发起审批
+            reApproval() {
+                this.disablePage = true
+                ReApprovalTempData = {
+                    valid: true,
+                    data: this.data,
+                    ProjectId: this.ruleForm.ProjectId,
+                    imageList: this.imageList,
+                    fileList: this.fileList,
+                    pdfList: this.pdfList,
+                    items: items
+                }
+                for (let img of imgConfig) {
+                    if (img.flowId == FlowId) {
+                        loadPage(img.url)
+                    }
+                }
             },
             //盖章并获取文件
             stampAndGet() {

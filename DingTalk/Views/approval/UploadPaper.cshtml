@@ -34,7 +34,7 @@
                    multiple
                    :limit="3"
                    :on-exceed="handleExceed"
-                   :file-list="fileList">
+                   :file-list="excelList">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
         </el-upload>
@@ -136,6 +136,7 @@
                 preCopy: false,
                 isPdfFile: false,
                 pdfList: [],
+                excelList: [],
                 fileList: [],
                 imageList: [],
                 mediaList: [],
@@ -395,8 +396,7 @@
                         }
                     }
                 }
-                console.log("upBom")
-                console.log(upBom)
+                console.log(tableData)
                 this.totalRows = this.data.length
                 this.getData()
             },
@@ -535,11 +535,58 @@
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
+
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                //ReApprovalTempData = {
+                //    valid: true,
+                //    tableData: this.tableData,
+                //    ProjectId: this.ruleForm.ProjectId,
+                //    imageList: this.imageList,
+                //    fileList: this.fileList,
+                //    pdfList: this.pdfList
+                //}
+                if (!ReApprovalTempData.valid) return
+                this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
+                this.imageList = ReApprovalTempData.imageList
+                this.fileList = ReApprovalTempData.fileList
+                this.pdfList = ReApprovalTempData.pdfList
+                var preUrl = 'http://' + window.location.host
+                for (let f of this.fileList) {
+                    f["response"] = {
+                        Content: f.url.replace(preUrl,'~')
+                    }
+                }
+                for (let p of this.pdfList) {
+                    p["response"] = {
+                        Content: p.url.replace(preUrl, '~')
+                    }
+                }
+
+                this.data = ReApprovalTempData.data
+                this.items = ReApprovalTempData.items
+                this.totalRows = this.data.length
+                this.getData()
+                for (let d of this.data) {
+                    upBom.push({
+                        BomId: d.BomId,
+                        DrawingNo: d.DrawingNo,
+                        Name: d.Name,
+                        Count: d.Count,
+                        MaterialScience: d.MaterialScience,
+                        Unit: d.Unit,
+                        Brand: d.Brand,
+                        Sorts: d.Sorts,
+                        Mark: d.Mark
+                    })
+                }
+            }
             
         },
         created: function () {
             this.getNodeInfo()
             this.getProjects()
+            this.loadReApprovalData()
             //this.getNodeList()
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)

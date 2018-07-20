@@ -7,6 +7,8 @@ var UrlObj = {} //url参数对象
 var QueryObj = {} //获取url参数对象
 var Id = 0 //自增task表的id
 var UserList = [] //所有用户数据
+var imgConfig = [] //审批主页图片和路由配置
+var ReApprovalTempData = {} //重新发起审批保存的临时数据
 
 //原型方法
 Array.prototype.removeByValue = function (val) {
