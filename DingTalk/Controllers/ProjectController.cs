@@ -57,7 +57,6 @@ namespace DingTalk.Controllers
                         bool IsProjectControl = context.Roles.Where(r => r.UserId == projectInfo.CreateManId && r.RoleName == "项目管理员" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
                         if (IsProjectControl)
                         {
-
                             ProjectInfo pInfo = context.ProjectInfo.SingleOrDefault(u => u.ProjectId == projectInfo.ProjectId);
 
                             if (pInfo != null)
@@ -251,12 +250,22 @@ namespace DingTalk.Controllers
                     {
                         return JsonConvert.SerializeObject(RePathList);
                     }
-
+                    int AppearCount = SubstringCount(path, "\\");
+                    if (AppearCount < 5)
+                    {
+                        return JsonConvert.SerializeObject(RePathList);
+                    }
+                    string CheckPath = path;
+                    if (AppearCount > 5)
+                    {
+                        int k = GetIndexOfString(path, "\\", 6);
+                        path = path.Substring(0, k - 1);
+                    }
                     //项目负责人
                     bool IsProjectLeader = context.ProjectInfo.Where(p => p.ResponsibleManId == userId && p.FilePath == path).ToList().Count() > 0 ? true : false;
                     //小组成员
                     bool IsGroupMember = context.ProjectInfo.Where(p => p.TeamMembersId.Contains(userId) && p.FilePath == path).ToList().Count() > 0 ? true : false;
-                    int AppearCount = SubstringCount(path, "\\");
+
                     if (AppearCount == 5)  //项目路径层级
                     {
 
@@ -275,7 +284,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        if (path.Contains("合同") && IsGroupMember) //小组成员没有权限看合同
+                        if (CheckPath.Contains("合同") && IsGroupMember) //小组成员没有权限看合同
                         {
                             return JsonConvert.SerializeObject(new ErrorModel()
                             {
@@ -358,7 +367,7 @@ namespace DingTalk.Controllers
                         LastModifyState = ChangeType.ToString()
                     };
                     //判断权限
-                    bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
+                    bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "项目管理员").ToList().Count() >= 1) ? true : false;
                     string RePath = path;
                     path = Server.MapPath(path);
                     if (IsSuperPower)
@@ -647,6 +656,13 @@ namespace DingTalk.Controllers
             return 0;
         }
 
+        /// <summary>
+        /// 返回第n次字符出现的索引
+        /// </summary>
+        /// <param name="InputString"></param>
+        /// <param name="CharString"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
         public int GetIndexOfString(string InputString, string CharString, int n)
         {
             int count = 0;
