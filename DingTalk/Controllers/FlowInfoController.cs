@@ -469,7 +469,7 @@ namespace DingTalk.Controllers
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
-                
+
                 if (NodeName == "抄送")
                 {
                     string[] ListNodeName = NodeName.Split(',');
@@ -752,7 +752,7 @@ namespace DingTalk.Controllers
         /// <param name="NodeId">节点Id</param>
         /// <returns></returns>
         /// 测试数据: FlowInfo/GetNodeInfo?FlowId=6&NodeId=0
-        public string GetNodeInfo(string FlowId, int NodeId = 0)
+        public string GetNodeInfo(string FlowId, string NodeId)
         {
             try
             {
@@ -760,8 +760,16 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        var NodeInfo = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId);
-                        return JsonConvert.SerializeObject(NodeInfo);
+                        if (string.IsNullOrEmpty(NodeId))
+                        {
+                            var NodeInfo = context.NodeInfo.Where(u => u.FlowId == FlowId);
+                            return JsonConvert.SerializeObject(NodeInfo);
+                        }
+                        else
+                        {
+                            var NodeInfo = context.NodeInfo.Where(u => u.NodeId.ToString() == NodeId && u.FlowId == FlowId);
+                            return JsonConvert.SerializeObject(NodeInfo);
+                        }
                     }
                 }
                 else
