@@ -982,7 +982,6 @@ namespace DingTalk.Controllers
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBack != false).ToList();
 
                         List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
-
                         List<object> ListObject = new List<object>();
                         //var QuaryChose = from n in ChoseNodeInfoList
                         //                 join t in TaskList
