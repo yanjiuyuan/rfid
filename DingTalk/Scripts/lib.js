@@ -446,7 +446,7 @@ Vue.component('sam-approver-list', {
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
-                                <el-button v-if="specialRoleNames.indexOf(node.NodeName)<0" class="button-new-tag" size="small" v-on:click="addPeople">+ 添加</el-button>
+                                <el-button v-if="!specialRoleNames" class="button-new-tag" size="small" v-on:click="addPeople(node.NodeId)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
@@ -488,16 +488,9 @@ Vue.component('sam-approver-list', {
                 onSuccess: function (data) {
                     console.log(that.nodeid)
                     for (let node of that.nodelist) {
-                        if (node.NodeId != that.nodeid + 1) 
+                        if (node.NodeId != nodeid) 
                             continue
-                        for (let d of data) {
-                            var dontExist = true
-                            for (let a of node.AddPeople) {
-                                if (a.emplId == d.emplId)
-                                    dontExist = false
-                            }
-                            if (dontExist) node.AddPeople.push(d)
-                        }
+                        node.AddPeople = data
                     }
                     console.log(data)
                     console.log(that.nodelist)

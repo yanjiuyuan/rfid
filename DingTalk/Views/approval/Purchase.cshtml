@@ -160,7 +160,7 @@
 </el-main>
 
 <script>
-    
+    NodeId = '0'
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -360,7 +360,7 @@
         created: function () {
             this.getNodeInfo()
             this.getProjects()
-            this.getNodeList()
+            //this.getNodeList()
             //this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
         }

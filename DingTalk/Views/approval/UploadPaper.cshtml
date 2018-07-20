@@ -185,6 +185,10 @@
                             }
                         }
                         var paramArr = []
+                        var stateArr = []
+                        for (var i = 0; i < that.pdfList.length; i++) {
+                            stateArr.push(0)
+                        }
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
@@ -204,7 +208,8 @@
                             "MediaId": that.mediaList.join(','),
                             "MediaIdPDF": that.mediaPdfList.join(','),
                             "Title": title,
-                            "ProjectId": that.ruleForm.ProjectId
+                            "ProjectId": that.ruleForm.ProjectId,
+                            "PdfState": stateArr.join(',')
                         }) 
                         for (let node of that.nodeList) {
                             if (this.specialRoleNames.indexOf(node.NodeName)>=0) {

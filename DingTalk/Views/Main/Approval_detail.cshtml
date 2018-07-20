@@ -63,6 +63,13 @@
                     <span>{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)">预览</el-button>
+         
+                    <el-switch v-if="index == 0" v-model="f.state"
+                               active-color="#13ce66" inactive-color="#ff4949"
+                               active-text="通过" inactive-text="不通过"
+                               active-value="1" inactive-value="0"
+                               v-on:change="setPdfState">
+                    </el-switch>
                 </div>
             </el-card>
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
@@ -509,6 +516,22 @@
             hideFrame() {
                 this.frameShow = false
             },
+            //PDF文件查看后，点击按钮设置状态
+            setPdfState() {
+                var states = []
+                for (let p of this.pdfList) {
+                    states.push(p.state)
+                }
+                var url = "/File/UpdatePDFState?TaskId=" + TaskId + "&PDFState=" + states.join(",")
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log("PDF文件查看后，点击按钮设置状态")
+                        console.log(url)
+                        console.log(data)
+                    }
+                })
+            },
             //钉钉推送文件
             downloadFile(mediaId) {
                 var that = this
@@ -592,11 +615,13 @@
                     var urlList = data.FilePDFUrl.split(',')
                     var oldUrlList = data.OldFilePDFUrl.split(',')
                     var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
+                    var stateList = data.PdfState ? data.PdfState.split(',') : []
                     for (var i = 0; i < urlList.length; i++) {
                         pdfList.push({
                             name: oldUrlList[i],
                             url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                            mediaId: MediaIdList[i]
+                            mediaId: MediaIdList[i],
+                            state: stateList[i]
                         })
                     }
                 }
