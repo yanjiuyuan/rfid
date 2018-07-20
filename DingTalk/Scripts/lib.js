@@ -262,6 +262,8 @@ var mixin = {
         getNodeInfo() {
             var that = this
             var url = "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId
+            if (NodeId == 0)
+                url = "/FlowInfo/GetNodeInfo?" + "FlowId=" + FlowId
             $.ajax({
                 url: url,
                 type: "GET",
@@ -270,6 +272,7 @@ var mixin = {
                     result = JSON.parse(result)
                     console.log(url)
                     console.log(result)
+                    if (NodeId == 0) that.nodeList = _cloneArr(result)
                     that.nodeInfo = $.extend(true, {}, result[0])
                     //that.preApprove = !data[0].IsNeedChose
                 },
@@ -300,8 +303,6 @@ var mixin = {
         getNodeList() {
             var that = this
             var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
-            if (TaskId == 0)
-                url = "/FlowInfo/GetSign?FlowId=" + FlowId 
             $.ajax({
                 url: url,
                 type: "GET",
