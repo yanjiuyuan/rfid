@@ -109,7 +109,7 @@
             </el-form-item>
 
             <!--添加审批人-->
-            <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+            <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames"
                                :nodeid="nodeInfo.NodeId">
             </sam-approver-list>
             <!--添加抄送人-->

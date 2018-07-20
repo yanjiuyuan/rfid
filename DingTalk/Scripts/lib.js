@@ -300,11 +300,16 @@ var mixin = {
         getNodeList() {
             var that = this
             var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
+            if (TaskId == 0)
+                url = "/FlowInfo/GetSign?FlowId=" + FlowId 
             $.ajax({
                 url: url,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
+                    console.log("相关人员列表")
+                    console.log(url)
+                    console.log(data)
                     for (let d of data[0]) {
                         if (d.ApplyMan)
                             d["NodePeople"] = d.ApplyMan.split(',')
@@ -312,9 +317,6 @@ var mixin = {
                             d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
                         d['AddPeople'] = []
                     }
-                    console.log("相关人员列表")
-                    console.log(url)
-                    console.log(data)
                     that.nodeList = data[0]
                 },
                 error: function (err) {
@@ -404,7 +406,7 @@ Vue.component('sam-approver-list', {
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a"
-                                        :closable="true"
+                                        :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
                                         onclick="" v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
@@ -413,7 +415,6 @@ Vue.component('sam-approver-list', {
                                         >
                                     {{ap.name}}
                                 </el-tag>
-                                </br>
                             </template>
 
                             <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
@@ -421,8 +422,8 @@ Vue.component('sam-approver-list', {
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
-                                      :key="member.UserId"
-                                      :label="member.UserName"
+                                      :key="member.userid"
+                                      :label="member.name"
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
@@ -430,8 +431,8 @@ Vue.component('sam-approver-list', {
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member2,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
-                                      :key="member.UserId"
-                                      :label="member.UserName"
+                                      :key="member.userid"
+                                      :label="member.name"
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
@@ -495,9 +496,15 @@ Vue.component('sam-approver-list', {
             });
         },
         //下拉框选人添加
-        selectSpecialMember(userId,nodeId) {
-            console.log(userId)
+        selectSpecialMember(userInfo, nodeId) {
+            userInfo = JSON.parse(userInfo)
+            console.log(userInfo)
             console.log(nodeId)
+            for (let node of this.nodelist) {
+                if (node.NodeId != nodeId)
+                    continue
+                node.AddPeople = [userInfo]
+            }
         },
 
         deletePeople(emplId) {
