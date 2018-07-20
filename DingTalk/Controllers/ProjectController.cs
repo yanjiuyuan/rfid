@@ -207,16 +207,16 @@ namespace DingTalk.Controllers
         /// 获取目录下的文件夹信息
         /// </summary>
         /// <param name="path">相对路径</param>
+        /// <param name="userId">用户Id</param>
         /// <returns>返回文件名数组</returns>
         /// 测试数据：/Project/GetFileMsg?Path=\UploadFile\ProjectFile\宝发
         [HttpGet]
-        public string GetFileMsg(string path)
+        public string GetFileMsg(string path, string userId)
         {
             try
             {
                 string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
                 List<string> RePathList = new List<string>();
-
                 foreach (var item in AbPathList)
                 {
                     //绝对路径转相对
@@ -224,7 +224,53 @@ namespace DingTalk.Controllers
                     string FileName = Path.GetFileName(RelativePath);
                     RePathList.Add(FileName);
                 }
-                return JsonConvert.SerializeObject(RePathList);
+
+                using (DDContext context = new DDContext())
+                {
+                    //项目管理员
+                    bool IsProjectControl = context.Roles.Where(r => r.UserId == userId && r.RoleName == "项目管理员" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
+                    //院领导
+                    bool IsLeader = context.Roles.Where(r => r.UserId == userId && r.RoleName == "院领导" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
+
+                    if (IsProjectControl || IsLeader)
+                    {
+                        return JsonConvert.SerializeObject(RePathList);
+                    }
+
+                    //项目负责人
+                    bool IsProjectLeader = context.ProjectInfo.Where(p => p.ResponsibleManId == userId && p.FilePath == path).ToList().Count() > 0 ? true : false;
+                    //小组成员
+                    bool IsGroupMember = context.ProjectInfo.Where(p => p.TeamMembersId.Contains(userId) && p.FilePath == path).ToList().Count() > 0 ? true : false;
+                    int AppearCount = SubstringCount(path, "\\");
+                    if (AppearCount == 5)  //项目路径层级
+                    {
+
+                        if (IsProjectLeader || IsGroupMember)
+                        {
+                            return JsonConvert.SerializeObject(RePathList);
+                        }
+                        else
+                        {
+                            return JsonConvert.SerializeObject(new ErrorModel()
+                            {
+                                errorCode = 0,
+                                errorMessage = "没有权限"
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if (path.Contains("合同") && IsGroupMember) //小组成员没有权限看合同
+                        {
+                            return JsonConvert.SerializeObject(new ErrorModel()
+                            {
+                                errorCode = 0,
+                                errorMessage = "没有权限"
+                            });
+                        }
+                        return JsonConvert.SerializeObject(RePathList);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -567,6 +613,23 @@ namespace DingTalk.Controllers
                 });
             }
 
+        }
+
+        /// <summary>
+        /// 计算字符串中子串出现的次数
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <param name="substring">子串</param>
+        /// <returns>出现的次数</returns>
+        public int SubstringCount(string str, string substring)
+        {
+            if (str.Contains(substring))
+            {
+                string strReplaced = str.Replace(substring, "");
+                return (str.Length - strReplaced.Length) / substring.Length;
+            }
+
+            return 0;
         }
 
         public int GetIndexOfString(string InputString, string CharString, int n)
