@@ -126,6 +126,7 @@
     var FlowId = 6
     var upBom = []
     var isPdf = false
+    NodeId = '0'
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -206,7 +207,7 @@
                             "ProjectId": that.ruleForm.ProjectId
                         }) 
                         for (let node of that.nodeList) {
-                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
+                            if (this.specialRoleNames.indexOf(node.NodeName)>=0) {
                                 console.log(node)
                                 console.log(node.AddPeople)
                                 if (!that.preApprove && node.AddPeople.length == 0) {

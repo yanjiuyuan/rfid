@@ -272,7 +272,16 @@ var mixin = {
                     result = JSON.parse(result)
                     console.log(url)
                     console.log(result)
-                    if (NodeId == 0) that.nodeList = _cloneArr(result)
+                    if (NodeId == 0) {
+                        that.nodeList = _cloneArr(result)
+                        for (let node of that.nodeList) {
+                            if (node.NodePeople)
+                                node.NodePeople = node.NodePeople.split(',')
+                            if (node.NodeId == 0)
+                                node.NodePeople = [DingData.nickName]//["temp"]//[d.ApplyMan]
+                            node['AddPeople'] = []
+                        }
+                    }
                     that.nodeInfo = $.extend(true, {}, result[0])
                     //that.preApprove = !data[0].IsNeedChose
                 },
@@ -423,7 +432,7 @@ Vue.component('sam-approver-list', {
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
-                                      :key="member.userid"
+                                      :key="member.emplId"
                                       :label="member.name"
                                       :value="JSON.stringify(member)">
                                     </el-option>
@@ -432,7 +441,7 @@ Vue.component('sam-approver-list', {
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member2,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
-                                      :key="member.userid"
+                                      :key="member.emplId"
                                       :label="member.name"
                                       :value="JSON.stringify(member)">
                                     </el-option>

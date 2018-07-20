@@ -118,7 +118,9 @@
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
                             "CompanyName": this.ruleForm.CompanyName,
-                            "ProjectType": this.ruleForm.ProjectType
+                            "ProjectType": this.ruleForm.ProjectType,
+                            "CreateManId": DingData.userid,
+                            "CreateMan": DingData.nickName
                         }
                         console.log(param)
                         $.ajax({
@@ -130,6 +132,14 @@
                             success: function (data) {
                                 console.log("添加项目")
                                 console.log(data)
+                                if (data.errorCode == 0) {
+                                    that.$alert(data.errorMessage, '提示信息', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+                                            return
+                                        }
+                                    });
+                                }
                                 that.$alert(data.errorMessage, '提示信息', {
                                     confirmButtonText: '确定'
                                 })

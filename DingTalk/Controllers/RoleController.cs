@@ -43,7 +43,7 @@ namespace DingTalk.Controllers
                                     {
                                         RoleName=r.RoleName,
                                         name = r.UserName,
-                                        userid = r.UserId
+                                        emplId = r.UserId
                                     };
                         return Quary;
                     }
