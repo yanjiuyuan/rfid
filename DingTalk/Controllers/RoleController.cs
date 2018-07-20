@@ -41,6 +41,7 @@ namespace DingTalk.Controllers
                         var Quary = from r in RoleList
                                     select new
                                     {
+                                        RoleName=r.RoleName,
                                         name = r.UserName,
                                         userid = r.UserId
                                     };

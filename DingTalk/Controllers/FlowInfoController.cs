@@ -723,7 +723,6 @@ namespace DingTalk.Controllers
         {
             try
             {
-
                 if (!string.IsNullOrEmpty(id))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
@@ -959,7 +958,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="TaskId">流水号</param>
         /// <param name="FlowId">流程Id</param>
-        /// <returns></returns
+        /// <returns></returns>
         /// 测试数据： /FlowInfo/GetSign?TaskId=100&FlowId=6
         [HttpGet]
         public string GetSign(string TaskId, string FlowId)
@@ -985,8 +984,6 @@ namespace DingTalk.Controllers
                         List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
 
                         List<object> ListObject = new List<object>();
-
-
                         //var QuaryChose = from n in ChoseNodeInfoList
                         //                 join t in TaskList
                         //                 on n.NodeId equals t.NodeId
@@ -1018,7 +1015,6 @@ namespace DingTalk.Controllers
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
                                     };
-                        //ListObject.Add(QuaryChose);
                         ListObject.Add(Quary);
                         return JsonConvert.SerializeObject(ListObject);
                     }
