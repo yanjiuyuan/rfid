@@ -171,9 +171,11 @@
                                 }
                             });
                         }
-                        //if (data.errorCode == 0) {
-                        //    return
-                        //}
+                        if (data.errorCode == 0) {
+                            that.clockFolder = false
+                            that.pathList.pop()
+                            return
+                        }
                         let folderArr = []
                         let fileArr = []
                         for (let d of data) {
