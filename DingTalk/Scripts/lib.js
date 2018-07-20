@@ -242,9 +242,6 @@ var mixin = {
         //获取特殊角色详细信息
         getSpecialRoleInfo: function (roleName) {
             var that = this
-            for (let r in this.specialRoles) {
-                if (r.name == roleName) r.members = []
-            }
             var url = '/Role/GetRoleInfo?RoleName=' + roleName
             $.ajax({
                 url: url,
@@ -252,13 +249,11 @@ var mixin = {
                     console.log('获取特殊角色详细信息')
                     console.log(url)
                     console.log(data)
-                    for (let d of data) {
                         for (let s of that.specialRoles) {
-                            if (d.RoleName == s.name) {
-                                s.members.push(d)
+                            if (data[0].RoleName == s.name) {
+                                s.members = data
                             }
                         }
-                    }
                 }
             })
         },
