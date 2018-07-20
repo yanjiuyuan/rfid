@@ -59,5 +59,9 @@ namespace DingTalk.Models.DingModels
         public string TeamMembers { get; set; }
 
         public string TeamMembersId { get; set; }
+
+        public string CreateMan { get; set; }
+
+        public string CreateManId { get; set; }
     }
 }
