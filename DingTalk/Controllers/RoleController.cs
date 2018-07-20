@@ -37,7 +37,13 @@ namespace DingTalk.Controllers
                     else
                     {
                         var RoleList = context.Roles.Where(r => r.RoleName.Contains(RoleName)).ToList();
-                        return RoleList;
+                        var Quary = from r in RoleList
+                                    select new
+                                    {
+                                        name = r.UserName,
+                                        userid = r.UserId
+                                    };
+                        return Quary;
                     }
                 }
             }
