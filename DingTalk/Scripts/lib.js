@@ -243,7 +243,7 @@ var mixin = {
         getSpecialRoleInfo: function (roleName) {
             var that = this
             for (let r in this.specialRoles) {
-                if (r.name == roleName) r.menbers = []
+                if (r.name == roleName) r.members = []
             }
             var url = '/Role/GetRoleInfo?RoleName=' + roleName
             $.ajax({
