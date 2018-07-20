@@ -418,21 +418,21 @@ Vue.component('sam-approver-list', {
 
                             <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
-                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember">
+                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
                                       :key="member.UserId"
                                       :label="member.UserName"
-                                      :value="member.UserId">
+                                      :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
                             <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[1] && role.name == node.NodeName"" v-model="member2"
-                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember">
+                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member2,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
                                       :key="member.UserId"
                                       :label="member.UserName"
-                                      :value="member.UserId">
+                                      :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
                                 <el-button v-if="specialRoleNames.indexOf(node.NodeName)<0" class="button-new-tag" size="small" v-on:click="addPeople">+ 添加</el-button>
@@ -495,9 +495,11 @@ Vue.component('sam-approver-list', {
             });
         },
         //下拉框选人添加
-        selectSpecialMember(userId) {
+        selectSpecialMember(userId,nodeId) {
             console.log(userId)
+            console.log(nodeId)
         },
+
         deletePeople(emplId) {
             for (let node of this.nodelist) {
                 for (let a of node.AddPeople) {
