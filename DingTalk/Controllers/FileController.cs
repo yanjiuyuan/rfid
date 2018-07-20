@@ -81,6 +81,7 @@ namespace DingTalk.Controllers
                     string FileName = Path.GetFileName(fileModel.FileName.Substring(0, fileModel.FileName.Length - 4));
                     string Err = "";
                     bool upres = WriteFile(ImageFilePath, FileContent, FileName + ".png", out Err);
+
                     if (upres)
                     {
                         //清除文件
