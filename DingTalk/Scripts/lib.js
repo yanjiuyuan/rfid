@@ -162,6 +162,21 @@ var pickerOptions = {
 var mixin = {
     data: {
         user: {},
+        specialRoles: [
+            {
+                name: '图纸校对人员',
+                intrudations: ['保证所校对的图样（文件）与技术（设计）任务或技术协议书要求的一致性与合理性。并应承担一定的设计技术责任'],
+                label: '校对人员的责任',
+                members: []
+            },
+            {
+                name: '图纸设计审核人员',
+                intrudations: ['a)产品设计方案合理、可行，能满足技术（设计）任务书或技术协议书的要求；', '  b)产品图样和设计文件的内容正确，数据、尺寸准确；','  c)设计人员不在时，应承担设计的技术责任。'],
+                label: '设计审核人员的责任',
+                members: []
+            }
+        ],
+        specialRoleNames: [],
         disablePage: false,
         rules: {
             name: [
@@ -202,6 +217,9 @@ var mixin = {
         totalRows: 0,
         pageSize: 5
     },
+    created:function() {
+        
+    },
     methods: {
         resetForm(formName) {
             this.$refs[formName].resetFields();
@@ -220,29 +238,57 @@ var mixin = {
             this.currentPage = val
             this.getData()
         },
-        
+
+        //获取特殊角色详细信息
+        getSpecialRoleInfo: function (roleName) {
+            var that = this
+            for (let r in this.specialRoles) {
+                if (r.name == roleName) r.menbers = []
+            }
+            var url = '/Role/GetRoleInfo?RoleName=' + roleName
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    console.log('获取特殊角色详细信息')
+                    console.log(url)
+                    console.log(data)
+                    for (let d of data) {
+                        for (let s of that.specialRoles) {
+                            if (d.RoleName == s.name) {
+                                s.members.push(d)
+                            }
+                        }
+                    }
+                }
+            })
+        },
+
         //获取节点数据GetNodeInfo
         getNodeInfo() {
             var that = this
+            var url = "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId
             $.ajax({
-                url: "/FlowInfo/GetNodeInfo?NodeId=0&FlowId=" + FlowId,
+                url: url,
                 type: "GET",
-                dataType: "json",
-                success: function (data) {
+                success: function (result) {
                     console.log("获取节点数据 GetNodeInfo")
-                    console.log("/FlowInfo/GetNodeInfo?NodeId=0&FlowId=" + FlowId)
-                    console.log(data)
-                    that.nodeInfo = data[0]
-                    that.preApprove = !data[0].IsNeedChose
-                    that.preCopy = !data[0].IsSendChose
-                    console.log(that.nodeInfo)
+                    result = JSON.parse(result)
+                    console.log(url)
+                    console.log(result)
+                    that.nodeInfo = $.extend(true, {}, result[0])
+                    //that.preApprove = !data[0].IsNeedChose
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
+                error: function (err) {
+                    console.log(err);
                 }
             })
+            
+        },
+        //获取项目数据
+        getProjects() {
+            var that = this
             $.ajax({
-                url: "/Project/GetAllProJect" ,
+                url: "/Project/GetAllProJect",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -250,32 +296,34 @@ var mixin = {
                     console.log(data)
                     that.projestList = data
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
+                error: function (err) {
+                    console.log(err);
                 }
             })
         },
         //获取审批/抄送 相关人员列表GetFlowProgress
         getNodeList() {
             var that = this
+            var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             $.ajax({
-                url: "/FlowInfo/GetFlowProgress?FlowId=" + FlowId,
+                url: url,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    console.log("获取审批/抄送 相关人员列表ok")
-                    for (let d of data) {
-                        if (d.NodePeople)
-                            d.NodePeople = d.NodePeople.split(',')
+                    for (let d of data[0]) {
+                        if (d.ApplyMan)
+                            d["NodePeople"] = d.ApplyMan.split(',')
                         if (d.NodeId == 0)
-                            d.NodePeople = [DingData.nickName]
+                            d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
                         d['AddPeople'] = []
                     }
+                    console.log("相关人员列表")
+                    console.log(url)
                     console.log(data)
-                    that.nodeList = data
+                    that.nodeList = data[0]
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest.status);
+                error: function (err) {
+                    console.log(err);
                 }
             })
         },
@@ -329,19 +377,18 @@ var tableData = [{
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
-    props: ['preset', 'nodelist', 'type' ,'nodeid', 'single'],
+    props: ['preset', 'nodelist', 'type', 'nodeid', 'single', 'specialRoles', 'specialRoleNames'],
     template: `<div>
-                    <el-form-item v-if="type=='approve'" label="审批人" style="margin-bottom:0px;">
-                        <span v-if="preset" class="hint">审批人已由管理员预置,并将自动去重</span>
-                        <el-button v-else class="button-new-tag" size="small" v-on:click="addPeople">+ 添加审批人</el-button>
+                    <el-form-item label="审批人" style="margin-bottom:0px;">
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
                             <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;">
                                 {{node.NodeName}}
                             </el-tag>
+
                             <template v-for="(p,a) in node.NodePeople">
-                                <span v-if="a>0" style="margin-left:137px;">&nbsp;</span>
+                                <span v-if="a>0 && node.NodeName!='抄送'" style="margin-left:137px;">&nbsp;</span>
                                 <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
@@ -351,10 +398,14 @@ Vue.component('sam-approver-list', {
                                         >
                                     {{p}}
                                 </el-tag>
-                                <p class='remark'>{{node.Remark}}</p>
-                                <p class='applytime'>{{node.ApplyTime}}</p>
-                                </br>
+                                
+                                <span v-if="node.NodeName=='抄送' && a < node.NodePeople.length-1">,</span>
+                                <template v-else>
+                                    <p class='applytime'>{{node.ApplyTime}}</p>
+                                    <p class='remark'>{{node.Remark}}</p>
+                                </template>
                             </template>
+                            
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a"
@@ -369,11 +420,35 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                                 </br>
                             </template>
+
+                            <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
+                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
+                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember">
+                                    <el-option
+                                      v-for="member in role.members"
+                                      :key="member.UserId"
+                                      :label="member.UserName"
+                                      :value="member.UserId">
+                                    </el-option>
+                                </el-select>
+                            <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[1] && role.name == node.NodeName"" v-model="member2"
+                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember">
+                                    <el-option
+                                      v-for="member in role.members"
+                                      :key="member.UserId"
+                                      :label="member.UserName"
+                                      :value="member.UserId">
+                                    </el-option>
+                                </el-select>
+                                <el-button v-if="specialRoleNames.indexOf(node.NodeName)<0" class="button-new-tag" size="small" v-on:click="addPeople">+ 添加</el-button>
+                            </template>
+
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
                                 <i class="el-icon-arrow-down approve-arrow"  type="primary"></i>
                                 </br>
                             </div>
                         </template>
+
                         <el-input class="input-new-tag"
                                     v-if="inputVisible"
                                     v-model="inputValue"
@@ -386,6 +461,8 @@ Vue.component('sam-approver-list', {
     data: function () {
         return {
             inputValue: '',
+            member1: '',
+            member2: '',
             inputVisible: false
         }
     },
@@ -393,18 +470,10 @@ Vue.component('sam-approver-list', {
         addNode() {
 
         },
+        //选人控件添加
         addPeople(nodeid) {
             var that = this
-             console.log('addPeople')
-            //for (let node of that.nodelist) {
-            //    if (node.NodeId != that.nodeid + 1)
-            //        continue
-            //    node.AddPeople.push({
-            //        emplId: "manager325",
-            //        name: "詹姆斯"
-            //    })
-            //}
-           
+            console.log('addPeople')
             DingTalkPC.biz.contact.choose({
                 multiple: !that.single, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
@@ -424,20 +493,15 @@ Vue.component('sam-approver-list', {
                             if (dontExist) node.AddPeople.push(d)
                         }
                     }
-                    //DingTalkPC.device.notification.alert({
-                    //    message: JSON.stringify(data),
-                    //    title: "提示",//可传空
-                    //    buttonName: "收到",
-                    //    onSuccess: function () {
-                    //        /*回调*/
-                    //    },
-                    //    onFail: function (err) { }
-                    //});
                     console.log(data)
                     console.log(that.nodelist)
                 },
                 onFail: function (err) { }
             });
+        },
+        //下拉框选人添加
+        selectSpecialMember(userId) {
+            console.log(userId)
         },
         deletePeople(emplId) {
             for (let node of this.nodelist) {

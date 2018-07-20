@@ -252,7 +252,7 @@ ol li {
 }
 .applytime {
     display: inline-block;
-    float: right;
+    /*float: right;*/
     color: gray;
     font-size: small;
     line-height: 14px;

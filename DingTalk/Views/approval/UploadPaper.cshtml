@@ -55,27 +55,6 @@
             <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
             </el-form-item>
 
-            @*<template v-if="showAddProject">
-                <el-form-item label="项目名称" prop="inputProjectName">
-                    <el-input v-model="ruleForm.inputProjectName"></el-input>
-                </el-form-item>
-                <el-form-item label="项目编号" prop="inputProjectId">
-                    <el-input v-model="ruleForm.inputProjectId"></el-input>
-                </el-form-item>
-                <el-form-item label="开始日期">
-                    <el-date-picker v-model="ruleForm.Time"
-                                    type="daterange"
-                                    :picker-options="pickerOptions"
-                                    range-separator="至"
-                                    start-placeholder="开始日期"
-                                    end-placeholder="结束日期">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" v-on:click="addProject">添加</el-button>
-                </el-form-item>
-            </template>*@
-
             <el-form-item label="申请人" prop="name">
                 <el-input v-model="ruleForm.name" :disabled="true"></el-input>
             </el-form-item>
@@ -554,7 +533,12 @@
         },
         created: function () {
             this.getNodeInfo()
+            this.getProjects()
             this.getNodeList()
+            for (let s of this.specialRoles) {
+                this.specialRoleNames.push(s.name)
+                this.getSpecialRoleInfo(s.name)
+            }
             loadHtml("mainPage", "partPage")
         }
     })

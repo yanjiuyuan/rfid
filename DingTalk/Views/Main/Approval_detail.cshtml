@@ -36,7 +36,7 @@
         </el-pagination>
     </div>
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="项目名">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
@@ -80,10 +80,9 @@
         </el-form-item>
         @*<el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>*@
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :special-roles="specialRoles" :special-role-names="specialRoleNames"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
-
 
 
         <!--添加抄送人-->
@@ -93,10 +92,16 @@
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.mark"></el-input>
             </el-form-item>
+            <el-form-item v-for="p in specialRoles" :key="p.name" :label="p.label" prop="mark" v-if="nodeInfo.NodeName == p.name">
+                <el-form-item>
+                    <el-alert v-for="(i,index) in p.intrudations" :key="index" type="warning" :show-icon="index == 0" :closable="false" style="line-height:12px;"
+                              :title="i">
+                    </el-alert>
+                </el-form-item>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
                 <el-button v-if="isBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
-                @*<el-button type="danger" v-on:click="" :disabled="disablePage">不同意</el-button>*@
             </el-form-item>
         </template>
     </el-form>
@@ -276,7 +281,7 @@
                 totalRows: 0,
                 nodeInfo: {},
                 nodeList: [],
-                copyers: ['小唐', '季老师'],
+                copyers: ['小唐~', '季老师'],
                 ruleForm: {},
                 isBack: false,
                 index: Index,
@@ -353,8 +358,8 @@
                             });
                         }
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
+                    error: function (err) {
+                        console.log(err);
                     }
                 })
             },
@@ -394,8 +399,8 @@
                             }
                         })
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
+                    error: function (err) {
+                        console.log(err);
                     }
                 })
             },
@@ -427,8 +432,8 @@
                             }
                         });
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
+                    error: function (err) {
+                        console.log(err);
                     }
                 })
             },
@@ -457,57 +462,12 @@
                             }
                         });
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
+                    error: function (err) {
+                        console.log(err);
                     }
                 })
             },
-            //获取节点数据GetNodeInfo
-            getNodeInfo() {
-                var that = this
-                $.ajax({
-                    url: "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("获取节点数据GetNodeInfo")
-                        console.log(data)
-                        if (!data) return
-                        that.nodeInfo = data[0]
-                        that.preApprove = (!data[0].IsNeedChose) || (Index > 0)
-                        that.preCopy = !data[0].IsSendChose
-                        that.isBack = data[0].IsBack
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-
-            },
-            //获取审批/抄送 相关人员列表GetFlowProgress
-            getNodeList() {
-                var that = this
-                $.ajax({
-                    url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        for (let d of data[0]) {
-                            if (d.ApplyMan)
-                                d["NodePeople"] = d.ApplyMan.split(',')
-                            if (d.NodeId == 0)
-                                d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
-                            d['AddPeople'] = []
-                        }
-                        console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
-                        console.log(data)
-                        that.nodeList = data[0]
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
+            
             //获取bom表信息
             getBomInfo() {
                 var that = this
@@ -522,8 +482,8 @@
                         that.getData()
                         that.totalRows = that.data.length
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
+                    error: function (err) {
+                        console.log(err);
                     }
                 })
             },
@@ -583,6 +543,10 @@
             if (Index == '1') {
                 this.ifShowStamppBtn = true
                 if (FlowId == '8') this.ifShowStamppBtn2 = true
+            }
+            for (let s of this.specialRoles) {
+                this.specialRoleNames.push(s.name)
+                this.getSpecialRoleInfo(s.name)
             }
             loadHtml("mainPage", "partPage")
         }
@@ -645,8 +609,8 @@
                 demo.getNodeList()
                 demo.getBomInfo()
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
+            error: function (err) {
+                console.log(err);
             }
         })
     }
