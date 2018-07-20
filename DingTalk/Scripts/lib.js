@@ -177,6 +177,7 @@ var mixin = {
             }
         ],
         specialRoleNames: [],
+        isBack: false,
         disablePage: false,
         rules: {
             name: [
@@ -272,6 +273,7 @@ var mixin = {
                     result = JSON.parse(result)
                     console.log(url)
                     console.log(result)
+                    that.isBack = result[0].IsBack
                     if (NodeId == 0) {
                         that.nodeList = _cloneArr(result)
                         for (let node of that.nodeList) {
