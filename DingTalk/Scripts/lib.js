@@ -51,11 +51,7 @@ function loadHtml(parentId,childId) {
 }
 
 function _cloneObj(obj) {
-    var newObj = {}
-    for (var o in obj) {
-        newObj[o]=obj[o]
-    }
-    return newObj
+     return $.extend(true, {}, obj)
 }
 
 function _cloneArr(arr) {
@@ -405,6 +401,7 @@ Vue.component('sam-approver-list', {
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
+                                        :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
                                     {{p}}
