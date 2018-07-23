@@ -18,9 +18,9 @@
         <!--底部翻頁-->
         <div style="text-align:right">
             <el-pagination 
-                           v-on:current-change="handleCurrentChange(d.currentPage,index)"
+                           v-on:current-change="handleBomPageChange(d.currentPage,index)"
                            :current-page="d.currentPage"
-                           :page-sizes="[1, 3, 5, 10]"
+                           :page-sizes="[5]"
                            :page-size="5"
                            layout="total, sizes, prev, pager, next, jumper"
                            :total="d.totalRows">
@@ -301,6 +301,12 @@
                     }
                 });
             },
+            //bom表格翻页
+            handleBomPageChange(page, index) {
+                console.log(page)
+                this.currentPage = page
+
+            },
             //审批绑定BOM表数据
             bindData(taskId) {
                 for (let d of upBom) {
@@ -395,6 +401,7 @@
                 var tableData = response[0].Value
                 let BomId = ''
                 if (!(tableData && tableData.length > 0)) return
+                this.data = []
                 for (let i = 0; i < tableData.length; i++) {
                     let data = tableData[i]
                     if (i == 0) {
@@ -402,6 +409,7 @@
                         for (let c in data) {
                             if (c.substring(0, 6) == 'Column') {
                                 this.items[c] = data[c]
+                                this.dataArr[this.bomIndex].items[c] = data[c]
                             }
                             else if (c.length > 10) {
                                 BomId = c
@@ -409,7 +417,8 @@
                         }
                     } else {
                         if (data['Column1'] && data['Column1'] != "") {
-                            this.data.push(data)
+                            this.dataArr[this.bomIndex].data.push(data)
+                            this.data.push(data) 
                             upBom.push({
                                 BomId: BomId,
                                 DrawingNo: data.Column1,
@@ -427,8 +436,10 @@
                     }
                 }
                 console.log(tableData)
-                this.totalRows = this.data.length
+                //this.totalRows = this.data.length
+                this.dataArr[this.bomIndex].totalRows = this.dataArr[this.bomIndex].data.length
                 this.getData()
+                this.dataArr[this.bomIndex].tableData = this.tableData
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
