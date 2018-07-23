@@ -53,11 +53,14 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string SingleWeight { get; set; }
-       
+
         /// <summary>
         /// ×ÜÖØ
         /// </summary>
         [StringLength(200)]
         public string AllWeight { get; set; }
+
+        [StringLength(200)]
+        public string NeedTime { get; set; }
     }
 }
