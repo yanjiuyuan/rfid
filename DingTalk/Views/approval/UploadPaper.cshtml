@@ -36,7 +36,7 @@
                    :limit="3"
                    :on-exceed="handleExceed"
                    :file-list="excelList">
-            <el-button size="small" type="primary" v-on:click="bomIndex = index">点击上传</el-button>
+            <el-button size="small" type="primary" v-on:click="bomIndex = index">上传{{d.Sorts}}件</el-button>
             <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
         </el-upload>
         @*</el-form-item>*@
@@ -305,7 +305,9 @@
             handleBomPageChange(page, index) {
                 console.log(page)
                 this.currentPage = page
-
+                this.dataArr[index].currentPage = page
+                this.getData()
+                this.dataArr[index].tableData = this.tableData
             },
             //审批绑定BOM表数据
             bindData(taskId) {

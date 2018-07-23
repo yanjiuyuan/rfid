@@ -405,6 +405,7 @@ Vue.component('sam-approver-list', {
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
+                                        :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
                                     {{p}}
