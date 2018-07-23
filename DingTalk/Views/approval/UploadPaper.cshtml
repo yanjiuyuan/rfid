@@ -18,7 +18,7 @@
         <!--底部翻頁-->
         <div style="text-align:right">
             <el-pagination 
-                           v-on:current-change="handleBomPageChange(d.currentPage,index)"
+                           v-on:current-change="handleBomPageChange($event,index)"
                            :current-page="d.currentPage"
                            :page-sizes="[5]"
                            :page-size="5"
@@ -33,7 +33,7 @@
                    :on-success="handleSuccess"
                    @*:before-remove="beforeRemove"*@
                    multiple
-                   :limit="3"
+                   :limit="1"
                    :on-exceed="handleExceed"
                    :file-list="excelList">
             <el-button size="small" type="primary" v-on:click="bomIndex = index">上传{{d.Sorts}}件</el-button>
@@ -304,10 +304,11 @@
             //bom表格翻页
             handleBomPageChange(page, index) {
                 console.log(page)
+                console.log(index)
                 this.currentPage = page
                 this.dataArr[index].currentPage = page
                 this.getData()
-                this.dataArr[index].tableData = this.tableData
+                this.dataArr[index].tableData = _cloneArr(this.tableData)
             },
             //审批绑定BOM表数据
             bindData(taskId) {
@@ -401,6 +402,7 @@
             handleSuccess(response, file, fileList) {
                 console.log(response)
                 var tableData = response[0].Value
+                this.currentPage = 1
                 let BomId = ''
                 if (!(tableData && tableData.length > 0)) return
                 this.data = []
@@ -432,7 +434,7 @@
                                 AllWeight: data.Column7,
                                 NeedTime: data.Column8,
                                 Mark: data.Column9,
-                                Sorts: '' 
+                                Sorts: this.dataArr[this.bomIndex].Sorts
                             })
                         }
                     }
@@ -590,7 +592,7 @@
                 //    pdfList: this.pdfList
                 //}
                 if (!ReApprovalTempData.valid) return
-                this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
+                this.ruleForm.ProjectId = ReApprovalTempData.ProjectIdReApprovalTempData
                 this.imageList = ReApprovalTempData.imageList
                 this.fileList = ReApprovalTempData.fileList
                 this.pdfList = ReApprovalTempData.pdfList
@@ -610,21 +612,25 @@
                 this.items = ReApprovalTempData.items
                 this.totalRows = this.data.length
                 this.getData()
-                for (let d of this.data) {
-                    upBom.push({
-                        BomId: d.BomId,
-                        DrawingNo: d.DrawingNo,
-                        Name: d.Name,
-                        Count: d.Count,
-                        MaterialScience: d.MaterialScience,
-                        Unit: d.Unit,
-                        SingleWeight: d.SingleWeight,
-                        AllWeight: d.AllWeight,
-                        NeedTime: d.NeedTime,
-                        Sorts: d.Sorts,//'标准','自制','外购'
-                        Mark: d.Mark
-                    })
-                }
+                upBom = []
+                upBom = _cloneArr(this.data)
+                //for (let d of this.data) {
+                //    upBom.push(
+                //        {
+                //            BomId: d.BomId,
+                //            DrawingNo: d.DrawingNo,
+                //            Name: d.Name,
+                //            Count: d.Count,
+                //            MaterialScience: d.MaterialScience,
+                //            Unit: d.Unit,
+                //            SingleWeight: d.SingleWeight,
+                //            AllWeight: d.AllWeight,
+                //            NeedTime: d.NeedTime,
+                //            Sorts: d.Sorts,//'标准','自制','外购'
+                //            Mark: d.Mark
+                //        }
+                //    )
+                //}
             }
             
         },

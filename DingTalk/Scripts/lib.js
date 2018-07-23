@@ -51,11 +51,7 @@ function loadHtml(parentId,childId) {
 }
 
 function _cloneObj(obj) {
-    var newObj = {}
-    for (var o in obj) {
-        newObj[o]=obj[o]
-    }
-    return newObj
+     return $.extend(true, {}, obj)
 }
 
 function _cloneArr(arr) {
