@@ -274,7 +274,6 @@ namespace DingTalk.Controllers
                     using (DDContext context = new DDContext())
                     {
                         //修改流程状态
-                        tasks.IsBack = true;
                         tasks.State = 1;
                         tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                         context.Entry(tasks).State = EntityState.Modified;
@@ -290,9 +289,13 @@ namespace DingTalk.Controllers
                         {
                             Tasks newTask = new Tasks();
                             newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
-                            newTask.IsBack = false;
+                            newTask.IsBack = true;
+                            context.Entry<Tasks>(newTask).State = EntityState.Modified;
+                            context.SaveChanges();
+                            
                             newTask.ApplyTime = null;
                             newTask.State = 0;
+                            newTask.IsBack = false;
                             newTask.Remark = null;
                             newTask.IsPost = true;
                             context.Tasks.Add(newTask);
@@ -315,10 +318,6 @@ namespace DingTalk.Controllers
                                 content = newTask.Remark
                             };
                             top.SendOaMessage(newTask.ApplyManId, oaTextModel);
-
-                            //SentCommonMsg(newTask.ApplyManId,
-                            //           string.Format("您有一条被退回的流程(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", tasks.TaskId),
-                            //           tasks.ApplyMan, tasks.Remark, null);
                         }
                         else
                         {
@@ -416,7 +415,7 @@ namespace DingTalk.Controllers
                         var QuaryList = from a in TasksList
                                         join b in NodeInfoList
                                         on a.NodeId equals b.NodeId
-                                        orderby b.NodeId
+                                        orderby b.NodeId ascending 
                                         select new
                                         {
                                             NodeId = a.NodeId,
@@ -942,7 +941,8 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
-                                  State = t.State
+                                  State = t.State,
+                                  IsBack = t.IsBack
                               });
             }
             return JsonConvert.SerializeObject(listQuary);
