@@ -289,13 +289,13 @@ namespace DingTalk.Controllers
                         {
                             Tasks newTask = new Tasks();
                             newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
-                            newTask.IsBack = true;
+                            newTask.IsBacked = true;
                             context.Entry<Tasks>(newTask).State = EntityState.Modified;
                             context.SaveChanges();
                             
                             newTask.ApplyTime = null;
                             newTask.State = 0;
-                            newTask.IsBack = false;
+                            newTask.IsBacked = false;
                             newTask.Remark = null;
                             newTask.IsPost = true;
                             context.Tasks.Add(newTask);
@@ -339,7 +339,7 @@ namespace DingTalk.Controllers
                                 //根据找到的人创建新任务流
                                 Tasks newTask = new Tasks();
                                 newTask = tasks;
-                                newTask.IsBack = false;
+                                newTask.IsBacked = false;
                                 newTask.ApplyMan = NodePeople;
                                 newTask.ApplyManId = PeopleId;
                                 newTask.ApplyTime = null;
@@ -942,7 +942,7 @@ namespace DingTalk.Controllers
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
                                   State = t.State,
-                                  IsBack = t.IsBack
+                                  IsBack = t.IsBacked
                               });
             }
             return JsonConvert.SerializeObject(listQuary);
@@ -965,13 +965,24 @@ namespace DingTalk.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(TaskId))
+                if (string.IsNullOrEmpty(TaskId))  //尚未发起流程
                 {
-                    return JsonConvert.SerializeObject(new ErrorModel
+                    using (DDContext context =new DDContext ())
                     {
-                        errorCode = 2,
-                        errorMessage = "TaskId不能为空"
-                    });
+                        List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
+                        var Quary = from n in NodeInfoList
+                                    select new
+                                    {
+                                        NodeId = n.NodeId,
+                                        NodeName = n.NodeName,
+                                        IsBack = false,
+                                        ApplyMan = n.NodePeople,
+                                        ApplyTime ="",
+                                        Remark = "",
+                                        IsSend = ""
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
                 }
                 else
                 {
@@ -979,7 +990,7 @@ namespace DingTalk.Controllers
                     {
                         string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
-                        List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBack != false).ToList();
+                        List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBacked != false).ToList();
 
                         List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
                         List<object> ListObject = new List<object>();
@@ -1008,7 +1019,7 @@ namespace DingTalk.Controllers
                                     {
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
-                                        IsBack = tt == null ? false : tt.IsBack,
+                                        IsBack = tt == null ? false : tt.IsBacked,
                                         ApplyMan = tt == null ? n.NodePeople : tt.ApplyMan,
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,

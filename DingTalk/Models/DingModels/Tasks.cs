@@ -53,7 +53,7 @@ namespace DingTalk.Models.DingModels
 
         public string OldFileUrl { get; set; }
 
-        public bool? IsBack { get; set; }
+        public bool? IsBacked { get; set; }
 
         public string MediaId { get; set; }
 
