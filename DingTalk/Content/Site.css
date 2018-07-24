@@ -39,6 +39,9 @@ form{
     z-index: 666;
     overflow: hidden;
 }
+.redborder{
+    border:1px solid #333333;
+}
 
 /*总体布局*/
 body {

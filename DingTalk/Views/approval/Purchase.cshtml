@@ -50,15 +50,38 @@
         <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
         <el-table-column prop="Name" label="物料名称"></el-table-column>
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
-        <el-table-column prop="Unit" label="单位"></el-table-column>
-        <el-table-column prop="Price" label="单价"></el-table-column>
-        <el-table-column prop="Count" label="数量"></el-table-column>
-        <el-table-column prop="Purpose" label="用途"></el-table-column>
-        <el-table-column prop="UrgentDate" label="需用日期"></el-table-column>
-        <el-table-column prop="Mark" label="备注"></el-table-column>
-        <el-table-column label="操作" width="150">
+        @*<el-table-column prop="Unit" label="单位"></el-table-column>*@
+        <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>
+                <el-input v-model="scope.row.Price" prop="Price" style="width:200px;background-color:red;"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Count" label="数量" width="100">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Count" prop="Count"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Purpose" label="用途">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Purpose"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="UrgentDate" label="需用日期" width="160">
+            <template slot-scope="scope">
+                <el-date-picker v-model="scope.row.UrgentDate"
+                                type="date"
+                                placeholder="选择日期">
+                </el-date-picker>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Mark" label="备注">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Mark"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" width="80">
+            <template slot-scope="scope">
+                @*<el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>*@
                 <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-table-column>
