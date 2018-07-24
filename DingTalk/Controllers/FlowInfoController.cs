@@ -965,13 +965,24 @@ namespace DingTalk.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(TaskId))
+                if (string.IsNullOrEmpty(TaskId))  //尚未发起流程
                 {
-                    return JsonConvert.SerializeObject(new ErrorModel
+                    using (DDContext context =new DDContext ())
                     {
-                        errorCode = 2,
-                        errorMessage = "TaskId不能为空"
-                    });
+                        List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
+                        var Quary = from n in NodeInfoList
+                                    select new
+                                    {
+                                        NodeId = n.NodeId,
+                                        NodeName = n.NodeName,
+                                        IsBack = false,
+                                        ApplyMan = n.NodePeople,
+                                        ApplyTime ="",
+                                        Remark = "",
+                                        IsSend = ""
+                                    };
+                        return JsonConvert.SerializeObject(Quary);
+                    }
                 }
                 else
                 {
