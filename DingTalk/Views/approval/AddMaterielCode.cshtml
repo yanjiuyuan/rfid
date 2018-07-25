@@ -1,0 +1,159 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        添加物料编码审批
+    </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
+
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" disabled></el-input>
+        </el-form-item>
+        <!--办公用品明细-->
+        <template v-for="(good,index) in ruleForm.goods">
+            <hr />
+            <el-form-item :label="'物料('+(index+1)+')'">
+                <el-button v-on:click="deleteGood(index)" v-if="index>0"
+                           type="danger" style="float:right;" plain>
+                    删除
+                </el-button>
+            </el-form-item>
+            <br />
+            <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) >=0"
+                          :label="meterielConfig[gk]" :rules="{ required: true, message: meterielConfig[gk]+'不能为空', trigger: 'blur'}"
+                          :prop="'goods.' + index + '.' + gk">
+                <el-input v-model="good[gk]"></el-input>
+            </el-form-item>
+            
+            <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) <0"
+                          :label="meterielConfig[gk]">
+                <el-input v-model="good[gk]"></el-input>
+            </el-form-item>
+        </template>
+        <p class="hint">如需添加申请项，请点击“添加明细”</p>
+        <el-button v-on:click="addGoods" type="primary" plain> + 添加明细</el-button>
+        <hr />
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
+
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
+            
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var meterielConfig = {
+        BigCode: '物料大类编码', 
+        SmallCode: '物料小类编码',
+        Name: '物料名称',
+        Unit: '单位',
+        Standard: '型号规格',
+        SurfaceTreatment: '表面处理',
+        PerformanceLevel: '性能等级',
+        StandardNumber: '标准号',
+        Features: '典型特征',
+        purpose: '用途',
+        Remark: '备注'
+    }
+    var meteriel = {}
+    for (let m in meterielConfig) {
+        meteriel[m] = ''
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                nodeList: [],
+                nodeInfo: {},
+                meterielConfig: meterielConfig,
+                meteriel: meteriel,
+                needInput: ['BigCode', 'SmallCode','Name'],
+                ruleForm: {
+                    name: DingData.nickName,
+                    goods: [_cloneObj(meteriel)]
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                var that = this
+                console.log('submit!')
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        var paramArr = []
+                        paramArr.push({
+                            "ApplyMan": DingData.nickName,
+                            "ApplyManId": DingData.userid,
+                            "NodeId": "0",
+                            "ApplyTime": _getTime(),
+                            "IsEnable": "1",
+                            "FlowId": FlowId + '',
+                            "IsSend": false,
+                            "State": "1"
+                        })
+                        console.log("提交审批 paramArr ")
+                        console.log(paramArr)
+                        $.ajax({
+                            url: '/FlowInfo/CreateTaskInfo',
+                            type: 'POST',
+                            data: JSON.stringify(paramArr),
+                            success: function (data) {
+                                console.log("提交审批ok!")
+                                var taskId = JSON.parse(data).Content
+                                console.log(data)
+                                console.log(taskId)
+                                that.bindAll(taskId)
+                            }
+                        })
+                    }
+                    else {
+                        this.$alert('表单有必填项未填', '提交错误', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                })
+            },
+            bindAll(taskId) {
+                var that = this
+                var paramArr = []
+                for (let p of this.ruleForm.goods) {
+                    p.TaskId = taskId
+                    paramArr.push(p)
+                }
+                console.log("物料申請批量保存 paramArr ")
+                console.log(paramArr)
+                $.ajax({
+                    url: '/ItemCodeAdd/TableSave',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data:paramArr,
+                    success: function (data) {
+                        console.log("采购表单批量保存ok")
+                        console.log(data)
+                    }
+                })
+            },
+            addGoods() {
+                this.ruleForm.goods.push(_cloneObj(meteriel))
+            },
+            deleteGood(index) {
+                this.ruleForm.goods.splice(index, 1)
+            }
+        },
+        created: function () {
+            this.getNodeInfo()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>

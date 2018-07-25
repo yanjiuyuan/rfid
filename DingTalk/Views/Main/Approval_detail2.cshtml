@@ -198,29 +198,29 @@
                 })
             },
             //获取审批/抄送 相关人员列表GetFlowProgress
-            getNodeList() {
-                var that = this
-                $.ajax({
-                    url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        for (let d of data[0]) {
-                            if (d.ApplyMan)
-                                d["NodePeople"] = d.ApplyMan.split(',')
-                            if (d.NodeId == 0)
-                                d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
-                            d['AddPeople'] = []
-                        }
-                        console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
-                        console.log(data)
-                        that.nodeList = data[0]
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
+            //getNodeList() {
+            //    var that = this
+            //    $.ajax({
+            //        url: "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId,
+            //        type: "GET",
+            //        dataType: "json",
+            //        success: function (data) {
+            //            for (let d of data[0]) {
+            //                if (d.ApplyMan)
+            //                    d["NodePeople"] = d.ApplyMan.split(',')
+            //                if (d.NodeId == 0)
+            //                    d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
+            //                d['AddPeople'] = []
+            //            }
+            //            console.log("相关人员列表/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId)
+            //            console.log(data)
+            //            that.nodeList = data[0]
+            //        },
+            //        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            //            console.log(XMLHttpRequest.status);
+            //        }
+            //    })
+            //},
             //获取bom表信息-任务零件列表
             getBomInfo() {
                 var that = this
@@ -249,7 +249,7 @@
             }
         },
         created: function () {
-            this.getNodeList()
+            //this.getNodeList()
             this.getNodeInfo()
             this.getProjects()
             this.getBomInfo()

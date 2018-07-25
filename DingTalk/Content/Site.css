@@ -39,8 +39,8 @@ form{
     z-index: 666;
     overflow: hidden;
 }
-.redborder{
-    border:1px solid #333333;
+.redborder input{
+    border: 1px solid #F56C6C;
 }
 
 /*总体布局*/
