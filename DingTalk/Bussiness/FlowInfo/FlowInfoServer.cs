@@ -75,7 +75,7 @@ namespace DingTalk.Bussiness.FlowInfo
         {
             using (DDContext context = new DDContext())
             {
-                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true && u.TaskId.ToString()== TaskId).First();
+                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true && u.TaskId.ToString() == TaskId).First();
                 return task;
             }
         }
@@ -84,7 +84,7 @@ namespace DingTalk.Bussiness.FlowInfo
         /// <summary>
         /// 返回已审批完成的任务流
         /// </summary>
-        /// <returns>List<Tasks></returns>
+        /// <returns>ListTasks</returns>
         public static List<Tasks> ReturnUnFinishedTaskId(string FlowId)
         {
             List<Tasks> ListTaskFinall = new List<Tasks>();
@@ -95,7 +95,7 @@ namespace DingTalk.Bussiness.FlowInfo
 
                 ListTaskFinall = (from tf in ListTaskFinished
                                   where
- !(from t in ListTask select t.TaskId).Contains(tf.TaskId)
+                                !(from t in ListTask select t.TaskId).Contains(tf.TaskId)
                                   select tf).ToList();
             }
             return ListTaskFinall;

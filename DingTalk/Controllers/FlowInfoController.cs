@@ -292,7 +292,7 @@ namespace DingTalk.Controllers
                             newTask.IsBacked = true;
                             context.Entry<Tasks>(newTask).State = EntityState.Modified;
                             context.SaveChanges();
-                            
+
                             newTask.ApplyTime = null;
                             newTask.State = 0;
                             newTask.IsBacked = false;
@@ -415,7 +415,7 @@ namespace DingTalk.Controllers
                         var QuaryList = from a in TasksList
                                         join b in NodeInfoList
                                         on a.NodeId equals b.NodeId
-                                        orderby b.NodeId ascending 
+                                        orderby b.NodeId ascending
                                         select new
                                         {
                                             NodeId = a.NodeId,
@@ -709,7 +709,7 @@ namespace DingTalk.Controllers
         }
 
         #endregion
-          
+
         #region 流程类别及数据读取
         /// <summary>
         /// 流程界面信息读取接口
@@ -967,10 +967,10 @@ namespace DingTalk.Controllers
             {
                 if (string.IsNullOrEmpty(TaskId))  //尚未发起流程
                 {
-                    using (DDContext context =new DDContext ())
+                    using (DDContext context = new DDContext())
                     {
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
-                      
+
                         var Quary = from n in NodeInfoList
                                     select new
                                     {
@@ -978,7 +978,7 @@ namespace DingTalk.Controllers
                                         NodeName = n.NodeName,
                                         IsBack = false,
                                         ApplyMan = n.NodePeople,
-                                        ApplyTime ="",
+                                        ApplyTime = "",
                                         Remark = "",
                                         IsSend = ""
                                     };
@@ -992,7 +992,6 @@ namespace DingTalk.Controllers
                         string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBacked != false).ToList();
-
                         List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
                         //List<object> ListObject = new List<object>();
                         //var QuaryChose = from n in ChoseNodeInfoList
