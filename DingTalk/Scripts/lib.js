@@ -433,6 +433,7 @@ Vue.component('sam-approver-list', {
                             </template>
 
                            <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
+                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
@@ -451,7 +452,6 @@ Vue.component('sam-approver-list', {
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
-                                <el-button v-if="!specialRoleNames||specialRoleNames.length==0" class="button-new-tag" size="small" v-on:click="addPeople(node.NodeId,node.NodeName)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
@@ -472,6 +472,7 @@ Vue.component('sam-approver-list', {
     data: function () {
         return {
             inputValue: '',
+            NodeId: 0,
             member1: '',
             member2: '',
             inputVisible: false
@@ -482,7 +483,7 @@ Vue.component('sam-approver-list', {
 
         },
         //选人控件添加
-        addPeople(nodeId, nodename) {
+        addMember(nodeId, nodename) {
             var that = this
             DingTalkPC.biz.contact.choose({
                 multiple: !that.single, //是否多选： true多选 false单选； 默认true
@@ -492,15 +493,13 @@ Vue.component('sam-approver-list', {
                 onSuccess: function (data) {
                     console.log(nodeId)
                     console.log(data)
-                    for (let node of that.nodelist) {
+                    var tmp = _cloneArr(that.nodelist)
+                    for (let node of tmp) {
                         if (node.NodeId == nodeId) {
-                            node.AddPeople = []
-                            for (let d of data) {
-                                d["RoleName"] = nodename
-                                node.AddPeople.push(d)
-                            }
+                            node.AddPeople = data
                         }
                     }
+                    that.nodelist = tmp
                     console.log(that.nodelist)
                 },
                 onFail: function (err) { }
@@ -545,6 +544,7 @@ Vue.component('sam-approver-list', {
         }
     },
     computed: {
+        
     }
 })
 Vue.component('sam-addapprover', {
