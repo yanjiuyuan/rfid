@@ -334,6 +334,13 @@ var mixin = {
                     loadPage('/main/Approval')
                 }
             });
+        },
+        //element彈窗
+        elementAlert(title, text) {
+            var that = this
+            that.$alert(text, title, {
+                confirmButtonText: '确定'
+            });
         }
     }
 }
