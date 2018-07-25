@@ -262,8 +262,8 @@ var mixin = {
         getNodeInfo() {
             var that = this
             //var url = "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId
-            var url = "/FlowInfo/GetSign?NodeId=" + NodeId + "&FlowId=" + FlowId
-            if (NodeId == 0) {
+            var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
+            if (TaskId == 0) {
                 //url = "/FlowInfo/GetNodeInfo?" + "FlowId=" + FlowId
                 url = "/FlowInfo/GetSign?FlowId=" + FlowId
             }
@@ -271,7 +271,7 @@ var mixin = {
                 url: url,
                 type: "GET",
                 success: function (result) {
-                    console.log("获取节点数据 GetNodeInfo")
+                    console.log("获取节点数据 GetSign nodeList")
                     result = JSON.parse(result)
                     console.log(url)
                     console.log(result)
@@ -394,7 +394,7 @@ Vue.component('sam-approver-list', {
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
-                            <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;">
+                            <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
                                 {{node.NodeName}}
                             </el-tag>
 
@@ -420,7 +420,7 @@ Vue.component('sam-approver-list', {
                             
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
-                                <el-tag :key="a"
+                                <el-tag :key="a" 
                                         :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
                                         v-if="node.AddPeople.length>0"
@@ -485,6 +485,7 @@ Vue.component('sam-approver-list', {
         //选人控件添加
         addMember(nodeId, nodename) {
             var that = this
+
             DingTalkPC.biz.contact.choose({
                 multiple: !that.single, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
@@ -493,13 +494,14 @@ Vue.component('sam-approver-list', {
                 onSuccess: function (data) {
                     console.log(nodeId)
                     console.log(data)
-                    var tmp = _cloneArr(that.nodelist)
-                    for (let node of tmp) {
+                    for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
-                            node.AddPeople = data
+                            for (let d of data) {
+                                node.AddPeople.push(d)
+                                $("#" + nodeId).after('<span class="el-tag" style="width: 60px; text-align: center; ">' + d.name + '</span >')
+                            }
                         }
                     }
-                    that.nodelist = tmp
                     console.log(that.nodelist)
                 },
                 onFail: function (err) { }
