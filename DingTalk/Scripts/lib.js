@@ -428,11 +428,12 @@ Vue.component('sam-approver-list', {
                                         :type="node.ApplyTime?'success':''"
                                         style="width:60px;text-align:center;"
                                         >
-                                    {{ap.name}}
+                                    {{returnValue(ap)}}
                                 </el-tag>
                             </template>
 
                            <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
+                                <el-button class="button-new-tag" size="small" v-on:click="addPeople(node.NodeId,node.NodeName)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
@@ -451,7 +452,6 @@ Vue.component('sam-approver-list', {
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
-                                <el-button v-if="!specialRoleNames||specialRoleNames.length==0" class="button-new-tag" size="small" v-on:click="addPeople(node.NodeId,node.NodeName)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
@@ -483,6 +483,12 @@ Vue.component('sam-approver-list', {
         },
         //选人控件添加
         addPeople(nodeId, nodename) {
+            for (let node of this.nodelist) {
+                if (node.NodeId != nodeId)
+                    continue
+                node.AddPeople = '6'
+            }
+            return
             var that = this
             DingTalkPC.biz.contact.choose({
                 multiple: !that.single, //是否多选： true多选 false单选； 默认true
@@ -508,6 +514,12 @@ Vue.component('sam-approver-list', {
         },
         //下拉框选人添加
         selectSpecialMember(userInfo, nodeId) {
+            for (let node of this.nodelist) {
+                if (node.NodeId != nodeId)
+                    continue
+                node.AddPeople = '六'
+            }
+            return
             console.log(userInfo)
             userInfo = JSON.parse(userInfo)
             console.log(userInfo)
@@ -517,6 +529,9 @@ Vue.component('sam-approver-list', {
                     continue
                 node.AddPeople = [userInfo]
             }
+        },
+        returnValue(value) {
+            return value
         },
 
         deletePeople(emplId) {
@@ -545,6 +560,9 @@ Vue.component('sam-approver-list', {
         }
     },
     computed: {
+        tagName: function (nodeId, index) {
+
+        }
     }
 })
 Vue.component('sam-addapprover', {
