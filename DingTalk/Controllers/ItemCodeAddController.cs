@@ -19,18 +19,21 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 表单保存接口
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="codeList"></param>
         /// <returns>"{\"errorCode\":0,\"errorMessage\":\"保存成功\",\"Content\":null,\"IsError\":false}"</returns>
         /// 测试数据：{"TaskId":"流水号","CodeNumber":"物料编码","BigCode":"物料大类编码","SmallCode":"小类编码","Name":"物料名称","Unit":"单位","Standard":"型号规格","SurfaceTreatment":"表面处理","PerformanceLevel":"性能等级","StandardNumber":"标准号","Features":"典型特征","purpose":"用途","Remark":"备注"}
         [Route("TableSave")]
         [HttpPost]
-        public Object TableSave([FromBody] Code code)
+        public Object TableSave([FromBody] List<Code> codeList)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    context.Code.Add(code);
+                    foreach (var code in codeList)
+                    {
+                        context.Code.Add(code);
+                    }
                     context.SaveChanges();
                     return new ErrorModel
                     {
