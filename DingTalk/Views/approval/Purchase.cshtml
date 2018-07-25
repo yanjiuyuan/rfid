@@ -53,12 +53,12 @@
         @*<el-table-column prop="Unit" label="单位"></el-table-column>*@
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price" prop="Price" style="width:200px;background-color:red;"></el-input>
+                <el-input v-model="scope.row.Price" prop="Price" :class="{ redborder:scope.row.Price ==''}"></el-input>
             </template>
         </el-table-column>
         <el-table-column prop="Count" label="数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Count" prop="Count"></el-input>
+                <el-input v-model="scope.row.Count" prop="Count" :class="{ redborder:scope.row.Count ==''}"></el-input>
             </template>
         </el-table-column>
         <el-table-column prop="Purpose" label="用途">
@@ -68,7 +68,7 @@
         </el-table-column>
         <el-table-column prop="UrgentDate" label="需用日期" width="160">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.UrgentDate"
+                <el-date-picker v-model="scope.row.UrgentDate" :class="{ redborder:scope.row.UrgentDate ==''}"
                                 type="date"
                                 placeholder="选择日期">
                 </el-date-picker>
@@ -172,7 +172,7 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="false"
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <el-form-item>
@@ -381,9 +381,9 @@
             }
         },
         created: function () {
+            //FlowId = 6
             this.getNodeInfo()
             this.getProjects()
-            //this.getNodeList()
             //this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
         }

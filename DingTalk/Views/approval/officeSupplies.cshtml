@@ -1,4 +1,7 @@
-﻿@{
+﻿
+
+
+@{
     Layout = null;
 }
 
@@ -10,16 +13,17 @@
         办公用品申请
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        
+
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <!--办公用品明细-->
-        <template v-for="(good,index) in ruleForm.goods" >
+        <template v-for="(good,index) in ruleForm.goods">
             <hr />
             <el-form-item :label="'品名('+(index+1)+')'">
                 <el-button v-on:click="deleteGood(index)" v-if="index>0"
-                           type="danger" style="float:right;" plain>删除
+                           type="danger" style="float:right;" plain>
+                    删除
                 </el-button>
             </el-form-item>
             <el-form-item label="名称" :rules="{ required: true, message: '名称不能为空', trigger: 'blur'}"
@@ -56,7 +60,7 @@
 </el-main>
 
 <script>
-    
+
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -88,7 +92,7 @@
                 })
             },
             deleteGood(index) {
-                this.ruleForm.goods.splice(index,1)
+                this.ruleForm.goods.splice(index, 1)
             }
         },
         created: function () {

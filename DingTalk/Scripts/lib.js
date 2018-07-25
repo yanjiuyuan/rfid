@@ -175,6 +175,7 @@ var mixin = {
             }
         ],
         specialRoleNames: [],
+        preApprove: true,
         isBack: false,
         disablePage: false,
         rules: {
@@ -260,9 +261,12 @@ var mixin = {
         //获取节点数据GetNodeInfo
         getNodeInfo() {
             var that = this
-            var url = "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId
-            if (NodeId == 0)
-                url = "/FlowInfo/GetNodeInfo?" + "FlowId=" + FlowId
+            //var url = "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId
+            var url = "/FlowInfo/GetSign?NodeId=" + NodeId + "&FlowId=" + FlowId
+            if (NodeId == 0) {
+                //url = "/FlowInfo/GetNodeInfo?" + "FlowId=" + FlowId
+                url = "/FlowInfo/GetSign?FlowId=" + FlowId
+            }
             $.ajax({
                 url: url,
                 type: "GET",
@@ -275,10 +279,10 @@ var mixin = {
                     if (NodeId == 0) {
                         that.nodeList = _cloneArr(result)
                         for (let node of that.nodeList) {
-                            if (node.NodePeople)
-                                node.NodePeople = node.NodePeople.split(',')
+                            if (node.ApplyMan)
+                                node.NodePeople = node.ApplyMan.split(',')
                             if (node.NodeId == 0)
-                                node.NodePeople = [DingData.nickName]//["temp"]//[d.ApplyMan]
+                                node.NodePeople = [DingData.nickName]
                             node['AddPeople'] = []
                         }
                     }
@@ -309,31 +313,31 @@ var mixin = {
             })
         },
         //获取审批/抄送 相关人员列表GetFlowProgress
-        getNodeList() {
-            var that = this
-            var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log("相关人员列表")
-                    console.log(url)
-                    console.log(data)
-                    for (let d of data[0]) {
-                        if (d.ApplyMan)
-                            d["NodePeople"] = d.ApplyMan.split(',')
-                        if (d.NodeId == 0)
-                            d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
-                        d['AddPeople'] = []
-                    }
-                    that.nodeList = data[0]
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        },
+        //getNodeList() {
+        //    var that = this
+        //    var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
+        //    $.ajax({
+        //        url: url,
+        //        type: "GET",
+        //        dataType: "json",
+        //        success: function (data) {
+        //            console.log("相关人员列表")
+        //            console.log(url)
+        //            console.log(data)
+        //            for (let d of data[0]) {
+        //                if (d.ApplyMan)
+        //                    d["NodePeople"] = d.ApplyMan.split(',')
+        //                if (d.NodeId == 0)
+        //                    d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
+        //                d['AddPeople'] = []
+        //            }
+        //            that.nodeList = data[0]
+        //        },
+        //        error: function (err) {
+        //            console.log(err);
+        //        }
+        //    })
+        //},
         //审批所有流程通过，后续处理
         doneSubmit() {
             this.$alert('提交审批成功', '提交成功', {
@@ -419,7 +423,7 @@ Vue.component('sam-approver-list', {
                                 <el-tag :key="a"
                                         :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
-                                        onclick="" v-if="node.AddPeople.length>0"
+                                        v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
                                         style="width:60px;text-align:center;"
@@ -428,7 +432,7 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                            <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
+                           <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
@@ -438,7 +442,7 @@ Vue.component('sam-approver-list', {
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
-                            <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[1] && role.name == node.NodeName"" v-model="member2"
+                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[1] && role.name == node.NodeName"" v-model="member2"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member2,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
@@ -447,7 +451,7 @@ Vue.component('sam-approver-list', {
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
-                                <el-button v-if="!specialRoleNames" class="button-new-tag" size="small" v-on:click="addPeople(node.NodeId)">+ 选人</el-button>
+                                <el-button v-if="!specialRoleNames||specialRoleNames.length==0" class="button-new-tag" size="small" v-on:click="addPeople(node.NodeId,node.NodeName)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
@@ -478,22 +482,25 @@ Vue.component('sam-approver-list', {
 
         },
         //选人控件添加
-        addPeople(nodeid) {
+        addPeople(nodeId, nodename) {
             var that = this
-            console.log('addPeople')
             DingTalkPC.biz.contact.choose({
                 multiple: !that.single, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
                 onSuccess: function (data) {
-                    console.log(that.nodeid)
-                    for (let node of that.nodelist) {
-                        if (node.NodeId != nodeid) 
-                            continue
-                        node.AddPeople = data
-                    }
+                    console.log(nodeId)
                     console.log(data)
+                    for (let node of that.nodelist) {
+                        if (node.NodeId == nodeId) {
+                            node.AddPeople = []
+                            for (let d of data) {
+                                d["RoleName"] = nodename
+                                node.AddPeople.push(d)
+                            }
+                        }
+                    }
                     console.log(that.nodelist)
                 },
                 onFail: function (err) { }
@@ -501,6 +508,7 @@ Vue.component('sam-approver-list', {
         },
         //下拉框选人添加
         selectSpecialMember(userInfo, nodeId) {
+            console.log(userInfo)
             userInfo = JSON.parse(userInfo)
             console.log(userInfo)
             console.log(nodeId)
