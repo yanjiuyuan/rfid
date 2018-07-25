@@ -709,7 +709,7 @@ namespace DingTalk.Controllers
         }
 
         #endregion
-
+          
         #region 流程类别及数据读取
         /// <summary>
         /// 流程界面信息读取接口
@@ -970,6 +970,7 @@ namespace DingTalk.Controllers
                     using (DDContext context =new DDContext ())
                     {
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
+                      
                         var Quary = from n in NodeInfoList
                                     select new
                                     {
@@ -993,7 +994,7 @@ namespace DingTalk.Controllers
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBacked != false).ToList();
 
                         List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
-                        List<object> ListObject = new List<object>();
+                        //List<object> ListObject = new List<object>();
                         //var QuaryChose = from n in ChoseNodeInfoList
                         //                 join t in TaskList
                         //                 on n.NodeId equals t.NodeId
@@ -1025,8 +1026,7 @@ namespace DingTalk.Controllers
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? false : tt.IsSend
                                     };
-                        ListObject.Add(Quary);
-                        return JsonConvert.SerializeObject(ListObject);
+                        return JsonConvert.SerializeObject(Quary);
                     }
                 }
             }
