@@ -258,13 +258,11 @@ var mixin = {
             })
         },
 
-        //获取节点数据GetNodeInfo
+        //获取审批/抄送 相关人员列表
         getNodeInfo() {
             var that = this
-            //var url = "/FlowInfo/GetNodeInfo?NodeId=" + NodeId + "&FlowId=" + FlowId
             var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
-            if (TaskId == 0) {
-                //url = "/FlowInfo/GetNodeInfo?" + "FlowId=" + FlowId
+            if (TaskId == 0 || TaskId == '0') {
                 url = "/FlowInfo/GetSign?FlowId=" + FlowId
             }
             $.ajax({
@@ -276,17 +274,15 @@ var mixin = {
                     console.log(url)
                     console.log(result)
                     that.isBack = result[0].IsBack
-                    if (NodeId == 0) {
-                        that.nodeList = _cloneArr(result)
-                        for (let node of that.nodeList) {
-                            if (node.ApplyMan)
-                                node.NodePeople = node.ApplyMan.split(',')
-                            if (node.NodeId == 0)
-                                node.NodePeople = [DingData.nickName]
-                            node['AddPeople'] = []
+                    that.nodeList = _cloneArr(result)
+                    for (let node of that.nodeList) {
+                        if (node.ApplyMan)
+                            node.NodePeople = node.ApplyMan.split(',')
+                        if (node.NodeId == 0)
+                            node.NodePeople = [DingData.nickName]
+                        node['AddPeople'] = []
                         }
-                    }
-                    that.nodeInfo = $.extend(true, {}, result[0])
+                    
                     //that.preApprove = !data[0].IsNeedChose
                 },
                 error: function (err) {
@@ -312,32 +308,24 @@ var mixin = {
                 }
             })
         },
-        //获取审批/抄送 相关人员列表GetFlowProgress
-        //getNodeList() {
-        //    var that = this
-        //    var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
-        //    $.ajax({
-        //        url: url,
-        //        type: "GET",
-        //        dataType: "json",
-        //        success: function (data) {
-        //            console.log("相关人员列表")
-        //            console.log(url)
-        //            console.log(data)
-        //            for (let d of data[0]) {
-        //                if (d.ApplyMan)
-        //                    d["NodePeople"] = d.ApplyMan.split(',')
-        //                if (d.NodeId == 0)
-        //                    d["NodePeople"] = [d.ApplyMan]//["temp"]//[d.ApplyMan]
-        //                d['AddPeople'] = []
-        //            }
-        //            that.nodeList = data[0]
-        //        },
-        //        error: function (err) {
-        //            console.log(err);
-        //        }
-        //    })
-        //},
+        //获取審批節點數據
+        getApproInfo() {
+            var that = this
+            var url = "/FlowInfo/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
+            $.ajax({
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    console.log("當前節點信息")
+                    console.log(url)
+                    console.log(data)
+                    that.nodeInfo = data[0]
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        },
         //审批所有流程通过，后续处理
         doneSubmit() {
             this.$alert('提交审批成功', '提交成功', {
