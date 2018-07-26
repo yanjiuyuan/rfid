@@ -75,7 +75,7 @@ namespace DingTalk.Bussiness.FlowInfo
         {
             using (DDContext context = new DDContext())
             {
-                Tasks task = context.Tasks.Where(u => u.NodeId == 0  && u.TaskId.ToString() == TaskId).First();
+                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.TaskId.ToString() == TaskId).First();
                 return task;
             }
         }
@@ -132,6 +132,33 @@ namespace DingTalk.Bussiness.FlowInfo
                 List<Tasks> TaskList = new List<Tasks>();
                 TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.State == 0 && u.NodeId.ToString() == NodeId).ToList();
                 return TaskList;
+            }
+        }
+
+        /// <summary>
+        /// 获取当前流程状态
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <returns>0 未完成 1 已完成 2 被退回</returns>
+        public int GetTasksState(string TaskId)
+        {
+            using (DDContext context = new DDContext())
+            {
+                List<Tasks> tasksListBack = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsBacked == true).ToList();
+                if (tasksListBack.Count > 0)
+                {
+                    return 2;
+                }
+                List<Tasks> tasksListFinished = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
+                if (tasksListFinished.Count > 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+
             }
         }
 

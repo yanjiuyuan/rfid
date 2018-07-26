@@ -869,7 +869,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
         /// <param name="ApplyManId">用户名Id</param>
-        /// <returns></returns>
+        /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=蔡兴桐Id
         [HttpGet]
         public string GetFlowStateDetail(int Index, string ApplyManId)
@@ -919,11 +919,12 @@ namespace DingTalk.Controllers
 
         public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId)
         {
+            FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<Object> listQuary = new List<object>();
 
             foreach (int TaskId in ListTasks)
             {
-                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u=>u.Id).Select(u => u.NodeId).ToList().First();
+                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
@@ -941,7 +942,7 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
-                                  State = t.State,
+                                  State = flowInfoServer.GetTasksState(t.TaskId.ToString()),
                                   IsBack = t.IsBacked
                               });
             }
