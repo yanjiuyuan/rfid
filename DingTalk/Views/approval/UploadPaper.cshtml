@@ -17,8 +17,7 @@
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
-            <el-pagination 
-                           v-on:current-change="handleBomPageChange($event,index)"
+            <el-pagination v-on:current-change="handleBomPageChange($event,index)"
                            :current-page="d.currentPage"
                            :page-sizes="[5]"
                            :page-size="5"
@@ -32,6 +31,7 @@
                    action="/drawingupload/UploadAndGetInfo"
                    :on-success="handleSuccess"
                    @*:before-remove="beforeRemove"*@
+                   :before-upload="beforeExcelUpload"
                    multiple
                    :limit="1"
                    :on-exceed="handleExceed"
@@ -41,90 +41,95 @@
         </el-upload>
         @*</el-form-item>*@
     </template>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
-                 id="uploadForm" enctype="multipart/form-data">
-            <el-form-item label="项目名" prop="ProjectId">
-                <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
-                    <el-option v-for="item in projestList"
-                               :key="item.ProjectId"
-                               :label="item.ProjectName"
-                               :value="item.ProjectId">
-                        <span style="float: left">{{ item.ProjectName }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px"></span>
-                    </el-option>
-                </el-select>
-                @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
-            </el-form-item>
+    <div style="margin:10px;">
+        <span>上传所需excel模板 - > </span><el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+    </div>
 
-            <el-form-item label="申请人" prop="name">
-                <el-input v-model="ruleForm.name" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="建议" prop="remark">
-                <el-input v-model="ruleForm.remark"></el-input>
-            </el-form-item>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
+                <el-option v-for="item in projestList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left">{{ item.ProjectName }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+        </el-form-item>
 
-            <el-form-item label="上传图片">
-                <el-upload action="/drawingupload/Upload"
-                           list-type="picture-card"
-                           :file-list="imageList"
-                           :on-preview="handlePictureCardPreview"
-                           :on-remove="handlePictureRemove"
-                           :on-success="handlePictureCardSuccess"
-                           :before-upload="beforePictureUpload">
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                </el-dialog>
-            </el-form-item>
-            <el-form-item label="上传PDF图纸" required="required">
-                <el-upload class="upload-demo"
-                           drag
-                           :file-list="pdfList"
-                           action="/drawingupload/Upload"
-                           :on-remove="handleFileRemove"
-                           :before-remove="isPdfFile = true"
-                           :before-upload="beforePdfFileUpload"
-                           :on-success="handleFileCardSuccess"
-                           multiple>
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">不超过30M</div>
-                </el-upload>
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
 
-            </el-form-item>
-            <el-form-item label="上传其他附件" required="required">
-                <el-upload class="upload-demo"
-                           drag
-                           :file-list="fileList"
-                           action="/drawingupload/Upload"
-                           :on-remove="handleFileRemove"
-                           :before-remove="isPdfFile = false"
-                           :before-upload="beforeFileUpload"
-                           :on-success="handleFileCardSuccess"
-                           multiple>
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">不超过30M</div>
-                </el-upload>
-            </el-form-item>
+        <el-form-item label="上传图片">
+            <el-upload action="/drawingupload/Upload"
+                       list-type="picture-card"
+                       :file-list="imageList"
+                       :on-preview="handlePictureCardPreview"
+                       :on-remove="handlePictureRemove"
+                       :on-success="handlePictureCardSuccess"
+                       :before-upload="beforePictureUpload">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+        </el-form-item>
+        <el-form-item label="上传PDF图纸" required="required">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="pdfList"
+                       action="/drawingupload/Upload"
+                       :on-remove="handleFileRemove"
+                       :before-remove="isPdfFile = true"
+                       :before-upload="beforePdfFileUpload"
+                       :on-success="handleFileCardSuccess"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">不超过30M</div>
+            </el-upload>
 
-            <!--添加审批人-->
-            <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames"
-                               :nodeid="nodeInfo.NodeId">
-            </sam-approver-list>
-            <!--添加抄送人-->
-            @*<sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
-        </sam-addapprover>*@
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-                <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
-            </el-form-item>
-        </el-form>
+        </el-form-item>
+        <el-form-item label="上传其他附件" required="required">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="fileList"
+                       action="/drawingupload/Upload"
+                       :on-remove="handleFileRemove"
+                       :before-remove="isPdfFile = false"
+                       :before-upload="beforeFileUpload"
+                       :on-success="handleFileCardSuccess"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">不超过30M</div>
+            </el-upload>
+        </el-form-item>
+
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
+        <!--添加抄送人-->
+        @*<sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
+            </sam-addapprover>*@
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
 </el-main>
 
 <script>
+    var mediaId = '@@lAvPBY0V46-mC3TObpYruc56rmPJ'
     var upBom = []
     var isPdf = false
     var demo = new Vue({
@@ -135,6 +140,7 @@
                 preApprove: false,
                 preCopy: false,
                 isPdfFile: false,
+                mediaId: mediaId,
                 pdfList: [],
                 excelList: [],
                 fileList: [],
@@ -444,7 +450,7 @@
                 this.dataArr[this.bomIndex].tableData = this.tableData
             },
             handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+                this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
@@ -543,6 +549,21 @@
                 }
                 return true
             },
+            beforeExcelUpload(file) {
+                console.log('before excel')
+                console.log(file)
+                const isExcel = file.name.substr(-3) == 'xls'
+                const isLt2M = file.size / 1024 / 1024 < 2
+                if (!isExcel) {
+                    this.$message.error('上传图片只能是 excel 文件!')
+                    return false
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!')
+                    return false
+                }
+                return true
+            },
             beforePdfFileUpload(file) {
                 console.log('before pdf')
                 console.log(file)
@@ -578,7 +599,7 @@
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
-
+            
             //加载重新发起审批传递的数据
             loadReApprovalData() {
                 //ReApprovalTempData = {
@@ -636,6 +657,7 @@
             //FlowId = 8
             this.getNodeInfo()
             this.getProjects()
+            this.getApproInfo()
             this.loadReApprovalData()
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)

@@ -54,7 +54,7 @@
         <el-table-column prop="Title" label="标题"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
-        @*<el-table-column v-if="Index == '3'" prop="State" label="状态"></el-table-column>*@
+        <el-table-column v-if="Index != '0'" prop="State" label="状态"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
@@ -119,6 +119,7 @@
                         console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
                         console.log(data)
                         for (let d of data) {
+                            d[0].State == 1 ? d[0].State = '已完成' : d[0].State = '未完成'
                             that.data.push(d[0])
                         }
                         //that.tableData = data

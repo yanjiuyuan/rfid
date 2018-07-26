@@ -29,7 +29,7 @@ form{
     color: #409EFF;
     cursor: pointer;
 }
-.mask {
+.mask ,.mask-super{
     position: fixed;
     top: 0px;
     left: 0px;
@@ -39,7 +39,16 @@ form{
     z-index: 666;
     overflow: hidden;
 }
-.redborder input{
+.mask-super{
+    z-index: 2002;
+}
+.loading {
+    position: fixed;
+    top: 20%;
+    left: 40%;
+    z-index: 2666;
+}
+.redborder input {
     border: 1px solid #F56C6C;
 }
 

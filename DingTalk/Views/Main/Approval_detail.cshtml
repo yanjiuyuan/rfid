@@ -55,7 +55,7 @@
             </el-pagination>
         </div>
     </template>
-    
+
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
@@ -151,7 +151,7 @@
                         <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>
                         <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
                             <span>
-                                <button id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
+                                <button v-if="index == 0" id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
                                 @*<button id="tools_undo">撤回</button>&nbsp;&nbsp;&nbsp;
                                     <button id="tools_redo">redo</button>*@
                             </span>
@@ -235,12 +235,17 @@
             <span id="show" style="display:none;"></span>
 
         </div>
-        <div class="mask" id="mask"></div>
+
         @*<canvas id="the-canvas"
             style="position:fixed;left:0;top:0;width:80%;height:100%;z-index:10086;"></canvas>*@
         @*<i class="el-icon-circle-close" v-on:click="hideFrame"
             style="position:fixed;right:10px;top:10px;z-index:10086;font-size:100px;"></i>*@
     </div>
+    <div class="mask" id="mask"></div>
+    @*<div class="mask-super" id="mask-super"></div>
+    <el-progress class="loading" type="circle" :percentage="tick" status="exception" :width="300"></el-progress>*@
+    <!--显示加載過程-->
+
 
 </el-main>
 <script>
@@ -264,6 +269,8 @@
         var Index = UrlObj.index
     }
     $("#mask").hide()
+    //$("#mask-super").hide()
+    //$(".loading").hide()
     var items = {}
     var allData = {}
     var imageList = []
@@ -280,6 +287,9 @@
                 MaterialScience: '材料',
                 Unit: '单位',
                 Sorts: '类别',
+                SingleWeight: '单重',
+                AllWeight: '总重',
+                NeedTime: '需用日期',
                 Mark: '备注'
             }
             bomUrl = "/DrawingUpload/GetPurchase?TaskId=" + TaskId
@@ -333,6 +343,7 @@
                 nodeInfo: {},
                 nodeList: [],
                 ruleForm: {},
+                tick: 50,
                 dataArr: [
                     {
                         data: [],
@@ -615,7 +626,7 @@
                     pdfMediaId = mediaId
                     console.log(name)
                     console.log(fileUrl)
-                    showPdf(fileUrl)
+                    this.showPdf(fileUrl)
                     $("#mask").show()
                     this.frameShow = true
                 }
@@ -640,37 +651,7 @@
                     }
                 })
             },
-            //钉钉推送文件
-            downloadFile(mediaId) {
-                this.disablePage = true
-                var that = this
-                var param = {
-                    UserId: DingData.userid,
-                    Media_Id: mediaId
-                }
-                $.ajax({
-                    url: '/DingTalkServers/sendFileMessage',
-                    type: 'POST',
-                    data: param,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('钉钉推送文件')
-                        console.log(param)
-                        console.log(data)
-                        if (data.errmsg == 'ok') {
-                            that.$alert(data.errorMessage, '获取文件成功', {
-                                confirmButtonText: '确定'
-                            });
-                        }
-                        else {
-                            that.$alert(data.errorMessage, '获取文件失败', {
-                                confirmButtonText: '确定'
-                            });
-                        }
-                        that.disablePage = false
-                    }
-                })
-            },
+            
             //獲取角色信息
             showStamp(roleName) {
                 var that = this
@@ -688,16 +669,65 @@
                     }
                 })
             },
-            //element彈窗
-            elementAlert(title,text) {
-                this.$alert(text, title, {
-                    confirmButtonText: '确定'
+            //显示PDF画板
+            showPdf(url) {
+                var that = this
+                this.disablePage = true
+
+                console.log('show pdf')
+                $(".loading").show()
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
                 });
+                $(".ui-dialog").show()
+                //$("#mask-super").show()
+                //that.tick = 0
+                //var interval = window.setInterval(function () {
+                //    that.tick >= 90 ? that.tick = 0 : that.tick += 10
+                //    console.log(that.tick)
+                //}, 1000)
+                initUI()
+                PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+                PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
+                    //
+                    // 获取第一页数据
+                    //
+                    pdf.getPage(1).then(function getPageHelloWorld(page) {
+                        var scale = 1;
+                        var viewport = page.getViewport(scale);
+
+                        //
+                        // Prepare canvas using PDF page dimensions
+                        //ctx
+                        //var canvas = document.getElementById('the-canvas');
+                        //var context = canvas.getContext('2d');
+                        //canvas.height = viewport.height;
+                        //canvas.width = viewport.width;
+
+                        var renderContext = {
+                            canvasContext: ctx,
+                            viewport: viewport
+                        };
+                        page.render(renderContext);
+                        that.disablePage = false
+                        loading.close()
+                        //$("#mask-super").hide()
+                        //$(".loading").hide()
+                        //clearInterval(interval)
+                        console.log('render pdf')
+                    });
+                });
+
             }
+
+
         },
         created: function () {
             this.showStamp("图纸管理员")
-            
+
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)
@@ -771,40 +801,6 @@
         })
     }
 
-    function showPdf(url) {
-        var that = this
-        this.disablePage = true
-        console.log('show pdf')
-        $(".ui-dialog").show()
-        initUI()
-        PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
-        PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
-            //
-            // 获取第一页数据
-            //
-            pdf.getPage(1).then(function getPageHelloWorld(page) {
-                var scale = 1;
-                var viewport = page.getViewport(scale);
-
-                //
-                // Prepare canvas using PDF page dimensions
-                //ctx
-                //var canvas = document.getElementById('the-canvas');
-                //var context = canvas.getContext('2d');
-                //canvas.height = viewport.height;
-                //canvas.width = viewport.width;
-                
-                var renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-                page.render(renderContext);
-                that.disablePage = false
-                console.log('render pdf')
-            });
-        });
-
-    }
 
 
 </script>

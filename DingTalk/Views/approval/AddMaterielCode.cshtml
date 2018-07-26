@@ -39,7 +39,7 @@
         <el-button v-on:click="addGoods" type="primary" plain> + 添加明细</el-button>
         <hr />
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames"
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
 
@@ -152,6 +152,7 @@
         },
         created: function () {
             this.getNodeInfo()
+            this.getApproInfo()
             loadHtml("mainPage", "partPage")
         }
     })

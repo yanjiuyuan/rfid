@@ -276,10 +276,10 @@ var mixin = {
                     that.isBack = result[0].IsBack
                     that.nodeList = _cloneArr(result)
                     for (let node of that.nodeList) {
-                        if (node.ApplyMan)
-                            node.NodePeople = node.ApplyMan.split(',')
                         if (node.NodeId == 0)
                             node.NodePeople = [DingData.nickName]
+                        if (node.ApplyMan && node.ApplyMan.length > 0)
+                            node.NodePeople = node.ApplyMan.split(',')
                         node['AddPeople'] = []
                         }
                     
@@ -320,6 +320,7 @@ var mixin = {
                     console.log(url)
                     console.log(data)
                     that.nodeInfo = data[0]
+                    that.preApprove = !data[0].IsNeedChose
                 },
                 error: function (err) {
                     console.log(err);
@@ -334,6 +335,37 @@ var mixin = {
                     loadPage('/main/Approval')
                 }
             });
+        },
+        //钉钉推送文件
+        downloadFile(mediaId) {
+            this.disablePage = true
+            var that = this
+            var param = {
+                UserId: DingData.userid,
+                Media_Id: mediaId
+            }
+            $.ajax({
+                url: '/DingTalkServers/sendFileMessage',
+                type: 'POST',
+                data: param,
+                success: function (data) {
+                    data = JSON.parse(data)
+                    console.log('钉钉推送文件')
+                    console.log(param)
+                    console.log(data)
+                    if (data.errmsg == 'ok') {
+                        that.$alert(data.errorMessage, '获取文件成功', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                    else {
+                        that.$alert(data.errorMessage, '获取文件失败', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                    that.disablePage = false
+                }
+            })
         },
         //element彈窗
         elementAlert(title, text) {
