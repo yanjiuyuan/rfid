@@ -989,27 +989,10 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
+                        //List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
+                        //string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBacked != false).ToList();
-                        List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
-                        //List<object> ListObject = new List<object>();
-                        //var QuaryChose = from n in ChoseNodeInfoList
-                        //                 join t in TaskList
-                        //                 on n.NodeId equals t.NodeId
-                        //                 into temp
-                        //                 from tt in temp.DefaultIfEmpty()
-                        //                 select new
-                        //                 {
-                        //                     NodeId = n.NodeId,
-                        //                     NodeName = n.NodeName,
-                        //                     IsBack = tt == null ? false : tt.IsBack,
-                        //                     ApplyMan = tt == null ? "" : tt.ApplyMan,
-                        //                     ApplyTime = tt == null ? "" : tt.ApplyTime,
-                        //                     Remark = tt == null ? "" : tt.Remark,
-                        //                     IsSend = tt == null ? false : tt.IsSend
-                        //                 };
-
                         var Quary = from n in NodeInfoList
                                     join t in TaskList
                                     on n.NodeId equals t.NodeId
@@ -1127,6 +1110,7 @@ namespace DingTalk.Controllers
         /// 审批页面通用数据读取
         /// </summary>
         /// <param name="TaskId">流水号</param>
+        /// <param name="ApplyManId">用户Id</param>
         /// <returns></returns>
         /// 测试数据 /FlowInfo/GetApproveInfo?TaskId=7
         public string GetApproveInfo(string TaskId, string ApplyManId)
@@ -1145,9 +1129,10 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).First();
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).OrderByDescending(t => t.Id).First();
                         Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
                         taskOld.Id = task.Id;
+                        taskOld.NodeId = task.NodeId;
                         return JsonConvert.SerializeObject(taskOld);
                     }
                 }
