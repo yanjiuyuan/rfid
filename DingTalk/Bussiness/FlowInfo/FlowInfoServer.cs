@@ -140,23 +140,23 @@ namespace DingTalk.Bussiness.FlowInfo
         /// </summary>
         /// <param name="TaskId">流水号</param>
         /// <returns>0 未完成 1 已完成 2 被退回</returns>
-        public int GetTasksState(string TaskId)
+        public string GetTasksState(string TaskId)
         {
             using (DDContext context = new DDContext())
             {
                 List<Tasks> tasksListBack = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsBacked == true).ToList();
                 if (tasksListBack.Count > 0)
                 {
-                    return 2;
+                    return "被退回";
                 }
                 List<Tasks> tasksListFinished = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
                 if (tasksListFinished.Count > 0)
                 {
-                    return 1;
+                    return "已完成";
                 }
                 else
                 {
-                    return 0;
+                    return "未完成";
                 }
 
             }
