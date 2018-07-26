@@ -222,6 +222,7 @@
                 var that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid && that.purchaseList.length > 0) {
+                        that.disablePage = true
                         var title
                         for (let p of that.projestList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
@@ -248,10 +249,7 @@
                                 console.log(node.AddPeople)
                                 if (!that.preApprove && node.AddPeople.length == 0) {
                                     this.$alert('您尚未选择审批人', '提交错误', {
-                                        confirmButtonText: '确定',
-                                        callback: action => {
-
-                                        }
+                                        confirmButtonText: '确定'
                                     });
                                     that.disablePage = false
                                     return
@@ -288,10 +286,7 @@
                         })
                     } else {
                         this.$alert('请填写完整信息', '提交错误', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-
-                            }
+                            confirmButtonText: '确定'
                         });
                         return false;
                     }
@@ -312,10 +307,10 @@
                     contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify(paramArr),
                     success: function (data) {
-                        console.log("采购表单批量保存ok")
-                        console.log()
                         console.log(data)
-                        that.doneSubmit()
+                        var alertStr = '采购表单批量保存成功'
+                        if (data.errorCode != 0) alertStr = data.errorMessage
+                        that.elementAlert('提示信息', alertStr)
                     }
                 })
             },
@@ -345,6 +340,9 @@
             },
             //添加申请物料
             addGood(index, good) {
+                for (let p of this.purchaseList) {
+                    if (p.CodeNo == good.FNumber) return
+                }
                 this.purchaseList.push({
                     CodeNo: good.FNumber,
                     Name: good.FName,

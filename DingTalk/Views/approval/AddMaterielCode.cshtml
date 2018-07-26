@@ -53,6 +53,7 @@
 <script>
     var meterielConfig = {
         BigCode: '物料大类编码', 
+        CodeNumber: '物料编码',
         SmallCode: '物料小类编码',
         Name: '物料名称',
         Unit: '单位',
@@ -77,7 +78,7 @@
                 nodeInfo: {},
                 meterielConfig: meterielConfig,
                 meteriel: meteriel,
-                needInput: ['BigCode', 'SmallCode','Name'],
+                needInput: ['BigCode', 'SmallCode', 'Name', 'CodeNumber'],
                 ruleForm: {
                     name: DingData.nickName,
                     goods: [_cloneObj(meteriel)]
@@ -87,9 +88,12 @@
         methods: {
             onSubmit(formName) {
                 var that = this
+                this.bindAll('88888')
+                return
                 console.log('submit!')
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        that.disablePage = true
                         var paramArr = []
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
@@ -101,6 +105,36 @@
                             "IsSend": false,
                             "State": "1"
                         })
+                        for (let node of that.nodeList) {
+                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
+                                console.log(node)
+                                console.log(node.AddPeople)
+                                if (!that.preApprove && node.AddPeople.length == 0) {
+                                    this.$alert('您尚未选择审批人', '提交错误', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+
+                                        }
+                                    });
+                                    that.disablePage = false
+                                    return
+                                }
+                                for (let a of node.AddPeople) {
+                                    paramArr.push({
+                                        "ApplyMan": a.name,
+                                        "ApplyManId": a.emplId,
+                                        "IsEnable": 1,
+                                        "FlowId": FlowId,
+                                        "NodeId": node.NodeId,
+                                        "IsSend": false,
+                                        "State": 0,
+                                        "ProjectId": that.ruleForm.ProjectId,
+                                        "OldFileUrl": null,
+                                        "IsBack": null
+                                    })
+                                }
+                            }
+                        }
                         console.log("提交审批 paramArr ")
                         console.log(paramArr)
                         $.ajax({
@@ -131,15 +165,17 @@
                     paramArr.push(p)
                 }
                 console.log("物料申請批量保存 paramArr ")
+                //console.log(JSON.stringify(paramArr))
                 console.log(paramArr)
                 $.ajax({
                     url: '/ItemCodeAdd/TableSave',
                     type: 'POST',
-                    contentType: 'application/json; charset=utf-8',
-                    data:paramArr,
+                    data: JSON.stringify(paramArr),
                     success: function (data) {
-                        console.log("采购表单批量保存ok")
                         console.log(data)
+                        var alertStr = '物料编码审批提交成功'
+                        if (data.errorCode != 0) alertStr = data.errorMessage
+                        that.elementAlert('提示信息', alertStr)
                     }
                 })
             },
