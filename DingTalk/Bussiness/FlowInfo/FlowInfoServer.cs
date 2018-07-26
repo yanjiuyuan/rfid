@@ -75,7 +75,7 @@ namespace DingTalk.Bussiness.FlowInfo
         {
             using (DDContext context = new DDContext())
             {
-                Tasks task = context.Tasks.Where(u => u.NodeId == 0 && u.IsPost == true && u.TaskId.ToString() == TaskId).First();
+                Tasks task = context.Tasks.Where(u => u.NodeId == 0  && u.TaskId.ToString() == TaskId).First();
                 return task;
             }
         }
@@ -90,7 +90,7 @@ namespace DingTalk.Bussiness.FlowInfo
             List<Tasks> ListTaskFinall = new List<Tasks>();
             using (DDContext context = new DDContext())
             {
-                List<Tasks> ListTask = context.Tasks.Where(u => u.State == 0 && u.FlowId.ToString() == FlowId).ToList();
+                List<Tasks> ListTask = context.Tasks.Where(u => u.State == 0 && u.IsSend != true && u.FlowId.ToString() == FlowId).ToList();
                 List<Tasks> ListTaskFinished = context.Tasks.Where(u => u.State == 1 && u.FlowId.ToString() == FlowId).ToList();
 
                 ListTaskFinall = (from tf in ListTaskFinished
