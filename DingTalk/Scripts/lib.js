@@ -35,6 +35,8 @@ function logout() {
 }
 
 function loadPage(url) {
+    TaskId = 0
+    NodeId = 0
     var param = url.split('?')[1]
     if (param) {
         var paramArr = param.split('&')
@@ -320,6 +322,7 @@ var mixin = {
                     console.log(url)
                     console.log(data)
                     that.nodeInfo = data[0]
+                    NodeId = data[0].NodeId
                     that.preApprove = !data[0].IsNeedChose
                 },
                 error: function (err) {

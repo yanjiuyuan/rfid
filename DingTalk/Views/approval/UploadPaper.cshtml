@@ -284,9 +284,6 @@
                                 console.log(paramArr)
                                 console.log(taskId)
                                 that.bindData(taskId)
-                                //that.addApprover(taskId)
-                                //that.bindApprover(taskId)
-                                //寻人，提示已提交
                             }
                         })
                     } else {
@@ -330,71 +327,6 @@
                         console.log("审批绑定BOM表数据ok")
                         console.log(upBom)
                         console.log(data)
-                        that.doneSubmit()
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
-            //审批绑定审批人(自选)
-            addApprover(taskId) {
-                var that = this
-                var peopleList = []
-                for (let node of this.nodeList) {
-                    if (node.NodeId == this.nodeInfo.NodeId) {
-                        for (let a of node.AddPeople) {
-                            peopleList.push({
-                                OldTaskId: taskId,
-                                FlowId: FlowId,
-                                NodeId: NodeId,
-                                ApplyMan: a.name,
-                                ApplyManId: a.userid,
-                                IsSend: "false",
-                                IsEnable: "1",
-                                State: "0"
-                            })
-                        }
-                    }
-                }
-                if (peopleList.length == 0) return
-                console.log("peopleList")
-                console.log(peopleList)
-                $.ajax({
-                    url: "/FlowInfo/ChoseOrSend",
-                    type: "POST",
-                    async: false,
-                    data: JSON.stringify(peopleList),
-                    success: function (data) {
-                        console.log("审批绑定自选审批人ok")
-                        console.log(data)
-                        that.doneSubmit()
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
-            //审批绑定审批人(默认)
-            bindApprover(taskId) {
-                var that = this
-                var param = {
-                    IsNext: 'true',
-                    IsSend: 'False',
-                    FlowId: FlowId,
-                    NodeId: NodeId,
-                    OldTaskId: taskId,
-                    ApplyManId: DingData.userid
-                }
-                $.ajax({
-                    url: "/FlowInfo/FindNextPeople" + _formatQueryStr(param),
-                    type: "GET",
-                    async: false,
-                    success: function (data) {
-                        console.log("审批绑定默认审批人ok")
-                        console.log(param)
-                        console.log(data)
-                        console.log("/FlowInfo/FindNextPeople" + _formatQueryStr(param))
                         that.doneSubmit()
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -628,11 +560,22 @@
                 }
 
                 this.data = ReApprovalTempData.data
+                this.dataArr = ReApprovalTempData.dataArr
                 this.items = ReApprovalTempData.items
-                this.totalRows = this.data.length
-                this.getData()
+                ReApprovalTempData.valid = false
                 upBom = []
-                upBom = _cloneArr(this.data)
+
+                if (FlowId == 6) {
+                    for (let a of this.dataArr) {
+                        a.tableData = a.data.slice(0, 5)
+                        a.totalRows = a.data.length
+                        upBom.concat(a.data)
+                    }
+                } else {
+                    this.getData()
+                    this.totalRows = that.data.length
+                    upBom = _cloneArr(this.data)
+                }
                 //for (let d of this.data) {
                 //    upBom.push(
                 //        {
