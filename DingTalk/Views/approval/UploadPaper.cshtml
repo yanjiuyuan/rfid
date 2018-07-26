@@ -559,23 +559,21 @@
                     }
                 }
 
-                this.data = ReApprovalTempData.data
                 this.dataArr = ReApprovalTempData.dataArr
                 this.items = ReApprovalTempData.items
                 ReApprovalTempData.valid = false
                 upBom = []
 
-                if (FlowId == 6) {
-                    for (let a of this.dataArr) {
-                        a.tableData = a.data.slice(0, 5)
-                        a.totalRows = a.data.length
-                        upBom.concat(a.data)
-                    }
-                } else {
-                    this.getData()
-                    this.totalRows = that.data.length
-                    upBom = _cloneArr(this.data)
+            
+                for (let a of this.dataArr) {
+                    a.tableData = a.data.slice(0, 5)
+                    a.totalRows = a.data.length
+                    a.items = this.items
+                    upBom.concat(a.data)
+                    console.log(111111111111111111111111111)
+                    console.log(a.tableData)
                 }
+           
                 //for (let d of this.data) {
                 //    upBom.push(
                 //        {
