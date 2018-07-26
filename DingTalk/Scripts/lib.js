@@ -320,6 +320,7 @@ var mixin = {
                     console.log(url)
                     console.log(data)
                     that.nodeInfo = data[0]
+                    that.preApprove = !data[0].IsNeedChose
                 },
                 error: function (err) {
                     console.log(err);

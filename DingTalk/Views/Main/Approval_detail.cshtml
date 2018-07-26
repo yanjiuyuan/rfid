@@ -151,7 +151,7 @@
                         <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>
                         <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
                             <span>
-                                <button id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
+                                <button v-if="index == 0" id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
                                 @*<button id="tools_undo">撤回</button>&nbsp;&nbsp;&nbsp;
                                     <button id="tools_redo">redo</button>*@
                             </span>
