@@ -923,7 +923,7 @@ namespace DingTalk.Controllers
 
             foreach (int TaskId in ListTasks)
             {
-                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).Select(u => u.NodeId).ToList().First();
+                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u=>u.Id).Select(u => u.NodeId).ToList().First();
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
