@@ -345,7 +345,7 @@ canvas {
 
 .ui-dialog {
     margin-left: 0%!important;
-    z-index:9999!important;
+    z-index:1999!important;
     position:fixed!important;
 }
 

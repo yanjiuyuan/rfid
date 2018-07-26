@@ -82,8 +82,8 @@
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
-                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
-                    <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)">预览</el-button>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
+                    <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
 
                     <el-switch v-if="index == 0" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
@@ -642,6 +642,7 @@
             },
             //钉钉推送文件
             downloadFile(mediaId) {
+                this.disablePage = true
                 var that = this
                 var param = {
                     UserId: DingData.userid,
@@ -666,6 +667,7 @@
                                 confirmButtonText: '确定'
                             });
                         }
+                        that.disablePage = false
                     }
                 })
             },
@@ -770,6 +772,8 @@
     }
 
     function showPdf(url) {
+        var that = this
+        this.disablePage = true
         console.log('show pdf')
         $(".ui-dialog").show()
         initUI()
@@ -795,6 +799,7 @@
                     viewport: viewport
                 };
                 page.render(renderContext);
+                that.disablePage = false
                 console.log('render pdf')
             });
         });

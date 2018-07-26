@@ -591,7 +591,8 @@ function saveItAsPdf() {
         data: param,
         success: function (data) {
             console.log('/File/PostFile')
-            alert('保存成功')
+            demo.elementAlert('提示','保存成功')
+            //alert('保存成功')
             console.log(data)
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
