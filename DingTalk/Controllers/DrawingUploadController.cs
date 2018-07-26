@@ -28,7 +28,7 @@ namespace DingTalk.Controllers
         {
             return View();
         }
-       
+
         /// <summary>
         /// 文件上传接口
         /// </summary>
@@ -124,7 +124,7 @@ namespace DingTalk.Controllers
                             LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:hh:ss"),
                             LastModifyState = "0"
                         };
-                       
+
                         using (DDContext context = new DDContext())
                         {
                             int j = GetIndexOfString(path, "\\", 6);
@@ -381,18 +381,18 @@ namespace DingTalk.Controllers
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
 
-                    //判断是否有权限触发按钮
-                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
-                    if (UserId != PeopleId)
-                    {
-                        return JsonConvert.SerializeObject(new ErrorModel
-                        {
-                            errorCode = 1,
-                            errorMessage = "没有权限"
-                        });
-                    }
+                    ////判断是否有权限触发按钮
+                    //string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
+                    //if (UserId != PeopleId)
+                    //{
+                    //    return JsonConvert.SerializeObject(new ErrorModel
+                    //    {
+                    //        errorCode = 1,
+                    //        errorMessage = "没有权限"
+                    //    });
+                    //}
                     //判断流程是否已结束
-                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsSend!=true &&t.State == 0).ToList();
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsSend != true && t.State == 0).ToList();
                     if (tasksList.Count > 0)
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
@@ -401,7 +401,6 @@ namespace DingTalk.Controllers
                             errorMessage = "流程未结束"
                         });
                     }
-
 
                     List<Purchase> PurchaseList = context.Purchase.Where(u => u.TaskId == TaskId).ToList();
 
@@ -413,8 +412,10 @@ namespace DingTalk.Controllers
                                                  p.Count,
                                                  p.MaterialScience,
                                                  p.Unit,
-                                                 p.Brand,
+                                                 p.SingleWeight,
+                                                 p.AllWeight,
                                                  p.Sorts,
+                                                 p.NeedTime,
                                                  p.Mark
                                              };
 
@@ -441,16 +442,16 @@ namespace DingTalk.Controllers
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                            "序号","代号","名称","数量","材料","单位","品牌","类别","备注"
+                            "序号","代号","名称","数量","材料","单位","单重","总重","类别","需用日期","备注"
                         };
 
                     float[] contentWithList = new float[]
                     {
-                        50, 60, 60, 60, 60, 60, 60, 60, 60
+                        50, 60, 60, 30, 60, 60, 60, 60, 60 , 60, 60
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "1", 300, 650, contentList, contentWithList, dtSourse, dtApproveView);
+                    ProjectName, "1", 380, 710, contentList, contentWithList, dtSourse, dtApproveView);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     string[] Paths = OldPath.Split(',');
@@ -510,6 +511,6 @@ namespace DingTalk.Controllers
             }
             return 0;
         }
-        
+
     }
 }

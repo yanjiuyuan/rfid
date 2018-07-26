@@ -80,10 +80,8 @@ namespace Common.PDF
                 AddHeaderTitleContent(FlowName + "流程明细", fontMiddle, IndentationLeft);//添加表头
                 CreateEmptyRow(1);//生成一行空行
 
-                AddPartnerContents("流水号", TaskId);
-                AddPartnerContents("申请人", ApplyName);
-                AddPartnerContents("申请时间", ApplyTime);
-                AddPartnerContents("所属项目", ProjectName);
+                AddPartnerContents("流水号", TaskId, "申请人", ApplyName);
+                AddPartnerContents("申请时间", ApplyTime, "所属项目", ProjectName);
 
                 AddPageNumberContent();//添加页码
                 CreateEmptyRow(1);//生成一行空行
@@ -339,16 +337,21 @@ namespace Common.PDF
         /// </summary>
         /// <param name="FieldName">字段名</param>
         /// <param name="FieldValue">字段值</param>
-        public static void AddPartnerContents(string FieldName, string FieldValue)
+        public static void AddPartnerContents(string FieldNameOne, string FieldValueOne,
+           string FieldNameTwo, string FieldValueTwo)
         {
             fontMiddle.SetStyle(Font.UNDERLINE);//文字下划线
                                                 //IndentationLeft = IndentationLeft + 10;
             Paragraph content = new Paragraph();
             content.IndentationLeft = IndentationLeft;
-            Chunk chunkName = new Chunk(FieldName + ":", fontSmallNoBold);
-            Chunk chunkText = new Chunk(GetEmptyString(20, FieldValue), fontMiddle);
-            content.Add(0, chunkName);
-            content.Add(1, chunkText);
+            Chunk chunkNameOne = new Chunk(FieldNameOne + ":", fontSmallNoBold);
+            Chunk chunkTextOne = new Chunk(GetEmptyString(20, FieldValueOne), fontMiddle);
+            Chunk chunkNameTwo = new Chunk(FieldNameTwo + ":", fontSmallNoBold);
+            Chunk chunkTextTwo = new Chunk(GetEmptyString(20, FieldValueTwo), fontMiddle);
+            content.Add(0, chunkNameOne);
+            content.Add(1, chunkTextOne);
+            content.Add(0, chunkNameTwo);
+            content.Add(1, chunkTextTwo);
             content.Alignment = 10;
             doc.Add(content);
         }
@@ -513,7 +516,7 @@ namespace Common.PDF
             {
                 throw;
             }
-           
+
         }
     }
 }
