@@ -651,37 +651,7 @@
                     }
                 })
             },
-            //钉钉推送文件
-            downloadFile(mediaId) {
-                this.disablePage = true
-                var that = this
-                var param = {
-                    UserId: DingData.userid,
-                    Media_Id: mediaId
-                }
-                $.ajax({
-                    url: '/DingTalkServers/sendFileMessage',
-                    type: 'POST',
-                    data: param,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('钉钉推送文件')
-                        console.log(param)
-                        console.log(data)
-                        if (data.errmsg == 'ok') {
-                            that.$alert(data.errorMessage, '获取文件成功', {
-                                confirmButtonText: '确定'
-                            });
-                        }
-                        else {
-                            that.$alert(data.errorMessage, '获取文件失败', {
-                                confirmButtonText: '确定'
-                            });
-                        }
-                        that.disablePage = false
-                    }
-                })
-            },
+            
             //獲取角色信息
             showStamp(roleName) {
                 var that = this

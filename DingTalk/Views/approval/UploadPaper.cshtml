@@ -32,11 +32,13 @@
                    action="/drawingupload/UploadAndGetInfo"
                    :on-success="handleSuccess"
                    @*:before-remove="beforeRemove"*@
+                   :before-upload="beforeExcelUpload"
                    multiple
                    :limit="1"
                    :on-exceed="handleExceed"
                    :file-list="excelList">
             <el-button size="small" type="primary" v-on:click="bomIndex = index">上传{{d.Sorts}}件</el-button>
+            <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
             <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
         </el-upload>
         @*</el-form-item>*@
@@ -125,6 +127,7 @@
 </el-main>
 
 <script>
+    var mediaId = '@@lAvPBY0V46-mC3TObpYruc56rmPJ'
     var upBom = []
     var isPdf = false
     var demo = new Vue({
@@ -135,6 +138,7 @@
                 preApprove: false,
                 preCopy: false,
                 isPdfFile: false,
+                mediaId: mediaId,
                 pdfList: [],
                 excelList: [],
                 fileList: [],
@@ -444,7 +448,7 @@
                 this.dataArr[this.bomIndex].tableData = this.tableData
             },
             handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+                this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
@@ -543,6 +547,21 @@
                 }
                 return true
             },
+            beforeExcelUpload(file) {
+                console.log('before excel')
+                console.log(file)
+                const isExcel = file.name.substr(-3) == 'xls'
+                const isLt2M = file.size / 1024 / 1024 < 2
+                if (!isExcel) {
+                    this.$message.error('上传图片只能是 excel 文件!')
+                    return false
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!')
+                    return false
+                }
+                return true
+            },
             beforePdfFileUpload(file) {
                 console.log('before pdf')
                 console.log(file)
@@ -578,7 +597,7 @@
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
-
+            
             //加载重新发起审批传递的数据
             loadReApprovalData() {
                 //ReApprovalTempData = {
