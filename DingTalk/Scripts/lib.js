@@ -452,7 +452,7 @@ Vue.component('sam-approver-list', {
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a" 
-                                        :closable="true"
+                                        :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
                                         v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
@@ -527,8 +527,8 @@ Vue.component('sam-approver-list', {
                     console.log(data)
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
+                            node.AddPeople = data
                             for (let d of data) {
-                                node.AddPeople.push(d)
                                 $("#" + nodeId).after('<span class="el-tag" style="width: 60px; text-align: center; ">' + d.name + '</span >')
                             }
                         }

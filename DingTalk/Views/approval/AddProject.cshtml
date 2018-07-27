@@ -13,13 +13,13 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
-            <el-form-item label="项目名称" prop="inputProjectName" style="width:300px;">
+            <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            <el-form-item label="项目编号" prop="inputProjectId" style="width:300px;">
+            <el-form-item label="项目编号" prop="inputProjectId">
                 <el-input v-model="ruleForm.inputProjectId"></el-input>
             </el-form-item>
-            <el-form-item label="承担部门" style="width:300px;">
+            <el-form-item label="承担部门">
                 <el-input v-model="ruleForm.DeptName"></el-input>
             </el-form-item>
             <el-form-item label="状态" required="required">
@@ -28,7 +28,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="公司名称" required="required">
-                <el-select v-model="ruleForm.CompanyName">
+                <el-select v-model="ruleForm.CompanyName" style="width:300px;">
                     <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
@@ -55,7 +55,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" v-on:click="addProject">添加</el-button>
+                <el-button type="primary" v-on:click="addProject" :disabeld="disablePage">添加</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -95,6 +95,7 @@
                 var that = this
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name && this.ruleForm.Time[0]) {
+                        that.disablePage = true
                         let names = []
                         let ids = []
                         for (let p of this.groupPeople) {
@@ -136,7 +137,7 @@
                                     that.$alert(data.errorMessage, '提示信息', {
                                         confirmButtonText: '确定',
                                         callback: action => {
-                                            return
+                                            loadPage('/main/Approval')
                                         }
                                     });
                                 }
