@@ -119,7 +119,6 @@
                         console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
                         console.log(data)
                         for (let d of data) {
-                            d[0].State == 1 ? d[0].State = '已完成' : d[0].State = '未完成'
                             that.data.push(d[0])
                         }
                         //that.tableData = data
@@ -153,10 +152,10 @@
             loader(row) {
                 if (row.TaskId && row.FlowId) {
                     if (row.FlowId == 7) {
-                        loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
+                        loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index + '&state=' + row.State)
                         return
                     }
-                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index)
+                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index + '&state=' + row.State)
                 }
             },
             handleDelete(index, row) {

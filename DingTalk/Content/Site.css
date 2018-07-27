@@ -9,6 +9,7 @@
 .box-card {
     width: 680px;
 }
+
 hr {
     height: 1px;
     border: none;
@@ -360,4 +361,17 @@ canvas {
 
 #dialog{
     
+}
+/*表格缩小*/
+.el-table .cell input {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.el-table .cell .repadding input {
+    padding-left: 15px !important;
+}
+
+.el-table .cell .repadding i {
+    width: 0px !important;
 }

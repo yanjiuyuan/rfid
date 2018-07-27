@@ -14,6 +14,7 @@
                        :value="item.PeopleId">
             </el-option>
         </el-select>
+        <el-button v-on:click="loadPage('/main/test')">跳转测试界面</el-button>
     </template>
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
