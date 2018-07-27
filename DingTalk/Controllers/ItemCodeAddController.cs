@@ -52,6 +52,33 @@ namespace DingTalk.Controllers
             }
         }
 
+        [Route("TableSingleSave")]
+        [HttpPost]
+        public Object TableSingleSave([FromBody] Code code)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.Code.Add(code);
+                    context.SaveChanges();
+                    return new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
         /// <summary>
         /// 表单读取接口
         /// </summary>
