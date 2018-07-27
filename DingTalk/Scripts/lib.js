@@ -331,8 +331,9 @@ var mixin = {
             })
         },
         //审批所有流程通过，后续处理
-        doneSubmit() {
-            this.$alert('提交审批成功', '提交成功', {
+        doneSubmit(text) {
+            if (!text) text = '提交审批成功'
+            this.$alert(text, '提示信息', {
                 confirmButtonText: '确定',
                 callback: action => {
                     loadPage('/main/Approval')
@@ -451,7 +452,7 @@ Vue.component('sam-approver-list', {
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a" 
-                                        :closable="false"
+                                        :closable="true"
                                         v-on:close="deletePeople(ap.emplId)"
                                         v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"

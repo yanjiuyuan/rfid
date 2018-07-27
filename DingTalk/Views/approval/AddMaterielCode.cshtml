@@ -14,7 +14,10 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" disabled></el-input>
         </el-form-item>
-        <!--办公用品明细-->
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark" style="width:600px;"></el-input>
+        </el-form-item>
+        <!--物料明细-->
         <template v-for="(good,index) in ruleForm.goods">
             <hr />
             <el-form-item :label="'物料('+(index+1)+')'">
@@ -29,7 +32,7 @@
                           :prop="'goods.' + index + '.' + gk">
                 <el-input v-model="good[gk]"></el-input>
             </el-form-item>
-            
+
             <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) <0"
                           :label="meterielConfig[gk]">
                 <el-input v-model="good[gk]"></el-input>
@@ -44,8 +47,8 @@
         </sam-approver-list>
 
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
-            
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+
         </el-form-item>
     </el-form>
 </el-main>
@@ -81,6 +84,7 @@
                 needInput: ['BigCode', 'SmallCode', 'Name', 'CodeNumber'],
                 ruleForm: {
                     name: DingData.nickName,
+                    remark: '',
                     goods: [_cloneObj(meteriel)]
                 }
             }
@@ -88,8 +92,9 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-                this.bindAll('88888')
-                return
+                this.disablePage = true
+                //this.bindAll('88888')
+                //return
                 console.log('submit!')
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -98,6 +103,7 @@
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
+                            "Remark": that.ruleForm.remark,
                             "NodeId": "0",
                             "ApplyTime": _getTime(),
                             "IsEnable": "1",
@@ -169,13 +175,15 @@
                 console.log(paramArr)
                 $.ajax({
                     url: '/ItemCodeAdd/TableSave',
+                    contentType: 'application/json; charset=utf-8',
                     type: 'POST',
+                    dataType: "json",
                     data: JSON.stringify(paramArr),
                     success: function (data) {
                         console.log(data)
                         var alertStr = '物料编码审批提交成功'
                         if (data.errorCode != 0) alertStr = data.errorMessage
-                        that.elementAlert('提示信息', alertStr)
+                        that.doneSubmit(alertStr)
                     }
                 })
             },

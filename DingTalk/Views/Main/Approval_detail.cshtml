@@ -59,7 +59,7 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名">
+        <el-form-item label="项目名" v-if="ruleForm.Title">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
@@ -586,7 +586,7 @@
                     success: function (data) {
                         console.log("获取bom表信息ok")
                         console.log(bomUrl)
-                        data = JSON.parse(data)
+                        if (typeof (data) == 'string') data = JSON.parse(data)
                         that.data = data
                         console.log(data)
                         if (FlowId == 6) {

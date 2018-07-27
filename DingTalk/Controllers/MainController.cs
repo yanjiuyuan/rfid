@@ -57,5 +57,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Test()
+        {
+            return View();
+        }
     }
 }

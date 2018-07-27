@@ -290,13 +290,6 @@
                         that.$alert('表单数据不全或有误', '提交错误', {
                             confirmButtonText: '确定'
                         });
-                        DingTalkPC.device.notification.alert({
-                            message: '表单数据不全或有误',
-                            title: '提示信息',
-                            buttonName: '确定',
-                            onSuccess: function () {
-                            }
-                        })
                         console.log('error submit!!');
                         return false;
                     }
