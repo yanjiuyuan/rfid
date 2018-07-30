@@ -40,13 +40,6 @@
             position: '-774px -227px'
         },
         {
-            flowId: 2,
-            sortId: 1,
-            url: '',
-            //url: '/approval/UseCar',
-            position: '-504px -407px'
-        },
-        {
             flowId: 3,
             sortId: 2,
             url: '',
@@ -109,6 +102,18 @@
             sortId: 5,
             url: '/approval/AddProject',
             position: '-594px -227px'
+        },
+        {
+            flowId: 14,
+            sortId: 6,
+            url: '/approval/UseCar',
+            position: '-504px -407px'
+        },
+        {
+            flowId: 15,
+            sortId: 6,
+            url: '/approval/UseCar',
+            position: '-144px -227px'
         }
     ]
     var demo = new Vue({
@@ -145,7 +150,6 @@
                             cache: false,
                             success: function (data) {
                                 that.list = _mergeObjectArr(data, imgConfig, 'flowId')
-                                console.log()
                                 console.log('/FlowInfo/LoadFlowInfo?id=123')
                                 console.log(that.list)
                             }
