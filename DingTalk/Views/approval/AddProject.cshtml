@@ -13,13 +13,13 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
-            <el-form-item label="项目名称" prop="inputProjectName" style="width:300px;">
+            <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            <el-form-item label="项目编号" prop="inputProjectId" style="width:300px;">
+            <el-form-item label="项目编号" prop="inputProjectId">
                 <el-input v-model="ruleForm.inputProjectId"></el-input>
             </el-form-item>
-            <el-form-item label="承担部门" style="width:300px;">
+            <el-form-item label="承担部门">
                 <el-input v-model="ruleForm.DeptName"></el-input>
             </el-form-item>
             <el-form-item label="状态" required="required">

@@ -67,6 +67,8 @@
 
 <script>
     //登录钉钉
+    DingData.userid = 'manager325'
+    DingData.nickName = '黄浩炜'
     $.ajax({
         //url: 'http://17e245o364.imwork.net/signature/',
         url: '/Login/BeginDDAutoLogin',
@@ -75,8 +77,8 @@
         cache:false,
         success: function (data) {
             DingData = data
-            //DingData.userid = 'manager325'
-            //DingData.nickName = '黄浩炜'
+            DingData.userid = 'manager325'
+            DingData.nickName = '黄浩炜'
             //var a = 11
             //if (a == 1) {
             //    DingData.userid = 'manager325'
