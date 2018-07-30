@@ -48,15 +48,9 @@ namespace DingTalk.Models.DingModels
 
         public bool? IsDown { get; set; }
 
-        /// <summary>
-        /// 单重
-        /// </summary>
         [StringLength(200)]
         public string SingleWeight { get; set; }
 
-        /// <summary>
-        /// 总重
-        /// </summary>
         [StringLength(200)]
         public string AllWeight { get; set; }
 

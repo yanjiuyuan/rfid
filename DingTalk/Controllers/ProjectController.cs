@@ -551,7 +551,7 @@ namespace DingTalk.Controllers
                 if (projectInfo != null)
                 {
                     using (DDContext context = new DDContext())
-                    {
+                    {   
                         context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
                     }
