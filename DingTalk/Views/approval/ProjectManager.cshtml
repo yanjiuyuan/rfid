@@ -30,20 +30,20 @@
             </el-form-item>
 
             @*<el-form-item label="部门">
-                <el-select v-model="formInline.Customer">
-                    <el-option label="全部" value=""></el-option>
-                    <el-option v-for="c of Customer" :label="c" :value="c" key="c"></el-option>
-                </el-select>
-            </el-form-item>*@
+                    <el-select v-model="formInline.Customer">
+                        <el-option label="全部" value=""></el-option>
+                        <el-option v-for="c of Customer" :label="c" :value="c" key="c"></el-option>
+                    </el-select>
+                </el-form-item>*@
 
             <!--高级检索-表单选项-->
             <el-form-item>
                 <el-checkbox-group v-model="formInline.projectState" :min="1">
-                    <el-checkbox v-for="t in tableOptions" :label="t" :key="t">{{t}}</el-checkbox>
+                    <el-checkbox v-for="t in status" :label="t" :key="t">{{t}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
         </template>
-        
+
         <el-form-item>
             <el-button type="primary" v-on:click="getProject">搜索</el-button>
             <span v-if="superSearch" v-on:click="superSearch = !superSearch" class="clickable-text">关闭高级搜索</span>
@@ -69,12 +69,12 @@
         <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
         <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
         <el-table-column prop="ProjectState" label="状态"></el-table-column>
-        @*<el-table-column label="操作" style="width:300px;">
+        <el-table-column label="操作" style="width:300px;">
             <template slot-scope="scope" style="width:300px;">
-                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
-                <el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @*<el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>*@
             </template>
-        </el-table-column>>*@
+        </el-table-column>>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -87,6 +87,56 @@
                        :total="totalRows">
         </el-pagination>
     </div>
+    <!--编辑项目表单-->
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                 enctype="multipart/form-data" :inline="true">
+            <template>
+                <el-form-item label="项目名称" prop="ProjectName">
+                    <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="项目编号" prop="ProjectId">
+                    <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="承担部门">
+                    <el-input v-model="ruleForm.DeptName"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" required="required">
+                    <el-select v-model="ruleForm.ProjectState">
+                        <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="公司名称" required="required">
+                    <el-input v-model="ruleForm.CompanyName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="项目类型" required="required">
+                    <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="项目负责人" required="required">
+                    <span>{{ResponsibleMan[0].name}} &nbsp;</span>
+                    <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
+                </el-form-item>
+                <el-form-item label="项目组成员" required="required">
+                    <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
+                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+                </el-form-item>
+                <el-form-item label="开始时间" required="required">
+                    <el-input v-model="ruleForm.StartTime"></el-input>
+                </el-form-item>
+                <el-form-item label="结束时间" required="required">
+                    <el-input v-model="ruleForm.EndTime"></el-input>
+                </el-form-item>
+                <hr />
+                <el-form-item>
+                    <el-button type="primary" v-on:click="editProject('ruleForm')">编辑</el-button>
+                </el-form-item>
+            </template>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+            @*<el-button type="primary" v-on:click="dialogFormVisible = false">完 成</el-button>*@
+        </div>
+    </el-dialog>
 </div>
 
 
@@ -105,7 +155,21 @@
                     time: '',
                     projectState: ["在研", "已完成", "终止"]
                 },
-                tableOptions: ["在研", "已完成", "终止"],
+                ruleForm: {
+                    ProjectName: '',
+                    ProjectId: '',
+                    DeptName: '',
+                    ProjectState: '',
+                    Time: '',
+                    ProjectType: '',
+                    StartTime: '',
+                    EndTime: '',
+                    CompanyName: ''
+                },
+                status: ["在研", "已完成", "终止"],
+                ResponsibleMan: [{ name: '', emplId: '' }],
+                groupPeople: [{ name: '', emplId: '' }],
+                dialogFormVisible: false,
                 isIndeterminate: true
             }
         },
@@ -145,10 +209,87 @@
                     }
                 })
             },
-            //表单操作
+            //编辑项目并保存
+            editProject(formName) {
+                var that = this
+                this.$refs[formName].validate((valid) => {
+                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name ) {
+                        that.disablePage = true
+                        let names = []
+                        let ids = []
+                        for (let p of this.groupPeople) {
+                            names.push(p.name)
+                            ids.push(p.emplId)
+                        }
+                        var param = {
+                            "ProjectName": this.ruleForm.inputProjectName,
+                            "ProjectState": this.ruleForm.ProjectState,
+                            "DeptName": this.ruleForm.DeptName,
+                            "StartTime": this.ruleForm.Time[0] ? _dateToString(this.ruleForm.Time[0]) : '',
+                            "EndTime": this.ruleForm.Time[1] ? _dateToString(this.ruleForm.Time[1]) : '',
+                            "ProjectId": this.ruleForm.inputProjectId,
+                            "ResponsibleMan": this.ResponsibleMan[0].name,
+                            "ResponsibleManId": this.ResponsibleMan[0].emplId,
+                            "TeamMembers": names.join(','),
+                            "TeamMembersId": ids.join(','),
+                            "CompanyName": this.ruleForm.CompanyName,
+                            "ProjectType": this.ruleForm.ProjectType,
+                        }
+                        console.log(param)
+                        $.ajax({
+                            url: "/Project/AddProject",
+                            type: "POST",
+                            dataType: "json",
+                            async: false,
+                            data: JSON.stringify(param),
+                            success: function (data) {
+                                console.log("添加项目")
+                                console.log(data)
+                                if (data.errorCode == 0) {
+                                    that.$alert(data.errorMessage, '提示信息', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+                                            loadPage('/main/Approval')
+                                        }
+                                    });
+                                }
+                                that.$alert(data.errorMessage, '提示信息', {
+                                    confirmButtonText: '确定'
+                                })
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                console.log(XMLHttpRequest.status);
+                            }
+                        })
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
+            },
+            //打开编辑表单
             handleEdit(index, row) {
-                console.log(index, row);
-                
+                console.log(index)
+                console.log(row)
+                this.ResponsibleMan[0] = { name: row.ResponsibleMan, emplId: row.ResponsibleManId }
+                let groupPeople = []
+                let members = row.TeamMembers.split(',')
+                let membersId = row.TeamMembersId.split(',')
+                for (var i = 0; i <= members.length; i++) {
+                    groupPeople.push({ name: members[i], emplId: membersId[i] })
+                }
+                this.groupPeople = groupPeople
+                this.dialogFormVisible = true
+                this.ruleForm.ProjectId = row.ProjectId
+                this.ruleForm.ProjectState = row.ProjectState
+                this.ruleForm.ProjectName = row.ProjectName
+                this.ruleForm.DeptName = row.DeptName
+                this.ruleForm.StartTime = row.StartTime
+                this.ruleForm.EndTime = row.EndTime
+                this.ruleForm.ProjectType = row.ProjectType
+                this.ruleForm.CompanyName = row.CompanyName
             },
             handleDelete(index, row) {
                 console.log(index, row);
