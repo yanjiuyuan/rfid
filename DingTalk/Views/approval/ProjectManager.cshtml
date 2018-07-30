@@ -142,6 +142,7 @@
 
 <script>
     var Index = 0
+    var id = ''
     var VUE = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -222,12 +223,13 @@
                             ids.push(p.emplId)
                         }
                         var param = {
-                            "ProjectName": this.ruleForm.inputProjectName,
+                            "Id": id,
+                            "ProjectName": this.ruleForm.ProjectName,
                             "ProjectState": this.ruleForm.ProjectState,
                             "DeptName": this.ruleForm.DeptName,
-                            "StartTime": this.ruleForm.Time[0] ? _dateToString(this.ruleForm.Time[0]) : '',
-                            "EndTime": this.ruleForm.Time[1] ? _dateToString(this.ruleForm.Time[1]) : '',
-                            "ProjectId": this.ruleForm.inputProjectId,
+                            "StartTime": this.ruleForm.StartTime,
+                            "EndTime": this.ruleForm.EndTime,
+                            "ProjectId": this.ruleForm.ProjectId,
                             "ResponsibleMan": this.ResponsibleMan[0].name,
                             "ResponsibleManId": this.ResponsibleMan[0].emplId,
                             "TeamMembers": names.join(','),
@@ -237,19 +239,19 @@
                         }
                         console.log(param)
                         $.ajax({
-                            url: "/Project/AddProject",
+                            url: "/Project/ProjectInfoModify",
                             type: "POST",
                             dataType: "json",
-                            async: false,
-                            data: JSON.stringify(param),
+                            data: param,
                             success: function (data) {
-                                console.log("添加项目")
+                                console.log("编辑项目")
                                 console.log(data)
                                 if (data.errorCode == 0) {
                                     that.$alert(data.errorMessage, '提示信息', {
                                         confirmButtonText: '确定',
                                         callback: action => {
                                             loadPage('/main/Approval')
+                                            that.getProject()
                                         }
                                     });
                                 }
@@ -259,6 +261,7 @@
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 console.log(XMLHttpRequest.status);
+                                console.log(XMLHttpRequest);
                             }
                         })
                     }
@@ -280,6 +283,7 @@
                 for (var i = 0; i <= members.length; i++) {
                     groupPeople.push({ name: members[i], emplId: membersId[i] })
                 }
+                id = row.Id
                 this.groupPeople = groupPeople
                 this.dialogFormVisible = true
                 this.ruleForm.ProjectId = row.ProjectId
