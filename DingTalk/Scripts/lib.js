@@ -377,6 +377,35 @@ var mixin = {
             that.$alert(text, title, {
                 confirmButtonText: '确定'
             });
+        },
+        //选单人
+        addMan() {
+            var that = this
+            DingTalkPC.biz.contact.choose({
+                multiple: false, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                onSuccess: function (data) {
+                    that.ResponsibleMan = data
+                    console.log(data)
+                },
+                onFail: function (err) { }
+            });
+        },
+        //选多人
+        addGroup() {
+            var that = this
+            console.log('addGroup')
+            DingTalkPC.biz.contact.choose({
+                multiple: true, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                onSuccess: function (data) {
+                    that.groupPeople = data
+                    console.log(data)
+                },
+                onFail: function (err) { }
+            });
         }
     }
 }
