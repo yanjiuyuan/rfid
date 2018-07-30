@@ -556,6 +556,7 @@ Vue.component('sam-approver-list', {
                     console.log(data)
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
+                            node.AddPeople = data
                             for (let d of data) {
                                 $("#" + nodeId).after('<span class="el-tag" style="width: 60px; text-align: center; ">' + d.name + '</span >')
                             }
