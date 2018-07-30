@@ -1163,7 +1163,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                Code purchaseDown = context.Code.First();
+                ProjectInfo purchaseDown = context.ProjectInfo.First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }

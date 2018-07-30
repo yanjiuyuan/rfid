@@ -100,7 +100,7 @@
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
                 <div v-for="f in fileList" :key="f.name" class="text item">
-                    <span v-on:click="clickFile(f.url)">{{ f.name }}</span>
+                    <span>{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
             </el-card>
@@ -147,8 +147,8 @@
                     <legend>工具</legend>
                     <div id="toolsOptions">
                         <input type="radio" id="tools_pencil" name="toolsOption" checked="checked"><label for="tools_pencil">画笔</label> &nbsp;
-                        <input type="radio" id="tools_eraser" name="toolsOption"><label for="tools_eraser">橡皮擦</label> &nbsp;
-                        <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>
+                        @*<input type="radio" id="tools_eraser" name="toolsOption"><label for="tools_eraser">橡皮擦</label> &nbsp;
+                        <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>*@
                         <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
                             <span>
                                 <button v-if="index == 0" id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;

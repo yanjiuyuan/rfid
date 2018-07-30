@@ -19,8 +19,7 @@ namespace DingTalk.Controllers
     [RoutePrefix("File")]
     public class FileController : ApiController
     {
-
-
+        
         /// <summary>
         /// Base64文件流上传
         /// </summary>

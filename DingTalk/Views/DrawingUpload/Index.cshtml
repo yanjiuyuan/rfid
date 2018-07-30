@@ -40,6 +40,7 @@
 <input id="btn20" type="button" value="盯盘文件下载(文件管理)" />
 <input id="btn21" type="button" value="物料编码提交" />
 <input id="btn22" type="button" value="物料编码提交Single" />
+<input id="btn23" type="button" value="项目信息修改" />
 <script type="text/javascript">
     var FlowTest = [{ "ApplyMan": "小威", "ApplyManId": "1209662535974958", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 0, "Remark": "6666", "IsSend": false, "State": 1, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
         { "ApplyMan": "蔡兴桐", "ApplyManId": "083452125733424957", "ApplyTime": null, "IsEnable": 1, "FlowId": 6, "NodeId": 1, "Remark": null, "IsSend": false, "State": 0, "ImageUrl": null, "FileUrl": null, "Title": "大型石板材扫描仪", "ProjectId": "2016ZL051", "IsPost": false, "OldImageUrl": null, "OldFileUrl": null, "IsBack": null },
@@ -596,4 +597,24 @@
             }
         })
     });
+
+
+    $("#btn23").click(function () {
+        $.ajax({
+            url: "/Project/ProjectInfoModify/",
+            type: "Post",
+            dataType: "json",
+            async: true,
+            data: { "Id": 10039.0, "ProjectName": "DingTalk", "CreateTime": "2018-07-10 16:20", "IsEnable": true, "ProjectState": "在研", "DeptName": "智慧工厂事业部", "ApplyMan": "蔡兴桐", "ApplyManId": "083452125733424957", "StartTime": "2018-07-12", "EndTime": "2018-07-13", "ProjectId": "12333", "FilePath": "\\UploadFile\\ProjectFile\\泉州华中科技大学智能制造研究院\\纵向项目\\DingTalk", "ResponsibleMan": "蔡兴桐", "ResponsibleManId": "083452125733424957", "CompanyName": "泉州华中科技大学智能制造研究院", "ProjectType": "纵向项目", "TeamMembers": "张鹏辉,肖民生,詹姆斯,黄龙贤", "TeamMembersId": "100328051024695354,073110326032521796,manager325,020821466340361583", "CreateMan": null, "CreateManId": null },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
 </script>
