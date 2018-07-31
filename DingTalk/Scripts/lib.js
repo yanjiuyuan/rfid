@@ -441,6 +441,7 @@ var mixin = {
             console.log(param)
             $.ajax({
                 url: url,
+                contentType: "application/json",
                 type: "POST",
                 data: param,
                 dataType: "json",
