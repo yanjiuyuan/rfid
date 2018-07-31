@@ -161,7 +161,6 @@
                     ProjectId: '',
                     DeptName: '',
                     ProjectState: '',
-                    Time: '',
                     ProjectType: '',
                     StartTime: '',
                     EndTime: '',
@@ -222,21 +221,15 @@
                             names.push(p.name)
                             ids.push(p.emplId)
                         }
-                        var param = {
-                            "Id": id,
-                            "ProjectName": this.ruleForm.ProjectName,
-                            "ProjectState": this.ruleForm.ProjectState,
-                            "DeptName": this.ruleForm.DeptName,
-                            "StartTime": this.ruleForm.StartTime,
-                            "EndTime": this.ruleForm.EndTime,
-                            "ProjectId": this.ruleForm.ProjectId,
-                            "ResponsibleMan": this.ResponsibleMan[0].name,
-                            "ResponsibleManId": this.ResponsibleMan[0].emplId,
-                            "TeamMembers": names.join(','),
-                            "TeamMembersId": ids.join(','),
-                            "CompanyName": this.ruleForm.CompanyName,
-                            "ProjectType": this.ruleForm.ProjectType,
+                        var param = {}
+                        for (let r in that.ruleForm) {
+                            param[r] = that.ruleForm[r]
                         }
+                        param["Id"] = id
+                        param["ResponsibleMan"] = this.ResponsibleMan[0].name
+                        param["ResponsibleManId"] = this.ResponsibleMan[0].emplId
+                        param["TeamMembers"] = names.join(',')
+                        param["TeamMembersId"] = ids.join(',')
                         console.log(param)
                         $.ajax({
                             url: "/Project/ProjectInfoModify",
@@ -286,14 +279,9 @@
                 id = row.Id
                 this.groupPeople = groupPeople
                 this.dialogFormVisible = true
-                this.ruleForm.ProjectId = row.ProjectId
-                this.ruleForm.ProjectState = row.ProjectState
-                this.ruleForm.ProjectName = row.ProjectName
-                this.ruleForm.DeptName = row.DeptName
-                this.ruleForm.StartTime = row.StartTime
-                this.ruleForm.EndTime = row.EndTime
-                this.ruleForm.ProjectType = row.ProjectType
-                this.ruleForm.CompanyName = row.CompanyName
+                for (let r in row) {
+                    this.ruleForm[r] = row[r]
+                }
             },
             handleDelete(index, row) {
                 console.log(index, row);
