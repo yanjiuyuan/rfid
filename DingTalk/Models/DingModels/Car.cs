@@ -59,5 +59,9 @@ namespace DingTalk.Models.DingModels
         /// 最后一次用车结束时间
         /// </summary>
         public DateTime? FinnalEndTime { get; set; }
+        /// <summary>
+        /// 车辆是否被占用
+        /// </summary>
+        public bool IsOccupyCar { get; set; }
     }
 }
