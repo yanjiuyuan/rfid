@@ -181,7 +181,9 @@
             handleDelete(index, row) {
                 var that = this
                 let url = "/CarMananger/Delete"
-                let param = 7
+                let param = {
+                    Id: row.Id
+                }
                
                 let handle = function (data) {
                     console.log('删除成功')

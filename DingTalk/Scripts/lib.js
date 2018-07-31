@@ -444,7 +444,7 @@ var mixin = {
                 url: url,
                 contentType: "application/json; charset=utf-8",
                 type: "POST",
-                data: param,
+                data: JSON.stringify(param),
                 dataType: "json",
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
