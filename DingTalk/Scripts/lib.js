@@ -447,6 +447,7 @@ var mixin = {
                 data: param,
                 dataType: "json",
                 success: function (data) {
+                    if (typeof (data) == 'string') data = JSON.parse(data) 
                     console.log(data)
                     if (alertStr) {
                         that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
