@@ -29,6 +29,8 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    car.FinnalStartTime = DateTime.Now;
+                    car.FinnalEndTime = DateTime.Now;
                     context.Car.Add(car);
                     context.SaveChanges();
                 }
