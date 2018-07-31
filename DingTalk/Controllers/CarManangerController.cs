@@ -55,7 +55,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Delete")]
         [HttpPost]
-        public object Delete(string Id)
+        public object Delete([FromBody]int Id)
         {
             try
             {
@@ -139,6 +139,33 @@ namespace DingTalk.Controllers
                           || c.Type.Contains(key)).ToList();
                         return Quary;
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// 车辆查询(返回当前车辆状态)
+        /// </summary>
+        /// <param name="dateTime">最后使用时间</param>
+        /// <returns></returns>
+        [Route("QuaryByTime")]
+        [HttpGet]
+        public object QuaryByTime(DateTime dateTime)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    var ListCar = context.Car.ToList();
+                    return null;
                 }
             }
             catch (Exception ex)
