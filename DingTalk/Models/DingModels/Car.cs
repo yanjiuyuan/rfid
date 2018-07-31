@@ -51,5 +51,13 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(500)]
         public string Remark { get; set; }
+        /// <summary>
+        /// 最后一次用车开始时间
+        /// </summary>
+        public DateTime? FinnalStartTime { get; set; }
+        /// <summary>
+        /// 最后一次用车结束时间
+        /// </summary>
+        public DateTime? FinnalEndTime { get; set; }
     }
 }

@@ -118,7 +118,7 @@ namespace DingTalk.Controllers
         /// <param name="key">查询关键字</param>
         /// <returns></returns>
         [Route("Quary")]
-        [HttpPost]
+        [HttpGet]
         public object Quary(string key)
         {
             try
