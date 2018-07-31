@@ -51,16 +51,17 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆删除
         /// </summary>
-        /// <param name="car"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
         [Route("Delete")]
         [HttpPost]
-        public object Delete(Car car)
+        public object Delete(string Id)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
+                    Car car = context.Car.Find(Id);
                     context.Car.Remove(car);
                     context.SaveChanges();
                 }
