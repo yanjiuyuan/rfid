@@ -120,7 +120,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Quary")]
         [HttpGet]
-        public string Quary(string key)
+        public object Quary(string key)
         {
             try
             {
@@ -129,24 +129,24 @@ namespace DingTalk.Controllers
                     if (string.IsNullOrEmpty(key))
                     {
                         var Quary = context.Car.ToList();
-                        return JsonConvert.SerializeObject(Quary);
+                        return Quary;
                     }
                     else
                     {
                         var Quary = context.Car.Where(c => c.Name.Contains(key) ||
                           c.CarNumber.Contains(key) || c.Color.Contains(key)
                           || c.Type.Contains(key)).ToList();
-                        return JsonConvert.SerializeObject(Quary);
+                        return Quary;
                     }
                 }
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel()
+                return new ErrorModel()
                 {
                     errorCode = 1,
                     errorMessage = ex.Message
-                });
+                };
             }
         }
     }
