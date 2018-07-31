@@ -62,6 +62,6 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// 车辆是否被占用
         /// </summary>
-        public bool IsOccupyCar { get; set; }
+        public bool? IsOccupyCar { get; set; }
     }
 }
