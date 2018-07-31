@@ -24,6 +24,7 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
         public virtual DbSet<Car> Car { get; set; }
+        public virtual DbSet<CarTable> CarTable { get; set; }
         public virtual DbSet<Code> Code { get; set; }
         public virtual DbSet<FileInfos> FileInfos { get; set; }
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
@@ -422,6 +423,46 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<Car>()
                 .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.PeerNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.MainContent)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.PlantTravelWay)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.FactTravelWay)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.StartKilometres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.EndKilometres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.UseKilometres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.CarId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Code>()

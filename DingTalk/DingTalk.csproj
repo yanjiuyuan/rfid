@@ -331,6 +331,7 @@
     <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CarManangerController.cs" />
+    <Compile Include="Controllers\CarTableController.cs" />
     <Compile Include="Controllers\DrawingDownController.cs" />
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\FileController.cs" />
@@ -382,6 +383,7 @@
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
+    <Compile Include="Models\DingModels\CarTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
     <Compile Include="Models\DingModels\DDContext.cs" />
     <Compile Include="Models\DingModels\FileInfos.cs" />
