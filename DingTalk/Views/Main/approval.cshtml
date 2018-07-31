@@ -104,6 +104,12 @@
             position: '-594px -227px'
         },
         {
+            flowId: 13,
+            sortId: 6,
+            url: '/approval/UsePublicCar',
+            position: '-775px -317px'
+        },
+        {
             flowId: 14,
             sortId: 6,
             url: '/approval/UseCar',
@@ -112,7 +118,7 @@
         {
             flowId: 15,
             sortId: 6,
-            url: '/approval/UseCar',
+            url: '/approval/CarManager',
             position: '-144px -227px'
         }
     ]
@@ -133,6 +139,7 @@
         },
         methods: {
             getMenu: function () {
+                
                 var that = this
                 $.ajax({
                     url: '/FlowInfo/LoadFlowSort?id=123',
@@ -189,16 +196,12 @@
                 }
             },
             getUserInfo: function () {
-                var that = this 
-                $.ajax({
-                    url: '/FlowInfo/GetUserInfo',
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log('获取用户数据')
-                        console.log(data)
-                        that.userList = data
-                    }
-                })
+                var that = this
+                let url = '/FlowInfo/GetUserInfo'
+                let handle = function (data) {
+                    that.userList = data
+                }
+                this._getData(url, handle)
             }
         },
         created: function () {
