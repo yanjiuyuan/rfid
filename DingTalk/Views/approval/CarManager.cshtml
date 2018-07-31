@@ -131,6 +131,7 @@
                         console.log(that.ruleForm)
                         $.ajax({
                             url: url,
+                            type: 'POST',
                             data: that.ruleForm,
                             success: function (data) {
                                 console.log("添加车辆ok")
@@ -180,10 +181,8 @@
             handleDelete(index, row) {
                 var that = this
                 let url = "/CarMananger/Delete"
-                let param = {
-                    Id: row.Id
-                }
-                param = row
+                let param = 7
+               
                 let handle = function (data) {
                     console.log('删除成功')
                     that.getCar()
