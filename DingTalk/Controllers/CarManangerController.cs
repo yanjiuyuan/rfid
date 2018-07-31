@@ -1,5 +1,6 @@
 ﻿using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,25 +120,33 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Quary")]
         [HttpGet]
-        public object Quary(string key)
+        public string Quary(string key)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    var Quary = context.Car.Where(c => c.Name.Contains(key) ||
-                    c.CarNumber.Contains(key) || c.Color.Contains(key)
-                    || c.Type.Contains(key)).ToList();
-                    return Quary;
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        var Quary = context.Car.ToList();
+                        return JsonConvert.SerializeObject(Quary);
+                    }
+                    else
+                    {
+                        var Quary = context.Car.Where(c => c.Name.Contains(key) ||
+                          c.CarNumber.Contains(key) || c.Color.Contains(key)
+                          || c.Type.Contains(key)).ToList();
+                        return JsonConvert.SerializeObject(Quary);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
+                return JsonConvert.SerializeObject(new ErrorModel()
                 {
                     errorCode = 1,
                     errorMessage = ex.Message
-                };
+                });
             }
         }
     }
