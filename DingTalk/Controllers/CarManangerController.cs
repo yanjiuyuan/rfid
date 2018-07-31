@@ -51,16 +51,19 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆删除
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="obj"></param>
         /// <returns></returns>
+        /// 测试数据: /CarMananger/Delete/
+        /// data: JSON.stringify({ Id: "7" }),
         [Route("Delete")]
         [HttpPost]
-        public object Delete([FromBody]int Id)
+        public object Delete(dynamic obj)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
+                    var Id = Convert.ToInt32(obj.Id);
                     Car car = context.Car.Find(Id);
                     context.Car.Remove(car);
                     context.SaveChanges();
@@ -155,7 +158,7 @@ namespace DingTalk.Controllers
         /// 车辆查询(返回当前车辆状态)
         /// </summary>
         /// <param name="dateTime">最后使用时间</param>
-        /// <returns></returns>
+        /// <returns>IsOccupyCar 是否被占用</returns>
         [Route("QuaryByTime")]
         [HttpGet]
         public object QuaryByTime(DateTime dateTime)
@@ -165,7 +168,22 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     var ListCar = context.Car.ToList();
-                    return null;
+                    var Quary = from l in ListCar
+                                select new
+                                {
+                                    l.CarNumber,
+                                    l.Color,
+                                    l.CreateMan,
+                                    l.CreateTime,
+                                    l.FinnalEndTime,
+                                    l.FinnalStartTime,
+                                    l.Id,
+                                    l.Name,
+                                    l.Remark,
+                                    l.State,
+                                    IsOccupyCar = dateTime > l.FinnalEndTime ? true : false
+                                };
+                    return Quary;
                 }
             }
             catch (Exception ex)
