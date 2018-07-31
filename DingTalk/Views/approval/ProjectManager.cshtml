@@ -88,7 +88,7 @@
         </el-pagination>
     </div>
     <!--编辑项目表单-->
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+    <el-dialog title="编辑项目" :visible.sync="dialogFormVisible">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
                  enctype="multipart/form-data" :inline="true">
             <template>
@@ -239,17 +239,12 @@
                             success: function (data) {
                                 console.log("编辑项目")
                                 console.log(data)
-                                if (data.errorCode == 0) {
-                                    that.$alert(data.errorMessage, '提示信息', {
-                                        confirmButtonText: '确定',
-                                        callback: action => {
-                                            loadPage('/main/Approval')
-                                            that.getProject()
-                                        }
-                                    });
-                                }
                                 that.$alert(data.errorMessage, '提示信息', {
-                                    confirmButtonText: '确定'
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        that.dialogFormVisible = false
+                                        that.getProject()
+                                    }
                                 })
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {

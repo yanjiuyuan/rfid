@@ -406,6 +406,61 @@ var mixin = {
                 },
                 onFail: function (err) { }
             });
+        },
+        //get获取接口数据通用方法
+        _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
+            var that = this
+            url = url += _formatQueryStr(param)
+            console.log(url)
+            console.log(param)
+            $.ajax({
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    if (alertStr) {
+                        that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                if (callBack) callBack(data)
+                            }
+                        })
+                    } else {
+                        callBack(data)
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest);
+                }
+            })
+        },
+        //post提交接口数据通用方法
+        _postData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
+            var that = this
+            console.log(url)
+            console.log(param)
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: param,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    if (alertStr) {
+                        that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                if (callBack) callBack()
+                            }
+                        })
+                    } else {
+                        callBack()
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest);
+                }
+            })
         }
     }
 }

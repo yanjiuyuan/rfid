@@ -22,6 +22,14 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult UsePublicCar()
+        {
+            return View();
+        }
+        public ActionResult CarManager()
+        {
+            return View();
+        }
         public ActionResult Purchase()
         {
             return View();
