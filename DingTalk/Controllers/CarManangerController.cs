@@ -160,10 +160,11 @@ namespace DingTalk.Controllers
         /// 车辆查询(返回当前车辆状态)
         /// </summary>
         /// <param name="dateTime">最后使用时间</param>
-        /// <returns>IsOccupyCar 是否被占用</returns>
+        /// <returns>IsOccupyCar 是否被占用 true 被占用 false 未被占用</returns>
+        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-07-29 15:07:07
         [Route("QuaryByTime")]
         [HttpGet]
-        public object QuaryByTime(DateTime dateTime)
+        public object QuaryByTime(string dateTime)
         {
             try
             {
@@ -183,7 +184,7 @@ namespace DingTalk.Controllers
                                     l.Name,
                                     l.Remark,
                                     l.State,
-                                    IsOccupyCar = dateTime > l.FinnalEndTime ? true : false
+                                    IsOccupyCar = Convert.ToDateTime(dateTime) > l.FinnalEndTime ? false : true
                                 };
                     return Quary;
                 }
