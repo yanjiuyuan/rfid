@@ -108,28 +108,15 @@
             //获取车辆数据getCar
             getCar() {
                 var that = this
-                var param = {
-                    key: '1'
+                let url = "/CarMananger/Quary"
+                let param = {
+                    key: this.formInline.key
                 }
-                url = "/CarMananger/Quary?key="
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(param),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("获取车辆数据 /CarMananger/Quary")
-                        console.log(url)
-                        console.log(data)
-                        that.data = data
-                        that.totalRows = data.length
-                        that.getData()
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest);
-                    }
-                })
+                let handle = function (data) {
+                    that.totalRows = data.length
+                    that.getData()
+                }
+                this._getData(url,handle,param)
             },
             //添加车辆数据
             addCar(formName) {
