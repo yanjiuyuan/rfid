@@ -8,31 +8,36 @@
         <i class="el-icon-arrow-left"></i>
         用车申请
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        
-        <el-form-item label="用车人" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="用车人" prop="DrivingMan">
+            <el-input v-model="ruleForm.DrivingMan" style="width:200px;"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
+        </el-form-item>
+        <el-form-item label="同行人" prop="PeerNumber">
+            <el-input v-model="ruleForm.PeerNumber" style="width:500px;"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
 
-        <el-form-item label="用车事由" prop="reson">
-            <el-input v-model="ruleForm.reson"></el-input>
+        <el-form-item label="用车事由" prop="MainContent">
+            <el-input v-model="ruleForm.MainContent" style="width:600px;"></el-input>
         </el-form-item>
 
         <hr />
 
-        <el-form-item label="始发地点" prop="startAddress">
-            <el-input v-model="ruleForm.startAddress"></el-input>
+        <el-form-item label="计划行车路线" prop="PlantTravelWay">
+            <el-input v-model="ruleForm.PlantTravelWay"></el-input>
         </el-form-item>
 
-        <el-form-item label="返回地点" prop="endAddress">
-            <el-input v-model="ruleForm.endAddress"></el-input>
+        <el-form-item label="起始公里数" prop="StartKilometres">
+            <el-input v-model="ruleForm.StartKilometres"></el-input>
         </el-form-item>
 
-        <el-form-item label="用车时间" prop="startTime">
+        <el-form-item label="用车时间" prop="StartTime">
             <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.startTime"
+                <el-date-picker v-model="ruleForm.StartTime"
                                 type="datetime"
+                                v-on:change="selectTime"
                                 placeholder="选择日期时间"
                                 align="right"
                                 :picker-options="dayPickerOptions">
@@ -40,10 +45,9 @@
             </div>
         </el-form-item>
 
-        <el-form-item label="返回时间" prop="endTime">
+        <el-form-item label="返回时间" prop="EndTime">
             <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.endTime"
+                <el-date-picker v-model="ruleForm.EndTime"
                                 type="datetime"
                                 placeholder="选择日期时间"
                                 align="right"
@@ -51,16 +55,22 @@
                 </el-date-picker>
             </div>
         </el-form-item>
+        <el-form-item label="车辆选择" prop="PlantTravelWay">
+            <el-select v-model="ruleForm.PlantTravelWay" v-on:change="selectUser" filterable placeholder="请选择">
+                <el-option v-for="item in carList"
+                           :key="item.PeopleId"
+                           :label="item.NodePeople"
+                           :value="item.PeopleId">
+                </el-option>
+            </el-select>
+        </el-form-item>
 
         <hr />
 
-        <el-form-item label="审批人">
-            <span class="hint">审批人已由管理员预置，并将自动去重</span>
-        </el-form-item>
-
-        <el-form-item label="抄送人">
-            <span class="hint">（审批通过后，通知抄送人）</span>
-        </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit()">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -74,44 +84,45 @@
         mixins: [mixin],
         data: function () {
             return {
+                carList: [],
+                nodeList: [],
+                nodeInfo: {},
                 ruleForm: {
-                    name: '',
-                    reson: '',
-                    startAddress: '',
-                    endAddress: '',
-                    startTime: '',
-                    endTime: '',
+                    CarId: "",
+                    DrivingMan: "",
+                    PeerNumber: "",
+                    StartTime: "",
+                    EndTime: "",
+                    MainContent: "",
+                    PlantTravelWay: "",
+                    StartKilometres: "",
+                    IsPublicCar: true,
+                    IsChooseOccupyCar: true,
+                    OccupyCarId: ""
                 },
                 rules: {
-                    name: [
-                        { required: true, message: '申请人不能为空', trigger: 'blur' },
-                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-                    ],
+                    DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
+                    PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
+                    MainContent: { required: true, message: '用车事由不能为空', trigger: 'blur' },
+                    PlantTravelWay: { required: true, message: '计划路线不能为空', trigger: 'blur' },
+                    StartKilometres: { required: true, message: '起始公里数不能为空', trigger: 'blur' },
                     startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
-                    endAddress: { required: true, message: '返回地点不能为空', trigger: 'blur' },
-                    startTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
-                    endTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
+                    StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
+                    EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
                 },
                 dayPickerOptions: {
                     shortcuts: [
                         {
-                            text: '昨天',
+                            text: '今天',
+                            onClick(picker) {
+                                picker.$emit('pick', new Date());
+                            }
+                        }, {
+                            text: '明天',
                             onClick(picker) {
                                 const date = new Date();
-                                date.setTime(date.getTime() - 3600 * 1000 * 24);
+                                date.setTime(date.getTime() + 3600 * 1000 * 24);
                                 picker.$emit('pick', date);
-                            }
-                        },{
-                        text: '今天',
-                        onClick(picker) {
-                            picker.$emit('pick', new Date());
-                        }
-                    }, {
-                        text: '明天',
-                        onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() + 3600 * 1000 * 24);
-                            picker.$emit('pick', date);
                         }
                     }]
                 }
@@ -120,9 +131,59 @@
         methods: {
             onSubmit() {
                 console.log('submit!');
+            },
+            //选车操作
+            selectUser(value) {
+                console.log(value)
+            },
+            //选时间操作
+            selectTime(value) {
+                console.log(value)
+                return
+                let url = '/CarMananger/QuaryByTime'
+                let param = {
+                    dateTime: value
+                }
+                let callBack = function(data){
+                    console.log('选时间操作')
+                }
+                this._getData(url, callBack, param)
+            },
+            //添加用车人
+            addDrivingMan() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [], 
+                    multiple: false,
+                    corpId: DingData.CorpId, 
+                    max: 10, 
+                    onSuccess: function (data) {
+                        console.log(data)
+                        that.ruleForm.DrivingMan = data[0].name
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            //添加同行人
+            addPeerNumber() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        let names = []
+                        for (let d of data) names.push(d.name)
+                        that.ruleForm.PeerNumber = names.join(',')
+                    },
+                    onFail: function (err) { }
+                });
             }
         },
         created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
             loadHtml("mainPage", "partPage")
         }
     })

@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        项目列表
+        车辆管理
     </div>
     <!--检索项目表单-->
     <el-form :inline="true" :model="formInline" class="demo-form-inline"
@@ -48,7 +48,10 @@
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
                  enctype="multipart/form-data" :inline="true">
             <template>
-                <el-form-item v-for="i in items" :key="i" :label="tableItems[i]" prop="i">
+                <el-form-item v-for="i in items" v-if="i=='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
+                    <el-input v-model="ruleForm[i]" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
                     <el-input v-model="ruleForm[i]"></el-input>
                 </el-form-item>
                 <hr />
@@ -74,9 +77,10 @@
         Type: "品牌",
         CarNumber: "车牌号" ,
         Color: "颜色" ,
-        CreateMan: "创建人" ,
+        FinnalUserMan: "最近使用人",
+        FinnalEndTime: "最近使用时间",
         //CreateTime: "创建时间" ,
-        State: "状态" ,
+        //State: "状态" ,
         Remark: "备注"
     }
     var items = []
