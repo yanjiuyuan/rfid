@@ -79,19 +79,6 @@
             DingData = data
             DingData.userid = 'manager325'
             DingData.nickName = '黄浩炜'
-            //var a = 11
-            //if (a == 1) {
-            //    DingData.userid = 'manager325'
-            //    DingData.nickName = '蔡兴桐'
-            //}
-            //if (a == 2) {
-            //    DingData.userid = '1209662535974958'
-            //    DingData.nickName = '小威'
-            //}
-            //if (a == 3) {
-            //    DingData.userid = '111'
-            //    DingData.nickName = '王老师'
-            //}
             console.log("你好，" + DingData.nickName)
             var configObj = {
                 jsticket: DingData.JsApiTicket,
@@ -137,6 +124,23 @@
                 DingData.nickName = result.nickName
                 console.log('免登成功')
                 console.log("你好，" + DingData.nickName)
+                let param = { userId: result.emplId}
+                $.ajax({
+                    url: '/DingTalkServers/departmentQuaryByUserId',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: JSON.stringify(param),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (typeof (data) == 'string') data = JSON.parse(data) 
+                        console.log('获取部门')
+                        console.log(data)
+                        DingData.departName = data.name
+                    },
+                    error: function (err) {
+                        console.error(err)
+                    }
+                })
             },
             onFail: function (err) {
                 console.log('userinfo fail: ' + JSON.stringify(err));
