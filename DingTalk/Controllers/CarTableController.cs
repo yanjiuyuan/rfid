@@ -30,7 +30,7 @@ namespace DingTalk.Controllers
                 {
                     context.CarTable.Add(carTable);
                     context.SaveChanges();
-                    Car car = context.Car.Find(carTable.CarId);
+                    Car car = context.Car.Find(Int32.Parse(carTable.CarId));
                     //更新车辆状态
                     if (carTable.StartTime > car.FinnalEndTime)
                     {
@@ -107,6 +107,49 @@ namespace DingTalk.Controllers
                     errorCode = 0,
                     errorMessage = "修改成功"
                 };
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// 获取时间段内的车辆统计报表
+        /// </summary>
+        /// <param name="StartTime">开始时间</param>
+        /// <param name="EndTime">结束时间</param>
+        /// <param name="UserId">用户Id</param>
+        /// <returns></returns>
+        [Route("GetReport")]
+        [HttpGet]
+        public object GetMonthReport(string StartTime, string EndTime, string UserId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    //查询时间段内的数据
+                    List<CarTable> carTables = context.CarTable.Where(c => c.StartTime > DateTime.Parse(StartTime)
+                      && c.EndTime < DateTime.Parse(EndTime)).ToList();
+                    //更新实际行驶路程
+                    foreach (CarTable carTable in carTables)
+                    {
+                        if (!string.IsNullOrEmpty(carTable.OccupyCarId))
+                        {
+                            CarTable catTb = context.CarTable.Find(carTable.OccupyCarId);
+                            catTb.UseKilometres = (Int32.Parse( catTb.UseKilometres) - Int32.Parse(carTable.UseKilometres)).ToString();
+                            context.Entry<CarTable>(catTb).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                        }
+                    }
+                    //获取
+                    return "";
+                }
             }
             catch (Exception ex)
             {
