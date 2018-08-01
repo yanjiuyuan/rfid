@@ -184,7 +184,8 @@ namespace DingTalk.Controllers
                                     l.Name,
                                     l.Remark,
                                     l.State,
-                                    IsOccupyCar = Convert.ToDateTime(dateTime) > l.FinnalEndTime ? false : true
+                                    IsOccupyCar = Convert.ToDateTime(dateTime) > l.FinnalEndTime ? false : true,
+                                    l.OccupyCarId
                                 };
                     return Quary;
                 }

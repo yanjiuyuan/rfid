@@ -70,5 +70,16 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(100)]
         public string CarId { get; set; }
+        /// <summary>
+        /// 驾驶人
+        /// </summary>
+        [StringLength(200)]
+        public string DrivingMan { get; set; }
+        /// <summary>
+        /// 最近一次占用车辆Id
+        /// </summary>
+        [StringLength(200)]
+        public string OccupyCarId { get; set; }
+
     }
 }
