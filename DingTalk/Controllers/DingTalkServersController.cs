@@ -63,7 +63,7 @@ namespace DingTalk.Controllers
         {
             if (string.IsNullOrEmpty(userId))
             {
-                userId = "manager325";
+                userId = "083452125733424957";
             }
             var result = await dtManager.GetDepartmentByUserId(userId);
             DepartmentListModel departmentListModel = JsonConvert.DeserializeObject<DepartmentListModel>(result);
@@ -75,7 +75,7 @@ namespace DingTalk.Controllers
                 {
                     foreach (var Id in item)
                     {
-                        if (item.IndexOf(Id) == 0)
+                        if (item.IndexOf(Id) == (item.Count - 2))
                         {
                             ListDepartmentId.Add(Id);
                         }
