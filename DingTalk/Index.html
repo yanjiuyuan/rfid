@@ -20,13 +20,15 @@
         <div class="panel-body">
             <div class="method-margin col-md-12">
                 <div style="margin-bottom:5px;">
-                    <!--<embed width="800" height="600" src="1.pdf">-->
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="accessToken">获取accessToken</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getJsapiTicket">获取jsapi_ticket</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="departmentList">获取部门列表</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="singleDepartment">获取单个部门</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="addDepartment">新建一个部门</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="delDepartment">删除一个部门</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="departmentListQuaryByUserId">根据用户Id获取上级部门Id</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="departmentListQuaryByDeptId">根据部门Id获取部门信息</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="departmentQuaryByUserId">根据用户Id获取第二级部门信息</button>
                 </div>
                 <div class="method-output-padding">
                     <div class="logs-margin alert alert-danger alert-dismissible" role="alert" name="showErrorAlert">
@@ -59,7 +61,7 @@
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="batchDeleteUser">批量删除用户</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getDepartmentUserList">获取部门用户</button>
                     <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getDepartmentUserDetailList">获取部门用户（详情)</button>
-                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getAttendanceList">获取考勤数据</button>
+                    <button type="button" class="btn btn-default" data-loading-text="正在请求..." id="getAttendanceList">获取考勤数据</button>             
                 </div>
                 <div class="method-output-padding">
                     <div class="logs-margin alert alert-danger alert-dismissible" role="alert" name="showErrorAlert">

@@ -48,16 +48,21 @@ namespace DingTalkServer
         }
         public Task<string> AddDepartment(AddDepartmentModel dpt)
         {
-
             var url = _addressConfig.CreateDepartmentUrl;
             return _client.UploadModel(url, dpt);
-
         }
 
         public Task<string> GetDepartmentUserList(int dptId)
         {
             var url = _addressConfig.GetDepartmentUserListUrl;
             _client.QueryString.Add("department_id", dptId.ToString());
+            return _client.Get(url);
+        }
+
+        public Task<string> GetDepartmentByUserId(string userId)
+        {
+            var url = _addressConfig.GetDepartmentByUserId;
+            _client.QueryString.Add("userId", userId);
             return _client.Get(url);
         }
 

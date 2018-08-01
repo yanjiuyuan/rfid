@@ -378,6 +378,7 @@
     <Compile Include="Models\BatchDeleteUserModel.cs" />
     <Compile Include="Models\CommomModel.cs" />
     <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\DepartmentListModel.cs" />
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
