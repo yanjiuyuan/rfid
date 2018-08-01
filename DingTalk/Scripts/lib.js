@@ -115,9 +115,10 @@ function _getTime() {
     var day = d.getDate()
     var hour = d.getHours()
     var minute = d.getMinutes()
+    var second = d.getSeconds()
     if (month < 10) month = '0' + month
     if (day < 10) day = '0' + day
-    return year + split + month + split + day + ' ' + hour + ':' + minute
+    return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
 }
 
 function isArray(o) {
@@ -158,7 +159,6 @@ var pickerOptions = {
         }
     }]
 }
-
 var mixin = {
     data: {
         user: {},
