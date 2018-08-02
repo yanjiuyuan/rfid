@@ -26,7 +26,7 @@
         <hr />
 
         <el-form-item label="计划行车路线" prop="PlantTravelWay">
-            <el-input v-model="ruleForm.PlantTravelWay"></el-input>
+            <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
         </el-form-item>
 
         <el-form-item label="起始公里数" prop="StartKilometres">
@@ -69,7 +69,7 @@
                 <el-option v-for="item in carList"
                            :key="item.PeopleId"
                            :label="item.Name"
-                           :value="JSON.stringify(item)">
+                           :value="item">
                 </el-option>
             </el-select>
         </el-form-item>
@@ -96,7 +96,7 @@
                 carList: [],
                 nodeList: [],
                 nodeInfo: {},
-                CarObj: {},
+                CarObj: '',
                 timeRange:[],
                 ruleForm: {
                     CarId: "",
@@ -148,9 +148,10 @@
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
+                    console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
                         console.log('save car table')
-                        this.$alert('恭喜你 ，提交成功', '提示信息', {
+                        that.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
 
@@ -162,8 +163,8 @@
             },
             //选车操作
             selectUser(value) {
-                value = JSON.parse(value)
-                console.log('选时间操作')
+                //value = JSON.parse(value)
+                console.log('选车操作')
                 console.log(value)
                 this.ruleForm.CarId = value.Id
                 this.ruleForm.OccupyCarId = value.OccupyCarId
