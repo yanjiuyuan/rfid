@@ -1,4 +1,5 @@
-﻿using DingTalk.Models;
+﻿using DingTalk.Bussiness.FlowInfo;
+using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
 using System.Collections.Generic;
@@ -116,7 +117,7 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 };
             }
-        } 
+        }
 
         /// <summary>
         /// 获取时间段内的车辆统计报表
@@ -142,12 +143,34 @@ namespace DingTalk.Controllers
                         if (!string.IsNullOrEmpty(carTable.OccupyCarId))
                         {
                             CarTable catTb = context.CarTable.Find(carTable.OccupyCarId);
-                            catTb.UseKilometres = (Int32.Parse( catTb.UseKilometres) - Int32.Parse(carTable.UseKilometres)).ToString();
+                            catTb.UseKilometres = (Int32.Parse(catTb.UseKilometres) - Int32.Parse(carTable.UseKilometres)).ToString();
                             context.Entry<CarTable>(catTb).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
                     }
-                    //获取
+                    //计算公里数
+                    List<CarTable> carTableList = context.CarTable.ToList();
+                    List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("13"); //公车任务流
+                    List<Tasks> taskList = new List<Tasks>();
+                    List<Car> carList = context.Car.ToList();
+                    foreach (Tasks tasks in tasksList)
+                    {
+                        if (tasks.NodeId == 0)
+                        {
+                            taskList.Add(tasks);
+                        }
+                    }
+                    var Quary = from t in taskList
+                                join c in carTableList
+                                on t.TaskId.ToString() equals c.TaskId
+                                join cars in carList 
+                                on c.CarId equals cars.Id.ToString()
+                                select new
+                                {
+                                    t.Dept,t.ApplyMan,c.StartTime,c.EndTime,
+
+                                };
+
                     return "";
                 }
             }

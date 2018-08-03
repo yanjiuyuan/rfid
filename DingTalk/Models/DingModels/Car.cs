@@ -76,7 +76,7 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// 每公里单价
         /// </summary>
-        public float UnitPricePerKilometre { get; set; }
+        public double? UnitPricePerKilometre { get; set; }
 
     }
 }

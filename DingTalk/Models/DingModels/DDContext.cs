@@ -425,6 +425,14 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.Remark)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Car>()
+                .Property(e => e.FinnalUserMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.OccupyCarId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<CarTable>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -463,6 +471,14 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<CarTable>()
                 .Property(e => e.CarId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.DrivingMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.OccupyCarId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Code>()
