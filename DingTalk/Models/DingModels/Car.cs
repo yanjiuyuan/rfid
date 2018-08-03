@@ -73,8 +73,10 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string OccupyCarId { get; set; }
-        
-
+        /// <summary>
+        /// 每公里单价
+        /// </summary>
+        public float UnitPricePerKilometre { get; set; }
 
     }
 }
