@@ -18,8 +18,7 @@
 
     <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/element.js"></script>
-    <script src="~/Scripts/pdf.js"></script>
-    <script src="~/Scripts/pdf.worker.js"></script>
+
     <script src="~/Scripts/lib.js"></script>
     <script src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
     @*<script src="http://g.alicdn.com/dingding/open-develop/1.6.9/dingtalk.js"></script>*@
@@ -42,11 +41,11 @@
     </script>
 </head>
 <body>
-    
+
     <div id="app">
         @*<el-header>
-            @RenderPage("~/Views/Shared/Head_login.cshtml")
-        </el-header>*@
+                @RenderPage("~/Views/Shared/Head_login.cshtml")
+            </el-header>*@
         <el-container>
             <el-main>
                 @RenderBody()
@@ -61,7 +60,7 @@
 </body>
 </html>
 <script>
-     
+
 
 </script>
 
@@ -73,26 +72,14 @@
         //url: 'http://17e245o364.imwork.net/signature/',
         url: '/Login/BeginDDAutoLogin',
         dataType: 'json',
-        type:'GET',
-        cache:false,
+        type: 'GET',
+        cache: false,
         success: function (data) {
             DingData = data
             DingData.userid = 'manager325'
             DingData.nickName = '黄浩炜'
-            //var a = 11
-            //if (a == 1) {
-            //    DingData.userid = 'manager325'
-            //    DingData.nickName = '蔡兴桐'
-            //}
-            //if (a == 2) {
-            //    DingData.userid = '1209662535974958'
-            //    DingData.nickName = '小威'
-            //}
-            //if (a == 3) {
-            //    DingData.userid = '111'
-            //    DingData.nickName = '王老师'
-            //}
             console.log("你好，" + DingData.nickName)
+            console.log("你好，召唤师" )
             var configObj = {
                 jsticket: DingData.JsApiTicket,
                 agentId: DingData.AgentId,
@@ -128,7 +115,8 @@
                 console.log('requestAuthCode fail: ' + JSON.stringify(err));
             }
         });
-
+        var startTime = new Date()
+        console.log('免登开始 ' + startTime.getSeconds())
         DingTalkPC.biz.user.get({
             onSuccess: function (result) {
                 console.log(result);
@@ -137,16 +125,38 @@
                 DingData.nickName = result.nickName
                 console.log('免登成功')
                 console.log("你好，" + DingData.nickName)
+                var endTime = new Date()
+                console.log('免登成功 ' + endTime.getSeconds())
+                let param = { userId: result.emplId }
+                //$.ajax({
+                //    url: '/DingTalkServers/departmentQuaryByUserId',
+                //    dataType: 'json',
+                //    type: 'POST',
+                //    data: JSON.stringify(param),
+                //    contentType: "application/json; charset=utf-8",
+                //    success: function (data) {
+                //        if (typeof (data) == 'string') data = JSON.parse(data)
+                //        console.log('获取部门')
+                //        console.log(data)
+                //        DingData.departName = data.name
+                //    },
+                //    error: function (err) {
+                //        console.error(err)
+                //    }
+                //})
             },
             onFail: function (err) {
                 console.log('userinfo fail: ' + JSON.stringify(err));
             }
         });
-    }); 
-    
+    });
+
 
     DingTalkPC.error(function (err) {
         console.log('dd error: ' + JSON.stringify(err));
     });
-    
+
 </script>
+
+<script src="~/Scripts/pdf.js"></script>
+<script src="~/Scripts/pdf.worker.js"></script>

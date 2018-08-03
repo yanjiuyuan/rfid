@@ -107,6 +107,20 @@ function _dateToString(date, split) {
     return year + split + month + split + day
 }
 
+function _timeToString(date, split) {
+    if (!split) split = "-"
+    var d = new Date(date)
+    var year = d.getFullYear()
+    var month = d.getMonth() + 1
+    var day = d.getDate()
+    var hour = d.getHours()
+    var minute = d.getMinutes()
+    var second = d.getSeconds()
+    if (month < 10) month = '0' + month
+    if (day < 10) day = '0' + day
+    return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
+}
+
 function _getTime() {
     var split = "-"
     var d = new Date()
@@ -223,6 +237,78 @@ var mixin = {
         
     },
     methods: {
+        //提交审批
+        approvalSubmit(formName,param,callBack) {
+            var that = this
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    that.disablePage = true
+                    var paramArr = []
+                    var applyObj = {
+                        "ApplyMan": DingData.nickName,
+                        "ApplyManId": DingData.userid,
+                        "NodeId": "0",
+                        "ApplyTime": _getTime(),
+                        "IsEnable": "1",
+                        "FlowId": FlowId + '',
+                        "IsSend": false,
+                        "State": "1",
+                    }
+                    for (let p in param) {
+                        applyObj[p] = param[p]
+                    }
+                    paramArr.push(applyObj)
+                    for (let node of that.nodeList) {
+                        if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
+                            console.log(node)
+                            console.log(node.AddPeople)
+                            if (!that.preApprove && node.AddPeople.length == 0) {
+                                this.$alert('您尚未选择审批人', '提交错误', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+
+                                    }
+                                });
+                                that.disablePage = false
+                                return
+                            }
+                            for (let a of node.AddPeople) {
+                                paramArr.push({
+                                    "ApplyMan": a.name,
+                                    "ApplyManId": a.emplId,
+                                    "IsEnable": 1,
+                                    "FlowId": FlowId + '',
+                                    "NodeId": node.NodeId + '',
+                                    "IsSend": false,
+                                    "State": 0,
+                                    "OldFileUrl": null,
+                                    "IsBack": null
+                                })
+                            }
+                        }
+                    }
+                    $.ajax({
+                        url: '/FlowInfo/CreateTaskInfo',
+                        type: 'POST',
+                        data: JSON.stringify(paramArr),
+                        success: function (data) {
+                            console.log("提交审批ok")
+                            console.log(data)
+                            var taskId = JSON.parse(data).Content
+                            console.log(paramArr)
+                            console.log(taskId)
+                            callBack(taskId)
+                        }
+                    })
+                } else {
+                    that.$alert('表单数据不全或有误', '提交错误', {
+                        confirmButtonText: '确定'
+                    });
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
@@ -278,7 +364,7 @@ var mixin = {
                     that.isBack = result[0].IsBack
                     that.nodeList = _cloneArr(result)
                     for (let node of that.nodeList) {
-                        if (node.NodeId == 0)
+                        if (node.NodeName.indexOf('申请人') >= 0)
                             node.NodePeople = [DingData.nickName]
                         if (node.ApplyMan && node.ApplyMan.length > 0)
                             node.NodePeople = node.ApplyMan.split(',')
