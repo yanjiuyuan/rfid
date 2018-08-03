@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        用车申请
+        用车申请-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
@@ -42,34 +42,14 @@
                             start-placeholder="开始时间"
                             end-placeholder="返回时间">
             </el-date-picker>
-
-            @*<div class="block">
-                <el-date-picker v-model="ruleForm.StartTime"
-                                type="datetime"
-                                v-on:change="selectTime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>*@
         </el-form-item>
 
-        @*<el-form-item label="返回时间" prop="EndTime">
-            <div class="block">
-                <el-date-picker v-model="ruleForm.EndTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>
-        </el-form-item>*@
         <el-form-item label="车辆选择" prop="PlantTravelWay">
             <el-select v-model="CarObj" v-on:change="selectUser" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
                            :key="item.PeopleId"
                            :label="item.Name"
-                           :value="item">
+                           :value="item.Id">
                 </el-option>
             </el-select>
         </el-form-item>
@@ -166,12 +146,18 @@
                 //value = JSON.parse(value)
                 console.log('选车操作')
                 console.log(value)
-                this.ruleForm.CarId = value.Id
-                this.ruleForm.OccupyCarId = value.OccupyCarId
-                this.ruleForm.IsChooseOccupyCar = value.IsChooseOccupyCar
+                let car = {}
+                for (let c of this.carList) {
+                    if (c.Id == value)
+                        car = c
+                }
+                this.ruleForm.CarId = car.Id
+                this.ruleForm.OccupyCarId = car.OccupyCarId
+                this.ruleForm.IsChooseOccupyCar = car.IsChooseOccupyCar
             },
             //选时间操作
             selectTime(value) {
+                if (!value[0]) return
                 var that = this
                 let url = '/CarMananger/QuaryByTime'
                 this.ruleForm.StartTime = _timeToString(value[0])
