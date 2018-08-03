@@ -647,6 +647,8 @@
     <Content Include="Views\Main\Test.cshtml" />
     <Content Include="Views\approval\UsePublicCar.cshtml" />
     <Content Include="Views\approval\CarManager.cshtml" />
+    <Content Include="Views\Main\Approval_usePublicCar.cshtml" />
+    <Content Include="Views\Main\Approval_useCar.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

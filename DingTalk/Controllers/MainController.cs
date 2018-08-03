@@ -45,6 +45,14 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_usePublicCar()
+        {
+            return View();
+        }
+        public ActionResult Approval_useCar()
+        {
+            return View();
+        }
         public ActionResult Main6()
         {
             return View();

@@ -46,6 +46,7 @@ function loadPage(url) {
     }
     $("#tempPage").load(url)
 }
+function goHome() { loadPage('/Main/approval')}
 
 function loadHtml(parentId,childId) {
     $("#" + parentId).html('')
@@ -312,6 +313,115 @@ var mixin = {
                 }
             });
         },
+        //同意审批
+        aggreSubmit(param, param2 = {}) {
+            this.disablePage = true
+            var paramArr = []
+            var that = this
+            paramArr.push({
+                "TaskId": TaskId,
+                "ApplyMan": DingData.nickName,
+                "ApplyManId": DingData.userid,
+                "NodeId": NodeId,
+                "ApplyTime": _getTime(),
+                "IsEnable": "1",
+                "FlowId": FlowId,
+                "IsSend": "false",
+                "State": "1",
+            })
+            for (let p in param) {
+                paramArr[0][p] = param[p]
+            }
+            for (let node of this.nodeList) {
+                if (node.NodeId == this.nodeInfo.NodeId) {
+                    for (let a of node.AddPeople) {
+                        paramArr.push({
+                            "ApplyMan": a.name,
+                            "ApplyManId": a.userid,
+                            "TaskId": TaskId,
+                            "ApplyTime": null,
+                            "IsEnable": 1,
+                            "FlowId": FlowId,
+                            "NodeId": NodeId,
+                            "Remark": null,
+                            "IsSend": false,
+                            "State": 0,
+                            "ImageUrl": null,
+                            "FileUrl": null,
+                            "IsPost": false,
+                            "OldImageUrl": null,
+                            "OldFileUrl": null,
+                            "IsBack": null
+                        })
+                    }
+                }
+            }
+            $.ajax({
+                url: "/FlowInfo/SubmitTaskInfo",
+                type: "POST",
+                data: JSON.stringify(paramArr),
+                dataType: "json",
+                success: function (data) {
+                    console.log(paramArr)
+                    console.log(data)
+                    if (data && data.errorCode == 0) {
+                        that.$alert('审批成功', '操作成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/main/Approval')
+                            }
+                        });
+                    } else {
+                        that.$alert('审批发生错误', '操作失败', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        },
+        //退回审批
+        returnSubmit(option) {
+            this.disablePage = true
+            var that = this
+            var param = {
+                "TaskId": TaskId,
+                "ApplyMan": DingData.nickName,
+                "ApplyManId": DingData.userid,
+                "NodeId": NodeId,
+                "ApplyTime": _getTime(),
+                "IsEnable": "1",
+                "FlowId": FlowId,
+                "IsSend": "false",
+                "State": "1",
+                "BackNodeId": this.nodeInfo.BackNodeId
+            }
+            for (let o in option) {
+                param[o] = option[o]
+            }
+            $.ajax({
+                url: "/FlowInfo/FlowBack",
+                type: "POST",
+                data: JSON.stringify(param),
+                dataType: "json",
+                success: function (data) {
+                    console.log('退回')
+                    console.log(param)
+                    console.log(data)
+                    that.$alert(data.errorMessage, '信息返回', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            loadPage('/Main/Approval_list')
+                        }
+                    })
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        },
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
@@ -500,13 +610,13 @@ var mixin = {
         _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
             var that = this
             url = url += _formatQueryStr(param)
-            console.log(url)
-            console.log(param)
             $.ajax({
                 url: url,
                 dataType: "json",
                 success: function (data) {
-                    if (typeof(data) == 'string') data = JSON.parse(data) 
+                    if (typeof (data) == 'string') data = JSON.parse(data) 
+                    console.log(url)
+                    console.log(param)
                     console.log(data)
                     if (alertStr) {
                         that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {

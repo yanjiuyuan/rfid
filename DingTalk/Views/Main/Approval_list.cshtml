@@ -151,11 +151,23 @@
             },
             loader(row) {
                 if (row.TaskId && row.FlowId) {
+                    let param = {
+                        taskid: row.TaskId,
+                        flowid: row.FlowId,
+                        nodeid: row.NodeId,
+                        id: row.Id,
+                        index: Index,
+                        state: row.State
+                    }
                     if (row.FlowId == 7) {
-                        loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index + '&state=' + row.State)
+                        loadPage('/Main/approval_detail2' + _formatQueryStr(param))
                         return
                     }
-                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index + '&state=' + row.State)
+                    if (row.FlowId == 13) {
+                        loadPage('/Main/approval_usePublicCar' + _formatQueryStr(param))
+                        return
+                    }
+                    loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },
             handleDelete(index, row) {
