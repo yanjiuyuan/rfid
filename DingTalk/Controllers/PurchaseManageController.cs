@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -106,16 +107,20 @@ namespace DingTalk.Controllers
             {
                 using (KisContext context = new KisContext())
                 {
-                    var ICItemList = context.t_ICItem.ToList();
-                    var Quary = from t in ICItemList
-                                where t.FName.Contains(Key) || t.FNumber.Contains(Key)
-                                select new
-                                {
-                                    t.FNumber, //物料编码
-                                    t.FName,  //物料名称
-                                    t.FModel, //规格
-                                    t.FOrderPrice  //单价
-                                };
+                    //var ICItemList = context.t_ICItem.ToList();
+                    //var Quary = from t in ICItemList
+                    //            where t.FName.Contains(Key) || t.FNumber.Contains(Key)
+                    //            select new
+                    //            {
+                    //                t.FNumber, //物料编码
+                    //                t.FName,  //物料名称
+                    //                t.FModel, //规格
+                    //                t.FOrderPrice  //单价
+                    //            };
+
+                    //DbRawSqlQuery<t_ICItem> Quary = context.Database.SqlQuery<t_ICItem>(string.Format("SELECT FNumber,FName,FModel,FOrderPrice FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key));
+                    var  Quary = context.Database.SqlQuery<t_ICItem>
+                        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
                     return JsonConvert.SerializeObject(Quary);
                 }
             }
