@@ -29,9 +29,9 @@
             <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
         </el-form-item>
 
-        <el-form-item label="起始公里数" prop="StartKilometres">
+        @*<el-form-item label="起始公里数" prop="StartKilometres">
             <el-input v-model="ruleForm.StartKilometres"></el-input>
-        </el-form-item>
+        </el-form-item>*@
 
         <el-form-item label="用车时间" prop="StartTime">
             <el-date-picker v-model="timeRange"
@@ -86,7 +86,7 @@
                     EndTime: "",
                     MainContent: "",
                     PlantTravelWay: "",
-                    StartKilometres: "",
+                    //StartKilometres: "",
                     IsPublicCar: true,
                     IsChooseOccupyCar: true,
                     OccupyCarId: ""
@@ -130,7 +130,6 @@
                     param.TaskId = taskId
                     console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
-                        console.log('save car table')
                         that.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {

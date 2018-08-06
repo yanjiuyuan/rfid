@@ -17,7 +17,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        审批处理-{{nodeInfo.NodeName}} 啦啦啦
+        审批处理-{{nodeInfo.NodeName}}
     </div>
     <template v-if="FlowId == '6'" v-for="(d,index) in dataArr">
         <h2 style="text-align:center;">{{d.Sorts}}件列表</h2>
@@ -323,7 +323,7 @@
                 CodeNo: '物料编码',
                 Name: '物料名称',
                 Standard: '规格型号',
-                Unit: '单位',
+                Unit: '单位(预计)',
                 Count: '数量',
                 Price: '单价',
                 Purpose: '用途',
@@ -596,6 +596,9 @@
                                 a.totalRows = a.data.length
                             }
                         } else {
+                            for (let d of that.data) {
+                                if (d.UrgentDate) d.UrgentDate = d.UrgentDate.substring(0,10)
+                            }
                             that.getData()
                             that.totalRows = that.data.length
                         }
@@ -710,7 +713,12 @@
 
         },
         created: function () {
-            this.showStamp("图纸管理员")
+            if (FlowId == '8') {
+                this.showStamp("采购管理员")
+            }
+            if (FlowId == '6') {
+                this.showStamp("图纸管理员")
+            }
 
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
