@@ -263,7 +263,7 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if (node.NodeId == (that.nodeInfo.NodeId + 1) || (node.NodeId > 0 && !node.ApplyMan && node.NodeName.indexOf('申请人') >= 0)) {
+                        if (node.NodeId == (that.nodeInfo.NodeId + 1) || (node.NodeId > 0 && node.NodeName.indexOf('申请人') >= 0)) {
                             console.log(node)
                             console.log(node.AddPeople)
                             if (!that.preApprove && node.AddPeople.length == 0) {
