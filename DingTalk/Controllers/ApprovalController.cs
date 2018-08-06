@@ -62,5 +62,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Vote()
+        {
+            return View();
+        }
     }
 }

@@ -2,11 +2,157 @@
     Layout = null;
 }
 
-<!--右侧实体内容-->
-<el-main id="partPage">
-    <h3>欢迎访问</h3>
-    <h1>Home6</h1>
-</el-main>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="stylesheet" href="~/Content/element.css" />
+    <link rel="stylesheet" href="~/Content/display.css" />
+    <link rel="stylesheet" href="~/Content/site.css" />
+    <script src="~/Scripts/jquery-1.11.0.js"></script>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/element.js"></script>
+    <script src="~/Scripts/lib.js"></script>
+    <script src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
+    <script>
+        var DingData = {}
+    </script>
+    <style>
+        .text {
+            font-size: 14px;
+        }
+        .item {
+            margin-bottom: 18px;
+        }
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+        .clearfix:after {
+            clear: both
+        }
+        .box-card {
+            margin:0 auto;
+            width: 880px;
+        }
+    </style>
+</head>
+<body>
+    <div id="partPage">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <p style="font-size:1.5rem;">标题名称{{ruleForm.Title}}</p>
+            </div>
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="发起人">
+                    <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="开始时间">
+                    <el-input v-model="ruleForm.StartTime" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="结束时间">
+                    <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="投票选项">
+                    <div v-if="voted" v-for="o in options" :key="o.name" class="text item">
+                        {{o.name }}<span>{{o.count}}</span>
+                    </div>
+                    <el-radio-group v-else v-model="chooseValue">
+                        <el-radio v-for="o in options" :key="o.name" :label="o.name">{{o.name}}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" v-on:click="onSubmit('ruleForm')">投票</el-button>
+                </el-form-item>
+            </el-form>
+            
+        </el-card>
+
+    </div>
+
+</body>
+</html>
+<script>
+
+    //登录钉钉
+    DingData.userid = 'manager325'
+    DingData.nickName = '黄浩炜'
+    $.ajax({
+        //url: 'http://17e245o364.imwork.net/signature/',
+        url: '/Login/BeginDDAutoLogin',
+        dataType: 'json',
+        type: 'GET',
+        cache: false,
+        success: function (data) {
+            DingData = data
+            DingData.userid = 'manager325'
+            DingData.nickName = '黄浩炜'
+            console.log("你好，" + DingData.nickName)
+            var configObj = {
+                jsticket: DingData.JsApiTicket,
+                agentId: DingData.AgentId,
+                corpId: DingData.CorpId,
+                timeStamp: DingData.TimeStamp,
+                signature: DingData.Signature,
+                nonceStr: DingData.NonceStr,
+                jsApiList: [
+                    'runtime.info',
+                    'biz.contact.choose',
+                    'device.notification.alert',
+                    'device.notification.confirm',
+                    'biz.user.get']
+            }
+            //console.log(configObj)
+            DingTalkPC.config(configObj);
+        },
+        error: function (err) {
+            console.error(err)
+        }
+    })
+    //DingTalkPC.ready回调函数
+    DingTalkPC.ready(function () {
+        //PC版获取免登授权码
+        DingTalkPC.runtime.permission.requestAuthCode({
+            corpId: DingData.CorpId, //企业id
+            agentId: DingData.AgentId,//应用id
+            onSuccess: function (result) {
+                //console.log(result);
+                Window.authcode = result.code;
+            },
+            onFail: function (err) {
+                console.log('requestAuthCode fail: ' + JSON.stringify(err));
+            }
+        });
+        var startTime = new Date()
+        console.log('免登开始 ' + startTime.getSeconds())
+        DingTalkPC.biz.user.get({
+            onSuccess: function (result) {
+                console.log(result);
+                DingData.userid = result.emplId
+                DingData.isManager = result.isManager
+                DingData.nickName = result.nickName
+                console.log('免登成功')
+                console.log("你好，" + DingData.nickName)
+                var endTime = new Date()
+                console.log('免登成功 ' + endTime.getSeconds())
+                let param = { userId: result.emplId }
+            },
+            onFail: function (err) {
+                console.log('userinfo fail: ' + JSON.stringify(err));
+            }
+        });
+    });
+    DingTalkPC.error(function (err) {
+        console.log('dd error: ' + JSON.stringify(err));
+    });
+</script>
 
 <script>
     var demo = new Vue({
@@ -14,19 +160,67 @@
         mixins: [mixin],
         data: function () {
             return {
-
+                ruleForm: {
+                    ApplyMan: DingData.nickName,
+                    ApplyManId: DingData.userid,
+                    Title: '',
+                    Option: '',
+                    StartTime: '',
+                    EndTime: '',
+                    VoteCount: '',
+                    SubmitterId: ''
+                },
+                chooseValue: '',
+                voted: false,
+                options = []
             }
         },
         methods: {
+            getVoteData() {
+                var that = this
+                var myurl = location.search
+                var urlObj = {}
+                var param = myurl.split('?')[1]
+                if (param) {
+                    var paramArr = param.split('&')
+                    for (let p of paramArr) {
+                        urlObj[p.split('=')[0]] = p.split('=')[1]
+                    }
+                }
+                var url = ''
+                return
+                this._getData(url, function (data) {
+                    that.ruleForm = data
+                    let options = data.Option.split(',')
+                    let counts = data.VoteCount.split(',')
+                    for (let i = 0; i < options.length; i++) {
+                        that.options.push({
+                            name: options[i],
+                            count: counts[i]
+                        })
+                    }
+                    that.chooseValue = that.options[0].name
+                },param)
+            },
+            postVoteData() {
+                var that = this
+                var url = '/VoteManager/ChangeVote'
+                var param = _cloneObj(this.ruleForm)
 
+
+                that._postData(url, function (data) {
+                    that.$alert('恭喜提交成功', '提示信息', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            
+                        }
+                    })
+                }, param)
+            }
         },
         created: function () {
-            loadHtml("mainPage", "partPage")
+            this.getVoteData()
         }
     })
-
-
 </script>
-
-
 

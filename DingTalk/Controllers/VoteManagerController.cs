@@ -9,6 +9,7 @@ using System.Web.Http;
 
 namespace DingTalk.Controllers
 {
+    [RoutePrefix("VoteManager")]
     /// <summary>
     /// 投票管理
     /// </summary>
@@ -18,6 +19,8 @@ namespace DingTalk.Controllers
         /// 发起投票
         /// </summary>
         /// <param name="vote"></param>
+        [Route("LaunchVote")]
+        [HttpPost]
         public object LaunchVote([FromBody] Vote vote)
         {
             try
@@ -47,6 +50,8 @@ namespace DingTalk.Controllers
         /// 修改投票
         /// </summary>
         /// <param name="vote"></param>
+        [Route("ChangeVote")]
+        [HttpPost]
         public object ChangeVote([FromBody] Vote vote)
         {
             try

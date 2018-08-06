@@ -120,6 +120,12 @@
             sortId: 6,
             url: '/approval/CarManager',
             position: '-144px -227px'
+        },
+        {
+            flowId: 10002,
+            sortId: 10006,
+            url: '/approval/Vote',
+            position: '-594px -47px'
         }
     ]
     var demo = new Vue({
@@ -127,7 +133,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [1,2,3,4],
+                activeNames: [1,2,3,4,5],
                 count: 2,
                 name: '',
                 id: '',
