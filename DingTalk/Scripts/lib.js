@@ -263,7 +263,7 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
+                        if (node.NodeId == (that.nodeInfo.NodeId + 1) || (node.NodeId > 0 && !node.ApplyMan && node.NodeName.indexOf('申请人') >= 0)) {
                             console.log(node)
                             console.log(node.AddPeople)
                             if (!that.preApprove && node.AddPeople.length == 0) {
@@ -477,12 +477,18 @@ var mixin = {
                     that.isBack = result[0].IsBack
                     that.nodeList = _cloneArr(result)
                     for (let node of that.nodeList) {
-                        if (node.NodeName.indexOf('申请人') >= 0)
-                            node.NodePeople = [DingData.nickName]
+                        node['AddPeople'] = []
                         if (node.ApplyMan && node.ApplyMan.length > 0)
                             node.NodePeople = node.ApplyMan.split(',')
-                        node['AddPeople'] = []
+                        if (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan) {
+                            node.ApplyMan = DingData.nickName
+                            node.AddPeople = [{
+                                name: DingData.nickName,
+                                emplId: DingData.userid
+                            }]
                         }
+                    
+                    }
                     
                     //that.preApprove = !data[0].IsNeedChose
                 },
@@ -749,7 +755,7 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
+                           <template v-if="!preset && !node.ApplyMan && node.NodeName!='结束'">
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
