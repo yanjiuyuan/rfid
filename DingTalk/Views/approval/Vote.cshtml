@@ -17,7 +17,7 @@
         <el-form-item label="发起人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="标题" :prop="Title" :rules="{ required: true, message: '标题不能为空', trigger: 'blur'}">
+        <el-form-item label="标题" prop="Title" :rules="{ required: true, message: '标题不能为空', trigger: 'blur'}">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
         <el-form-item label="有效时间" prop="StartTime" :rules="{ required: true, message: '时间不能为空', trigger: 'blur'}">
