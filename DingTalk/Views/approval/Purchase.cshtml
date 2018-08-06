@@ -58,7 +58,7 @@
         </el-table-column>
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price" prop="Price" :class="{ redborder:scope.row.Price ==''}" >
+                <el-input v-model="scope.row.Price" >
                 </el-input>
             </template>
         </el-table-column>
@@ -107,7 +107,7 @@
                 <el-input v-model="good.Standard" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="单价">
-                <el-input v-model="good.Price" prop="Price"></el-input>
+                <el-input v-model="good.Price"></el-input>
             </el-form-item>
             <el-form-item label="单位">
                 <el-input v-model="good.Unit" prop="Unit"></el-input>
@@ -354,7 +354,7 @@
                     Name: good.FName,
                     Standard: good.FModel,
                     Unit: '',
-                    Price: good.FOrderPrice,
+                    Price: good.FOrderPrice == '0' ? '' : good.FOrderPrice,
                     Count: '',
                     Purpose: '',
                     UrgentDate: '',

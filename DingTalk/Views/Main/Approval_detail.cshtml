@@ -724,13 +724,14 @@
 
     //获取审批表单信息
     function getFormData() {
+        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
         $.ajax({
-            url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+            url: url,
             type: "GET",
             dataType: "json",
             success: function (data) {
                 console.log("获取审批表单信息ok")
-                console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
+                console.log(url)
                 console.log(data)
                 allData = data
                 if (data.ImageUrl && data.ImageUrl.length > 5) {
