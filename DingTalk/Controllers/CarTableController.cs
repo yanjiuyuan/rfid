@@ -1,6 +1,7 @@
 ﻿using DingTalk.Bussiness.FlowInfo;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,15 +164,21 @@ namespace DingTalk.Controllers
                     var Quary = from t in taskList
                                 join c in carTableList
                                 on t.TaskId.ToString() equals c.TaskId
-                                join cars in carList 
+                                join cars in carList
                                 on c.CarId equals cars.Id.ToString()
                                 select new
                                 {
-                                    t.Dept,t.ApplyMan,c.StartTime,c.EndTime,
-
+                                    t.Dept,
+                                    t.ApplyMan,
+                                    c.StartTime,
+                                    c.EndTime,
+                                    cars.Name,
+                                    c.MainContent,
+                                    c.UseKilometres,
+                                    cars.UnitPricePerKilometre,
+                                    Price = Int32.Parse(c.UseKilometres) * cars.UnitPricePerKilometre
                                 };
-
-                    return "";
+                    return JsonConvert.SerializeObject(Quary);
                 }
             }
             catch (Exception ex)
