@@ -348,6 +348,7 @@
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Controllers\DingTalkServersController.cs" />
+    <Compile Include="Controllers\VoteManagerController.cs" />
     <Compile Include="DingTalkHelper\TopSDKTest.cs" />
     <Compile Include="DingTalkAddressConfig\DepartmentAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\DingTalkServerAddressConfig.cs" />
@@ -404,6 +405,7 @@
     <Compile Include="Models\DingModels\Roles.cs" />
     <Compile Include="Models\DingModels\Tasks.cs" />
     <Compile Include="Models\DingModels\UserInfo.cs" />
+    <Compile Include="Models\DingModels\Vote.cs" />
     <Compile Include="Models\DingModels\Worker.cs" />
     <Compile Include="Models\DingModels\WorkTime.cs" />
     <Compile Include="Models\DownloadFileModel.cs" />
