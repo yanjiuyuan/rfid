@@ -71,5 +71,29 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 读取投票信息
+        /// </summary>
+        /// <param name="Id"></param>
+        public object QuaryVote(string Id)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Vote vote= context.Vote.Find(Id);
+                    return vote;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
     }
 }
