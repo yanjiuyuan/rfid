@@ -98,6 +98,7 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+
                     if (Id==0)
                     {
                         List<Vote> vote = context.Vote.ToList();
