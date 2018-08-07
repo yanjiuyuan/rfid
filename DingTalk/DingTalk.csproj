@@ -617,8 +617,8 @@
     <Content Include="Views\Main\Approval_IDone.cshtml" />
     <Content Include="Views\Main\Approval_list.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\Main\Main6.cshtml" />
-    <Content Include="Views\Main\Main7.cshtml" />
+    <Content Include="Views\Main\VoteDetail.cshtml" />
+    <Content Include="Views\Main\VoteList.cshtml" />
     <Content Include="Views\Main\Main8.cshtml" />
   </ItemGroup>
   <ItemGroup>

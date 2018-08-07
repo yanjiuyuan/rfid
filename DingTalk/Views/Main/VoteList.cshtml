@@ -6,12 +6,10 @@
 <div id="partPage">
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
-        <el-table-column prop="TaskId" label="流水号"></el-table-column>
-        <el-table-column prop="FlowName" label="审批类型"></el-table-column>
-        <el-table-column prop="Title" label="标题"></el-table-column>
-        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
-        <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
-        <el-table-column v-if="Index != '0'" prop="State" label="状态"></el-table-column>
+        <el-table-column prop="Title" label="主题"></el-table-column>
+        <el-table-column prop="ApplyMan" label="发起人"></el-table-column>
+        <el-table-column prop="StartTime" label="开始时间"></el-table-column>
+        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">详情</el-button>
@@ -43,17 +41,7 @@
                 data: [],
                 tableData: [],
                 currentPage: 1,
-                totalRows: 0,
-                superSearch: false,
-                Index: UrlObj.Index,
-                formInline: {
-                    user: '',
-                    region: '',
-                    startDate: '',
-                    endDate: '',
-                    state:0
-                },
-                items: { TaskId: '审批编号' ,ApplyMan:'审批人'}
+                totalRows: 0
             }
         },
         methods: {
@@ -67,17 +55,16 @@
             },
             //获取审批列表
             getApproveList() {
-                var that = this 
+                var that = this
+                var url = 'VoteManager/QuaryVote'
                 $.ajax({
-                    url: 'FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid,
+                    url: url,
                     dataType: 'json',
                     type: 'GET',
                     success: function (data) {
-                        console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
+                        console.log(url)
                         console.log(data)
-                        for (let d of data) {
-                            that.data.push(d[0])
-                        }
+                        that.data = data
                         //that.tableData = data
                         that.getData()
                         that.totalRows = data.length
@@ -90,40 +77,12 @@
             //表单操作
             handleEdit(index, row) {
                 console.log(index, row);
-                var that = this
-                if (Index == '3') {
-                    var url = '/FlowInfo/ChangeSendState?TaskId=' + row.TaskId + '&UserId=' + DingData.userid
-                    $.ajax({
-                        url: url, 
-                        success: function (data) {
-                            console.log('设置抄送审批为已读')
-                            console.log(url)
-                            console.log(data)
-                            that.loader(row)
-                        }
-                    })
-                } else {
-                    this.loader(row)
-                }
+                loadPage('/Main/approval_detail' + _formatQueryStr(param))
+                this.loader(row)
             },
             loader(row) {
                 if (row.TaskId && row.FlowId) {
-                    let param = {
-                        taskid: row.TaskId,
-                        flowid: row.FlowId,
-                        nodeid: row.NodeId,
-                        id: row.Id,
-                        index: Index,
-                        state: row.State
-                    }
-                    if (row.FlowId == 7) {
-                        loadPage('/Main/approval_detail2' + _formatQueryStr(param))
-                        return
-                    }
-                    if (row.FlowId == 13) {
-                        loadPage('/Main/approval_usePublicCar' + _formatQueryStr(param))
-                        return
-                    }
+  
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },

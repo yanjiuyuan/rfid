@@ -8,8 +8,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
-    @Scripts.Render("~/bundles/modernizr")
 
     <link rel="stylesheet" href="~/Content/element.css" />
     <link rel="stylesheet" href="~/Content/display.css" />
@@ -19,6 +17,7 @@
     <script src="~/Scripts/element.js"></script>
     <script src="~/Scripts/lib.js"></script>
     <script src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
+    @*<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.0.57/dingtalk.open.js"></script>*@
     <script>
         var DingData = {}
     </script>
@@ -26,19 +25,23 @@
         .text {
             font-size: 14px;
         }
+
         .item {
             margin-bottom: 18px;
         }
+
         .clearfix:before,
         .clearfix:after {
             display: table;
             content: "";
         }
+
         .clearfix:after {
             clear: both
         }
+
         .box-card {
-            margin:0 auto;
+            margin: 0 auto;
             width: 100%;
         }
     </style>
@@ -86,77 +89,82 @@
 </html>
 <script>
 
+
+ 
+</script>
+
+<script>
     //登录钉钉
+    var code = ''
     DingData.userid = 'manager325'
     DingData.nickName = '黄浩炜'
-    //$.ajax({
-    //    //url: 'http://17e245o364.imwork.net/signature/',
-    //    url: '/Login/BeginDDAutoLogin',
-    //    dataType: 'json',
-    //    type: 'GET',
-    //    cache: false,
-    //    success: function (data) {
-    //        DingData = data
-    //        DingData.userid = 'manager325'
-    //        DingData.nickName = '黄浩炜'
-    //        console.log("你好，" + DingData.nickName)
-    //        var configObj = {
-    //            jsticket: DingData.JsApiTicket,
-    //            agentId: DingData.AgentId,
-    //            corpId: DingData.CorpId,
-    //            timeStamp: DingData.TimeStamp,
-    //            signature: DingData.Signature,
-    //            nonceStr: DingData.NonceStr,
-    //            jsApiList: [
-    //                'runtime.info',
-    //                'biz.contact.choose',
-    //                'device.notification.alert',
-    //                'device.notification.confirm',
-    //                'biz.user.get']
-    //        }
-    //        //console.log(configObj)
-    //        DingTalkPC.config(configObj);
-    //    },
-    //    error: function (err) {
-    //        console.error(err)
-    //    }
-    //})
-    //DingTalkPC.ready回调函数
-    //DingTalkPC.ready(function () {
-    //    //PC版获取免登授权码
-    //    DingTalkPC.runtime.permission.requestAuthCode({
-    //        corpId: DingData.CorpId, //企业id
-    //        agentId: DingData.AgentId,//应用id
-    //        onSuccess: function (result) {
-    //            //console.log(result);
-    //            Window.authcode = result.code;
-    //        },
-    //        onFail: function (err) {
-    //            console.log('requestAuthCode fail: ' + JSON.stringify(err));
-    //        }
-    //    });
-    //    var startTime = new Date()
-    //    console.log('免登开始 ' + startTime.getSeconds())
-    //    DingTalkPC.biz.user.get({
-    //        onSuccess: function (result) {
-    //            console.log(result);
-    //            DingData.userid = result.emplId
-    //            DingData.isManager = result.isManager
-    //            DingData.nickName = result.nickName
-    //            console.log('免登成功')
-    //            console.log("你好，" + DingData.nickName)
-    //            var endTime = new Date()
-    //            console.log('免登成功 ' + endTime.getSeconds())
-    //            let param = { userId: result.emplId }
-    //        },
-    //        onFail: function (err) {
-    //            console.log('userinfo fail: ' + JSON.stringify(err));
-    //        }
-    //    });
-    //});
-    //DingTalkPC.error(function (err) {
-    //    console.log('dd error: ' + JSON.stringify(err));
-    //});
+    $.ajax({
+        //url: 'http://17e245o364.imwork.net/signature/',
+        url: '/Login/BeginDDAutoLogin',
+        dataType: 'json',
+        type: 'GET',
+        cache: false,
+        success: function (data) {
+            DingData = data
+            DingData.userid = 'manager325'
+            DingData.nickName = '黄浩炜'
+            console.log(data)
+            console.log("你好，" + DingData.nickName)
+            var configObj = {
+                agentId: DingData.AgentId,
+                corpId: DingData.CorpId,
+                timeStamp: DingData.TimeStamp,
+                nonceStr: DingData.NonceStr,
+                signature: DingData.Signature,
+
+                jsticket: DingData.JsApiTicket,
+                jsApiList: [
+                    'runtime.info',
+                    'biz.contact.choose',
+                    'device.notification.alert',
+                    'device.notification.confirm',
+                    'biz.user.get']
+            }
+            //console.log(configObj)
+            dd.config(configObj);
+        },
+        error: function (err) {
+            console.error(err)
+        }
+    })
+    //手机版接口
+    dd.ready(function () {
+        //dd.device.notification.confirm({
+        //    message: "你爱我吗",
+        //    title: "提示",
+        //    buttonLabels: ['爱', '不爱'],
+        //    onSuccess: function (result) {
+            
+        //    },
+        //    onFail: function (err) { }
+        //});
+        // dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
+        dd.runtime.permission.requestAuthCode({
+            corpId: DingData.CorpId,
+            onSuccess: function (result) {
+                dd.device.notification.confirm({
+                    message: JSON.stringify(result),
+                    title: JSON.stringify(result),
+                    buttonLabels: ['爱', '不爱'],
+                    onSuccess: function (result) {
+                   
+                    },
+                    onFail: function (err) { }
+                });
+                code = result.code
+            },
+            onFail: function (err) { }
+
+        });
+    });
+    dd.error(function (error) {
+        alert('dd error: ' + JSON.stringify(err));
+    });
 </script>
 
 <script>
