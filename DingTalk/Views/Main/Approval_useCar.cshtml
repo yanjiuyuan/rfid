@@ -40,23 +40,46 @@
             <el-form-item label="使用公里数">
                 <el-input v-model="UseKilometres" :disabled="true"></el-input>
             </el-form-item>
+
         </template>
 
 
         @*<el-form-item label="起始公里数">
-                <el-input v-model="ruleForm.StartKilometres" :disabled="true"></el-input>
-            </el-form-item>*@
+            <el-input v-model="ruleForm.StartKilometres" :disabled="true"></el-input>
+        </el-form-item>*@
         <el-form-item label="开始时间">
             <el-input v-model="ruleForm.StartTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="返回时间">
             <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="使用车辆">
-            <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="意见">
             <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
+
+        <el-form-item label="上传公里数图" v-if="NodeId == '3'" required="required">
+            <el-upload action="/drawingupload/Upload"
+                       list-type="picture-card"
+                       :file-list="imageList"
+                       :on-preview="handlePictureCardPreview"
+                       :on-remove="handlePictureRemove"
+                       :on-success="handlePictureCardSuccess"
+                       :before-upload="beforePictureUpload">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+        </el-form-item>
+
+        <!--图片展示-->
+        <el-form-item v-if="imageList.length > 0" label="相关图片">
+            <el-upload action=""
+                       list-type="picture-card"
+                       :on-preview="handlePictureCardPreview"
+                       :file-list="imageList"
+                       :disabled="true">
+            </el-upload>
         </el-form-item>
 
         <hr />
@@ -74,6 +97,7 @@
 
 <script>
     var allData = {}
+    var imageList = []
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -87,7 +111,9 @@
         data: function () {
             return {
                 carList: [],
+                imageList: imageList,
                 index: Index,
+                NodeId: NodeId,
                 car: {},
                 nodeList: [],
                 nodeInfo: {},
@@ -96,6 +122,9 @@
                 ruleForm: {
 
                 },
+                //图片上传参数
+                dialogImageUrl: '',
+                dialogVisible: false,
                 rules: {
                     FactTravelWay: { required: true, message: '实际行车路线不能为空', trigger: 'blur' },
                     StartKilometres: [{ required: true, message: '起始公里数不能为空', trigger: 'blur' }],
@@ -115,7 +144,9 @@
 
                     that.aggreSubmit({
                         "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark
+                        "Remark": that.ruleForm.Mark,
+                        "ImageUrl": that.ruleForm.ImageUrl,
+                        "OldImageUrl": that.ruleForm.OldImageUrl
                     })
 
                 },param)
@@ -130,7 +161,6 @@
             },
             getUseCarTable() {
                 var that = this
-
                 let handle = function (data) {
                     that.totalRows = data.length
                     that.data = data
@@ -152,8 +182,8 @@
                         }
                     , { TaskId: TaskId })
                 }, {key:''})
-
-            }
+            },
+            
         },
         computed: {
             UseKilometres: function () {
@@ -183,6 +213,15 @@
                 console.log(url)
                 console.log(data)
                 allData = data
+                if (data.ImageUrl && data.ImageUrl.length > 5) {
+                    var tempList = data.ImageUrl.split(',')
+                    for (let img of tempList) {
+                        imageList.push({
+                            name: 'hello.jpg',
+                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                        })
+                    }
+                }
             },
             error: function (err) {
                 console.log(err);

@@ -645,7 +645,18 @@ var mixin = {
         handlePictureCardSuccess(response, file, fileList) {
             this.changePictureList(fileList)
         },
-
+        changePictureList(fileList) {
+            console.log(fileList)
+            this.ruleForm['ImageUrl'] = ''
+            this.ruleForm['OldImageUrl'] = ''
+            for (var i = 0; i < fileList.length; i++) {
+                this.ruleForm.ImageUrl += fileList[i].response.Content
+                this.ruleForm.OldImageUrl += fileList[i].name
+                if (i == fileList.length - 1) break
+                this.ruleForm.ImageUrl += ','
+                this.ruleForm.OldImageUrl += ','
+            }
+        },
 
         //get获取接口数据通用方法
         _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {

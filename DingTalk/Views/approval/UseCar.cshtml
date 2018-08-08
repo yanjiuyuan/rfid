@@ -32,20 +32,7 @@
             <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
         </el-form-item>
 
-        @*<el-form-item label="起始公里数图片">
-            <el-upload action="/drawingupload/Upload"
-                       list-type="picture-card"
-                       :file-list="imageList"
-                       :on-preview="handlePictureCardPreview"
-                       :on-remove="handlePictureRemove"
-                       :on-success="handlePictureCardSuccess"
-                       :before-upload="beforePictureUpload">
-                <i class="el-icon-plus"></i>
-            </el-upload>
-            <el-dialog :visible.sync="dialogVisible">
-                <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog>
-        </el-form-item>*@
+       
 
         <el-form-item label="用车时间" prop="StartTime">
             <el-date-picker v-model="timeRange"
@@ -96,9 +83,7 @@
                     OccupyCarId: ""
                 },
 
-                //图片上传参数
-                dialogImageUrl: '',
-                dialogVisible: false,
+                
                 rules: {
                     DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
                     PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
@@ -184,19 +169,7 @@
                     onFail: function (err) { }
                 });
             },
-            //上传图片处理
-            changePictureList(fileList) {
-                console.log(fileList)
-                this.ruleForm.ImageUrl = ''
-                this.ruleForm.OldImageUrl = ''
-                for (var i = 0; i < fileList.length; i++) {
-                    this.ruleForm.ImageUrl += fileList[i].response.Content
-                    this.ruleForm.OldImageUrl += fileList[i].name
-                    if (i == fileList.length - 1) break
-                    this.ruleForm.ImageUrl += ','
-                    this.ruleForm.OldImageUrl += ','
-                }
-            },
+            
         
         },
         created: function () {

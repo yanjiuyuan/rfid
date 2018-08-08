@@ -408,18 +408,6 @@
                     }
                 })
             },
-            changePictureList(fileList) {
-                console.log(fileList)
-                this.ruleForm.ImageUrl = ''
-                this.ruleForm.OldImageUrl = ''
-                for (var i = 0; i < fileList.length; i++) {
-                    this.ruleForm.ImageUrl += fileList[i].response.Content
-                    this.ruleForm.OldImageUrl += fileList[i].name
-                    if (i == fileList.length - 1) break
-                    this.ruleForm.ImageUrl += ','
-                    this.ruleForm.OldImageUrl += ','
-                }
-            },
             fileListToUrl() {
                 console.log('拼接文件url list')
                 console.log(this.fileList)
