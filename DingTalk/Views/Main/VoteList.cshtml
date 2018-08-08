@@ -49,10 +49,6 @@
             onFilter() {
                 console.log(this.formInline)
             },
-            //切换高级搜索
-            changeSuperSearch() {
-                this.superSearch = !this.superSearch;
-            },
             //获取审批列表
             getApproveList() {
                 var that = this
@@ -77,23 +73,13 @@
             //表单操作
             handleEdit(index, row) {
                 console.log(index, row);
-                loadPage('/Main/approval_detail' + _formatQueryStr(param))
-                this.loader(row)
-            },
-            loader(row) {
-                if (row.TaskId && row.FlowId) {
-  
-                    loadPage('/Main/approval_detail' + _formatQueryStr(param))
-                }
+                loadPage('/Main/VoteDetail?id=' + row.Id)
             },
             handleDelete(index, row) {
                 console.log(index, row);
             }
         },
         created: function () {
-            console.log('UrlObj')
-            console.log(UrlObj)
-            Index = UrlObj.Index
             this.getApproveList()
             loadHtml("mainPage", "partPage")
         }

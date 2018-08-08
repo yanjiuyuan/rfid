@@ -53,7 +53,7 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
-        public ActionResult VoteDetial()
+        public ActionResult VoteDetail()
         {
             return View();
         }
