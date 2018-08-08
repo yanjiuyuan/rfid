@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
                     //更新车辆状态
                     if (carTable.StartTime > car.FinnalEndTime)
                     {
-                        car.OccupyCarId = carTable.OccupyCarId;
+                        car.OccupyCarId = carTable.CarId;
                         car.FinnalUserMan = carTable.DrivingMan;
                         car.FinnalStartTime = carTable.StartTime;
                         car.FinnalEndTime = carTable.EndTime;
