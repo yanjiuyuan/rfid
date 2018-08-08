@@ -379,15 +379,11 @@
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${file.name}？`);
             },
-            handlePictureRemove(file, fileList) {
-                this.changePictureList(fileList)
-            },
+            
             handleFileRemove(file, fileList) {
                 this.isPdfFile ? this.pdfList = fileList : this.fileList = fileList
             },
-            handlePictureCardSuccess(response, file, fileList) {
-                this.changePictureList(fileList)
-            },
+            
             handleFileCardSuccess(response, file, fileList) {
                 var that = this
                 var paramObj = {
@@ -453,24 +449,6 @@
                 console.log(this.ruleForm.FileUrl)
                 console.log(this.ruleForm.OldFileUrl)
                 console.log('拼接文件url list ok')
-                return true
-            },
-            beforePictureUpload(file) {
-                console.log('before file')
-                console.log(file)
-                file.name = 'helloWorld'
-                const isJPG = file.type === 'image/jpeg'
-                const isPNG = file.type === 'image/png'
-                const isLt2M = file.size / 1024 / 1024 < 2
-
-                if (!(isJPG || isPNG)) {
-                    this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
-                    return false
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 2MB!')
-                    return false
-                }
                 return true
             },
             beforeExcelUpload(file) {
@@ -562,27 +540,9 @@
                     a.totalRows = a.data.length
                     a.items = this.items
                     upBom.concat(a.data)
-                    console.log(111111111111111111111111111)
                     console.log(a.tableData)
                 }
            
-                //for (let d of this.data) {
-                //    upBom.push(
-                //        {
-                //            BomId: d.BomId,
-                //            DrawingNo: d.DrawingNo,
-                //            Name: d.Name,
-                //            Count: d.Count,
-                //            MaterialScience: d.MaterialScience,
-                //            Unit: d.Unit,
-                //            SingleWeight: d.SingleWeight,
-                //            AllWeight: d.AllWeight,
-                //            NeedTime: d.NeedTime,
-                //            Sorts: d.Sorts,//'标准','自制','外购'
-                //            Mark: d.Mark
-                //        }
-                //    )
-                //}
             }
             
         },

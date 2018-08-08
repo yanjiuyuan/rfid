@@ -126,23 +126,23 @@
                 console.log("你好，" + DingData.nickName)
                 var endTime = new Date()
                 console.log('免登成功 ' + endTime.getSeconds())
-                let param = { userId: result.emplId }
-                //$.ajax({
-                //    url: '/DingTalkServers/departmentQuaryByUserId',
-                //    dataType: 'json',
-                //    type: 'POST',
-                //    data: JSON.stringify(param),
-                //    contentType: "application/json; charset=utf-8",
-                //    success: function (data) {
-                //        if (typeof (data) == 'string') data = JSON.parse(data)
-                //        console.log('获取部门')
-                //        console.log(data)
-                //        DingData.departName = data.name
-                //    },
-                //    error: function (err) {
-                //        console.error(err)
-                //    }
-                //})
+                let param = {}
+                $.ajax({
+                    url: '/DingTalkServers/departmentQuaryByUserId?userId=' + result.emplId,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: param,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (typeof (data) == 'string') data = JSON.parse(data)
+                        console.log('获取部门')
+                        console.log(data)
+                        DingData.departName = data.name
+                    },
+                    error: function (err) {
+                        console.error(err)
+                    }
+                })
             },
             onFail: function (err) {
                 console.log('userinfo fail: ' + JSON.stringify(err));
