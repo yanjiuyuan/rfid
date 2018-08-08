@@ -182,6 +182,8 @@ namespace DingTalk.Controllers
                                 tasksApplyMan.ImageUrl = tasks.ImageUrl;
                                 tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
                                 tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                context.Entry(tasksApplyMan).State = EntityState.Modified;
+                                context.SaveChanges();
                                 JsonConvert.SerializeObject(new ErrorModel
                                 {
                                     errorCode = 0,
