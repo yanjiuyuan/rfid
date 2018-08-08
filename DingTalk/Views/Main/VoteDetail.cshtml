@@ -94,7 +94,7 @@
                         that.options.push({
                             name: options[i],
                             count: counts[i],
-                            rate: (counts[i] / that.total) * 100
+                            rate: parseInt((counts[i] / that.total) * 100)
                         })
                     }
                     callback()
