@@ -254,6 +254,7 @@ var mixin = {
                     var applyObj = {
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
+                        "Dept": DingData.departName,
                         "NodeId": "0",
                         "ApplyTime": _getTime(),
                         "IsEnable": "1",
@@ -615,6 +616,37 @@ var mixin = {
                 onFail: function (err) { }
             });
         },
+
+        //图片上传事件
+        beforePictureUpload(file) {
+            console.log('before file')
+            console.log(file)
+            file.name = 'helloWorld'
+            const isJPG = file.type === 'image/jpeg'
+            const isPNG = file.type === 'image/png'
+            const isLt2M = file.size / 1024 / 1024 < 2
+            if (!(isJPG || isPNG)) {
+                this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
+                return false
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!')
+                return false
+            }
+            return true
+        },
+        handlePictureCardPreview(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+        handlePictureRemove(file, fileList) {
+            this.changePictureList(fileList)
+        },
+        handlePictureCardSuccess(response, file, fileList) {
+            this.changePictureList(fileList)
+        },
+
+
         //get获取接口数据通用方法
         _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
             var that = this

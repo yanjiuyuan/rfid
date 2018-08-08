@@ -6,15 +6,18 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        用车申请-{{nodeInfo.NodeName}}
+        公车申请-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="用车人" prop="DrivingMan">
+        <el-form-item label="申请人">
+            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="驾驶员" prop="DrivingMan">
             <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
         </el-form-item>
-        <el-form-item label="同行人" prop="PeerNumber">
+        <el-form-item label="同行人">
             <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
@@ -29,29 +32,29 @@
             <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
         </el-form-item>
 
-        <el-form-item label="起始公里数" prop="StartKilometres">
-            <el-input v-model="ruleForm.StartKilometres"></el-input>
-        </el-form-item>
+        @*<el-form-item label="起始公里数图片">
+            <el-upload action="/drawingupload/Upload"
+                       list-type="picture-card"
+                       :file-list="imageList"
+                       :on-preview="handlePictureCardPreview"
+                       :on-remove="handlePictureRemove"
+                       :on-success="handlePictureCardSuccess"
+                       :before-upload="beforePictureUpload">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+        </el-form-item>*@
 
         <el-form-item label="用车时间" prop="StartTime">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
                             v-on:change="selectTime"
-                            @*:picker-options="dayPickerOptions"*@
                             range-separator="至"
                             start-placeholder="开始时间"
                             end-placeholder="返回时间">
             </el-date-picker>
-        </el-form-item>
-
-        <el-form-item label="车辆选择" prop="PlantTravelWay">
-            <el-select v-model="CarObj" v-on:change="selectUser" filterable placeholder="请选择">
-                <el-option v-for="item in carList"
-                           :key="item.PeopleId"
-                           :label="item.Name"
-                           :value="item.Id">
-                </el-option>
-            </el-select>
         </el-form-item>
 
         <hr />
@@ -73,11 +76,12 @@
         mixins: [mixin],
         data: function () {
             return {
+                applyMan: DingData.nickName,
                 carList: [],
                 nodeList: [],
                 nodeInfo: {},
                 CarObj: '',
-                timeRange:[],
+                timeRange: [],
                 ruleForm: {
                     CarId: "",
                     DrivingMan: "",
@@ -86,17 +90,20 @@
                     EndTime: "",
                     MainContent: "",
                     PlantTravelWay: "",
-                    StartKilometres: "",
+                    //StartKilometres: "",
                     IsPublicCar: true,
                     IsChooseOccupyCar: true,
                     OccupyCarId: ""
                 },
+
+                //图片上传参数
+                dialogImageUrl: '',
+                dialogVisible: false,
                 rules: {
                     DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
                     PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
                     MainContent: { required: true, message: '用车事由不能为空', trigger: 'blur' },
                     PlantTravelWay: { required: true, message: '计划路线不能为空', trigger: 'blur' },
-                    StartKilometres: { required: true, message: '起始公里数不能为空', trigger: 'blur' },
                     startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
                     StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
                     EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
@@ -114,8 +121,8 @@
                                 const date = new Date();
                                 date.setTime(date.getTime() + 3600 * 1000 * 24);
                                 picker.$emit('pick', date);
-                        }
-                    }]
+                            }
+                        }]
                 }
             }
         },
@@ -130,61 +137,30 @@
                     param.TaskId = taskId
                     console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
-                        console.log('save car table')
                         that.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
-
+                                goHome()
                             }
                         })
-                    },param)
+                    }, param)
                 }
                 this.approvalSubmit(formName, {}, callBack)
-            },
-            //选车操作
-            selectUser(value) {
-                //value = JSON.parse(value)
-                console.log('选车操作')
-                console.log(value)
-                let car = {}
-                for (let c of this.carList) {
-                    if (c.Id == value)
-                        car = c
-                }
-                this.ruleForm.CarId = car.Id
-                this.ruleForm.OccupyCarId = car.OccupyCarId
-                this.ruleForm.IsChooseOccupyCar = car.IsChooseOccupyCar
             },
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
-                var that = this
-                let url = '/CarMananger/QuaryByTime'
                 this.ruleForm.StartTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
-                let param = {
-                    dateTime: _timeToString(value[0])
-                }
-                let callBack = function (data) {
-                    that.carList = data
-                    if (data && data.length > 0) {
-                        let car = data[0]
-                        that.ruleForm.CarId = car.Id
-                        that.ruleForm.OccupyCarId = car.OccupyCarId
-                        that.ruleForm.IsChooseOccupyCar = car.IsChooseOccupyCar
-                    }
-                    console.log('选时间操作')
-                }
-                this._getData(url, callBack, param)
             },
             //添加用车人
             addDrivingMan() {
                 var that = this
                 DingTalkPC.biz.contact.choose({
-                    users: [], 
+                    users: [],
                     multiple: false,
-                    corpId: DingData.CorpId, 
-                    max: 10, 
+                    corpId: DingData.CorpId,
+                    max: 10,
                     onSuccess: function (data) {
                         console.log(data)
                         that.ruleForm.DrivingMan = data[0].name
@@ -207,7 +183,21 @@
                     },
                     onFail: function (err) { }
                 });
-            }
+            },
+            //上传图片处理
+            changePictureList(fileList) {
+                console.log(fileList)
+                this.ruleForm.ImageUrl = ''
+                this.ruleForm.OldImageUrl = ''
+                for (var i = 0; i < fileList.length; i++) {
+                    this.ruleForm.ImageUrl += fileList[i].response.Content
+                    this.ruleForm.OldImageUrl += fileList[i].name
+                    if (i == fileList.length - 1) break
+                    this.ruleForm.ImageUrl += ','
+                    this.ruleForm.OldImageUrl += ','
+                }
+            },
+        
         },
         created: function () {
             this.getNodeInfo()

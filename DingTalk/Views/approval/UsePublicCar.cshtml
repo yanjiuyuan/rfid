@@ -10,11 +10,14 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="用车人" prop="DrivingMan">
+        <el-form-item label="申请人">
+            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="驾驶员" prop="DrivingMan">
             <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
         </el-form-item>
-        <el-form-item label="同行人" prop="PeerNumber">
+        <el-form-item label="同行人">
             <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
@@ -73,6 +76,7 @@
         mixins: [mixin],
         data: function () {
             return {
+                applyMan: DingData.nickName,
                 carList: [],
                 nodeList: [],
                 nodeInfo: {},
@@ -96,7 +100,6 @@
                     PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
                     MainContent: { required: true, message: '用车事由不能为空', trigger: 'blur' },
                     PlantTravelWay: { required: true, message: '计划路线不能为空', trigger: 'blur' },
-                    StartKilometres: { required: true, message: '起始公里数不能为空', trigger: 'blur' },
                     startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
                     StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
                     EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }

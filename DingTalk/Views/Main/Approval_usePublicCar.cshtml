@@ -10,7 +10,7 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="用车人">
+        <el-form-item label="驾驶员">
             <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="同行人">
@@ -29,23 +29,23 @@
 
         <template v-if="reInput">
             <el-form-item label="实际行车路线" prop="FactTravelWay">
-                <el-input v-model="ruleForm.FactTravelWay" style="width:550px;"></el-input>
+                <el-input v-model="ruleForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
             </el-form-item>
             <el-form-item label="起始公里数" prop="StartKilometres">
-                <el-input v-model="ruleForm.StartKilometres"></el-input>
+                <el-input v-model="ruleForm.StartKilometres" :disabled="ifDisabeleEdit"></el-input>
             </el-form-item>
             <el-form-item label="结束公里数" prop="EndKilometres">
-                <el-input v-model="ruleForm.EndKilometres"></el-input>
+                <el-input v-model="ruleForm.EndKilometres" :disabled="ifDisabeleEdit"></el-input>
             </el-form-item>
             <el-form-item label="使用公里数">
-                <el-input v-model="ruleForm.EndKilometres" :disabled="true"></el-input>
+                <el-input v-model="UseKilometres" :disabled="true"></el-input>
             </el-form-item>
         </template>
         
 
-        <el-form-item label="起始公里数">
+        @*<el-form-item label="起始公里数">
             <el-input v-model="ruleForm.StartKilometres" :disabled="true"></el-input>
-        </el-form-item>
+        </el-form-item>*@
         <el-form-item label="开始时间">
             <el-input v-model="ruleForm.StartTime" :disabled="true"></el-input>
         </el-form-item>
@@ -65,8 +65,8 @@
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
-        <el-form-item label="操作">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')">同意</el-button>
+        <el-form-item label="操作" v-if="index==0">
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
     </el-form>
@@ -87,27 +87,39 @@
         data: function () {
             return {
                 carList: [],
+                index: Index,
                 car: {},
                 nodeList: [],
                 nodeInfo: {},
                 reInput: false,
+                ifDisabeleEdit: Index != 0,
                 ruleForm: {
                     
                 },
                 rules: {
                     FactTravelWay: { required: true, message: '实际行车路线不能为空', trigger: 'blur' },
-                    EndKilometres: { required: true, message: '结束公里数不能为空', trigger: 'blur' }
+                    StartKilometres: [{ required: true, message: '起始公里数不能为空', trigger: 'blur' }],
+                    EndKilometres: [{ required: true, message: '结束公里数不能为空', trigger: 'blur' }]
                 }
             }
         },
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.aggreSubmit(param)
+
+                var that = this
+                let url = '/CarTable/TableModify'
+                var param = _cloneObj(this.ruleForm)
+                param.UseKilometres = this.UseKilometres
+                this._postData(url, function () {
+
+                    that.aggreSubmit({
+                        "Id": allData.Id,
+                        "Remark": that.ruleForm.Mark
+                    })
+
+                },param)
+
             },
             returnBk() {
                 let param = {
@@ -124,9 +136,11 @@
                     that.data = data
                     that.getData()
                 }
+                this.disablePage = true
                 this._getData("/CarMananger/Quary", function (data) {
                         that.carList = data
                         that._getData('/CarTable/TableQuary', function (data2) {
+                            if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
                             that.ruleForm = data2[0]
                             that.ruleForm['Mark'] = ''
                             for (let car of that.carList) {
@@ -141,11 +155,16 @@
                 
             }
         },
+        computed: {
+            UseKilometres: function () {
+                return this.ruleForm.EndKilometres - this.ruleForm.StartKilometres
+            }
+        },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
             this.getUseCarTable()
-            if (NodeId == '3') this.reInput = true
+            if (NodeId == '3' || NodeId == '4') this.reInput = true
             loadHtml("mainPage", "partPage")
         }
     })
