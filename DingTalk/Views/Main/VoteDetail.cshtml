@@ -2,49 +2,13 @@
     Layout = null;
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
-    @Scripts.Render("~/bundles/modernizr")
-
-    <link rel="stylesheet" href="~/Content/element.css" />
-    <link rel="stylesheet" href="~/Content/display.css" />
-    <link rel="stylesheet" href="~/Content/site.css" />
-    <script src="~/Scripts/jquery-1.11.0.js"></script>
-    <script src="~/Scripts/vue.js"></script>
-    <script src="~/Scripts/element.js"></script>
-    <script src="~/Scripts/lib.js"></script>
-    <script src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
-    <script>
-        var DingData = {}
-    </script>
-    <style>
-        .text {
-            font-size: 14px;
-        }
-        .item {
-            margin-bottom: 18px;
-        }
-        .clearfix:before,
-        .clearfix:after {
-            display: table;
-            content: "";
-        }
-        .clearfix:after {
-            clear: both
-        }
-        .box-card {
-            margin:0 auto;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-    <div id="partPage">
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        投票
+    </div>
+    <div>
         <el-card class="box-card">
             <div slot="header" class="clearfix">
                 <p style="font-size:1.5rem;">{{ruleForm.Title}}</p>
@@ -74,90 +38,12 @@
                     <el-button type="primary" v-on:click="postVoteData('ruleForm')">投票</el-button>
                 </el-form-item>
                 <el-form-item>
-                    
+
                 </el-form-item>
             </el-form>
-            
         </el-card>
-
     </div>
-
-</body>
-</html>
-<script>
-
-    //登录钉钉
-    DingData.userid = 'manager325'
-    DingData.nickName = '黄浩炜'
-    //$.ajax({
-    //    //url: 'http://17e245o364.imwork.net/signature/',
-    //    url: '/Login/BeginDDAutoLogin',
-    //    dataType: 'json',
-    //    type: 'GET',
-    //    cache: false,
-    //    success: function (data) {
-    //        DingData = data
-    //        DingData.userid = 'manager325'
-    //        DingData.nickName = '黄浩炜'
-    //        console.log("你好，" + DingData.nickName)
-    //        var configObj = {
-    //            jsticket: DingData.JsApiTicket,
-    //            agentId: DingData.AgentId,
-    //            corpId: DingData.CorpId,
-    //            timeStamp: DingData.TimeStamp,
-    //            signature: DingData.Signature,
-    //            nonceStr: DingData.NonceStr,
-    //            jsApiList: [
-    //                'runtime.info',
-    //                'biz.contact.choose',
-    //                'device.notification.alert',
-    //                'device.notification.confirm',
-    //                'biz.user.get']
-    //        }
-    //        //console.log(configObj)
-    //        DingTalkPC.config(configObj);
-    //    },
-    //    error: function (err) {
-    //        console.error(err)
-    //    }
-    //})
-    //DingTalkPC.ready回调函数
-    //DingTalkPC.ready(function () {
-    //    //PC版获取免登授权码
-    //    DingTalkPC.runtime.permission.requestAuthCode({
-    //        corpId: DingData.CorpId, //企业id
-    //        agentId: DingData.AgentId,//应用id
-    //        onSuccess: function (result) {
-    //            //console.log(result);
-    //            Window.authcode = result.code;
-    //        },
-    //        onFail: function (err) {
-    //            console.log('requestAuthCode fail: ' + JSON.stringify(err));
-    //        }
-    //    });
-    //    var startTime = new Date()
-    //    console.log('免登开始 ' + startTime.getSeconds())
-    //    DingTalkPC.biz.user.get({
-    //        onSuccess: function (result) {
-    //            console.log(result);
-    //            DingData.userid = result.emplId
-    //            DingData.isManager = result.isManager
-    //            DingData.nickName = result.nickName
-    //            console.log('免登成功')
-    //            console.log("你好，" + DingData.nickName)
-    //            var endTime = new Date()
-    //            console.log('免登成功 ' + endTime.getSeconds())
-    //            let param = { userId: result.emplId }
-    //        },
-    //        onFail: function (err) {
-    //            console.log('userinfo fail: ' + JSON.stringify(err));
-    //        }
-    //    });
-    //});
-    //DingTalkPC.error(function (err) {
-    //    console.log('dd error: ' + JSON.stringify(err));
-    //});
-</script>
+</el-main>
 
 <script>
     var id = ''
@@ -182,7 +68,7 @@
                 voted: false,
                 options: [],
                 total: 0,
-                status: ['', 'Success', 'Warning','Danger']
+                status: ['', 'Success', 'Warning', 'Danger']
             }
         },
         methods: {
@@ -208,7 +94,7 @@
                         that.options.push({
                             name: options[i],
                             count: counts[i],
-                            rate: (counts[i] / that.total)*100
+                            rate: (counts[i] / that.total) * 100
                         })
                     }
                     callback()
@@ -218,7 +104,7 @@
                 if (!this.chooseValue) return
                 var that = this
                 var url = '/VoteManager/ChangeVote'
-                
+
 
                 this.getVoteData(function () {
                     let index = 0
@@ -241,7 +127,7 @@
 
                     var param = _cloneObj(that.ruleForm)
                     param.SubmitterId = param.SubmitterId + ',' + DingData.userid
-                    
+
                     console.log('更新投票数据')
                     console.log(param)
                     that._postData(url, function (data) {
@@ -253,7 +139,7 @@
                         })
                     }, param)
                 })
-                
+
             }
         },
         created: function () {
@@ -268,6 +154,7 @@
             }
             id = urlObj.id
             this.getVoteData(function () { })
+            loadHtml("mainPage", "partPage")
         }
     })
 </script>
