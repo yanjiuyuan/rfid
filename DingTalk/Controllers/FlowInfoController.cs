@@ -176,6 +176,12 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
+
+                                Tasks tasksApplyMan = context.Tasks.Where(t=>t.TaskId.ToString()==tasks.TaskId.ToString()
+                                && t.NodeId==0).First();
+                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
                                 JsonConvert.SerializeObject(new ErrorModel
                                 {
                                     errorCode = 0,
