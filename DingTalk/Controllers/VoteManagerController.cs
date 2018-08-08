@@ -98,7 +98,6 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-
                     if (Id==0)
                     {
                         List<Vote> vote = context.Vote.ToList();
@@ -151,11 +150,9 @@ namespace DingTalk.Controllers
                     CorpMessageCorpconversationAsyncsendResponse rsp = client.Execute(req, accessTokenResponseModel.access_token);
                     Console.WriteLine(rsp.Body);
                 }
-
-
                 return new ErrorModel()
                 {
-                    errorCode = 1,
+                    errorCode = 0,
                     errorMessage = "成功"
                 };
             }
