@@ -23,17 +23,24 @@
                 <el-form-item label="结束时间">
                     <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
                 </el-form-item>
+                <el-form-item label="说明">
+                    <p style="font-size:1.2rem">{{ruleForm.Detail}}</p>
+                </el-form-item>
                 <el-form-item label="投票结果" v-if="voted" style="margin-left:0px;">
-                    <p style="font-size:24px;text-align:center;margin:0px;">总票数 : <span style="color:red;font-size:26px;">{{total}}</span> 票</p>
+                    <p style="font-size:24px;text-align:center;margin:0px;">总票数 : <span style="color:red;font-size:26px;">{{total}}</span> 票
+                    </p>
                     <div v-for="(o,i) in options" :key="o.name" class="text item" style="margin-left:-80px;">
-                        <p style="width:20%;display:inline-block;font-size:24px;text-align:center;margin:0px;">{{o.name }}</p>
-                        <el-progress style="width:60%;display:inline-block;" :text-inside="true" :stroke-width="18" :status="status[i]" :percentage="o.rate"></el-progress>
+                        <p style="width:100%;display:inline-block;font-size:18px;margin:0px;">{{o.name }}</p>
+                        <el-progress style="width:80%;display:inline-block;" :text-inside="true" :stroke-width="18" :status="status[i]" :percentage="o.rate"></el-progress>
                         <p style="width:10%;color:red;font-size:24px;display:inline-block;text-align:center;margin:0px;">{{o.count}}</p>
                     </div>
                 </el-form-item>
                 <el-form-item label="投票选项" v-else>
                     <el-radio-group v-model="chooseValue">
-                        <el-radio v-for="o in options" :key="o.name" :label="o.name">{{o.name}}</el-radio>
+                        <template v-for="o in options">
+                            <el-radio :key="o.name" :label="o.name">{{o.name}}</el-radio>
+                            <br />
+                        </template>
                     </el-radio-group>
                     <el-button type="primary" v-on:click="postVoteData('ruleForm')">投票</el-button>
                 </el-form-item>
@@ -58,6 +65,7 @@
                     ApplyMan: '',
                     ApplyManId: '',
                     Title: '',
+                    Detail: '',
                     Option: '',
                     StartTime: '',
                     EndTime: '',
@@ -79,13 +87,19 @@
                 this._getData(url, function (data) {
                     data.StartTime = data.StartTime.replace('T', ' ')
                     data.EndTime = data.EndTime.replace('T', ' ')
+
+                    //临时处理数据
+                    var content = data.Option.split('&')
+                    data.Option = content[0]
+                    data.Detail = content[1]
+
                     that.ruleForm = data
                     var submitters = data.SubmitterId.split(',')
                     for (let s of submitters) {
                         if (DingData.userid == s)
                             that.voted = true
                     }
-                    options = data.Option.split(',')
+                    options = data.Option.split('^')
                     counts = data.VoteCount.split(',')
                     that.options = []
                     that.total = 0
@@ -127,6 +141,9 @@
 
                     var param = _cloneObj(that.ruleForm)
                     param.SubmitterId = param.SubmitterId + ',' + DingData.userid
+
+                    //临时处理数据
+                    param.Option = param.Option + '&' + param.Detail
 
                     console.log('更新投票数据')
                     console.log(param)
