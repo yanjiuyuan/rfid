@@ -1,0 +1,339 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
+        <i class="el-icon-arrow-left"></i>
+        审批处理-{{nodeInfo.NodeName}}
+    </div>
+
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                        v-on:current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[1, 3, 5, 10]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalRows">
+        </el-pagination>
+    </div>
+
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" v-if="ruleForm.Title">
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
+        </el-form-item>
+        <!--图片展示-->
+        <el-form-item v-if="imageList.length > 0" label="相关图片">
+            <el-upload action=""
+                       list-type="picture-card"
+                       :on-preview="handlePictureCardPreview"
+                       :file-list="imageList"
+                       :disabled="true">
+            </el-upload>
+        </el-form-item>
+        <!--相关文件-->
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
+            <el-card class="box-card">
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                </div>
+            </el-card>
+        </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
+
+        <template v-if="index==0">
+            <el-form-item label="审批意见" prop="mark">
+                <el-input v-model="ruleForm.mark"></el-input>
+            </el-form-item>
+            <el-form-item v-for="p in specialRoles" :key="p.name" :label="p.label" prop="mark" v-if="nodeInfo.NodeName == p.name">
+                <el-form-item>
+                    <el-alert v-for="(i,index) in p.intrudations" :key="index" type="warning" :show-icon="index == 0" :closable="false" style="line-height:12px;"
+                              :title="i">
+                    </el-alert>
+                </el-form-item>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2 && state=='被退回'">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+
+
+</el-main>
+<script>
+    var taskId = 0
+
+</script>
+
+<script>
+
+    var state = ''
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        state = UrlObj.state
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    $("#mask").hide()
+    var allData = {}
+    var imageList = []
+    var fileList = []
+    var dataArr = []
+    var items = {
+        BigCode: '物料大类编码',
+        SmallCode: '物料小类编码',
+        Name: '物料名称',
+        Unit: '单位',
+        Standard: '型号规格',
+        SurfaceTreatment: '表面处理',
+        PerformanceLevel: '性能等级',
+        StandardNumber: '标准号',
+        Features: '典型特征',
+        purpose: '用途',
+        Remark: '备注'
+    }
+    var bomUrl = "/ItemCodeAdd/GetTable?TaskId=" + TaskId
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                preApprove: false,
+                preCopy: false,
+                imageList: imageList,
+                fileList: fileList,
+                data: [],
+                items: items,
+                FlowId: FlowId,
+                tableData: [],
+                totalRows: 0,
+                nodeInfo: {},
+                nodeList: [],
+                ruleForm: {},
+                state: state,
+                tick: 50,
+                dataArr: dataArr,
+                index: Index,
+                frameUrl: '',
+                ifShowStamppBtn: false,
+                ifShowStamppBtn2: false,
+                frameShow: false
+            }
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                
+            },
+            //退回审批
+            returnSubmit() {
+                this.disablePage = true
+                var that = this
+                var param = {
+                    "Id": allData.Id,
+                    "TaskId": TaskId,
+                    "ApplyMan": DingData.nickName,
+                    "ApplyManId": DingData.userid,
+                    "NodeId": NodeId,
+                    "ApplyTime": _getTime(),
+                    "IsEnable": "1",
+                    "FlowId": FlowId,
+                    "Remark": this.ruleForm.mark,
+                    "IsSend": "false",
+                    "State": "1",
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId,
+                    "BackNodeId": this.nodeInfo.BackNodeId
+                }
+                $.ajax({
+                    url: "/FlowInfo/FlowBack",
+                    type: "POST",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log('退回')
+                        console.log(param)
+                        console.log(data)
+                        that.$alert(data.errorMessage, '信息返回', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/Main/Approval_list')
+                            }
+                        })
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            //重新发起审批
+            reApproval() {
+                this.disablePage = true
+                ReApprovalTempData = {
+                    valid: true,
+                    data: this.data,
+                    dataArr: this.dataArr,
+                    ProjectId: this.ruleForm.ProjectId,
+                    imageList: this.imageList,
+                    fileList: this.fileList,
+                    items: items
+                }
+                for (let img of imgConfig) {
+                    if (img.flowId == FlowId) {
+                        loadPage(img.url)
+                    }
+                }
+            },
+
+            //获取bom表信息
+            getBomInfo() {
+                var that = this
+                $.ajax({
+                    url: bomUrl,
+                    type: "GET",
+                    success: function (data) {
+                        console.log("获取bom表信息ok")
+                        console.log(bomUrl)
+                        if (typeof (data) == 'string') data = JSON.parse(data)
+                        that.data = data
+                        console.log(data)
+                        if (FlowId == 6) {
+                            for (let a of that.dataArr) {
+                                for (let d of data) {
+                                    if (a.Sorts == d.Sorts) {
+                                        a.data.push(d)
+                                    }
+                                }
+                                a.tableData = a.data.slice(0, 5)
+                                a.totalRows = a.data.length
+                            }
+                        } else {
+                            for (let d of that.data) {
+                                if (d.UrgentDate) d.UrgentDate = d.UrgentDate.substring(0, 10)
+                            }
+                            that.getData()
+                            that.totalRows = that.data.length
+                        }
+
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+
+            //獲取角色信息
+            showStamp(roleName) {
+                var that = this
+                var url = "/Role/GetRoleInfo?RoleName=" + roleName
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log("獲取角色信息")
+                        console.log(url)
+                        console.log(data)
+                        if (data[0].emplId == DingData.userid && Index == "3") {
+                            that.ifShowStamppBtn = true
+                            if (FlowId == '8') that.ifShowStamppBtn2 = true
+                        }
+                    }
+                })
+            },
+
+
+        },
+        created: function () {
+
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData()
+
+
+    //获取审批表单信息
+    function getFormData() {
+        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log("获取审批表单信息ok")
+                console.log(url)
+                console.log(data)
+                allData = data
+                if (data.ImageUrl && data.ImageUrl.length > 5) {
+                    var tempList = data.ImageUrl.split(',')
+                    for (let img of tempList) {
+                        imageList.push({
+                            name: 'hello.jpg',
+                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                        })
+                    }
+                }
+                if (data.FileUrl && data.FileUrl.length > 5) {
+                    FileUrl = data.FileUrl
+                    var urlList = data.FileUrl.split(',')
+                    var oldUrlList = data.OldFileUrl.split(',')
+                    var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
+                    for (var i = 0; i < urlList.length; i++) {
+                        fileList.push({
+                            name: oldUrlList[i],
+                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                            mediaId: MediaIdList[i]
+                        })
+                    }
+                }
+                taskId = allData.TaskId
+                console.log(imageList)
+                console.log(fileList)
+                demo.ruleForm = allData
+                demo.getNodeInfo()
+                demo.getApproInfo()
+                demo.getBomInfo()
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+</script>
+
+
+
+
+

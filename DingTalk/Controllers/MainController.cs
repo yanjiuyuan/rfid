@@ -57,17 +57,14 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_meterieCode()
+        {
+            return View();
+        }
         public ActionResult VoteList()
         {
             return View();
         }
-        public ActionResult Main8()
-        {
-            return View();
-        }
-        public ActionResult Test()
-        {
-            return View();
-        }
+    
     }
 }
