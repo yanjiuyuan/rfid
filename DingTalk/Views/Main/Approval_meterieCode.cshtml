@@ -14,6 +14,11 @@
     <el-table :data="tableData" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
+        <el-table-column prop="Count" label="物料编码" width="100" v-if="Index == '0' && NodeId == '2'">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:scope.row.CodeNumber ==''}"></el-input>
+            </template>
+        </el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -95,13 +100,14 @@
 <script>
 
     var state = ''
+    var Index = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
         state = UrlObj.state
         Id = UrlObj.id
-        var Index = UrlObj.index
+        Index = UrlObj.index
     }
     $("#mask").hide()
     var allData = {}
@@ -134,6 +140,8 @@
                 data: [],
                 items: items,
                 FlowId: FlowId,
+                Index: Index,
+                NodeId: NodeId,
                 tableData: [],
                 totalRows: 0,
                 nodeInfo: {},
@@ -152,7 +160,21 @@
         methods: {
             //提交审批
             onSubmit(formName) {
-                
+                console.log('submit!');
+                var that = this
+                let url = '/CarTable/TableModify'
+                var param = _cloneObj(this.ruleForm)
+                param.UseKilometres = this.UseKilometres
+                this._postData(url, function () {
+
+                    that.aggreSubmit({
+                        "Id": allData.Id,
+                        "Remark": that.ruleForm.Mark,
+                        "ImageUrl": that.ruleForm.ImageUrl,
+                        "OldImageUrl": that.ruleForm.OldImageUrl
+                    })
+
+                }, param)
             },
             //退回审批
             returnSubmit() {
