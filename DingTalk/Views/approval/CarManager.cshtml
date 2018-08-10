@@ -51,7 +51,7 @@
                 <el-form-item v-for="i in items" v-if="i=='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
                     <el-input v-model="ruleForm[i]" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='FinnalUserMan' && i!='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
                     <el-input v-model="ruleForm[i]"></el-input>
                 </el-form-item>
                 <hr />
@@ -79,7 +79,7 @@
         Color: "颜色" ,
         FinnalUserMan: "最近使用人",
         FinnalEndTime: "最近使用时间",
-        UnitPricePerKilometre: "每公里单价",
+        UnitPricePerKilometre: "每公里单价(元)",
         //CreateTime: "创建时间" ,
         //State: "状态" ,
         Remark: "备注"

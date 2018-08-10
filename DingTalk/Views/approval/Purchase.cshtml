@@ -10,15 +10,19 @@
         采购申请-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline"
-             size="medium" :rules="rules" ref="searchForm">
-        <el-form-item label="关键字" prop="string">
-            <el-input v-model="searchForm.string" style="width:200px;"></el-input>
+    @*<el-form :inline="true" :model="searchForm" class="demo-form-inline" autocomplete="off" v-on:submit.prevent="searchCode('searchForm')"
+             size="medium" :rules="rules">
+        <el-form-item label="关键字" prop="name">
+            <el-input v-model="searchForm.name" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="search('searchForm')">搜索</el-button>
+            <el-button type="primary" v-on:click="searchCode('searchForm')">搜索</el-button>
         </el-form-item>
-    </el-form>
+    </el-form>*@
+    <div>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+    </div>
     <!--物料列表表格實體-->
     <el-table :data="tableData" stripe border>
         <el-table-column prop="FNumber" label="物料编码"></el-table-column>
@@ -209,7 +213,7 @@
                 nodeInfo: {},
                 dialogFormVisible: false,
                 searchForm: {
-                    string:'',
+                    name:'',
                 },
                 ruleForm: {
                     name: DingData.nickName,
@@ -321,11 +325,12 @@
                 })
             },
             //搜索物料列表
-            search(formName) {
+            searchCode(formName) {
                 var that = this
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        var url = '/Purchase/GetICItem?Key=' + that.searchForm.string
+                if (!this.searchForm.name) return
+                //this.$refs[formName].validate((valid) => {
+                //    if (valid) {
+                        var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
                         $.ajax({
                             url: url,
                             success: function (data) {
@@ -338,11 +343,11 @@
                                 that.getData()
                             }
                         })
-                    } else {
-                        console.log('搜索物料列表')
-                        return false;
-                    }
-                });
+                //    } else {
+                //        console.log('搜索物料列表')
+                //        return false;
+                //    }
+                //});
             },
             //添加申请物料
             addGood(index, good) {
@@ -389,8 +394,13 @@
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
-            //this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
+            document.onkeydown = function (event) {
+                var e = event || window.event;
+                if (e && e.keyCode == 13) { //回车键的键值为13
+                    return
+                }
+            }; 
         }
     })
 

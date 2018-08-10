@@ -20,6 +20,9 @@
         <el-form-item label="标题" prop="Title" :rules="{ required: true, message: '标题不能为空', trigger: 'blur'}">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
+        <el-form-item label="说明">
+            <el-input v-model="ruleForm.Detail" type="textarea" autosize></el-input>
+        </el-form-item>
         <el-form-item label="有效时间" prop="StartTime" :rules="{ required: true, message: '时间不能为空', trigger: 'blur'}">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
@@ -34,7 +37,7 @@
             <hr />
             <el-form-item :label="'选项('+(index+1)+')'" :rules="{ required: true, message: '选项不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.name'">
-                <el-input v-model="good.name" style="width:200px;"></el-input>
+                <el-input v-model="good.name" style="width:500px;"></el-input>
                 <el-button v-on:click="deleteGood(index)" v-if="index>0"
                            type="danger" plain>
                     删除
@@ -64,6 +67,7 @@
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
                     Title: '',
+                    Detail: '',
                     goods: [{
                         name: ''
                     }],
@@ -91,7 +95,10 @@
                             goods.push(g.name)
                         }
                         param.VoteCount = count.join(',')
-                        param.Option = goods.join(',')
+                        param.Option = goods.join('^')
+                        //临时处理数据
+                        param.Option = param.Option + '&' + param.Detail
+
                         that._postData(url, function (data) {
                             that.$alert('恭喜提交成功', '提示信息', {
                                 confirmButtonText: '确定',
