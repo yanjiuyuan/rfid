@@ -77,6 +77,9 @@ namespace DingTalk.Models.DingModels
         /// 每公里单价
         /// </summary>
         public double? UnitPricePerKilometre { get; set; }
-
+        /// <summary>
+        /// 车辆时间段
+        /// </summary>
+        public string UseTimes { get; set; }
     }
 }
