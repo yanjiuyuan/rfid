@@ -36,8 +36,21 @@ namespace DingTalk.Controllers
                     //更新车辆状态
                     if (carTable.StartTime > car.FinnalEndTime)
                     {
+                        //只保留五条最新数据
+                        if (car.UseTimes.Split(',').Length < 5)  
+                        {
+                            if (car.UseTimes.Split(',').Length == 0)
+                            {
+                                car.UseTimes = carTable.StartTime + "-" + carTable.EndTime + ",";
+                                car.UseMan = carTable.DrivingMan + ",";
+                            }
+                            else
+                            {
+                                car.UseTimes = carTable.StartTime + "-" + carTable.EndTime;
+                                car.UseMan = carTable.DrivingMan;
+                            }
+                        }
                         car.OccupyCarId = carTable.CarId;
-                        car.FinnalUserMan = carTable.DrivingMan;
                         car.FinnalStartTime = carTable.StartTime;
                         car.FinnalEndTime = carTable.EndTime;
                         context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;

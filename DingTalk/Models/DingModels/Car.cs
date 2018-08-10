@@ -67,7 +67,7 @@ namespace DingTalk.Models.DingModels
         /// 最近一次使用人
         /// </summary>
         [StringLength(200)]
-        public string FinnalUserMan { get; set; }
+        public string UseMan { get; set; }
         /// <summary>
         /// 最近一次占用车辆Id
         /// </summary>
