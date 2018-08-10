@@ -172,15 +172,32 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<Car> cars = context.Car.ToList();
-                    List<Car> carsNew = new List<Car>();
+                    //List<Car> carsNew = new List<Car>();
                     foreach (Car car in cars)
                     {
-                        if (car.UseTimes.Split(',').Length > 0)
+                        string[] UseTimesList = car.UseTimes.Split(',');
+                        if (UseTimesList.Length > 0)
                         {
-
+                            int i = 0;
+                            foreach (var UseTimes in UseTimesList)
+                            {
+                                i++;
+                                if (UseTimes.Split('-').Length > 0)
+                                {
+                                    string startT = UseTimes.Split('-')[0];
+                                    string endT = UseTimes.Split('-')[1];
+                                    //判断时间段是否出现重叠
+                                    if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
+                                       DateTime.Parse(endTime) < DateTime.Parse(startT)))
+                                    {
+                                        car.IsOccupyCar = true;
+                                        car.UseMan = car.UseMan.Split(',')[i];
+                                    }
+                                }
+                            }
                         }
                     }
-                    return "";
+                    return cars;
                     //var Quary = from l in ListCar
                     //            select new
                     //            {
