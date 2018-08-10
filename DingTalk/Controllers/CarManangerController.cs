@@ -159,35 +159,45 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆查询(返回当前车辆状态)
         /// </summary>
-        /// <param name="dateTime">最后使用时间</param>
+        /// <param name="startTime">开始时间</param>
+        /// <param name="endTime">结束时间</param>
         /// <returns>IsOccupyCar 是否被占用 true 被占用 false 未被占用</returns>
-        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-07-29 15:07:07
+        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-07-29 15:07:07&endTime=2018-07-29 15:07:07
         [Route("QuaryByTime")]
         [HttpGet]
-        public object QuaryByTime(string dateTime)
+        public object QuaryByTime(string startTime, string endTime)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    var ListCar = context.Car.ToList();
-                    var Quary = from l in ListCar
-                                select new
-                                {
-                                    l.CarNumber,
-                                    l.Color,
-                                    l.CreateMan,
-                                    l.CreateTime,
-                                    l.FinnalEndTime,
-                                    l.FinnalStartTime,
-                                    l.Id,
-                                    l.Name,
-                                    l.Remark,
-                                    l.State,
-                                    IsOccupyCar = Convert.ToDateTime(dateTime) > l.FinnalEndTime ? false : true,
-                                    l.OccupyCarId
-                                };
-                    return Quary;
+                    List<Car> cars = context.Car.ToList();
+                    List<Car> carsNew = new List<Car>();
+                    foreach (Car car in cars)
+                    {
+                        if (car.UseTimes.Split(',').Length > 0)
+                        {
+
+                        }
+                    }
+                    return "";
+                    //var Quary = from l in ListCar
+                    //            select new
+                    //            {
+                    //                l.CarNumber,
+                    //                l.Color,
+                    //                l.CreateMan,
+                    //                l.CreateTime,
+                    //                l.FinnalEndTime,
+                    //                l.FinnalStartTime,
+                    //                l.Id,
+                    //                l.Name,
+                    //                l.Remark,
+                    //                l.State,
+                    //                IsOccupyCar = Convert.ToDateTime(dateTime) > l.FinnalEndTime ? false : true,
+                    //                l.OccupyCarId
+                    //            };
+                    //return Quary;
                 }
             }
             catch (Exception ex)

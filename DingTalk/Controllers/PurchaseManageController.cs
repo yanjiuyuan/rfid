@@ -117,7 +117,6 @@ namespace DingTalk.Controllers
                     //                t.FModel, //规格
                     //                t.FOrderPrice  //单价
                     //            };
-
                     //DbRawSqlQuery<t_ICItem> Quary = context.Database.SqlQuery<t_ICItem>(string.Format("SELECT FNumber,FName,FModel,FOrderPrice FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key));
                     var  Quary = context.Database.SqlQuery<t_ICItem>
                         (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
@@ -156,9 +155,8 @@ namespace DingTalk.Controllers
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
-
                     //判断是否有权限触发按钮
-                    string PeopleId = context.NodeInfo.Where(n => n.NodeName == "院领导审核" && n.FlowId == FlowId).First().PeopleId;
+                    string PeopleId = context.Roles.Where(r=>r.RoleName=="采购管理员").First().UserId;
                     if (UserId != PeopleId)
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
@@ -179,7 +177,7 @@ namespace DingTalk.Controllers
                     }
 
                     List<PurchaseTable> PurchaseTableList = context.PurchaseTable.Where(u => u.TaskId == TaskId).ToList();
-
+                    
                     var SelectPurchaseList = from p in PurchaseTableList
                                              select new
                                              {
@@ -228,8 +226,7 @@ namespace DingTalk.Controllers
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
                     ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
-
-
+                    
                     List<string> newPaths = new List<string>();
                     RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
                     newPaths.Add(RelativePath);
@@ -237,7 +234,7 @@ namespace DingTalk.Controllers
                     //文件压缩打包
                     IonicHelper.CompressMulti(newPaths, SavePath, false);
 
-                    ///上传盯盘获取MediaId
+                    //上传盯盘获取MediaId
                     SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
                     DingTalkServersController dingTalkServersController = new DingTalkServersController();
                     var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);

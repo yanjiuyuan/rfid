@@ -176,14 +176,6 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
-
-                                Tasks tasksApplyMan = context.Tasks.Where(t=>t.TaskId.ToString()==tasks.TaskId.ToString()
-                                && t.NodeId==0).First();
-                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
-                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                context.Entry(tasksApplyMan).State = EntityState.Modified;
-                                context.SaveChanges();
                                 JsonConvert.SerializeObject(new ErrorModel
                                 {
                                     errorCode = 0,
@@ -200,6 +192,14 @@ namespace DingTalk.Controllers
                                     tasks.State = 1;
                                     tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     context.Entry(tasks).State = EntityState.Modified;
+                                    context.SaveChanges();
+
+                                    Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
+                                    && t.NodeId == 0).First();
+                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    context.Entry(tasksApplyMan).State = EntityState.Modified;
                                     context.SaveChanges();
                                 }
                                 else
@@ -932,7 +932,8 @@ namespace DingTalk.Controllers
 
             foreach (int TaskId in ListTasks)
             {
-                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
+                //int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
+                int? NodeId = context.Tasks.Where(t=>t.TaskId.ToString()==TaskId.ToString()).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
