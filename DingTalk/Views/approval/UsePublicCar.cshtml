@@ -166,7 +166,8 @@
                 this.ruleForm.StartTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
                 let param = {
-                    dateTime: _timeToString(value[0])
+                    startTime: _timeToString(value[0]),
+                    endTime: _timeToString(value[1])
                 }
                 let callBack = function (data) {
                     that.carList = data
