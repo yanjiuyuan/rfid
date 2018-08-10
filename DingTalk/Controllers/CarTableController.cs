@@ -39,15 +39,15 @@ namespace DingTalk.Controllers
                     {
                         if (car.UseTimes.Split(',').Length < 5)
                         {
-                            car.UseTimes = "," + carTable.StartTime + "-" + carTable.EndTime;
-                            car.UseMan = "," + carTable.DrivingMan;
+                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "-" + carTable.EndTime;
+                            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
                         }
                         else
                         {
                             car.UseTimes = car.UseTimes.Substring(car.UseTimes.IndexOf(','), car.UseTimes.Length - car.UseTimes.IndexOf(','));
                             car.UseMan = car.UseMan.Substring(car.UseMan.IndexOf(','), car.UseMan.Length - car.UseMan.IndexOf(','));
-                            car.UseTimes = "," + carTable.StartTime + "-" + carTable.EndTime;
-                            car.UseMan = "," + carTable.DrivingMan;
+                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "-" + carTable.EndTime;
+                            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
                         }
                     }
                     else
