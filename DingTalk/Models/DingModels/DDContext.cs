@@ -427,7 +427,7 @@ namespace DingTalk.Models.DingModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<Car>()
-                .Property(e => e.FinnalUserMan)
+                .Property(e => e.UseMan)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Car>()
