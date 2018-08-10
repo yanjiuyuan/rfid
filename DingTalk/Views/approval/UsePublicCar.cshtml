@@ -48,14 +48,14 @@
         </el-form-item>
 
         <el-form-item label="车辆选择" prop="PlantTravelWay">
-            <el-select v-model="CarObj" v-on:change="selectUser" filterable placeholder="请选择">
+            <el-select v-model="ruleForm.CarId" v-on:change="selectUser" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
                            :key="item.PeopleId"
                            :label="item.Name"
                            :value="item.Id">
                 </el-option>
             </el-select>
-            <span v-if="CarObj.IsOccupyCar" style="color:red;">当前被占用</span>
+            <span v-if="CarObj && CarObj.IsOccupyCar" style="color:red;">当前被占用</span>
         </el-form-item>
 
         <hr />
@@ -81,7 +81,6 @@
                 carList: [],
                 nodeList: [],
                 nodeInfo: {},
-                CarObj: '',
                 timeRange:[],
                 ruleForm: {
                     CarId: "",
@@ -217,6 +216,14 @@
             this.getNodeInfo()
             this.getApproInfo()
             loadHtml("mainPage", "partPage")
+        },
+        computed: {
+            CarObj: function () {
+                for (let car of this.carList) {
+                    if (car.Id == this.ruleForm.CarId)
+                        return car
+                }
+            }
         }
     })
 

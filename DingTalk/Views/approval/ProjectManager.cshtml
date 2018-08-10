@@ -102,7 +102,7 @@
                     <el-input v-model="ruleForm.DeptName"></el-input>
                 </el-form-item>
                 <el-form-item label="状态" required="required">
-                    <el-select v-model="ruleForm.ProjectState">
+                    <el-select v-model="ruleForm.ProjectState" :disabled="true">
                         <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                     </el-select>
                 </el-form-item>
