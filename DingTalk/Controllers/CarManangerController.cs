@@ -175,27 +175,31 @@ namespace DingTalk.Controllers
                     //List<Car> carsNew = new List<Car>();
                     foreach (Car car in cars)
                     {
-                        string[] UseTimesList = car.UseTimes.Split(',');
-                        if (UseTimesList.Length > 0)
+                        if (!string.IsNullOrEmpty(car.UseTimes))
                         {
-                            int i = 0;
-                            foreach (var UseTimes in UseTimesList)
+                            string[] UseTimesList = car.UseTimes.Split(',');
+                            if (UseTimesList.Length > 0)
                             {
-                                i++;
-                                if (UseTimes.Split('-').Length > 0)
+                                int i = 0;
+                                foreach (var UseTimes in UseTimesList)
                                 {
-                                    string startT = UseTimes.Split('-')[0];
-                                    string endT = UseTimes.Split('-')[1];
-                                    //判断时间段是否出现重叠
-                                    if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
-                                       DateTime.Parse(endTime) < DateTime.Parse(startT)))
+                                    i++;
+                                    if (UseTimes.Split('-').Length > 0)
                                     {
-                                        car.IsOccupyCar = true;
-                                        car.UseMan = car.UseMan.Split(',')[i];
+                                        string startT = UseTimes.Split('-')[0];
+                                        string endT = UseTimes.Split('-')[1];
+                                        //判断时间段是否出现重叠
+                                        if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
+                                           DateTime.Parse(endTime) < DateTime.Parse(startT)))
+                                        {
+                                            car.IsOccupyCar = true;
+                                            car.UseMan = car.UseMan.Split(',')[i];
+                                        }
                                     }
                                 }
                             }
                         }
+                        
                     }
                     return cars;
                     //var Quary = from l in ListCar
