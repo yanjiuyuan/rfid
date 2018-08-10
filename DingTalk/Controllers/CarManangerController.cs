@@ -193,7 +193,7 @@ namespace DingTalk.Controllers
                                            DateTime.Parse(endTime) < DateTime.Parse(startT)))
                                         {
                                             car.IsOccupyCar = true;
-                                            car.UseMan = car.UseMan.Split(',')[i];
+                                            car.UseMan = car.UseMan.Split(',')[i-1];
                                         }
                                     }
                                 }
