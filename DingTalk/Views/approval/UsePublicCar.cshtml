@@ -48,14 +48,20 @@
         </el-form-item>
 
         <el-form-item label="车辆选择" prop="PlantTravelWay">
-            <el-select v-model="ruleForm.CarId" v-on:change="selectUser" filterable placeholder="请选择">
+            <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
-                           :key="item.PeopleId"
+                           :key="item.Id"
                            :label="item.Name"
                            :value="item.Id">
                 </el-option>
             </el-select>
-            <span v-if="CarObj && CarObj.IsOccupyCar" style="color:red;">当前被占用</span>
+            <template v-if="CarObj && CarObj.IsOccupyCar">
+                <span style="color:red;">当前被占用,占用情况如下</span>
+                <p v-for="u in useTimeList">
+                    <span>驾驶员:{{u.name}}</span>
+                    <span>占用时间:{{u.time}}</span>
+                </p>
+            </template>
         </el-form-item>
 
         <hr />
@@ -81,7 +87,8 @@
                 carList: [],
                 nodeList: [],
                 nodeInfo: {},
-                timeRange:[],
+                timeRange: [],
+                useTimeList: [],
                 ruleForm: {
                     CarId: "",
                     DrivingMan: "",
@@ -145,14 +152,25 @@
                 this.approvalSubmit(formName, {}, callBack)
             },
             //选车操作
-            selectUser(value) {
+            selectCar(value) {
                 //value = JSON.parse(value)
                 console.log('选车操作')
                 console.log(value)
                 let car = {}
+                this.useTimeList = []
                 for (let c of this.carList) {
-                    if (c.Id == value)
+                    if (c.Id == value) {
                         car = c
+                        if (!c.UseMan) break
+                        let nameList = c.UseMan.split(',')
+                        let timeList = c.UseTimes.split(',')
+                        for (var i = 0; i < nameList.length; i++) {
+                            this.useTimeList.push({
+                                name: nameList[i],
+                                time: timeList[i]
+                            })
+                        }
+                    }
                 }
                 this.ruleForm.CarId = car.Id
                 this.ruleForm.OccupyCarId = car.OccupyCarId
@@ -172,10 +190,7 @@
                 let callBack = function (data) {
                     that.carList = data
                     if (data && data.length > 0) {
-                        let car = data[0]
-                        that.ruleForm.CarId = car.Id
-                        that.ruleForm.OccupyCarId = car.OccupyCarId
-                        that.ruleForm.IsChooseOccupyCar = car.IsChooseOccupyCar
+                        that.selectCar(data[0].Id)
                     }
                     console.log('选时间操作')
                 }
