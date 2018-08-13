@@ -619,7 +619,6 @@
     <Content Include="Views\Main\Index.cshtml" />
     <Content Include="Views\Main\VoteDetail.cshtml" />
     <Content Include="Views\Main\VoteList.cshtml" />
-    <Content Include="Views\Main\Main8.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="JqueryUI\colorpicker-master\bower.json" />
@@ -647,12 +646,12 @@
     <Content Include="Views\approval\AddProject.cshtml" />
     <Content Include="SwaggerUI\lib\.DS_Store" />
     <Content Include="Views\approval\AddMaterielCode.cshtml" />
-    <Content Include="Views\Main\Test.cshtml" />
     <Content Include="Views\approval\UsePublicCar.cshtml" />
     <Content Include="Views\approval\CarManager.cshtml" />
     <Content Include="Views\Main\Approval_usePublicCar.cshtml" />
     <Content Include="Views\Main\Approval_useCar.cshtml" />
     <Content Include="Views\approval\Vote.cshtml" />
+    <Content Include="Views\Main\Approval_meterieCode.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

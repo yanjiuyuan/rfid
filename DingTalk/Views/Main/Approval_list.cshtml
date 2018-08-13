@@ -120,6 +120,10 @@
                         loadPage('/Main/approval_detail2' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 12) {
+                        loadPage('/Main/approval_meterieCode' + _formatQueryStr(param))
+                        return
+                    }
                     if (row.FlowId == 13) {
                         loadPage('/Main/approval_usePublicCar' + _formatQueryStr(param))
                         return
