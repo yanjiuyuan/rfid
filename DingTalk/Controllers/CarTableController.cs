@@ -33,20 +33,19 @@ namespace DingTalk.Controllers
                     context.CarTable.Add(carTable);
                     context.SaveChanges();
                     Car car = context.Car.Find(Int32.Parse(carTable.CarId));
-
                     //只保留五条最新数据
                     if (!string.IsNullOrEmpty(car.UseTimes))
                     {
                         if (car.UseTimes.Split(',').Length < 5)
                         {
-                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "-" + carTable.EndTime;
+                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
                             car.UseMan = car.UseMan + "," + carTable.DrivingMan;
                         }
                         else
                         {
                             car.UseTimes = car.UseTimes.Substring(car.UseTimes.IndexOf(','), car.UseTimes.Length - car.UseTimes.IndexOf(','));
                             car.UseMan = car.UseMan.Substring(car.UseMan.IndexOf(','), car.UseMan.Length - car.UseMan.IndexOf(','));
-                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "-" + carTable.EndTime;
+                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
                             car.UseMan = car.UseMan + "," + carTable.DrivingMan;
                         }
                     }

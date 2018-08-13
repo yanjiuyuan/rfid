@@ -162,7 +162,7 @@ namespace DingTalk.Controllers
         /// <param name="startTime">开始时间</param>
         /// <param name="endTime">结束时间</param>
         /// <returns>IsOccupyCar 是否被占用 true 被占用 false 未被占用</returns>
-        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-07-29 15:07:07&endTime=2018-07-29 15:07:07
+        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-08-07 00:00:00&endTime=2018-08-27 00:00:00
         [Route("QuaryByTime")]
         [HttpGet]
         public object QuaryByTime(string startTime, string endTime)
@@ -181,25 +181,39 @@ namespace DingTalk.Controllers
                             if (UseTimesList.Length > 0)
                             {
                                 int i = 0;
+                                string UseManResult = "";
+                                string UseTimeResult = "";
+                                string UseManSave = car.UseMan;
+                                string UseTimeSave = car.UseTimes;
                                 foreach (var UseTimes in UseTimesList)
                                 {
                                     i++;
                                     if (UseTimes.Split('-').Length > 0)
                                     {
-                                        string startT = UseTimes.Split('-')[0];
-                                        string endT = UseTimes.Split('-')[1];
+                                        string startT = UseTimes.Split('~')[0];
+                                        string endT = UseTimes.Split('~')[1];
                                         //判断时间段是否出现重叠
                                         if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
                                            DateTime.Parse(endTime) < DateTime.Parse(startT)))
                                         {
                                             car.IsOccupyCar = true;
-                                            car.UseMan = car.UseMan.Split(',')[i-1];
+                                            if (i == 1)
+                                            {
+                                                UseManResult = UseManSave.Split(',')[i - 1];
+                                                UseTimeResult = UseTimes.Split(',')[i - 1];
+                                            }
+                                            else
+                                            {
+                                                UseManResult += "," + UseManSave.Split(',')[i - 1];
+                                                UseTimeResult += "," + UseTimeSave.Split(',')[i - 1];
+                                            }
                                         }
                                     }
                                 }
+                                car.UseTimes = UseTimeResult;
+                                car.UseMan = UseManResult;
                             }
                         }
-                        
                     }
                     return cars;
                     //var Quary = from l in ListCar
