@@ -99,7 +99,6 @@
                     var submitters = ''
                     if(data.SubmitterId) submitters = data.SubmitterId.split(',')
                     for (let s of submitters) {
-                        console.log('sssssssssssss')
                         let man = s.split('=')
                         that.votedList.push(man[1])
 
