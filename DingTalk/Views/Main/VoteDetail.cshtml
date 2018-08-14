@@ -44,8 +44,8 @@
                     </el-radio-group>
                     <el-button type="primary" v-on:click="postVoteData('ruleForm')">投票</el-button>
                 </el-form-item>
-                <el-form-item>
-
+                <el-form-item label="已投人员" v-if="userName == '詹姆斯' || userName == '黄浩炜' || userName == '研究院唐丽娟'">
+                    <span v-for="v in votedList">{{v}} , </span>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -72,6 +72,8 @@
                     VoteCount: '',
                     SubmitterId: ''
                 },
+                userName: DingData.nickName,
+                votedList: [],
                 chooseValue: '',
                 voted: false,
                 options: [],
@@ -94,9 +96,13 @@
                     data.Detail = content[1]
 
                     that.ruleForm = data
-                    var submitters = data.SubmitterId.split(',')
+                    var submitters = ''
+                    if(data.SubmitterId) submitters = data.SubmitterId.split(',')
                     for (let s of submitters) {
-                        if (DingData.userid == s)
+                        let man = s.split('=')
+                        that.votedList.push(man[1])
+
+                        if (DingData.userid == man[0])
                             that.voted = true
                     }
                     options = data.Option.split('^')
@@ -140,7 +146,11 @@
                     }
 
                     var param = _cloneObj(that.ruleForm)
-                    param.SubmitterId = param.SubmitterId + ',' + DingData.userid
+                    if (param.SubmitterId) {
+                        param.SubmitterId = param.SubmitterId + ',' + DingData.userid + '=' + DingData.nickName
+                    } else {
+                        param.SubmitterId = DingData.userid + '=' + DingData.nickName
+                    }
 
                     //临时处理数据
                     param.Option = param.Option + '&' + param.Detail
