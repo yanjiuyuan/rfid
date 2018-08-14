@@ -937,11 +937,11 @@ namespace DingTalk.Controllers
                 int? NodeId = 0;
                 if (StateCount > 1)
                 {
-                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
+                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
                 }
                 else
                 {
-                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString()).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
+                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
                 }
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
