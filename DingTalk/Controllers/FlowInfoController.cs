@@ -937,7 +937,7 @@ namespace DingTalk.Controllers
                 int? NodeId = 0;
                 if (StateCount > 1)
                 {
-                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
+                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
                 }
                 else
                 {
