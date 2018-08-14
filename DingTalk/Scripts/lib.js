@@ -232,6 +232,10 @@ var mixin = {
             Count: [
                 { required: true, message: '数量不能为空！', trigger: 'change' },
                 { type: 'number', message: '必须为数字值' }
+            ],
+            time: [
+                { required: true, message: '时长不能为空！', trigger: 'change' },
+                { type: 'number', message: '必须为数字值' }
             ]
         },
         pickerOptions: pickerOptions,
