@@ -121,6 +121,7 @@
                 })
             },
             postVoteData() {
+                if (goError()) return
                 if (!this.chooseValue) return
                 var that = this
                 var url = '/VoteManager/ChangeVote'
@@ -154,7 +155,6 @@
 
                     //临时处理数据
                     param.Option = param.Option + '&' + param.Detail
-
                     console.log('更新投票数据')
                     console.log(param)
                     that._postData(url, function (data) {

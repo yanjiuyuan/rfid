@@ -435,6 +435,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
     <Content Include="Content\images\EraserTool.gif" />
     <Content Include="Content\images\EraserTool.png" />
@@ -552,7 +553,7 @@
     <Content Include="SwaggerUI\swagger-ui.min.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Login\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\partHome.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />

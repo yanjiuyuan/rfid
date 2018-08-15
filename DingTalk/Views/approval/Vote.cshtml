@@ -83,6 +83,7 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
+                if(goError()) return
                 var that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
