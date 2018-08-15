@@ -341,6 +341,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
+    <Compile Include="Controllers\OverTimeTableController.cs" />
     <Compile Include="Controllers\PatentManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
@@ -396,6 +397,7 @@
     <Compile Include="Models\DingModels\Flows.cs" />
     <Compile Include="Models\DingModels\FlowSort.cs" />
     <Compile Include="Models\DingModels\NodeInfo.cs" />
+    <Compile Include="Models\DingModels\OverTime.cs" />
     <Compile Include="Models\DingModels\ProcedureInfo.cs" />
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
     <Compile Include="Models\DingModels\Purchase.cs" />
