@@ -172,7 +172,6 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<Car> cars = context.Car.ToList();
-                    //List<Car> carsNew = new List<Car>();
                     foreach (Car car in cars)
                     {
                         if (!string.IsNullOrEmpty(car.UseTimes))
@@ -208,23 +207,6 @@ namespace DingTalk.Controllers
                         }
                     }
                     return cars;
-                    //var Quary = from l in ListCar
-                    //            select new
-                    //            {
-                    //                l.CarNumber,
-                    //                l.Color,
-                    //                l.CreateMan,
-                    //                l.CreateTime,
-                    //                l.FinnalEndTime,
-                    //                l.FinnalStartTime,
-                    //                l.Id,
-                    //                l.Name,
-                    //                l.Remark,
-                    //                l.State,
-                    //                IsOccupyCar = Convert.ToDateTime(dateTime) > l.FinnalEndTime ? false : true,
-                    //                l.OccupyCarId
-                    //            };
-                    //return Quary;
                 }
             }
             catch (Exception ex)
