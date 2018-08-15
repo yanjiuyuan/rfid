@@ -935,13 +935,20 @@ namespace DingTalk.Controllers
                 //int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
                 int StateCount = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Count();
                 int? NodeId = 0;
-                if (StateCount > 1)
+                if (StateCount == 0)
                 {
-                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
+                    NodeId = -1;
                 }
                 else
                 {
-                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
+                    if (StateCount > 1)
+                    {
+                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).OrderBy(u => u.NodeId).Select(u => u.NodeId).ToList().First();
+                    }
+                    else
+                    {
+                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
+                    }
                 }
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
