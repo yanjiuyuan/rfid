@@ -950,6 +950,7 @@ namespace DingTalk.Controllers
                         NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
                     }
                 }
+
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
