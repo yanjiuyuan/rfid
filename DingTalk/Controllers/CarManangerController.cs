@@ -181,8 +181,8 @@ namespace DingTalk.Controllers
                             if (UseTimesList.Length > 0)
                             {
                                 int i = 0;
-                                string UseManResult = "";
-                                string UseTimeResult = "";
+                                List<string> UseManResult = new List<string>();
+                                List<string> UseTimeResult = new List<string>();
                                 string UseManSave = car.UseMan;
                                 string UseTimeSave = car.UseTimes;
                                 foreach (var UseTimes in UseTimesList)
@@ -197,21 +197,13 @@ namespace DingTalk.Controllers
                                            DateTime.Parse(endTime) < DateTime.Parse(startT)))
                                         {
                                             car.IsOccupyCar = true;
-                                            if (i == 1)
-                                            {
-                                                UseManResult = UseManSave.Split(',')[i - 1];
-                                                UseTimeResult = UseTimes.Split(',')[i - 1];
-                                            }
-                                            else
-                                            {
-                                                UseManResult += "," + UseManSave.Split(',')[i - 1];
-                                                UseTimeResult += "," + UseTimeSave.Split(',')[i - 1];
-                                            }
+                                            UseManResult.Add(UseManSave.Split(',')[i - 1]);
+                                            UseTimeResult.Add(UseManSave.Split(',')[i - 1]);
                                         }
                                     }
                                 }
-                                car.UseTimes = UseTimeResult;
-                                car.UseMan = UseManResult;
+                                car.UseTimes = string.Join(",", UseManResult);
+                                car.UseMan = string.Join(",", UseTimeResult);
                             }
                         }
                     }
