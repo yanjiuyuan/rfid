@@ -46,7 +46,16 @@ function loadPage(url) {
     }
     $("#tempPage").load(url)
 }
-function goHome() { loadPage('/Main/approval')}
+function goHome() {
+    loadPage('/Main/approval')
+    return true
+}
+function goError() {
+    if (!DingData.userid || DingData.userid == 'undefined') {
+        loadPage('/Login/Error?errorStr=免登失败，重新打开页面试试')
+        return true
+    }
+}
 
 function loadHtml(parentId,childId) {
     $("#" + parentId).html('')
@@ -234,8 +243,10 @@ var mixin = {
                 { type: 'number', message: '必须为数字值' }
             ],
             time: [
-                { required: true, message: '时长不能为空！', trigger: 'change' },
-                { type: 'number', message: '必须为数字值' }
+                { required: true, message: '时长不能为空！', trigger: 'change' }
+            ],
+            startTime: [
+                { required: true, message: '时长不能为空！', trigger: 'change' }
             ]
         },
         pickerOptions: pickerOptions,
@@ -249,7 +260,8 @@ var mixin = {
     },
     methods: {
         //提交审批
-        approvalSubmit(formName,param,callBack) {
+        approvalSubmit(formName, param, callBack) {
+            if (goError()) return
             var that = this
             this.$refs[formName].validate((valid) => {
                 if (valid) {

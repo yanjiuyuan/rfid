@@ -20,28 +20,35 @@
 
         <hr />
 
-        <el-form-item label="开始时间" prop="startTime">
+        <el-form-item label="加班日期" prop="date">
             <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.startTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
+                <el-date-picker v-model="ruleForm.date"
+                                type="date"
+                                value-format="yyyy-MM-dd"
+                                placeholder="选择日期"
+                                align="right">
                 </el-date-picker>
             </div>
         </el-form-item>
 
-        <el-form-item label="结束时间" prop="endTime">
-            <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.endTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>
+
+        <el-form-item label="加班时间" prop="startTime">
+            <el-time-select placeholder="起始时间"
+                            v-model="ruleForm.startTime"
+                            :picker-options="{
+                              start: '08:30',
+                              step: '00:30',
+                              end: '18:30'
+                            }">
+            </el-time-select>
+            <el-time-select placeholder="结束时间"
+                            v-model="ruleForm.endTime"
+                            :picker-options="{
+                              start: '08:30',
+                              step: '00:30',
+                              end: '23:30',
+                              minTime: startTime
+                            }">
         </el-form-item>
         <el-form-item label="加班时长(小时)" prop="time">
             <el-input v-model="ruleForm.time" style="width:200px;"></el-input>
@@ -73,30 +80,7 @@
                     reson: '',
                     startTime: '',
                     endTime: '',
-                    time: ''
-                },
-                dayPickerOptions: {
-                    shortcuts: [
-                        {
-                            text: '昨天',
-                            onClick(picker) {
-                                const date = new Date();
-                                date.setTime(date.getTime() - 3600 * 1000 * 24);
-                                picker.$emit('pick', date);
-                            }
-                        },{
-                        text: '今天',
-                        onClick(picker) {
-                            picker.$emit('pick', new Date());
-                        }
-                    }, {
-                        text: '明天',
-                        onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() + 3600 * 1000 * 24);
-                            picker.$emit('pick', date);
-                        }
-                    }]
+                    date: ''
                 }
             }
         },
