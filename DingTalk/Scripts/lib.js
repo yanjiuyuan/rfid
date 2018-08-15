@@ -269,6 +269,9 @@ var mixin = {
             OverTimeContent: [
                 { required: true, message: '不能为空！', trigger: 'change' }
             ], 
+            EffectiveTime: [
+                { required: true, message: '有效时间不能为空！', trigger: 'change' }
+            ], 
         },
         pickerOptions: pickerOptions,
         showAddProject: false,

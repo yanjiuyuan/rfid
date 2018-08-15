@@ -6,23 +6,19 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        公车申请审批-{{nodeInfo.NodeName}}
+        基地加班审批-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="加班人员" prop="name">
-            <el-input v-model="ruleForm.name" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-
         <el-form-item label="加班事由" prop="OverTimeContent">
-            <el-input v-model="ruleForm.OverTimeContent" style="width:90%;"></el-input>
+            <el-input v-model="ruleForm.OverTimeContent" :disabled="true" style="width:90%;"></el-input>
         </el-form-item>
 
         <hr />
 
         <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
-                <el-date-picker v-model="ruleForm.DateTime"
+                <el-date-picker v-model="ruleForm.DateTime" :disabled="true"
                                 type="date"
                                 value-format="yyyy-MM-dd"
                                 placeholder="选择日期"
@@ -33,7 +29,7 @@
 
 
         <el-form-item label="加班时间" prop="StartTime">
-            <el-time-select placeholder="起始时间"
+            <el-time-select placeholder="起始时间" :disabled="true"
                             v-model="ruleForm.StartTime"
                             :picker-options="{
                               start: '08:30',
@@ -42,7 +38,7 @@
                               maxTime: ruleForm.EndTimeTime
                             }">
             </el-time-select>
-            <el-time-select placeholder="结束时间"
+            <el-time-select placeholder="结束时间" :disabled="true"
                             v-model="ruleForm.EndTimeTime"
                             :picker-options="{
                               start: '08:30',
@@ -52,13 +48,13 @@
                             }">
         </el-form-item>
         <el-form-item label="加班时长(小时)">
-            <el-input v-model="UseTime" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.UseTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
 
         <template v-if="reInput">
-            <el-form-item label="实际行车路线" prop="FactTravelWay">
-                <el-input v-model="ruleForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
+            <el-form-item label="有效加班时长(小时)" prop="EffectiveTime">
+                <el-input v-model="ruleForm.EffectiveTime" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
             </el-form-item>
         </template>
 
@@ -93,20 +89,13 @@
         mixins: [mixin],
         data: function () {
             return {
-                carList: [],
                 index: Index,
-                car: {},
                 nodeList: [],
                 nodeInfo: {},
                 reInput: false,
                 ifDisabeleEdit: Index != 0,
                 ruleForm: {
 
-                },
-                rules: {
-                    FactTravelWay: { required: true, message: '实际行车路线不能为空', trigger: 'blur' },
-                    StartKilometres: [{ required: true, message: '起始公里数不能为空', trigger: 'blur' }],
-                    EndKilometres: [{ required: true, message: '结束公里数不能为空', trigger: 'blur' }]
                 }
             }
         },
@@ -115,7 +104,7 @@
                 console.log('submit!')
 
                 var that = this
-                let url = '/CarTable/TableModify'
+                let url = '/OverTimeTable/OverTimeTableModify'
                 var param = _cloneObj(this.ruleForm)
                 param.UseKilometres = this.UseKilometres
                 this._postData(url, function () {
@@ -135,30 +124,19 @@
                 }
                 this.returnSubmit(param)
             },
-            getUseCarTable() {
+            getTable() {
                 var that = this
-
-                this.disablePage = true
-      
-                that._getData('/CarTable/TableQuary', function (data2) {
-                    if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
-                    that.ruleForm = data2[0]
+                that._getData('/OverTimeTable/OverTimeTableQuary', function (data2) {
+                    that.ruleForm = data2
                     that.ruleForm['Mark'] = ''
-                    for (let car of that.carList) {
-                        if (car.Id == data2[0].CarId) {
-                            that.ruleForm['Name'] = car.Name
-                            that.car = car
-                        }
-                    }
+                    that.ruleForm['EffectiveTime'] = ''
                 }, { TaskId: TaskId })
-            
-
             }
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
-            this.getUseCarTable()
+            this.getTable()
             if (NodeId == '1') this.reInput = true
             loadHtml("mainPage", "partPage")
         }
