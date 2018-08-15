@@ -41,5 +41,9 @@ namespace DingTalk.Models.DingModels
         /// 加班事由
         /// </summary>
         public string OverTimeContent { get; set; }
+        /// <summary>
+        /// 有效时间
+        /// </summary>
+        public string EffectiveTime { get; set; }
     }
 }
