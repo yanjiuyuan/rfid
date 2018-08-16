@@ -69,6 +69,8 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
+                                //寻人抄送
+                                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
                             }
                             else
                             {
@@ -85,6 +87,7 @@ namespace DingTalk.Controllers
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
                             }
+                          
 
                             if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                             {
@@ -515,7 +518,14 @@ namespace DingTalk.Controllers
                         context.Tasks.Add(newTask);
                         context.SaveChanges();
                     }
-                    return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                    if (IsSend == true)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                    }
                 }
 
                 if (NodeName == "结束")
@@ -999,6 +1009,7 @@ namespace DingTalk.Controllers
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
 
                         var Quary = from n in NodeInfoList
+                                    orderby n.NodeId
                                     select new
                                     {
                                         NodeId = n.NodeId,
@@ -1016,8 +1027,6 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        //List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
-                        //string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBacked != false).ToList();
                         var Quary = from n in NodeInfoList
@@ -1025,6 +1034,7 @@ namespace DingTalk.Controllers
                                     on n.NodeId equals t.NodeId
                                     into temp
                                     from tt in temp.DefaultIfEmpty()
+                                    orderby n.NodeId
                                     select new
                                     {
                                         NodeId = n.NodeId,
