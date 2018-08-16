@@ -242,8 +242,6 @@
             style="position:fixed;right:10px;top:10px;z-index:10086;font-size:100px;"></i>*@
     </div>
     <div class="mask" id="mask"></div>
-    @*<div class="mask-super" id="mask-super"></div>
-        <el-progress class="loading" type="circle" :percentage="tick" status="exception" :width="300"></el-progress>*@
     <!--显示加載過程-->
 
 
@@ -624,16 +622,14 @@
             },
             //文件点击操作
             clickFile(fileUrl, name, mediaId) {
-                console.log(fileUrl)
                 if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
                     pdfUrl = fileUrl
                     pdfName = name
                     pdfMediaId = mediaId
-                    console.log(name)
                     console.log(fileUrl)
-                    this.showPdf(fileUrl)
                     $("#mask").show()
                     this.frameShow = true
+                    this.showPdf(fileUrl)
                 }
 
             },
@@ -680,7 +676,6 @@
                 this.disablePage = true
 
                 console.log('show pdf')
-                $(".loading").show()
                 const loading = this.$loading({
                     lock: true,
                     text: 'Loading',

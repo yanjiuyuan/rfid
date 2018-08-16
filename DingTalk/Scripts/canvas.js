@@ -19,7 +19,7 @@ var fontTip = $("<textarea rows='3' cols='20' style='background:transparent;posi
 $("#container").append(rectTip);
 $("#container").append(circleTip);
 $("#container").append(fontTip);
-
+$("#colorpicker-popup").val("ff0000")
 
 
 var flag = false;
@@ -196,7 +196,7 @@ function clearCanvas() {
 
 
 $("#container").mousedown(function (e) {
-
+    $("#colorpicker-popup").val("ff0000")
     // set mousedown flag for mousemove event
     flag = true;
     //set the begin path of the brash
@@ -508,6 +508,7 @@ function initUI() {
         showOn: 'both',
         close: borderColorEventListener
     });
+    $("#colorpicker-popup").val("ff0000")
 
     function borderColorEventListener(e) {
         // 1. set brash context
