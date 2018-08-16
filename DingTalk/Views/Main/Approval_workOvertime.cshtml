@@ -54,11 +54,11 @@
 
         <template v-if="reInput">
             <el-form-item label="有效加班时长(小时)" prop="EffectiveTime">
-                <el-input v-model="ruleForm.EffectiveTime" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
+                <el-input v-model="ruleForm.EffectiveTime" :disabled="disabledRemark" style="width:550px;"></el-input>
             </el-form-item>
         </template>
 
-        <el-form-item label="意见">
+        <el-form-item label="意见" v-show="!disabledRemark">
             <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
 
@@ -93,7 +93,7 @@
                 nodeList: [],
                 nodeInfo: {},
                 reInput: false,
-                ifDisabeleEdit: Index != 0,
+                disabledRemark: false,
                 ruleForm: {
 
                 }
@@ -104,18 +104,21 @@
                 console.log('submit!')
 
                 var that = this
-                let url = '/OverTimeTable/OverTimeTableModify'
-                var param = _cloneObj(this.ruleForm)
-                param.UseKilometres = this.UseKilometres
-                this._postData(url, function () {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let url = '/OverTimeTable/OverTimeTableModify'
+                        var param = _cloneObj(this.ruleForm)
+                        param.UseKilometres = this.UseKilometres
+                        that._postData(url, function () {
 
-                    that.aggreSubmit({
-                        "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark
-                    })
+                            that.aggreSubmit({
+                                "Id": allData.Id,
+                                "Remark": that.ruleForm.Mark
+                            })
 
-                },param)
-
+                        }, param)
+                    }
+                })
             },
             returnBk() {
                 let param = {
@@ -137,7 +140,8 @@
             this.getNodeInfo()
             this.getApproInfo()
             this.getTable()
-            if (NodeId == '1') this.reInput = true
+            if (NodeId == '1' || NodeId == '2') this.reInput = true
+            if (NodeId == '2') this.disabledRemark = true
             loadHtml("mainPage", "partPage")
         }
     })
