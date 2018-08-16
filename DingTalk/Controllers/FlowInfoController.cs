@@ -87,7 +87,7 @@ namespace DingTalk.Controllers
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
                             }
-                          
+
 
                             if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                             {
@@ -705,8 +705,9 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     Tasks task = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.ApplyManId == UserId
-                     && t.IsSend == true).First();
+                     && t.IsSend == true).OrderByDescending(u=>u.Id).First();
                     task.State = 1;
+                    task.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     context.Entry<Tasks>(task).State = EntityState.Modified;
                     context.SaveChanges();
                     return JsonConvert.SerializeObject(new ErrorModel()
@@ -913,7 +914,7 @@ namespace DingTalk.Controllers
                             return Quary(context, ListTasks, ApplyManId);
                         case 3:
                             //抄送我的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
@@ -943,21 +944,21 @@ namespace DingTalk.Controllers
             foreach (int TaskId in ListTasks)
             {
                 //int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
-                int StateCount = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Count();
+                int StateCount = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
                 int? NodeId = 0;
                 if (StateCount == 0)
                 {
-                    NodeId = -1;
+                    NodeId = context.Tasks.Max(n=>n.NodeId);
                 }
                 else
                 {
                     if (StateCount > 1)
                     {
-                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).OrderBy(u => u.NodeId).Select(u => u.NodeId).ToList().First();
+                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).OrderBy(u => u.NodeId).Select(u => u.NodeId).ToList().First();
                     }
                     else
                     {
-                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0).Select(u => u.NodeId).ToList().First();
+                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Select(u => u.NodeId).ToList().First();
                     }
                 }
 
@@ -978,6 +979,7 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
+                                  //IsRead=t.State==1?"已阅":"未读",
                                   State = flowInfoServer.GetTasksState(t.TaskId.ToString()),
                                   IsBack = t.IsBacked
                               });
