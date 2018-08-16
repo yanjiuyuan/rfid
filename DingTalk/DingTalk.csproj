@@ -655,6 +655,7 @@
     <Content Include="Views\Main\Approval_useCar.cshtml" />
     <Content Include="Views\approval\Vote.cshtml" />
     <Content Include="Views\Main\Approval_meterieCode.cshtml" />
+    <Content Include="Views\Main\Approval_workOvertime.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

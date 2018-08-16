@@ -132,6 +132,10 @@
                         loadPage('/Main/approval_useCar' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 17) {
+                        loadPage('/Main/approval_workOvertime' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },

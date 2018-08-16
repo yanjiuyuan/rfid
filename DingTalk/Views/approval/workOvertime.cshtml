@@ -14,15 +14,15 @@
             <el-input v-model="ruleForm.name" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="加班事由" prop="reson">
-            <el-input v-model="ruleForm.reson" style="width:90%;"></el-input>
+        <el-form-item label="加班事由" prop="OverTimeContent">
+            <el-input v-model="ruleForm.OverTimeContent" style="width:90%;"></el-input>
         </el-form-item>
 
         <hr />
 
-        <el-form-item label="加班日期" prop="date">
+        <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
-                <el-date-picker v-model="ruleForm.date"
+                <el-date-picker v-model="ruleForm.DateTime"
                                 type="date"
                                 value-format="yyyy-MM-dd"
                                 placeholder="选择日期"
@@ -32,26 +32,27 @@
         </el-form-item>
 
 
-        <el-form-item label="加班时间" prop="startTime">
+        <el-form-item label="加班时间" prop="StartTime">
             <el-time-select placeholder="起始时间"
-                            v-model="ruleForm.startTime"
+                            v-model="ruleForm.StartTime"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
-                              end: '18:30'
+                              end: '18:30',
+                              maxTime: ruleForm.EndTimeTime
                             }">
             </el-time-select>
             <el-time-select placeholder="结束时间"
-                            v-model="ruleForm.endTime"
+                            v-model="ruleForm.EndTimeTime"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
                               end: '23:30',
-                              minTime: ruleForm.startTime
+                              minTime: ruleForm.StartTime
                             }">
         </el-form-item>
-        <el-form-item label="加班时长(小时)" prop="time">
-            <el-input v-model="ruleForm.time" style="width:200px;"></el-input>
+        <el-form-item label="加班时长(小时)">
+            <el-input v-model="UseTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
 
@@ -61,7 +62,7 @@
         </sam-approver-list>
 
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit()">提交</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
@@ -76,23 +77,64 @@
                 nodeList: [],
                 nodeInfo: {},
                 ruleForm: {
+                    TaskId: '',
+                    StartTime: '',
+
                     name: DingData.nickName,
-                    reson: '',
-                    startTime: '',
-                    endTime: '',
-                    date: ''
+                    OverTimeContent: '',
+                    EndTimeTime: '',
+                    UseTime: '',
+                    DateTime: ''
                 }
             }
         },
         methods: {
-            onSubmit() {
-                console.log('submit!');
+            onSubmit(formName) {
+                var that = this
+                let url = '/OverTimeTable/OverTimeTableSave'
+                var param = _cloneObj(this.ruleForm)
+                param.UseTime = this.UseTime
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    param.TaskId = taskId
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    }, param)
+                }
+                this.approvalSubmit(formName, {}, callBack)
             }
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
             loadHtml("mainPage", "partPage")
+        },
+        computed: {
+            UseTime: function () {
+                let StartTime = this.ruleForm.StartTime
+                let EndTimeTime = this.ruleForm.EndTimeTime
+                let startHour = parseInt(StartTime.split(':')[0])
+                let startMinut = parseInt(StartTime.split(':')[1])
+                let endHour = parseInt(EndTimeTime.split(':')[0])
+                let endMinut = parseInt(EndTimeTime.split(':')[1])
+                if (StartTime >= '13:30' || (StartTime <= '12:00' && EndTimeTime <= '12:00')) {
+                    return _computedTime(startHour, startMinut, endHour, endMinut)
+                } else {
+                    if (endMinut < 30) {
+                        endMinut += 60
+                        endHour --
+                    }
+                    endHour--
+                    endMinut -= 30
+                    return _computedTime(startHour, startMinut, endHour, endMinut)
+                }
+            }
         }
     })
 

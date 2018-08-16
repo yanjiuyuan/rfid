@@ -151,6 +151,15 @@ function _getTime() {
     return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
 }
 
+function _computedTime(startHour, startMinute, endHour, endMinute) {
+    if (startMinute > endMinute) {
+        endMinute += 60
+        endHour -- 
+    }
+    if (endHour < startHour) return '0:0'
+    return (endHour - startHour) + ':' + (endMinute - startMinute)
+}
+
 function isArray(o) {
     return Object.prototype.toString.call(o) == '[object Array]';
 }
@@ -245,9 +254,24 @@ var mixin = {
             time: [
                 { required: true, message: '时长不能为空！', trigger: 'change' }
             ],
-            startTime: [
+            DateTime: [
+                { required: true, message: '日期不能为空！', trigger: 'change' }
+            ],
+            StartTime: [
+                { required: true, message: '开始时间不能为空！', trigger: 'change' }
+            ], 
+            EndTimeTime: [
+                { required: true, message: '结束时间不能为空！', trigger: 'change' }
+            ], 
+            UseTime: [
                 { required: true, message: '时长不能为空！', trigger: 'change' }
-            ]
+            ],
+            OverTimeContent: [
+                { required: true, message: '不能为空！', trigger: 'change' }
+            ], 
+            EffectiveTime: [
+                { required: true, message: '有效时间不能为空！', trigger: 'change' }
+            ], 
         },
         pickerOptions: pickerOptions,
         showAddProject: false,
