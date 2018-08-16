@@ -932,7 +932,6 @@ namespace DingTalk.Controllers
                     errorCode = 2,
                     errorMessage = ex.Message
                 });
-
             }
         }
 
