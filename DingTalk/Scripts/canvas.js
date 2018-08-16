@@ -19,7 +19,7 @@ var fontTip = $("<textarea rows='3' cols='20' style='background:transparent;posi
 $("#container").append(rectTip);
 $("#container").append(circleTip);
 $("#container").append(fontTip);
-$("#colorpicker-popup").val("ff0000")
+
 
 
 var flag = false;
