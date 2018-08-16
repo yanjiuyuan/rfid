@@ -66,12 +66,13 @@ namespace DingTalk.Controllers
                 {
                     //文件大小不为0
                     HttpPostedFileBase files = Request.Files[0];
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string FileName = file.FileName;
+                    int nIndex = FileName.LastIndexOf('.');
+                    string newFileName = file.FileName.Substring(0, nIndex) +DateTime.Now.ToString("yyyyMMddHHmmss");
                     string Path = "";
                     string strPath = "";
-                    string FileName = file.FileName;
                     string strExtension = "";
-                    int nIndex = FileName.LastIndexOf('.');
+                   
                     if (nIndex >= 0)
                     {
                         strExtension = FileName.Substring(nIndex);
