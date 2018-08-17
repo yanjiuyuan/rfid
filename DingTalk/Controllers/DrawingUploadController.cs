@@ -26,7 +26,7 @@ namespace DingTalk.Controllers
         // GET: DrawingUpload
         public ActionResult Index()
         {
-            return View();
+            return View(); 
         }
 
         /// <summary>

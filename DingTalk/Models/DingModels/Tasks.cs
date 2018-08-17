@@ -65,5 +65,9 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(500)]
         public string PdfState { get; set; }
+
+        [StringLength(200)]
+        public string ProjectName { get; set; }
+        
     }
 }
