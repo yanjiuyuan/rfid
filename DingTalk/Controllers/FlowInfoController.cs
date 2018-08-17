@@ -69,8 +69,11 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
-                                //寻人抄送
-                                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
+                                if (tasks.FlowId == 6) //图纸上传
+                                {
+                                    //寻人抄送
+                                    FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
+                                }
                             }
                             else
                             {
