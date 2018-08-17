@@ -10,8 +10,8 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title" :disabled="true" style="width:90%;"></el-input>
+        <el-form-item label="标题">
+            <el-input v-model="allData.Title" :disabled="true" style="width:90%;"></el-input>
         </el-form-item>
         <el-form-item label="加班事由" prop="OverTimeContent">
             <el-input v-model="ruleForm.OverTimeContent" :disabled="true" style="width:90%;"></el-input>
@@ -165,6 +165,7 @@
                 console.log(url)
                 console.log(data)
                 allData = data
+                demo.allData = data
             },
             error: function (err) {
                 console.log(err);
