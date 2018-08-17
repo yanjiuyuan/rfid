@@ -58,7 +58,7 @@
                 </el-option>
             </el-select>
             @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
 
         <el-form-item label="申请人" prop="name">
@@ -82,6 +82,7 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
         </el-form-item>
+
         <el-form-item label="上传PDF图纸" required="required">
             <el-upload class="upload-demo"
                        drag
@@ -90,14 +91,14 @@
                        :on-remove="handleFileRemove"
                        :before-remove="isPdfFile = true"
                        :before-upload="beforePdfFileUpload"
-                       :on-success="handleFileCardSuccess"
+                       :on-success="handlePdfFileCardSuccess"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
-
         </el-form-item>
+
         <el-form-item label="上传其他附件" required="required">
             <el-upload class="upload-demo"
                        drag
@@ -120,7 +121,7 @@
         </sam-approver-list>
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
-            </sam-addapprover>*@
+        </sam-addapprover>*@
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -381,9 +382,35 @@
             },
             
             handleFileRemove(file, fileList) {
-                this.isPdfFile ? this.pdfList = fileList : this.fileList = fileList
+                this.isPdfFile ? this.pdfList = _cloneArr(fileList) : this.fileList = _cloneArr(fileList)
             },
-            
+
+            handlePdfFileCardSuccess(response, file, fileList) {
+                var that = this
+                var paramObj = {
+                    "": file.response.Content
+                }
+                $.ajax({
+                    url: '/DingTalkServers/UploadMedia/',
+                    type: 'POST',
+                    data: paramObj,
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        console.log('上传文件到钉盘')
+                        console.log('/api/dt/uploadMedia/')
+                        console.log(paramObj)
+                        if (data.media_id) {
+                            console.log(data.media_id)
+                            //isPdf ? that.mediaPdfList.push(data.media_id) : that.mediaList.push(data.media_id)
+                            that.mediaPdfList.push(data.media_id)
+                        } else {
+                            console.log('无media_di')
+                        }
+                        //that.isPdfFile ? that.pdfList = _cloneArr(fileList) : that.fileList = _cloneArr(fileList)
+                        that.pdfList = _cloneArr(fileList)
+                    }
+                })
+            },
             handleFileCardSuccess(response, file, fileList) {
                 var that = this
                 var paramObj = {
@@ -400,11 +427,13 @@
                         console.log(paramObj)
                         if (data.media_id) {
                             console.log(data.media_id)
-                            isPdf ? that.mediaPdfList.push(data.media_id) : that.mediaList.push(data.media_id)
+                            //isPdf ? that.mediaPdfList.push(data.media_id) : that.mediaList.push(data.media_id)
+                            that.mediaList.push(data.media_id)
                         } else {
                             console.log('无media_di')
                         }
-                        that.isPdfFile ? that.pdfList = fileList : that.fileList = fileList
+                        //that.isPdfFile ? that.pdfList = _cloneArr(fileList) : that.fileList = _cloneArr(fileList)
+                        that.fileList = _cloneArr(fileList)
                     }
                 })
             },

@@ -3,16 +3,7 @@
 }
 
 
-<link rel="stylesheet" href="~/JqueryUI/jquery-ui.css" />
-<link rel="stylesheet" href="~/JqueryUI/jquery-ui.structure.css" />
-<link rel="stylesheet" href="~/JqueryUI/colorpicker-master/jquery.colorpicker.css" />
-<link rel="stylesheet" href="~/JqueryUI/jquery-ui.theme.css" />
-<script src="~/JqueryUI/jquery-ui.min.js"></script>
-<script src="~/Scripts/anyLine.js"></script>
-<script src="~/JqueryUI/colorpicker-master/jquery.colorpicker.js"></script>
-<script src="~/JqueryUI/colorpicker-master/parts/jquery.ui.colorpicker-rgbslider.js"></script>
 
-<script src="~/Scripts/pdf.worker.js"></script>
 <!--右侧实体内容-->
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
@@ -682,7 +673,9 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                $(".ui-dialog").show()
+                //$(".ui-dialog").show()
+                
+                //initui()
                 initUI()
                 PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
                 PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
@@ -795,15 +788,12 @@
 
 
 
-<script src="~/Scripts/canvas.js"></script>
-<script src="~/Scripts/jspdf.min.js"></script>
 
 <script>
     //初始化
-    initUI()
-    $(".ui-dialog").hide()
+    //$(".ui-dialog").hide()
 </script>
 
-
+<script src="~/Scripts/canvas.js"></script>
 
 
