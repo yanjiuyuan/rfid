@@ -63,10 +63,11 @@ namespace DingTalk.Models.DingModels
 
         public string MediaIdPDF { get; set; }
 
-        /// <summary>
-        /// PDF
-        /// </summary>
         [StringLength(500)]
         public string PdfState { get; set; }
+
+        [StringLength(200)]
+        public string ProjectName { get; set; }
+        
     }
 }

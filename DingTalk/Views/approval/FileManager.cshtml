@@ -22,7 +22,7 @@
         <br />
         <div>
             <span style="font-size:1.2rem;">文件夹列表</span>
-            <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 4" size="small" type="primary">新建文件夹</el-button>
+            <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 5" size="small" type="primary">新建文件夹</el-button>
         </div>
         <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f)" style="cursor:pointer;">
             @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
@@ -124,7 +124,7 @@
                 dialogFormVisible: false,
                 clockFolder: false,
                 isRoot: true,
-                pathList: ['UploadFile', 'ProjectFile'],
+                pathList: ['UploadFile', '项目文件'],
                 fileList: [],
                 lineTree: [],
                 defaultProps: {

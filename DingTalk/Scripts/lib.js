@@ -3,6 +3,7 @@ var FlowId = 0 //当前审批类别ID
 var NodeId = 0 //审批节点ID
 var TaskId = 0 //审批任务ID
 var State = 0 //多异步辅助状态
+var Index = 0 //审批列表类型参数 0-带我审批 1-我已审批 2-我发起的 3-抄送我的
 var UrlObj = {} //url参数对象
 var QueryObj = {} //获取url参数对象
 var Id = 0 //自增task表的id
@@ -45,6 +46,16 @@ function loadPage(url) {
         }
     }
     $("#tempPage").load(url)
+}
+function goHome() {
+    loadPage('/Main/approval')
+    return true
+}
+function goError() {
+    if (!DingData.userid || DingData.userid == 'undefined') {
+        loadPage('/Login/Error?errorStr=免登失败，重新打开页面试试')
+        return true
+    }
 }
 
 function loadHtml(parentId,childId) {
@@ -107,6 +118,23 @@ function _dateToString(date, split) {
     return year + split + month + split + day
 }
 
+function _timeToString(date, split) {
+    if (!split) split = "-"
+    var d = new Date(date)
+    var year = d.getFullYear()
+    var month = d.getMonth() + 1
+    var day = d.getDate()
+    var hour = d.getHours()
+    var minute = d.getMinutes()
+    var second = d.getSeconds()
+    if (month < 10) month = '0' + month
+    if (day < 10) day = '0' + day
+    if (hour < 10) hour = '0' + hour
+    if (minute < 10) minute = '0' + minute
+    if (second < 10) second = '0' + second
+    return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
+}
+
 function _getTime() {
     var split = "-"
     var d = new Date()
@@ -115,9 +143,22 @@ function _getTime() {
     var day = d.getDate()
     var hour = d.getHours()
     var minute = d.getMinutes()
+    var second = d.getSeconds()
     if (month < 10) month = '0' + month
     if (day < 10) day = '0' + day
-    return year + split + month + split + day + ' ' + hour + ':' + minute
+    if (hour < 10) hour = '0' + hour
+    if (minute < 10) minute = '0' + minute
+    if (second < 10) second = '0' + second
+    return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
+}
+
+function _computedTime(startHour, startMinute, endHour, endMinute) {
+    if (startMinute > endMinute) {
+        endMinute += 60
+        endHour -- 
+    }
+    if (endHour < startHour) return '0:0'
+    return (endHour - startHour) + ':' + (endMinute - startMinute)
 }
 
 function isArray(o) {
@@ -158,7 +199,6 @@ var pickerOptions = {
         }
     }]
 }
-
 var mixin = {
     data: {
         user: {},
@@ -192,6 +232,9 @@ var mixin = {
             ProjectId: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
+            Title: [
+                { required: true, message: '标题内容不能为空！', trigger: 'change' }
+            ],
             ProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
@@ -211,7 +254,28 @@ var mixin = {
             Count: [
                 { required: true, message: '数量不能为空！', trigger: 'change' },
                 { type: 'number', message: '必须为数字值' }
-            ]
+            ],
+            time: [
+                { required: true, message: '时长不能为空！', trigger: 'change' }
+            ],
+            DateTime: [
+                { required: true, message: '日期不能为空！', trigger: 'change' }
+            ],
+            StartTime: [
+                { required: true, message: '开始时间不能为空！', trigger: 'change' }
+            ], 
+            EndTimeTime: [
+                { required: true, message: '结束时间不能为空！', trigger: 'change' }
+            ], 
+            UseTime: [
+                { required: true, message: '时长不能为空！', trigger: 'change' }
+            ],
+            OverTimeContent: [
+                { required: true, message: '不能为空！', trigger: 'change' }
+            ], 
+            EffectiveTime: [
+                { required: true, message: '有效时间不能为空！', trigger: 'change' }
+            ], 
         },
         pickerOptions: pickerOptions,
         showAddProject: false,
@@ -223,6 +287,189 @@ var mixin = {
         
     },
     methods: {
+        //提交审批
+        approvalSubmit(formName, param, callBack) {
+            if (goError()) return
+            var that = this
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    that.disablePage = true
+                    var paramArr = []
+                    var applyObj = {
+                        "ApplyMan": DingData.nickName,
+                        "ApplyManId": DingData.userid,
+                        "Dept": DingData.departName,
+                        "NodeId": "0",
+                        "ApplyTime": _getTime(),
+                        "IsEnable": "1",
+                        "FlowId": FlowId + '',
+                        "IsSend": false,
+                        "State": "1",
+                    }
+                    for (let p in param) {
+                        applyObj[p] = param[p]
+                    }
+                    paramArr.push(applyObj)
+                    for (let node of that.nodeList) {
+                        if (node.NodeId == (that.nodeInfo.NodeId + 1) || (node.NodeId > 0 && node.NodeName.indexOf('申请人') >= 0)) {
+                            console.log(node)
+                            console.log(node.AddPeople)
+                            if (!that.preApprove && node.AddPeople.length == 0) {
+                                this.$alert('您尚未选择审批人', '提交错误', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+
+                                    }
+                                });
+                                that.disablePage = false
+                                return
+                            }
+                            for (let a of node.AddPeople) {
+                                paramArr.push({
+                                    "ApplyMan": a.name,
+                                    "ApplyManId": a.emplId,
+                                    "IsEnable": 1,
+                                    "FlowId": FlowId + '',
+                                    "NodeId": node.NodeId + '',
+                                    "IsSend": false,
+                                    "State": 0,
+                                    "OldFileUrl": null,
+                                    "IsBack": null
+                                })
+                            }
+                        }
+                    }
+                    $.ajax({
+                        url: '/FlowInfo/CreateTaskInfo',
+                        type: 'POST',
+                        data: JSON.stringify(paramArr),
+                        success: function (data) {
+                            console.log("提交审批ok")
+                            console.log(data)
+                            var taskId = JSON.parse(data).Content
+                            console.log(paramArr)
+                            console.log(taskId)
+                            callBack(taskId)
+                        }
+                    })
+                } else {
+                    that.$alert('表单数据不全或有误', '提交错误', {
+                        confirmButtonText: '确定'
+                    });
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        //同意审批
+        aggreSubmit(param, param2 = {}) {
+            this.disablePage = true
+            var paramArr = []
+            var that = this
+            paramArr.push({
+                "TaskId": TaskId,
+                "ApplyMan": DingData.nickName,
+                "ApplyManId": DingData.userid,
+                "NodeId": NodeId,
+                "ApplyTime": _getTime(),
+                "IsEnable": "1",
+                "FlowId": FlowId,
+                "IsSend": "false",
+                "State": "1",
+            })
+            for (let p in param) {
+                paramArr[0][p] = param[p]
+            }
+            for (let node of this.nodeList) {
+                if (node.NodeId == this.nodeInfo.NodeId) {
+                    for (let a of node.AddPeople) {
+                        paramArr.push({
+                            "ApplyMan": a.name,
+                            "ApplyManId": a.userid,
+                            "TaskId": TaskId,
+                            "ApplyTime": null,
+                            "IsEnable": 1,
+                            "FlowId": FlowId,
+                            "NodeId": NodeId,
+                            "Remark": null,
+                            "IsSend": false,
+                            "State": 0,
+                            "ImageUrl": null,
+                            "FileUrl": null,
+                            "IsPost": false,
+                            "OldImageUrl": null,
+                            "OldFileUrl": null,
+                            "IsBack": null
+                        })
+                    }
+                }
+            }
+            $.ajax({
+                url: "/FlowInfo/SubmitTaskInfo",
+                type: "POST",
+                data: JSON.stringify(paramArr),
+                dataType: "json",
+                success: function (data) {
+                    console.log(paramArr)
+                    console.log(data)
+                    if (data && data.errorCode == 0) {
+                        that.$alert('审批成功', '操作成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                loadPage('/main/Approval')
+                            }
+                        });
+                    } else {
+                        that.$alert('审批发生错误', '操作失败', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        },
+        //退回审批
+        returnSubmit(option) {
+            this.disablePage = true
+            var that = this
+            var param = {
+                "TaskId": TaskId,
+                "ApplyMan": DingData.nickName,
+                "ApplyManId": DingData.userid,
+                "NodeId": NodeId,
+                "ApplyTime": _getTime(),
+                "IsEnable": "1",
+                "FlowId": FlowId,
+                "IsSend": "false",
+                "State": "1",
+                "BackNodeId": this.nodeInfo.BackNodeId
+            }
+            for (let o in option) {
+                param[o] = option[o]
+            }
+            $.ajax({
+                url: "/FlowInfo/FlowBack",
+                type: "POST",
+                data: JSON.stringify(param),
+                dataType: "json",
+                success: function (data) {
+                    console.log('退回')
+                    console.log(param)
+                    console.log(data)
+                    that.$alert(data.errorMessage, '信息返回', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            loadPage('/Main/Approval_list')
+                        }
+                    })
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        },
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
@@ -278,12 +525,18 @@ var mixin = {
                     that.isBack = result[0].IsBack
                     that.nodeList = _cloneArr(result)
                     for (let node of that.nodeList) {
-                        if (node.NodeId == 0)
-                            node.NodePeople = [DingData.nickName]
+                        node['AddPeople'] = []
                         if (node.ApplyMan && node.ApplyMan.length > 0)
                             node.NodePeople = node.ApplyMan.split(',')
-                        node['AddPeople'] = []
+                        if (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan) {
+                            node.ApplyMan = DingData.nickName
+                            node.AddPeople = [{
+                                name: DingData.nickName,
+                                emplId: DingData.userid
+                            }]
                         }
+                    
+                    }
                     
                     //that.preApprove = !data[0].IsNeedChose
                 },
@@ -303,7 +556,7 @@ var mixin = {
                 success: function (data) {
                     console.log("获取项目列表数据 GetAllProJect")
                     console.log(data)
-                    that.projestList = data
+                    that.projectList = data
                 },
                 error: function (err) {
                     console.log(err);
@@ -377,6 +630,135 @@ var mixin = {
             that.$alert(text, title, {
                 confirmButtonText: '确定'
             });
+        },
+        //选单人
+        addMan() {
+            var that = this
+            DingTalkPC.biz.contact.choose({
+                multiple: false, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                onSuccess: function (data) {
+                    that.ResponsibleMan = data
+                    console.log(data)
+                },
+                onFail: function (err) { }
+            });
+        },
+        //选多人
+        addGroup() {
+            var that = this
+            console.log('addGroup')
+            DingTalkPC.biz.contact.choose({
+                multiple: true, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                onSuccess: function (data) {
+                    that.groupPeople = data
+                    console.log(data)
+                },
+                onFail: function (err) { }
+            });
+        },
+
+        //图片上传事件
+        beforePictureUpload(file) {
+            console.log('before file')
+            console.log(file)
+            file.name = 'helloWorld'
+            const isJPG = file.type === 'image/jpeg'
+            const isPNG = file.type === 'image/png'
+            const isLt2M = file.size / 1024 / 1024 < 2
+            if (!(isJPG || isPNG)) {
+                this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
+                return false
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!')
+                return false
+            }
+            return true
+        },
+        handlePictureCardPreview(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+        handlePictureRemove(file, fileList) {
+            this.changePictureList(fileList)
+        },
+        handlePictureCardSuccess(response, file, fileList) {
+            this.changePictureList(fileList)
+        },
+        changePictureList(fileList) {
+            console.log(fileList)
+            this.ruleForm['ImageUrl'] = ''
+            this.ruleForm['OldImageUrl'] = ''
+            for (var i = 0; i < fileList.length; i++) {
+                this.ruleForm.ImageUrl += fileList[i].response.Content
+                this.ruleForm.OldImageUrl += fileList[i].name
+                if (i == fileList.length - 1) break
+                this.ruleForm.ImageUrl += ','
+                this.ruleForm.OldImageUrl += ','
+            }
+        },
+
+        //get获取接口数据通用方法
+        _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
+            var that = this
+            url = url += _formatQueryStr(param)
+            $.ajax({
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    if (typeof (data) == 'string') data = JSON.parse(data) 
+                    console.log(url)
+                    console.log(param)
+                    console.log(data)
+                    if (alertStr) {
+                        that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                if (callBack) callBack(data)
+                            }
+                        })
+                    } else {
+                        callBack(data)
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest);
+                }
+            })
+        },
+        //post提交接口数据通用方法
+        _postData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
+            var that = this
+            console.log(url)
+            console.log(param)
+            $.ajax({
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                type: "POST",
+                data: JSON.stringify(param),
+                dataType: "json",
+                success: function (data) {
+                    if (typeof (data) == 'string') data = JSON.parse(data) 
+                    console.log(data)
+                    if (alertStr) {
+                        that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                if (callBack) callBack()
+                            }
+                        })
+                    } else {
+                        callBack()
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest);
+                }
+            })
         }
     }
 }
@@ -452,7 +834,7 @@ Vue.component('sam-approver-list', {
                             <template v-for="(ap,a) in node.AddPeople">
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a" 
-                                        :closable="true"
+                                        :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
                                         v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
@@ -463,7 +845,7 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="!preset && !node.NodePeople && node.NodeName!='结束'">
+                           <template v-if="!preset && !node.ApplyMan && node.NodeName!='结束'">
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
@@ -527,8 +909,8 @@ Vue.component('sam-approver-list', {
                     console.log(data)
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
+                            node.AddPeople = data
                             for (let d of data) {
-                                node.AddPeople.push(d)
                                 $("#" + nodeId).after('<span class="el-tag" style="width: 60px; text-align: center; ">' + d.name + '</span >')
                             }
                         }

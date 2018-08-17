@@ -1,0 +1,196 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        公车申请审批-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="驾驶员">
+            <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="同行人">
+            <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="用车事由">
+            <el-input v-model="ruleForm.MainContent" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <hr />
+
+        <el-form-item label="计划行车路线">
+            <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <template v-if="reInput">
+            <el-form-item label="实际行车路线" prop="FactTravelWay">
+                <el-input v-model="ruleForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
+            </el-form-item>
+            <el-form-item label="起始公里数" prop="StartKilometres">
+                <el-input v-model="ruleForm.StartKilometres" :disabled="ifDisabeleEdit"></el-input>
+            </el-form-item>
+            <el-form-item label="结束公里数" prop="EndKilometres">
+                <el-input v-model="ruleForm.EndKilometres" :disabled="ifDisabeleEdit"></el-input>
+            </el-form-item>
+            <el-form-item label="使用公里数">
+                <el-input v-model="UseKilometres" :disabled="true"></el-input>
+            </el-form-item>
+        </template>
+        
+
+        @*<el-form-item label="起始公里数">
+            <el-input v-model="ruleForm.StartKilometres" :disabled="true"></el-input>
+        </el-form-item>*@
+        <el-form-item label="开始时间">
+            <el-input v-model="ruleForm.StartTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="返回时间">
+            <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="使用车辆">
+            <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="意见">
+            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
+
+        <hr />
+
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
+        <el-form-item label="操作" v-if="index==0">
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var allData = {}
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                carList: [],
+                index: Index,
+                car: {},
+                nodeList: [],
+                nodeInfo: {},
+                reInput: false,
+                ifDisabeleEdit: Index != 0,
+                ruleForm: {
+                    
+                },
+                rules: {
+                    FactTravelWay: { required: true, message: '实际行车路线不能为空', trigger: 'blur' },
+                    StartKilometres: [{ required: true, message: '起始公里数不能为空', trigger: 'blur' }],
+                    EndKilometres: [{ required: true, message: '结束公里数不能为空', trigger: 'blur' }]
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                console.log('submit!')
+
+                var that = this
+                let url = '/CarTable/TableModify'
+                var param = _cloneObj(this.ruleForm)
+                param.UseKilometres = this.UseKilometres
+                this._postData(url, function () {
+
+                    that.aggreSubmit({
+                        "Id": allData.Id,
+                        "Remark": that.ruleForm.Mark
+                    })
+
+                },param)
+
+            },
+            returnBk() {
+                let param = {
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            getUseCarTable() {
+                var that = this
+            
+                let handle = function (data) {
+                    that.totalRows = data.length
+                    that.data = data
+                    that.getData()
+                }
+                this.disablePage = true
+                this._getData("/CarMananger/Quary", function (data) {
+                        that.carList = data
+                        that._getData('/CarTable/TableQuary', function (data2) {
+                            if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
+                            that.ruleForm = data2[0]
+                            that.ruleForm['Mark'] = ''
+                            for (let car of that.carList) {
+                                if (car.Id == data2[0].CarId) {
+                                    that.ruleForm['Name'] = car.Name
+                                    that.car = car
+                                }
+                            }
+                        }
+                    , { TaskId: TaskId })
+                }, {key:''})
+                
+            }
+        },
+        computed: {
+            UseKilometres: function () {
+                return this.ruleForm.EndKilometres - this.ruleForm.StartKilometres
+            }
+        },
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            this.getUseCarTable()
+            if (NodeId == '3' || NodeId == '4') this.reInput = true
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData()
+
+
+    //获取审批表单信息
+    function getFormData() {
+        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log("获取审批表单信息ok")
+                console.log(url)
+                console.log(data)
+                allData = data
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+</script>
+
+
+

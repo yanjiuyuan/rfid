@@ -69,6 +69,11 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
+                                if (tasks.FlowId == 6) //图纸上传
+                                {
+                                    //寻人抄送
+                                    FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
+                                }
                             }
                             else
                             {
@@ -85,6 +90,7 @@ namespace DingTalk.Controllers
                                 context.Tasks.Add(tasks);
                                 context.SaveChanges();
                             }
+
 
                             if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                             {
@@ -192,6 +198,14 @@ namespace DingTalk.Controllers
                                     tasks.State = 1;
                                     tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     context.Entry(tasks).State = EntityState.Modified;
+                                    context.SaveChanges();
+
+                                    Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
+                                    && t.NodeId == 0).First();
+                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    context.Entry(tasksApplyMan).State = EntityState.Modified;
                                     context.SaveChanges();
                                 }
                                 else
@@ -507,7 +521,14 @@ namespace DingTalk.Controllers
                         context.Tasks.Add(newTask);
                         context.SaveChanges();
                     }
-                    return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                    if (IsSend == true)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                    }
                 }
 
                 if (NodeName == "结束")
@@ -687,8 +708,9 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     Tasks task = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.ApplyManId == UserId
-                     && t.IsSend == true).First();
+                     && t.IsSend == true).OrderByDescending(u=>u.Id).First();
                     task.State = 1;
+                    task.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     context.Entry<Tasks>(task).State = EntityState.Modified;
                     context.SaveChanges();
                     return JsonConvert.SerializeObject(new ErrorModel()
@@ -896,7 +918,7 @@ namespace DingTalk.Controllers
                             return Quary(context, ListTasks, ApplyManId);
                         case 3:
                             //抄送我的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return Quary(context, ListTasks, ApplyManId);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
@@ -914,7 +936,6 @@ namespace DingTalk.Controllers
                     errorCode = 2,
                     errorMessage = ex.Message
                 });
-
             }
         }
 
@@ -925,7 +946,25 @@ namespace DingTalk.Controllers
 
             foreach (int TaskId in ListTasks)
             {
-                int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
+                //int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
+                int StateCount = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
+                int? NodeId = 0;
+                if (StateCount == 0)
+                {
+                    NodeId = context.Tasks.Where(t=>t.TaskId.ToString()==TaskId.ToString()).Max(n=>n.NodeId);
+                }
+                else
+                {
+                    if (StateCount > 1)
+                    {
+                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).OrderBy(u => u.NodeId).Select(u => u.NodeId).ToList().First();
+                    }
+                    else
+                    {
+                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Select(u => u.NodeId).ToList().First();
+                    }
+                }
+
                 List<Tasks> ListTask = context.Tasks.ToList();
                 List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
@@ -943,6 +982,7 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
+                                  //IsRead=t.State==1?"已阅":"未读",
                                   State = flowInfoServer.GetTasksState(t.TaskId.ToString()),
                                   IsBack = t.IsBacked
                               });
@@ -974,6 +1014,7 @@ namespace DingTalk.Controllers
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
 
                         var Quary = from n in NodeInfoList
+                                    orderby n.NodeId
                                     select new
                                     {
                                         NodeId = n.NodeId,
@@ -991,8 +1032,6 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        //List<NodeInfo> ChoseNodeInfoList = NodeInfoList.Where(u => (u.PeopleId == null || u.PeopleId == "") && u.NodeId != 0 && u.NodeName != "结束").ToList();
-                        //string ApplyMan = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsPost == true && u.State == 1).First().ApplyMan;
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.IsBacked != false).ToList();
                         var Quary = from n in NodeInfoList
@@ -1000,6 +1039,7 @@ namespace DingTalk.Controllers
                                     on n.NodeId equals t.NodeId
                                     into temp
                                     from tt in temp.DefaultIfEmpty()
+                                    orderby n.NodeId
                                     select new
                                     {
                                         NodeId = n.NodeId,
@@ -1164,7 +1204,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
-                Code purchaseDown = context.Code.First();
+                ProjectInfo purchaseDown = context.ProjectInfo.First();
                 return JsonConvert.SerializeObject(purchaseDown);
             }
         }

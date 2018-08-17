@@ -1,0 +1,42 @@
+﻿
+
+
+@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        错误页面
+    </div>
+    <h3 v-if="errorStr" style="text-align:center">原因可能是:{{errorStr}}</h3>
+    <div style="margin:auto;width:500px;">
+        <img src="~/Content/images/404.jpg" />
+    </div>
+
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                errorStr: UrlObj.errorStr ? UrlObj.errorStr : ''
+            }
+        },
+        methods: {
+            
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+
+

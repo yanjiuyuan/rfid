@@ -537,6 +537,50 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 项目信息修改
+        /// </summary>
+        /// <param name="projectInfo"></param>
+        /// <returns></returns>
+        /// 测试数据：  /Project/ProjectInfoModify
+        ///  data: {"Id":10039.0,"ProjectName":"DingTalk","CreateTime":"2018-07-10 16:20","IsEnable":true,"ProjectState":"在研","DeptName":"智慧工厂事业部","ApplyMan":"蔡兴桐","ApplyManId":"083452125733424957","StartTime":"2018-07-12","EndTime":"2018-07-13","ProjectId":"12333","FilePath":"\\UploadFile\\ProjectFile\\泉州华中科技大学智能制造研究院\\纵向项目\\DingTalk","ResponsibleMan":"蔡兴桐","ResponsibleManId":"083452125733424957","CompanyName":"泉州华中科技大学智能制造研究院","ProjectType":"纵向项目","TeamMembers":"张鹏辉,肖民生,詹姆斯,黄龙贤","TeamMembersId":"100328051024695354,073110326032521796,manager325,020821466340361583","CreateMan":null,"CreateManId":null}
+        [HttpPost]
+        public string ProjectInfoModify(ProjectInfo projectInfo)
+        {
+            try
+            {
+                if (projectInfo != null)
+                {
+                    using (DDContext context = new DDContext())
+                    {   
+                        context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                    }
+                    return JsonConvert.SerializeObject(new ErrorModel {
+                        errorCode=0,
+                        errorMessage="修改成功"
+                    });
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 1,
+                        errorMessage = "参数未传递"
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
         /// 项目信息关键字查询
         /// </summary>
         /// <param name="key">关键字</param>

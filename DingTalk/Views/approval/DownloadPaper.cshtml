@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        下发图纸
+        下发图纸-{{nodeInfo.NodeName}}
     </div>
 
     <!--项目选择部分-->
@@ -184,13 +184,14 @@
             return {
                 //项目列表相关参数
                 data: [],
+                nodeInfo: {},
                 tableData: [],
                 projectItems: {
                     ProjectId: '项目编号',
                     ProjectName: '项目名称',
-                    ApplyMan: '创建人',
+                    ResponsibleMan: '项目负责人',
                     CreateTime: '创建时间',
-                    DeptName: '所属部门'
+                    DeptName: '负责部门'
                 },
                 totalRows: 0,
                 project: [],

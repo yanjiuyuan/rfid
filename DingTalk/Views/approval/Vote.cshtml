@@ -1,0 +1,138 @@
+﻿
+
+
+@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        发起投票
+    </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+
+        <el-form-item label="发起人">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="标题" prop="Title" :rules="{ required: true, message: '标题不能为空', trigger: 'blur'}">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="说明">
+            <el-input v-model="ruleForm.Detail" type="textarea" autosize></el-input>
+        </el-form-item>
+        <el-form-item label="有效时间" prop="StartTime" :rules="{ required: true, message: '时间不能为空', trigger: 'blur'}">
+            <el-date-picker v-model="timeRange"
+                            type="datetimerange"
+                            v-on:change="selectTime"
+                            range-separator="至"
+                            start-placeholder="开始时间"
+                            end-placeholder="结束时间">
+            </el-date-picker>
+        </el-form-item>
+        <!--投票选项明细-->
+        <template v-for="(good,index) in ruleForm.goods">
+            <hr />
+            <el-form-item :label="'选项('+(index+1)+')'" :rules="{ required: true, message: '选项不能为空', trigger: 'blur'}"
+                          :prop="'goods.' + index + '.name'">
+                <el-input v-model="good.name" style="width:500px;"></el-input>
+                <el-button v-on:click="deleteGood(index)" v-if="index>0"
+                           type="danger" plain>
+                    删除
+                </el-button>
+            </el-form-item>
+        </template>
+        <p class="hint">如需添加选项，请点击“添加选项”</p>
+        <el-button v-on:click="addGoods" type="primary" plain> + 添加选项</el-button>
+        <hr />
+
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                timeRange: [],
+                ruleForm: {
+                    ApplyMan: DingData.nickName,
+                    ApplyManId: DingData.userid,
+                    Title: '',
+                    Detail: '',
+                    goods: [{
+                        name: ''
+                    }],
+                    Option: '',
+                    StartTime: '',
+                    EndTime: '',
+                    VoteCount: '',
+                    SubmitterId: ''
+                },
+                preApprover: false
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                console.log('submit!')
+                if(goError()) return
+                var that = this
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let url = '/VoteManager/LaunchVote'
+                        let param = _cloneObj(that.ruleForm)
+                        let count = []
+                        let goods = []
+                        for (let g of param.goods) {
+                            count.push(0)
+                            goods.push(g.name)
+                        }
+                        param.VoteCount = count.join(',')
+                        param.Option = goods.join('^')
+                        //临时处理数据
+                        param.Option = param.Option + '&' + param.Detail
+
+                        that._postData(url, function (data) {
+                            that.$alert('恭喜提交成功', '提示信息', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    goHome()
+                                }
+                            })
+                        }, param)
+                    }
+                })
+                
+            },
+            //选时间操作
+            selectTime(value) {
+                if (!value || !value[0]) return
+                this.ruleForm.StartTime = _timeToString(value[0])
+                this.ruleForm.EndTime = _timeToString(value[1])
+            },
+            addGoods() {
+                this.ruleForm.goods.push({
+                    name: ''
+                })
+            },
+            deleteGood(index) {
+                this.ruleForm.goods.splice(index, 1)
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+
+

@@ -4,49 +4,6 @@
 
 <!--右侧实体内容-->
 <div id="partPage">
-    <!--查詢表單-->
-    @*<el-form :inline="true" :model="formInline" class="demo-form-inline"
-             size="medium">
-        <el-form-item label="关键字">
-            <el-input v-model="formInline.user" style="width:500px;"
-                      placeholder="请输入搜索关键字，包括审批标题、正文内容、审批意见"></el-input>
-        </el-form-item>
-        
-        <template v-if="superSearch">
-            <el-form-item label="发起日期（提交审批日期）">
-                <el-date-picker v-model="formInline.startDate"
-                                type="daterange"
-                                :picker-options="pickerOptions"
-                                range-separator="至"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item label="完成日期（最终审批日期）">
-                <el-date-picker v-model="formInline.endDate"
-                                type="daterange"
-                                :picker-options="pickerOptions"
-                                range-separator="至"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期">
-                </el-date-picker>
-            </el-form-item>
-        </template>
-
-        <el-form-item>
-            <el-button type="primary" v-on:click="onFilter">搜索</el-button>
-            <span v-if="superSearch" v-on:click="changeSuperSearch" class="clickable-text">关闭高级搜索</span>
-            <span v-else v-on:click="changeSuperSearch" class="clickable-text">高级搜索</span>
-        </el-form-item>
-        
-        <el-form-item label="审批类型">
-            <el-select v-model="formInline.region">
-                <el-option label="全部" value=""></el-option>
-                <el-option label="办公用品申领" value="1"></el-option>
-                <el-option label="用车申请" value="2"></el-option>
-            </el-select>
-        </el-form-item>
-    </el-form>*@
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
         <el-table-column prop="TaskId" label="流水号"></el-table-column>
@@ -151,11 +108,35 @@
             },
             loader(row) {
                 if (row.TaskId && row.FlowId) {
+                    let param = {
+                        taskid: row.TaskId,
+                        flowid: row.FlowId,
+                        nodeid: row.NodeId,
+                        id: row.Id,
+                        index: Index,
+                        state: row.State
+                    }
                     if (row.FlowId == 7) {
-                        loadPage('/Main/approval_detail2?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index + '&state=' + row.State)
+                        loadPage('/Main/approval_detail2' + _formatQueryStr(param))
                         return
                     }
-                    loadPage('/Main/approval_detail?taskid=' + row.TaskId + '&flowid=' + row.FlowId + '&nodeid=' + row.NodeId + '&id=' + row.Id + '&index=' + Index + '&state=' + row.State)
+                    if (row.FlowId == 12) {
+                        loadPage('/Main/approval_meterieCode' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 13) {
+                        loadPage('/Main/approval_usePublicCar' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 14) {
+                        loadPage('/Main/approval_useCar' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 17) {
+                        loadPage('/Main/approval_workOvertime' + _formatQueryStr(param))
+                        return
+                    }
+                    loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },
             handleDelete(index, row) {

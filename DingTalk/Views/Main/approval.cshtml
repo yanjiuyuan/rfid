@@ -5,7 +5,7 @@
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <br />
-    <template>
+    <template @*v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯'"*@>
         <span>我是：</span>
         <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">
             <el-option v-for="item in userList"
@@ -14,7 +14,9 @@
                        :value="item.PeopleId">
             </el-option>
         </el-select>
-        <el-button v-on:click="loadPage('/main/test')">跳转测试界面</el-button>
+        <p>{{name}}</p>
+        <p>{{id}}</p>
+        <el-button class="button-new-tag" size="small" v-on:click="addMemberTest()">+ 选人</el-button>
     </template>
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
@@ -36,20 +38,6 @@
             sortId: 1,
             //url: '/approval/officesupplies',
             position: '-774px -227px'
-        },
-        {
-            flowId: 2,
-            sortId: 1,
-            url: '',
-            //url: '/approval/UseCar',
-            position: '-504px -407px'
-        },
-        {
-            flowId: 3,
-            sortId: 2,
-            url: '',
-            //url: '/approval/WorkOvertime',
-            position: '-594px -47px'
         },
         {
             flowId: 4,
@@ -107,15 +95,47 @@
             sortId: 5,
             url: '/approval/AddProject',
             position: '-594px -227px'
-        }
+        },
+        {
+            flowId: 13,
+            sortId: 6,
+            url: '/approval/UsePublicCar',
+            position: '-775px -317px'
+        },
+        {
+            flowId: 14,
+            sortId: 6,
+            url: '/approval/UseCar',
+            position: '-504px -407px'
+        },
+        {
+            flowId: 15,
+            sortId: 6,
+            url: '/approval/CarManager',
+            position: '-144px -227px'
+        },
+        {
+            flowId: 16,
+            sortId: 7,
+            url: '/approval/Vote',
+            position: '-594px -47px'
+        },
+        {
+            flowId: 17,
+            sortId: 7,
+            url: '/approval/WorkOvertime',
+            position: '-323px -47px'
+        },
     ]
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [1,2,3,4],
+                activeNames: [1,2,3,4,5],
                 count: 2,
+                name: '',
+                id: '',
                 menu: [],
                 list: [],
                 userList: userList,
@@ -124,6 +144,7 @@
         },
         methods: {
             getMenu: function () {
+                
                 var that = this
                 $.ajax({
                     url: '/FlowInfo/LoadFlowSort?id=123',
@@ -141,13 +162,27 @@
                             cache: false,
                             success: function (data) {
                                 that.list = _mergeObjectArr(data, imgConfig, 'flowId')
-                                console.log()
                                 console.log('/FlowInfo/LoadFlowInfo?id=123')
                                 console.log(that.list)
                             }
                         })
                     }
                 })
+            },
+            addMemberTest() {
+                var that = this
+
+                DingTalkPC.biz.contact.choose({
+                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                    corpId: DingData.CorpId, //企业id
+                    max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
+                    onSuccess: function (data) {
+                        console.log(data)
+                        that.name = data[0].name
+                        that.id = data[0].emplId
+                    },
+                    onFail: function (err) { }
+                });
             },
             toApprove: function (url, id) {
                 FlowId = id
@@ -166,16 +201,12 @@
                 }
             },
             getUserInfo: function () {
-                var that = this 
-                $.ajax({
-                    url: '/FlowInfo/GetUserInfo',
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log('获取用户数据')
-                        console.log(data)
-                        that.userList = data
-                    }
-                })
+                var that = this
+                let url = '/FlowInfo/GetUserInfo'
+                let handle = function (data) {
+                    that.userList = data
+                }
+                this._getData(url, handle)
             }
         },
         created: function () {

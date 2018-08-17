@@ -1,0 +1,227 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        车辆管理
+    </div>
+    <!--检索项目表单-->
+    <el-form :inline="true" :model="formInline" class="demo-form-inline"
+             size="medium">
+        <el-form-item label="关键字">
+            <el-input v-model="formInline.key" style="width:200px;"
+                      placeholder="请输入搜索关键字"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="getCar">搜索</el-button>
+            <el-button v-on:click="handleAdd" type="primary">添加车辆</el-button>
+        </el-form-item>
+    </el-form>
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column v-for="i in items" :prop="i" :key="i" :label="tableItems[i]"></el-table-column>
+
+        <el-table-column label="操作" width="200">
+            <template slot-scope="scope">
+                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+    <!--编辑车辆信息表单-->
+    <el-dialog title="编辑车辆信息" :visible.sync="dialogFormVisible">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                 enctype="multipart/form-data" :inline="true">
+            <template>
+                <el-form-item v-for="i in items" v-if="i=='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
+                    <el-input v-model="ruleForm[i]" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='FinnalUserMan' && i!='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
+                    <el-input v-model="ruleForm[i]"></el-input>
+                </el-form-item>
+                <hr />
+                <el-form-item>
+                    <el-button v-if="isAdd" type="primary" v-on:click="addCar('ruleForm')" :disabled="disableAdd">添加</el-button>
+                    <el-button v-else type="primary" v-on:click="editCar('ruleForm')" :disabled="disableAdd">保存</el-button>
+                </el-form-item>
+            </template>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+            @*<el-button type="primary" v-on:click="dialogFormVisible = false">完 成</el-button>*@
+        </div>
+    </el-dialog>
+</div>
+
+
+<script>
+    var Index = 0
+    var id = ''
+    var tableItems = {
+        Name: "名称",
+        Type: "品牌",
+        CarNumber: "车牌号" ,
+        Color: "颜色" ,
+        FinnalUserMan: "最近使用人",
+        FinnalEndTime: "最近使用时间",
+        UnitPricePerKilometre: "每公里单价(元)",
+        //CreateTime: "创建时间" ,
+        //State: "状态" ,
+        Remark: "备注"
+    }
+    var items = []
+    var ruleForm = {}
+    for (let t in tableItems) {
+        items.push(t)
+        ruleForm[t] = ''
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                disableAdd: false,
+                showAddUser: false,
+                isAdd: true,
+                tableData: [],
+                items: items,
+                tableItems: tableItems,
+                formInline: {
+                    key: ''
+                },
+                ruleForm: ruleForm,
+                dialogFormVisible: false
+            }
+        },
+        methods: {
+            //获取车辆数据getCar
+            getCar() {
+                var that = this
+                let url = "/CarMananger/Quary"
+                let param = {
+                    key: this.formInline.key
+                }
+                let handle = function (data) {
+                    that.totalRows = data.length
+                    for (let d of data) { d.State += ''}
+                    that.data = data
+                    that.getData()
+                }
+                this._getData(url,handle,param)
+            },
+            //添加车辆数据
+            addCar(formName) {
+                var that = this
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        that.disableAdd = true
+                        var url = '/CarMananger/Add' 
+                        console.log("添加车辆")
+                        console.log(that.ruleForm)
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: that.ruleForm,
+                            success: function (data) {
+                                console.log("添加车辆ok")
+                                console.log(data)
+                                that.disableAdd = false
+                                that.dialogFormVisible = false
+                                that.getCar()
+                            }
+                        })
+                    } else {
+                        console.log('添加用户失败')
+                        that.disableAdd = false
+                        return false;
+                    }
+                });
+            },
+            //编辑车辆数据
+            editCar(formName) {
+                var that = this
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        that.disableAdd = true
+                        var url = '/CarMananger/Modify'
+                        var param = _cloneObj(that.ruleForm)
+                        param['Id'] = id
+                        console.log("编辑车辆")
+                        console.log(param)
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: param,
+                            success: function (data) {
+                                console.log("编辑车辆ok")
+                                console.log(data)
+                                that.disableAdd = false
+                                that.dialogFormVisible = false
+                                that.getCar()
+                            }
+                        })
+                    } else {
+                        console.log('添加用户失败')
+                        that.disableAdd = false
+                        return false;
+                    }
+                });
+            },
+            handleDelete(index, row) {
+                var that = this
+                let url = "/CarMananger/Delete"
+                let param = {
+                    Id: row.Id
+                }
+               
+                let handle = function (data) {
+                    console.log('删除成功')
+                    that.getCar()
+                }
+                this._postData(url, handle, param)
+            },
+            //添加车辆按钮事件
+            handleAdd: function () {
+                this.dialogFormVisible = true
+                this.isAdd = true
+                for (let f in this.ruleForm) {
+                    if (f == 'CreateMan') this.ruleForm[f] = DingData.nickName
+                    else this.ruleForm[f] = ''
+                }
+            },
+            //编辑车辆按钮事件
+            handleEdit: function (index, row) {
+                console.log(index)
+                console.log(row)
+                id = row.Id
+                this.isAdd = false
+                this.dialogFormVisible = true
+                for (let i of items) {
+                    this.ruleForm[i] = row[i]
+                }
+            },
+        },
+        created: function () {
+            this.getCar()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>

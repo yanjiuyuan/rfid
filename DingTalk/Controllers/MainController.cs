@@ -45,21 +45,30 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
-        public ActionResult Main6()
+        public ActionResult Approval_usePublicCar()
         {
             return View();
         }
-        public ActionResult Main7()
+        public ActionResult Approval_useCar()
         {
             return View();
         }
-        public ActionResult Main8()
+        public ActionResult Approval_workOvertime()
         {
             return View();
         }
-        public ActionResult Test()
+        public ActionResult VoteDetail()
         {
             return View();
         }
+        public ActionResult Approval_meterieCode()
+        {
+            return View();
+        }
+        public ActionResult VoteList()
+        {
+            return View();
+        }
+    
     }
 }

@@ -23,6 +23,8 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
+        public virtual DbSet<Car> Car { get; set; }
+        public virtual DbSet<CarTable> CarTable { get; set; }
         public virtual DbSet<Code> Code { get; set; }
         public virtual DbSet<FileInfos> FileInfos { get; set; }
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
@@ -30,9 +32,10 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
         public virtual DbSet<PurchaseProcedureInfo> PurchaseProcedureInfo { get; set; }
         public virtual DbSet<PurchaseTable> PurchaseTable { get; set; }
+        public virtual DbSet<Vote> Vote { get; set; }
         public virtual DbSet<Worker> Worker { get; set; }
         public virtual DbSet<WorkTime> WorkTime { get; set; }
-
+        public virtual DbSet<OverTime> OverTime { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Approve>()
@@ -267,6 +270,10 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.AllWeight)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Purchase>()
+                .Property(e => e.NeedTime)
+                .IsUnicode(false);
+
             modelBuilder.Entity<Roles>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -385,6 +392,94 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.FinnalLoginTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.Type)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.CarNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.Color)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.CreateMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.CreateTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.UseMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.OccupyCarId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.PeerNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.MainContent)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.PlantTravelWay)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.FactTravelWay)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.StartKilometres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.EndKilometres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.UseKilometres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.CarId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.DrivingMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CarTable>()
+                .Property(e => e.OccupyCarId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Code>()
@@ -563,6 +658,14 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.TeamMembersId)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.CreateMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ProjectInfo>()
+                .Property(e => e.CreateManId)
+                .IsUnicode(false);
+
             modelBuilder.Entity<PurchaseDown>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -689,6 +792,34 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<PurchaseTable>()
                 .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.ApplyManId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.Title)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.Option)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.VoteCount)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Vote>()
+                .Property(e => e.SubmitterId)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Worker>()

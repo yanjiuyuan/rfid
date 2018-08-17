@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        添加物料编码审批
+        物料编码审批-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
 
@@ -56,7 +56,7 @@
 <script>
     var meterielConfig = {
         BigCode: '物料大类编码', 
-        CodeNumber: '物料编码',
+        //CodeNumber: '物料编码',
         SmallCode: '物料小类编码',
         Name: '物料名称',
         Unit: '单位',
@@ -81,7 +81,7 @@
                 nodeInfo: {},
                 meterielConfig: meterielConfig,
                 meteriel: meteriel,
-                needInput: ['BigCode', 'SmallCode', 'Name', 'CodeNumber'],
+                needInput: ['BigCode', 'SmallCode', 'Name'],
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',

@@ -3,7 +3,9 @@
  */
 
 
+$(function () {
 
+})
 
 var x, y, endX, endY;
 
@@ -24,27 +26,7 @@ $("#container").append(fontTip);
 
 var flag = false;
 var ctx = document.getElementById("myCanvas").getContext("2d");
-//var img=document.getElementById("img");
-//ctx.drawImage(img,10,10);
-/**
- * Every function in this app has a corresponding command code:
- * --------------------------------------------------
- * function			command code		description
- * --------------------------------------------------
- * brash(pencil)			1				use it as a pencil to draw 
- * eraser					2				use it as a eraser to erase some spots
- * trash					3 				you can clean the whole canvas
- * draw line				4				draws straight lines
- * draw rectangle			5				draw rectangles
- * draw words				6				you can input words on the canvas			
- * 
- */
-
-
-// Every function has different canvas context and cursor style
-// therefore, we create a callback list to .....
-// 1.	switch the canvas context
-// 2. switch the cursor style when the mouse is on the canvas 
+$("#colorpicker-popup").val("ff0000")
 var command = 1;
 var commandCallbacks = $.Callbacks();
 commandCallbacks.add(switchCanvasContext);
@@ -355,10 +337,31 @@ function redo() {
     }
 }
 
+function initui() {
+    $("#dialog").dialog(
+        {
+            autoOpen: true,
+            closed: true,
+            draggable: false,
+            show: {
+                effect: "blind",
+                duration: 920
+            },
+            position: top,
+            height: 630,
+            width: 980,
+            close: function () {
+                console.log('1233333333')
+                $("#mask").hide()
+            },
+            load: function () {
+                console.log('1233333333')
+            },
+        });
+}
 
 //// define function
 function initUI() {
-    ctx = document.getElementById("myCanvas").getContext("2d")
     //界面UI初始化，对话框
     $("#dialog").dialog(
         {
@@ -378,7 +381,7 @@ function initUI() {
             width: 980,
             //left: 227,
             close: function () {
-                console.log('1233333333')
+                console.log('33333333')
                 $("#mask").hide()
             },
             load: function () {

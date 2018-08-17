@@ -7,18 +7,22 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        采购申请
+        采购申请-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline"
-             size="medium" :rules="rules" ref="searchForm">
-        <el-form-item label="关键字" prop="string">
-            <el-input v-model="searchForm.string" style="width:200px;"></el-input>
+    @*<el-form :inline="true" :model="searchForm" class="demo-form-inline" autocomplete="off" v-on:submit.prevent="searchCode('searchForm')"
+             size="medium" :rules="rules">
+        <el-form-item label="关键字" prop="name">
+            <el-input v-model="searchForm.name" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="search('searchForm')">搜索</el-button>
+            <el-button type="primary" v-on:click="searchCode('searchForm')">搜索</el-button>
         </el-form-item>
-    </el-form>
+    </el-form>*@
+    <div>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+    </div>
     <!--物料列表表格實體-->
     <el-table :data="tableData" stripe border>
         <el-table-column prop="FNumber" label="物料编码"></el-table-column>
@@ -58,7 +62,7 @@
         </el-table-column>
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price" prop="Price" :class="{ redborder:scope.row.Price ==''}" >
+                <el-input v-model="scope.row.Price" >
                 </el-input>
             </template>
         </el-table-column>
@@ -107,7 +111,7 @@
                 <el-input v-model="good.Standard" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="单价">
-                <el-input v-model="good.Price" prop="Price"></el-input>
+                <el-input v-model="good.Price"></el-input>
             </el-form-item>
             <el-form-item label="单位">
                 <el-input v-model="good.Unit" prop="Unit"></el-input>
@@ -138,7 +142,7 @@
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="项目名" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
-                <el-option v-for="item in projestList"
+                <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectName"
                            :value="item.ProjectId">
@@ -170,7 +174,9 @@
                 <el-button type="primary" v-on:click="addProject">添加</el-button>
             </el-form-item>
         </template>
-
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
@@ -198,7 +204,7 @@
                 data: [],
                 tableData: [],
                 purchaseList: [],
-                projestList: [],
+                projectList: [],
                 good: {
                     Price: '',
                     Unit: '',
@@ -209,12 +215,13 @@
                 nodeInfo: {},
                 dialogFormVisible: false,
                 searchForm: {
-                    string:'',
+                    name:'',
                 },
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
                     ProjectName: '',
+                    Title: '',
                     ProjectId: null,
                     inputProjectName: '',
                     inputProjectId: '',
@@ -229,10 +236,10 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid && that.purchaseList.length > 0) {
                         that.disablePage = true
-                        var title
-                        for (let p of that.projestList) {
+                        var ProjectName
+                        for (let p of that.projectList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
-                                title = p.ProjectName
+                                ProjectName = p.ProjectName
                             }
                         }
                         var paramArr = []
@@ -246,7 +253,8 @@
                             "Remark": that.ruleForm.remark,
                             "IsSend": false,
                             "State": "1",
-                            "Title": title,
+                            "Title": that.ruleForm.title,
+                            "ProjectName": ProjectName,
                             "ProjectId": that.ruleForm.ProjectId
                         })
                         for (let node of that.nodeList) {
@@ -321,11 +329,12 @@
                 })
             },
             //搜索物料列表
-            search(formName) {
+            searchCode(formName) {
                 var that = this
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        var url = '/Purchase/GetICItem?Key=' + that.searchForm.string
+                if (!this.searchForm.name) return
+                //this.$refs[formName].validate((valid) => {
+                //    if (valid) {
+                        var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
                         $.ajax({
                             url: url,
                             success: function (data) {
@@ -338,11 +347,11 @@
                                 that.getData()
                             }
                         })
-                    } else {
-                        console.log('搜索物料列表')
-                        return false;
-                    }
-                });
+                //    } else {
+                //        console.log('搜索物料列表')
+                //        return false;
+                //    }
+                //});
             },
             //添加申请物料
             addGood(index, good) {
@@ -354,7 +363,7 @@
                     Name: good.FName,
                     Standard: good.FModel,
                     Unit: '',
-                    Price: good.FOrderPrice,
+                    Price: good.FOrderPrice == '0' ? '' : good.FOrderPrice,
                     Count: '',
                     Purpose: '',
                     UrgentDate: '',
@@ -389,8 +398,13 @@
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
-            //this.searchForm.string = '材'
             loadHtml("mainPage", "partPage")
+            document.onkeydown = function (event) {
+                var e = event || window.event;
+                if (e && e.keyCode == 13) { //回车键的键值为13
+                    return
+                }
+            }; 
         }
     })
 

@@ -43,6 +43,59 @@ namespace DingTalk.Controllers
             var result = await dtManager.GetDepartmentList();
             return result;
         }
+        /// <summary>
+        /// 根据用户Id获取所有关联部门Id
+        /// </summary>
+        /// <returns></returns>
+        [Route("departmentListQuaryByUserId")]
+        public async Task<string> DepartmentListQuary()
+        {
+            string userId = "manager325";
+            var result = await dtManager.GetDepartmentByUserId(userId);
+            return result;
+        }
+        /// <summary>
+        /// 根据用户Id获取第二级部门信息
+        /// </summary>
+        /// <returns></returns>
+        [Route("departmentQuaryByUserId")]
+        public async Task<string> departmentQuaryByUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                userId = "083452125733424957";
+            }
+            var result = await dtManager.GetDepartmentByUserId(userId);
+            DepartmentListModel departmentListModel = JsonConvert.DeserializeObject<DepartmentListModel>(result);
+            List<List<string>> ListString = departmentListModel.department;
+            List<string> ListDepartmentId = new List<string>();
+            foreach (List<string> item in ListString)
+            {
+                if (ListString.IndexOf(item) == 0)
+                {
+                    foreach (var Id in item)
+                    {
+                        if (item.IndexOf(Id) == (item.Count - 2))
+                        {
+                            ListDepartmentId.Add(Id);
+                        }
+                    }
+                }
+            }
+            //return JsonConvert.SerializeObject(ListDepartmentId);
+            var results = await dtManager.SingleDepartment(Int32.Parse(ListDepartmentId[0]));
+            return results;
+        }
+
+        //"{\"errmsg\":\"ok\",\"department\":[[56943182,1]],\"errcode\":0}"
+
+        [Route("departmentListQuaryByDeptId")]
+        public async Task<string> departmentListQuaryByDeptId()
+        {
+            var allDptStr = await dtManager.GetDepartmentList();
+            return allDptStr;
+        }
+
         [Route("addDepartment")]
         public async Task<string> DepartmentAdd()
         {
@@ -365,7 +418,7 @@ namespace DingTalk.Controllers
                 fileInfos.LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 using (DDContext context = new DDContext())
                 {
-                    fileInfos.FilePath = @"\"+fileInfos.FilePath.Replace(AppDomain.CurrentDomain.BaseDirectory,"");
+                    fileInfos.FilePath = @"\" + fileInfos.FilePath.Replace(AppDomain.CurrentDomain.BaseDirectory, "");
                     context.FileInfos.Add(fileInfos);
                     context.SaveChanges();
                 }

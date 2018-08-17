@@ -27,6 +27,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Error()
+        {
+            return View();
+        }
         //
         // GET: /DD/
         public ActionResult GetUserInfo(string accessToken, string code, bool setCurrentUser = true)

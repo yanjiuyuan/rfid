@@ -6,55 +6,66 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        加班申请
+        加班申请-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        
-        <el-form-item label="加班人" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="加班人员" prop="name">
+            <el-input v-model="ruleForm.name" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="加班事由" prop="reson">
-            <el-input v-model="ruleForm.reson"></el-input>
-        </el-form-item>
-
-        <hr />
-
-        <el-form-item label="开始时间" prop="startTime">
-            <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.startTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>
-        </el-form-item>
-
-        <el-form-item label="结束时间" prop="endTime">
-            <div class="block">
-                <span class="demonstration">带快捷选项</span>
-                <el-date-picker v-model="ruleForm.endTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                align="right"
-                                :picker-options="dayPickerOptions">
-                </el-date-picker>
-            </div>
+        <el-form-item label="加班事由" prop="OverTimeContent">
+            <el-input v-model="ruleForm.OverTimeContent" style="width:90%;"></el-input>
         </el-form-item>
 
         <hr />
 
-        <el-form-item label="审批人">
-            <span class="hint">审批人已由管理员预置，并将自动去重</span>
+        <el-form-item label="加班日期" prop="DateTime">
+            <div class="block">
+                <el-date-picker v-model="ruleForm.DateTime"
+                                type="date"
+                                value-format="yyyy-MM-dd"
+                                placeholder="选择日期"
+                                align="right">
+                </el-date-picker>
+            </div>
         </el-form-item>
 
-        <el-form-item label="抄送人">
-            <span class="hint">（审批通过后，通知抄送人）</span>
+
+        <el-form-item label="加班时间" prop="StartTime">
+            <el-time-select placeholder="起始时间"
+                            v-model="ruleForm.StartTime"
+                            :picker-options="{
+                              start: '08:30',
+                              step: '00:30',
+                              end: '18:30',
+                              maxTime: ruleForm.EndTimeTime
+                            }">
+            </el-time-select>
+            <el-time-select placeholder="结束时间"
+                            v-model="ruleForm.EndTimeTime"
+                            :picker-options="{
+                              start: '08:30',
+                              step: '00:30',
+                              end: '23:30',
+                              minTime: ruleForm.StartTime
+                            }">
         </el-form-item>
+        <el-form-item label="加班时长(小时)">
+            <el-input v-model="UseTime" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <hr />
+
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
+
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit()">提交</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
@@ -66,52 +77,67 @@
         mixins: [mixin],
         data: function () {
             return {
+                nodeList: [],
+                nodeInfo: {},
                 ruleForm: {
-                    name: '',
-                    reson: '',
-                    startTime: '',
-                    endTime: '',
-                },
-                rules: {
-                    name: [
-                        { required: true, message: '申请人不能为空', trigger: 'blur' },
-                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-                    ],
-                    startTime: { required: true, message: '开始时间不能为空', trigger: 'blur' },
-                    endTime: { required: true, message: '结束时间不能为空', trigger: 'blur' }
-                },
-                dayPickerOptions: {
-                    shortcuts: [
-                        {
-                            text: '昨天',
-                            onClick(picker) {
-                                const date = new Date();
-                                date.setTime(date.getTime() - 3600 * 1000 * 24);
-                                picker.$emit('pick', date);
-                            }
-                        },{
-                        text: '今天',
-                        onClick(picker) {
-                            picker.$emit('pick', new Date());
-                        }
-                    }, {
-                        text: '明天',
-                        onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() + 3600 * 1000 * 24);
-                            picker.$emit('pick', date);
-                        }
-                    }]
+                    TaskId: '',
+                    StartTime: '',
+                    Title: "加班申请",
+                    name: DingData.nickName,
+                    OverTimeContent: '',
+                    EndTimeTime: '',
+                    UseTime: '',
+                    DateTime: ''
                 }
             }
         },
         methods: {
-            onSubmit() {
-                console.log('submit!');
+            onSubmit(formName) {
+                var that = this
+                let url = '/OverTimeTable/OverTimeTableSave'
+                var param = _cloneObj(this.ruleForm)
+                param.UseTime = this.UseTime
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    param.TaskId = taskId
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    }, param)
+                }
+                this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
             }
         },
         created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
             loadHtml("mainPage", "partPage")
+        },
+        computed: {
+            UseTime: function () {
+                let StartTime = this.ruleForm.StartTime
+                let EndTimeTime = this.ruleForm.EndTimeTime
+                let startHour = parseInt(StartTime.split(':')[0])
+                let startMinut = parseInt(StartTime.split(':')[1])
+                let endHour = parseInt(EndTimeTime.split(':')[0])
+                let endMinut = parseInt(EndTimeTime.split(':')[1])
+                if (StartTime >= '13:30' || (StartTime <= '12:00' && EndTimeTime <= '12:00')) {
+                    return _computedTime(startHour, startMinut, endHour, endMinut)
+                } else {
+                    if (endMinut < 30) {
+                        endMinut += 60
+                        endHour --
+                    }
+                    endHour--
+                    endMinut -= 30
+                    return _computedTime(startHour, startMinut, endHour, endMinut)
+                }
+            }
         }
     })
 

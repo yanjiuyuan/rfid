@@ -60,8 +60,10 @@ namespace DingTalk.Models.DingModels
 
         public string TeamMembersId { get; set; }
 
+        [StringLength(200)]
         public string CreateMan { get; set; }
 
+        [StringLength(200)]
         public string CreateManId { get; set; }
     }
 }

@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        私车申请-{{nodeInfo.NodeName}}
+        公车申请-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
@@ -14,12 +14,12 @@
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
-            <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        @*<el-form-item label="驾驶员" prop="DrivingMan">
+        <el-form-item label="驾驶员" prop="DrivingMan">
             <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
-        </el-form-item>*@
+        </el-form-item>
         <el-form-item label="同行人">
             <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
@@ -35,14 +35,36 @@
             <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
         </el-form-item>
 
+        @*<el-form-item label="起始公里数" prop="StartKilometres">
+            <el-input v-model="ruleForm.StartKilometres"></el-input>
+        </el-form-item>*@
+
         <el-form-item label="用车时间" prop="StartTime">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
                             v-on:change="selectTime"
+                            @*:picker-options="dayPickerOptions"*@
                             range-separator="至"
                             start-placeholder="开始时间"
                             end-placeholder="返回时间">
             </el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="车辆选择" prop="PlantTravelWay">
+            <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
+                <el-option v-for="item in carList"
+                           :key="item.Id"
+                           :label="item.Name"
+                           :value="item.Id">
+                </el-option>
+            </el-select>
+            <template v-if="CarObj && CarObj.IsOccupyCar">
+                <span style="color:red;">当前被占用,占用情况如下</span>
+                <p v-for="u in useTimeList">
+                    <span>驾驶员:{{u.name}}</span>
+                    <span>占用时间:{{u.time}}</span>
+                </p>
+            </template>
         </el-form-item>
 
         <hr />
@@ -68,23 +90,21 @@
                 carList: [],
                 nodeList: [],
                 nodeInfo: {},
-                CarObj: '',
                 timeRange: [],
+                useTimeList: [],
                 ruleForm: {
                     CarId: "",
-                    DrivingMan: DingData.nickName,
+                    DrivingMan: "",
                     PeerNumber: "",
                     StartTime: "",
                     EndTime: "",
                     MainContent: "",
                     PlantTravelWay: "",
-                    Title: "私车申请",
-                    IsPublicCar: false,
+                    Title: "公车申请",
+                    IsPublicCar: true,
                     IsChooseOccupyCar: true,
                     OccupyCarId: ""
                 },
-
-                
                 rules: {
                     DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
                     PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
@@ -107,8 +127,8 @@
                                 const date = new Date();
                                 date.setTime(date.getTime() + 3600 * 1000 * 24);
                                 picker.$emit('pick', date);
-                            }
-                        }]
+                        }
+                    }]
                 }
             }
         },
@@ -118,6 +138,7 @@
                 var that = this
                 let url = '/CarTable/TableSave'
                 var param = _cloneObj(this.ruleForm)
+                if (this.CarObj.IsOccupyCar) param['OccupyCarId'] = this.CarObj.OccupyCarId
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
@@ -129,15 +150,54 @@
                                 goHome()
                             }
                         })
-                    }, param)
+                    },param)
                 }
                 this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
+            },
+            //选车操作
+            selectCar(value) {
+                //value = JSON.parse(value)
+                console.log('选车操作')
+                console.log(value)
+                let car = {}
+                this.useTimeList = []
+                for (let c of this.carList) {
+                    if (c.Id == value) {
+                        car = c
+                        if (!c.UseMan) break
+                        let nameList = c.UseMan.split(',')
+                        let timeList = c.UseTimes.split(',')
+                        for (var i = 0; i < nameList.length; i++) {
+                            this.useTimeList.push({
+                                name: nameList[i],
+                                time: timeList[i]
+                            })
+                        }
+                    }
+                }
+                this.ruleForm.CarId = car.Id
+                this.ruleForm.OccupyCarId = car.OccupyCarId
+                this.ruleForm.IsChooseOccupyCar = car.IsChooseOccupyCar
             },
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
+                var that = this
+                let url = '/CarMananger/QuaryByTime'
                 this.ruleForm.StartTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
+                let param = {
+                    startTime: _timeToString(value[0]),
+                    endTime: _timeToString(value[1])
+                }
+                let callBack = function (data) {
+                    that.carList = data
+                    if (data && data.length > 0) {
+                        that.selectCar(data[0].Id)
+                    }
+                    console.log('选时间操作')
+                }
+                this._getData(url, callBack, param)
             },
             //添加用车人
             addDrivingMan() {
@@ -169,14 +229,20 @@
                     },
                     onFail: function (err) { }
                 });
-            },
-            
-        
+            }
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
             loadHtml("mainPage", "partPage")
+        },
+        computed: {
+            CarObj: function () {
+                for (let car of this.carList) {
+                    if (car.Id == this.ruleForm.CarId)
+                        return car
+                }
+            }
         }
     })
 

@@ -330,6 +330,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CarManangerController.cs" />
+    <Compile Include="Controllers\CarTableController.cs" />
     <Compile Include="Controllers\DrawingDownController.cs" />
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\FileController.cs" />
@@ -339,12 +341,15 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
+    <Compile Include="Controllers\OverTimeTableController.cs" />
+    <Compile Include="Controllers\PatentManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Controllers\DingTalkServersController.cs" />
+    <Compile Include="Controllers\VoteManagerController.cs" />
     <Compile Include="DingTalkHelper\TopSDKTest.cs" />
     <Compile Include="DingTalkAddressConfig\DepartmentAddressConfig.cs" />
     <Compile Include="DingTalkAddressConfig\DingTalkServerAddressConfig.cs" />
@@ -376,10 +381,13 @@
     <Compile Include="Models\BatchDeleteUserModel.cs" />
     <Compile Include="Models\CommomModel.cs" />
     <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\DepartmentListModel.cs" />
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
+    <Compile Include="Models\DingModels\Car.cs" />
+    <Compile Include="Models\DingModels\CarTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
     <Compile Include="Models\DingModels\DDContext.cs" />
     <Compile Include="Models\DingModels\FileInfos.cs" />
@@ -389,6 +397,7 @@
     <Compile Include="Models\DingModels\Flows.cs" />
     <Compile Include="Models\DingModels\FlowSort.cs" />
     <Compile Include="Models\DingModels\NodeInfo.cs" />
+    <Compile Include="Models\DingModels\OverTime.cs" />
     <Compile Include="Models\DingModels\ProcedureInfo.cs" />
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
     <Compile Include="Models\DingModels\Purchase.cs" />
@@ -398,6 +407,7 @@
     <Compile Include="Models\DingModels\Roles.cs" />
     <Compile Include="Models\DingModels\Tasks.cs" />
     <Compile Include="Models\DingModels\UserInfo.cs" />
+    <Compile Include="Models\DingModels\Vote.cs" />
     <Compile Include="Models\DingModels\Worker.cs" />
     <Compile Include="Models\DingModels\WorkTime.cs" />
     <Compile Include="Models\DownloadFileModel.cs" />
@@ -427,6 +437,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
     <Content Include="Content\images\EraserTool.gif" />
     <Content Include="Content\images\EraserTool.png" />
@@ -522,7 +533,9 @@
     <Content Include="Scripts\lib.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\pdf.js" />
+    <Content Include="Scripts\pdf.min.js" />
     <Content Include="Scripts\pdf.worker.js" />
+    <Content Include="Scripts\pdf.worker.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\vue.js" />
@@ -542,7 +555,7 @@
     <Content Include="SwaggerUI\swagger-ui.min.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Login\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\partHome.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
@@ -607,9 +620,8 @@
     <Content Include="Views\Main\Approval_IDone.cshtml" />
     <Content Include="Views\Main\Approval_list.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\Main\Main6.cshtml" />
-    <Content Include="Views\Main\Main7.cshtml" />
-    <Content Include="Views\Main\Main8.cshtml" />
+    <Content Include="Views\Main\VoteDetail.cshtml" />
+    <Content Include="Views\Main\VoteList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="JqueryUI\colorpicker-master\bower.json" />
@@ -637,7 +649,13 @@
     <Content Include="Views\approval\AddProject.cshtml" />
     <Content Include="SwaggerUI\lib\.DS_Store" />
     <Content Include="Views\approval\AddMaterielCode.cshtml" />
-    <Content Include="Views\Main\Test.cshtml" />
+    <Content Include="Views\approval\UsePublicCar.cshtml" />
+    <Content Include="Views\approval\CarManager.cshtml" />
+    <Content Include="Views\Main\Approval_usePublicCar.cshtml" />
+    <Content Include="Views\Main\Approval_useCar.cshtml" />
+    <Content Include="Views\approval\Vote.cshtml" />
+    <Content Include="Views\Main\Approval_meterieCode.cshtml" />
+    <Content Include="Views\Main\Approval_workOvertime.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

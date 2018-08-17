@@ -2,15 +2,6 @@
     Layout = null;
 }
 
-<link rel="stylesheet" href="~/JqueryUI/jquery-ui.css" />
-<link rel="stylesheet" href="~/JqueryUI/jquery-ui.structure.css" />
-<link rel="stylesheet" href="~/JqueryUI/colorpicker-master/jquery.colorpicker.css" />
-<link rel="stylesheet" href="~/JqueryUI/jquery-ui.theme.css" />
-<script src="~/JqueryUI/jquery-ui.min.js"></script>
-<script src="~/Scripts/anyLine.js"></script>
-<script src="~/JqueryUI/colorpicker-master/jquery.colorpicker.js"></script>
-<script src="~/JqueryUI/colorpicker-master/parts/jquery.ui.colorpicker-rgbslider.js"></script>
-<script src="~/Scripts/jspdf.min.js"></script>
 
 
 <!--右侧实体内容-->
@@ -37,7 +28,7 @@
             </el-pagination>
         </div>
     </template>
-    <template  v-if="FlowId != '6'">
+    <template v-if="FlowId != '6'">
         <!--表格實體-->
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
@@ -59,8 +50,11 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名" v-if="ruleForm.Title">
+        <el-form-item label="标题" v-if="ruleForm.Title">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目名" v-if="ruleForm.ProjectName">
+            <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
@@ -100,7 +94,7 @@
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
                 <div v-for="f in fileList" :key="f.name" class="text item">
-                    <span v-on:click="clickFile(f.url)">{{ f.name }}</span>
+                    <span>{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
             </el-card>
@@ -115,7 +109,7 @@
 
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-            </sam-addapprover>*@
+        </sam-addapprover>*@
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.mark"></el-input>
@@ -147,8 +141,8 @@
                     <legend>工具</legend>
                     <div id="toolsOptions">
                         <input type="radio" id="tools_pencil" name="toolsOption" checked="checked"><label for="tools_pencil">画笔</label> &nbsp;
-                        <input type="radio" id="tools_eraser" name="toolsOption"><label for="tools_eraser">橡皮擦</label> &nbsp;
-                        <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>
+                        @*<input type="radio" id="tools_eraser" name="toolsOption"><label for="tools_eraser">橡皮擦</label> &nbsp;
+                            <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>*@
                         <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
                             <span>
                                 <button v-if="index == 0" id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
@@ -242,8 +236,6 @@
             style="position:fixed;right:10px;top:10px;z-index:10086;font-size:100px;"></i>*@
     </div>
     <div class="mask" id="mask"></div>
-    @*<div class="mask-super" id="mask-super"></div>
-    <el-progress class="loading" type="circle" :percentage="tick" status="exception" :width="300"></el-progress>*@
     <!--显示加載過程-->
 
 
@@ -253,14 +245,12 @@
     var pdfName = ''
     var pdfMediaId = ''
     var taskId = 0
-    
+
     var stampRole = {}//圖紙審批 可打印并 下載的角色信息
 </script>
 
 <script>
-    //初始化
-    //initUI()
-    //$(".ui-dialog").hide()
+
     var state = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
@@ -271,8 +261,6 @@
         var Index = UrlObj.index
     }
     $("#mask").hide()
-    //$("#mask-super").hide()
-    //$(".loading").hide()
     var items = {}
     var allData = {}
     var imageList = []
@@ -327,7 +315,7 @@
                 CodeNo: '物料编码',
                 Name: '物料名称',
                 Standard: '规格型号',
-                Unit: '单位',
+                Unit: '单位(预计)',
                 Count: '数量',
                 Price: '单价',
                 Purpose: '用途',
@@ -564,7 +552,7 @@
                         console.log(data)
                         var alertStr = ''
                         data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
-                        that.$alert('盖章文件已推送到钉钉', '消息', {
+                        that.$alert(alertStr, '消息', {
                             confirmButtonText: '确定',
                             callback: action => {
 
@@ -576,7 +564,7 @@
                     }
                 })
             },
-            
+
             //获取bom表信息
             getBomInfo() {
                 var that = this
@@ -600,10 +588,13 @@
                                 a.totalRows = a.data.length
                             }
                         } else {
+                            for (let d of that.data) {
+                                if (d.UrgentDate) d.UrgentDate = d.UrgentDate.substring(0,10)
+                            }
                             that.getData()
                             that.totalRows = that.data.length
                         }
-                        
+
                     },
                     error: function (err) {
                         console.log(err);
@@ -624,17 +615,15 @@
                 this.dialogVisible = true;
             },
             //文件点击操作
-            clickFile(fileUrl,name,mediaId) {
-                console.log(fileUrl)
+            clickFile(fileUrl, name, mediaId) {
                 if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
                     pdfUrl = fileUrl
                     pdfName = name
                     pdfMediaId = mediaId
-                    console.log(name)
                     console.log(fileUrl)
-                    this.showPdf(fileUrl)
                     $("#mask").show()
                     this.frameShow = true
+                    this.showPdf(fileUrl)
                 }
 
             },
@@ -657,7 +646,7 @@
                     }
                 })
             },
-            
+
             //獲取角色信息
             showStamp(roleName) {
                 var that = this
@@ -681,20 +670,15 @@
                 this.disablePage = true
 
                 console.log('show pdf')
-                $(".loading").show()
                 const loading = this.$loading({
                     lock: true,
                     text: 'Loading',
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                $(".ui-dialog").show()
-                //$("#mask-super").show()
-                //that.tick = 0
-                //var interval = window.setInterval(function () {
-                //    that.tick >= 90 ? that.tick = 0 : that.tick += 10
-                //    console.log(that.tick)
-                //}, 1000)
+                //$(".ui-dialog").show()
+                
+                //initui()
                 initUI()
                 PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
                 PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
@@ -704,15 +688,6 @@
                     pdf.getPage(1).then(function getPageHelloWorld(page) {
                         var scale = 1;
                         var viewport = page.getViewport(scale);
-
-                        //
-                        // Prepare canvas using PDF page dimensions
-                        //ctx
-                        //var canvas = document.getElementById('the-canvas');
-                        //var context = canvas.getContext('2d');
-                        //canvas.height = viewport.height;
-                        //canvas.width = viewport.width;
-
                         var renderContext = {
                             canvasContext: ctx,
                             viewport: viewport
@@ -720,9 +695,6 @@
                         page.render(renderContext);
                         that.disablePage = false
                         loading.close()
-                        //$("#mask-super").hide()
-                        //$(".loading").hide()
-                        //clearInterval(interval)
                         console.log('render pdf')
                     });
                 });
@@ -732,7 +704,12 @@
 
         },
         created: function () {
-            this.showStamp("图纸管理员")
+            if (FlowId == '8') {
+                this.showStamp("采购管理员")
+            }
+            if (FlowId == '6') {
+                this.showStamp("图纸管理员")
+            }
 
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
@@ -746,13 +723,14 @@
 
     //获取审批表单信息
     function getFormData() {
+        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
         $.ajax({
-            url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
+            url: url,
             type: "GET",
             dataType: "json",
             success: function (data) {
                 console.log("获取审批表单信息ok")
-                console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
+                console.log(url)
                 console.log(data)
                 allData = data
                 if (data.ImageUrl && data.ImageUrl.length > 5) {
@@ -813,10 +791,12 @@
 
 
 
-<script src="~/Scripts/canvas.js"></script>
 
 <script>
     //初始化
-    initUI()
-    $(".ui-dialog").hide()
+    //$(".ui-dialog").hide()
 </script>
+
+<script src="~/Scripts/canvas.js"></script>
+
+

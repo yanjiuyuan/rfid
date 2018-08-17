@@ -1,0 +1,179 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        投票
+    </div>
+    <div>
+        <el-card>
+            <div slot="header" class="clearfix">
+                <p style="font-size:1.5rem;">{{ruleForm.Title}}</p>
+            </div>
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+                <el-form-item label="发起人">
+                    <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="开始时间">
+                    <el-input v-model="ruleForm.StartTime" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="结束时间">
+                    <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="说明">
+                    <p style="font-size:1.2rem">{{ruleForm.Detail}}</p>
+                </el-form-item>
+                <el-form-item label="投票结果" v-if="voted" style="margin-left:0px;">
+                    <p style="font-size:24px;text-align:center;margin:0px;">总票数 : <span style="color:red;font-size:26px;">{{total}}</span> 票
+                    </p>
+                    <div v-for="(o,i) in options" :key="o.name" class="text item" style="margin-left:-80px;">
+                        <p style="width:100%;display:inline-block;font-size:18px;margin:0px;">{{o.name }}</p>
+                        <el-progress style="width:80%;display:inline-block;" :text-inside="true" :stroke-width="18" :status="status[i]" :percentage="o.rate"></el-progress>
+                        <p style="width:10%;color:red;font-size:24px;display:inline-block;text-align:center;margin:0px;">{{o.count}}</p>
+                    </div>
+                </el-form-item>
+                <el-form-item label="投票选项" v-else>
+                    <el-radio-group v-model="chooseValue">
+                        <template v-for="o in options">
+                            <el-radio :key="o.name" :label="o.name">{{o.name}}</el-radio>
+                            <br />
+                        </template>
+                    </el-radio-group>
+                    <el-button type="primary" v-on:click="postVoteData('ruleForm')">投票</el-button>
+                </el-form-item>
+                <el-form-item label="已投人员" v-if="userName == '詹姆斯' || userName == '黄浩炜' || userName == '研究院唐丽娟'">
+                    <span v-for="v in votedList">{{v}} , </span>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </div>
+</el-main>
+
+<script>
+    var id = ''
+    var options = []
+    var counts = []
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                ruleForm: {
+                    ApplyMan: '',
+                    ApplyManId: '',
+                    Title: '',
+                    Detail: '',
+                    Option: '',
+                    StartTime: '',
+                    EndTime: '',
+                    VoteCount: '',
+                    SubmitterId: ''
+                },
+                userName: DingData.nickName,
+                votedList: [],
+                chooseValue: '',
+                voted: false,
+                options: [],
+                total: 0,
+                status: ['', 'Success', 'Warning', 'Danger']
+            }
+        },
+        methods: {
+            getVoteData(callback) {
+                var that = this
+                //var url = '/VoteManager/QuaryVote?Id=3'
+                var url = '/VoteManager/QuaryVote?Id=' + UrlObj.id
+                this._getData(url, function (data) {
+                    data.StartTime = data.StartTime.replace('T', ' ')
+                    data.EndTime = data.EndTime.replace('T', ' ')
+
+                    //临时处理数据
+                    var content = data.Option.split('&')
+                    data.Option = content[0]
+                    data.Detail = content[1]
+
+                    that.ruleForm = data
+                    var submitters = ''
+                    if(data.SubmitterId) submitters = data.SubmitterId.split(',')
+                    for (let s of submitters) {
+                        let man = s.split('=')
+                        that.votedList.push(man[1])
+
+                        if (DingData.userid == man[0])
+                            that.voted = true
+                    }
+                    options = data.Option.split('^')
+                    counts = data.VoteCount.split(',')
+                    that.options = []
+                    that.total = 0
+                    for (let c of counts) { that.total += parseInt(c) }
+                    for (let i = 0; i < options.length; i++) {
+                        that.options.push({
+                            name: options[i],
+                            count: counts[i],
+                            rate: parseInt((counts[i] / that.total) * 100)
+                        })
+                    }
+                    callback()
+                })
+            },
+            postVoteData() {
+                if (goError()) return
+                if (!this.chooseValue) return
+                var that = this
+                var url = '/VoteManager/ChangeVote'
+
+
+                this.getVoteData(function () {
+                    let index = 0
+                    for (var i = 0; i < options.length; i++) {
+                        if (options[i] == that.chooseValue)
+                            index = i
+                    }
+                    counts[index] = parseInt(counts[index]) + 1 + ''
+                    that.ruleForm.VoteCount = counts.join(',')
+                    that.options = []
+                    that.total = 0
+                    for (let c of counts) { that.total += parseInt(c) }
+                    for (let i = 0; i < options.length; i++) {
+                        that.options.push({
+                            name: options[i],
+                            count: counts[i],
+                            rate: (counts[i] / that.total) * 100
+                        })
+                    }
+
+                    var param = _cloneObj(that.ruleForm)
+                    if (param.SubmitterId) {
+                        param.SubmitterId = param.SubmitterId + ',' + DingData.userid + '=' + DingData.nickName
+                    } else {
+                        param.SubmitterId = DingData.userid + '=' + DingData.nickName
+                    }
+
+                    //临时处理数据
+                    param.Option = param.Option + '&' + param.Detail
+                    console.log('更新投票数据')
+                    console.log(param)
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                that.voted = true
+                            }
+                        })
+                    }, param)
+                })
+
+            }
+        },
+        created: function () {
+            
+            this.getVoteData(function () { })
+            loadHtml("mainPage", "partPage")
+        }
+    })
+</script>
+
