@@ -152,11 +152,11 @@ namespace DingTalk.Bussiness.FlowInfo
                 List<Tasks> tasksListFinished = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
                 if (tasksListFinished.Count > 0)
                 {
-                    return "已完成";
+                    return "未完成";
                 }
                 else
                 {
-                    return "未完成";
+                    return "已完成";
                 }
 
             }
