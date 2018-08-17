@@ -381,7 +381,7 @@ function initUI() {
             width: 980,
             //left: 227,
             close: function () {
-                console.log('1233333333')
+                console.log('33333333')
                 $("#mask").hide()
             },
             load: function () {
