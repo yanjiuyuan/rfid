@@ -950,7 +950,7 @@ namespace DingTalk.Controllers
                 int? NodeId = 0;
                 if (StateCount == 0)
                 {
-                    NodeId = context.Tasks.Max(n=>n.NodeId);
+                    NodeId = context.Tasks.Where(t=>t.TaskId.ToString()==TaskId.ToString()).Max(n=>n.NodeId);
                 }
                 else
                 {
