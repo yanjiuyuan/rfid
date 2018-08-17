@@ -142,7 +142,7 @@
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="项目名" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
-                <el-option v-for="item in projestList"
+                <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectName"
                            :value="item.ProjectId">
@@ -204,7 +204,7 @@
                 data: [],
                 tableData: [],
                 purchaseList: [],
-                projestList: [],
+                projectList: [],
                 good: {
                     Price: '',
                     Unit: '',
@@ -237,7 +237,7 @@
                     if (valid && that.purchaseList.length > 0) {
                         that.disablePage = true
                         var ProjectName
-                        for (let p of that.projestList) {
+                        for (let p of that.projectList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
                                 ProjectName = p.ProjectName
                             }

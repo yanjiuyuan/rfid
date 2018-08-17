@@ -48,12 +48,12 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="项目名" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
-                <el-option v-for="item in projestList"
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;">
+                <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectName"
                            :value="item.ProjectId">
-                    <span style="float: left">{{ item.ProjectName }}</span>
+                    <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
@@ -182,7 +182,7 @@
                     }],
                 nodeInfo: {},
                 nodeList: [],
-                projestList: [],
+                projectList: [],
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
@@ -216,7 +216,7 @@
                     if (valid && this.data.length > 0) {
                         that.disablePage = true
                         var ProjectName
-                        for (let p of that.projestList) {
+                        for (let p of that.projectList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
                                 ProjectName = p.ProjectName
                             }
