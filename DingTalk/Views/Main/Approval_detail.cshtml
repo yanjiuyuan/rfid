@@ -50,8 +50,11 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名" v-if="ruleForm.Title">
+        <el-form-item label="标题" v-if="ruleForm.Title">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目名" v-if="ruleForm.ProjectName">
+            <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
@@ -106,7 +109,7 @@
 
         <!--添加抄送人-->
         @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-            </sam-addapprover>*@
+        </sam-addapprover>*@
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.mark"></el-input>

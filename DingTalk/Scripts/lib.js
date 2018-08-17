@@ -231,6 +231,9 @@ var mixin = {
             ProjectId: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
+            Title: [
+                { required: true, message: '标题内容不能为空！', trigger: 'change' }
+            ],
             ProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],

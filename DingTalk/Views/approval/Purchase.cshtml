@@ -174,7 +174,9 @@
                 <el-button type="primary" v-on:click="addProject">添加</el-button>
             </el-form-item>
         </template>
-
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
@@ -219,6 +221,7 @@
                     name: DingData.nickName,
                     remark: '',
                     ProjectName: '',
+                    Title: '',
                     ProjectId: null,
                     inputProjectName: '',
                     inputProjectId: '',
@@ -233,10 +236,10 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid && that.purchaseList.length > 0) {
                         that.disablePage = true
-                        var title
+                        var ProjectName
                         for (let p of that.projestList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
-                                title = p.ProjectName
+                                ProjectName = p.ProjectName
                             }
                         }
                         var paramArr = []
@@ -250,7 +253,8 @@
                             "Remark": that.ruleForm.remark,
                             "IsSend": false,
                             "State": "1",
-                            "Title": title,
+                            "Title": that.ruleForm.title,
+                            "ProjectName": ProjectName,
                             "ProjectId": that.ruleForm.ProjectId
                         })
                         for (let node of that.nodeList) {

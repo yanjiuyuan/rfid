@@ -61,6 +61,9 @@
             <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
 
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
@@ -198,7 +201,7 @@
                     inputProjectName: '',
                     inputProjectId: '',
                     copyers: ['小唐', '季老师'],
-                    ProjectName: '',
+                    Title: '',
                     ProjectId: null,
                     Time: ''
                 }
@@ -212,10 +215,10 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
                         that.disablePage = true
-                        var title
+                        var ProjectName
                         for (let p of that.projestList) {
                             if (p.ProjectId == that.ruleForm.ProjectId) {
-                                title = p.ProjectName
+                                ProjectName = p.ProjectName
                             }
                         }
                         var paramArr = []
@@ -241,7 +244,8 @@
                             "OldFileUrl": that.ruleForm.OldFileUrl,
                             "MediaId": that.mediaList.join(','),
                             "MediaIdPDF": that.mediaPdfList.join(','),
-                            "Title": title,
+                            "Title": that.ruleForm.title,
+                            "ProjectName": ProjectName,
                             "ProjectId": that.ruleForm.ProjectId,
                             "PdfState": stateArr.join(',')
                         }) 

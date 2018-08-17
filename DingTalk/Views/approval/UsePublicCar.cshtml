@@ -10,6 +10,9 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -97,7 +100,7 @@
                     EndTime: "",
                     MainContent: "",
                     PlantTravelWay: "",
-                    //StartKilometres: "",
+                    Title: "公车申请",
                     IsPublicCar: true,
                     IsChooseOccupyCar: true,
                     OccupyCarId: ""
@@ -149,7 +152,7 @@
                         })
                     },param)
                 }
-                this.approvalSubmit(formName, {}, callBack)
+                this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
             },
             //选车操作
             selectCar(value) {
