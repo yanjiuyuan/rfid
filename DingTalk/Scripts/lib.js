@@ -52,7 +52,7 @@ function goHome() {
     return true
 }
 function goError() {
-    if (!DingData.userid || DingData.userid == 'undefined') {
+    if (!DingData.nickName || DingData.nickName == 'undefined') {
         loadPage('/Login/Error?errorStr=免登失败，重新打开页面试试')
         return true
     }

@@ -136,8 +136,7 @@
                 var that = this
                 that._getData('/OverTimeTable/OverTimeTableQuary', function (data2) {
                     that.ruleForm = data2
-                    that.ruleForm['Mark'] = ''
-                    that.ruleForm['EffectiveTime'] = ''
+                    if (!data2.EffectiveTime) that.ruleForm['EffectiveTime'] = ''
                 }, { TaskId: TaskId })
             }
         },
