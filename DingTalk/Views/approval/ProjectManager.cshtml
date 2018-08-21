@@ -29,13 +29,6 @@
                 </el-date-picker>
             </el-form-item>
 
-            @*<el-form-item label="部门">
-                    <el-select v-model="formInline.Customer">
-                        <el-option label="全部" value=""></el-option>
-                        <el-option v-for="c of Customer" :label="c" :value="c" key="c"></el-option>
-                    </el-select>
-                </el-form-item>*@
-
             <!--高级检索-表单选项-->
             <el-form-item>
                 <el-checkbox-group v-model="formInline.projectState" :min="1">
@@ -201,6 +194,13 @@
                         console.log("获取项目列表数据 QuaryProjectInfo")
                         console.log(url)
                         console.log(data)
+                        var date = new Date()
+                        var dateStr = _dateToString(date)
+                        console.log(dateStr)
+                        for (let d of data) {
+                            if (d.ProjectState == '在研' && dateStr > d.EndTime )
+                                d.ProjectState += '-已延期'
+                        }
                         that.data = data
                         that.totalRows = data.length
                         that.getData()
