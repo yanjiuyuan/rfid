@@ -86,6 +86,11 @@
         success: function (data) {
             DingData = data
             console.log("你好，" + DingData.nickName)
+            setInterval(function () {
+                //goError();
+                //window.open('http://www.baidu.com') 
+                console.log('hahahahaha')
+            }, 3000)
             if (goError()) return
             var configObj = {
                 jsticket: DingData.JsApiTicket,
