@@ -1,7 +1,4 @@
-﻿
-
-
-@{
+﻿@{
     Layout = null;
 }
 
@@ -10,93 +7,394 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        办公用品申请
+        采购申请-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+    <!--物料搜索-->
+    <div>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+    </div>
+    <!--物料列表表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="FNumber" label="物料编码"></el-table-column>
+        <el-table-column prop="FName" label="物料名称"></el-table-column>
+        <el-table-column prop="FModel" label="规格型号"></el-table-column>
+        <el-table-column prop="FOrderPrice" label="单价"></el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini"
+                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+    <hr />
+    <h3>已选物料</h3>
+    <!--采购列表表格實體-->
+    <el-table :data="purchaseList" stripe border>
+        <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
+        <el-table-column prop="Name" label="物料名称"></el-table-column>
+        <el-table-column prop="Standard" label="规格型号"></el-table-column>
+        <el-table-column prop="Unit" label="单位">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Unit" prop="Price">
+                </el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Price" label="单价" width="100">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Price">
+                </el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Count" label="数量" width="100">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Count" prop="Count" :class="{ redborder:scope.row.Count ==''}"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Purpose" label="用途">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Purpose"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="UrgentDate" label="需用日期" width="140">
+            <template slot-scope="scope">
+                <el-date-picker v-model="scope.row.UrgentDate" :class="{ redborder:scope.row.UrgentDate ==''}" class="repadding"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus">
+                </el-date-picker>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Mark" label="备注">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Mark"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" width="80">
+            <template slot-scope="scope">
+                @*<el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>*@
+                <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
 
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+    <!--编辑物料表單-->
+    <el-dialog title="编辑物料" :visible.sync="dialogFormVisible">
+        <el-form :model="good" class="demo-form-inline" :rules="rules" ref="good"
+                 size="medium">
+            <el-form-item label="物料编码">
+                <el-input v-model="good.CodeNo" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="物料名称">
+                <el-input v-model="good.Name" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="规格型号">
+                <el-input v-model="good.Standard" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="单价">
+                <el-input v-model="good.Price"></el-input>
+            </el-form-item>
+            <el-form-item label="单位">
+                <el-input v-model="good.Unit" prop="Unit"></el-input>
+            </el-form-item>
+            <el-form-item label="数量">
+                <el-input v-model="good.Count" prop="Count"></el-input>
+            </el-form-item>
+            <el-form-item label="用途">
+                <el-input v-model="good.Purpose"></el-input>
+            </el-form-item>
+            <el-form-item label="需用日期">
+                <el-date-picker v-model="good.UrgentDate"
+                                type="date"
+                                placeholder="选择日期">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="备注">
+                <el-input v-model="good.Mark"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" v-on:click="editGood">完 成</el-button>
+        </div>
+    </el-dialog>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left">{{ item.ProjectName }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
-        <!--办公用品明细-->
-        <template v-for="(good,index) in ruleForm.goods">
-            <hr />
-            <el-form-item :label="'品名('+(index+1)+')'">
-                <el-button v-on:click="deleteGood(index)" v-if="index>0"
-                           type="danger" style="float:right;" plain>
-                    删除
-                </el-button>
+
+        <template v-if="showAddProject">
+            <el-form-item label="项目名称" prop="inputProjectName">
+                <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            <el-form-item label="名称" :rules="{ required: true, message: '名称不能为空', trigger: 'blur'}"
-                          :prop="'goods.' + index + '.name'">
-                <el-input v-model="good.name"></el-input>
+            <el-form-item label="项目编号" prop="inputProjectId">
+                <el-input v-model="ruleForm.inputProjectId"></el-input>
             </el-form-item>
-            <el-form-item label="规格" :rules="{ required: true, message: '规格不能为空', trigger: 'blur'}"
-                          :prop="'goods.' + index + '.standard'">
-                <el-input v-model="good.standard"></el-input>
+            <el-form-item label="开始日期">
+                <el-date-picker v-model="ruleForm.Time"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
             </el-form-item>
-            <el-form-item label="数量" :rules="{ required: true, message: '数量不能为空', trigger: 'blur'}"
-                          :prop="'goods.' + index + '.quentity'">
-                <el-input v-model="good.quentity"></el-input>
-            </el-form-item>
-            <el-form-item label="用途说明">
-                <el-input v-model="good.detail"></el-input>
+            <el-form-item>
+                <el-button type="primary" v-on:click="addProject">添加</el-button>
             </el-form-item>
         </template>
-        <p class="hint">如需添加申请项，请点击“添加明细”</p>
-        <el-button v-on:click="addGoods" type="primary" plain> + 添加明细</el-button>
-        <hr />
-        <!--添加审批人-->
-        <sam-addapprover :preApprover="preApprover" :approvers="ruleForm.approvers" :goods="ruleForm.goods"></sam-addapprover>
-        <!--添加抄送人-->
-        <el-form-item label="抄送人">
-            <span class="hint">（审批通过后，通知抄送人）</span>
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
-
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+                           :nodeid="nodeInfo.NodeId">
+        </sam-approver-list>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit()">提交</el-button>
-            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
+            @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
         </el-form-item>
     </el-form>
 </el-main>
 
 <script>
-
+    NodeId = '0'
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                ruleForm: {
+                data: [],
+                tableData: [],
+                purchaseList: [],
+                projectList: [],
+                good: {
+                    Price: '',
+                    Unit: '',
+                    Count: ''
+                },
+                preApprove: false,
+                nodeList: [],
+                nodeInfo: {},
+                dialogFormVisible: false,
+                searchForm: {
                     name: '',
-                    goods: [{
-                        name: '',
-                        goodName: '',
-                        standard: '',
-                        quentity: ''
-                    }],
-                    approvers: ['小唐', '院长']
+                },
+                ruleForm: {
+                    name: DingData.nickName,
+                    remark: '',
+                    ProjectName: '',
+                    Title: '',
+                    ProjectId: null,
+                    inputProjectName: '',
+                    inputProjectId: '',
+                    Time: ''
                 },
                 preApprover: false
             }
         },
         methods: {
-            onSubmit() {
-                console.log('submit!');
+            onSubmit(formName) {
+                var that = this
+                this.$refs[formName].validate((valid) => {
+                    if (valid && that.purchaseList.length > 0) {
+                        that.disablePage = true
+                        var ProjectName
+                        for (let p of that.projectList) {
+                            if (p.ProjectId == that.ruleForm.ProjectId) {
+                                ProjectName = p.ProjectName
+                            }
+                        }
+                        var paramArr = []
+                        paramArr.push({
+                            "ApplyMan": DingData.nickName,
+                            "ApplyManId": DingData.userid,
+                            "NodeId": "0",
+                            "ApplyTime": _getTime(),
+                            "IsEnable": "1",
+                            "FlowId": FlowId + '',
+                            "Remark": that.ruleForm.remark,
+                            "IsSend": false,
+                            "State": "1",
+                            "Title": that.ruleForm.title,
+                            "ProjectName": ProjectName,
+                            "ProjectId": that.ruleForm.ProjectId
+                        })
+                        for (let node of that.nodeList) {
+                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
+                                console.log(node)
+                                console.log(node.AddPeople)
+                                if (!that.preApprove && node.AddPeople.length == 0) {
+                                    this.$alert('您尚未选择审批人', '提交错误', {
+                                        confirmButtonText: '确定'
+                                    });
+                                    that.disablePage = false
+                                    return
+                                }
+                                for (let a of node.AddPeople) {
+                                    paramArr.push({
+                                        "ApplyMan": a.name,
+                                        "ApplyManId": a.emplId,
+                                        "IsEnable": 1,
+                                        "FlowId": FlowId,
+                                        "NodeId": node.NodeId,
+                                        "IsSend": false,
+                                        "State": 0,
+                                        "ProjectId": that.ruleForm.ProjectId,
+                                        "OldFileUrl": null,
+                                        "IsBack": null
+                                    })
+                                }
+                            }
+                        }
+                        console.log("提交审批 paramArr ")
+                        console.log(paramArr)
+                        $.ajax({
+                            url: '/FlowInfo/CreateTaskInfo',
+                            type: 'POST',
+                            data: JSON.stringify(paramArr),
+                            success: function (data) {
+                                console.log("提交审批ok!")
+                                var taskId = JSON.parse(data).Content
+                                console.log(data)
+                                console.log(taskId)
+                                that.bindAll(taskId)
+                            }
+                        })
+                    } else {
+                        this.$alert('请填写完整信息', '提交错误', {
+                            confirmButtonText: '确定'
+                        });
+                        return false;
+                    }
+                });
             },
-            addGoods() {
-                this.ruleForm.goods.push({
-                    name: '',
-                    standard: '',
-                    quentity: '',
-                    detail: ''
+            bindAll(taskId) {
+                var that = this
+                var paramArr = []
+                for (let p of this.purchaseList) {
+                    p.TaskId = taskId
+                    paramArr.push(p)
+                }
+                console.log("采购表单批量保存 paramArr ")
+                console.log(paramArr)
+                $.ajax({
+                    url: '/Purchase/SavePurchaseTable',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(paramArr),
+                    success: function (data) {
+                        console.log(data)
+                        var alertStr = '采购表单批量保存成功'
+                        if (data.errorCode != 0) alertStr = data.errorMessage
+                        that.doneSubmit(alertStr)
+                    }
                 })
             },
-            deleteGood(index) {
-                this.ruleForm.goods.splice(index, 1)
+            //搜索物料列表
+            searchCode(formName) {
+                var that = this
+                if (!this.searchForm.name) return
+                //this.$refs[formName].validate((valid) => {
+                //    if (valid) {
+                var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log(url)
+                        console.log("搜索物料列表ok")
+                        data = JSON.parse(data)
+                        console.log(data)
+                        that.data = data
+                        that.totalRows = data.length
+                        that.getData()
+                    }
+                })
+                //    } else {
+                //        console.log('搜索物料列表')
+                //        return false;
+                //    }
+                //});
+            },
+            //添加申请物料
+            addGood(index, good) {
+                for (let p of this.purchaseList) {
+                    if (p.CodeNo == good.FNumber) return
+                }
+                this.purchaseList.push({
+                    CodeNo: good.FNumber,
+                    Name: good.FName,
+                    Standard: good.FModel,
+                    Unit: '',
+                    Price: good.FOrderPrice == '0' ? '' : good.FOrderPrice,
+                    Count: '',
+                    Purpose: '',
+                    UrgentDate: '',
+                    Mark: ''
+                })
+            },
+            //删除申请物料
+            deleteGood(index, good) {
+                this.purchaseList.splice(index, 1)
+            },
+            //编辑审批物料
+            showEditGood(index, good) {
+                this.dialogFormVisible = true
+                this.good = $.extend({}, good)
+                this.good.index = index
+            },
+            editGood() {
+                this.dialogFormVisible = false
+                let tmpGood = $.extend({}, this.good)
+                if (tmpGood.UrgentDate) tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
+                this.purchaseList[this.good.index] = tmpGood
+                let tmpArr = _cloneArr(this.purchaseList)
+                this.purchaseList = tmpArr
+                console.log('done eidt')
+                console.log(tmpGood)
+                console.log(this.good.index)
+                console.log(this.purchaseList)
             }
         },
         created: function () {
+            //FlowId = 6
+            this.getNodeInfo()
+            this.getProjects()
+            this.getApproInfo()
             loadHtml("mainPage", "partPage")
+            document.onkeydown = function (event) {
+                var e = event || window.event;
+                if (e && e.keyCode == 13) { //回车键的键值为13
+                    return
+                }
+            };
         }
     })
 
