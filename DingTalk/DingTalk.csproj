@@ -341,6 +341,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
+    <Compile Include="Controllers\OfficeSuppliesManageController.cs" />
     <Compile Include="Controllers\OverTimeTableController.cs" />
     <Compile Include="Controllers\PatentManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -423,6 +424,8 @@
     <Compile Include="Models\LinkMsgModel.cs" />
     <Compile Include="Models\MessageRequestBaseModel.cs" />
     <Compile Include="Models\OATextModel.cs" />
+    <Compile Include="Models\OfficeModels\OfficeModel.cs" />
+    <Compile Include="Models\OfficeModels\t_ICItem.cs" />
     <Compile Include="Models\PrintAndSendModel.cs" />
     <Compile Include="Models\RequestBaseModel.cs" />
     <Compile Include="Models\ResponseBaseModel.cs" />
