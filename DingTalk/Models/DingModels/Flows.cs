@@ -8,10 +8,11 @@ namespace DingTalk.Models.DingModels
 
     public partial class Flows
     {
-        [Key]
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public decimal FlowId { get; set; }
+        public decimal Id { get; set; }
+
+        public int? FlowId { get; set; }
 
         [StringLength(200)]
         public string FlowName { get; set; }

@@ -135,7 +135,7 @@ namespace DingTalk.Models.DingModels
                 .IsUnicode(false);
 
             modelBuilder.Entity<Flows>()
-                .Property(e => e.FlowId)
+                .Property(e => e.Id)
                 .HasPrecision(18, 0);
 
             modelBuilder.Entity<Flows>()

@@ -137,7 +137,6 @@ namespace DingTalk.Controllers
                             {
                                 //保存文件
                                 files.SaveAs(Path);
-
                                 //上传盯盘获取MediaId
                                 var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
                                 var resultUploadMedia = await otherController.UploadMedia(fileInfos.FilePath);

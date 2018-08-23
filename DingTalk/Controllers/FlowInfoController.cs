@@ -292,12 +292,10 @@ namespace DingTalk.Controllers
                         tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                         context.Entry(tasks).State = EntityState.Modified;
                         context.SaveChanges();
-
                         //查找退回节点Id
                         string newBackNodeId = context.NodeInfo.Where
                             (u => u.FlowId == tasks.FlowId.ToString() && u.NodeId == tasks.NodeId)
                             .Select(u => u.BackNodeId).First();
-
                         //根据退回节点Id找人
                         if (newBackNodeId == "0")  //退回节点为发起人
                         {
@@ -306,7 +304,6 @@ namespace DingTalk.Controllers
                             newTask.IsBacked = true;
                             context.Entry<Tasks>(newTask).State = EntityState.Modified;
                             context.SaveChanges();
-
                             newTask.ApplyTime = null;
                             newTask.State = 0;
                             newTask.IsBacked = false;
@@ -314,7 +311,6 @@ namespace DingTalk.Controllers
                             newTask.IsPost = true;
                             context.Tasks.Add(newTask);
                             context.SaveChanges();
-
                             TopSDKTest top = new TopSDKTest();
                             OATextModel oaTextModel = new OATextModel();
                             oaTextModel.head = new head
@@ -366,8 +362,6 @@ namespace DingTalk.Controllers
                             }
                         }
                     }
-
-
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
@@ -1178,7 +1172,6 @@ namespace DingTalk.Controllers
                         return JsonConvert.SerializeObject(taskOld);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1188,7 +1181,6 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
-
         }
 
         #endregion

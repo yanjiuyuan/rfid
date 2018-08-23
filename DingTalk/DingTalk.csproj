@@ -397,6 +397,7 @@
     <Compile Include="Models\DingModels\Flows.cs" />
     <Compile Include="Models\DingModels\FlowSort.cs" />
     <Compile Include="Models\DingModels\NodeInfo.cs" />
+    <Compile Include="Models\DingModels\OfficeSupplies.cs" />
     <Compile Include="Models\DingModels\OverTime.cs" />
     <Compile Include="Models\DingModels\ProcedureInfo.cs" />
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
