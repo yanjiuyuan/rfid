@@ -295,6 +295,19 @@
         }]
     if (FlowId != '6') dataArr = []
     switch (FlowId) {
+        case '1':
+            items = {
+                CodeNo: '物料编码',
+                Name: '物料名称',
+                Standard: '规格型号',
+                Unit: '单位',
+                Count: '数量',
+                Price: '单价(预计)',
+                Purpose: '用途',
+                Mark: '备注'
+            }
+            bomUrl = "/OfficeSupplies/ReadTable?TaskId=" + TaskId
+            break;
         case '6':
             items = {
                 DrawingNo: '代号',
@@ -315,9 +328,9 @@
                 CodeNo: '物料编码',
                 Name: '物料名称',
                 Standard: '规格型号',
-                Unit: '单位(预计)',
+                Unit: '单位',
                 Count: '数量',
-                Price: '单价',
+                Price: '单价(预计)',
                 Purpose: '用途',
                 UrgentDate: '需用日期',
                 Mark: '备注'
