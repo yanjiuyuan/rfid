@@ -175,7 +175,7 @@
             </el-form-item>
         </template>
         <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
@@ -221,7 +221,7 @@
                     name: DingData.nickName,
                     remark: '',
                     ProjectName: '',
-                    Title: '',
+                    Title: '采购申请',
                     ProjectId: null,
                     inputProjectName: '',
                     inputProjectId: '',

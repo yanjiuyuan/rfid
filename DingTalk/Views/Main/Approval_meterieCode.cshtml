@@ -166,9 +166,7 @@
                 if (NodeId < 2) {
                     that.aggreSubmit({
                         "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark,
-                        "ImageUrl": that.ruleForm.ImageUrl,
-                        "OldImageUrl": that.ruleForm.OldImageUrl
+                        "Remark": that.ruleForm.mark
                     })
                 }
                 else {
@@ -182,9 +180,7 @@
                     this._postData(url, function () {
                         that.aggreSubmit({
                             "Id": allData.Id,
-                            "Remark": that.ruleForm.Mark,
-                            "ImageUrl": that.ruleForm.ImageUrl,
-                            "OldImageUrl": that.ruleForm.OldImageUrl
+                            "Remark": that.ruleForm.mark
                         })
                     }, param)
                 }
