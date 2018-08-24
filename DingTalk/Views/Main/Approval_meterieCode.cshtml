@@ -16,7 +16,7 @@
         </el-table-column>
         <el-table-column prop="Count" label="物料编码" width="100" v-if="Index == '0' && NodeId == '2'">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:scope.row.CodeNumber ==''}"></el-input>
+                <el-input v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
             </template>
         </el-table-column>
     </el-table>
@@ -162,19 +162,33 @@
             onSubmit(formName) {
                 console.log('submit!');
                 var that = this
-                let url = '/CarTable/TableModify'
-                var param = _cloneObj(this.ruleForm)
-                param.UseKilometres = this.UseKilometres
-                this._postData(url, function () {
-
+                if (Index < 2) {
                     that.aggreSubmit({
                         "Id": allData.Id,
                         "Remark": that.ruleForm.Mark,
                         "ImageUrl": that.ruleForm.ImageUrl,
                         "OldImageUrl": that.ruleForm.OldImageUrl
                     })
-
-                }, param)
+                }
+                else {
+                    for (let d of this.tableData) {
+                        if (!d.CodeNumber) 
+                            this.elementAlert('提示信息','请输入物料编码')
+                    }
+                    let url = '/ItemCodeAdd/TableModify'
+                    var param = _cloneArr(this.tableData)
+                    console.log(param)
+                    return
+                    this._postData(url, function () {
+                        that.aggreSubmit({
+                            "Id": allData.Id,
+                            "Remark": that.ruleForm.Mark,
+                            "ImageUrl": that.ruleForm.ImageUrl,
+                            "OldImageUrl": that.ruleForm.OldImageUrl
+                        })
+                    }, param)
+                }
+                
             },
             //退回审批
             returnSubmit() {
