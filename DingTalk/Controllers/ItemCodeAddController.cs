@@ -106,5 +106,42 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+
+        /// <summary>
+        /// 物料编码批量修改
+        /// </summary>
+        /// <param name="codeList"></param>
+        /// <returns></returns>
+        [Route("TableModify")]
+        [HttpPost]
+        public Object TableModify([FromBody] List<Code> codeList)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    foreach (var code in codeList)
+                    {
+                        context.Entry<Code>(code).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                    }
+                    return new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "保存成功"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
     }
 }
