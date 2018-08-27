@@ -383,7 +383,7 @@ var mixin = {
             for (let node of this.nodeList) {
                 if (node.NodeId == this.nodeInfo.NodeId) {
                     for (let a of node.AddPeople) {
-                        paramArr.push({
+                        let tmpParam = {
                             "ApplyMan": a.name,
                             "ApplyManId": a.userid,
                             "TaskId": TaskId,
@@ -400,7 +400,11 @@ var mixin = {
                             "OldImageUrl": null,
                             "OldFileUrl": null,
                             "IsBack": null
-                        })
+                        }
+                        for (let p2 in param2) {
+                            tmpParam[p2] = param2[p2]
+                        }
+                        paramArr.push(tmpParam)
                     }
                 }
             }

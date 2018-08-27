@@ -192,40 +192,9 @@
                 var that = this
                 var param = {
                     "Id": allData.Id,
-                    "TaskId": TaskId,
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid,
-                    "NodeId": NodeId,
-                    "ApplyTime": _getTime(),
-                    "IsEnable": "1",
-                    "FlowId": FlowId,
-                    "Remark": this.ruleForm.mark,
-                    "IsSend": "false",
-                    "State": "1",
-                    "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId,
-                    "BackNodeId": this.nodeInfo.BackNodeId
+                    "Remark": this.ruleForm.mark
                 }
-                $.ajax({
-                    url: "/FlowInfo/FlowBack",
-                    type: "POST",
-                    data: JSON.stringify(param),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log('退回')
-                        console.log(param)
-                        console.log(data)
-                        that.$alert(data.errorMessage, '信息返回', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                loadPage('/Main/Approval_list')
-                            }
-                        })
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                this.returnSubmit(param)
             },
             //重新发起审批
             reApproval() {

@@ -33,6 +33,11 @@
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
             </el-table-column>
+            <el-table-column prop="Price" label="单价(实际)" v-if="FlowId == '1'">
+                <template slot-scope="scope">
+                    <el-input v-model="scope.row.Price" prop="Count" :class="{ redborder:scope.row.Price ==''}"></el-input>
+                </template>
+            </el-table-column>
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
@@ -386,73 +391,14 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                var paramArr = []
-                var that = this
-                paramArr.push({
+                this.aggreSubmit({
                     "Id": allData.Id,
-                    "TaskId": TaskId,
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid,
-                    "NodeId": NodeId,
-                    "ApplyTime": _getTime(),
-                    "IsEnable": "1",
-                    "FlowId": FlowId,
                     "Remark": this.ruleForm.mark,
-                    "IsSend": "false",
-                    "State": "1",
                     "Title": this.ruleForm.Title,
                     "ProjectId": this.ruleForm.ProjectId
-                })
-                for (let node of this.nodeList) {
-                    if (node.NodeId == this.nodeInfo.NodeId) {
-                        for (let a of node.AddPeople) {
-                            paramArr.push({
-                                "ApplyMan": a.name,
-                                "ApplyManId": a.userid,
-                                "TaskId": TaskId,
-                                "ApplyTime": null,
-                                "IsEnable": 1,
-                                "FlowId": FlowId,
-                                "NodeId": NodeId,
-                                "Remark": null,
-                                "IsSend": false,
-                                "State": 0,
-                                "ImageUrl": null,
-                                "FileUrl": null,
-                                "ProjectId": that.ruleForm.ProjectId,
-                                "IsPost": false,
-                                "OldImageUrl": null,
-                                "OldFileUrl": null,
-                                "IsBack": null
-                            })
-                        }
-                    }
-                }
-                $.ajax({
-                    url: "/FlowInfo/SubmitTaskInfo",
-                    type: "POST",
-                    data: JSON.stringify(paramArr),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(paramArr)
-                        console.log(data)
-                        if (data && data.errorCode == 0) {
-                            that.$alert('审批成功', '操作成功', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    loadPage('/main/Approval')
-                                }
-                            });
-                        } else {
-                            that.$alert('审批发生错误', '操作失败', {
-                                confirmButtonText: '确定'
-                            });
-                        }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                }, {
+                        "ProjectId": this.ruleForm.ProjectId
+                    })
             },
             //退回审批
             returnSubmit() {
@@ -460,40 +406,9 @@
                 var that = this
                 var param = {
                     "Id": allData.Id,
-                    "TaskId": TaskId,
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid,
-                    "NodeId": NodeId,
-                    "ApplyTime": _getTime(),
-                    "IsEnable": "1",
-                    "FlowId": FlowId,
-                    "Remark": this.ruleForm.mark,
-                    "IsSend": "false",
-                    "State": "1",
-                    "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId,
-                    "BackNodeId": this.nodeInfo.BackNodeId
+                    "Remark": this.ruleForm.mark
                 }
-                $.ajax({
-                    url: "/FlowInfo/FlowBack",
-                    type: "POST",
-                    data: JSON.stringify(param),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log('退回')
-                        console.log(param)
-                        console.log(data)
-                        that.$alert(data.errorMessage, '信息返回', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                loadPage('/Main/Approval_list')
-                            }
-                        })
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                this.returnSubmit(param)
             },
             //重新发起审批
             reApproval() {
