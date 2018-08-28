@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        采购申请-{{nodeInfo.NodeName}}
+        办公用品申请-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
     <div>
@@ -53,7 +53,7 @@
         </el-table-column>
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price">
+                <el-input v-model="scope.row.Price" :disabled="true">
                 </el-input>
             </template>
         </el-table-column>
@@ -89,17 +89,6 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        @*<el-form-item label="项目名" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择">
-                <el-option v-for="item in projectList"
-                           :key="item.ProjectId"
-                           :label="item.ProjectName"
-                           :value="item.ProjectId">
-                    <span style="float: left">{{ item.ProjectName }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
-                </el-option>
-            </el-select>
-        </el-form-item>*@
 
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
@@ -169,62 +158,31 @@
                                 ProjectName = p.ProjectName
                             }
                         }
-                        var paramArr = []
-                        paramArr.push({
-                            "ApplyMan": DingData.nickName,
-                            "ApplyManId": DingData.userid,
-                            "NodeId": "0",
-                            "ApplyTime": _getTime(),
-                            "IsEnable": "1",
-                            "FlowId": FlowId + '',
-                            "Remark": that.ruleForm.remark,
-                            "IsSend": false,
-                            "State": "1",
-                            "Title": that.ruleForm.Title,
-                            "ProjectName": ProjectName,
-                            "ProjectId": that.ruleForm.ProjectId
-                        })
-                        for (let node of that.nodeList) {
-                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
-                                console.log(node)
-                                console.log(node.AddPeople)
-                                if (!that.preApprove && node.AddPeople.length == 0) {
-                                    this.$alert('您尚未选择审批人', '提交错误', {
-                                        confirmButtonText: '确定'
-                                    });
-                                    that.disablePage = false
-                                    return
-                                }
-                                for (let a of node.AddPeople) {
-                                    paramArr.push({
-                                        "ApplyMan": a.name,
-                                        "ApplyManId": a.emplId,
-                                        "IsEnable": 1,
-                                        "FlowId": FlowId,
-                                        "NodeId": node.NodeId,
-                                        "IsSend": false,
-                                        "State": 0,
-                                        "ProjectId": that.ruleForm.ProjectId,
-                                        "OldFileUrl": null,
-                                        "IsBack": null
-                                    })
-                                }
+                        let url = '/OfficeSupplies/SaveTable'
+                        let callBack = function (taskId) {
+                            console.log(taskId)
+                            var param = []
+                            for (let p of that.purchaseList) {
+                                p.TaskId = taskId
+                                param.push(p)
                             }
+                            console.log(JSON.stringify(param))
+                            that._postData(url, function (data) {
+                                that.$alert('恭喜提交成功', '提示信息', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        goHome()
+                                    }
+                                })
+                            }, param)
                         }
-                        console.log("提交审批 paramArr ")
-                        console.log(paramArr)
-                        $.ajax({
-                            url: '/FlowInfo/CreateTaskInfo',
-                            type: 'POST',
-                            data: JSON.stringify(paramArr),
-                            success: function (data) {
-                                console.log("提交审批ok!")
-                                var taskId = JSON.parse(data).Content
-                                console.log(data)
-                                console.log(taskId)
-                                that.bindAll(taskId)
-                            }
-                        })
+                        that.approvalSubmit(formName, {
+                            Title: that.ruleForm.Title,
+                            Remark: that.ruleForm.remark,
+                            ProjectName: ProjectName,
+                            ProjectId: that.ruleForm.ProjectId
+                        }, callBack)
+                        
                     } else {
                         this.$alert('请填写完整信息', '提交错误', {
                             confirmButtonText: '确定'
@@ -232,28 +190,6 @@
                         return false;
                     }
                 });
-            },
-            bindAll(taskId) {
-                var that = this
-                var paramArr = []
-                for (let p of this.purchaseList) {
-                    p.TaskId = taskId
-                    paramArr.push(p)
-                }
-                console.log("采购表单批量保存 paramArr ")
-                console.log(paramArr)
-                $.ajax({
-                    url: '/OfficeSupplies/SaveTable',
-                    type: 'POST',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(paramArr),
-                    success: function (data) {
-                        console.log(data)
-                        var alertStr = '采购表单批量保存成功'
-                        if (data.errorCode != 0) alertStr = data.errorMessage
-                        that.doneSubmit(alertStr)
-                    }
-                })
             },
             //搜索物料列表
             searchCode(formName) {
@@ -274,11 +210,6 @@
                         that.getData()
                     }
                 })
-                //    } else {
-                //        console.log('搜索物料列表')
-                //        return false;
-                //    }
-                //});
             },
             //添加申请物料
             addGood(index, good) {
@@ -290,7 +221,7 @@
                     Name: good.FName,
                     Standard: good.FModel,
                     Unit: '',
-                    Price: good.FOrderPrice == '0' ? '' : good.FOrderPrice,
+                    Price: good.FOrderPrice,// == '0' ? '' : good.FOrderPrice,
                     Count: '',
                     Purpose: '',
                     UrgentDate: '',
@@ -315,7 +246,6 @@
                 let tmpArr = _cloneArr(this.purchaseList)
                 this.purchaseList = tmpArr
                 console.log('done eidt')
-                console.log(tmpGood)
                 console.log(this.good.index)
                 console.log(this.purchaseList)
             }

@@ -141,14 +141,12 @@
                 var param = _cloneObj(this.ruleForm)
                 param.UseKilometres = this.UseKilometres
                 this._postData(url, function () {
-
                     that.aggreSubmit({
                         "Id": allData.Id,
                         "Remark": that.ruleForm.Mark,
                         "ImageUrl": that.ruleForm.ImageUrl,
                         "OldImageUrl": that.ruleForm.OldImageUrl
                     })
-
                 },param)
 
             },

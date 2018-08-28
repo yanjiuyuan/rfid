@@ -14,9 +14,10 @@
     <el-table :data="tableData" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
-        <el-table-column prop="Count" label="物料编码" width="100" v-if="Index == '0' && NodeId == '2'">
+        <el-table-column prop="Count" label="物料编码" width="100" v-if="NodeId == '2' || NodeId == '3'">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:scope.row.CodeNumber ==''}"></el-input>
+                <el-input v-if="Index == '0'" v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
+                <span v-else>{{scope.row.CodeNumber}}</span>
             </template>
         </el-table-column>
     </el-table>
@@ -162,19 +163,28 @@
             onSubmit(formName) {
                 console.log('submit!');
                 var that = this
-                let url = '/CarTable/TableModify'
-                var param = _cloneObj(this.ruleForm)
-                param.UseKilometres = this.UseKilometres
-                this._postData(url, function () {
-
+                if (NodeId < 2) {
                     that.aggreSubmit({
                         "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark,
-                        "ImageUrl": that.ruleForm.ImageUrl,
-                        "OldImageUrl": that.ruleForm.OldImageUrl
+                        "Remark": that.ruleForm.mark
                     })
-
-                }, param)
+                }
+                else {
+                    for (let d of this.tableData) {
+                        if (!d.CodeNumber) 
+                            this.elementAlert('提示信息','请输入物料编码')
+                    }
+                    let url = '/ItemCodeAdd/TableModify'
+                    var param = _cloneArr(this.tableData)
+                    console.log(param)
+                    this._postData(url, function () {
+                        that.aggreSubmit({
+                            "Id": allData.Id,
+                            "Remark": that.ruleForm.mark
+                        })
+                    }, param)
+                }
+                
             },
             //退回审批
             returnSubmit() {
@@ -182,40 +192,9 @@
                 var that = this
                 var param = {
                     "Id": allData.Id,
-                    "TaskId": TaskId,
-                    "ApplyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid,
-                    "NodeId": NodeId,
-                    "ApplyTime": _getTime(),
-                    "IsEnable": "1",
-                    "FlowId": FlowId,
-                    "Remark": this.ruleForm.mark,
-                    "IsSend": "false",
-                    "State": "1",
-                    "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId,
-                    "BackNodeId": this.nodeInfo.BackNodeId
+                    "Remark": this.ruleForm.mark
                 }
-                $.ajax({
-                    url: "/FlowInfo/FlowBack",
-                    type: "POST",
-                    data: JSON.stringify(param),
-                    dataType: "json",
-                    success: function (data) {
-                        console.log('退回')
-                        console.log(param)
-                        console.log(data)
-                        that.$alert(data.errorMessage, '信息返回', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                loadPage('/Main/Approval_list')
-                            }
-                        })
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                this.returnSubmit(param)
             },
             //重新发起审批
             reApproval() {
