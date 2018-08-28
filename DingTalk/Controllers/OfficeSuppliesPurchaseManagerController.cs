@@ -60,6 +60,7 @@ namespace DingTalk.Controllers
                                     t.dept,
                                     o.CodeNo,
                                     o.Count,
+                                    o.Unit,
                                     o.ExpectPrice,
                                     o.Id,
                                     o.Mark,
