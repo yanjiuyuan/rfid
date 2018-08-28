@@ -47,13 +47,13 @@
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
         <el-table-column prop="Unit" label="单位">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Unit" prop="Price">
+                <el-input v-model="scope.row.Unit">
                 </el-input>
             </template>
         </el-table-column>
-        <el-table-column prop="Price" label="单价" width="100">
+        <el-table-column prop="ExpectPrice" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price" :disabled="true">
+                <el-input v-model="scope.row.ExpectPrice" :disabled="true">
                 </el-input>
             </template>
         </el-table-column>
@@ -122,7 +122,7 @@
                 purchaseList: [],
                 projectList: [],
                 good: {
-                    Price: '',
+                    ExpectPrice: '',
                     Unit: '',
                     Count: ''
                 },
@@ -149,47 +149,29 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-                this.$refs[formName].validate((valid) => {
-                    if (valid && that.purchaseList.length > 0) {
-                        that.disablePage = true
-                        var ProjectName
-                        for (let p of that.projectList) {
-                            if (p.ProjectId == that.ruleForm.ProjectId) {
-                                ProjectName = p.ProjectName
-                            }
-                        }
-                        let url = '/OfficeSupplies/SaveTable'
-                        let callBack = function (taskId) {
-                            console.log(taskId)
-                            var param = []
-                            for (let p of that.purchaseList) {
-                                p.TaskId = taskId
-                                param.push(p)
-                            }
-                            console.log(JSON.stringify(param))
-                            that._postData(url, function (data) {
-                                that.$alert('恭喜提交成功', '提示信息', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        goHome()
-                                    }
-                                })
-                            }, param)
-                        }
-                        that.approvalSubmit(formName, {
-                            Title: that.ruleForm.Title,
-                            Remark: that.ruleForm.remark,
-                            ProjectName: ProjectName,
-                            ProjectId: that.ruleForm.ProjectId
-                        }, callBack)
-                        
-                    } else {
-                        this.$alert('请填写完整信息', '提交错误', {
-                            confirmButtonText: '确定'
-                        });
-                        return false;
+                that.disablePage = true
+                let url = '/OfficeSupplies/SaveTable'
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    var param = []
+                    for (let p of that.purchaseList) {
+                        p.TaskId = taskId
+                        param.push(p)
                     }
-                });
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    }, param)
+                }
+                that.approvalSubmit(formName, {
+                    Title: that.ruleForm.Title,
+                    Remark: that.ruleForm.remark
+                }, callBack)
             },
             //搜索物料列表
             searchCode(formName) {
@@ -221,7 +203,7 @@
                     Name: good.FName,
                     Standard: good.FModel,
                     Unit: '',
-                    Price: good.FOrderPrice,// == '0' ? '' : good.FOrderPrice,
+                    ExpectPrice: good.FOrderPrice,// == '0' ? '' : good.FOrderPrice,
                     Count: '',
                     Purpose: '',
                     UrgentDate: '',
@@ -256,12 +238,7 @@
             this.getProjects()
             this.getApproInfo()
             loadHtml("mainPage", "partPage")
-            document.onkeydown = function (event) {
-                var e = event || window.event;
-                if (e && e.keyCode == 13) { //回车键的键值为13
-                    return
-                }
-            };
+           
         }
     })
 

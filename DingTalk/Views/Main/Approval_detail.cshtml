@@ -33,9 +33,10 @@
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
             </el-table-column>
-            <el-table-column prop="Price" label="单价(实际)" v-if="FlowId == '1'">
+            <el-table-column prop="Price" label="单价(实际)" v-if="FlowId == '1' && nodeInfo.NodeId >= '2'">
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row.Price" prop="Count" :class="{ redborder:scope.row.Price ==''}"></el-input>
+                    <el-input v-model="scope.row.Price" prop="Count" :disabled="nodeInfo.NodeId > '2'"
+                              :class="{ redborder:scope.row.Price ==''}"></el-input>
                 </template>
             </el-table-column>
         </el-table>
@@ -307,7 +308,7 @@
                 Standard: '规格型号',
                 Unit: '单位',
                 Count: '数量',
-                Price: '单价(预计)',
+                ExpectPrice: '单价(预计)',
                 Purpose: '用途',
                 Mark: '备注'
             }
@@ -358,6 +359,21 @@
             }
             bomUrl = "/ItemCodeAdd/GetTable?TaskId=" + TaskId
             break;
+        case '18':
+            items = {
+                CodeNo: '物料编码',
+                Name: '物料名称',
+                Standard: '规格型号',
+                Unit: '单位',
+                Count: '数量',
+                ExpectPrice: '单价(预计)',
+                Price: '单价(实际)',
+                Purpose: '用途',
+                Dept: '部门',
+                Mark: '备注'
+            }
+            bomUrl = "/OfficeSuppliesPurchase/ReadTable?TaskId=" + TaskId
+            break;
     }
     var demo = new Vue({
         el: "#partPage",
@@ -391,14 +407,30 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                this.aggreSubmit({
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.mark,
-                    "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId
-                }, {
+                var that = this
+                if (FlowId == '1') {
+                    let url = '/OfficeSupplies/ModifyTable'
+                    console.log(this.data)
+                    that._postData(url, function (data) {
+                        that.aggreSubmit({
+                            "Id": allData.Id,
+                            "Remark": that.ruleForm.mark,
+                            "Title": that.ruleForm.Title,
+                            "ProjectId": that.ruleForm.ProjectId
+                        }, {
+                                "ProjectId": that.ruleForm.ProjectId
+                            })
+                    }, that.data)
+                } else {
+                    this.aggreSubmit({
+                        "Id": allData.Id,
+                        "Remark": this.ruleForm.mark,
+                        "Title": this.ruleForm.Title,
                         "ProjectId": this.ruleForm.ProjectId
-                    })
+                    }, {
+                            "ProjectId": this.ruleForm.ProjectId
+                        })
+                }
             },
             //退回审批
             returnSubmit() {

@@ -243,7 +243,7 @@ var mixin = {
             ],
             inputProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
-            ],
+            ], 
             Price: [
                 { required: true, message: '价格不能为空！', trigger: 'change' },
                 { type: 'number', message: '必须为数字值' }
@@ -442,6 +442,7 @@ var mixin = {
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
+                "Dept": DingData.departName,
                 "NodeId": NodeId,
                 "ApplyTime": _getTime(),
                 "IsEnable": "1",
