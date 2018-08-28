@@ -5,15 +5,16 @@ namespace DingTalk.Models.DingModels
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
-    /// <summary>
-    /// 办公用品
-    /// </summary>
-    public partial class OfficeSupplies
+
+    [Table("OfficeSuppliesPurchase")]
+    public partial class OfficeSuppliesPurchase
     {
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
-
+        /// <summary>
+        /// 流水号
+        /// </summary>
         [StringLength(300)]
         public string TaskId { get; set; }
         /// <summary>
@@ -22,7 +23,7 @@ namespace DingTalk.Models.DingModels
         [StringLength(500)]
         public string CodeNo { get; set; }
         /// <summary>
-        /// 物料名称
+        /// 名称
         /// </summary>
         [StringLength(300)]
         public string Name { get; set; }
@@ -49,6 +50,7 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// 预计价格
         /// </summary>
+        [StringLength(500)]
         public string ExpectPrice { get; set; }
         /// <summary>
         /// 用途
@@ -65,5 +67,15 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(500)]
         public string Mark { get; set; }
+        /// <summary>
+        /// 申请人
+        /// </summary>
+        [StringLength(300)]
+        public string ApplyMan { get; set; }
+        /// <summary>
+        /// 申请部门
+        /// </summary>
+        [StringLength(300)]
+        public string Dept { get; set; }
     }
 }

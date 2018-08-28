@@ -37,6 +37,9 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<WorkTime> WorkTime { get; set; }
         public virtual DbSet<OverTime> OverTime { get; set; }
         public virtual DbSet<OfficeSupplies> OfficeSupplies { get; set; }
+
+        public virtual DbSet<OfficeSuppliesPurchase> OfficeSuppliesPurchase { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Approve>()

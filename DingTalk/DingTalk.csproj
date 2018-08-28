@@ -342,6 +342,7 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
     <Compile Include="Controllers\OfficeSuppliesManageController.cs" />
+    <Compile Include="Controllers\OfficeSuppliesPurchaseManagerController.cs" />
     <Compile Include="Controllers\OverTimeTableController.cs" />
     <Compile Include="Controllers\PatentManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -399,6 +400,7 @@
     <Compile Include="Models\DingModels\FlowSort.cs" />
     <Compile Include="Models\DingModels\NodeInfo.cs" />
     <Compile Include="Models\DingModels\OfficeSupplies.cs" />
+    <Compile Include="Models\DingModels\OfficeSuppliesPurchase.cs" />
     <Compile Include="Models\DingModels\OverTime.cs" />
     <Compile Include="Models\DingModels\ProcedureInfo.cs" />
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
