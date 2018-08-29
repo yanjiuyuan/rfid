@@ -244,7 +244,7 @@
                             "OldFileUrl": that.ruleForm.OldFileUrl,
                             "MediaId": that.mediaList.join(','),
                             "MediaIdPDF": that.mediaPdfList.join(','),
-                            "Title": that.ruleForm.title,
+                            "Title": that.ruleForm.Title,
                             "ProjectName": ProjectName,
                             "ProjectId": that.ruleForm.ProjectId,
                             "PdfState": stateArr.join(',')
@@ -534,7 +534,12 @@
             //加载重新发起审批传递的数据
             loadReApprovalData() {
                 if (!ReApprovalTempData.valid) return
+                var tmpPdfList = []
+                for (let pdf of ReApprovalTempData.pdfList) {
+                    if (pdf.state == '1') tmpPdfList.push(pdf)
+                }
                 this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
+                this.ruleForm.Title = ReApprovalTempData.Title
                 this.imageList = ReApprovalTempData.imageList
                 this.fileList = ReApprovalTempData.fileList
                 this.pdfList = ReApprovalTempData.pdfList
