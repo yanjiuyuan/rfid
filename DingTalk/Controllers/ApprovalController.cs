@@ -17,7 +17,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
-
+        public ActionResult OfficePurchase()
+        {
+            return View();
+        }
         public ActionResult UseCar()
         {
             return View();
