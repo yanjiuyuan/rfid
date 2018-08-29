@@ -86,9 +86,13 @@
         success: function (data) {
             DingData = data
             console.log(DingData)
-            setInterval(function () {
-                goError();
-            }, 3000)
+            //免登失败跳转错误页面
+            //setInterval(function () {
+            //    goError();
+            //}, 3000)
+
+
+
             //if (goError()) return
             var configObj = {
                 jsticket: DingData.JsApiTicket,
