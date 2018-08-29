@@ -104,9 +104,7 @@
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
             </el-card>
-            @*<el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>*@
         </el-form-item>
-        @*<el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>*@
         <!--添加审批人-->
         <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'"
                            :nodeid="nodeInfo.NodeId">
@@ -431,7 +429,6 @@
             reSubmit() {
                 this.disablePage = true
                 var that = this
-                console.log('退回!!!!!!!')
                 var param = {
                     "Id": allData.Id,
                     "Remark": this.ruleForm.mark

@@ -23,17 +23,6 @@
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
-    @*<el-table :data="tableData" stripe border>
-        <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
-        <el-table-column prop="Name" label="物料名称"></el-table-column>
-        <el-table-column prop="Standard" label="规格型号"></el-table-column>
-        <el-table-column prop="Unit" label="单位"></el-table-column>
-        <el-table-column prop="Price" label="实际单价"></el-table-column>
-        <el-table-column prop="Count" label="数量"></el-table-column>
-        <el-table-column prop="applyMan" label="申请人"></el-table-column>
-        <el-table-column prop="dept" label="部门"></el-table-column>
-        <el-table-column prop="Mark" label="备注"></el-table-column>
-    </el-table>*@
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(d,i) in dataList" :name="i+1" :key="i">
             <template slot="title">
@@ -52,18 +41,6 @@
             </el-table>
         </el-collapse-item>
     </el-collapse>
-    <!--底部翻頁-->
-    @*<div style="text-align:right">
-        <el-pagination v-on:size-change="handleSizeChange"
-                       v-on:current-change="handleCurrentChange"
-                       :current-page="currentPage"
-                       :page-sizes="[1, 3, 5, 10]"
-                       :page-size="pageSize"
-                       layout="total, sizes, prev, pager, next, jumper"
-                       :total="totalRows">
-        </el-pagination>
-    </div>*@
-    <hr />
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
@@ -83,7 +60,6 @@
         </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
         </el-form-item>
     </el-form>
 </el-main>
@@ -105,7 +81,7 @@
                 searchForm: {
                     name: '',
                 },
-                activeNames: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                activeNames: [1],
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
@@ -191,7 +167,6 @@
             }
         },
         created: function () {
-            //FlowId = 6
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()

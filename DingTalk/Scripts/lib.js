@@ -310,10 +310,11 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if (node.NodeId == (that.nodeInfo.NodeId + 1) || (node.NodeId > 0 && node.NodeName.indexOf('申请人') >= 0)) {
+                        if (node.NodeName != '结束' && node.NodeId > 0) {
                             console.log(node)
+                            console.log(node.ApplyMan)
                             console.log(node.AddPeople)
-                            if (!that.preApprove && node.AddPeople.length == 0) {
+                            if (!node.ApplyMan && node.AddPeople.length == 0) {
                                 this.$alert('您尚未选择审批人', '提交错误', {
                                     confirmButtonText: '确定',
                                     callback: action => {
@@ -918,10 +919,10 @@ Vue.component('sam-approver-list', {
                     console.log(data)
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
-                            $(".helloworld").remove()
+                            $("." + nodeId).remove()
                             node.AddPeople = data
                             for (let d of data) {
-                                $("#" + nodeId).after('<span class="el-tag helloworld" style="width: 60px; text-align: center; ">' + d.name + '</span >')
+                                $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name + '</span >')
                             }
                         }
                     }
