@@ -83,7 +83,14 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
-                                    tasks.IsEnable = 0;  //选人跨节点，任务流暂时失效
+                                    if (tasks.NodeId == 1)
+                                    {
+                                        tasks.IsEnable = 1;
+                                    }
+                                    else
+                                    {
+                                        tasks.IsEnable = 0;  //选人跨节点，任务流暂时失效
+                                    }
                                 }
                                 tasks.IsPost = false;
                                 tasks.State = 0;
