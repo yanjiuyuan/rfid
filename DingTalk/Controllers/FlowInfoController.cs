@@ -709,7 +709,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     Tasks task = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.ApplyManId == UserId
-                     && t.IsSend == true).OrderByDescending(u=>u.Id).First();
+                     && t.IsSend == true && t.State == 0).OrderByDescending(u => u.Id).First();
                     task.State = 1;
                     task.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     context.Entry<Tasks>(task).State = EntityState.Modified;
@@ -952,7 +952,7 @@ namespace DingTalk.Controllers
                 int? NodeId = 0;
                 if (StateCount == 0)
                 {
-                    NodeId = context.Tasks.Where(t=>t.TaskId.ToString()==TaskId.ToString()).Max(n=>n.NodeId);
+                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString()).Max(n => n.NodeId);
                 }
                 else
                 {
