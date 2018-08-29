@@ -48,7 +48,7 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="项目名" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectName"
@@ -330,6 +330,14 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+            },
+            selectProject(id) {
+                console.log(id)
+                for (var project of this.projectList) {
+                    if (project.ProjectId == id) {
+                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                    }
+                }
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {
