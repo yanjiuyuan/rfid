@@ -710,6 +710,7 @@ namespace DingTalk.Controllers
                 {
                     Tasks task = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.ApplyManId == UserId
                      && t.IsSend == true && t.State == 0).OrderByDescending(u => u.Id).First();
+
                     task.State = 1;
                     task.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     context.Entry<Tasks>(task).State = EntityState.Modified;
