@@ -288,8 +288,7 @@ var mixin = {
     },
     methods: {
         //提交审批
-        approvalSubmit(formName, param, callBack) {
-            if (goError()) return
+        approvalSubmit(formName, param, callBack, param2 = {}) {
             var that = this
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -311,10 +310,11 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if (node.NodeId == (that.nodeInfo.NodeId + 1) || (node.NodeId > 0 && node.NodeName.indexOf('申请人') >= 0)) {
+                        if (node.NodeName != '结束' && node.NodeId > 0) {
                             console.log(node)
+                            console.log(node.ApplyMan)
                             console.log(node.AddPeople)
-                            if (!that.preApprove && node.AddPeople.length == 0) {
+                            if (!node.ApplyMan && node.AddPeople.length == 0) {
                                 this.$alert('您尚未选择审批人', '提交错误', {
                                     confirmButtonText: '确定',
                                     callback: action => {
@@ -325,7 +325,7 @@ var mixin = {
                                 return
                             }
                             for (let a of node.AddPeople) {
-                                paramArr.push({
+                                let tmpParam = {
                                     "ApplyMan": a.name,
                                     "ApplyManId": a.emplId,
                                     "IsEnable": 1,
@@ -335,7 +335,11 @@ var mixin = {
                                     "State": 0,
                                     "OldFileUrl": null,
                                     "IsBack": null
-                                })
+                                }
+                                for (let p2 in param2) {
+                                    tmpParam[p2] = param2[p2]
+                                }
+                                paramArr.push(tmpParam)
                             }
                         }
                     }
@@ -461,6 +465,7 @@ var mixin = {
                 dataType: "json",
                 success: function (data) {
                     console.log('退回')
+                    console.log("/FlowInfo/FlowBack")
                     console.log(param)
                     console.log(data)
                     that.$alert(data.errorMessage, '信息返回', {
@@ -822,7 +827,7 @@ Vue.component('sam-approver-list', {
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
-                                        :type="node.ApplyTime?'success':''"
+                                        :type="node.ApplyTime?'success':''" 
                                         :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
@@ -914,10 +919,10 @@ Vue.component('sam-approver-list', {
                     console.log(data)
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
-                            $(".helloworld").remove()
+                            $("." + nodeId).remove()
                             node.AddPeople = data
                             for (let d of data) {
-                                $("#" + nodeId).after('<span class="el-tag helloworld" style="width: 60px; text-align: center; ">' + d.name + '</span >')
+                                $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name + '</span >')
                             }
                         }
                     }

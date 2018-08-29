@@ -57,6 +57,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_officePurchase()
+        {
+            return View();
+        }
         public ActionResult VoteDetail()
         {
             return View();
