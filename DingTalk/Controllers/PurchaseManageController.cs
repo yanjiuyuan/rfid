@@ -145,15 +145,15 @@ namespace DingTalk.Controllers
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
                     //判断是否有权限触发按钮
-                    string PeopleId = context.Roles.Where(r=>r.RoleName=="采购管理员").First().UserId;
-                    if (UserId != PeopleId)
-                    {
-                        return JsonConvert.SerializeObject(new ErrorModel
-                        {
-                            errorCode = 1,
-                            errorMessage = "没有权限"
-                        });
-                    }
+                    //string PeopleId = context.Roles.Where(r=>r.RoleName=="采购管理员").First().UserId;
+                    //if (UserId != PeopleId)
+                    //{
+                    //    return JsonConvert.SerializeObject(new ErrorModel
+                    //    {
+                    //        errorCode = 1,
+                    //        errorMessage = "没有权限"
+                    //    });
+                    //}
                     //判断流程是否已结束
                     List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
                     if (tasksList.Count > 0)
