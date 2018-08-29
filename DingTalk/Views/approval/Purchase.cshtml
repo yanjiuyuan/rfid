@@ -184,7 +184,7 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
+        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="false"
                            :nodeid="nodeInfo.NodeId">
         </sam-approver-list>
         <el-form-item>
