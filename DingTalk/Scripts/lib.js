@@ -288,8 +288,7 @@ var mixin = {
     },
     methods: {
         //提交审批
-        approvalSubmit(formName, param, callBack) {
-            if (goError()) return
+        approvalSubmit(formName, param, callBack, param2 = {}) {
             var that = this
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -325,7 +324,7 @@ var mixin = {
                                 return
                             }
                             for (let a of node.AddPeople) {
-                                paramArr.push({
+                                let tmpParam = {
                                     "ApplyMan": a.name,
                                     "ApplyManId": a.emplId,
                                     "IsEnable": 1,
@@ -335,7 +334,11 @@ var mixin = {
                                     "State": 0,
                                     "OldFileUrl": null,
                                     "IsBack": null
-                                })
+                                }
+                                for (let p2 in param2) {
+                                    tmpParam[p2] = param2[p2]
+                                }
+                                paramArr.push(tmpParam)
                             }
                         }
                     }
@@ -461,6 +464,7 @@ var mixin = {
                 dataType: "json",
                 success: function (data) {
                     console.log('退回')
+                    console.log("/FlowInfo/FlowBack")
                     console.log(param)
                     console.log(data)
                     that.$alert(data.errorMessage, '信息返回', {

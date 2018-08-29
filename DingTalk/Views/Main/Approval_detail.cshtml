@@ -129,7 +129,8 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+                <span> - </span>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
         <template v-if="index==2 && state=='被退回'">
@@ -233,13 +234,7 @@
                 <canvas id="myCanvas" width="1200" height="900" class="container_pencil"></canvas>
             </div>
             <span id="show" style="display:none;"></span>
-
         </div>
-
-        @*<canvas id="the-canvas"
-            style="position:fixed;left:0;top:0;width:80%;height:100%;z-index:10086;"></canvas>*@
-        @*<i class="el-icon-circle-close" v-on:click="hideFrame"
-            style="position:fixed;right:10px;top:10px;z-index:10086;font-size:100px;"></i>*@
     </div>
     <div class="mask" id="mask"></div>
     <!--显示加載過程-->
@@ -433,9 +428,10 @@
                 }
             },
             //退回审批
-            returnSubmit() {
+            reSubmit() {
                 this.disablePage = true
                 var that = this
+                console.log('退回!!!!!!!')
                 var param = {
                     "Id": allData.Id,
                     "Remark": this.ruleForm.mark
@@ -617,13 +613,10 @@
                         console.log("獲取角色信息")
                         console.log(url)
                         console.log(data)
-                        if (data[0] && data[0].emplId == DingData.userid && Index == "3" && Index == "2") {
+                        if ((data[0] && data[0].emplId == DingData.userid) && (Index == "3" || Index == "2")) {
                             that.ifShowStamppBtn = true
                             if (FlowId == '8') that.ifShowStamppBtn2 = true
                         }
-                        setTimeout(function () {
-                            if (that.nodeList[0].ApplyMan == DingData.nickName) that.ifShowStamppBtn2 = true
-                        },1000)
                     }
                 })
             },
@@ -672,6 +665,9 @@
             }
             if (FlowId == '6') {
                 this.showStamp("图纸管理员")
+            }
+            if (FlowId == '8' && (Index == "3" || Index == "2")) {
+                this.ifShowStamppBtn2 = true
             }
 
             for (let s of this.specialRoles) {

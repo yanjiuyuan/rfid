@@ -525,16 +525,8 @@
             
             //加载重新发起审批传递的数据
             loadReApprovalData() {
-                //ReApprovalTempData = {
-                //    valid: true,
-                //    tableData: this.tableData,
-                //    ProjectId: this.ruleForm.ProjectId,
-                //    imageList: this.imageList,
-                //    fileList: this.fileList,
-                //    pdfList: this.pdfList
-                //}
                 if (!ReApprovalTempData.valid) return
-                this.ruleForm.ProjectId = ReApprovalTempData.ProjectIdReApprovalTempData
+                this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
                 this.imageList = ReApprovalTempData.imageList
                 this.fileList = ReApprovalTempData.fileList
                 this.pdfList = ReApprovalTempData.pdfList
@@ -549,13 +541,10 @@
                         Content: p.url.replace(preUrl, '~')
                     }
                 }
-
                 this.dataArr = ReApprovalTempData.dataArr
                 this.items = ReApprovalTempData.items
                 ReApprovalTempData.valid = false
                 upBom = []
-
-            
                 for (let a of this.dataArr) {
                     a.tableData = a.data.slice(0, 5)
                     a.totalRows = a.data.length
@@ -563,7 +552,6 @@
                     upBom.concat(a.data)
                     console.log(a.tableData)
                 }
-           
             }
             
         },

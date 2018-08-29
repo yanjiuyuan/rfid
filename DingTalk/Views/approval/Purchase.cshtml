@@ -233,78 +233,26 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-                this.$refs[formName].validate((valid) => {
-                    if (valid && that.purchaseList.length > 0) {
-                        that.disablePage = true
-                        var ProjectName
-                        for (let p of that.projectList) {
-                            if (p.ProjectId == that.ruleForm.ProjectId) {
-                                ProjectName = p.ProjectName
-                            }
-                        }
-                        var paramArr = []
-                        paramArr.push({
-                            "ApplyMan": DingData.nickName,
-                            "ApplyManId": DingData.userid,
-                            "NodeId": "0",
-                            "ApplyTime": _getTime(),
-                            "IsEnable": "1",
-                            "FlowId": FlowId + '',
-                            "Remark": that.ruleForm.remark,
-                            "IsSend": false,
-                            "State": "1",
-                            "Title": that.ruleForm.title,
-                            "ProjectName": ProjectName,
-                            "ProjectId": that.ruleForm.ProjectId
-                        })
-                        for (let node of that.nodeList) {
-                            if (node.NodeId == (that.nodeInfo.NodeId + 1)) {
-                                console.log(node)
-                                console.log(node.AddPeople)
-                                if (!that.preApprove && node.AddPeople.length == 0) {
-                                    this.$alert('您尚未选择审批人', '提交错误', {
-                                        confirmButtonText: '确定'
-                                    });
-                                    that.disablePage = false
-                                    return
-                                }
-                                for (let a of node.AddPeople) {
-                                    paramArr.push({
-                                        "ApplyMan": a.name,
-                                        "ApplyManId": a.emplId,
-                                        "IsEnable": 1,
-                                        "FlowId": FlowId,
-                                        "NodeId": node.NodeId,
-                                        "IsSend": false,
-                                        "State": 0,
-                                        "ProjectId": that.ruleForm.ProjectId,
-                                        "OldFileUrl": null,
-                                        "IsBack": null
-                                    })
-                                }
-                            }
-                        }
-                        console.log("提交审批 paramArr ")
-                        console.log(paramArr)
-                        $.ajax({
-                            url: '/FlowInfo/CreateTaskInfo',
-                            type: 'POST',
-                            data: JSON.stringify(paramArr),
-                            success: function (data) {
-                                console.log("提交审批ok!")
-                                var taskId = JSON.parse(data).Content
-                                console.log(data)
-                                console.log(taskId)
-                                that.bindAll(taskId)
-                            }
-                        })
-                    } else {
-                        this.$alert('请填写完整信息', '提交错误', {
-                            confirmButtonText: '确定'
-                        });
-                        return false;
+
+                var ProjectName
+                for (let p of that.projectList) {
+                    if (p.ProjectId == that.ruleForm.ProjectId) {
+                        ProjectName = p.ProjectName
                     }
-                });
+                }
+                let callBack = function (taskId) {
+                    console.log("提交审批ok!")
+                    console.log(taskId)
+                    that.bindAll(taskId)
+                }
+                that.approvalSubmit(formName, {
+                    Title: that.ruleForm.Title,
+                    Remark: that.ruleForm.remark,
+                    ProjectName: ProjectName,
+                    ProjectId: that.ruleForm.ProjectId
+                }, callBack, {
+                        ProjectId: that.ruleForm.ProjectId
+                    })
             },
             bindAll(taskId) {
                 var that = this
@@ -391,6 +339,14 @@
                 console.log(tmpGood)
                 console.log(this.good.index)
                 console.log(this.purchaseList)
+            },
+            
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
+                ReApprovalTempData.valid = false
+                this.purchaseList = ReApprovalTempData.data
             }
         },
         created: function () {
@@ -398,6 +354,7 @@
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
+            this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
             document.onkeydown = function (event) {
                 var e = event || window.event;
