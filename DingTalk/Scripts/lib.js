@@ -827,7 +827,7 @@ Vue.component('sam-approver-list', {
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
-                                        :type="node.ApplyTime?'success':''"
+                                        :type="node.ApplyTime?'success':''" 
                                         :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
