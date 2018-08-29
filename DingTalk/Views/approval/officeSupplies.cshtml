@@ -39,7 +39,7 @@
         </el-pagination>
     </div>
     <hr />
-    <h3>已选物料</h3>
+    <h3>已选办公用品</h3>
     <!--采购列表表格實體-->
     <el-table :data="purchaseList" stripe border>
         <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
@@ -47,7 +47,7 @@
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
         <el-table-column prop="Unit" label="单位">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Unit">
+                <el-input v-model="scope.row.Unit" :class="{ redborder:scope.row.Unit ==''}">
                 </el-input>
             </template>
         </el-table-column>
@@ -148,6 +148,13 @@
         },
         methods: {
             onSubmit(formName) {
+                for (let p of this.purchaseList) {
+                    if (p.Unit == '' || p.Count == '') {
+                        this.elementAlert('提交失败', '已选物品信息没填全')
+                        return
+                    }
+                }
+
                 var that = this
                 let url = '/OfficeSupplies/SaveTable'
                 let callBack = function (taskId) {
