@@ -281,7 +281,8 @@ var mixin = {
         showAddProject: false,
         currentPage: 1,
         totalRows: 0,
-        pageSize: 5
+        pageSize: 5,
+        dingList: []
     },
     created:function() {
         
@@ -482,6 +483,30 @@ var mixin = {
         },
         resetForm(formName) {
             this.$refs[formName].resetFields();
+        },
+        //重新发起审批
+        reApproval() {
+            this.disablePage = true
+            var tmpPdfList = []
+            for (let pdf of this.pdfList) {
+                if (pdf.state == '1') tmpPdfList.push(pdf)
+            }
+            ReApprovalTempData = {
+                valid: true,
+                data: this.data,
+                dataArr: this.dataArr,
+                ProjectId: this.ruleForm.ProjectId,
+                Title: this.ruleForm.Title,
+                imageList: this.imageList,
+                fileList: this.fileList,
+                pdfList: tmpPdfList,
+                items: items
+            }
+            for (let img of imgConfig) {
+                if (img.flowId == FlowId) {
+                    loadPage(img.url)
+                }
+            }
         },
         //翻頁相關事件
         getData() {
@@ -710,6 +735,17 @@ var mixin = {
                 this.ruleForm.ImageUrl += ','
                 this.ruleForm.OldImageUrl += ','
             }
+        },
+
+        //根据taskId获取下一个需要审批的人，即要钉的人
+        GetDingList(taskId) {
+            var that = this
+            this._getData('/DingTalkServers/Ding', function (data) {
+                if (data.ApplyManId) {
+                    that.dingList.push(data.ApplyManId)
+                }
+                else that.dingList = []
+            }, { taskId: taskId })
         },
 
         //get获取接口数据通用方法
@@ -976,47 +1012,50 @@ Vue.component('sam-approver-list', {
 
 //钉钉----钉一下功能组件
 Vue.component('ding', {
-    props: ['DingParam'],
+    props: ['dinglist'],
     template: `
-<div>
-<el-button type="primary" v-on:click="dialogFormVisible = true">钉一下</el-button>
-<el-dialog title="编辑钉一下内容" :visible.sync="dialogFormVisible">
-  <el-form :model="form">
-    <el-form-item label="钉信息" :label-width="formLabelWidth">
-      <el-input v-model="form.text" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="钉类型" :label-width="formLabelWidth">
-      <el-select v-model="form.alertType" placeholder="请选择钉类型">
-        <el-option label="应用内" value="2"></el-option>
-        <el-option label="短信" value="1"></el-option>
-        <el-option label="电话" value="0"></el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="钉时间" :label-width="formLabelWidth">
-      <div class="block">
-        <span class="demonstration">默认</span>
-        <el-date-picker
-          v-model="form.alertDate"
-          type="datetime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          placeholder="选择日期时间">
-        </el-date-picker>
-      </div>
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="Ding">确 定</el-button>
-  </div>
-</el-dialog>`,
+            <div v-show="dinglist && dinglist.length && dinglist.length>0">
+                <el-button type="primary" v-on:click="Ding">钉一下</el-button>
+                <el-dialog title="编辑钉一下内容" :visible.sync="dialogFormVisible">
+                  <el-form :model="form">
+                    <el-form-item label="钉信息" :label-width="formLabelWidth">
+                      <el-input v-model="form.text" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="钉类型" :label-width="formLabelWidth">
+                      <el-select v-model="form.alertType" placeholder="请选择钉类型">
+                        <el-option label="应用内" value="2"></el-option>
+                        <el-option label="短信" value="1"></el-option>
+                        <el-option label="电话" value="0"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="钉时间" :label-width="formLabelWidth">
+                      <div class="block">
+                        <span class="demonstration">默认</span>
+                        <el-date-picker
+                          v-model="form.alertDate"
+                          type="datetime"
+                          value-format="yyyy-MM-dd HH:mm"
+                          placeholder="选择日期时间">
+                        </el-date-picker>
+                      </div>
+                    </el-form-item>
+                  </el-form>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="Ding">确 定</el-button>
+                  </div>
+                </el-dialog>
+            </div>`,
     data: function () {
         return {
+            DingVisiable: true,
             dialogFormVisible: false,
             form: {
-                alertType: 2,
+                alertType: '2',
                 alertDate: '',
                 text: '', 
             },
+            UserList:[],
             formLabelWidth: '120px'
         }
     },
@@ -1025,29 +1064,23 @@ Vue.component('ding', {
             console.log('你开始钉了')
             var that = this
             var param = {
-                users: ['100', '101'],//用户列表，userid
-                corpId: DingData.CropId, //加密的企业id
+                users: this.dinglist,//用户列表，userid
+                corpId: DingData.CorpId, //加密的企业id
                 type: 1, //钉类型 1：image  2：link
-                alertType: that.form.alertType,
-                alertDate: { "format": "yyyy-MM-dd HH:mm", "value": that.form.alertDate },
-                attachment: {
-                    images: ['~/Content/images/单位LOGO.jpg'],
-                },
-                text: that.form.text,
-                onSuccess: function (e) {
-                    console.log(e)
-                    console.log('你成功钉了')
-                },
-                onFail: function (e) {
-                    console.log(e)
-                    console.log('你失败钉了')
-                }
+                alertType: parseInt(that.form.alertType),
+                //alertDate: { "format": "yyyy-MM-dd HH:mm", "value": that.form.alertDate },
+                //attachment: {
+                //    images: ['~/Content/images/单位LOGO.jpg'],
+                //},
+                //text: that.form.text,
             }
             console.log(param)
             DingTalkPC.biz.ding.post(param)
         }
     }
 })
+
+
 Vue.component('sam-addapprover', {
     props: ['preset', 'approvers','type'],
     template: `<div>
