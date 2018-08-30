@@ -85,12 +85,13 @@
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
 
-                    <el-switch v-if="index == 0 || index == 2" v-model="f.state"
+                    <el-switch v-if="index == 0" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
                                active-text="通过" inactive-text="不通过"
                                active-value="1" inactive-value="0"
                                v-on:change="setPdfState">
                     </el-switch>
+                    <span v-if="index == 2">{{f.state == '1'? '通过' : '不通过'}}</span>
                 </div>
             </el-card>
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
@@ -438,6 +439,10 @@
             //重新发起审批
             reApproval() {
                 this.disablePage = true
+                var tmpPdfList = []
+                for (let pdf of this.pdfList) {
+                    if (pdf.state == '1') tmpPdfList.push(pdf)
+                }
                 ReApprovalTempData = {
                     valid: true,
                     data: this.data,
@@ -446,7 +451,7 @@
                     Title: this.ruleForm.Title,
                     imageList: this.imageList,
                     fileList: this.fileList,
-                    pdfList: this.pdfList,
+                    pdfList: tmpPdfList,
                     items: items
                 }
                 for (let img of imgConfig) {

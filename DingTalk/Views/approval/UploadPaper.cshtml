@@ -198,9 +198,7 @@
                     OldFileUrl: '',
                     MediaId: '',
                     MediaIdPDF: '',
-                    inputProjectName: '',
                     inputProjectId: '',
-                    copyers: ['小唐', '季老师'],
                     Title: '',
                     ProjectId: null,
                     Time: ''
@@ -534,15 +532,13 @@
             //加载重新发起审批传递的数据
             loadReApprovalData() {
                 if (!ReApprovalTempData.valid) return
-                var tmpPdfList = []
-                for (let pdf of ReApprovalTempData.pdfList) {
-                    if (pdf.state == '1') tmpPdfList.push(pdf)
-                }
+                console.log('加载重新发起审批传递的数据')
                 this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
                 this.ruleForm.Title = ReApprovalTempData.Title
                 this.imageList = ReApprovalTempData.imageList
                 this.fileList = ReApprovalTempData.fileList
                 this.pdfList = ReApprovalTempData.pdfList
+                this.data = ReApprovalTempData.data
                 var preUrl = 'http://' + window.location.host
                 for (let f of this.fileList) {
                     f["response"] = {
@@ -559,11 +555,12 @@
                 ReApprovalTempData.valid = false
                 upBom = []
                 for (let a of this.dataArr) {
+                    let bomArr = _cloneArr(a.data)
                     a.tableData = a.data.slice(0, 5)
                     a.totalRows = a.data.length
                     a.items = this.items
-                    upBom.concat(a.data)
-                    console.log(a.tableData)
+                    upBom = upBom.concat(bomArr)
+                    console.log(upBom)
                 }
             }
             

@@ -14,9 +14,9 @@
     <el-table :data="tableData" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
-        <el-table-column prop="Count" label="物料编码" width="100" v-if="NodeId == '2' || NodeId == '3'">
+        <el-table-column prop="Count" label="物料编码" width="100" v-if="NodeId > '0'">
             <template slot-scope="scope">
-                <el-input v-if="Index == '0'" v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
+                <el-input v-if="Index == '0' && NodeId == 1" v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
                 <span v-else>{{scope.row.CodeNumber}}</span>
             </template>
         </el-table-column>
@@ -163,16 +163,12 @@
             onSubmit(formName) {
                 console.log('submit!');
                 var that = this
-                if (NodeId < 2) {
-                    that.aggreSubmit({
-                        "Id": allData.Id,
-                        "Remark": that.ruleForm.mark
-                    })
-                }
-                else {
+                if (NodeId == 1) {
                     for (let d of this.tableData) {
-                        if (!d.CodeNumber) 
-                            this.elementAlert('提示信息','请输入物料编码')
+                        if (!d.CodeNumber) {
+                            this.elementAlert('提示信息', '请输入物料编码')
+                            return
+                        }
                     }
                     let url = '/ItemCodeAdd/TableModify'
                     var param = _cloneArr(this.tableData)
@@ -183,6 +179,12 @@
                             "Remark": that.ruleForm.mark
                         })
                     }, param)
+                }
+                else {
+                    that.aggreSubmit({
+                        "Id": allData.Id,
+                        "Remark": that.ruleForm.mark
+                    })
                 }
                 
             },

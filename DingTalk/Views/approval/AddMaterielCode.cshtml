@@ -14,6 +14,9 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" disabled></el-input>
         </el-form-item>
+        <el-form-item label="建议" prop="Title">
+            <el-input v-model="ruleForm.Title" style="width:600px;"></el-input>
+        </el-form-item>
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" style="width:600px;"></el-input>
         </el-form-item>
@@ -85,6 +88,7 @@
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
+                    Title: '物料编码申请',
                     goods: [_cloneObj(meteriel)]
                 }
             }
@@ -92,10 +96,6 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-                this.disablePage = true
-                //this.bindAll('88888')
-                //return
-                console.log('submit!')
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         that.disablePage = true
