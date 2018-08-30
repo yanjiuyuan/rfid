@@ -465,6 +465,8 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="taskId">流水号</param>
         /// <returns></returns>
+        [Route("Ding")]
+        [HttpGet]
         public object Ding(string taskId)
         {
             try
