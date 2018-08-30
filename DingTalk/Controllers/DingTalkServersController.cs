@@ -1,4 +1,5 @@
 ﻿using Common.Flie;
+using DingTalk.Bussiness.FlowInfo;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using DingTalkServer;
@@ -455,6 +456,51 @@ namespace DingTalk.Controllers
             var result = await dtManager.DownloadFile(mediaId, fileName);
             return result;
         }
+        #endregion
+
+        #region 发钉推送
+
+        /// <summary>
+        /// 发钉推送
+        /// </summary>
+        /// <param name="taskId">流水号</param>
+        /// <returns></returns>
+        public object Ding(string taskId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    FlowInfoServer flowInfoServer = new FlowInfoServer();
+                    if (flowInfoServer.GetTasksState(taskId) == "已完成")
+                    {
+                        return new ErrorModel
+                        {
+                            errorCode = 0,
+                            errorMessage = "流程已完成"
+                        };
+                    }
+                    else
+                    {
+                        Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).OrderBy(s => s.NodeId).First();
+                        return new
+                        {
+                            tasks.ApplyMan,
+                            tasks.ApplyManId
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
         #endregion
     }
 }
