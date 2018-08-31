@@ -375,6 +375,7 @@ var mixin = {
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
+                "Dept": DingData.departName,
                 "NodeId": NodeId,
                 "ApplyTime": _getTime(),
                 "IsEnable": "1",

@@ -38,6 +38,12 @@
                 <el-table-column prop="applyMan" label="申请人"></el-table-column>
                 @*<el-table-column prop="dept" label="部门"></el-table-column>*@
                 <el-table-column prop="Mark" label="备注"></el-table-column>
+                <el-table-column prop="ExpectPrice" label="参考单价">
+                    <template slot-scope="scope">
+                        <el-input v-model="scope.row.ExpectPrice"
+                                  :class="{ redborder:scope.row.ExpectPrice ==''}"></el-input>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-collapse-item>
     </el-collapse>
@@ -98,13 +104,23 @@
         methods: {
             onSubmit(formName) {
                 var that = this
+                for (let d of that.dataList) {
+                    for (let v of d.value) {
+                        if (v.ExpectPrice == '') {
+                            this.elementAlert('提示信息', '有预计单价未填')
+                            return
+                        }
+                    }
+                }
                 let url = '/OfficeSuppliesPurchase/SaveTable'
                 let callBack = function (taskId) {
                     console.log(taskId)
                     var param = []
-                    for (let p of that.data) {
-                        p.TaskId = taskId
-                        param.push(p)
+                    for (let p of that.dataList) {
+                        for (let v of d.value) {
+                            v.TaskId = taskId
+                            param.push(v)
+                        }
                     }
                     console.log(JSON.stringify(param))
                     that._postData(url, function (data) {

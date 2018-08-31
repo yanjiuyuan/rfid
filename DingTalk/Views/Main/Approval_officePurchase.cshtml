@@ -18,11 +18,17 @@
                 <el-table-column prop="Name" label="物料名称"></el-table-column>
                 <el-table-column prop="Standard" label="规格型号"></el-table-column>
                 <el-table-column prop="Unit" label="单位"></el-table-column>
-                <el-table-column prop="Price" label="实际单价"></el-table-column>
                 <el-table-column prop="Count" label="数量"></el-table-column>
                 <el-table-column prop="applyMan" label="申请人"></el-table-column>
                 @*<el-table-column prop="dept" label="部门"></el-table-column>*@
                 <el-table-column prop="Mark" label="备注"></el-table-column>
+                <el-table-column prop="ExpectPrice" label="参考单价"></el-table-column>
+                <el-table-column prop="Price" label="实际单价" v-if="NodeId == 2">
+                    <template slot-scope="scope">
+                        <el-input v-model="scope.row.Price"
+                                  :class="{ redborder:scope.row.Price ==''}"></el-input>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-collapse-item>
     </el-collapse>
@@ -64,6 +70,7 @@
         data: function () {
             return {
                 dataList: [],
+                NodeId: NodeId,
                 activeNames: [1, 2, 3, 4, 5, 6],
                 index: Index,
                 nodeList: [],
@@ -76,6 +83,34 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
+                var that = this
+                let callBack = function () {}
+                if (NodeId == '2') {
+                    for (let d of that.dataList) {
+                        for (let v of d.value) {
+                            if (v.Price == '') {
+                                this.elementAlert('提示信息', '有实际单价未填')
+                                return
+                            }
+                        }
+                    }
+                    let url = '/OfficeSuppliesPurchase/ModifyTable'
+                    console.log(taskId)
+                    var param = []
+                    for (let p of that.dataList) {
+                        for (let v of d.value) {
+                            v.TaskId = taskId
+                            param.push(v)
+                        }
+                    }
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.aggreSubmit({
+                            "Id": allData.Id,
+                            "Remark": that.ruleForm.Mark
+                        })
+                    }, param)
+                }
                 this.aggreSubmit({
                     "Id": allData.Id,
                     "Remark": this.ruleForm.Mark
