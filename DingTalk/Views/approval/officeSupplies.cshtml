@@ -148,6 +148,10 @@
         },
         methods: {
             onSubmit(formName) {
+                if (!this.purchaseList.length) {
+                    this.elementAlert('提交失败', '没有选择办公用品')
+                    return
+                }
                 for (let p of this.purchaseList) {
                     if (p.Unit == '' || p.Count == '') {
                         this.elementAlert('提交失败', '已选物品信息没填全')
@@ -178,6 +182,13 @@
                     Title: that.ruleForm.Title,
                     Remark: that.ruleForm.remark
                 }, callBack)
+            },
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                this.ruleForm.Title = ReApprovalTempData.Title
+                ReApprovalTempData.valid = false
+                this.purchaseList = ReApprovalTempData.data
             },
             //搜索物料列表
             searchCode(formName) {
@@ -243,6 +254,7 @@
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
+            this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
            
         }
