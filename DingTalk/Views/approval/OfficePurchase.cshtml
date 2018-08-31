@@ -104,6 +104,10 @@
         methods: {
             onSubmit(formName) {
                 var that = this
+                if (that.data.length == 0) {
+                    this.elementAlert('提示信息', '没有采购数据')
+                    return
+                }
                 for (let d of that.dataList) {
                     for (let v of d.value) {
                         if (v.ExpectPrice == '') {
@@ -116,7 +120,7 @@
                 let callBack = function (taskId) {
                     console.log(taskId)
                     var param = []
-                    for (let p of that.dataList) {
+                    for (let d of that.dataList) {
                         for (let v of d.value) {
                             v.TaskId = taskId
                             param.push(v)

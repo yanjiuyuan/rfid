@@ -26,9 +26,10 @@
                 <el-table-column prop="Price" label="实际单价" v-if="NodeId == 2">
                     <template slot-scope="scope">
                         <el-input v-model="scope.row.Price"
-                                  :class="{ redborder:scope.row.Price ==''}"></el-input>
+                                  :class="{ redborder:scope.row.Price == '' || scope.row.Price == null}"></el-input>
                     </template>
                 </el-table-column>
+                <el-table-column prop="Price" label="实际单价" v-if="NodeId > 2"></el-table-column>
             </el-table>
         </el-collapse-item>
     </el-collapse>
@@ -40,7 +41,7 @@
         </sam-approver-list>
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.Mark"></el-input>
+                <el-input v-model="ruleForm.Mark" style="width:400px;"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
@@ -88,18 +89,16 @@
                 if (NodeId == '2') {
                     for (let d of that.dataList) {
                         for (let v of d.value) {
-                            if (v.Price == '') {
+                            if (v.Price == '' || v.Price == null) {
                                 this.elementAlert('提示信息', '有实际单价未填')
                                 return
                             }
                         }
                     }
                     let url = '/OfficeSuppliesPurchase/ModifyTable'
-                    console.log(taskId)
                     var param = []
-                    for (let p of that.dataList) {
+                    for (let d of that.dataList) {
                         for (let v of d.value) {
-                            v.TaskId = taskId
                             param.push(v)
                         }
                     }
@@ -111,10 +110,12 @@
                         })
                     }, param)
                 }
-                this.aggreSubmit({
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                })
+                else {
+                    this.aggreSubmit({
+                        "Id": allData.Id,
+                        "Remark": this.ruleForm.Mark
+                    })
+                }
             },
             returnBk() {
                 let param = {
