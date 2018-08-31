@@ -33,12 +33,12 @@
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
             </el-table-column>
-            <el-table-column prop="Price" label="单价(实际)" v-if="FlowId == '1' && nodeInfo.NodeId >= '2'">
+            @*<el-table-column prop="Price" label="单价(实际)" v-if="FlowId == '1' && nodeInfo.NodeId >= '2'">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row.Price" prop="Count" :disabled="nodeInfo.NodeId > '2'"
                               :class="{ redborder:scope.row.Price ==''}"></el-input>
                 </template>
-            </el-table-column>
+            </el-table-column>*@
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
@@ -135,6 +135,11 @@
         <template v-if="index==2 && state=='被退回'">
             <el-form-item>
                 <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
             </el-form-item>
         </template>
     </el-form>
@@ -302,7 +307,7 @@
                 Standard: '规格型号',
                 Unit: '单位',
                 Count: '数量',
-                ExpectPrice: '单价(预计)',
+                //ExpectPrice: '单价(预计)',
                 Purpose: '用途',
                 Mark: '备注'
             }
@@ -436,30 +441,7 @@
                 }
                 this.returnSubmit(param)
             },
-            //重新发起审批
-            reApproval() {
-                this.disablePage = true
-                var tmpPdfList = []
-                for (let pdf of this.pdfList) {
-                    if (pdf.state == '1') tmpPdfList.push(pdf)
-                }
-                ReApprovalTempData = {
-                    valid: true,
-                    data: this.data,
-                    dataArr: this.dataArr,
-                    ProjectId: this.ruleForm.ProjectId,
-                    Title: this.ruleForm.Title,
-                    imageList: this.imageList,
-                    fileList: this.fileList,
-                    pdfList: tmpPdfList,
-                    items: items
-                }
-                for (let img of imgConfig) {
-                    if (img.flowId == FlowId) {
-                        loadPage(img.url)
-                    }
-                }
-            },
+            
             //盖章并获取文件
             stampAndGet() {
                 FileUrl = FileUrl.replace(/\\/g, '\\\\')
@@ -663,6 +645,8 @@
 
         },
         created: function () {
+            //获取下一个节点的审批人id
+            this.GetDingList(TaskId)
             if (FlowId == '8') {
                 this.showStamp("采购管理员")
             }

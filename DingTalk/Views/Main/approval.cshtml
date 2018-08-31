@@ -5,7 +5,6 @@
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <br />
-    <el-button type="primary" v-on:click="addMemberTest()">钉一下</el-button>
     <template v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯'">
         <span>我是：</span>
         <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">

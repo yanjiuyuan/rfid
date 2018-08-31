@@ -41,7 +41,7 @@
                 <el-input v-model="UseKilometres" :disabled="true"></el-input>
             </el-form-item>
         </template>
-        
+
 
         @*<el-form-item label="起始公里数">
             <el-input v-model="ruleForm.StartKilometres" :disabled="true"></el-input>
@@ -69,6 +69,11 @@
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+            </el-form-item>
+        </template>
     </el-form>
 </el-main>
 
@@ -164,6 +169,7 @@
             this.getNodeInfo()
             this.getApproInfo()
             this.getUseCarTable()
+            this.GetDingList(TaskId)
             if (NodeId == '3' || NodeId == '4') this.reInput = true
             loadHtml("mainPage", "partPage")
         }
