@@ -58,6 +58,12 @@ namespace DingTalk.Controllers
                         tasks.TaskId = TaskId;
                         using (DDContext context = new DDContext())
                         {
+                            //判断是否与上一节点人员重复
+                            bool IsRepeat = false;
+                            if (taskList.IndexOf(tasks) > 0)
+                            {
+                                IsRepeat = tasks.ApplyManId == taskList[taskList.IndexOf(tasks) - 1].ApplyManId;
+                            }
                             //修改任务流状态
                             if (taskList.IndexOf(tasks) == 0)
                             {
@@ -77,25 +83,38 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
-                                if (taskList.IndexOf(tasks) == 1)
+                                //判断是否与上一节点人员重复
+                                if (IsRepeat)
                                 {
+                                    tasks.IsPost = false;
+                                    tasks.State = 1;
                                     tasks.IsEnable = 1;
+                                    tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                    context.Tasks.Add(tasks);
+                                    context.SaveChanges();
                                 }
                                 else
                                 {
-                                    if (tasks.NodeId == 1)
+                                    if (taskList.IndexOf(tasks) == 1)
                                     {
                                         tasks.IsEnable = 1;
                                     }
                                     else
                                     {
-                                        tasks.IsEnable = 0;  //选人跨节点，任务流暂时失效
+                                        if (tasks.NodeId == 1)
+                                        {
+                                            tasks.IsEnable = 1;
+                                        }
+                                        else
+                                        {
+                                            tasks.IsEnable = 0;  //选人跨节点，任务流暂时失效
+                                        }
                                     }
+                                    tasks.IsPost = false;
+                                    tasks.State = 0;
+                                    context.Tasks.Add(tasks);
+                                    context.SaveChanges();
                                 }
-                                tasks.IsPost = false;
-                                tasks.State = 0;
-                                context.Tasks.Add(tasks);
-                                context.SaveChanges();
                             }
 
 
@@ -112,7 +131,7 @@ namespace DingTalk.Controllers
                             }
                             else  //有选人
                             {
-                                if (taskList.IndexOf(tasks) == 1)
+                                if (taskList.IndexOf(tasks) > 0 && !IsRepeat)
                                 {
                                     //获取申请人提交表单信息
                                     FlowInfoServer fServer = new FlowInfoServer();
@@ -1173,7 +1192,7 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId).OrderByDescending(t => t.Id).First();
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderByDescending(t => t.Id).First();
                         Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
                         taskOld.Id = task.Id;
                         taskOld.NodeId = task.NodeId;
