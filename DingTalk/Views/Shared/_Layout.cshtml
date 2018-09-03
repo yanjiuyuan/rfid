@@ -137,7 +137,7 @@
                 console.log(result);
                 DingData.userid = result.emplId
                 DingData.isManager = result.isManager
-                DingData.nickName = result.nickName.subString(0,3)
+                DingData.nickName = result.nickName.substring(0,3)
                 console.log('免登成功')
                 console.log("你好，" + DingData.nickName)
                 var endTime = new Date()

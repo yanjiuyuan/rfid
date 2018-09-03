@@ -105,6 +105,7 @@
         </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
+            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
             @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
         </el-form-item>
     </el-form>
@@ -247,10 +248,23 @@
                 console.log('done eidt')
                 console.log(this.good.index)
                 console.log(this.purchaseList)
+            },
+            //显示临时保存数据
+            saveTempData() {
+                setLocalObj('officeSupplies', this.purchaseList)
+                this.elementAlert('提示信息','保存成功')
+            },
+            loadTempData() {
+                var data = getLocalObj('officeSupplies')
+                console.log('load officeSupplies')
+                console.log(data)
+                if (data && data.length && data.length > 0) this.purchaseList = data
+                localStorage.removeItem('officeSupplies')
             }
         },
         created: function () {
             //FlowId = 6
+            this.loadTempData()
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
