@@ -16,7 +16,7 @@
         </el-table-column>
         <el-table-column prop="Count" label="物料编码" width="100" v-if="NodeId > '0'">
             <template slot-scope="scope">
-                <el-input v-if="Index == '0' && NodeId == 1" v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
                 <span v-else>{{scope.row.CodeNumber}}</span>
             </template>
         </el-table-column>
@@ -168,7 +168,7 @@
             onSubmit(formName) {
                 console.log('submit!');
                 var that = this
-                if (NodeId == 1) {
+                if (NodeId == 2) {
                     for (let d of this.tableData) {
                         if (!d.CodeNumber) {
                             this.elementAlert('提示信息', '请输入物料编码')
