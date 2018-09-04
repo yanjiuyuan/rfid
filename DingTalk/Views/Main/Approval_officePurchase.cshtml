@@ -36,9 +36,7 @@
 
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
-                           :nodeid="nodeInfo.NodeId">
-        </sam-approver-list>
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
                 <el-input v-model="ruleForm.Mark" style="width:400px;"></el-input>
