@@ -636,7 +636,6 @@ namespace DingTalk.Controllers
                         string[] ListNodeName = NodeName.Split(',');
                         string[] ListPeopleId = PeopleId.Split(',');
                         string[] ListNodePeople = NodePeople.Split(',');
-
                         Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
