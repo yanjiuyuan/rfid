@@ -353,6 +353,7 @@ var mixin = {
                             console.log(data)
                             var taskId = JSON.parse(data).Content
                             console.log(paramArr)
+                            console.log(JSON.stringify(paramArr))
                             console.log(taskId)
                             callBack(taskId)
                         }
@@ -959,7 +960,7 @@ Vue.component('sam-approver-list', {
                             $("." + nodeId).remove()
                             node.AddPeople = data
                             for (let d of data) {
-                                $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name + '</span >')
+                                $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 3) + '</span >')
                             }
                         }
                     }
