@@ -117,7 +117,6 @@ namespace DingTalk.Controllers
                                 }
                             }
 
-
                             if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                             {
                                 //寻人推送
@@ -144,7 +143,7 @@ namespace DingTalk.Controllers
                                 {
                                     //寻人推送
                                     Dictionary<string, string> dic =
-                                    FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, 0);
+                                    FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, tasks.NodeId);
                                     if (dic["PeopleId"].ToString() != "")
                                     {
                                         //推送OA消息

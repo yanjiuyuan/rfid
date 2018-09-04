@@ -27,19 +27,19 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<CarTable> CarTable { get; set; }
         public virtual DbSet<Code> Code { get; set; }
         public virtual DbSet<FileInfos> FileInfos { get; set; }
+        public virtual DbSet<OfficeSupplies> OfficeSupplies { get; set; }
+        public virtual DbSet<OfficeSuppliesPurchase> OfficeSuppliesPurchase { get; set; }
+        public virtual DbSet<OverTime> OverTime { get; set; }
         public virtual DbSet<ProcedureInfo> ProcedureInfo { get; set; }
         public virtual DbSet<ProjectInfo> ProjectInfo { get; set; }
         public virtual DbSet<PurchaseDown> PurchaseDown { get; set; }
         public virtual DbSet<PurchaseProcedureInfo> PurchaseProcedureInfo { get; set; }
         public virtual DbSet<PurchaseTable> PurchaseTable { get; set; }
+        public virtual DbSet<Receiving> Receiving { get; set; }
         public virtual DbSet<Vote> Vote { get; set; }
         public virtual DbSet<Worker> Worker { get; set; }
         public virtual DbSet<WorkTime> WorkTime { get; set; }
-        public virtual DbSet<OverTime> OverTime { get; set; }
-        public virtual DbSet<OfficeSupplies> OfficeSupplies { get; set; }
 
-        public virtual DbSet<OfficeSuppliesPurchase> OfficeSuppliesPurchase { get; set; }
-        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Approve>()
@@ -370,6 +370,10 @@ namespace DingTalk.Models.DingModels
                 .Property(e => e.PdfState)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<Tasks>()
+                .Property(e => e.ProjectName)
+                .IsUnicode(false);
+
             modelBuilder.Entity<UserInfo>()
                 .Property(e => e.nickName)
                 .IsUnicode(false);
@@ -436,6 +440,10 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<Car>()
                 .Property(e => e.OccupyCarId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Car>()
+                .Property(e => e.UseTimes)
                 .IsUnicode(false);
 
             modelBuilder.Entity<CarTable>()
@@ -568,6 +576,142 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<FileInfos>()
                 .Property(e => e.MediaId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.CodeNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Standard)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Unit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Count)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Price)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Purpose)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.UrgentDate)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSupplies>()
+                .Property(e => e.ExpectPrice)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.CodeNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Standard)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Unit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Count)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Price)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.ExpectPrice)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Purpose)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.UrgentDate)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.ApplyMan)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OfficeSuppliesPurchase>()
+                .Property(e => e.Dept)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.DateTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.StartTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.EndTimeTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.UseTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.OverTimeContent)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<OverTime>()
+                .Property(e => e.EffectiveTime)
                 .IsUnicode(false);
 
             modelBuilder.Entity<ProcedureInfo>()
@@ -796,6 +940,50 @@ namespace DingTalk.Models.DingModels
 
             modelBuilder.Entity<PurchaseTable>()
                 .Property(e => e.Mark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.Id)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.TaskId)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.ReceivingUnit)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.ReceivingNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.FileNo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.ReceivingTime)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.MainIdea)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.Suggestion)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.Leadership)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.Review)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Receiving>()
+                .Property(e => e.HandleImplementation)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Vote>()
