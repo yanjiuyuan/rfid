@@ -328,6 +328,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\SwaggerNet.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Bussiness\EF\EFHelper.cs" />
     <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CarManangerController.cs" />
@@ -347,6 +348,7 @@
     <Compile Include="Controllers\PatentManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
+    <Compile Include="Controllers\ReceivingManagerController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
@@ -408,6 +410,7 @@
     <Compile Include="Models\DingModels\PurchaseDown.cs" />
     <Compile Include="Models\DingModels\PurchaseProcedureInfo.cs" />
     <Compile Include="Models\DingModels\PurchaseTable.cs" />
+    <Compile Include="Models\DingModels\Receiving.cs" />
     <Compile Include="Models\DingModels\Roles.cs" />
     <Compile Include="Models\DingModels\Tasks.cs" />
     <Compile Include="Models\DingModels\UserInfo.cs" />
@@ -425,6 +428,7 @@
     <Compile Include="Models\KisModels\t_ICItem.cs" />
     <Compile Include="Models\LinkMsgModel.cs" />
     <Compile Include="Models\MessageRequestBaseModel.cs" />
+    <Compile Include="Models\NewErrorModel.cs" />
     <Compile Include="Models\OATextModel.cs" />
     <Compile Include="Models\OfficeModels\OfficeModel.cs" />
     <Compile Include="Models\OfficeModels\t_ICItem.cs" />
