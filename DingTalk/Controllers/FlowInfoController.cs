@@ -1055,7 +1055,9 @@ namespace DingTalk.Controllers
                                         ApplyMan = n.NodePeople,
                                         ApplyTime = "",
                                         Remark = "",
-                                        IsSend = ""
+                                        IsSend = "",
+                                        IsNeedChose = n.IsNeedChose,
+                                        ChoseNodeId = n.ChoseNodeId
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
