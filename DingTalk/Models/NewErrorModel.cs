@@ -8,7 +8,7 @@ namespace DingTalk.Models
     public class NewErrorModel
     {
         public Error error { get; set; }
-        public object List { get; set; }
+        public object data { get; set; }
     }
 
     public class Error

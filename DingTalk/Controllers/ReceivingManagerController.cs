@@ -90,7 +90,7 @@ namespace DingTalk.Controllers
                 return new NewErrorModel()
                 {
                     error = new Error(0, "读取成功！", "") { },
-                    List = receivings
+                    data = receivings
                 };
             }
             catch (Exception ex)
