@@ -668,6 +668,8 @@
     <Content Include="Views\Main\Approval_workOvertime.cshtml" />
     <Content Include="Views\approval\OfficePurchase.cshtml" />
     <Content Include="Views\Main\Approval_officePurchase.cshtml" />
+    <Content Include="Views\approval\SendRead.cshtml" />
+    <Content Include="Views\Main\Approval_sendRead.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -140,6 +140,10 @@
                         loadPage('/Main/approval_officePurchase' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 19) {
+                        loadPage('/Main/approval_sendRead' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },

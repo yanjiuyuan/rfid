@@ -275,7 +275,32 @@ var mixin = {
             ], 
             EffectiveTime: [
                 { required: true, message: '有效时间不能为空！', trigger: 'change' }
+            ],
+            //文件阅办单表单
+            MainContent: [
+                { required: true, message: '文件标题不能为空！', trigger: 'blur' }
+            ],
+            ReceivingUnit: [
+                { required: true, message: '来文单位不能为空！', trigger: 'blur' }
+            ],
+            ReceivingTime: [
+                { required: true, message: '时间不能为空！', trigger: 'blur' }
             ], 
+            MainIdea: [
+                { required: true, message: '主要内容不能为空！', trigger: 'blur' }
+            ], 
+            Suggestion: [
+                { required: true, message: '拟办意见不能为空！', trigger: 'blur' }
+            ],
+            Leadership: [
+                { required: true, message: '领导阅示不能为空！', trigger: 'blur' }
+            ], 
+            Review: [
+                { required: true, message: '部门阅办情况不能为空！', trigger: 'blur' }
+            ],
+            HandleImplementation: [
+                { required: true, message: '办理落实情况不能为空！', trigger: 'blur' }
+            ],
         },
         pickerOptions: pickerOptions,
         showAddProject: false,
@@ -311,11 +336,11 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if (node.NodeName != '结束' && node.NodeId > 0) {
+                        if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
                             console.log(node)
                             console.log(node.ApplyMan)
                             console.log(node.AddPeople)
-                            if (!node.ApplyMan && node.AddPeople.length == 0) {
+                            if (node.AddPeople.length == 0) {
                                 this.$alert('您尚未选择审批人', '提交错误', {
                                     confirmButtonText: '确定',
                                     callback: action => {
@@ -736,6 +761,38 @@ var mixin = {
                 if (i == fileList.length - 1) break
                 this.ruleForm.ImageUrl += ','
                 this.ruleForm.OldImageUrl += ','
+            }
+        },
+
+        //文件上传处理方法
+        BeforeFileUpload(file) {
+            console.log('before file')
+            console.log(file)
+            file.name = 'helloWorld'
+            isPdf = false
+            const isLt2M = file.size / 1024 / 1024 < 30
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 30MB!')
+                return false
+            }
+            return true
+        },
+        HandleFileRemove(file, fileList) {
+            this.changePictureList(fileList)
+        },
+        HandleFileSuccess(response, file, fileList) {
+            this.changePictureList(fileList)
+        },
+        ChangeFileList(fileList) {
+            console.log(fileList)
+            this.ruleForm['FileUrl'] = ''
+            this.ruleForm['OldFileUrl'] = ''
+            for (var i = 0; i < fileList.length; i++) {
+                this.ruleForm.FileUrl += fileList[i].response.Content
+                this.ruleForm.OldFileUrl += fileList[i].name
+                if (i == fileList.length - 1) break
+                this.ruleForm.FileUrl += ','
+                this.ruleForm.OldFileUrl += ','
             }
         },
 
