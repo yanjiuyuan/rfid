@@ -219,6 +219,12 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
+
+                                //推送发起人
+                                SentCommonMsg(taskList[0].ApplyManId,
+                                string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", tasks.TaskId),
+                                taskList[0].ApplyMan, taskList[0].Remark, null);
+
                                 JsonConvert.SerializeObject(new ErrorModel
                                 {
                                     errorCode = 0,
