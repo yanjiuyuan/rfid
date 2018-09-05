@@ -61,7 +61,7 @@
         <el-table-column prop="DeptName" label="部门名称"></el-table-column>
         <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
         <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
-        <el-table-column prop="ProjectState" label="状态"></el-table-column>
+        <el-table-column prop="showProjectState" label="状态"></el-table-column>
         <el-table-column label="操作" style="width:300px;">
             <template slot-scope="scope" style="width:300px;">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -198,8 +198,11 @@
                         var dateStr = _dateToString(date)
                         console.log(dateStr)
                         for (let d of data) {
-                            if (d.ProjectState == '在研' && dateStr > d.EndTime )
-                                d.ProjectState += '-已延期'
+                            d["showProjectState"] = d.ProjectState
+                            if (d.ProjectState == '在研' && dateStr > d.EndTime) {
+                                //d.ProjectState += '-已延期'
+                                d.showProjectState += '-已延期'
+                            }
                         }
                         that.data = data
                         that.totalRows = data.length

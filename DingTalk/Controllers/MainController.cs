@@ -69,6 +69,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_sendRead()
+        {
+            return View();
+        }
         public ActionResult VoteList()
         {
             return View();
