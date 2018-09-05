@@ -58,7 +58,7 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<Receiving> eFHelper = new EFHelper<Receiving>();
-                eFHelper.ModifyAll(ReceivingList);
+                eFHelper.Modify(ReceivingList);
                 return new NewErrorModel()
                 {
                     error = new Error(0, "修改成功！", "") { },
