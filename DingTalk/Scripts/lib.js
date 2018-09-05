@@ -849,9 +849,10 @@ var tableData = [{
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
-    props: ['preset', 'nodelist', 'type', 'nodeid', 'single', 'specialRoles', 'specialRoleNames'],
+    props: ['nodedata', 'nodelist', 'single', 'specialRoles', 'specialRoleNames'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
+                        <h5></h5>
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
@@ -869,7 +870,7 @@ Vue.component('sam-approver-list', {
                                         :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
-                                    {{p}}
+                                    {{p.substring(0,3)}}
                                 </el-tag>
                                 
                                 <span v-if="node.NodeName=='抄送' && a < node.NodePeople.length-1">,</span>
@@ -889,11 +890,11 @@ Vue.component('sam-approver-list', {
                                         :type="node.ApplyTime?'success':''"
                                         style="width:60px;text-align:center;"
                                         >
-                                    {{ap.name}}
+                                    {{ap.name.substring(0,3)}}
                                 </el-tag>
                             </template>
 
-                           <template v-if="!preset && !node.ApplyMan && node.NodeName!='结束'">
+                           <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
@@ -1146,12 +1147,3 @@ Vue.component('sam-addapprover', {
 })
 
 
-  //  < template v-for="(p,b) in node.AddPeople" >
-  //      <el-tag :key="b"
-  //                                      :closable="true"
-  //          onclick="" 
-  //                                      :disable-transitions="false"
-  //          v-on:close="handleClose(p.emplId)">
-  //          {{ p.name }}
-  //      </el-tag>
-  //</template >

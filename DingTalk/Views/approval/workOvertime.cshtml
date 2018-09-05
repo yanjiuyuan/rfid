@@ -60,9 +60,7 @@
         <hr />
 
         <!--添加审批人-->
-        <sam-approver-list :preset="preApprove" :nodelist="nodeList" :type="'approve'" :single="true"
-                           :nodeid="nodeInfo.NodeId">
-        </sam-approver-list>
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
 
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
