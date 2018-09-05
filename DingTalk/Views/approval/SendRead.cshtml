@@ -17,16 +17,12 @@
             <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="文件标题" prop="MainContent">
-            <el-input v-model="ruleForm.MainContent" style="width:500px;"></el-input>
-        </el-form-item>
-
         <el-form-item label="来文单位" prop="ReceivingUnit">
             <el-input v-model="ruleForm.ReceivingUnit" style="width:500px;"></el-input>
         </el-form-item>
 
         <el-form-item label="文件文号">
-            <el-input v-model="ruleForm.FileNo " style="width:500px;"></el-input>
+            <el-input v-model="ruleForm.FileNo" style="width:500px;"></el-input>
         </el-form-item>
 
         <el-form-item label="收文时间" prop="ReceivingTime">
@@ -76,6 +72,7 @@
                 nodeList: [],
                 nodeInfo: {},
                 fileList: [],
+                mediaList: [],
                 ruleForm: {
                     ApplyMan: DingData.nickName,
                     MainContent: "",
@@ -112,6 +109,7 @@
                     Title: this.ruleForm.Title,
                     FileUrl: that.ruleForm.FileUrl,
                     OldFileUrl: that.ruleForm.OldFileUrl,
+                    MediaId: that.mediaList.join(','),
                 }, callBack)
             },
            

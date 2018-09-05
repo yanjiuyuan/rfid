@@ -10,15 +10,11 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="标题" prop="Title">
+        <el-form-item label="标题">
             <el-input v-model="allData.Title" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="allData.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-
-        <el-form-item label="文件标题" prop="MainContent">
-            <el-input v-model="ruleForm.MainContent" style="width:500px;"> :disabled="true"</el-input>
         </el-form-item>
 
         <el-form-item label="来文单位" prop="ReceivingUnit">
@@ -26,7 +22,7 @@
         </el-form-item>
 
         <el-form-item label="文件文号">
-            <el-input v-model="ruleForm.FileNo " style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.FileNo" style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="收文时间" prop="ReceivingTime">
@@ -38,7 +34,7 @@
         </el-form-item>
 
         <el-form-item label="主要内容" prop="MainIdea">
-            <el-input v-model="ruleForm.MainIdea " type="textarea" row="5" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.MainIdea" type="textarea" :row="5" style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
 
         <!--相关文件-->
@@ -52,33 +48,33 @@
         </el-form-item>
 
         <el-form-item label="拟办意见" prop="Suggestion">
-            <el-input v-model="ruleForm.Suggestion" :disabled="NodeId > 1"></el-input>
+            <el-input v-model="ruleForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1"></el-input>
         </el-form-item>
 
         <hr />
 
         <template v-if="NodeId >= 2">
             <el-form-item label="领导阅示" prop="Leadership">
-                <el-input v-model="ruleForm.Leadership" :disabled="NodeId>2"></el-input>
+                <el-input v-model="ruleForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>2"></el-input>
             </el-form-item>
         </template>
 
         <template v-if="NodeId >= 5">
             <el-form-item label="部门阅办情况" prop="Review">
-                <el-input v-model="ruleForm.Review" :disabled="NodeId>5"></el-input>
+                <el-input v-model="ruleForm.Review" style="width:500px;" :disabled="NodeId>5"></el-input>
             </el-form-item>
         </template>
 
         <template v-if="NodeId >= 6">
             <el-form-item label="办理落实情况" prop="HandleImplementation">
-                <el-input v-model="ruleForm.HandleImplementation" :disabled="NodeId>6"></el-input>
+                <el-input v-model="ruleForm.HandleImplementation" style="width:500px;" :disabled="NodeId>6"></el-input>
             </el-form-item>
         </template>
 
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark" style="width:500px;"></el-input>
+        <sam-approver-list :nodeList="nodeList" :single="false" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item label="建议">
+            <el-input v-model="ruleForm.Remark" style="width:500px;"></el-input>
         </el-form-item>
         <el-form-item label="操作" v-if="index==0">
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
@@ -88,8 +84,6 @@
 </el-main>
 
 <script>
-    var allData = {}
-    var FileList = []
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -102,9 +96,9 @@
         mixins: [mixin],
         data: function () {
             return {
-                FileList: FileList,
+                FileList: [],
                 index: Index,
-                allData: allData,
+                allData: {},
                 NodeId: NodeId,
                 nodeList: [],
                 nodeInfo: {},
@@ -120,29 +114,32 @@
                 var that = this
                 let url = '/CarTable/TableModify'
                 var param = _cloneObj(this.ruleForm)
-                param.UseKilometres = this.UseKilometres
-                this._postData(url, function () {
-                    that.aggreSubmit({
-                        "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark,
-                        //"ImageUrl": that.ruleForm.ImageUrl,
-                        //"OldImageUrl": that.ruleForm.OldImageUrl
-                    })
+                console.log(JSON.stringify(param))
+                this._postData(url, function (data) {
+                    //if (data.error.errorCode == 0) {
+                    //    that.aggreSubmit({
+                    //        "Id": that.allData.Id,
+                    //        "Remark": that.ruleForm.Remark,
+                    //    })
+                    //}
+                    //else {
+                    //    that.element.alert('提示信息','提交失败')
+                    //}
                 },param)
 
             },
             returnBk() {
                 let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
+                    "Id": that.allData.Id,
+                    "Remark": this.ruleForm.Remark
                 }
                 this.returnSubmit(param)
             },
             getTable() {
                 var that = this
-                that._getData('/Receiving/Read', function (data2) {
-                    that.ruleForm = data2[0]
-                    that.ruleForm['Mark'] = ''
+                that._getData('/Receiving/Read', function (data) {
+                    that.ruleForm = data.data[0]
+                    that.ruleForm['Remark'] = ''
                     
                 }
                     , { TaskId: TaskId })
@@ -170,13 +167,16 @@
                 console.log("获取审批表单信息ok")
                 console.log(url)
                 console.log(data)
-                allData = data
+                demo.allData = data
                 if (data.FileUrl && data.FileUrl.length > 5) {
-                    var tempList = data.FileUrl.split(',')
-                    for (let file of tempList) {
-                        FileList.push({
-                            name: 'hello.jpg',
-                            url: document.location + (file.substring(2)).replace(/\\/g, "/")
+                    var urlList = data.FileUrl.split(',')
+                    var oldUrlList = data.OldFileUrl.split(',')
+                    var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
+                    for (var i = 0; i < urlList.length; i++) {
+                        demo.FileList.push({
+                            name: oldUrlList[i],
+                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                            mediaId: MediaIdList[i]
                         })
                     }
                 }

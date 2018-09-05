@@ -778,10 +778,10 @@ var mixin = {
             return true
         },
         HandleFileRemove(file, fileList) {
-            this.changePictureList(fileList)
+            this.ChangeFileList(fileList)
         },
         HandleFileSuccess(response, file, fileList) {
-            this.changePictureList(fileList)
+            this.ChangeFileList(fileList)
         },
         ChangeFileList(fileList) {
             console.log(fileList)
