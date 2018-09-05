@@ -99,7 +99,7 @@ namespace DingTalk.EF
         /// </summary>
         /// <param name="model">要修改的实体对象</param>
         /// <param name="whereLambda">查询条件</param>
-        /// <param name="proNames">要修改的 属性 名称</param>
+        /// <param name="modifiedProNames">要修改的 属性 名称</param>
         /// <returns></returns>
         public int ModifyBy(T model, Expression<Func<T, bool>> whereLambda, params string[] modifiedProNames)
         {
@@ -180,6 +180,7 @@ namespace DingTalk.EF
         /// <param name="whereLambda">条件 lambda表达式</param>
         /// <param name="orderBy">排序 lambda表达式</param>
         /// <returns></returns>
+        
         public List<T> GetPagedList<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy)
         {
             // 分页 一定注意： Skip 之前一定要 OrderBy

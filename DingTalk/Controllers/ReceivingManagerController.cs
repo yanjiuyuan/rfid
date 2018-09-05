@@ -80,7 +80,7 @@ namespace DingTalk.Controllers
         /// <param name="taskId"></param>
         /// <returns></returns>
         [Route("Read")]
-        [HttpPost]
+        [HttpGet]
         public object ReadTable(string taskId)
         {
             try
