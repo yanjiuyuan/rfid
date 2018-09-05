@@ -60,8 +60,8 @@ namespace DingTalk.EF
             listDeleting.ForEach(u =>
             {
                 db.Set<T>().Attach(u);//先附加到 EF容器
-                    db.Set<T>().Remove(u);//标识为 删除 状态
-                });
+                db.Set<T>().Remove(u);//标识为 删除 状态
+            });
             //3.3一次性 生成sql语句到数据库执行删除
             return db.SaveChanges();
         }
@@ -89,6 +89,22 @@ namespace DingTalk.EF
                 entry.Property(proName).IsModified = true;
             }
             //4.4一次性 生成sql语句到数据库执行
+            return db.SaveChanges();
+        }
+        #endregion
+
+
+        #region 4.0 整个实体修改
+        /// <summary>
+        /// 修改整个实体
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int ModifyAll(T model)
+        {
+            //4.1将 对象 添加到 EF中
+            DbEntityEntry entry = db.Entry<T>(model);
+            entry.State = EntityState.Modified;
             return db.SaveChanges();
         }
         #endregion
@@ -180,7 +196,7 @@ namespace DingTalk.EF
         /// <param name="whereLambda">条件 lambda表达式</param>
         /// <param name="orderBy">排序 lambda表达式</param>
         /// <returns></returns>
-        
+
         public List<T> GetPagedList<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy)
         {
             // 分页 一定注意： Skip 之前一定要 OrderBy
