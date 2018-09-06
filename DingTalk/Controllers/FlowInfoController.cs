@@ -520,7 +520,7 @@ namespace DingTalk.Controllers
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
 
-                if (NodeName.Contains("抄送"))
+                if (NodeName == "抄送")
                 {
                     string[] ListNodeName = NodeName.Split(',');
                     string[] ListPeopleId = PeopleId.Split(',');
@@ -534,7 +534,6 @@ namespace DingTalk.Controllers
                         {
                             TaskId = OldTaskId,
                             ApplyMan = ListNodePeople[i],
-                            //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
                             IsEnable = 1,
                             NodeId = NodeId + 1,
                             FlowId = Int32.Parse(FlowId),
@@ -578,13 +577,22 @@ namespace DingTalk.Controllers
                 {
                     string PreNodeId = context.NodeInfo.Where(f => f.NodeId == NodeId).First().PreNodeId;
                     Tasks tasks = context.Tasks.Where(t => t.TaskId == OldTaskId && t.NodeId.ToString() == PreNodeId).First();
-                    tasks.IsEnable = 1;
-                    context.Entry<Tasks>(tasks).State = EntityState.Modified;
-                    context.SaveChanges();
+                    if (tasks.IsSend == false)
+                    {
+                        tasks.IsEnable = 1;
+                        context.Entry<Tasks>(tasks).State = EntityState.Modified;
+                        context.SaveChanges();
 
-                    dic["PeopleId"] = tasks.ApplyManId;
-                    dic["NodePeople"] = tasks.ApplyMan;
-                    return dic;
+                        dic["PeopleId"] = tasks.ApplyManId;
+                        dic["NodePeople"] = tasks.ApplyMan;
+                        return dic;
+                    }
+                    else
+                    {
+                        //string FindNodeIdFind = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PreNodeId;
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                    }
+
                 }
 
                 if (PeopleId == null && IsNeedChose == false)  //找不到人、且不需要找人时继续查找下一节点人员
@@ -617,7 +625,6 @@ namespace DingTalk.Controllers
                                 {
                                     TaskId = OldTaskId,
                                     ApplyMan = ListNodePeople[i],
-                                    //ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
                                     IsEnable = 1,
                                     NodeId = NodeId + 1,
                                     FlowId = Int32.Parse(FlowId),
@@ -664,6 +671,7 @@ namespace DingTalk.Controllers
                                 IsPost = false,
                                 ProjectId = Task.ProjectId,
                             };
+                            context.Tasks.Add(newTask);
                         }
                         context.SaveChanges();
                     }
