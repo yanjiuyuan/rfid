@@ -1087,7 +1087,7 @@ namespace DingTalk.Controllers
                                         ApplyMan = tt == null ? n.NodePeople : tt.ApplyMan,
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,
-                                        IsSend = tt == null ? false : tt.IsSend
+                                        IsSend = tt == null ? n.IsSend : tt.IsSend
                                     };
                         return JsonConvert.SerializeObject(Quary);
                     }
