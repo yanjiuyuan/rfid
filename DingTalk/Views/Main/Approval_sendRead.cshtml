@@ -112,19 +112,19 @@
                 console.log('submit!')
 
                 var that = this
-                let url = '/CarTable/TableModify'
+                let url = '/Receiving/Modify'
                 var param = _cloneObj(this.ruleForm)
                 console.log(JSON.stringify(param))
                 this._postData(url, function (data) {
-                    //if (data.error.errorCode == 0) {
-                    //    that.aggreSubmit({
-                    //        "Id": that.allData.Id,
-                    //        "Remark": that.ruleForm.Remark,
-                    //    })
-                    //}
-                    //else {
-                    //    that.element.alert('提示信息','提交失败')
-                    //}
+                    if (data.error.errorCode == 0) {
+                        that.aggreSubmit({
+                            "Id": that.allData.Id,
+                            "Remark": that.ruleForm.Remark,
+                        })
+                    }
+                    else {
+                        that.element.alert('提示信息','提交失败')
+                    }
                 },param)
 
             },
