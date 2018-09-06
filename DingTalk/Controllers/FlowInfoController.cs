@@ -520,7 +520,7 @@ namespace DingTalk.Controllers
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
 
-                if (NodeName == "抄送")
+                if (NodeName.Contains("抄送"))
                 {
                     string[] ListNodeName = NodeName.Split(',');
                     string[] ListPeopleId = PeopleId.Split(',');
