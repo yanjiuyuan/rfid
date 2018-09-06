@@ -110,7 +110,7 @@
                        :on-remove="handleFileRemove"
                        :before-remove="isPdfFile = false"
                        :before-upload="beforeFileUpload"
-                       :on-success="handleFileCardSuccess"
+                       :on-success="HandleFileSuccess"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -420,63 +420,7 @@
                     }
                 })
             },
-            handleFileCardSuccess(response, file, fileList) {
-                var that = this
-                var paramObj = {
-                    "": file.response.Content
-                }
-                $.ajax({
-                    url: '/DingTalkServers/UploadMedia/',
-                    type: 'POST',
-                    data: paramObj,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('上传文件到钉盘')
-                        console.log('/api/dt/uploadMedia/')
-                        console.log(paramObj)
-                        if (data.media_id) {
-                            console.log(data.media_id)
-                            //isPdf ? that.mediaPdfList.push(data.media_id) : that.mediaList.push(data.media_id)
-                            that.mediaList.push(data.media_id)
-                        } else {
-                            console.log('无media_di')
-                        }
-                        //that.isPdfFile ? that.pdfList = _cloneArr(fileList) : that.fileList = _cloneArr(fileList)
-                        that.fileList = _cloneArr(fileList)
-                    }
-                })
-            },
-            fileListToUrl() {
-                console.log('拼接文件url list')
-                console.log(this.fileList)
-                console.log(this.pdfList)
-
-                this.ruleForm.FilePDFUrl = ''
-                this.ruleForm.OldFilePDFUrl = ''
-
-                this.ruleForm.FileUrl = ''
-                this.ruleForm.OldFileUrl = ''
-                for (var i = 0; i < this.pdfList.length; i++) {
-                    this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
-                    this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
-                    if (i == this.pdfList.length - 1) break
-                    this.ruleForm.FilePDFUrl += ','
-                    this.ruleForm.OldFilePDFUrl += ','
-                }
-                for (var i = 0; i < this.fileList.length; i++) {
-                    this.ruleForm.FileUrl += this.fileList[i].response.Content
-                    this.ruleForm.OldFileUrl += this.fileList[i].name
-                    if (i == this.fileList.length - 1) break
-                    this.ruleForm.FileUrl += ','
-                    this.ruleForm.OldFileUrl += ','
-                }
-                console.log(this.ruleForm.FilePDFUrl)
-                console.log(this.ruleForm.OldFilePDFUrl)
-                console.log(this.ruleForm.FileUrl)
-                console.log(this.ruleForm.OldFileUrl)
-                console.log('拼接文件url list ok')
-                return true
-            },
+            
             beforeExcelUpload(file) {
                 console.log('before excel')
                 console.log(file)
@@ -517,7 +461,7 @@
                 isPdf = false
                 const isLt2M = file.size / 1024 / 1024 < 30
                 if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 30MB!')
+                    this.$message.error('上传文件大小不能超过 30MB!')
                     return false
                 }
                 this.isPdfFile = false

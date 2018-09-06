@@ -92,6 +92,7 @@
                 var that = this
                 let url = '/Receiving/save'
                 var param = _cloneObj(this.ruleForm)
+                this.fileListToUrl()
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId

@@ -413,18 +413,18 @@ var mixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if (node.NodeId == this.nodeInfo.NodeId) {
+                if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
                     for (let a of node.AddPeople) {
                         let tmpParam = {
                             "ApplyMan": a.name,
-                            "ApplyManId": a.userid,
+                            "ApplyManId": a.emplId,
                             "TaskId": TaskId,
                             "ApplyTime": null,
                             "IsEnable": 1,
                             "FlowId": FlowId,
-                            "NodeId": NodeId,
+                            "NodeId": node.NodeId,
                             "Remark": null,
-                            "IsSend": false,
+                            "IsSend": node.IsSend,
                             "State": 0,
                             "ImageUrl": null,
                             "FileUrl": null,
@@ -781,7 +781,28 @@ var mixin = {
             this.ChangeFileList(fileList)
         },
         HandleFileSuccess(response, file, fileList) {
-            this.ChangeFileList(fileList)
+            var that = this
+            var paramObj = {
+                "": file.response.Content
+            }
+            $.ajax({
+                url: '/DingTalkServers/UploadMedia/',
+                type: 'POST',
+                data: paramObj,
+                success: function (data) {
+                    data = JSON.parse(data)
+                    console.log('上传文件到钉盘')
+                    console.log('/api/dt/uploadMedia/')
+                    console.log(paramObj)
+                    if (data.media_id) {
+                        console.log(data.media_id)
+                        that.mediaList.push(data.media_id)
+                    } else {
+                        console.log('无media_di')
+                    }
+                    that.fileList = _cloneArr(fileList)
+                }
+            })
         },
         ChangeFileList(fileList) {
             console.log(fileList)
@@ -794,6 +815,40 @@ var mixin = {
                 this.ruleForm.FileUrl += ','
                 this.ruleForm.OldFileUrl += ','
             }
+        },
+        fileListToUrl() {
+            console.log('拼接文件url list')
+            console.log(this.fileList)
+            console.log(this.pdfList)
+            this.ruleForm.FilePDFUrl = ''
+            this.ruleForm.OldFilePDFUrl = ''
+
+            this.ruleForm.FileUrl = ''
+            this.ruleForm.OldFileUrl = ''
+            if (this.pdfList) {
+                for (var i = 0; i < this.pdfList.length; i++) {
+                    this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
+                    this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
+                    if (i == this.pdfList.length - 1) break
+                    this.ruleForm.FilePDFUrl += ','
+                    this.ruleForm.OldFilePDFUrl += ','
+                }
+            }
+            if (this.fileList) {
+                for (var i = 0; i < this.fileList.length; i++) {
+                    this.ruleForm.FileUrl += this.fileList[i].response.Content
+                    this.ruleForm.OldFileUrl += this.fileList[i].name
+                    if (i == this.fileList.length - 1) break
+                    this.ruleForm.FileUrl += ','
+                    this.ruleForm.OldFileUrl += ','
+                }
+            }
+            console.log(this.ruleForm.FilePDFUrl)
+            console.log(this.ruleForm.OldFilePDFUrl)
+            console.log(this.ruleForm.FileUrl)
+            console.log(this.ruleForm.OldFileUrl)
+            console.log('拼接文件url list ok')
+            return true
         },
 
         //根据taskId获取下一个需要审批的人，即要钉的人
@@ -853,11 +908,11 @@ var mixin = {
                         that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
                             confirmButtonText: '确定',
                             callback: action => {
-                                if (callBack) callBack()
+                                if (callBack) callBack(data)
                             }
                         })
                     } else {
-                        callBack()
+                        callBack(data)
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
