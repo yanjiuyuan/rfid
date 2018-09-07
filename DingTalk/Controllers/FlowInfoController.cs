@@ -597,6 +597,31 @@ namespace DingTalk.Controllers
                     }
                 }
 
+                if (NodeName == "抄送所有人")
+                {
+                    List<Tasks> TasksList = context.Tasks.Where(t => t.TaskId == OldTaskId).ToList();
+                    //context.Tasks.Where(t => t.TaskId == OldTaskId).Select(h => h.ApplyManId).Distinct().ToList();
+                    List<string> AppplyManIdList = new List<string>();
+                    foreach (var task in TasksList)
+                    {
+                        if (!AppplyManIdList.Contains(task.ApplyManId))
+                        {
+                            AppplyManIdList.Add(task.ApplyManId);
+                            task.IsSend = true;
+                            task.NodeId = NodeId;
+                            task.IsEnable = 1;
+                            task.State = 0;
+                        }
+                        context.Tasks.Add(task);
+                        context.SaveChanges();
+                        //推送抄送消息
+                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                        SentCommonMsg(task.ApplyManId,
+                        string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
+                        Task.ApplyMan, Task.Remark, null);
+                    }
+                }
+
                 if (NodeName == "结束")
                 {
                     return dic;
@@ -1159,7 +1184,7 @@ namespace DingTalk.Controllers
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? n.IsSend : tt.IsSend
                                     };
-                        Quary = Quary.OrderBy(q => q.NodeId).ThenByDescending(h=>h.ApplyTime);
+                        Quary = Quary.OrderBy(q => q.NodeId).ThenByDescending(h => h.ApplyTime);
                         return JsonConvert.SerializeObject(Quary);
                     }
                 }

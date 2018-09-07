@@ -58,11 +58,25 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<Receiving> eFHelper = new EFHelper<Receiving>();
+                Receiving QuaryReceiving = eFHelper.GetListBy(t => t.Id == ReceivingList.Id).First();
+                if (string.IsNullOrEmpty(QuaryReceiving.Review))
+                {
+                    QuaryReceiving.Review = ReceivingList.Review;
+                }
+                else
+                {
+                    QuaryReceiving.Review += "~" + ReceivingList.Review;
+                }
 
-
-                eFHelper.Modify(ReceivingList);
-                
-
+                if (string.IsNullOrEmpty(QuaryReceiving.HandleImplementation))
+                {
+                    QuaryReceiving.HandleImplementation = ReceivingList.HandleImplementation;
+                }
+                else
+                {
+                    QuaryReceiving.HandleImplementation += "~" + ReceivingList.HandleImplementation;
+                }
+                eFHelper.Modify(QuaryReceiving);
                 return new NewErrorModel()
                 {
                     error = new Error(0, "修改成功！", "") { },
