@@ -296,9 +296,13 @@ namespace DingTalk.Controllers
                                     if (i == 1)  //防止重复推送
                                     {
                                         //推送OA消息
-                                        SentCommonMsg(tasks.ApplyManId,
-                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                        taskNew.ApplyMan, taskNew.Remark, null);
+                                        string[] PeopleIdList = dic["PeopleId"].Split(',');
+                                        foreach (var PeopleId in PeopleIdList)
+                                        {
+                                            SentCommonMsg(PeopleId,
+                                       string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
+                                       taskNew.ApplyMan, taskNew.Remark, null);
+                                        }
                                         i++;
                                     }
                                 }
@@ -535,6 +539,9 @@ namespace DingTalk.Controllers
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
                 bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).IsNeedChose;
+                //判断流程多人提交(当前步骤)
+                bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;
+
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("NodeName", NodeName);
                 dic.Add("NodePeople", NodePeople);
@@ -596,22 +603,57 @@ namespace DingTalk.Controllers
                 if (string.IsNullOrEmpty(NodePeople) && string.IsNullOrEmpty(PeopleId))
                 {
                     string PreNodeId = context.NodeInfo.Where(f => f.NodeId == NodeId).First().PreNodeId;
-                    Tasks tasks = context.Tasks.Where(t => t.TaskId == OldTaskId && t.NodeId.ToString() == PreNodeId).First();
-                    if (tasks.IsSend == false)
+                    List<Tasks> taskList = context.Tasks.Where(t => t.TaskId == OldTaskId && t.NodeId.ToString() == PreNodeId).ToList();
+                    int iCount = 0;
+                    foreach (var tasks in taskList)
                     {
-                        tasks.IsEnable = 1;
-                        context.Entry<Tasks>(tasks).State = EntityState.Modified;
-                        context.SaveChanges();
-
-                        dic["PeopleId"] = tasks.ApplyManId;
-                        dic["NodePeople"] = tasks.ApplyMan;
-                        return dic;
+                        if (tasks.IsSend == false)  //非抄送
+                        {
+                            //查找当前是否还有人未审核
+                            List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0).ToList();
+                            if (ListTask.Count > 0)  //还有人未审核
+                            {
+                                return dic;
+                            }
+                            if (IsAllAllow != true)  //逐一审核
+                            {
+                                if (iCount == 0)
+                                {
+                                    dic["PeopleId"] = tasks.ApplyManId;
+                                    dic["NodePeople"] = tasks.ApplyMan;
+                                    tasks.IsEnable = 1;
+                                }
+                                else
+                                {
+                                    tasks.IsEnable = 0;
+                                }
+                                iCount++;
+                            }
+                            else  //同时审核
+                            {
+                                if (iCount == 0)
+                                {
+                                    iCount++;
+                                    dic["PeopleId"] = tasks.ApplyManId;
+                                    dic["NodePeople"] = tasks.ApplyMan;
+                                    tasks.IsEnable = 1;
+                                }
+                                else
+                                {
+                                    dic["PeopleId"] += "," + tasks.ApplyManId;
+                                    dic["NodePeople"] += "," + tasks.ApplyMan;
+                                    tasks.IsEnable = 1;
+                                }
+                            }
+                            context.Entry<Tasks>(tasks).State = EntityState.Modified;
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                        }
                     }
-                    else
-                    {
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
-                    }
-
+                    return dic;
                 }
 
                 if (PeopleId == null && IsNeedChose == false)  //找不到人、且不需要找人时继续查找下一节点人员
@@ -620,8 +662,6 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
-                    //判断流程多人提交(当前步骤)
-                    bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;
                     if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
                     {
                         //查找当前是否还有人未审核
