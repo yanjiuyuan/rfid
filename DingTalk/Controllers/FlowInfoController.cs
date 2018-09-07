@@ -201,11 +201,33 @@ namespace DingTalk.Controllers
                 else
                 {
                     List<Tasks> taskList = JsonHelper.JsonToObject<List<Tasks>>(stream);
+
+                    //获取申请人提交表单信息
+                    FlowInfoServer fServer = new FlowInfoServer();
+                    Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
+
+                    if (taskList.Count > 1)  //如果有选人
+                    {
+                        using (DDContext contexts = new DDContext())
+                        {
+                            foreach (var task in taskList)
+                            {
+                                if (taskList.IndexOf(task) > 0)
+                                {
+                                    task.IsEnable = 0;
+                                    contexts.Tasks.Add(task);
+                                    contexts.SaveChanges();
+                                }
+                            }
+                        }
+                    }
+
                     //调用寻人接口
                     Tasks Findtasks = taskList[0];
                     Dictionary<string, string> dic = new Dictionary<string, string>();
                     dic = FindNextPeople(Findtasks.FlowId.ToString(), Findtasks.ApplyManId, true, Findtasks.IsSend,
-                        Findtasks.TaskId, Findtasks.NodeId);
+                    Findtasks.TaskId, Findtasks.NodeId);
+                    int i = 1; //推送次数
 
                     foreach (var tasks in taskList)
                     {
@@ -254,15 +276,11 @@ namespace DingTalk.Controllers
                                 else
                                 {
                                     //创建流程推送(选人)
-                                    tasks.IsPost = false;
-                                    tasks.State = 0;
-                                    context.Tasks.Add(tasks);
-                                    context.SaveChanges();
+                                    //tasks.IsPost = false;
+                                    //tasks.State = 0;
+                                    //context.Tasks.Add(tasks);
+                                    //context.SaveChanges();
                                 }
-
-                                //获取申请人提交表单信息
-                                FlowInfoServer fServer = new FlowInfoServer();
-                                Tasks taskNew = fServer.GetApplyManFormInfo(tasks.TaskId.ToString());
                                 if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                                 {
                                     //当前节点所有任务流已完成
@@ -276,12 +294,15 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
-                                    //推送OA消息
-                                    SentCommonMsg(tasks.ApplyManId,
-                                    string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
-                                    taskNew.ApplyMan, taskNew.Remark, null);
+                                    if (i == 1)  //防止重复推送
+                                    {
+                                        //推送OA消息
+                                        SentCommonMsg(tasks.ApplyManId,
+                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", taskNew.TaskId),
+                                        taskNew.ApplyMan, taskNew.Remark, null);
+                                        i++;
+                                    }
                                 }
-
                             }
                         }
                     }
@@ -589,7 +610,6 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        //string FindNodeIdFind = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PreNodeId;
                         return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
 
