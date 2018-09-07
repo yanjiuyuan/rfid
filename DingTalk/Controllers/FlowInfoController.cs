@@ -217,7 +217,7 @@ namespace DingTalk.Controllers
                                     {
                                         //推送抄送消息
                                         SentCommonMsg(task.ApplyManId,
-                                        string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
+                                        string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", task.TaskId),
                                         taskNew.ApplyMan, taskNew.Remark, null);
                                         task.IsEnable = 1;
                                     }
