@@ -76,20 +76,18 @@
             <el-form-item label="办理落实情况" prop="HandleImplementation" v-if="NodeId == 6">
                 <el-input v-model="ruleForm.HandleImplementation" style="width:500px;" :disabled="NodeId>6"></el-input>
 
-                <el-form-item label="上传文件" required="required">
-                    <el-upload class="upload-demo"
-                               drag
-                               :file-list="fileList"
-                               action="/drawingupload/Upload"
-                               :on-remove="HandleFileRemove"
-                               :before-upload="BeforeFileUpload"
-                               :on-success="HandleFileSuccess"
-                               multiple>
-                        <i class="el-icon-upload"></i>
-                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <div class="el-upload__tip" slot="tip">不超过30M</div>
-                    </el-upload>
-                </el-form-item>
+                <el-upload class="upload-demo"
+                            drag
+                            :file-list="fileList"
+                            action="/drawingupload/Upload"
+                            :on-remove="HandleFileRemove"
+                            :before-upload="BeforeFileUpload"
+                            :on-success="HandleFileSuccess"
+                            multiple>
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">不超过30M</div>
+                </el-upload>
 
             </el-form-item>
             <el-form-item label="办理落实情况" v-else>
@@ -127,6 +125,8 @@
         data: function () {
             return {
                 FileList: [],
+                fileList: [],
+                mediaList: [],
                 index: Index,
                 allData: {},
                 NodeId: NodeId,
@@ -152,8 +152,11 @@
                 this._postData(url, function (data) {
                     if (data.error.errorCode == 0) {
                         that.aggreSubmit({
-                            "Id": that.allData.Id,
-                            "Remark": that.ruleForm.Remark,
+                            Id: that.allData.Id,
+                            Remark: that.ruleForm.Remark,
+                            FileUrl: that.ruleForm.FileUrl,
+                            OldFileUrl: that.ruleForm.OldFileUrl,
+                            MediaId: that.mediaList.join(','),
                         })
                     }
                     else {
@@ -174,8 +177,12 @@
                 that._getData('/Receiving/Read', function (data) {
                     that.ruleForm = data.data[0]
                     that.ruleForm['Remark'] = ''
-                    that.ReviewList = data.data[0].Review.split('`')
-                    that.HandleImplementationList = data.data[0].HandleImplementation.split('`')
+                    if (data.error.errorCode != 0) {
+                        that.elementAlert('提示信息', error.errorMessage)
+                        return
+                    }
+                    if (data.data[0].Review) that.ReviewList = data.data[0].Review.split('`')
+                    if (data.data[0].HandleImplementation) that.HandleImplementationList = data.data[0].HandleImplementation.split('`')
                 }
                     , { TaskId: TaskId })
             },
