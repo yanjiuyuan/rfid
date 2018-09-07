@@ -597,10 +597,26 @@ var mixin = {
                     console.log(result)
                     that.isBack = result[0].IsBack
                     that.nodeList = _cloneArr(result)
+                    let lastNode = {}
+                    let tempNodeList = []
+                    //审批人分组
+                    for (let node of that.nodeList) {
+                        if (lastNode.NodeName == node.NodeName && !lastNode.ApplyTime && !node.ApplyTime) {
+                            tempNodeList[tempNodeList.length - 1].ApplyMan = tempNodeList[tempNodeList.length - 1].ApplyMan + ',' + node.ApplyMan
+                        }
+                        else {
+                            tempNodeList.push(node)
+                        }
+                        lastNode = node
+                    }
+                    that.nodeList = _cloneArr(tempNodeList)
+
                     for (let node of that.nodeList) {
                         node['AddPeople'] = []
+                        //抄送人分组
                         if (node.ApplyMan && node.ApplyMan.length > 0)
                             node.NodePeople = node.ApplyMan.split(',')
+                        //申请人设置当前人信息
                         if (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan) {
                             node.ApplyMan = DingData.nickName
                             node.AddPeople = [{
@@ -608,7 +624,6 @@ var mixin = {
                                 emplId: DingData.userid
                             }]
                         }
-                    
                     }
                     
                     //that.preApprove = !data[0].IsNeedChose
@@ -984,7 +999,7 @@ Vue.component('sam-approver-list', {
                             </el-tag>
 
                             <template v-for="(p,a) in node.NodePeople">
-                                <span v-if="a>0 && node.NodeName!='抄送'" style="margin-left:137px;">&nbsp;</span>
+                                <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
                                 <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
@@ -996,7 +1011,7 @@ Vue.component('sam-approver-list', {
                                     {{p.substring(0,3)}}
                                 </el-tag>
                                 
-                                <span v-if="node.NodeName=='抄送' && a < node.NodePeople.length-1">,</span>
+                                <span v-if="(node.NodeName=='抄送' || !node.ApplyTime) && a < node.NodePeople.length-1">,</span>
                                 <template v-else>
                                     <p class='applytime'>{{node.ApplyTime}}</p>
                                     <p class='remark'>{{node.Remark}}</p>
