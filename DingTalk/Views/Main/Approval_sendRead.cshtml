@@ -63,22 +63,26 @@
             <el-form-item label="部门阅办情况" prop="Review" v-if="NodeId == 5">
                 <el-input v-model="ruleForm.Review" style="width:500px;" :disabled="NodeId>5"></el-input>
             </el-form-item>
-            <el-card v-else>
-                <div v-for="r in ReviewList" :key="r" class="text item">
-                    {{r}}
-                </div>
-            </el-card>
+            <el-form-item label="部门阅办情况" v-else>
+                <el-card>
+                    <div v-for="r in ReviewList" :key="r" class="text item">
+                        {{r}}
+                    </div>
+                </el-card>
+            </el-form-item>
         </template>
 
         <template v-if="NodeId >= 6">
             <el-form-item label="办理落实情况" prop="HandleImplementation" v-if="NodeId == 6">
                 <el-input v-model="ruleForm.HandleImplementation" style="width:500px;" :disabled="NodeId>6"></el-input>
             </el-form-item>
-            <el-card class="box-card" v-else>
-                <div v-for="h in HandleImplementationList" :key="h" class="text item">
-                    {{h}}
-                </div>
-            </el-card>
+            <el-form-item label="办理落实情况" v-else>
+                <el-card class="box-card">
+                    <div v-for="h in HandleImplementationList" :key="h" class="text item">
+                        {{h}}
+                    </div>
+                </el-card>
+            </el-form-item>
         </template>
 
         <!--添加审批人-->
@@ -126,7 +130,7 @@
                 var that = this
                 let url = '/Receiving/Modify'
                 var param = _cloneObj(this.ruleForm)
-                NodeId == 5 ? param.Review = DingData.dept + '-' + DingData.nickName + ': ' + param.Review : param.Review = ''
+                NodeId == 5 ? param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review : param.Review = ''
                 NodeId == 6 ? param.HandleImplementation = DingData.dept + '-' + DingData.nickName + ': ' + param.HandleImplementation : param.HandleImplementation = ''
                 console.log(JSON.stringify(param))
                 this._postData(url, function (data) {
