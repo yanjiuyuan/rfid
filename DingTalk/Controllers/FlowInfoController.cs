@@ -201,7 +201,6 @@ namespace DingTalk.Controllers
                 else
                 {
                     List<Tasks> taskList = JsonHelper.JsonToObject<List<Tasks>>(stream);
-
                     //获取申请人提交表单信息
                     FlowInfoServer fServer = new FlowInfoServer();
                     Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
