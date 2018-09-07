@@ -613,7 +613,7 @@ namespace DingTalk.Controllers
                     }
                 }
                 //查找当前是否还有人未审核
-                List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0).ToList();
+                List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0 && u.IsSend!=true).ToList();
                 if (ListTask.Count > 0)  //还有人未审核
                 {
                     return dic;
