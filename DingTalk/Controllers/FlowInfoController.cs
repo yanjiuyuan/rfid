@@ -596,32 +596,41 @@ namespace DingTalk.Controllers
                         return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                 }
-
-                if (NodeName == "抄送所有人")
+                //查找当前是否还有人未审核
+                List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0).ToList();
+                if (ListTask.Count > 0)  //还有人未审核
                 {
-                    List<Tasks> TasksList = context.Tasks.Where(t => t.TaskId == OldTaskId).ToList();
-                    //context.Tasks.Where(t => t.TaskId == OldTaskId).Select(h => h.ApplyManId).Distinct().ToList();
-                    List<string> AppplyManIdList = new List<string>();
-                    foreach (var task in TasksList)
-                    {
-                        if (!AppplyManIdList.Contains(task.ApplyManId))
-                        {
-                            AppplyManIdList.Add(task.ApplyManId);
-                            task.IsSend = true;
-                            task.NodeId = NodeId;
-                            task.IsEnable = 1;
-                            task.State = 0;
-                        }
-                        context.Tasks.Add(task);
-                        context.SaveChanges();
-                        //推送抄送消息
-                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
-                        SentCommonMsg(task.ApplyManId,
-                        string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
-                        Task.ApplyMan, Task.Remark, null);
-                    }
                     return dic;
                 }
+                else
+                {
+                    if (NodeName == "抄送所有人")
+                    {
+                        List<Tasks> TasksList = context.Tasks.Where(t => t.TaskId == OldTaskId).ToList();
+                        //context.Tasks.Where(t => t.TaskId == OldTaskId).Select(h => h.ApplyManId).Distinct().ToList();
+                        List<string> AppplyManIdList = new List<string>();
+                        foreach (var task in TasksList)
+                        {
+                            if (!AppplyManIdList.Contains(task.ApplyManId))
+                            {
+                                AppplyManIdList.Add(task.ApplyManId);
+                                task.IsSend = true;
+                                task.NodeId = NodeId;
+                                task.IsEnable = 1;
+                                task.State = 0;
+                            }
+                            context.Tasks.Add(task);
+                            context.SaveChanges();
+                            //推送抄送消息
+                            Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                            SentCommonMsg(task.ApplyManId,
+                            string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
+                            Task.ApplyMan, Task.Remark, null);
+                        }
+                        return dic;
+                    }
+                }
+                    
 
                 if (NodeName == "结束")
                 {
@@ -639,7 +648,6 @@ namespace DingTalk.Controllers
                         if (tasks.IsSend == false)  //非抄送
                         {
                             //查找当前是否还有人未审核
-                            List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0).ToList();
                             if (ListTask.Count > 0)  //还有人未审核
                             {
                                 return dic;
