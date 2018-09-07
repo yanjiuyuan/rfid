@@ -75,6 +75,22 @@
         <template v-if="NodeId >= 6">
             <el-form-item label="办理落实情况" prop="HandleImplementation" v-if="NodeId == 6">
                 <el-input v-model="ruleForm.HandleImplementation" style="width:500px;" :disabled="NodeId>6"></el-input>
+
+                <el-form-item label="上传文件" required="required">
+                    <el-upload class="upload-demo"
+                               drag
+                               :file-list="fileList"
+                               action="/drawingupload/Upload"
+                               :on-remove="HandleFileRemove"
+                               :before-upload="BeforeFileUpload"
+                               :on-success="HandleFileSuccess"
+                               multiple>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">不超过30M</div>
+                    </el-upload>
+                </el-form-item>
+
             </el-form-item>
             <el-form-item label="办理落实情况" v-else>
                 <el-card class="box-card">
