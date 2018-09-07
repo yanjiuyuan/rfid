@@ -226,7 +226,7 @@ namespace DingTalk.Controllers
                     Dictionary<string, string> dic = new Dictionary<string, string>();
                     dic = FindNextPeople(Findtasks.FlowId.ToString(), Findtasks.ApplyManId, true, Findtasks.IsSend,
                     Findtasks.TaskId, Findtasks.NodeId);
-                    int i = 1; //推送次数
+                    int i = 1; //控制推送次数
 
                     foreach (var tasks in taskList)
                     {
@@ -293,17 +293,20 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
-                                    if (i == 1)  //防止重复推送
+                                    if (dic["PeopleId"] != null)
                                     {
-                                        //推送OA消息
-                                        string[] PeopleIdList = dic["PeopleId"].Split(',');
-                                        foreach (var PeopleId in PeopleIdList)
+                                        if (i == 1)  //防止重复推送
                                         {
-                                            SentCommonMsg(PeopleId,
-                                       string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                       taskNew.ApplyMan, taskNew.Remark, null);
+                                            //推送OA消息
+                                            string[] PeopleIdList = dic["PeopleId"].Split(',');
+                                            foreach (var PeopleId in PeopleIdList)
+                                            {
+                                                SentCommonMsg(PeopleId,
+                                           string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
+                                           taskNew.ApplyMan, taskNew.Remark, null);
+                                            }
+                                            i++;
                                         }
-                                        i++;
                                     }
                                 }
                             }
