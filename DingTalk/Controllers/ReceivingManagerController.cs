@@ -59,6 +59,10 @@ namespace DingTalk.Controllers
             {
                 EFHelper<Receiving> eFHelper = new EFHelper<Receiving>();
                 Receiving QuaryReceiving = eFHelper.GetListBy(t => t.Id == ReceivingList.Id).First();
+                QuaryReceiving.Leadership = ReceivingList.Leadership;
+                QuaryReceiving.MainIdea = ReceivingList.MainIdea;
+                QuaryReceiving.Suggestion = ReceivingList.Suggestion;
+                QuaryReceiving.Leadership = ReceivingList.Leadership;
                 if (string.IsNullOrEmpty(QuaryReceiving.Review))
                 {
                     QuaryReceiving.Review = ReceivingList.Review;
