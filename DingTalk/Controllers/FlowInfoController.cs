@@ -606,7 +606,7 @@ namespace DingTalk.Controllers
                 {
                     if (NodeName == "抄送相应部门部长")
                     {
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, Int32.Parse(FindNodeId) + 1);
                     }
                     if (NodeName == "抄送所有人")
                     {
