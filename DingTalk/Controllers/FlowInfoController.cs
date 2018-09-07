@@ -627,7 +627,7 @@ namespace DingTalk.Controllers
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
                             Task.ApplyMan, Task.Remark, null);
                         }
-                        return dic;
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                 }
                     
@@ -702,7 +702,6 @@ namespace DingTalk.Controllers
                     if (IsAllAllow == true)   //流程配置为所有人同时同意后提交
                     {
                         //查找当前是否还有人未审核
-                        List<Tasks> ListTask = context.Tasks.Where(u => u.TaskId == OldTaskId && u.FlowId.ToString() == FlowId && u.NodeId == NodeId && u.NodeId != 0 && u.ApplyManId != ApplyManId && u.State == 0).ToList();
                         if (ListTask.Count > 0)  //还有人未审核
                         {
                             return dic;
