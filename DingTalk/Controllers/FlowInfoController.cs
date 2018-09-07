@@ -620,6 +620,7 @@ namespace DingTalk.Controllers
                         string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
                         Task.ApplyMan, Task.Remark, null);
                     }
+                    return dic;
                 }
 
                 if (NodeName == "结束")
