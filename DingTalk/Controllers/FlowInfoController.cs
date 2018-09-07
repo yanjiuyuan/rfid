@@ -1159,6 +1159,7 @@ namespace DingTalk.Controllers
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? n.IsSend : tt.IsSend
                                     };
+                        Quary = Quary.OrderBy(q => q.NodeId).ThenByDescending(h=>h.ApplyTime);
                         return JsonConvert.SerializeObject(Quary);
                     }
                 }
