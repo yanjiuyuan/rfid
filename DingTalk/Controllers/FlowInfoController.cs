@@ -604,6 +604,10 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
+                    if (NodeName == "抄送相应部门部长")
+                    {
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                    }
                     if (NodeName == "抄送所有人")
                     {
                         List<Tasks> TasksList = context.Tasks.Where(t => t.TaskId == OldTaskId).ToList();
