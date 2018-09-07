@@ -213,7 +213,18 @@ namespace DingTalk.Controllers
                             {
                                 if (taskList.IndexOf(task) > 0)
                                 {
-                                    task.IsEnable = 0;
+                                    if (task.IsSend == true)
+                                    {
+                                        //推送抄送消息
+                                        SentCommonMsg(task.ApplyManId,
+                                        string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
+                                        taskNew.ApplyMan, taskNew.Remark, null);
+                                        task.IsEnable = 1;
+                                    }
+                                    else
+                                    {
+                                        task.IsEnable = 0;
+                                    }
                                     contexts.Tasks.Add(task);
                                     contexts.SaveChanges();
                                 }
@@ -550,6 +561,11 @@ namespace DingTalk.Controllers
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
 
+
+                if (NodeName == "结束")
+                {
+                    return dic;
+                }
                 if (NodeName == "抄送")
                 {
                     string[] ListNodeName = NodeName.Split(',');
@@ -593,7 +609,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, Int32.Parse(FindNodeId) + 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                 }
                 //查找当前是否还有人未审核
@@ -606,7 +622,7 @@ namespace DingTalk.Controllers
                 {
                     if (NodeName == "抄送相应部门部长")
                     {
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, Int32.Parse(FindNodeId) + 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                     if (NodeName == "抄送所有人")
                     {
@@ -635,11 +651,6 @@ namespace DingTalk.Controllers
                     }
                 }
 
-
-                if (NodeName == "结束")
-                {
-                    return dic;
-                }
 
                 //节点表找不到人，任务表找
                 if (string.IsNullOrEmpty(NodePeople) && string.IsNullOrEmpty(PeopleId))
