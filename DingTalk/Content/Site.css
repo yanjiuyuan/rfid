@@ -9,7 +9,13 @@
 .box-card {
     width: 680px;
 }
+.text {
+    font-size: 14px;
+}
 
+.item {
+    padding: 18px 0;
+}
 hr {
     height: 1px;
     border: none;
