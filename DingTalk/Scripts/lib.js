@@ -414,6 +414,16 @@ var mixin = {
             }
             for (let node of this.nodeList) {
                 if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
+                    if (node.AddPeople.length == 0) {
+                        this.$alert('您尚未选择审批人', '提交错误', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
+                        that.disablePage = false
+                        return
+                    }
                     for (let a of node.AddPeople) {
                         let tmpParam = {
                             "ApplyMan": a.name,
@@ -447,6 +457,7 @@ var mixin = {
                 dataType: "json",
                 success: function (data) {
                     console.log(paramArr)
+                    console.log(JSON.stringify(paramArr))
                     console.log(data)
                     if (data && data.errorCode == 0) {
                         that.$alert('审批成功', '操作成功', {
