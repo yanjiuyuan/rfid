@@ -615,7 +615,7 @@ namespace DingTalk.Controllers
                             {
                                 AppplyManIdList.Add(task.ApplyManId);
                                 task.IsSend = true;
-                                task.NodeId = NodeId;
+                                task.NodeId = NodeId + 1;
                                 task.IsEnable = 1;
                                 task.State = 0;
                             }
@@ -630,7 +630,7 @@ namespace DingTalk.Controllers
                         return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                 }
-                    
+
 
                 if (NodeName == "结束")
                 {
