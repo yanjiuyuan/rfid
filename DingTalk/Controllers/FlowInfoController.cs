@@ -609,7 +609,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, FindNodeId + 1);
                     }
                 }
                 //查找当前是否还有人未审核
