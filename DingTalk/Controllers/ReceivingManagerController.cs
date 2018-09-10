@@ -63,11 +63,7 @@ namespace DingTalk.Controllers
                 QuaryReceiving.MainIdea = ReceivingList.MainIdea;
                 QuaryReceiving.Suggestion = ReceivingList.Suggestion;
                 QuaryReceiving.Leadership = ReceivingList.Leadership;
-                if (string.IsNullOrEmpty(ReceivingList.Review))
-                {
-                    //QuaryReceiving.Review = QuaryReceiving.Review;
-                }
-                else
+                if (!string.IsNullOrEmpty(ReceivingList.Review))
                 {
                     if (string.IsNullOrEmpty(QuaryReceiving.Review))
                     {
@@ -79,13 +75,16 @@ namespace DingTalk.Controllers
                     }
                 }
 
-                if (string.IsNullOrEmpty(QuaryReceiving.HandleImplementation))
+                if (!string.IsNullOrEmpty(ReceivingList.HandleImplementation))
                 {
-                    QuaryReceiving.HandleImplementation = ReceivingList.HandleImplementation;
-                }
-                else
-                {
-                    QuaryReceiving.HandleImplementation += "~" + ReceivingList.HandleImplementation;
+                    if (string.IsNullOrEmpty(QuaryReceiving.HandleImplementation))
+                    {
+                        QuaryReceiving.HandleImplementation += ReceivingList.HandleImplementation;
+                    }
+                    else
+                    {
+                        QuaryReceiving.HandleImplementation += "~" + ReceivingList.HandleImplementation;
+                    }
                 }
                 eFHelper.Modify(QuaryReceiving);
                 return new NewErrorModel()
