@@ -53,9 +53,9 @@
 
         <hr />
 
-        <template v-if="NodeId >= 2">
+        <template v-if="NodeId >= 3">
             <el-form-item label="领导阅示" prop="Leadership">
-                <el-input v-model="ruleForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>2"></el-input>
+                <el-input v-model="ruleForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>3"></el-input>
             </el-form-item>
         </template>
 
@@ -147,7 +147,7 @@
                 let url = '/Receiving/Modify'
                 var param = _cloneObj(this.ruleForm)
                 NodeId == 5 ? param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review : param.Review = ''
-                NodeId == 6 ? param.HandleImplementation = DingData.dept + '-' + DingData.nickName + ': ' + param.HandleImplementation : param.HandleImplementation = ''
+                NodeId == 6 ? param.HandleImplementation = DingData.departName + '-' + DingData.nickName + ': ' + param.HandleImplementation : param.HandleImplementation = ''
                 console.log(JSON.stringify(param))
                 this._postData(url, function (data) {
                     if (data.error.errorCode == 0) {
@@ -177,12 +177,14 @@
                 that._getData('/Receiving/Read', function (data) {
                     that.ruleForm = data.data[0]
                     that.ruleForm['Remark'] = ''
+                    if (NodeId == 5) that.ruleForm.Review = ''
+                    if (NodeId == 6) that.ruleForm.HandleImplementation = ''
                     if (data.error.errorCode != 0) {
                         that.elementAlert('提示信息', error.errorMessage)
                         return
                     }
-                    if (data.data[0].Review) that.ReviewList = data.data[0].Review.split('`')
-                    if (data.data[0].HandleImplementation) that.HandleImplementationList = data.data[0].HandleImplementation.split('`')
+                    if (data.data[0].Review) that.ReviewList = data.data[0].Review.split('~')
+                    if (data.data[0].HandleImplementation) that.HandleImplementationList = data.data[0].HandleImplementation.split('~')
                 }
                     , { TaskId: TaskId })
             },
