@@ -635,6 +635,8 @@ namespace DingTalk.Controllers
                             {
                                 AppplyManIdList.Add(task.ApplyManId);
                                 task.IsSend = true;
+                                task.ApplyTime = "";
+                                task.Remark = "";
                                 task.NodeId = NodeId + 1;
                                 task.IsEnable = 1;
                                 task.State = 0;
