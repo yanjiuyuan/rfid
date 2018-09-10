@@ -280,6 +280,25 @@ namespace DingTalk.Controllers
                                     tasksApplyMan.ImageUrl = tasks.ImageUrl;
                                     tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
                                     tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    if (string.IsNullOrEmpty(tasksApplyMan.FileUrl))
+                                    {
+                                        if (string.IsNullOrEmpty(tasks.FileUrl))
+                                        {
+                                            tasksApplyMan.FileUrl = "," + tasks.FileUrl;
+                                            tasksApplyMan.OldFileUrl = "," + tasks.OldFileUrl;
+                                            tasksApplyMan.MediaId = "," + tasks.MediaId;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (string.IsNullOrEmpty(tasks.FileUrl))
+                                        {
+                                            tasksApplyMan.FileUrl = tasks.FileUrl;
+                                            tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
+                                            tasksApplyMan.MediaId = tasks.MediaId;
+                                        }
+                                    }
+
                                     context.Entry(tasksApplyMan).State = EntityState.Modified;
                                     context.SaveChanges();
                                 }
@@ -560,7 +579,7 @@ namespace DingTalk.Controllers
                 string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
                 bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).IsNeedChose;
                 //判断流程多人提交(当前步骤)
-                bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;                
+                bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
 
@@ -647,7 +666,7 @@ namespace DingTalk.Controllers
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
                             Task.ApplyMan, Task.Remark, null);
                         }
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId+ 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                 }
 
