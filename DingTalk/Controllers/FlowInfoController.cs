@@ -548,24 +548,22 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
                 string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == NodeId).PreNodeId;
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodeName;
-                string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
-                string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
-                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).IsNeedChose;
-                //判断流程多人提交(当前步骤)
-                bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;
-
-                Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("NodeName", NodeName);
-                dic.Add("NodePeople", NodePeople);
-                dic.Add("PeopleId", PeopleId);
-
-
                 if (NodeName == "结束")
                 {
                     return dic;
                 }
+                string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
+                string NodePeople = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodePeople;
+                bool? IsNeedChose = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).IsNeedChose;
+                //判断流程多人提交(当前步骤)
+                bool? IsAllAllow = context.NodeInfo.Where(u => u.NodeId == NodeId && u.FlowId == FlowId).First().IsAllAllow;                
+                dic.Add("NodePeople", NodePeople);
+                dic.Add("PeopleId", PeopleId);
+
                 if (NodeName == "抄送")
                 {
                     string[] ListNodeName = NodeName.Split(',');
@@ -609,7 +607,7 @@ namespace DingTalk.Controllers
                     }
                     else
                     {
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, Int32.Parse(FindNodeId) + 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
                 }
                 //查找当前是否还有人未审核
@@ -640,16 +638,16 @@ namespace DingTalk.Controllers
                                 task.NodeId = NodeId + 1;
                                 task.IsEnable = 1;
                                 task.State = 0;
+                                context.Tasks.Add(task);
+                                context.SaveChanges();
                             }
-                            context.Tasks.Add(task);
-                            context.SaveChanges();
                             //推送抄送消息
                             Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                             SentCommonMsg(task.ApplyManId,
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
                             Task.ApplyMan, Task.Remark, null);
                         }
-                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                        return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId+ 1);
                     }
                 }
 
