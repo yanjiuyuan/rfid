@@ -8,7 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         公车申请审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form id="pageContent" :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="标题">
             <el-input v-model="allData.Title" style="width:300px;" :disabled="true"></el-input>
@@ -77,13 +77,13 @@
                 <el-input v-model="ruleForm.HandleImplementation" style="width:500px;" :disabled="NodeId>6"></el-input>
 
                 <el-upload class="upload-demo"
-                            drag
-                            :file-list="fileList"
-                            action="/drawingupload/Upload"
-                            :on-remove="HandleFileRemove"
-                            :before-upload="BeforeFileUpload"
-                            :on-success="HandleFileSuccess"
-                            multiple>
+                           drag
+                           :file-list="fileList"
+                           action="/drawingupload/Upload"
+                           :on-remove="HandleFileRemove"
+                           :before-upload="BeforeFileUpload"
+                           :on-success="HandleFileSuccess"
+                           multiple>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">不超过30M</div>
@@ -101,21 +101,34 @@
 
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="false" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="建议">
-            <el-input v-model="ruleForm.Remark" style="width:500px;"></el-input>
-        </el-form-item>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
-        </el-form-item>
+        <template v-if="index==0">
+            <el-form-item label="建议">
+                <el-input v-model="ruleForm.Remark" style="width:500px;"></el-input>
+            </el-form-item>
+            <el-form-item label="操作">
+                <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
+                <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+            </el-form-item>
+        </template>
     </el-form>
+
+    <div id="capture" style="padding: 10px; background: #f5da55">
+        <h4 style="color: #000; ">Hello world!</h4>
+    </div>
 </el-main>
 
 <script>
+    var state = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
+        state = UrlObj.state
         Id = UrlObj.id
         var Index = UrlObj.index
     }
@@ -132,6 +145,7 @@
                 NodeId: NodeId,
                 nodeList: [],
                 nodeInfo: {},
+                state: state,
                 ReviewList: [],
                 HandleImplementationList: [],
                 ruleForm: {
@@ -142,13 +156,32 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
-
+                this.disablePage = true
                 var that = this
                 let url = '/Receiving/Modify'
                 var param = _cloneObj(this.ruleForm)
-                NodeId == 5 ? param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review : param.Review = ''
-                NodeId == 6 ? param.HandleImplementation = DingData.departName + '-' + DingData.nickName + ': ' + param.HandleImplementation : param.HandleImplementation = ''
+                this.fileListToUrl()
+                if (NodeId == 5) {
+                    if (!this.ruleForm.Review) {
+                        this.elementAlert('提示','请填写部门阅办情况')
+                        return
+                    }
+                    param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review
+                } else {
+                    param.Review = ''
+                }
+                if (NodeId == 6) {
+                    if (!this.ruleForm.HandleImplementation) {
+                        this.elementAlert('提示', '请填写落实情况')
+                        return
+                    }
+                    param.HandleImplementation = DingData.departName + '-' + DingData.nickName + ': ' + param.HandleImplementation
+                } else {
+                    param.HandleImplementation = ''
+                } 
                 console.log(JSON.stringify(param))
+                //console.log(param)
+                //return
                 this._postData(url, function (data) {
                     if (data.error.errorCode == 0) {
                         that.aggreSubmit({
@@ -191,9 +224,34 @@
 
         },
         created: function () {
+            //获取下一个节点的审批人id
+            this.GetDingList(TaskId)
             this.getNodeInfo()
             this.getApproInfo()
             this.getTable()
+
+            ////要转换为图片的dom对象
+            //var element = document.querySelector('#pageContent');
+            ////要显示图片的img标签
+            //var image = document.querySelector('#img');
+
+            //html2canvas(element).then(function (canvas) {
+            //    var imageData = canvas.toDataURL(1);
+            //    console.log('hello world')
+            //    console.log(canvas)
+            //    console.log(element)
+            //    console.log(image)
+            //    console.log(imageData)
+            //    image.src = imageData;
+            //})
+
+            html2canvas(document.querySelector("#capture")).then(canvas => {
+                console.log('hello world')
+                var imageData = canvas.toDataURL(1);
+                console.log(imageData)
+                document.body.appendChild(canvas)
+            });
+
             loadHtml("mainPage", "partPage")
         }
     })
