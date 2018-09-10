@@ -12,6 +12,7 @@ namespace DingTalk.Controllers
     /// </summary>
     public class PatentManagerController : ApiController
     {
+
         
     }
 }
