@@ -280,9 +280,9 @@ namespace DingTalk.Controllers
                                     tasksApplyMan.ImageUrl = tasks.ImageUrl;
                                     tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
                                     tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                    if (string.IsNullOrEmpty(tasksApplyMan.FileUrl))
+                                    if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
                                     {
-                                        if (string.IsNullOrEmpty(tasks.FileUrl))
+                                        if (!string.IsNullOrEmpty(tasks.FileUrl))
                                         {
                                             tasksApplyMan.FileUrl = "," + tasks.FileUrl;
                                             tasksApplyMan.OldFileUrl = "," + tasks.OldFileUrl;
@@ -291,14 +291,13 @@ namespace DingTalk.Controllers
                                     }
                                     else
                                     {
-                                        if (string.IsNullOrEmpty(tasks.FileUrl))
+                                        if (!string.IsNullOrEmpty(tasks.FileUrl))
                                         {
                                             tasksApplyMan.FileUrl = tasks.FileUrl;
                                             tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
                                             tasksApplyMan.MediaId = tasks.MediaId;
                                         }
                                     }
-
                                     context.Entry(tasksApplyMan).State = EntityState.Modified;
                                     context.SaveChanges();
                                 }
