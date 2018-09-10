@@ -63,13 +63,20 @@ namespace DingTalk.Controllers
                 QuaryReceiving.MainIdea = ReceivingList.MainIdea;
                 QuaryReceiving.Suggestion = ReceivingList.Suggestion;
                 QuaryReceiving.Leadership = ReceivingList.Leadership;
-                if (string.IsNullOrEmpty(QuaryReceiving.Review))
+                if (string.IsNullOrEmpty(ReceivingList.Review))
                 {
-                    QuaryReceiving.Review = ReceivingList.Review;
+                    //QuaryReceiving.Review = QuaryReceiving.Review;
                 }
                 else
                 {
-                    QuaryReceiving.Review += "~" + ReceivingList.Review;
+                    if (string.IsNullOrEmpty(QuaryReceiving.Review))
+                    {
+                        QuaryReceiving.Review += ReceivingList.Review;
+                    }
+                    else
+                    {
+                        QuaryReceiving.Review += "~" + ReceivingList.Review;
+                    }
                 }
 
                 if (string.IsNullOrEmpty(QuaryReceiving.HandleImplementation))
