@@ -284,9 +284,9 @@ namespace DingTalk.Controllers
                                     {
                                         if (!string.IsNullOrEmpty(tasks.FileUrl))
                                         {
-                                            tasksApplyMan.FileUrl = "," + tasks.FileUrl;
-                                            tasksApplyMan.OldFileUrl = "," + tasks.OldFileUrl;
-                                            tasksApplyMan.MediaId = "," + tasks.MediaId;
+                                            tasksApplyMan.FileUrl = tasksApplyMan.FileUrl+"," + tasks.FileUrl;
+                                            tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl+"," + tasks.OldFileUrl;
+                                            tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
                                         }
                                     }
                                     else
