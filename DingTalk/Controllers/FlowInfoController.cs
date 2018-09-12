@@ -253,9 +253,9 @@ namespace DingTalk.Controllers
                                 context.SaveChanges();
 
                                 //推送发起人
-                                SentCommonMsg(taskList[0].ApplyManId,
+                                SentCommonMsg(taskNew.ApplyManId,
                                 string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", tasks.TaskId),
-                                taskList[0].ApplyMan, taskList[0].Remark, null);
+                                taskNew.ApplyMan, taskNew.Remark, null);
 
                                 JsonConvert.SerializeObject(new ErrorModel
                                 {

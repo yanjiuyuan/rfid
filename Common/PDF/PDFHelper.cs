@@ -51,10 +51,11 @@ namespace Common.PDF
         /// <param name="contentWithList">表单宽度数组</param>
         /// <param name="dtSourse">表单数据</param>
         /// <param name="dtApproveView">审批意见数据</param>
+        ///  <param name="keyValuePairs">表单单列数据</param>
         public string GeneratePDF(string FlowName, string TaskId, string ApplyName,
             string ApplyTime, string ProjectName, string ImageNo, float ImageX, float ImageY
             , List<string> contentList, float[] contentWithList
-            , DataTable dtSourse, DataTable dtApproveView)
+            , DataTable dtSourse, DataTable dtApproveView, Dictionary<string, string> keyValuePairs)
         {
             doc = new Document(PageSize.A4);
             try
@@ -81,8 +82,7 @@ namespace Common.PDF
                 CreateEmptyRow(1);//生成一行空行
 
                 AddPartnerContents("流水号", TaskId, "申请人", ApplyName);
-                AddPartnerContents("申请时间", ApplyTime, "所属项目", ProjectName);
-
+                if (!string.IsNullOrEmpty(ProjectName)) { AddPartnerContents("申请时间", ApplyTime, "所属项目", ProjectName); }
                 AddPageNumberContent();//添加页码
                 CreateEmptyRow(1);//生成一行空行
 
@@ -108,48 +108,50 @@ namespace Common.PDF
                 #region 生成表格数据
 
 
-
-                PdfPTable table = new PdfPTable(contentList.Count);
-
-                //添加表格列头   
-                foreach (var item in contentList)
+                if (contentList != null)
                 {
-                    table.AddCell(GetPdfCell(item, fontSmallNoBold, Element.ALIGN_CENTER));
-                }
-                //添加表格列头宽度   
-                table.SetTotalWidth(contentWithList);
+                    PdfPTable table = new PdfPTable(contentList.Count);
 
-                if (dtSourse.Rows.Count > 0)
-                {
-                    for (int i = 0; i < dtSourse.Rows.Count; i++)
+                    //添加表格列头   
+                    foreach (var item in contentList)
                     {
-                        //DataRow row = dtSourse.Rows[i];
-                        //table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                        table.AddCell(GetPdfCell((i + 1).ToString(), fontTableSmallNoBold, Element.ALIGN_CENTER));
-                        for (int j = 0; j < dtSourse.Columns.Count; j++)
+                        table.AddCell(GetPdfCell(item, fontSmallNoBold, Element.ALIGN_CENTER));
+                    }
+                    //添加表格列头宽度   
+                    table.SetTotalWidth(contentWithList);
+
+                    if (dtSourse.Rows.Count > 0)
+                    {
+                        for (int i = 0; i < dtSourse.Rows.Count; i++)
                         {
-                            table.AddCell(GetPdfCell((dtSourse.Rows[i][j]).ToString(), fontTableSmallNoBold, Element.ALIGN_CENTER));
+                            table.AddCell(GetPdfCell((i + 1).ToString(), fontTableSmallNoBold, Element.ALIGN_CENTER));
+                            for (int j = 0; j < dtSourse.Columns.Count; j++)
+                            {
+                                table.AddCell(GetPdfCell((dtSourse.Rows[i][j]).ToString(), fontTableSmallNoBold, Element.ALIGN_CENTER));
+                            }
                         }
                     }
+                    doc.Add(table);
                 }
-                //for (int i = 0; i < dtSourse.Rows.Count; i++)
-                //{
-                //    DataRow row = dtSourse.Rows[i];
-                //    table.AddCell(GetPdfCell((i + 1).ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-
-                //    table.AddCell(GetPdfCell(row["DrawingNo"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["Name"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["Count"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["MaterialScience"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["Unit"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["Brand"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["Sorts"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //    table.AddCell(GetPdfCell(row["Mark"].ToString(), fontSmallNoBold, Element.ALIGN_CENTER));
-                //}
-
-
-                doc.Add(table);
                 #endregion
+
+                #region 生成表格单行数据
+
+                if (keyValuePairs != null)
+                {
+                    PdfPTable table = new PdfPTable(2);
+                    float[] fList = { 40, 200 };
+                    table.SetTotalWidth(fList);
+                    foreach (var item in keyValuePairs.Keys)
+                    {
+                        table.AddCell(GetPdfCell(item, fontTableSmallNoBold, Element.ALIGN_CENTER));
+                        table.AddCell(GetPdfCell(keyValuePairs[item], fontTableSmallNoBold, Element.ALIGN_LEFT));
+                    }
+                    doc.Add(table);
+                }
+
+                #endregion
+
 
 
                 #region 打印审批人

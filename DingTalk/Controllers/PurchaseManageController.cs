@@ -214,7 +214,7 @@ namespace DingTalk.Controllers
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView);
+                    ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView,null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
                     
                     List<string> newPaths = new List<string>();

@@ -1,4 +1,5 @@
-﻿using DingTalk.Bussiness.FlowInfo;
+﻿using Common.PDF;
+using DingTalk.Bussiness.FlowInfo;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
@@ -50,7 +51,7 @@ namespace DingTalk.Controllers
                         }
                     }
                     List<OfficeSupplies> officeSupplies = context.OfficeSupplies.ToList();
-                   
+
                     var Quary = from t in officeModeldList
                                 join o in officeSupplies
                                 on t.taskId equals o.TaskId
@@ -184,6 +185,8 @@ namespace DingTalk.Controllers
             }
         }
     }
+
+
 
     public class OfficeModels
     {
