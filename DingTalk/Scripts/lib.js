@@ -804,7 +804,7 @@ var mixin = {
             return true
         },
         HandleFileRemove(file, fileList) {
-            this.ChangeFileList(fileList)
+            this.fileList = _cloneArr(fileList)
         },
         HandleFileSuccess(response, file, fileList) {
             var that = this
@@ -823,6 +823,7 @@ var mixin = {
                     if (data.media_id) {
                         console.log(data.media_id)
                         that.mediaList.push(data.media_id)
+                        //that.ruleForm
                     } else {
                         console.log('无media_di')
                     }
@@ -830,25 +831,9 @@ var mixin = {
                 }
             })
         },
-        ChangeFileList(fileList) {
-            console.log(fileList)
-            this.ruleForm['FileUrl'] = ''
-            this.ruleForm['OldFileUrl'] = ''
-            for (var i = 0; i < fileList.length; i++) {
-                this.ruleForm.FileUrl += fileList[i].response.Content
-                this.ruleForm.OldFileUrl += fileList[i].name
-                if (i == fileList.length - 1) break
-                this.ruleForm.FileUrl += ','
-                this.ruleForm.OldFileUrl += ','
-            }
-        },
         fileListToUrl() {
-            console.log('拼接文件url list')
-            console.log(this.fileList)
-            console.log(this.pdfList)
             this.ruleForm.FilePDFUrl = ''
             this.ruleForm.OldFilePDFUrl = ''
-
             this.ruleForm.FileUrl = ''
             this.ruleForm.OldFileUrl = ''
             if (this.pdfList) {
@@ -869,11 +854,6 @@ var mixin = {
                     this.ruleForm.OldFileUrl += ','
                 }
             }
-            console.log(this.ruleForm.FilePDFUrl)
-            console.log(this.ruleForm.OldFilePDFUrl)
-            console.log(this.ruleForm.FileUrl)
-            console.log(this.ruleForm.OldFileUrl)
-            console.log('拼接文件url list ok')
             return true
         },
 
