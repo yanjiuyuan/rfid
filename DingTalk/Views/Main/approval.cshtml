@@ -223,6 +223,9 @@
             }
         },
         created: function () {
+
+            var node = document.getElementById('content');
+            
             this.getMenu()
             this.getUserInfo()
             loadHtml("mainPage", "partPage")

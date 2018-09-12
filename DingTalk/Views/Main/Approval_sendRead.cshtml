@@ -8,8 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         公车申请审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form id="pageContent" :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
+    <el-form id="formImg" :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="标题">
             <el-input v-model="allData.Title" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
@@ -110,16 +109,16 @@
                 <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
             </el-form-item>
         </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item>
+        <template v-if="index==2">
+            <el-form-item v-if="state=='未完成'">
                 <ding :dinglist="dingList"></ding>
+            </el-form-item>
+            <el-form-item v-else>
+                <el-button type="primary" v-on:click="print" :disabeld="disablePage">打印</el-button>
             </el-form-item>
         </template>
     </el-form>
 
-    <div id="capture" style="padding: 10px; background: #f5da55">
-        <h4 style="color: #000; ">Hello world!</h4>
-    </div>
 </el-main>
 
 <script>
@@ -221,7 +220,17 @@
                 }
                     , { TaskId: TaskId })
             },
-
+            print() {
+                var that = this
+                var param = { taskId: TaskId, UserId: DingData.userid }
+                console.log('打印开始')
+                console.log(param)
+                this._getData('/Receiving/GetReport', function (data) {
+                    console.log('打印结果')
+                    console.log(data)
+                    that.elementAlert('提示信息',data.error.errorMessage)
+                }, param)
+            }
         },
         created: function () {
             //获取下一个节点的审批人id
@@ -229,28 +238,6 @@
             this.getNodeInfo()
             this.getApproInfo()
             this.getTable()
-
-            ////要转换为图片的dom对象
-            //var element = document.querySelector('#pageContent');
-            ////要显示图片的img标签
-            //var image = document.querySelector('#img');
-
-            //html2canvas(element).then(function (canvas) {
-            //    var imageData = canvas.toDataURL(1);
-            //    console.log('hello world')
-            //    console.log(canvas)
-            //    console.log(element)
-            //    console.log(image)
-            //    console.log(imageData)
-            //    image.src = imageData;
-            //})
-
-            html2canvas(document.querySelector("#capture")).then(canvas => {
-                console.log('hello world')
-                var imageData = canvas.toDataURL(1);
-                console.log(imageData)
-                document.body.appendChild(canvas)
-            });
 
             loadHtml("mainPage", "partPage")
         }

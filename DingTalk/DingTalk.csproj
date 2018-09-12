@@ -535,7 +535,6 @@
     <Content Include="Scripts\canvas.js" />
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element.js" />
-    <Content Include="Scripts\html2canvas.min.js" />
     <Content Include="Scripts\jquery-1.11.0.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
