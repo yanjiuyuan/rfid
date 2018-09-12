@@ -141,6 +141,8 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 获取打印报表
         /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <param name="UserId">用户Id</param>
         /// <returns></returns>
         [Route("GetReport")]
         [HttpGet]
