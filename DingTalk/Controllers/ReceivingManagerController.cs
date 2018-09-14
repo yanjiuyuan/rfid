@@ -168,10 +168,9 @@ namespace DingTalk.Controllers
                                 error = new Error(0, "流程尚未结束", "") { },
                             });
                     }
-
+                    
                     List<Receiving> ReceivingList = context.Receiving.Where(u => u.TaskId == TaskId).ToList();
                     DataTable dtSourse = DtLinqOperators.CopyToDataTable(ReceivingList);
-
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束" && !u.NodeName.Contains("抄送")).ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
@@ -191,13 +190,15 @@ namespace DingTalk.Controllers
                         }
                     }
 
-
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
 
                     Dictionary<string, string> dic = new Dictionary<string, string>();
                     Receiving receiving = context.Receiving.Where(r => r.TaskId == TaskId).SingleOrDefault();
+                    dic.Add("申请人", tasks.ApplyMan);
+                    dic.Add("流水号", tasks.TaskId.ToString());
                     dic.Add("标题", tasks.Title);
+                    dic.Add("收文编号",receiving.ReceivingNo);
                     dic.Add("来文单位", receiving.ReceivingUnit);
                     dic.Add("文件文号", receiving.FileNo);
                     dic.Add("收文时间", receiving.ReceivingTime);
@@ -206,7 +207,7 @@ namespace DingTalk.Controllers
                     dic.Add("领导阅示", receiving.Leadership);
                     dic.Add("承办部门阅办情况", receiving.Review.Replace("~", "     "));
                     dic.Add("办理落实情况", receiving.HandleImplementation.Replace("~", "     "));
-                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
+                    string path = pdfHelper.GeneratePDF(FlowName, null, tasks.ApplyMan, tasks.ApplyTime,
                     "", "2", 380, 710, null, null, dtSourse, dtApproveView, dic);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
                     List<string> newPaths = new List<string>();

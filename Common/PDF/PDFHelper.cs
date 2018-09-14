@@ -28,12 +28,13 @@ namespace Common.PDF
 
         //定义字体
         private static Font fontBig = new Font(bf, 15, Font.BOLD);
-        private static Font fontMiddle = new Font(bf, 13, Font.BOLD);
+        private static Font fontMiddle = new Font(bf, 15, Font.BOLD);
         private static Font fontSmall = new Font(bf, 13, Font.BOLD);
+        private static Font fontSmallest = new Font(bf, 11, Font.BOLD);
         private static Font fontSmallNoBold = new Font(bf, 12);
         private static Font fontTableSmallNoBold = new Font(bf, 8);
         private static float IndentationLeft = 50;//距左边距
-
+        private static float IndentationCenter = 220;//距左边距
         /// <summary>
         /// 绘制PDF
         /// </summary>
@@ -70,18 +71,18 @@ namespace Common.PDF
                 iTextSharp.text.Image imageLogo = iTextSharp.text.Image.GetInstance(
                     string.Format(@"{0}\Content\images\单位LOGO.jpg", AppDomain.CurrentDomain.BaseDirectory));
                 //imageLogo.Width = 100;
-                imageLogo.SetAbsolutePosition(80, 770);
+                imageLogo.SetAbsolutePosition(85, 780);
                 writer.DirectContent.AddImage(imageLogo);
 
-                AddHeaderTitleContent("泉州华中科技大学智能制造研究院", fontBig, 80);
+                AddHeaderTitleContent("泉州华中科技大学智能制造研究院", fontSmallest, 80);
                 CreateEmptyRow(1);//生成一行空行
                 CreateLine();//生成一条下横线
                 //CreateEmptyRow(1);//生成一行空行
 
-                AddHeaderTitleContent(FlowName + "流程明细", fontMiddle, IndentationLeft);//添加表头
-                CreateEmptyRow(1);//生成一行空行
+                AddHeaderTitleContent(FlowName , fontMiddle, IndentationCenter);//添加表头
+                //CreateEmptyRow(1);//生成一行空行
 
-                AddPartnerContents("流水号", TaskId, "申请人", ApplyName);
+                if (!string.IsNullOrEmpty(TaskId)){ AddPartnerContents("流水号", TaskId, "申请人", ApplyName); }
                 if (!string.IsNullOrEmpty(ProjectName)) { AddPartnerContents("申请时间", ApplyTime, "所属项目", ProjectName); }
                 AddPageNumberContent();//添加页码
                 CreateEmptyRow(1);//生成一行空行
@@ -140,7 +141,7 @@ namespace Common.PDF
                 if (keyValuePairs != null)
                 {
                     PdfPTable table = new PdfPTable(2);
-                    float[] fList = { 40, 200 };
+                    float[] fList = { 60, 200 };
                     table.SetTotalWidth(fList);
                     foreach (var item in keyValuePairs.Keys)
                     {
