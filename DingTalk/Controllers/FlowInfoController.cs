@@ -389,6 +389,7 @@ namespace DingTalk.Controllers
                         if (tasks.NodeId == 0)  //撤回
                         {
                             tasks.IsBacked = true;
+                            context.Entry<Tasks>(tasks).State = EntityState.Modified;
                             context.SaveChanges();
                             //找到当前未审核的人员修改状态
                             List<Tasks> taskList = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.State == 0 && t.IsSend != true).ToList();
