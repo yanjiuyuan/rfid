@@ -151,7 +151,7 @@ namespace DingTalk.Bussiness.FlowInfo
                     {
                         if (task.NodeId == 0)
                         {
-                            return "被撤回";
+                            return "已撤回";
                         }
                         else
                         {
