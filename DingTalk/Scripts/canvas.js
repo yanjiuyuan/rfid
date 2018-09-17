@@ -433,6 +433,18 @@ function initUI() {
         }
     });
 
+    $("#tools_turn_left").button({
+        icons: {
+            primary: "ui-icon-arrowreturnthick-1-w"
+        }
+    });
+
+    $("#tools_turn_right").button({
+        icons: {
+            primary: "ui-icon-arrowreturnthick-1-e"
+        }
+    });
+
     $("#tools_redo").button({
         icons: {
             primary: "ui-icon-arrowreturnthick-1-e"
@@ -607,7 +619,47 @@ function saveItAsPdf() {
     //window.location.href=image; 
 }
 
+//旋转画布
+$("#tools_turn_right").click(trunCanvasRight);
+$("#tools_turn_left").click(trunCanvasLeft);
+function trunCanvasRight() {
+    turnCanvas(90)
+}
+function trunCanvasLeft() {
+    turnCanvas(-90)
+}
+function turnCanvas(d) {
+    const loading = demo.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    });
+    var canvas = document.getElementById("myCanvas")
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.translate(canvas.width / 2, canvas.height / 2)
+    ctx.rotate(d * Math.PI / 180)
 
+
+    //PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+    PDFJS.getDocument(pdfUrl).then(function getPdfHelloWorld(pdf) {
+        //
+        // 获取第一页数据
+        //
+        pdf.getPage(1).then(function getPageHelloWorld(page) {
+            var scale = 1;
+            var viewport = page.getViewport(scale);
+            var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            page.render(renderContext);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2)
+            loading.close()
+            console.log('render pdf')
+        });
+    });
+}
 
 /**
  * put current canvas to cache
