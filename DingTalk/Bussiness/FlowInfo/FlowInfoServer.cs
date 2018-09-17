@@ -147,7 +147,17 @@ namespace DingTalk.Bussiness.FlowInfo
                 List<Tasks> tasksListBack = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsBacked == true).ToList();
                 if (tasksListBack.Count > 0)
                 {
-                    return "被退回";
+                    foreach (Tasks task in tasksListBack)
+                    {
+                        if (task.NodeId == 0)
+                        {
+                            return "被撤回";
+                        }
+                        else
+                        {
+                            return "被退回";
+                        }
+                    }
                 }
                 List<Tasks> tasksListFinished = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
                 if (tasksListFinished.Count > 0)

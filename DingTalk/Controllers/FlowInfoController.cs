@@ -284,8 +284,8 @@ namespace DingTalk.Controllers
                                     {
                                         if (!string.IsNullOrEmpty(tasks.FileUrl))
                                         {
-                                            tasksApplyMan.FileUrl = tasksApplyMan.FileUrl+"," + tasks.FileUrl;
-                                            tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl+"," + tasks.OldFileUrl;
+                                            tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
+                                            tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
                                             tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
                                         }
                                     }
@@ -386,87 +386,108 @@ namespace DingTalk.Controllers
                     Tasks tasks = JsonHelper.JsonToObject<Tasks>(stream);
                     using (DDContext context = new DDContext())
                     {
-                        //修改流程状态
-                        tasks.State = 1;
-                        tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                        context.Entry(tasks).State = EntityState.Modified;
-                        context.SaveChanges();
-                        //查找退回节点Id
-                        string newBackNodeId = context.NodeInfo.Where
-                            (u => u.FlowId == tasks.FlowId.ToString() && u.NodeId == tasks.NodeId)
-                            .Select(u => u.BackNodeId).First();
-                        //根据退回节点Id找人
-                        if (newBackNodeId == "0")  //退回节点为发起人
+                        if (tasks.NodeId == 0)  //撤回
                         {
-                            Tasks newTask = new Tasks();
-                            newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
-                            newTask.IsBacked = true;
-                            context.Entry<Tasks>(newTask).State = EntityState.Modified;
+                            tasks.IsBacked = true;
                             context.SaveChanges();
-                            newTask.ApplyTime = null;
-                            newTask.State = 0;
-                            newTask.IsBacked = false;
-                            newTask.Remark = null;
-                            newTask.IsPost = true;
-                            context.Tasks.Add(newTask);
-                            context.SaveChanges();
-                            TopSDKTest top = new TopSDKTest();
-                            OATextModel oaTextModel = new OATextModel();
-                            oaTextModel.head = new head
+                            //找到当前未审核的人员修改状态
+                            List<Tasks> taskList = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.State == 0 && t.IsSend != true).ToList();
+                            foreach (var task in taskList)
                             {
-                                bgcolor = "FFBBBBBB",
-                                text = "您有一条待审批的流程，请登入OA系统审批"
-                            };
-                            oaTextModel.body = new body
+                                task.State = 1;
+                                context.SaveChanges();
+                            }
+                            return JsonConvert.SerializeObject(new ErrorModel
                             {
-                                form = new form[] {
-                    new form{ key="审批人：",value=tasks.ApplyMan},
-                    new form{ key="审批时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
-                },
-                                title = string.Format("您有一条被退回的流程(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", tasks.TaskId),
-                                content = newTask.Remark
-                            };
-                            top.SendOaMessage(newTask.ApplyManId, oaTextModel);
+                                errorCode = 0,
+                                errorMessage = "撤回成功",
+                                Content = tasks.TaskId.ToString()
+                            });
                         }
                         else
                         {
-                            string PeopleId = context.NodeInfo.SingleOrDefault
-                                (u => u.NodeId.ToString() == newBackNodeId && u.FlowId == tasks.FlowId.ToString()).PeopleId;
-                            string NodePeople = context.NodeInfo.SingleOrDefault
-                                (u => u.NodeId.ToString() == newBackNodeId && u.FlowId == tasks.FlowId.ToString()).NodePeople;
-                            if (string.IsNullOrEmpty(PeopleId))
+                            //修改流程状态
+                            tasks.State = 1;
+                            tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                            context.Entry(tasks).State = EntityState.Modified;
+                            context.SaveChanges();
+                            //查找退回节点Id
+                            string newBackNodeId = context.NodeInfo.Where
+                                (u => u.FlowId == tasks.FlowId.ToString() && u.NodeId == tasks.NodeId)
+                                .Select(u => u.BackNodeId).First();
+                            //根据退回节点Id找人
+                            if (newBackNodeId == "0")  //退回节点为发起人
                             {
-                                return JsonConvert.SerializeObject(new ErrorModel
+                                Tasks newTask = new Tasks();
+                                newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
+                                newTask.IsBacked = true;
+                                context.Entry<Tasks>(newTask).State = EntityState.Modified;
+                                context.SaveChanges();
+                                newTask.ApplyTime = null;
+                                newTask.State = 0;
+                                newTask.IsBacked = false;
+                                newTask.Remark = null;
+                                newTask.IsPost = true;
+                                context.Tasks.Add(newTask);
+                                context.SaveChanges();
+                                TopSDKTest top = new TopSDKTest();
+                                OATextModel oaTextModel = new OATextModel();
+                                oaTextModel.head = new head
                                 {
-                                    errorCode = 1,
-                                    errorMessage = "退回节点尚未配置人员"
-                                });
+                                    bgcolor = "FFBBBBBB",
+                                    text = "您有一条待审批的流程，请登入OA系统审批"
+                                };
+                                oaTextModel.body = new body
+                                {
+                                    form = new form[] {
+                    new form{ key="审批人：",value=tasks.ApplyMan},
+                    new form{ key="审批时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
+                },
+                                    title = string.Format("您有一条被退回的流程(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", tasks.TaskId),
+                                    content = newTask.Remark
+                                };
+                                top.SendOaMessage(newTask.ApplyManId, oaTextModel);
                             }
                             else
                             {
-                                int iBackNodeIds = int.Parse(newBackNodeId);
-                                //根据找到的人创建新任务流
-                                Tasks newTask = new Tasks();
-                                newTask = tasks;
-                                newTask.IsBacked = false;
-                                newTask.ApplyMan = NodePeople;
-                                newTask.ApplyManId = PeopleId;
-                                newTask.ApplyTime = null;
-                                newTask.State = 0;
-                                newTask.NodeId = iBackNodeIds;
-                                newTask.Remark = null;
-                                newTask.IsPost = false;
-                                context.Tasks.Add(newTask);
-                                context.SaveChanges();
+                                string PeopleId = context.NodeInfo.SingleOrDefault
+                                    (u => u.NodeId.ToString() == newBackNodeId && u.FlowId == tasks.FlowId.ToString()).PeopleId;
+                                string NodePeople = context.NodeInfo.SingleOrDefault
+                                    (u => u.NodeId.ToString() == newBackNodeId && u.FlowId == tasks.FlowId.ToString()).NodePeople;
+                                if (string.IsNullOrEmpty(PeopleId))
+                                {
+                                    return JsonConvert.SerializeObject(new ErrorModel
+                                    {
+                                        errorCode = 1,
+                                        errorMessage = "退回节点尚未配置人员"
+                                    });
+                                }
+                                else
+                                {
+                                    int iBackNodeIds = int.Parse(newBackNodeId);
+                                    //根据找到的人创建新任务流
+                                    Tasks newTask = new Tasks();
+                                    newTask = tasks;
+                                    newTask.IsBacked = false;
+                                    newTask.ApplyMan = NodePeople;
+                                    newTask.ApplyManId = PeopleId;
+                                    newTask.ApplyTime = null;
+                                    newTask.State = 0;
+                                    newTask.NodeId = iBackNodeIds;
+                                    newTask.Remark = null;
+                                    newTask.IsPost = false;
+                                    context.Tasks.Add(newTask);
+                                    context.SaveChanges();
+                                }
                             }
                         }
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 0,
+                            errorMessage = "退回成功",
+                            Content = tasks.TaskId.ToString()
+                        });
                     }
-                    return JsonConvert.SerializeObject(new ErrorModel
-                    {
-                        errorCode = 0,
-                        errorMessage = "退回成功",
-                        Content = tasks.TaskId.ToString()
-                    });
                 }
             }
             catch (Exception ex)
