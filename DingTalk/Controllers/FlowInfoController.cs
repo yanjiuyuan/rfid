@@ -388,8 +388,9 @@ namespace DingTalk.Controllers
                     {
                         if (tasks.NodeId == 0)  //撤回
                         {
-                            tasks.IsBacked = true;
-                            context.Entry<Tasks>(tasks).State = EntityState.Modified;
+                            Tasks taskNew= context.Tasks.Find(tasks.Id);
+                            taskNew.IsBacked = true;
+                            context.Entry<Tasks>(taskNew).State = EntityState.Modified;
                             context.SaveChanges();
                             //找到当前未审核的人员修改状态
                             List<Tasks> taskList = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.State == 0 && t.IsSend != true).ToList();
@@ -1177,7 +1178,6 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
-                                  //IsRead=t.State==1?"已阅":"未读",
                                   State = flowInfoServer.GetTasksState(t.TaskId.ToString()),
                                   IsBack = t.IsBacked
                               });
