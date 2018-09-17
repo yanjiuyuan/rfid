@@ -139,6 +139,7 @@
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
             </el-form-item>
+            <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
         </template>
     </el-form>
 
@@ -435,6 +436,16 @@
                 var that = this
                 var param = {
                     "Id": allData.Id,
+                    "Remark": this.ruleForm.mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var that = this
+                var param = {
+                    "Id": 0,
                     "Remark": this.ruleForm.mark
                 }
                 this.returnSubmit(param)
