@@ -394,7 +394,7 @@ namespace DingTalk.Controllers
                             List<Tasks> taskList = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.State == 0 && t.IsSend != true).ToList();
                             foreach (var task in taskList)
                             {
-                                task.State = 1;
+                                context.Tasks.Remove(task);
                                 context.SaveChanges();
                             }
                             return JsonConvert.SerializeObject(new ErrorModel
