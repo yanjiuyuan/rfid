@@ -163,6 +163,15 @@ namespace DingTalk.EF
         {
             return db.Set<T>().Where(whereLambda).ToList();
         }
+        /// <summary>
+        /// 根据Id查询
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public T GetListById(int Id)
+        {
+            return db.Set<T>().Find(Id);
+        }
         #endregion
 
         #region 5.1 根据条件 排序 和查询 + List<T> GetListBy<TKey>

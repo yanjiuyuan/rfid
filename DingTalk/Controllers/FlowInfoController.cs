@@ -116,7 +116,6 @@ namespace DingTalk.Controllers
                                     context.SaveChanges();
                                 }
                             }
-
                             if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                             {
                                 //寻人推送
