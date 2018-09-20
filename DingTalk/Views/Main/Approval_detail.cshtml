@@ -138,8 +138,8 @@
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
-            <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
         </template>
     </el-form>
 
@@ -156,8 +156,10 @@
                         <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
                             <span>
                                 <button v-if="index == 0" id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
+                                <button id="tools_turn_right">正转</button>
+                                <button id="tools_turn_left">逆转</button>
                                 @*<button id="tools_undo">撤回</button>&nbsp;&nbsp;&nbsp;
-                                    <button id="tools_redo">redo</button>*@
+                                 <button id="tools_redo">redo</button>*@
                             </span>
                         </div>
                     </div>
@@ -256,6 +258,7 @@
 <script>
 
     var state = ''
+    var pdfUrl = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -445,7 +448,8 @@
                 this.disablePage = true
                 var that = this
                 var param = {
-                    "Id": 0,
+                    "Id": allData.Id,
+                    "NodeId": 0,
                     "Remark": this.ruleForm.mark
                 }
                 this.returnSubmit(param)
@@ -618,7 +622,7 @@
             showPdf(url) {
                 var that = this
                 this.disablePage = true
-
+                pufUrl = url
                 console.log('show pdf')
                 const loading = this.$loading({
                     lock: true,
@@ -630,7 +634,7 @@
                 
                 //initui()
                 initUI()
-                PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+                
                 PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
                     //
                     // 获取第一页数据
@@ -670,6 +674,7 @@
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)
             }
+            PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
             loadHtml("mainPage", "partPage")
         }
     })

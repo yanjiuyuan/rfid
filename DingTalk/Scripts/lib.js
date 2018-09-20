@@ -1135,7 +1135,7 @@ Vue.component('sam-approver-list', {
 Vue.component('ding', {
     props: ['dinglist'],
     template: `
-            <div v-show="dinglist && dinglist.length && dinglist.length>0">
+            <div v-show="dinglist && dinglist.length && dinglist.length>0" style="display:inline-block;">
                 <el-button type="primary" v-on:click="Ding">钉一下</el-button>
                 <el-dialog title="编辑钉一下内容" :visible.sync="dialogFormVisible">
                   <el-form :model="form">
