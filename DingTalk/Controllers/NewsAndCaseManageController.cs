@@ -127,11 +127,11 @@ namespace DingTalk.Controllers
                 WordHelper wordHelper = new WordHelper();
                 string filePath = HttpContext.Current.Server.MapPath(wordPath);
                 string strPathHtml = wordHelper.GetPathByDocToHTML(filePath);
-                string strHtml = GetFileToString(strPathHtml);
+                //string strHtml = GetFileToString(strPathHtml);
 
                 return new NewErrorModel()
                 {
-                    data = strHtml,
+                    data = strPathHtml,
                     error = new Error(0, "读取成功！", "") { },
                 };
             }
