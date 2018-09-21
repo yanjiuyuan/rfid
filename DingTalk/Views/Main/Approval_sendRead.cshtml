@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        公车申请审批-{{nodeInfo.NodeName}}
+        文件阅办单审批-{{nodeInfo.NodeName}}
     </div>
     <el-form id="formImg" :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="标题">
@@ -33,7 +33,7 @@
         </el-form-item>
 
         <el-form-item label="主要内容" prop="MainIdea">
-            <el-input v-model="ruleForm.MainIdea" type="textarea" :row="5" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.MainIdea" type="textarea" :row="5" style="width:600px;" :disabled="true" :autosize="{ minRows: 4, maxRows: 6}"></el-input>
         </el-form-item>
 
         <!--相关文件-->
