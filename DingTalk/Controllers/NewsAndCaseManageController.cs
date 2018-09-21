@@ -1,11 +1,14 @@
-﻿using DingTalk.EF;
+﻿using DingTalk.Bussiness.Word;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -21,6 +24,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="newsAndCases"></param>
         /// <returns></returns>
+        [Route("Save")]
         [HttpPost]
         public object Save([FromBody] NewsAndCases newsAndCases)
         {
@@ -50,6 +54,7 @@ namespace DingTalk.Controllers
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页容量</param>
         /// <returns></returns>
+        [Route("Read")]
         [HttpGet]
         public object Read(string bigType, string type, int pageIndex, int pageSize)
         {
@@ -84,6 +89,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Route("ReadById")]
         [HttpGet]
         public object ReadById(int id)
         {
@@ -104,6 +110,56 @@ namespace DingTalk.Controllers
                     error = new Error(1, ex.Message, "") { },
                 };
             }
+        }
+
+        /// <summary>
+        /// word转html
+        /// </summary>
+        /// <param name="wordPath">文件路径</param>
+        /// <returns></returns>
+        /// 测试数据   wordPath=~/bin/1.doc
+        [Route("WordPathToHtml")]
+        [HttpGet]
+        public object WordPathToHtml(string wordPath)
+        {
+            try
+            {
+                WordHelper wordHelper = new WordHelper();
+                string filePath = HttpContext.Current.Server.MapPath(wordPath);
+                string strPathHtml = wordHelper.GetPathByDocToHTML(filePath);
+                string strHtml = GetFileToString(strPathHtml);
+
+                return new NewErrorModel()
+                {
+                    data = strHtml,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 读取html文件
+        /// </summary>
+        /// <param name="filePath">路径</param>
+        /// <returns></returns>
+        [Route("GetFileToString")]
+        [HttpGet]
+        public string GetFileToString(string filePath)
+        {
+            filePath = HttpContext.Current.Server.MapPath(filePath);
+            string fileContent = string.Empty;
+            using (var reader = new StreamReader(filePath))
+            {
+                fileContent = reader.ReadToEnd();
+            }
+            return fileContent;
         }
     }
 }
