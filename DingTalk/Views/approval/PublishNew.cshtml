@@ -39,13 +39,12 @@
                     <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
             </el-form-item>
-            <el-form-item label="上传word附件" required="required">
+            <el-form-item label="上传word" required="required">
                 <el-upload class="upload-demo"
                            drag
                            :file-list="fileList"
                            action="/drawingupload/Upload"
-                           :on-remove="handleFileRemove"
-                           :before-remove="isPdfFile = false"
+                           :on-remove="HandleFileRemove"
                            :before-upload="beforeFileUpload"
                            :on-success="HandleFileSuccess"
                            multiple>
@@ -72,6 +71,7 @@
             return {
                 types: ['图片新闻', '研究院新闻', '行业资讯', '技术百科', '通知公告'],
                 imageList: [],
+                fileList: [],
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
@@ -107,9 +107,9 @@
                 console.log('before file')
                 console.log(file)
                 file.name = 'helloWorld'
-                const isPdfType = file.type === 'application/word'
+                const isDoc = file.name.indexOf('.doc') > 0
                 const isLt2M = file.size / 1024 / 1024 < 30
-                if (!isPdfType) {
+                if (!isDoc) {
                     this.$message.error('上传文件只能是 word !')
                     return false
                 }
@@ -122,10 +122,10 @@
             HandleFileSuccess(response, file, fileList) {
                 var that = this
                 console.log(response)
-                return
                 that._getData('/NewsAndCases/WordPathToHtml', function (data) {
+                    console.log('WordPathToHtml')
                     console.log(data)
-                }, { wordPath: '' })
+                }, { wordPath: response.Content })
             },
         },
         created: function () {
