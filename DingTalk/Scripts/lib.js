@@ -235,6 +235,12 @@ var mixin = {
             Title: [
                 { required: true, message: '标题内容不能为空！', trigger: 'change' }
             ],
+            Type: [
+                { required: true, message: '类别不能为空！', trigger: 'change' }
+            ],
+            Abstract: [
+                { required: true, message: '内容简介不能为空！', trigger: 'change' }
+            ],
             ProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
