@@ -69,6 +69,18 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult PublishNew()
+        {
+            return View();
+        }
+        public ActionResult PublishProduct()
+        {
+            return View();
+        }
+        public ActionResult PublishRecruit()
+        {
+            return View();
+        }
         public ActionResult Vote()
         {
             return View();
