@@ -53,6 +53,42 @@ namespace DingTalk.Controllers
                     List<Tasks> taskList = JsonHelper.JsonToObject<List<Tasks>>(stream);
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     int TaskId = flowInfoServer.FindMaxTaskId();
+
+                    //if (taskList.Count > 1)  //如果有选人
+                    //{
+                    //    using (DDContext contexts = new DDContext())
+                    //    {
+                    //        foreach (var task in taskList)
+                    //        {
+                    //            task.TaskId = TaskId;
+                    //            if (taskList.IndexOf(task) > 0)
+                    //            {
+                    //                if (task.IsSend == true)
+                    //                {
+                    //                    //推送抄送消息
+                    //                    SentCommonMsg(task.ApplyManId,
+                    //                    string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", task.TaskId),
+                    //                    taskNew.ApplyMan, taskNew.Remark, null);
+                    //                    task.IsEnable = 1;
+                    //                }
+                    //                else
+                    //                {
+                    //                    task.IsEnable = 0;
+                    //                }
+                    //                contexts.Tasks.Add(task);
+                    //                contexts.SaveChanges();
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+                    //using (DDContext context=new DDContext ())
+                    //{
+                    //    List<Tasks> taskListNow = context.Tasks.Where(t => t.TaskId == TaskId).ToList();
+
+                    //}
+
+
                     foreach (var tasks in taskList)
                     {
                         tasks.TaskId = TaskId;
@@ -64,6 +100,13 @@ namespace DingTalk.Controllers
                             {
                                 IsRepeat = tasks.ApplyManId == taskList[taskList.IndexOf(tasks) - 1].ApplyManId;
                             }
+                            //判断之前节点已审核
+                            bool IsApproved = false;
+                            if (taskList.IndexOf(tasks) > 0)
+                            {
+                                IsApproved = context.Tasks.Where(t => t.NodeId < tasks.NodeId && t.State == 0).ToList().Count() > 0 ? false : true;
+                            }
+
                             //修改任务流状态
                             if (taskList.IndexOf(tasks) == 0)
                             {
@@ -83,8 +126,8 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
-                                //判断是否与上一节点人员重复
-                                if (IsRepeat)
+                                //判断是否与上一节点人员重复 且之前节点已审核
+                                if (IsRepeat && IsApproved)
                                 {
                                     tasks.IsPost = false;
                                     tasks.State = 1;
@@ -131,14 +174,12 @@ namespace DingTalk.Controllers
                             {
                                 if (taskList.IndexOf(tasks) > 0 && !IsRepeat)
                                 {
-                                    //获取申请人提交表单信息
-                                    FlowInfoServer fServer = new FlowInfoServer();
-                                    Tasks taskNew = fServer.GetApplyManFormInfo(tasks.TaskId.ToString());
+                                    Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
                                     //推送OA消息
                                     SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
                                 }
                                 //对最后一条重复数据进行寻人推送
-                                if (IsRepeat && taskList.Count == (taskList.IndexOf(tasks) + 1))
+                                if (IsRepeat && IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
                                 {
                                     //寻人推送
                                     Dictionary<string, string> dic =
@@ -387,7 +428,7 @@ namespace DingTalk.Controllers
                     {
                         if (tasks.NodeId == 0)  //撤回
                         {
-                            Tasks taskNew= context.Tasks.Find(tasks.Id);
+                            Tasks taskNew = context.Tasks.Find(tasks.Id);
                             taskNew.IsBacked = true;
                             context.Entry<Tasks>(taskNew).State = EntityState.Modified;
                             context.SaveChanges();
