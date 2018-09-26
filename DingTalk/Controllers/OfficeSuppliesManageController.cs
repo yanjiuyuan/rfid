@@ -133,7 +133,7 @@ namespace DingTalk.Controllers
                 using (OfficeModel context = new OfficeModel())
                 {
                     var Quary = context.Database.SqlQuery<t_ICItem>
-                        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
+                        (string.Format("SELECT FNumber,FName,FModel,FPriceDecimal FOrderPrice, FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
                     return JsonConvert.SerializeObject(Quary);
                 }
             }
