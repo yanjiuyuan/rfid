@@ -988,13 +988,13 @@ Vue.component('sam-approver-list', {
                                 <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
                                 <el-tag :key="a"
                                         :closable="false"
-                                        onclick="" v-if="node.NodePeople"
+                                        onclick="" v-if="node.NodePeople && p"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''" 
                                         :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
-                                    {{p.substring(0,3)}}
+                                    {{p}}
                                 </el-tag>
                                 
                                 <span v-if="(node.NodeName=='抄送' || !node.ApplyTime) && a < node.NodePeople.length-1">,</span>
@@ -1009,7 +1009,7 @@ Vue.component('sam-approver-list', {
                                 <el-tag :key="a" 
                                         :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
-                                        v-if="node.AddPeople.length>0"
+                                        v-if="node.AddPeople.length>0 && ap.name"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
                                         style="width:60px;text-align:center;"

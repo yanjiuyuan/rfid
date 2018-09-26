@@ -83,6 +83,7 @@
                     Abstract: '',
                     ImageUrl: '',
                     BigType: '新闻',
+                    Content: '',
                     CreateTime: _dateToString(date)
                 }
             }
@@ -121,11 +122,13 @@
             },
             HandleFileSuccess(response, file, fileList) {
                 var that = this
-                console.log(response)
+                console.log(response.Content)
                 that._getData('/NewsAndCases/WordPathToHtml', function (data) {
                     console.log('WordPathToHtml')
                     console.log(data)
-                }, { wordPath: response.Content })
+                    that.ruleForm.Content = data
+                }, {
+                    wordPath: '~/bin/1.doc' })
             },
         },
         created: function () {

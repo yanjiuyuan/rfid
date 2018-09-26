@@ -75,8 +75,8 @@
 
 <script>
     //登录钉钉
-    //DingData.userid = 'manager325'
-    //DingData.nickName = '黄浩炜'
+    DingData.userid = 'manager325'
+    DingData.nickName = '黄浩炜'
     $.ajax({
         //url: 'http://17e245o364.imwork.net/signature/',
         url: '/Login/BeginDDAutoLogin',
@@ -87,9 +87,9 @@
             DingData = data
             console.log(DingData)
             //免登失败跳转错误页面
-            setInterval(function () {
-                goError();
-            }, 3000)
+            //setInterval(function () {
+            //    goError();
+            //}, 3000)
 
 
 
