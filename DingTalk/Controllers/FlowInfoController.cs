@@ -152,11 +152,11 @@ namespace DingTalk.Controllers
                                         {
                                             if (IsApproved)
                                             {
-                                                tasks.IsEnable = 1;  
+                                                tasks.IsEnable = 0;  
                                             }
                                             else
                                             {
-                                                tasks.IsEnable = 0;
+                                                tasks.IsEnable = 1;
                                             }
                                         }
                                     }
