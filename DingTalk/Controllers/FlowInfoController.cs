@@ -100,7 +100,7 @@ namespace DingTalk.Controllers
                             {
                                 IsRepeat = tasks.ApplyManId == taskList[taskList.IndexOf(tasks) - 1].ApplyManId;
                             }
-                            //判断之前节点已审核
+                            //判断之前节点是否还有未审核
                             bool IsApproved = false;
                             if (taskList.IndexOf(tasks) > 0)
                             {
@@ -150,7 +150,14 @@ namespace DingTalk.Controllers
                                         }
                                         else
                                         {
-                                            tasks.IsEnable = 0;  //选人跨节点，任务流暂时失效
+                                            if (IsApproved)
+                                            {
+                                                tasks.IsEnable = 1;  
+                                            }
+                                            else
+                                            {
+                                                tasks.IsEnable = 0;
+                                            }
                                         }
                                     }
                                     tasks.IsPost = false;
