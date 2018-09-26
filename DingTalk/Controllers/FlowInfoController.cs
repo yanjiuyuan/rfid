@@ -150,7 +150,14 @@ namespace DingTalk.Controllers
                                         }
                                         else
                                         {
-                                            tasks.IsEnable = 0;
+                                            if (IsRepeat)
+                                            {
+                                                tasks.IsEnable = 1;
+                                            }
+                                            else
+                                            {
+                                                tasks.IsEnable = 0;
+                                            }
                                         }
                                     }
                                     tasks.IsPost = false;
