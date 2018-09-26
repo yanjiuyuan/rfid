@@ -128,7 +128,6 @@ namespace DingTalk.Controllers
                 string filePath = HttpContext.Current.Server.MapPath(wordPath);
                 string strPathHtml = wordHelper.GetPathByDocToHTML(filePath);
                 //string strHtml = GetFileToString(strPathHtml);
-
                 return new NewErrorModel()
                 {
                     data = strPathHtml,
