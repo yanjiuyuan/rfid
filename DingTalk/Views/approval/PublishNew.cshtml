@@ -1,0 +1,137 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        发布新闻
+    </div>
+    <!--创建项目表单-->
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        <template>
+            <el-form-item label="标题" prop="Title">
+                <el-input v-model="ruleForm.Title"></el-input>
+            </el-form-item>
+            <el-form-item label="新闻类别" required="required">
+                <el-select v-model="ruleForm.Type">
+                    <el-option v-for="s of types" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="内容简介" prop="Abstract">
+                <el-input v-model="ruleForm.Abstract" type="textarea"></el-input>
+            </el-form-item>
+
+            <el-form-item label="上传图片">
+                <el-upload action="/drawingupload/Upload"
+                           list-type="picture-card"
+                           :file-list="imageList"
+                           :on-preview="handlePictureCardPreview"
+                           :on-remove="handlePictureRemove"
+                           :on-success="handlePictureCardSuccess"
+                           :before-upload="beforePictureUpload">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                    <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
+            </el-form-item>
+            <el-form-item label="上传word" required="required">
+                <el-upload class="upload-demo"
+                           drag
+                           :file-list="fileList"
+                           action="/drawingupload/Upload"
+                           :on-remove="HandleFileRemove"
+                           :before-upload="beforeFileUpload"
+                           :on-success="HandleFileSuccess"
+                           multiple>
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">不超过30M</div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="addProject" :disabeld="disablePage">发布</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+</div>
+
+
+<script>
+    var Index = 0
+    var date = new Date()
+    var VUE = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                types: ['图片新闻', '研究院新闻', '行业资讯', '技术百科', '通知公告'],
+                imageList: [],
+                fileList: [],
+                //图片上传参数
+                dialogImageUrl: '',
+                dialogVisible: false,
+                ruleForm: {
+                    ImageUrl: '',
+                    OldImageUrl: '',
+                    Title: '',
+                    Type: '',
+                    Abstract: '',
+                    ImageUrl: '',
+                    BigType: '新闻',
+                    CreateTime: _dateToString(date)
+                }
+            }
+        },
+        methods: {
+            //添加新闻
+            addProject() {
+                var that = this
+                this.$refs['ruleForm'].validate((valid) => {
+                    that._postData('/NewsAndCases/Save', function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    }, that.ruleForm)
+                })
+
+            },
+            beforeFileUpload(file) {
+                console.log('before file')
+                console.log(file)
+                file.name = 'helloWorld'
+                const isDoc = file.name.indexOf('.doc') > 0
+                const isLt2M = file.size / 1024 / 1024 < 30
+                if (!isDoc) {
+                    this.$message.error('上传文件只能是 word !')
+                    return false
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 30MB!')
+                    return false
+                }
+                return true
+            },
+            HandleFileSuccess(response, file, fileList) {
+                var that = this
+                console.log(response)
+                that._getData('/NewsAndCases/WordPathToHtml', function (data) {
+                    console.log('WordPathToHtml')
+                    console.log(data)
+                }, { wordPath: response.Content })
+            },
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>
