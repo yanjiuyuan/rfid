@@ -33,6 +33,12 @@ namespace DingTalk.Bussiness.Word
             Microsoft.Office.Interop.Word.Document doc = (Microsoft.Office.Interop.Word.Document)docsType.InvokeMember("Open",
             System.Reflection.BindingFlags.InvokeMethod, null, docs, new Object[] { fileName, true, true });
 
+            if (doc == null)
+
+            {
+                return "doc is null";
+            }
+
             // 转换格式，另存为html  
             Type docType = doc.GetType();
             //给文件重新起名
