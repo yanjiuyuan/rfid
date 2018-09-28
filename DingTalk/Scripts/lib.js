@@ -994,7 +994,7 @@ Vue.component('sam-approver-list', {
                                         :class="{'el-tag--danger':node.IsBack}"
                                         style="width:60px;text-align:center;"
                                         >
-                                    {{p.substring(0,3)}}
+                                    {{p}}
                                 </el-tag>
                                 
                                 <span v-if="(node.NodeName=='抄送' || !node.ApplyTime) && a < node.NodePeople.length-1">,</span>
@@ -1014,7 +1014,7 @@ Vue.component('sam-approver-list', {
                                         :type="node.ApplyTime?'success':''"
                                         style="width:60px;text-align:center;"
                                         >
-                                    {{ap.name.substring(0,3)}}
+                                    {{ap.name}}
                                 </el-tag>
                             </template>
 
