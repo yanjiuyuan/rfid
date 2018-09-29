@@ -63,11 +63,12 @@
                 <el-input v-model="ruleForm.Review" style="width:500px;" :disabled="NodeId>5"></el-input>
             </el-form-item>
             <el-form-item label="部门阅办情况" v-else>
-                <el-card>
-                    <div v-for="r in ReviewList" :key="r" class="text item">
-                        {{r}}
-                    </div>
-                </el-card>
+                @*<el-card>
+                </el-card>*@
+                <div v-for="r in ReviewList" :key="r" class="text item" style="min-width:400px;">
+                    {{r}}
+                </div>
+                
             </el-form-item>
         </template>
 
