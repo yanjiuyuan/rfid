@@ -179,7 +179,7 @@ namespace DingTalk.Controllers
                                     SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
                                 }
                                 //对最后一条重复数据进行寻人推送
-                                if (IsRepeat && IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
+                                if (IsRepeat && !IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
                                 {
                                     //寻人推送
                                     Dictionary<string, string> dic =
