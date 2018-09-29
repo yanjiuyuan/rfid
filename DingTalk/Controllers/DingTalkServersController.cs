@@ -23,6 +23,7 @@ namespace DingTalk.Controllers
 
     public class DingTalkServersController : ApiController
     {
+
         DingTalkManager dtManager;
         public DingTalkConfig DTConfig { get; set; } = new DingTalkConfig();
 
