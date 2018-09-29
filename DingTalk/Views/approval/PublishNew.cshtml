@@ -69,7 +69,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                types: ['图片新闻', '研究院新闻', '行业资讯', '技术百科', '通知公告'],
+                types: ['研究院新闻', '视频短片', '媒体聚焦', '行业信息'],
                 imageList: [],
                 fileList: [],
                 //图片上传参数
@@ -105,8 +105,6 @@
 
             },
             beforeFileUpload(file) {
-                console.log('before file')
-                console.log(file)
                 file.name = 'helloWorld'
                 const isDoc = file.name.indexOf('.doc') > 0
                 const isLt2M = file.size / 1024 / 1024 < 30
@@ -122,13 +120,14 @@
             },
             HandleFileSuccess(response, file, fileList) {
                 var that = this
-                console.log(response.Content)
-                that._getData('/NewsAndCases/WordPathToHtml', function (data) {
+                this.ruleForm.Content = response.Content
+                that._getData('/NewsAndCases/WordPathToHtml', function (result) {
                     console.log('WordPathToHtml')
-                    console.log(data)
-                    that.ruleForm.Content = data
+                    console.log(result)
+                    that.ruleForm.Content = result.data
                 }, {
-                    wordPath: '~/bin/1.doc' })
+                        wordPath: response.Content
+                    })
             },
         },
         created: function () {
