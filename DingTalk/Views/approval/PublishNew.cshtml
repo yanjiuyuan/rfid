@@ -120,11 +120,10 @@
             },
             HandleFileSuccess(response, file, fileList) {
                 var that = this
-                this.ruleForm.Content = response.Content
                 that._getData('/NewsAndCases/WordPathToHtml', function (result) {
                     console.log('WordPathToHtml')
                     console.log(result)
-                    that.ruleForm.Content = result.data
+                    that.ruleForm.Content =  result.data
                 }, {
                         wordPath: response.Content
                     })
