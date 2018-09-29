@@ -292,6 +292,33 @@ namespace DingTalk.Controllers
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
 
+                                Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
+                                  && t.NodeId == 0).First();
+                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
+                                {
+                                    if (!string.IsNullOrEmpty(tasks.FileUrl))
+                                    {
+                                        tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
+                                        tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
+                                        tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!string.IsNullOrEmpty(tasks.FileUrl))
+                                    {
+                                        tasksApplyMan.FileUrl = tasks.FileUrl;
+                                        tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
+                                        tasksApplyMan.MediaId = tasks.MediaId;
+                                    }
+                                }
+                                context.Entry(tasksApplyMan).State = EntityState.Modified;
+                                context.SaveChanges();
+
+
                                 //推送发起人
                                 SentCommonMsg(taskNew.ApplyManId,
                                 string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", tasks.TaskId),
