@@ -112,6 +112,41 @@ namespace DingTalk.Controllers
             }
         }
 
+
+
+        /// <summary>
+        /// 新闻与应用案例详情删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("ReadById")]
+        [HttpGet]
+        public object DeleteById(int id)
+        {
+            try
+            {
+                EFHelper<NewsAndCases> eFHelper = new EFHelper<NewsAndCases>();
+                using (DDContext context=new DDContext ())
+                {
+                    NewsAndCases newsAndCases= context.NewsAndCases.Find(id);
+                    context.NewsAndCases.Remove(newsAndCases) ;
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    data = newsAndCases,
+                    error = new Error(0, "删除成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
         /// <summary>
         /// word转html
         /// </summary>
