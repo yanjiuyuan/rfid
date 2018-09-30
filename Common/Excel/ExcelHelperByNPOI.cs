@@ -938,6 +938,61 @@ namespace Common.Excel
             }
         }
 
+        /// <summary>
+        /// 更新Excel表格
+        /// </summary>
+        /// <param name="outputFile">需更新的excel表格路径</param>
+        /// <param name="sheetname">sheet名</param>
+        /// <param name="updateData">需更新的数据</param>
+        /// <param name="coluids">需更新的列号</param>
+        /// <param name="rowid">需更新的开始行号</param>
+        public static bool UpdateExcel(string outputFile, string sheetname, DataTable updateData, int coluids, int rowid)
+        {
+            try
+            {
+                if (!File.Exists(outputFile))
+                {
+                    return false;
+                }
+
+                FileStream readfile = new FileStream(outputFile, FileMode.Open, FileAccess.Read);
+                XSSFWorkbook hssfworkbook = new XSSFWorkbook(readfile);
+                ISheet sheet1 = hssfworkbook.GetSheet(sheetname);
+                for (int i = 0; i < updateData.Rows.Count; i++)
+                {
+                    for (int j = 0; j < updateData.Columns.Count; j++)
+                    {
+                        if (sheet1.GetRow(i + rowid) == null)
+                        {
+                            sheet1.CreateRow(i + rowid);
+                        }
+                        if (sheet1.GetRow(i + rowid).GetCell(j + coluids) == null)
+                        {
+                            sheet1.GetRow(i + rowid).CreateCell(j + coluids);
+                        }
+                        sheet1.GetRow(i + rowid).GetCell(j + coluids).SetCellValue(updateData.Rows[i][j].ToString());
+                    }
+                }
+                try
+                {
+                    readfile.Close();
+                    FileStream writefile = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
+                    hssfworkbook.Write(writefile);
+                    writefile.Close();
+                }
+                catch (Exception ex)
+                {
+                    //wl.WriteLogs(ex.ToString());
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
         #endregion
 
         #region 读取excel中Sheet个数
@@ -959,7 +1014,7 @@ namespace Common.Excel
             return number;
         }
         #endregion
-        
+
         #region 读取Sheet名称
         public static ArrayList GetSheetName(string outputFile)
         {
@@ -981,7 +1036,7 @@ namespace Common.Excel
             return arrayList;
         }
         #endregion
-        
+
         #region 判断格式
         public static bool isNumeric(String message, out double result)
         {
