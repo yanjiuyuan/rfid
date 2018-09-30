@@ -179,7 +179,7 @@ namespace DingTalk.Controllers
                                     SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
                                 }
                                 //对最后一条重复数据进行寻人推送
-                                if (IsRepeat && IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
+                                if (IsRepeat && !IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
                                 {
                                     //寻人推送
                                     Dictionary<string, string> dic =
@@ -291,6 +291,33 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
+
+                                Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
+                                  && t.NodeId == 0).First();
+                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
+                                {
+                                    if (!string.IsNullOrEmpty(tasks.FileUrl))
+                                    {
+                                        tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
+                                        tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
+                                        tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!string.IsNullOrEmpty(tasks.FileUrl))
+                                    {
+                                        tasksApplyMan.FileUrl = tasks.FileUrl;
+                                        tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
+                                        tasksApplyMan.MediaId = tasks.MediaId;
+                                    }
+                                }
+                                context.Entry(tasksApplyMan).State = EntityState.Modified;
+                                context.SaveChanges();
+
 
                                 //推送发起人
                                 SentCommonMsg(taskNew.ApplyManId,
