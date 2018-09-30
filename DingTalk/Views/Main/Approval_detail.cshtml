@@ -141,6 +141,11 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
+        <template v-if="index==3 && FlowId==8">
+            <el-form-item>
+                <el-button type="primary" v-on:click="printExcel" :disabled="disablePage">打印excel</el-button>
+            </el-form-item>
+        </template>
     </el-form>
 
     <!--显示PDF-->
@@ -517,6 +522,23 @@
                         console.log(err);
                     }
                 })
+            },
+
+            //采购抄送打印excel
+            printExcel() {
+                var that = this
+                let url = '/api/PurchaseManage'
+                that._geteData(url, function (data) {
+                    that.$alert('恭喜提交成功', '提示信息', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            
+                        }
+                    })
+                }, {
+                        taskId: TaskId,
+                        UserId: DingData.userid
+                    })
             },
 
             //获取bom表信息

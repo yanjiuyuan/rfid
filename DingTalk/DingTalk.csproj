@@ -591,7 +591,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="JqueryUI\external\" />
     <Folder Include="JqueryUI\images\" />
-    <Folder Include="UploadFile\Excel\" />
     <Folder Include="UploadFile\Flies\" />
     <Folder Include="UploadFile\Images\ChangeImages\" />
     <Folder Include="Views\Account\" />
@@ -676,6 +675,7 @@
     <Content Include="Views\approval\OfficePurchase.cshtml" />
     <Content Include="Views\approval\officeSupplies.cshtml" />
     <Content Include="Views\approval\Purchase.cshtml" />
+    <Content Include="UploadFile\Excel\Templet\采购导出模板.xlsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

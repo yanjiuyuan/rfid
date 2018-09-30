@@ -11,7 +11,7 @@
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(d,i) in dataList" :name="i+1" :key="i">
             <template slot="title">
-                <span style="font-size:16px;">部门名称:{{d.name}},参考总价{{}},实际总价{{}}</span>
+                <span style="font-size:16px;">部门名称:{{d.name}},参考总价{{tmpTotalPrice}},实际总价{{totalPrice}}</span>
             </template>
             <el-table :data="d.value" stripe border>
                 <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
@@ -142,13 +142,17 @@
                     for (let d of deptList) {
                         that.dataList.push({
                             name: d,
-                            value: []
+                            value: [],
+                            tmpTotalPrice: 0,
+                            totalPrice: 0
                         })
                     }
                     for (let d of data) {
                         for (let l of that.dataList) {
                             if (d.Dept == l.name) {
                                 l.value.push(d)
+                                l.tmpTotalPrice = d.ExpectPrice
+                                l.totalPrice = d.Price
                                 break
                             }
                         }
