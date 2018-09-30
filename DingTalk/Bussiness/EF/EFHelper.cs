@@ -44,6 +44,7 @@ namespace DingTalk.EF
             db.Set<T>().Remove(model);
             return db.SaveChanges();
         }
+
         #endregion
 
         #region 3.0 根据条件删除 +int DelBy(Expression<Func<T, bool>> delWhere)
