@@ -1,5 +1,6 @@
 ﻿using Common.ClassChange;
 using Common.DTChange;
+using Common.Excel;
 using Common.Ionic;
 using Common.PDF;
 using DingTalk.Models;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -107,7 +109,7 @@ namespace DingTalk.Controllers
             {
                 using (KisContext context = new KisContext())
                 {
-                    var  Quary = context.Database.SqlQuery<t_ICItem>
+                    var Quary = context.Database.SqlQuery<t_ICItem>
                         (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
                     return JsonConvert.SerializeObject(Quary);
                 }
@@ -167,7 +169,7 @@ namespace DingTalk.Controllers
                     }
 
                     List<PurchaseTable> PurchaseTableList = context.PurchaseTable.Where(u => u.TaskId == TaskId).ToList();
-                    
+
                     var SelectPurchaseList = from p in PurchaseTableList
                                              select new
                                              {
@@ -214,9 +216,9 @@ namespace DingTalk.Controllers
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView,null);
+                    ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
-                    
+
                     List<string> newPaths = new List<string>();
                     RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
                     newPaths.Add(RelativePath);
@@ -242,6 +244,59 @@ namespace DingTalk.Controllers
                     errorCode = 3,
                     errorMessage = ex.Message
                 });
+            }
+        }
+        /// <summary>
+        /// 采购管理查询并导出Excel
+        /// </summary>
+        /// <param name="taskId">流水号</param>
+        /// <param name="UserId">用户Id</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<object> PrintExcel(string taskId, string UserId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<PurchaseTable> purchaseTables = context.PurchaseTable.Where(p => p.TaskId == taskId).ToList();
+                    DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(purchaseTables);
+
+                    string path = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet/采购导出模板.xlsx");
+                    string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\采购单" + time + ".xlsx";
+                    File.Copy(path, newPath);
+                    if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 1))
+                    {
+                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
+
+                        //上盯盘
+                        var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/采购单" + time + ".xlsx");
+                        //推送用户
+                        FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                        fileSendModel.UserId = UserId;
+                        var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, result, "") { },
+                        };
+                    }
+                    else
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "文件有误", "") { },
+                        };
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
             }
         }
     }
