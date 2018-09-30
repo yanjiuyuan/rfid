@@ -127,10 +127,10 @@ namespace DingTalk.Controllers
             {
                 EFHelper<NewsAndCases> eFHelper = new EFHelper<NewsAndCases>();
                 NewsAndCases newsAndCases = new NewsAndCases();
-                using (DDContext context=new DDContext ())
+                using (DDContext context = new DDContext())
                 {
-                    newsAndCases= context.NewsAndCases.Find(id);
-                    context.NewsAndCases.Remove(newsAndCases) ;
+                    newsAndCases = context.NewsAndCases.Find(id);
+                    context.NewsAndCases.Remove(newsAndCases);
                     context.SaveChanges();
                 }
                 return new NewErrorModel()
