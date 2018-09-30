@@ -34,6 +34,7 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// 内容
         /// </summary>
+        [StringLength(300)]
         public string Content { get; set; }
         /// <summary>
         /// 创建时间
