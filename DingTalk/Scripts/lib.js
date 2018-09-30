@@ -171,6 +171,15 @@ function _getQueryString(name) {
     if (r != null) return unescape(r[2]); return null;
 }
 
+function checkRate(input) {
+    var re = /^[0-9]+.?[0-9]*$/; //判断字符串是否为数字 //判断正整数 /^[1-9]+[0-9]*]*$/ 
+    var nubmer = input
+    if (!re.test(nubmer)) {
+        return false;
+    }
+}
+
+
 //时间选择器插件参数
 var pickerOptions = {
     shortcuts: [{
