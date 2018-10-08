@@ -92,7 +92,7 @@ namespace DingTalk.Bussiness.Word
             TransHTMLEncoding(ConfigPath);
 
             //拷贝文件到研究院官网目录下
-            CopyDir(System.Web.HttpContext.Current.Server.MapPath("/html/"), YjyWebPath);
+            CopyDir(System.Web.HttpContext.Current.Server.MapPath("/html/"), YjyWebPath+"html");
             return (strFilePath + filename + ".html");
         }
         private void TransHTMLEncoding(string strFilePath)

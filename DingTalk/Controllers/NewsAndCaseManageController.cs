@@ -4,6 +4,7 @@ using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -67,7 +68,7 @@ namespace DingTalk.Controllers
                      expression, n => n.Id);
                 foreach (var item in newsAndCases)
                 {
-                    item.Content = "";
+                    item.Contents = "";
                 }
                 return new NewErrorModel()
                 {
@@ -179,6 +180,35 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 拷贝文件到研究院项目下
+        /// </summary>
+        /// <param name="picPath">文件路径</param>
+        /// <returns></returns>
+        [HttpGet]
+        public object CopyPic(string picPath)
+        {
+            try
+            {
+                string YjyWebPath = ConfigurationManager.AppSettings["YjyWebPath"];
+                string filePath = HttpContext.Current.Server.MapPath(picPath);
+                File.Copy(filePath, YjyWebPath+"html");
+
+                return new NewErrorModel()
+                {
+                    data = "",
+                    error = new Error(0, "复制成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
 
 
         /// <summary>
@@ -198,5 +228,6 @@ namespace DingTalk.Controllers
             }
             return fileContent;
         }
+
     }
 }
