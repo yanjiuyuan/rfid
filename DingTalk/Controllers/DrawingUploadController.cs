@@ -162,7 +162,6 @@ namespace DingTalk.Controllers
                             }
                         }
                     }
-
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
