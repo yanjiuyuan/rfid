@@ -55,16 +55,43 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="addProject" :disabeld="disablePage">发布</el-button>
+                <el-button type="primary" v-on:click="getData">获取新闻</el-button>
             </el-form-item>
         </template>
     </el-form>
+
+    <div>
+        <!--新闻列表表格實體-->
+        <el-table :data="data" stripe border>
+            <el-table-column prop="Title" label="标题"></el-table-column>
+            <el-table-column prop="Type" label="新闻类别"></el-table-column>\
+            <el-table-column prop="CreateTime" label="发布时间"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="danger"
+                               v-on:click="deleteNews(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:size-change="handleSizeChange"
+                           v-on:current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="pageSize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="totalRows">
+            </el-pagination>
+        </div>
+    </div>
 </div>
 
 
 <script>
     var Index = 0
     var date = new Date()
-    var VUE = new Vue({
+    var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
@@ -86,7 +113,8 @@
                     BigType: '新闻',
                     Contents: '',
                     CreateTime: _dateToString(date)
-                }
+                },
+                data: []
             }
         },
         methods: {
@@ -129,6 +157,23 @@
                         wordPath: response.Content
                     })
             },
+            //获取新闻数据
+            getData() {
+                var that = this
+                var param = {
+                    bigType: '新闻',
+                    type: this.ruleForm.Type,
+                    pageIndex: this.currentPage,
+                    pageSize: this.pageSize
+                }
+                this._getData("/NewsAndCases/Read", function (result) {
+                    that.data = result.data
+                }, param)
+            },
+            //删除新闻
+            deleteNews(index,news) {
+                var id = news.Id
+            }
         },
         created: function () {
             loadHtml("mainPage", "partPage")
