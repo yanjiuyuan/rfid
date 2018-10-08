@@ -118,7 +118,7 @@ namespace DingTalk.Controllers
                         files.SaveAs(Path);
                         if (IsCopy == true)
                         {
-                            System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\");
+                            System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\"+ newFileName+ strExtension);
                         }
                     }
                     else
