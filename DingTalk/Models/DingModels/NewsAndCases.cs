@@ -35,7 +35,11 @@ namespace DingTalk.Models.DingModels
         /// 内容
         /// </summary>
         [StringLength(300)]
+<<<<<<< HEAD
         public string Content { get; set; }
+=======
+        public string Contents { get; set; }
+>>>>>>> b3b73ce4317033c7611e0da3672497d938a57f84
         /// <summary>
         /// 创建时间
         /// </summary>

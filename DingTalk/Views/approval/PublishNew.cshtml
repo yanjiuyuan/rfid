@@ -83,7 +83,7 @@
                     Abstract: '',
                     ImageUrl: '',
                     BigType: '新闻',
-                    Content: '',
+                    Contents: '',
                     CreateTime: _dateToString(date)
                 }
             }
@@ -122,7 +122,7 @@
                 var that = this
                 this.disablePage = true
                 that._getData('/NewsAndCases/WordPathToHtml', function (result) {
-                    that.ruleForm.Content = result.data
+                    that.ruleForm.Contents = result.data
                     that.disablePage = false
                 }, {
                         wordPath: response.Content

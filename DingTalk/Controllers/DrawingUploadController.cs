@@ -10,6 +10,7 @@ using iTextSharp.text.pdf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -36,9 +37,10 @@ namespace DingTalk.Controllers
         /// <param name="path">文件路径</param>
         /// <param name="ApplyMan">用户Id</param>
         /// <param name="ApplyManId">用户Id</param>
+        /// <param name="IsCopy">是否拷贝到研究院项目</param>
         /// <returns>返回文件路径</returns>
         [HttpPost]
-        public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId)
+        public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId,bool? IsCopy=false)
         {
             try
             {
@@ -80,6 +82,7 @@ namespace DingTalk.Controllers
 
                     if (string.IsNullOrEmpty(path))
                     {
+                        string YjyWebPath = ConfigurationManager.AppSettings["YjyWebPath"];
                         switch (strExtension)
                         {
                             //Image
@@ -113,6 +116,10 @@ namespace DingTalk.Controllers
 
                         //保存文件
                         files.SaveAs(Path);
+                        if (IsCopy == true)
+                        {
+                            System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\");
+                        }
                     }
                     else
                     {
