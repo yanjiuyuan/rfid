@@ -26,7 +26,7 @@
             </el-form-item>
 
             <el-form-item label="上传图片">
-                <el-upload :action="/drawingupload/Upload?IsCopy=true"
+                <el-upload action="/drawingupload/Upload?IsCopy=true"
                            list-type="picture-card"
                            :file-list="imageList"
                            :on-preview="handlePictureCardPreview"
