@@ -120,7 +120,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("ReadById")]
+        [Route("DeleteById")]
         [HttpGet]
         public object DeleteById(int id)
         {
