@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        发布新闻
+        发布产品信息
     </div>
     <!--创建项目表单-->
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
@@ -16,11 +16,11 @@
             <el-form-item label="标题" prop="Title">
                 <el-input v-model="ruleForm.Title"></el-input>
             </el-form-item>
-            <el-form-item label="新闻类别" required="required">
+            @*<el-form-item label="产品类别" required="required">
                 <el-select v-model="ruleForm.Type">
                     <el-option v-for="s of types" :label="s" :value="s" key="s"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item>*@
             <el-form-item label="内容简介" prop="Abstract">
                 <el-input v-model="ruleForm.Abstract" type="textarea"></el-input>
             </el-form-item>
@@ -28,7 +28,7 @@
             <el-form-item label="上传图片">
                 <el-upload action="/drawingupload/Upload?IsCopy=true"
                            list-type="picture-card"
-                           :file-list="imageList" 
+                           :file-list="imageList"
                            :on-preview="handlePictureCardPreview"
                            :on-remove="handlePictureRemove"
                            :on-success="handlePictureCardSuccess"
@@ -55,7 +55,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="addProject" :disabled="disablePage">发布</el-button>
-                <el-button type="primary" v-on:click="getData">获取新闻列表</el-button>
+                <el-button type="primary" v-on:click="getData">获取产品列表</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -64,7 +64,7 @@
         <!--新闻列表表格實體-->
         <el-table :data="data" stripe border>
             <el-table-column prop="Title" label="标题"></el-table-column>
-            <el-table-column prop="Type" label="新闻类别"></el-table-column>
+            @*<el-table-column prop="Type" label="产品类别"></el-table-column>*@
             <el-table-column prop="CreateTime" label="发布时间"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -96,7 +96,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                types: ['研究院新闻', '视频短片', '媒体聚焦', '行业信息'],
+                types: ['综合案例'],
                 imageList: [],
                 fileList: [],
                 //图片上传参数
@@ -154,7 +154,7 @@
             HandleFileSuccess(response, file, fileList) {
                 var that = this
                 that._getData('/NewsAndCases/WordPathToHtml', function (result) {
-                    if (result.error.errorCode!=0) {
+                    if (result.error.errorCode != 0) {
                         that.elementAlert('报错了', result.error.errorMessage)
                         return
                     }
@@ -165,12 +165,12 @@
                         wordPath: response.Content
                     })
             },
-            //获取新闻数据
+            //获取产品数据
             getData() {
                 var that = this
                 var param = {
-                    bigType: '新闻',
-                    type: this.ruleForm.Type,
+                    bigType: this.ruleForm.BigType,
+                    type: '综合案例',
                     pageIndex: this.currentPage,
                     pageSize: this.pageSize
                 }
@@ -178,8 +178,8 @@
                     that.data = result.data
                 }, param)
             },
-            //删除新闻
-            deleteNews(index,news) {
+            //删除产品
+            deleteNews(index, news) {
                 var that = this
                 that._getData('/NewsAndCases/DeleteById', function (result) {
                     if (result.error.errorCode != 0) {
