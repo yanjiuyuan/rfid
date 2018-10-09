@@ -81,6 +81,7 @@ namespace WebZhongZhi.Controllers
             ViewBag.CorpId = DDApiService.Instance.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
             ViewBag.AgentId = DDApiService.Instance.AgentId;
+            
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("Url", url);
