@@ -193,8 +193,37 @@
                                 that.list = _mergeObjectArr(data, imgConfig, 'flowId')
                                 console.log('/FlowInfo/LoadFlowInfo?id=123')
                                 console.log(that.list)
+                                that.filterMenuList()
                             }
                         })
+                    }
+                })
+            },
+            filterMenuList() {
+                var that = this
+                var url = '/Role/GetRoleInfo?RoleName=研究院官网维护人员' 
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log('获取特殊角色详细信息')
+                        console.log(data)
+                        let isRole = false
+                        for (let d of data) {
+                            console.log(d)
+                            if (d.name == DingData.nickName) {
+                                isRole = true
+                                break
+                            }
+                        }
+                        if (!isRole) {
+                            console.log('开始过滤-研究院官网维护人员')
+                            console.log(isRole)
+                            for (var i = 0; i < that.menu.length; i++) {
+                                if (that.menu[i].SORT_NAME == '研究院官网管理') {
+                                    that.menu.splice(i, 1)
+                                }
+                            }
+                        }
                     }
                 })
             },
