@@ -72,6 +72,7 @@ namespace WebZhongZhi.Controllers
             long timeStamp = DDHelper.GetTimeStamp();
             string url = dtConfig.Url;
             string signature = DDApiService.Instance.GetSign(ticket, nonceStr, timeStamp, url);
+            string CompanyId = ConfigurationManager.AppSettings["hao"];  // 0 阿法度 2 研究院
             ViewBag.Url = url;
             ViewBag.JsApiTicket = ticket;
             ViewBag.Signature = signature;
@@ -80,6 +81,7 @@ namespace WebZhongZhi.Controllers
             ViewBag.CorpId = DDApiService.Instance.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
             ViewBag.AgentId = DDApiService.Instance.AgentId;
+            
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("Url", url);
@@ -89,6 +91,7 @@ namespace WebZhongZhi.Controllers
             dic.Add("NonceStr", nonceStr);
             dic.Add("Signature", signature);
             dic.Add("JsApiTicket", ticket);
+            dic.Add("CompanyId", CompanyId);
             return JsonConvert.SerializeObject(dic);
         }
 
