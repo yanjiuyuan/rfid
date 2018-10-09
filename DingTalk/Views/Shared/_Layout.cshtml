@@ -84,14 +84,20 @@
         cache: false,
         success: function (data) {
             DingData = data
-            //setInterval(function () {
-            //    goError();
-            //}, 3000)
-            DingData.userid = 'manager325'
-            DingData.nickName = '黄浩炜'
-
+            //0代表研究院
+            if (DingData.CompanyId == 0) {
+                 setInterval(function () {
+                    goError();
+                 }, 3000)
+            }
+            //2代表阿法迪
+            if (DingData.CompanyId == 2) {
+                DingData.userid = 'manager325'
+                DingData.nickName = '黄浩炜'
+            }
+            
+            console.log('开始获取授权')
             console.log(DingData)
-
 
             //if (goError()) return
             var configObj = {
