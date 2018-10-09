@@ -110,7 +110,7 @@ namespace DingTalk.Controllers
                 using (KisContext context = new KisContext())
                 {
                     var Quary = context.Database.SqlQuery<t_ICItem>
-                        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
+                        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'  or FModel  like '%{2}%'", Key, Key, Key)).ToList();
                     return JsonConvert.SerializeObject(Quary);
                 }
             }

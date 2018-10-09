@@ -55,6 +55,7 @@ namespace DingTalk.Controllers
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页容量</param>
         /// <returns></returns>
+        [Route("Read")]
         [HttpGet]
         public object Read(string bigType, string type, int pageIndex, int pageSize)
         {
