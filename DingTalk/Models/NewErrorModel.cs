@@ -8,6 +8,8 @@ namespace DingTalk.Models
     public class NewErrorModel
     {
         public Error error { get; set; }
+
+        public int count { get; set; }
         public object data { get; set; }
     }
 
