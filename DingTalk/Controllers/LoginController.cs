@@ -72,7 +72,7 @@ namespace WebZhongZhi.Controllers
             long timeStamp = DDHelper.GetTimeStamp();
             string url = dtConfig.Url;
             string signature = DDApiService.Instance.GetSign(ticket, nonceStr, timeStamp, url);
-            string CompanyId = ConfigurationManager.AppSettings["hao"];  // 0 阿法度 2 研究院
+            string CompanyId = ConfigurationManager.AppSettings["hao"];  // 0 阿法迪 2 研究院
             ViewBag.Url = url;
             ViewBag.JsApiTicket = ticket;
             ViewBag.Signature = signature;
