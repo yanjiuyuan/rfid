@@ -173,6 +173,16 @@ namespace DingTalk.EF
         {
             return db.Set<T>().Find(Id);
         }
+
+        /// <summary>
+        /// 查询所有数据
+        /// </summary>
+        /// <returns></returns>
+        public List<T> GetList()
+        {
+            return db.Set<T>().ToList();
+        }
+
         #endregion
 
         #region 5.1 根据条件 排序 和查询 + List<T> GetListBy<TKey>

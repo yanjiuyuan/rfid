@@ -344,6 +344,7 @@
     <Compile Include="Controllers\FlowInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemCodeAddController.cs" />
+    <Compile Include="Controllers\JobManangerController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
@@ -406,6 +407,8 @@
     <Compile Include="Models\DingModels\FlowQx.cs" />
     <Compile Include="Models\DingModels\Flows.cs" />
     <Compile Include="Models\DingModels\FlowSort.cs" />
+    <Compile Include="Models\DingModels\Jobs.cs" />
+    <Compile Include="Models\DingModels\LeaveWord.cs" />
     <Compile Include="Models\DingModels\NewsAndCases.cs" />
     <Compile Include="Models\DingModels\NodeInfo.cs" />
     <Compile Include="Models\DingModels\OfficeSupplies.cs" />

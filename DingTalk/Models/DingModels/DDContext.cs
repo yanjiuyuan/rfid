@@ -42,6 +42,8 @@ namespace DingTalk.Models.DingModels
 
         public virtual DbSet<NewsAndCases> NewsAndCases { get; set; }
 
+        public virtual DbSet<Jobs> Jobs { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Approve>()
