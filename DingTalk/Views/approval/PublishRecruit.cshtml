@@ -1,0 +1,143 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        发布招聘信息
+    </div>
+    <!--创建项目表单-->
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        <template>
+            <el-form-item label="职位名称" prop="JobName">
+                <el-input v-model="ruleForm.JobName"></el-input>
+            </el-form-item>
+            <el-form-item label="要求" prop="Require">
+                <el-input v-model="ruleForm.Require"></el-input>
+            </el-form-item>
+            <el-form-item label="工作地点" prop="WorkPlace">
+                <el-input v-model="ruleForm.WorkPlace"></el-input>
+            </el-form-item>
+            <el-form-item label="薪资范围" prop="Pay">
+                <el-input v-model="ruleForm.Pay"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="addProject" :disabled="disablePage">发布</el-button>
+                <el-button type="primary" v-on:click="getData">获取职位列表</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+
+    <div>
+        <!--新闻列表表格實體-->
+        <el-table :data="data" stripe border>
+            <el-table-column prop="JobName" label="职位名称"></el-table-column>
+            <el-table-column prop="Require" label="要求"></el-table-column>
+            <el-table-column prop="WorkPlace" label="工作地点"></el-table-column>
+            <el-table-column prop="Pay" label="薪资范围"></el-table-column>
+            <el-table-column prop="CreateTime" label="发布时间"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="danger"
+                               v-on:click="deleteNews(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:size-change="handleSizeChange"
+                           v-on:current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[100]"
+                           :page-size="100"
+                           layout="total, sizes, prev, pager, next"
+                           :total="totalRows">
+            </el-pagination>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var Index = 0
+    var date = new Date()
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                rules: {
+                    JobName: [
+                        { required: true, message: '职位名称不能为空！', trigger: 'change' }
+                    ],
+                    Require: [
+                        { required: true, message: '要求不能为空！', trigger: 'change' }
+                    ],
+                    WorkPlace: [
+                        { required: true, message: '工作地点不能为空！', trigger: 'change' }
+                    ],
+                    Pay: [
+                        { required: true, message: '发布时间不能为空！', trigger: 'change' }
+                    ]
+                },
+                ruleForm: {
+                    JobName: '',
+                    Require: '',
+                    WorkPlace: '',
+                    Pay: '',
+                    CreateTime: _dateToString(date)
+                },
+                data: []
+            }
+        },
+        methods: {
+            //添加新闻
+            addProject() {
+                var that = this
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid) {
+                        that._postData('/Job/Save', function (data) {
+                            that.$alert('恭喜提交成功', '提示信息', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    //goHome()
+                                }
+                            })
+                        }, that.ruleForm)
+                    }
+                })
+
+            },
+            //获取招聘信息数据
+            getData() {
+                var that = this
+                this._getData("/Job/Read", function (result) {
+                    that.data = result.data
+                    that.totalRows = result.count
+                })
+            },
+            //删除新闻
+            deleteNews(index,job) {
+                var that = this
+                that._getData('/Job/DeleteById', function (result) {
+                    if (result.error.errorCode != 0) {
+                        that.elementAlert('报错了', result.error.errorMessage)
+                        return
+                    }
+                    that.getData()
+                }, {
+                        id: job.Id
+                    })
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>

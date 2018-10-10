@@ -680,6 +680,7 @@
     <Content Include="Views\approval\Purchase.cshtml" />
     <Content Include="UploadFile\Excel\Templet\采购导出模板.xlsx" />
     <Content Include="Views\approval\PublishProduct.cshtml" />
+    <Content Include="Views\approval\PublishRecruit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
