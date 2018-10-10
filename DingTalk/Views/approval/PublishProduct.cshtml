@@ -107,10 +107,10 @@
                     ImageUrl: '',
                     OldImageUrl: '',
                     Title: '',
-                    Type: '',
+                    Type: '综合案例',
                     Abstract: '',
                     ImageUrl: '',
-                    BigType: '新闻',
+                    BigType: '产品',
                     Contents: '',
                     CreateTime: _dateToString(date)
                 },
@@ -176,6 +176,7 @@
                 }
                 this._getData("/NewsAndCases/Read", function (result) {
                     that.data = result.data
+                    that.totalRows = result.count
                 }, param)
             },
             //删除产品

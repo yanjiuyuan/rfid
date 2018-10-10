@@ -176,6 +176,7 @@
                 }
                 this._getData("/NewsAndCases/Read", function (result) {
                     that.data = result.data
+                    that.totalRows = result.count
                 }, param)
             },
             //删除新闻
