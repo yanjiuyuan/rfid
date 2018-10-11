@@ -48,7 +48,17 @@ function loadPage(url) {
     $("#tempPage").load(url)
 }
 function goHome() {
-    loadPage('/Main/approval')
+    $.ajax({
+        url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
+        datatype: 'json',
+        success: function (data) {
+            if (JSON.parse(data).ApproveCount) {
+                loadPage('/Main/approval')
+            } else {
+                loadPage('/Main/approval_list?Index=0')
+            }
+        }
+    })
     return true
 }
 function goError() {
@@ -1001,7 +1011,7 @@ Vue.component('sam-approver-list', {
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''" 
                                         :class="{'el-tag--danger':node.IsBack}"
-                                        style="width:60px;text-align:center;"
+                                        style="text-align:center;"
                                         >
                                     {{p}}
                                 </el-tag>
@@ -1021,7 +1031,7 @@ Vue.component('sam-approver-list', {
                                         v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
                                         :type="node.ApplyTime?'success':''"
-                                        style="width:60px;text-align:center;"
+                                        style="text-align:center;"
                                         >
                                     {{ap.name}}
                                 </el-tag>
