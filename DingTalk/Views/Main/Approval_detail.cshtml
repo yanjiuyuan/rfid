@@ -526,9 +526,9 @@
                 })
             },
             downloadAllFile() {
-                var that = this
+                var that = this 
                 let url = '/DrawingUpload/GetAllPDF'
-                that._geteData(url, function (data) {
+                that._getData(url, function (data) {
                     that.$alert('获取成功', '提示信息', {
                         confirmButtonText: '确定',
                         callback: action => {
@@ -543,7 +543,7 @@
             outPutBom() {
                 var that = this
                 let url = '/DrawingUpload/GetExcelReport'
-                that._geteData(url, function (data) {
+                that._getData(url, function (data) {
                     that.$alert('获取成功', '提示信息', {
                         confirmButtonText: '确定',
                         callback: action => {
@@ -560,7 +560,7 @@
             printExcel() {
                 var that = this
                 let url = '/api/PurchaseManage'
-                that._geteData(url, function (data) {
+                that._getData(url, function (data) {
                     that.$alert('恭喜提交成功', '提示信息', {
                         confirmButtonText: '确定',
                         callback: action => {
