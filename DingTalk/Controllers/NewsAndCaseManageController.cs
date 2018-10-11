@@ -110,9 +110,7 @@ namespace DingTalk.Controllers
                 };
             }
         }
-
-
-
+        
         /// <summary>
         /// 新闻与应用案例详情删除
         /// </summary>
@@ -169,7 +167,6 @@ namespace DingTalk.Controllers
                     error = new Error(0, "读取成功！", "") { },
                 };
             }
-
             catch (Exception ex)
             {
                 return new NewErrorModel()
