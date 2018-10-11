@@ -157,7 +157,6 @@ namespace DingTalk.Controllers
                     //    });
                     //}
                     //判断流程是否已结束
-
                     List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
                     if (tasksList.Count > 0)
                     {

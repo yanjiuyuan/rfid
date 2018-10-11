@@ -630,9 +630,6 @@ namespace DingTalk.Controllers
                             error = new Error(0, "未发现相关图纸！", "") { },
                         };
                     }
-
-
-
                 }
             }
             catch (Exception ex)
