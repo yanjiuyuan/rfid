@@ -79,6 +79,7 @@
         </el-form-item>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
+            <el-button type="primary" v-on:click="downloadAllFile">下载所有图纸</el-button>
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
@@ -97,6 +98,7 @@
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
         </el-form-item>
         <el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>
+        <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
@@ -460,7 +462,7 @@
                 this.returnSubmit(param)
             },
             
-            //盖章并获取文件
+            //图纸盖章并获取文件
             stampAndGet() {
                 FileUrl = FileUrl.replace(/\\/g, '\\\\')
                 var paramObj = {
@@ -522,6 +524,36 @@
                         console.log(err);
                     }
                 })
+            },
+            downloadAllFile() {
+                var that = this
+                let url = '/DrawingUpload/GetAllPDF'
+                that._geteData(url, function (data) {
+                    that.$alert('获取成功', '提示信息', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
+                    })
+                }, {
+                        taskId: TaskId,
+                        applyManId: DingData.userid
+                    })
+            },
+            outPutBom() {
+                var that = this
+                let url = '/DrawingUpload/GetExcelReport'
+                that._geteData(url, function (data) {
+                    that.$alert('获取成功', '提示信息', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
+                    })
+                }, {
+                        taskId: TaskId,
+                        applyManId: DingData.userid
+                    })
             },
 
             //采购抄送打印excel
