@@ -1,9 +1,11 @@
 ﻿using Common.ClassChange;
 using Common.DTChange;
 using Common.Excel;
+using Common.Flie;
 using Common.Ionic;
 using Common.JsonHelper;
 using Common.PDF;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using iTextSharp.text.pdf;
@@ -27,7 +29,7 @@ namespace DingTalk.Controllers
         // GET: DrawingUpload
         public ActionResult Index()
         {
-            return View(); 
+            return View();
         }
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace DingTalk.Controllers
         /// <param name="IsCopy">是否拷贝到研究院项目</param>
         /// <returns>返回文件路径</returns>
         [HttpPost]
-        public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId,bool? IsCopy=false)
+        public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId, bool? IsCopy = false)
         {
             try
             {
@@ -70,11 +72,11 @@ namespace DingTalk.Controllers
                     HttpPostedFileBase files = Request.Files[0];
                     string FileName = file.FileName;
                     int nIndex = FileName.LastIndexOf('.');
-                    string newFileName = file.FileName.Substring(0, nIndex) +DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string newFileName = file.FileName.Substring(0, nIndex) + DateTime.Now.ToString("yyyyMMddHHmmss");
                     string Path = "";
                     string strPath = "";
                     string strExtension = "";
-                   
+
                     if (nIndex >= 0)
                     {
                         strExtension = FileName.Substring(nIndex);
@@ -118,7 +120,7 @@ namespace DingTalk.Controllers
                         files.SaveAs(Path);
                         if (IsCopy == true)
                         {
-                            System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\"+ newFileName+ strExtension);
+                            System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\" + newFileName + strExtension);
                         }
                     }
                     else
@@ -457,7 +459,7 @@ namespace DingTalk.Controllers
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "1", 380, 710, contentList, contentWithList, dtSourse, dtApproveView,null);
+                    ProjectName, "1", 380, 710, contentList, contentWithList, dtSourse, dtApproveView, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     string[] Paths = OldPath.Split(',');
@@ -499,6 +501,151 @@ namespace DingTalk.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// 获取Excel Bom报表
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="applyManId"></param>
+        /// <returns></returns>
+        /// 测试数据： /DrawingUpload/GetExcelReport?taskId=105&applyManId=083452125733424957
+        [HttpGet]
+        public async Task<object> GetExcelReport(string taskId, string applyManId)
+        {
+            try
+            {
+                //EFHelper<Purchase> eFHelper = new EFHelper<Purchase>();
+                //System.Linq.Expressions.Expression<Func<Purchase, bool>> where = p => p.TaskId == taskId;
+                //List<Purchase> purchases = eFHelper.GetListBy(where);
+                using (DDContext context = new DDContext())
+                {
+                    var SelectPurchaseList = from p in context.Purchase
+                                             where p.TaskId == taskId
+                                             select new
+                                             {
+                                                 p.TaskId,
+                                                 p.BomId,
+                                                 p.Name,
+                                                 p.Count,
+                                                 p.MaterialScience,
+                                                 p.Unit,
+                                                 p.SingleWeight,
+                                                 p.AllWeight,
+                                                 p.Sorts,
+                                                 p.NeedTime,
+                                                 p.Mark
+                                             };
+                    DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
+                    string path = Server.MapPath("~/UploadFile/Excel/Templet/图纸BOM导出模板.xlsx");
+                    string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string newPath = Server.MapPath("~/UploadFile/Excel/Templet") + "\\图纸BOM数据" + time + ".xlsx";
+                    System.IO.File.Copy(path, newPath);
+                    if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 1))
+                    {
+                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                        //上盯盘
+                        var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/图纸BOM数据" + time + ".xlsx");
+                        //推送用户
+                        FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                        fileSendModel.UserId = applyManId;
+                        var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, "已推送至钉钉！", "") { },
+                        };
+                    }
+                    else
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(2, "文件有误！", "") { },
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// 推送所有图纸数据
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="applyManId"></param>
+        /// <returns></returns>
+        /// 测试数据： /DrawingUpload/GetAllPDF?taskId=199&applyManId=083452125733424957
+        [HttpGet]
+        public async Task<object> GetAllPDF(string taskId, string applyManId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    string[] FilePDFUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FilePDFUrl.Split(',');
+                    if (FilePDFUrl.Length > 0)
+                    {
+                        List<string> ListPath = new List<string>(FilePDFUrl);
+                        List<string> ListAbPath = new List<string>();
+                        foreach (var item in ListPath)
+                        {
+                            ListAbPath.Add(Server.MapPath(item));
+                        }
+                        string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸打包" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                        //文件压缩打包
+                        if (IonicHelper.CompressMulti(ListAbPath, SavePath, false))
+                        {
+                            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
+
+                            SavePath = "~\\"+ FileHelper.RelativePath(Server.MapPath("~/"), SavePath);
+                            //上盯盘
+                            var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                            //推送用户
+                            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                            fileSendModel.UserId = applyManId;
+                            var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "已推送至钉钉！", "") { },
+                            };
+                        }
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "打包失败！", "") { },
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, "未发现相关图纸！", "") { },
+                        };
+                    }
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+
 
         public int GetIndexOfString(string InputString, string CharString, int n)
         {
