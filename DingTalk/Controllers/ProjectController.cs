@@ -179,6 +179,7 @@ namespace DingTalk.Controllers
         /// 测试数据： /Project/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
         public void DownloadFile(string flieName, string filePath)
         {
+
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(filePath));
             if (fileInfo.Exists == true)
             {
