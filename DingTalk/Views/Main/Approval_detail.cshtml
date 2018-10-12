@@ -97,8 +97,10 @@
             </el-card>
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
         </el-form-item>
+        <el-form-item label="操作">
+            <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
+        </el-form-item>
         <el-button type="primary" v-on:click="stampAndGet2" v-if="ifShowStamppBtn2">盖章并获取</el-button>
-        <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
