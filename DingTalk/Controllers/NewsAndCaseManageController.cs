@@ -110,7 +110,7 @@ namespace DingTalk.Controllers
                 };
             }
         }
-        
+
         /// <summary>
         /// 新闻与应用案例详情删除
         /// </summary>
@@ -188,7 +188,7 @@ namespace DingTalk.Controllers
             {
                 string YjyWebPath = ConfigurationManager.AppSettings["YjyWebPath"];
                 string filePath = HttpContext.Current.Server.MapPath(picPath);
-                File.Copy(filePath, YjyWebPath+"html");
+                File.Copy(filePath, YjyWebPath + "html");
 
                 return new NewErrorModel()
                 {
@@ -234,7 +234,7 @@ namespace DingTalk.Controllers
         /// 测试数据： /NewsAndCases/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
         [Route("DownloadFile")]
         [HttpPost]
-        public string DownloadFile(FileBase64 fileBase64)
+        public object DownloadFile(FileBase64 fileBase64)
         {
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(HttpContext.Current.Server.MapPath(fileBase64.FilePath));
             if (fileInfo.Exists == true)
@@ -261,13 +261,12 @@ namespace DingTalk.Controllers
                 filestream.Read(bt, 0, bt.Length);
                 string base64Str = Convert.ToBase64String(bt);
                 filestream.Close();
-                return base64Str;
 
-                //return new NewErrorModel()
-                //{
-                //    data = "data:application/pdf;base64," + base64Str,
-                //    error = new Error(0, "下载成功！", "") { },
-                //};
+                return new NewErrorModel()
+                {
+                    data = "data:application/pdf;base64," + base64Str,
+                    error = new Error(0, "下载成功！", "") { },
+                };
             }
             else
             {
