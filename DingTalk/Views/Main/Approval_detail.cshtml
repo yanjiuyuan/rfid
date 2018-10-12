@@ -79,7 +79,7 @@
         </el-form-item>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
-            <el-button type="primary" v-on:click="downloadAllFile">下载所有图纸</el-button>
+            <el-button type="primary" v-on:click="downloadAllPdf">下载所有图纸</el-button>
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
@@ -527,16 +527,14 @@
                     }
                 })
             },
-            downloadAllFile() {
+            downloadAllPdf() {
                 console.log(' start')
                 var that = this 
                 let url = '/NewsAndCases/GetAllPDF'
                 that._getData(url, function (result) {
                     console.log('/NewsAndCases/GetAllPDF')
-                    console.log(result)
-                    return
-                    console.log(result.data.replace("application/pdf", "pdf/octet-stream"))
-                    window.location.href = result.data.replace("application/pdf", "pdf/octet-stream")
+                    console.log(result.data.replace("application/zip", "zip/octet-stream"))
+                    window.location.href = result.data.replace("application/zip", "zip/octet-stream")
                     that.$alert('获取成功', '提示信息', {
                         confirmButtonText: '确定'
                     })
