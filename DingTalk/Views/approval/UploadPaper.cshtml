@@ -300,19 +300,22 @@
             },
             downLoad() {
                 var that = this
-                let url = 'UploadFile\\PDF\\123.PDF'
-                url = '/Project/DownloadFile?flieName=123&filePath=~/UploadFile/PDF/123.PDF'
-                console.log(url)
-                //window.location = url
-                window.open(url)
+                let url = '123.PDF'
+                url = '/NewsAndCases/DownloadFile'
+                
+                //window.location.href = url
+                //window.open(url)
 
 
-                return
-                that._getData(url, function (data) {
-                    that.$alert('获取成功', '提示信息', {
-                        confirmButtonText: '确定',
+                that._postData(url, function (result) {
+                    console.log('url')
+                    console.log(result.data.replace("application/pdf", "pdf/octet-stream"))
+                    window.location.href = result.data.replace("application/pdf", "pdf/octet-stream")
+                    
+                }, {
+                        FileName: '123.pdf',
+                        FilePath:'~/UploadFile/PDF/123.PDF'
                     })
-                })
             },
             //bom表格翻页
             handleBomPageChange(page, index) {
