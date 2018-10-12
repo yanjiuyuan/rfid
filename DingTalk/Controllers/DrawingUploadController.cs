@@ -581,7 +581,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         /// 测试数据： /DrawingUpload/GetAllPDF?taskId=199&applyManId=083452125733424957
         [HttpGet]
-        public async Task<object> GetAllPDF(string taskId, string applyManId)
+        public object GetAllPDF(string taskId, string applyManId)
         {
             try
             {
@@ -600,31 +600,53 @@ namespace DingTalk.Controllers
                         //文件压缩打包
                         if (IonicHelper.CompressMulti(ListAbPath, SavePath, false))
                         {
-                            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
-
-                            SavePath = "~\\"+ FileHelper.RelativePath(Server.MapPath("~/"), SavePath);
-                            //上盯盘
-                            var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
-                            //推送用户
-                            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                            fileSendModel.UserId = applyManId;
-                            var result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                            return new NewErrorModel()
+                            System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(SavePath));
+                            if (fileInfo.Exists == true)
                             {
-                                error = new Error(0, "已推送至钉钉！", "") { },
-                            };
+                                FileStream filestream = new FileStream(Server.MapPath(SavePath), FileMode.Open);
+                                byte[] bt = new byte[filestream.Length];
+                                //调用read读取方法
+                                filestream.Read(bt, 0, bt.Length);
+                                string base64Str = Convert.ToBase64String(bt);
+                                filestream.Close();
+                                return new NewErrorModel()
+                                {
+                                    data = "data:application/zip;base64," + base64Str,
+                                    error = new Error(0, "下载成功！", "") { },
+                                };
+
+                                //string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                                //DingTalkServersController dingTalkServersController = new DingTalkServersController();
+
+                                //SavePath = "~\\"+ FileHelper.RelativePath(Server.MapPath("~/"), SavePath);
+                                ////上盯盘
+                                //var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                                ////推送用户
+                                //FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                                //fileSendModel.UserId = applyManId;
+                                //var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                                //return new NewErrorModel()
+                                //{
+                                //    error = new Error(0, "已推送至钉钉！", "") { },
+                                //};
+                            }
+                            else
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, "打包失败！", "") { },
+                                };
+                            }
                         }
                         else
                         {
                             return new NewErrorModel()
                             {
-                                error = new Error(1, "打包失败！", "") { },
+                                error = new Error(0, "未发现相关图纸！", "") { },
                             };
                         }
                     }
-                    else
-                    {
+                    else {
                         return new NewErrorModel()
                         {
                             error = new Error(0, "未发现相关图纸！", "") { },
