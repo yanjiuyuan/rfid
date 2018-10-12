@@ -1,4 +1,5 @@
-﻿using DingTalk.Bussiness.Word;
+﻿using Common.Ionic;
+using DingTalk.Bussiness.Word;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
@@ -271,6 +272,98 @@ namespace DingTalk.Controllers
                 return null;
             }
 
+        }
+
+
+        /// <summary>
+        /// 推送所有图纸数据
+        /// </summary>
+        /// <param name="taskId">199</param>
+        /// <param name="applyManId">083452125733424957</param>
+        /// <returns></returns>
+        [Route("GetAllPDF")]
+        [HttpGet]
+        public object GetAllPDF(string taskId, string applyManId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    string[] FilePDFUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FilePDFUrl.Split(',');
+                    if (FilePDFUrl.Length > 0)
+                    {
+                        List<string> ListPath = new List<string>(FilePDFUrl);
+                        List<string> ListAbPath = new List<string>();
+                        foreach (var item in ListPath)
+                        {
+                            ListAbPath.Add(HttpContext.Current.Server.MapPath(item));
+                        }
+                        string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸打包" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                        //文件压缩打包
+                        if (IonicHelper.CompressMulti(ListAbPath, SavePath, false))
+                        {
+                            System.IO.FileInfo fileInfo = new System.IO.FileInfo(SavePath);
+                            if (fileInfo.Exists == true)
+                            {
+                                FileStream filestream = new FileStream((SavePath), FileMode.Open);
+                                byte[] bt = new byte[filestream.Length];
+                                //调用read读取方法
+                                filestream.Read(bt, 0, bt.Length);
+                                string base64Str = Convert.ToBase64String(bt);
+                                filestream.Close();
+                                return new NewErrorModel()
+                                {
+                                    data = "data:application/zip;base64," + base64Str,
+                                    error = new Error(0, "下载成功！", "") { },
+                                };
+
+                                //string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                                //DingTalkServersController dingTalkServersController = new DingTalkServersController();
+
+                                //SavePath = "~\\"+ FileHelper.RelativePath(Server.MapPath("~/"), SavePath);
+                                ////上盯盘
+                                //var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                                ////推送用户
+                                //FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                                //fileSendModel.UserId = applyManId;
+                                //var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                                //return new NewErrorModel()
+                                //{
+                                //    error = new Error(0, "已推送至钉钉！", "") { },
+                                //};
+                            }
+                            else
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, "打包失败！", "") { },
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "未发现相关图纸！", "") { },
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, "未发现相关图纸！", "") { },
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
         }
 
     }
