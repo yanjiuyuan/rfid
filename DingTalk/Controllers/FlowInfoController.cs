@@ -1487,11 +1487,14 @@ namespace DingTalk.Controllers
             {
                 var NodeInfoList = context.NodeInfo;
                 var Quary = from n in NodeInfoList
+                            where n.PeopleId != null
                             select new
                             {
                                 n.PeopleId,
                                 n.NodePeople
                             };
+       
+
                 return JsonConvert.SerializeObject(Quary);
             }
         }
