@@ -127,6 +127,7 @@
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+            <el-button v-on:click="downLoad">下载</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -297,6 +298,22 @@
                     }
                 });
             },
+            downLoad() {
+                var that = this
+                let url = 'UploadFile\\PDF\\123.PDF'
+                url = '/Project/DownloadFile?flieName=123&filePath=~/UploadFile/PDF/123.PDF'
+                console.log(url)
+                //window.location = url
+                window.open(url)
+
+
+                return
+                that._getData(url, function (data) {
+                    that.$alert('获取成功', '提示信息', {
+                        confirmButtonText: '确定',
+                    })
+                })
+            },
             //bom表格翻页
             handleBomPageChange(page, index) {
                 console.log(page)
@@ -442,13 +459,13 @@
                 file.name = 'helloWorld'
                 isPdf = true
                 const isPdfType = file.type === 'application/pdf'
-                const isLt2M = file.size / 1024 / 1024 < 30
+                const isLt2M = file.size / 1024 / 1024 < 10
                 if (!isPdfType) {
                     this.$message.error('上传图片只能是 PDF 格式!')
                     return false
                 }
                 if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 30MB!')
+                    this.$message.error('上传文件大小不能超过 10MB!')
                     return false
                 }
                 this.isPdfFile = true
@@ -459,9 +476,9 @@
                 console.log(file)
                 file.name = 'helloWorld'
                 isPdf = false
-                const isLt2M = file.size / 1024 / 1024 < 30
+                const isLt2M = file.size / 1024 / 1024 < 10
                 if (!isLt2M) {
-                    this.$message.error('上传文件大小不能超过 30MB!')
+                    this.$message.error('上传文件大小不能超过 10MB!')
                     return false
                 }
                 this.isPdfFile = false

@@ -821,9 +821,9 @@ var mixin = {
             console.log(file)
             file.name = 'helloWorld'
             isPdf = false
-            const isLt2M = file.size / 1024 / 1024 < 30
+            const isLt2M = file.size / 1024 / 1024 < 10
             if (!isLt2M) {
-                this.$message.error('上传图片大小不能超过 30MB!')
+                this.$message.error('上传图片大小不能超过 10MB!')
                 return false
             }
             return true
