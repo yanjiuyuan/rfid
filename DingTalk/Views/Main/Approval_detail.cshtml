@@ -528,14 +528,17 @@
                 })
             },
             downloadAllFile() {
+                console.log('  start')
                 var that = this 
                 let url = '/DrawingUpload/GetAllPDF'
-                that._getData(url, function (data) {
+                that._getData(url, function (result) {
+                    console.log('/DrawingUpload/GetAllPDF')
+                    console.log(result)
+                    return
+                    console.log(result.data.replace("application/pdf", "pdf/octet-stream"))
+                    window.location.href = result.data.replace("application/pdf", "pdf/octet-stream")
                     that.$alert('获取成功', '提示信息', {
-                        confirmButtonText: '确定',
-                        callback: action => {
-
-                        }
+                        confirmButtonText: '确定'
                     })
                 }, {
                         taskId: TaskId,
