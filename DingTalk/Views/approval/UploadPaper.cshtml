@@ -308,7 +308,6 @@
 
 
                 that._postData(url, function (result) {
-                    console.log('url')
                     console.log(result.data.replace("application/pdf", "pdf/octet-stream"))
                     window.location.href = result.data.replace("application/pdf", "pdf/octet-stream")
                     
