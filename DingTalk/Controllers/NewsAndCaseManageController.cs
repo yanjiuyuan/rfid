@@ -235,6 +235,7 @@ namespace DingTalk.Controllers
         [HttpPost]
         public object DownloadFile(FileBase64 fileBase64)
         {
+
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(HttpContext.Current.Server.MapPath(fileBase64.FilePath));
             if (fileInfo.Exists == true)
             {
