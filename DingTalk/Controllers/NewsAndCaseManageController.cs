@@ -278,8 +278,8 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 推送所有图纸数据
         /// </summary>
-        /// <param name="taskId">199</param>
-        /// <param name="applyManId">083452125733424957</param>
+        /// <param name="taskId">流水号</param>
+        /// <param name="applyManId">用户Id</param>
         /// <returns></returns>
         [Route("GetAllPDF")]
         [HttpGet]
