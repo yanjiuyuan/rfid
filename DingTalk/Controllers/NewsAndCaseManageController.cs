@@ -225,5 +225,56 @@ namespace DingTalk.Controllers
             return fileContent;
         }
 
+
+        /// <summary>
+        /// 文件下载
+        /// </summary>
+        /// <param name="flieName">文件名</param>
+        /// <param name="filePath">文件路径</param>
+        /// 测试数据： /NewsAndCases/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
+        [Route("DownloadFile")]
+        [HttpPost]
+        public string DownloadFile(FileBase64 fileBase64)
+        {
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(HttpContext.Current.Server.MapPath(fileBase64.FilePath));
+            if (fileInfo.Exists == true)
+            {
+                //const long ChunkSize = 102400;//100K 每次读取文件，只读取100K，这样可以缓解服务器的压力
+                //byte[] buffer = new byte[ChunkSize];
+                //Response.Clear();
+                //System.IO.FileStream iStream = System.IO.File.OpenRead(Server.MapPath(filePath));
+                //long dataLengthToRead = iStream.Length;//获取下载的文件总大小
+                //Response.ContentType = "application/octet-stream";
+                //Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(flieName));
+                //while (dataLengthToRead > 0 && Response.IsClientConnected)
+                //{
+                //    int lengthRead = iStream.Read(buffer, 0, Convert.ToInt32(ChunkSize));//读取的大小
+                //    Response.OutputStream.Write(buffer, 0, lengthRead);
+                //    Response.Flush();
+                //    dataLengthToRead = dataLengthToRead - lengthRead;
+                //}
+                //Response.Close();
+                FileStream filestream = new FileStream(HttpContext.Current.Server.MapPath(fileBase64.FilePath), FileMode.Open);
+                byte[] bt = new byte[filestream.Length];
+
+                //调用read读取方法
+                filestream.Read(bt, 0, bt.Length);
+                string base64Str = Convert.ToBase64String(bt);
+                filestream.Close();
+                return base64Str;
+
+                //return new NewErrorModel()
+                //{
+                //    data = "data:application/pdf;base64," + base64Str,
+                //    error = new Error(0, "下载成功！", "") { },
+                //};
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
     }
 }

@@ -167,7 +167,7 @@ namespace DingTalk.Controllers
                 string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
                 100, 100
             );
-            DownloadFile(string.Format("{0}.pdf", DateTime.Now.ToString("yyyyMMdd hh:mm:ss")), string.Format(@"{0}\UploadFile\PDF\321.PDF", AppDomain.CurrentDomain.BaseDirectory));
+            //DownloadFile(string.Format("{0}.pdf", DateTime.Now.ToString("yyyyMMdd hh:mm:ss")), string.Format(@"{0}\UploadFile\PDF\321.PDF", AppDomain.CurrentDomain.BaseDirectory));
         }
 
 
@@ -177,10 +177,10 @@ namespace DingTalk.Controllers
         /// <param name="flieName">文件名</param>
         /// <param name="filePath">文件路径</param>
         /// 测试数据： /Project/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
-        public object DownloadFile(string flieName, string filePath)
+        [HttpPost]
+        public string DownloadFile(FileBase64 fileBase64)
         {
-
-            System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(filePath));
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(fileBase64.FilePath));
             if (fileInfo.Exists == true)
             {
                 //const long ChunkSize = 102400;//100K 每次读取文件，只读取100K，这样可以缓解服务器的压力
@@ -198,18 +198,20 @@ namespace DingTalk.Controllers
                 //    dataLengthToRead = dataLengthToRead - lengthRead;
                 //}
                 //Response.Close();
-                FileStream filestream = new FileStream(Server.MapPath(filePath), FileMode.Open);
+                FileStream filestream = new FileStream(Server.MapPath(fileBase64.FilePath), FileMode.Open);
                 byte[] bt = new byte[filestream.Length];
 
                 //调用read读取方法
                 filestream.Read(bt, 0, bt.Length);
                 string base64Str = Convert.ToBase64String(bt);
                 filestream.Close();
-                return new NewErrorModel()
-                {
-                    data = "data:application/pdf;base64," + base64Str,
-                    error = new Error(0, "下载成功！", "") { },
-                };
+                return base64Str;
+
+                //return new NewErrorModel()
+                //{
+                //    data = "data:application/pdf;base64," + base64Str,
+                //    error = new Error(0, "下载成功！", "") { },
+                //};
             }
             else
             {
@@ -750,5 +752,12 @@ namespace DingTalk.Controllers
             }
             return 0;
         }
+    }
+
+    public class FileBase64
+    {
+        public string FileName { get; set; }
+
+        public string FilePath { get; set; }
     }
 }

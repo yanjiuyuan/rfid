@@ -42,6 +42,7 @@
 <input id="btn22" type="button" value="物料编码提交Single" />
 <input id="btn23" type="button" value="项目信息修改" />
 <input id="btn24" type="button" value="删除车辆" />
+<input id="btn25" type="button" value="取BASE64" />
 <script type="text/javascript">
     var FlowTest = [{ "ApplyMan": "黄浩伟", "ApplyManId": "manager325", "Dept": "研究院", "NodeId": "0", "ApplyTime": "2018-09-26 14:35:57", "IsEnable": "1", "FlowId": "8", "IsSend": false, "State": "1", "Title": "零部件采购申请", "Remark": "1", "ProjectName": "DingTalk", "ProjectId": "12333" }, { "ApplyMan": "智慧工厂部-石威", "ApplyManId": "12096625353680", "IsEnable": 1, "FlowId": "8", "NodeId": "1", "IsSend": false, "State": 0, "OldFileUrl": null, "IsBack": null, "ProjectId": "12333" }, { "ApplyMan": "智慧工厂部-石威", "ApplyManId": "12096625353680", "IsEnable": 1, "FlowId": "8", "NodeId": "2", "IsSend": false, "State": 0, "OldFileUrl": null, "IsBack": null, "ProjectId": "12333" }];
 
@@ -620,6 +621,27 @@
                 console.log(data);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        })
+    });
+
+    $("#btn25").click(function () {
+        $.ajax({
+            url: "/NewsAndCases/DownloadFile",
+            type: "Post",
+            dataType: "json",
+            async: true,
+            data: { "FileName": "123", "FilePath": "~/UploadFile/PDF/123.PDF"},
+            success: function (data) {
+                alert(666);
+                alert(data);
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(999);
                 console.log(XMLHttpRequest.status);
                 console.log(XMLHttpRequest.readyState);
                 console.log(textStatus);
