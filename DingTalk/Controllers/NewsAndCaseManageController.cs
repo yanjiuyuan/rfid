@@ -229,9 +229,8 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 文件下载
         /// </summary>
-        /// <param name="flieName">文件名</param>
-        /// <param name="filePath">文件路径</param>
-        /// 测试数据： /NewsAndCases/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
+        /// <param name="fileBase64">文件流</param>
+        /// <returns></returns>
         [Route("DownloadFile")]
         [HttpPost]
         public object DownloadFile(FileBase64 fileBase64)
