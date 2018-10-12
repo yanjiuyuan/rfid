@@ -177,7 +177,7 @@ namespace DingTalk.Controllers
         /// <param name="flieName">文件名</param>
         /// <param name="filePath">文件路径</param>
         /// 测试数据： /Project/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
-        public string DownloadFile(string flieName, string filePath)
+        public object DownloadFile(string flieName, string filePath)
         {
 
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(filePath));
@@ -205,7 +205,11 @@ namespace DingTalk.Controllers
                 filestream.Read(bt, 0, bt.Length);
                 string base64Str = Convert.ToBase64String(bt);
                 filestream.Close();
-                return base64Str;
+                return new NewErrorModel()
+                {
+                    data = "data:application/pdf;base64," + base64Str,
+                    error = new Error(0, "下载成功！", "") { },
+                };
             }
             else
             {
@@ -572,13 +576,14 @@ namespace DingTalk.Controllers
                 if (projectInfo != null)
                 {
                     using (DDContext context = new DDContext())
-                    {   
+                    {
                         context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
                     }
-                    return JsonConvert.SerializeObject(new ErrorModel {
-                        errorCode=0,
-                        errorMessage="修改成功"
+                    return JsonConvert.SerializeObject(new ErrorModel
+                    {
+                        errorCode = 0,
+                        errorMessage = "修改成功"
                     });
                 }
                 else
