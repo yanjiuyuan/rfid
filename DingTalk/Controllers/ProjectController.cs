@@ -170,15 +170,22 @@ namespace DingTalk.Controllers
             DownloadFile(string.Format("{0}.pdf", DateTime.Now.ToString("yyyyMMdd hh:mm:ss")), string.Format(@"{0}\UploadFile\PDF\321.PDF", AppDomain.CurrentDomain.BaseDirectory));
         }
 
+
+        /// <summary>
+        /// 文件下载
+        /// </summary>
+        /// <param name="flieName">文件名</param>
+        /// <param name="filePath">文件路径</param>
+        /// 测试数据： /Project/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
         public void DownloadFile(string flieName, string filePath)
         {
-            System.IO.FileInfo fileInfo = new System.IO.FileInfo(filePath);
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(filePath));
             if (fileInfo.Exists == true)
             {
                 const long ChunkSize = 102400;//100K 每次读取文件，只读取100K，这样可以缓解服务器的压力
                 byte[] buffer = new byte[ChunkSize];
                 Response.Clear();
-                System.IO.FileStream iStream = System.IO.File.OpenRead(filePath);
+                System.IO.FileStream iStream = System.IO.File.OpenRead(Server.MapPath(filePath));
                 long dataLengthToRead = iStream.Length;//获取下载的文件总大小
                 Response.ContentType = "application/octet-stream";
                 Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(flieName));

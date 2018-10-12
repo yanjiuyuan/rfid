@@ -355,6 +355,7 @@
     <Compile Include="Controllers\PatentManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
+    <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\ReceivingManagerController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
@@ -396,6 +397,7 @@
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
+    <Compile Include="Models\DingModels\PurchaseOrder.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />

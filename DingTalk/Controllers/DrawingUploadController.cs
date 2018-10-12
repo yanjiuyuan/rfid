@@ -524,7 +524,7 @@ namespace DingTalk.Controllers
                                              select new
                                              {
                                                  p.TaskId,
-                                                 p.BomId,
+                                                 p.DrawingNo,
                                                  p.Name,
                                                  p.Count,
                                                  p.MaterialScience,
