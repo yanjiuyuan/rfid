@@ -1493,8 +1493,6 @@ namespace DingTalk.Controllers
                                 n.PeopleId,
                                 n.NodePeople
                             };
-       
-
                 return JsonConvert.SerializeObject(Quary);
             }
         }

@@ -600,10 +600,10 @@ namespace DingTalk.Controllers
                         //文件压缩打包
                         if (IonicHelper.CompressMulti(ListAbPath, SavePath, false))
                         {
-                            System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(SavePath));
+                            System.IO.FileInfo fileInfo = new System.IO.FileInfo(SavePath);
                             if (fileInfo.Exists == true)
                             {
-                                FileStream filestream = new FileStream(Server.MapPath(SavePath), FileMode.Open);
+                                FileStream filestream = new FileStream((SavePath), FileMode.Open);
                                 byte[] bt = new byte[filestream.Length];
                                 //调用read读取方法
                                 filestream.Read(bt, 0, bt.Length);
