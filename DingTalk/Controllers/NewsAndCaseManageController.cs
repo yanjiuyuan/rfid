@@ -261,7 +261,6 @@ namespace DingTalk.Controllers
                 filestream.Read(bt, 0, bt.Length);
                 string base64Str = Convert.ToBase64String(bt);
                 filestream.Close();
-
                 return new NewErrorModel()
                 {
                     data = "data:application/pdf;base64," + base64Str,
