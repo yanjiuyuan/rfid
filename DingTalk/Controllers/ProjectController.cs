@@ -177,28 +177,41 @@ namespace DingTalk.Controllers
         /// <param name="flieName">文件名</param>
         /// <param name="filePath">文件路径</param>
         /// 测试数据： /Project/DownloadFile?flieName=123&filePath=~\UploadFile\PDF\123.PDF
-        public void DownloadFile(string flieName, string filePath)
+        public string DownloadFile(string flieName, string filePath)
         {
 
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(Server.MapPath(filePath));
             if (fileInfo.Exists == true)
             {
-                const long ChunkSize = 102400;//100K 每次读取文件，只读取100K，这样可以缓解服务器的压力
-                byte[] buffer = new byte[ChunkSize];
-                Response.Clear();
-                System.IO.FileStream iStream = System.IO.File.OpenRead(Server.MapPath(filePath));
-                long dataLengthToRead = iStream.Length;//获取下载的文件总大小
-                Response.ContentType = "application/octet-stream";
-                Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(flieName));
-                while (dataLengthToRead > 0 && Response.IsClientConnected)
-                {
-                    int lengthRead = iStream.Read(buffer, 0, Convert.ToInt32(ChunkSize));//读取的大小
-                    Response.OutputStream.Write(buffer, 0, lengthRead);
-                    Response.Flush();
-                    dataLengthToRead = dataLengthToRead - lengthRead;
-                }
-                Response.Close();
+                //const long ChunkSize = 102400;//100K 每次读取文件，只读取100K，这样可以缓解服务器的压力
+                //byte[] buffer = new byte[ChunkSize];
+                //Response.Clear();
+                //System.IO.FileStream iStream = System.IO.File.OpenRead(Server.MapPath(filePath));
+                //long dataLengthToRead = iStream.Length;//获取下载的文件总大小
+                //Response.ContentType = "application/octet-stream";
+                //Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(flieName));
+                //while (dataLengthToRead > 0 && Response.IsClientConnected)
+                //{
+                //    int lengthRead = iStream.Read(buffer, 0, Convert.ToInt32(ChunkSize));//读取的大小
+                //    Response.OutputStream.Write(buffer, 0, lengthRead);
+                //    Response.Flush();
+                //    dataLengthToRead = dataLengthToRead - lengthRead;
+                //}
+                //Response.Close();
+                FileStream filestream = new FileStream(Server.MapPath(filePath), FileMode.Open);
+                byte[] bt = new byte[filestream.Length];
+
+                //调用read读取方法
+                filestream.Read(bt, 0, bt.Length);
+                string base64Str = Convert.ToBase64String(bt);
+                filestream.Close();
+                return base64Str;
             }
+            else
+            {
+                return null;
+            }
+
         }
 
 
