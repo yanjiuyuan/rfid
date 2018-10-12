@@ -530,9 +530,9 @@
             downloadAllFile() {
                 console.log('  start')
                 var that = this 
-                let url = '/DrawingUpload/GetAllPDF'
+                let url = '/NewsAndCases/GetAllPDF'
                 that._getData(url, function (result) {
-                    console.log('/DrawingUpload/GetAllPDF')
+                    console.log('/NewsAndCases/GetAllPDF')
                     console.log(result)
                     return
                     console.log(result.data.replace("application/pdf", "pdf/octet-stream"))
