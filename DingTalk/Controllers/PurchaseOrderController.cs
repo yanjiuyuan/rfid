@@ -137,7 +137,7 @@ namespace DingTalk.Controllers
         /// <param name="purchaseOrder"></param>
         /// <returns></returns>
         [Route("Save")]
-        [HttpGet]
+        [HttpPost]
         public object Save(List<PurchaseOrder> purchaseOrderList)
         {
             try
