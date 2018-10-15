@@ -309,7 +309,7 @@
             totalRows: 0,
             items: {}
         }]
-    if (FlowId != '6') dataArr = []
+    if (FlowId != '6' || FlowId != '23') dataArr = []
     switch (FlowId) {
         case '1':
             items = {
@@ -338,6 +338,21 @@
                 Mark: '备注'
             }
             bomUrl = "/DrawingUpload/GetPurchase?TaskId=" + TaskId
+            break;
+        case '23':
+            items = {
+                DrawingNo: '代号',
+                Name: '名称',
+                Count: '数量',
+                MaterialScience: '材料',
+                Unit: '单位',
+                Sorts: '类别',
+                SingleWeight: '单重',
+                AllWeight: '总重',
+                //NeedTime: '需用日期',
+                //Mark: '备注'
+            }
+            bomUrl = "/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId
             break;
         case '8':
             items = {
