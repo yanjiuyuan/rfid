@@ -424,6 +424,7 @@
     <Compile Include="Models\DingModels\PurchaseTable.cs" />
     <Compile Include="Models\DingModels\Receiving.cs" />
     <Compile Include="Models\DingModels\Roles.cs" />
+    <Compile Include="Models\DingModels\TasksPurcahse.cs" />
     <Compile Include="Models\DingModels\Tasks.cs" />
     <Compile Include="Models\DingModels\UserInfo.cs" />
     <Compile Include="Models\DingModels\Vote.cs" />
