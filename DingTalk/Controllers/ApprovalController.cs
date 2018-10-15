@@ -61,6 +61,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult UploadPaperRe()
+        {
+            return View();
+        }
         public ActionResult DownloadPaper()
         {
             return View();

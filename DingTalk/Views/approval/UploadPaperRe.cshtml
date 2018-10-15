@@ -1,0 +1,211 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+
+<el-main id="partPage" style="position:relative;margin-left:1%;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        图纸下单-{{nodeInfo.NodeName}}
+    </div>
+    <div>
+        <span>关键字查询</span>
+        <el-input v-model="keyWord" style="width:200px;"></el-input>
+        <el-button v-on:click="search">搜索</el-button>
+    </div>
+    <!--表格實體-->
+    <h3>审批列表</h3>
+    <el-table :data="allData" stripe border>
+        <el-table-column prop="TaskId" label="审批编号">
+        </el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人">
+        </el-table-column>
+        <el-table-column prop="ProjectName" label="项目名称">
+        </el-table-column>
+        <el-table-column prop="Title" label="标题">
+        </el-table-column>
+        <el-table-column prop="ApplyManId" label="申请时间">
+        </el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini" v-on:click="chooseProject(scope.$index, scope.row)">选择</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <h3>零件列表</h3>
+    <el-table :data="data" stripe border >
+        <el-table-column prop="BomId" label="组件名称">
+        </el-table-column>
+        <el-table-column prop="Sorts" label="类型">
+        </el-table-column>
+        <el-table-column prop="DrawingNo" label="代号">
+        </el-table-column>
+        <el-table-column prop="Name" label="名称">
+        </el-table-column>
+        <el-table-column prop="Count" label="数量">
+        </el-table-column>
+        <el-table-column prop="MaterialScience" label="材料">
+        </el-table-column>
+        <el-table-column prop="Unit" label="单位">
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    @*<div style="text-align:right">
+            <el-pagination v-on:current-change="handleBomPageChange($event,index)"
+                            :current-page="d.currentPage"
+                            :page-sizes="[5]"
+                            :page-size="5"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="d.totalRows">
+            </el-pagination>
+        </div>*@
+
+    <hr />
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+        </el-form-item>
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
+
+
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true">
+        </sam-approver-list>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                nodeInfo: {},
+                nodeList: [],
+                allData: [],
+                data: [],
+                projectList: [],
+                keyWord: '',
+                //表单参数
+                ruleForm: {
+                    name: DingData.nickName,
+                    remark: '',
+                    ImageUrl: '',
+                    OldImageUrl: '',
+                    FileUrl: '',
+                    OldFilePDFUrl: '',
+                    FilePDFUrl: '',
+                    OldFileUrl: '',
+                    MediaId: '',
+                    MediaIdPDF: '',
+                    inputProjectId: '',
+                    Title: '',
+                    ProjectId: null,
+                    Time: ''
+                }
+            }
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                var that = this
+                this.approvalSubmit('ruleForm', this.ruleForm, function (taskId) {
+                    that.bindData(taskId)
+                })
+            },
+            search() {
+                var that = this
+                this._getData('/PurchaseOrder/Quary', function (result) {
+                    that.allData = result.data
+                }, { key: that.keyWord })
+            },
+            chooseProject(index,row) {
+                this.data = row.PurchaseList
+
+                this.ruleForm.FileUrl = row.FileUrl
+                this.ruleForm.Title = row.Title
+                this.ruleForm.ProjectId = row.ProjectId
+                this.ruleForm.OldImageUrl = row.OldImageUrl
+                this.ruleForm.OldFileUrl = row.OldFileUrl
+                this.ruleForm.MediaId = row.MediaId
+                this.ruleForm.FilePDFUrl = row.FilePDFUrl
+                this.ruleForm.OldFilePDFUrl = row.OldFilePDFUrl
+                this.ruleForm.MediaIdPDF = row.MediaIdPDF
+                this.ruleForm.ProjectName = row.ProjectName
+            },
+            selectProject(id) {
+                console.log(id)
+                for (var project of this.projectList) {
+                    if (project.ProjectId == id) {
+                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                        this.ruleForm.ProjectName = project.ProjectName
+                    }
+                }
+            },
+            //审批绑定BOM表数据
+            bindData(taskId) {
+                var that = this
+                for (let d of this.data) {
+                    d.TaskId = taskId
+                }
+                $.ajax({
+                    url: "/PurchaseOrder/Save",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(that.data),
+                    success: function (data) {
+                        console.log("审批绑定BOM表数据ok")
+                        console.log(that.data)
+                        console.log(data)
+                        that.doneSubmit()
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
+
+
+        },
+        created: function () {
+            //FlowId = 8
+            this.getNodeInfo()
+            this.getProjects()
+            this.getApproInfo()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+<style>
+    .upload-demo {
+        width: 400px;
+    }
+</style>
+

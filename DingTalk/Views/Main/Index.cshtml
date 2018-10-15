@@ -3,17 +3,17 @@
 }
 
 @RenderPage("~/Views/Shared/LeftMenu.cshtml")
-                
+
 <!--右侧实体内容-->
 <el-main id="mainPage">
 </el-main>
 
 @RenderPage("~/Views/Shared/LeftAnother.cshtml")
-  
+
 
 @section scripts{
     <script>
-        
+
         var index = new Vue({
             el: '#app',
             mixins: [mixin],
@@ -33,37 +33,37 @@
             computed: {
                 menuStatusComputed: function () {
                     console.log('menuStates')
-                    if(this.DingData)
+                    if (this.DingData)
                         this.loadMenuData(this.DingData.agentId)
                     return 1
                 }
             },
             methods: {
-              handleOpen(key, keyPath) {
-                console.log(key, keyPath);
-              },
-              handleClose(key, keyPath) {
-                console.log(key, keyPath);
-              },
-              //菜单数据加载
-              loadMenuData(id) {
-                  var that = this
-                  $.ajax({
-                      url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
-                      datatype:'json',
-                      success: function (data) {
-                          that.menuStatus = JSON.parse(data)
-                      }
-                  })
-              }
+                handleOpen(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                handleClose(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                //菜单数据加载
+                loadMenuData(id) {
+                    var that = this
+                    $.ajax({
+                        url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
+                        datatype: 'json',
+                        success: function (data) {
+                            that.menuStatus = JSON.parse(data)
+                        }
+                    })
+                }
             },
             created: function () {
                 var that = this
                 this.loadMenuData(DingData.userid)
-                
+
                 window.setInterval(function () {
                     that.loadMenuData(DingData.userid)
-                },5000)
+                }, 5000)
             }
         })
         $("#tempPage").load('/Main/approval')
@@ -75,12 +75,12 @@
         }
         index.scollImages = scollImages
 
-        
+
     </script>
 
     <style>
         .el-menu-vertical-demo:not(.el-menu--collapse) {
-            z-index:666;
+            z-index: 666;
         }
     </style>
 }
