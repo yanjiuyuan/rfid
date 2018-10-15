@@ -85,10 +85,10 @@ namespace DingTalk.Controllers
 
                 var quaryList = context.Tasks.Where(t => (t.TaskId.ToString().Contains(key)
                   || t.ProjectName.Contains(key) || t.Title.Contains(key)
-                    || t.ApplyMan.Contains(key)) && t.NodeId == 0 && t.FlowId==6).Select(t => new TasksPurcahse
+                    || t.ApplyMan.Contains(key)) && t.NodeId == 0 && t.FlowId == 6).Select(t => new TasksPurcahse
                     {
                         Id = t.Id,
-                        TaskId=t.TaskId,
+                        TaskId = t.TaskId,
                         ApplyMan = t.ApplyMan,
                         ApplyManId = t.ApplyManId,
                         ApplyTime = t.ApplyTime,
@@ -138,12 +138,15 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Save")]
         [HttpGet]
-        public object Save(PurchaseOrder purchaseOrder)
+        public object Save(List<PurchaseOrder> purchaseOrderList)
         {
             try
             {
                 EFHelper<PurchaseOrder> eFHelper = new EFHelper<PurchaseOrder>();
-                eFHelper.Add(purchaseOrder);
+                foreach (var item in purchaseOrderList)
+                {
+                    eFHelper.Add(item);
+                }
                 return new NewErrorModel()
                 {
                     data = "",
@@ -173,10 +176,10 @@ namespace DingTalk.Controllers
             {
                 EFHelper<PurchaseOrder> eFHelper = new EFHelper<PurchaseOrder>();
                 System.Linq.Expressions.Expression<Func<PurchaseOrder, bool>> expression = n => n.TaskId == taskId;
-                PurchaseOrder purchaseOrder = eFHelper.GetListBy(expression).First();
+                List<PurchaseOrder> purchaseOrderList = eFHelper.GetListBy(expression).ToList();
                 return new NewErrorModel()
                 {
-                    data = purchaseOrder,
+                    data = purchaseOrderList,
                     error = new Error(0, "查询成功！", "") { },
                 };
             }
