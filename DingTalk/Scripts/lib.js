@@ -741,7 +741,7 @@ var mixin = {
         elementAlert(title, text) {
             var that = this
             that.$alert(text, title, {
-                confirmButtonText: '确定'
+                confirmButtonText: '确定',
             });
         },
         //选单人
@@ -902,6 +902,10 @@ var mixin = {
                 dataType: "json",
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
+                    if (data.error && data.error.errorCoe != 0) {
+                        that.elementAlert('报错信息', result.error.errorMessage)
+                        return
+                    }
                     console.log(url)
                     console.log(param)
                     console.log(data)
@@ -935,6 +939,10 @@ var mixin = {
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     console.log(data)
+                    if (data.error && data.error.errorCoe != 0) {
+                        that.elementAlert('报错信息', result.error.errorMessage)
+                        return
+                    }
                     if (alertStr) {
                         that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
                             confirmButtonText: '确定',
