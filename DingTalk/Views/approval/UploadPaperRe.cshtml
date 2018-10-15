@@ -173,22 +173,12 @@
                 for (let d of this.data) {
                     d.TaskId = taskId
                 }
-                $.ajax({
-                    url: "/PurchaseOrder/Save",
-                    type: "POST",
-                    dataType: "json",
-                    data: JSON.stringify(that.data),
-                    success: function (data) {
-                        console.log("审批绑定BOM表数据ok")
-                        console.log(that.data)
-                        console.log(JSON.stringify(that.data))
-                        console.log(data)
-                        that.doneSubmit()
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
+                this._postData("/PurchaseOrder/Save", function (data) {
+                    console.log("审批绑定BOM表数据ok")
+                    console.log(JSON.stringify(that.data))
+                    console.log(data)
+                    that.doneSubmit()
+                }, that.data)
             },
 
 
