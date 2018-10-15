@@ -134,7 +134,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 图纸下单表单保存
         /// </summary>
-        /// <param name="purchaseOrder"></param>
+        /// <param name="purchaseOrderList"></param>
         /// <returns></returns>
         [Route("Save")]
         [HttpPost]
@@ -166,7 +166,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 图纸下单数据查询
         /// </summary>
-        /// <param name="key">流水号</param>
+        /// <param name="taskId">流水号</param>
         /// <returns></returns>
         [Route("QuaryByTaskId")]
         [HttpGet]
