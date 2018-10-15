@@ -224,6 +224,16 @@
                         for (var i = 0; i < that.pdfList.length; i++) {
                             stateArr.push(0)
                         }
+                        if (!that.ruleForm.FilePDFUrl || !that.ruleForm.FileUrl) {
+                            this.$alert('图纸或文件未上传', '提交错误', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+
+                                }
+                            });
+                            that.disablePage = false
+                            return 
+                        }
                         paramArr.push({
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
