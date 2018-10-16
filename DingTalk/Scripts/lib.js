@@ -903,7 +903,7 @@ var mixin = {
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     if (data.error && data.error.errorCoe != 0) {
-                        that.elementAlert('报错信息', result.error.errorMessage)
+                        that.elementAlert('报错信息', data.error.errorMessage)
                         return
                     }
                     console.log(url)
