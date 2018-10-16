@@ -1,8 +1,10 @@
-﻿using Common.Ionic;
+﻿using Common.Flie;
+using Common.Ionic;
 using DingTalk.Bussiness.Word;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -283,11 +286,10 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("GetAllPDF")]
         [HttpGet]
-        public object GetAllPDF(string taskId, string applyManId)
+        public async Task<object> GetAllPDF(string taskId, string applyManId)
         {
             try
             {
-
                 using (DDContext context = new DDContext())
                 {
                     string[] FilePDFUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FilePDFUrl.Split(',');
@@ -295,67 +297,50 @@ namespace DingTalk.Controllers
                     {
                         List<string> ListPath = new List<string>(FilePDFUrl);
                         List<string> ListAbPath = new List<string>();
+
+                        int iCount = 12;  //设置每个文件夹最大文件数量
+                        int i = 0;
                         foreach (var item in ListPath)
                         {
-                            ListAbPath.Add(HttpContext.Current.Server.MapPath(item));
-                        }
-                        string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸打包" + DateTime.Now.ToString("yyyyMMddHHmmss"));
-                        //文件压缩打包
-                        if (IonicHelper.CompressMulti(ListAbPath, SavePath, false))
-                        {
-                            System.IO.FileInfo fileInfo = new System.IO.FileInfo(SavePath);
-                            if (fileInfo.Exists == true)
+                            if (ListAbPath.Count < iCount)
                             {
-                                FileStream filestream = new FileStream((SavePath), FileMode.Open);
-                                byte[] bt = new byte[filestream.Length];
-                                //调用read读取方法
-                                filestream.Read(bt, 0, bt.Length);
-                                string base64Str = Convert.ToBase64String(bt);
-                                filestream.Close();
-                                return new NewErrorModel()
-                                {
-                                    data = "data:application/zip;base64," + base64Str,
-                                    error = new Error(0, "下载成功！", "") { },
-                                };
-
-                                //string time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                                //DingTalkServersController dingTalkServersController = new DingTalkServersController();
-
-                                //SavePath = "~\\"+ FileHelper.RelativePath(Server.MapPath("~/"), SavePath);
-                                ////上盯盘
-                                //var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
-                                ////推送用户
-                                //FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                                //fileSendModel.UserId = applyManId;
-                                //var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                                ListAbPath.Add(HttpContext.Current.Server.MapPath(item));
+                            }
+                            if (ListAbPath.Count == iCount || ListPath.IndexOf(item) == ListPath.Count - 1)
+                            {
+                                i++;
+                                string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "流水号" + taskId + "图纸打包第" + i + "份" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                                //文件压缩打包
+                                IonicHelper.CompressMulti(ListAbPath, SavePath, false);
+                                //FileStream filestream = new FileStream((SavePath), FileMode.Open);
+                                //byte[] bt = new byte[filestream.Length];
+                                ////调用read读取方法
+                                //filestream.Read(bt, 0, bt.Length);
+                                //string base64Str = Convert.ToBase64String(bt);
+                                //filestream.Close();
                                 //return new NewErrorModel()
                                 //{
-                                //    error = new Error(0, "已推送至钉钉！", "") { },
+                                //    data = "data:application/zip;base64," + base64Str,
+                                //    error = new Error(0, "下载成功！", "") { },
                                 //};
+
+                                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                SavePath = "~\\" + FileHelper.RelativePath(HttpContext.Current.Server.MapPath("~/"), SavePath);
+                                //上盯盘
+                                var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                                //推送用户
+                                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                                fileSendModel.UserId = applyManId;
+                                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                                ListAbPath.Clear();
                             }
-                            else
-                            {
-                                return new NewErrorModel()
-                                {
-                                    error = new Error(1, "打包失败！", "") { },
-                                };
-                            }
-                        }
-                        else
-                        {
-                            return new NewErrorModel()
-                            {
-                                error = new Error(0, "未发现相关图纸！", "") { },
-                            };
                         }
                     }
-                    else
+
+                    return new NewErrorModel()
                     {
-                        return new NewErrorModel()
-                        {
-                            error = new Error(0, "未发现相关图纸！", "") { },
-                        };
-                    }
+                        error = new Error(0, "已推送至钉钉！", "") { },
+                    };
                 }
             }
             catch (Exception ex)
