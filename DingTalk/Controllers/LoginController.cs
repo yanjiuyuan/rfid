@@ -81,8 +81,6 @@ namespace WebZhongZhi.Controllers
             ViewBag.CorpId = DDApiService.Instance.CorpId;
             ViewBag.CorpSecret = dtConfig.CorpSecret;
             ViewBag.AgentId = DDApiService.Instance.AgentId;
-            
-
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("Url", url);
             dic.Add("AgentId", DDApiService.Instance.AgentId);
@@ -93,6 +91,7 @@ namespace WebZhongZhi.Controllers
             dic.Add("JsApiTicket", ticket);
             dic.Add("CompanyId", CompanyId);
             return JsonConvert.SerializeObject(dic);
+
         }
 
         /// <summary>

@@ -87,8 +87,9 @@ namespace DingTalk.Controllers
                     //    List<Tasks> taskListNow = context.Tasks.Where(t => t.TaskId == TaskId).ToList();
 
                     //}
-
-
+                    
+                    //是否推送过
+                    bool IsTs = true;
                     foreach (var tasks in taskList)
                     {
                         tasks.TaskId = TaskId;
@@ -106,6 +107,7 @@ namespace DingTalk.Controllers
                             {
                                 IsApproved = context.Tasks.Where(t => t.NodeId < tasks.NodeId && t.State == 0).ToList().Count() > 0 ? false : true;
                             }
+
 
                             //修改任务流状态
                             if (taskList.IndexOf(tasks) == 0)
@@ -172,8 +174,9 @@ namespace DingTalk.Controllers
                             }
                             else  //有选人
                             {
-                                if (taskList.IndexOf(tasks) > 0 && !IsRepeat)
+                                if (taskList.IndexOf(tasks) > 0 && !IsRepeat && IsTs)
                                 {
+                                    IsTs = false;
                                     Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
                                     //推送OA消息
                                     SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
