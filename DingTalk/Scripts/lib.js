@@ -941,7 +941,7 @@ var mixin = {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     console.log(data)
                     if (data.error && data.error.errorCoe != 0) {
-                        that.elementAlert('报错信息', result.error.errorMessage)
+                        that.elementAlert('报错信息', data.error.errorMessage)
                         return
                     }
                     if (alertStr) {

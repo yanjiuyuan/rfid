@@ -544,17 +544,25 @@
             },
             downloadAllPdf() {
                 console.log(' start')
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 var that = this 
                 let url = '/NewsAndCases/GetAllPDF'
                 that._getData(url, function (result) {
                     console.log('/NewsAndCases/GetAllPDF')
-                    console.log(result.data.replace("application/zip", "zip/octet-stream"))
-                    window.location.href = result.data.replace("application/zip", "zip/octet-stream")
+                    //console.log(result.data.replace("application/zip", "zip/octet-stream"))
+                    //window.location.href = result.data.replace("application/zip", "zip/octet-stream")
+                    loading.close()
                     that.$alert('获取成功', '提示信息', {
                         confirmButtonText: '确定'
                     })
                 }, {
                         taskId: TaskId,
+                        //applyManId: '093545544539955991'
                         applyManId: DingData.userid
                     })
             },
