@@ -140,7 +140,9 @@
             },
             search() {
                 var that = this
+                console.log('hehehe233333333')
                 this._getData('/PurchaseOrder/Quary', function (result) {
+                    console.log('hehehe')
                     that.allData = result.data
                 }, { key: that.keyWord })
             },
