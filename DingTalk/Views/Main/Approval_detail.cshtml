@@ -86,13 +86,13 @@
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
 
-                    <el-switch v-if="index == 0" v-model="f.state"
+                    <el-switch v-if="index == 0 && FlowId == '6'" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
                                active-text="通过" inactive-text="不通过"
                                active-value="1" inactive-value="0"
                                v-on:change="setPdfState">
                     </el-switch>
-                    <span v-if="index == 2">{{f.state == '1'? '通过' : '不通过'}}</span>
+                    <span v-if="index == 2 && FlowId == '6'">{{f.state == '1'? '通过' : '不通过'}}</span>
                 </div>
             </el-card>
             <el-button type="primary" v-on:click="stampAndGet" v-if="ifShowStamppBtn">盖章并获取</el-button>
@@ -279,9 +279,7 @@
     $("#mask").hide()
     var items = {}
     var allData = {}
-    var imageList = []
-    var fileList = []
-    var pdfList = []
+
     var FileUrl = ''
     var bomUrl = ''
     var dataArr = [
@@ -610,6 +608,7 @@
                         console.log(bomUrl)
                         if (typeof (data) == 'string') data = JSON.parse(data)
                         that.data = data
+                        if(FlowId == 23) that.data = data.data
                         console.log(data)
                         if (FlowId == 6) {
                             for (let a of that.dataArr) {
@@ -710,7 +709,6 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                //$(".ui-dialog").show()
                 
                 //initui()
                 initUI()
@@ -749,7 +747,7 @@
             if (FlowId == '8' && (Index == "3" || Index == "2")) {
                 this.ifShowStamppBtn2 = true
             }
-
+            this.getBomInfo()
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)
@@ -758,74 +756,7 @@
             loadHtml("mainPage", "partPage")
         }
     })
-    getFormData()
-
-
-    //获取审批表单信息
-    function getFormData() {
-        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-        $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("获取审批表单信息ok")
-                console.log(url)
-                console.log(data)
-                allData = data
-                if (data.ImageUrl && data.ImageUrl.length > 5) {
-                    var tempList = data.ImageUrl.split(',')
-                    for (let img of tempList) {
-                        imageList.push({
-                            name: 'hello.jpg',
-                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
-                        })
-                    }
-                }
-                if (data.FileUrl && data.FileUrl.length > 5) {
-                    FileUrl = data.FileUrl
-                    var urlList = data.FileUrl.split(',')
-                    var oldUrlList = data.OldFileUrl.split(',')
-                    var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
-                    for (var i = 0; i < urlList.length; i++) {
-                        fileList.push({
-                            name: oldUrlList[i],
-                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                            mediaId: MediaIdList[i]
-                        })
-                    }
-                }
-                if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
-                    FileUrl = data.FilePDFUrl
-                    var urlList = data.FilePDFUrl.split(',')
-                    var oldUrlList = data.OldFilePDFUrl.split(',')
-                    var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
-                    var stateList = data.PdfState ? data.PdfState.split(',') : []
-                    for (var i = 0; i < urlList.length; i++) {
-                        pdfList.push({
-                            name: oldUrlList[i],
-                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                            mediaId: MediaIdList[i],
-                            state: stateList[i]
-                        })
-                    }
-                }
-                taskId = allData.TaskId
-                console.log(imageList)
-                console.log(fileList)
-                console.log(pdfList)
-                demo.ruleForm = allData
-                demo.getNodeInfo()
-                demo.getApproInfo()
-                demo.getBomInfo()
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
-
-
+    getFormData(demo)
 
 </script>
 

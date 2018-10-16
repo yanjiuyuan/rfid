@@ -10,6 +10,9 @@ var Id = 0 //自增task表的id
 var UserList = [] //所有用户数据
 var imgConfig = [] //审批主页图片和路由配置
 var ReApprovalTempData = {} //重新发起审批保存的临时数据
+var imageList = []
+var fileList = []
+var pdfList = []
 
 //原型方法
 Array.prototype.removeByValue = function (val) {
@@ -189,6 +192,72 @@ function checkRate(input) {
     }
 }
 
+//获取审批表单信息
+function getFormData(demo) {
+    var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+    $.ajax({
+        url: url,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            console.log("获取审批表单信息ok")
+            console.log(url)
+            console.log(data)
+            allData = data
+            handleUrlData(data)
+            taskId = allData.TaskId
+            console.log(imageList)
+            console.log(fileList)
+            console.log(pdfList)
+            demo.ruleForm = allData
+            demo.getNodeInfo()
+            demo.getApproInfo()
+            //demo.getBomInfo()
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+}
+function handleUrlData(data) {
+    if (data.ImageUrl && data.ImageUrl.length > 5) {
+        var tempList = data.ImageUrl.split(',')
+        for (let img of tempList) {
+            imageList.push({
+                name: 'hello.jpg',
+                url: document.location + (img.substring(2)).replace(/\\/g, "/")
+            })
+        }
+    }
+    if (data.FileUrl && data.FileUrl.length > 5) {
+        FileUrl = data.FileUrl
+        var urlList = data.FileUrl.split(',')
+        var oldUrlList = data.OldFileUrl.split(',')
+        var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
+        for (var i = 0; i < urlList.length; i++) {
+            fileList.push({
+                name: oldUrlList[i],
+                url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                mediaId: MediaIdList[i]
+            })
+        }
+    }
+    if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
+        FileUrl = data.FilePDFUrl
+        var urlList = data.FilePDFUrl.split(',')
+        var oldUrlList = data.OldFilePDFUrl.split(',')
+        var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
+        var stateList = data.PdfState ? data.PdfState.split(',') : []
+        for (var i = 0; i < urlList.length; i++) {
+            pdfList.push({
+                name: oldUrlList[i],
+                url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                mediaId: MediaIdList[i],
+                state: stateList[i]
+            })
+        }
+    }
+}
 
 //时间选择器插件参数
 var pickerOptions = {
@@ -903,7 +972,6 @@ var mixin = {
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     if (data.error && data.error.errorCode != 0) {
-                        console.log(data)
                         that.elementAlert('报错信息', data.error.errorMessage)
                         return
                     }
@@ -940,7 +1008,7 @@ var mixin = {
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     console.log(data)
-                    if (data.error && data.error.errorCoe != 0) {
+                    if (data.error && data.error.errorCode != 0) {
                         that.elementAlert('报错信息', data.error.errorMessage)
                         return
                     }
