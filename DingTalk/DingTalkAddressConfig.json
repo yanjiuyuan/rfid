@@ -8,6 +8,7 @@
   "DeleteDepartmentUrl": "https://oapi.dingtalk.com/department/delete",
   "GetDepartmentUserListUrl": "https://oapi.dingtalk.com/user/simplelist",
   "GetUserDetailUrl": "https://oapi.dingtalk.com/user/get",
+  "GetUserId": "https://oapi.dingtalk.com/user/getuserinfo",
   "CreateUserUrl": "https://oapi.dingtalk.com/user/create",
   "UpdateUserUrl": "https://oapi.dingtalk.com/user/update",
   "DeleteUserUrl": "https://oapi.dingtalk.com/user/delete",
@@ -19,4 +20,5 @@
   "DownloadFileUrl": "https://oapi.dingtalk.com/media/downloadFile",
   "GetMessageListStatusUrl": "https://oapi.dingtalk.com/message/list_message_status",
   "GetDepartmentByUserId": "https://oapi.dingtalk.com/department/list_parent_depts"
+
 }

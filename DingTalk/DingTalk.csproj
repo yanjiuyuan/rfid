@@ -346,6 +346,7 @@
     <Compile Include="Controllers\ItemCodeAddController.cs" />
     <Compile Include="Controllers\JobManangerController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\LoginMobileController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
     <Compile Include="Controllers\NewsAndCaseManageController.cs" />
@@ -441,6 +442,9 @@
     <Compile Include="Models\KisModels\t_ICItem.cs" />
     <Compile Include="Models\LinkMsgModel.cs" />
     <Compile Include="Models\MessageRequestBaseModel.cs" />
+    <Compile Include="Models\MobileModels\AccessTokenModel.cs" />
+    <Compile Include="Models\MobileModels\UserIdModel.cs" />
+    <Compile Include="Models\MobileModels\UserInfoMobileModel.cs" />
     <Compile Include="Models\NewErrorModel.cs" />
     <Compile Include="Models\OATextModel.cs" />
     <Compile Include="Models\OfficeModels\OfficeModel.cs" />
