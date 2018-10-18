@@ -19,8 +19,8 @@ namespace DingTalk.Controllers
     [RoutePrefix("LoginMobile")]
     public class LoginMobileController : ApiController
     {
-        DingTalkManager dtManager;
-        HttpsClient _client;
+        DingTalkManager dtManager = new DingTalkManager();
+        HttpsClient _client = new HttpsClient();
         public DingTalkConfig DTConfig { get; set; } = new DingTalkConfig();
         DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
 
@@ -37,7 +37,8 @@ namespace DingTalk.Controllers
             {
                 string accessToken = await GetAccessToken();
                 string userId = await GetUserId(accessToken, authCode);
-                var userInfo = await GetUserInfo(accessToken, userId);
+                string accessTokenT = await GetAccessToken();
+                var userInfo = await GetUserInfo(accessTokenT, userId);
                 return userInfo;
             }
             catch (Exception ex)
@@ -57,8 +58,8 @@ namespace DingTalk.Controllers
         [Route("GetAccessToken")]
         public async Task<string> GetAccessToken()
         {
-            _client.QueryString.Add("appkey", DTConfig.CorpId);
-            _client.QueryString.Add("appsecret", DTConfig.CorpSecret);
+            _client.QueryString.Add("appkey", DTConfig.appkey);
+            _client.QueryString.Add("appsecret", DTConfig.appsecret);
             var url = _addressConfig.GetAccessTokenUrl;
             var result = await _client.Get(url);
             string accessToken = JsonConvert.DeserializeObject<DingTalk.Models.MobileModels.AccessTokenModel>(result).access_token;
@@ -98,7 +99,7 @@ namespace DingTalk.Controllers
             _client.QueryString.Add("userid", userId);
             var url = _addressConfig.GetUserDetailUrl;
             var result = await _client.Get(url);
-            return userId;
+            return result;
         }
 
        
