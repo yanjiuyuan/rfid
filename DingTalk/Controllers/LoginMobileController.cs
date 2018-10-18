@@ -93,16 +93,17 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetUserInfo")]
-        public async Task<string> GetUserInfo(string access_token, string userId)
+        public async Task<object> GetUserInfo(string access_token, string userId)
         {
             _client.QueryString.Add("access_token", access_token);
             _client.QueryString.Add("userid", userId);
             var url = _addressConfig.GetUserDetailUrl;
             var result = await _client.Get(url);
-            return result;
+            var userInfo = JsonConvert.DeserializeObject<DingTalk.Models.MobileModels.UserInfoMobileModel>(result);
+            return userInfo;
         }
 
-       
+
         private void SetAppSettings(string name, string value)
         {
             Configuration config = WebConfigurationManager.OpenWebConfiguration("~");
