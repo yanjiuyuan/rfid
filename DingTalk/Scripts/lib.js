@@ -203,6 +203,9 @@ function getFormData(demo) {
             console.log("获取审批表单信息ok")
             console.log(url)
             console.log(data)
+            imageList = []
+            fileList = []
+            pdfList = []
             allData = data
             handleUrlData(data)
             taskId = allData.TaskId
