@@ -39,7 +39,11 @@ namespace DingTalk.Controllers
                 string userId = await GetUserId(accessToken, authCode);
                 string accessTokenT = await GetAccessToken();
                 var userInfo = await GetUserInfo(accessTokenT, userId);
-                return userInfo;
+                return new NewErrorModel()
+                {
+                    data = userInfo,
+                    error = new Error(0, "读取成功！", "") { },
+                };
             }
             catch (Exception ex)
             {

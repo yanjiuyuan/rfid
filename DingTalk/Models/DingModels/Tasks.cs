@@ -69,5 +69,9 @@ namespace DingTalk.Models.DingModels
         [StringLength(200)]
         public string ProjectName { get; set; }
         
+        [StringLength(100)]
+        public string counts { get; set; }
+        
+
     }
 }

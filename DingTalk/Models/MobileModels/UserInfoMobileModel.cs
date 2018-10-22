@@ -33,11 +33,11 @@ namespace DingTalk.Models.MobileModels
 
         public List<int> department { get; set; }
 
-        public List<roles> roles { get; set; }
+        public List<role> roles { get; set; }
 
     }
 
-    public class roles
+    public class role
     {
         public int id { get; set; }
         public string name { get; set; }
