@@ -57,7 +57,7 @@
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
         <el-table-column prop="Unit" label="单位">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Unit" prop="Price">
+                <el-input v-model="scope.row.Unit" prop="Unit" :class="{ redborder:scope.row.Unit ==''}">
                 </el-input>
             </template>
         </el-table-column>
@@ -235,7 +235,12 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-
+                for (let p of this.purchaseList) {
+                    if (!p.UrgentDate || !p.Unit || !p.Count) {
+                        this.elementAlert('提示信息', '表单未填写完整')
+                        return
+                    }
+                }
                 var ProjectName
                 for (let p of that.projectList) {
                     if (p.ProjectId == that.ruleForm.ProjectId) {
