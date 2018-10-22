@@ -51,7 +51,7 @@
                            :total="totalRows">
             </el-pagination>
         </div>
-    </template>
+    </template> 
 
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
@@ -64,6 +64,9 @@
         </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="套数" v-if="FlowId == 23">
+            <el-input v-model="ruleForm.counts" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
