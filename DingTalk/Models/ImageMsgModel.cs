@@ -8,6 +8,7 @@ namespace DingTalkServer.Models
 {
     public class ImageMsgModel:MessageRequestBaseModel
     {
+
         public ImageMsgModel()
         {
             this.messageType = MessageType.Image;
