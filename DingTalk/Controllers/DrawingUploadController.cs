@@ -81,7 +81,6 @@ namespace DingTalk.Controllers
                     {
                         strExtension = FileName.Substring(nIndex);
                     }
-
                     if (string.IsNullOrEmpty(path))
                     {
                         string YjyWebPath = ConfigurationManager.AppSettings["YjyWebPath"];
