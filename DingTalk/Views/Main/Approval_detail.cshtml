@@ -65,6 +65,9 @@
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="套数" v-if="FlowId == 23">
+            <el-input v-model="ruleForm.counts" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
         </el-form-item>
