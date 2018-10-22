@@ -75,7 +75,7 @@
                 </el-option>
             </el-select>
             @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
 
         <el-form-item label="标题" prop="Title">
@@ -83,6 +83,9 @@
         </el-form-item>
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="套数">
+            <el-input v-model="ruleForm.counts"></el-input>
         </el-form-item>
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -235,6 +238,7 @@
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
+                    counts: 1,
                     ImageUrl: '',
                     OldImageUrl: '',
                     FileUrl: '',
