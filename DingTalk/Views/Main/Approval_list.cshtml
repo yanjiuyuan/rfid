@@ -5,7 +5,11 @@
 <!--右侧实体内容-->
 <div id="partPage">
     <!--表格實體-->
-    <el-table :data="tableData" stripe border>
+    <el-table :data="tableData" stripe border
+                v-loading="showLoading"
+                element-loading-text="数据加载中"
+                element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(0, 0, 0, 0.8)">
         <el-table-column prop="TaskId" label="流水号"></el-table-column>
         <el-table-column prop="FlowName" label="审批类型"></el-table-column>
         <el-table-column prop="Title" label="标题"></el-table-column>
@@ -40,6 +44,7 @@
         mixins: [mixin],
         data: function () {
             return {
+                showLoading: true,
                 data: [],
                 tableData: [],
                 currentPage: 1,
@@ -78,6 +83,7 @@
                         for (let d of data) {
                             that.data.push(d[0])
                         }
+                        that.showLoading = false
                         //that.tableData = data
                         that.getData()
                         that.totalRows = data.length
