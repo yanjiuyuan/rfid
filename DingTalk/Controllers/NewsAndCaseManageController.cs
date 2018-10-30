@@ -279,7 +279,7 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
-        /// 推送所有图纸数据
+        /// 推送所有图纸数据和附件数据
         /// </summary>
         /// <param name="taskId">流水号</param>
         /// <param name="applyManId">用户Id</param>
@@ -292,7 +292,20 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    string[] FilePDFUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FilePDFUrl.Split(',');
+                    string strUrl = "";
+                    string strFilePDFUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FilePDFUrl;
+                    string strFileUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FileUrl;
+
+                    if (!string.IsNullOrEmpty(strFileUrl))
+                    {
+                        strUrl = strFilePDFUrl + "," + strFileUrl;
+                    }
+                    else
+                    {
+                        strUrl = strFilePDFUrl;
+                    }
+
+                    string[] FilePDFUrl = strUrl.Split(',');
                     if (FilePDFUrl.Length > 0)
                     {
                         List<string> ListPath = new List<string>(FilePDFUrl);
