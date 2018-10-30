@@ -1,4 +1,5 @@
-﻿using DingTalk.EF;
+﻿using DingTalk.Bussiness.FlowInfo;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
@@ -28,64 +29,12 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext context = new DDContext();
-                //var quaryList = from t in context.Tasks
-                //               join p in context.Purchase
-                //               on t.TaskId.ToString() equals p.TaskId
-                //               where (t.TaskId.ToString().Contains(key) ||
-                //               t.ProjectName.Contains(key) || t.Title.Contains(key)
-                //               || t.ApplyMan.Contains(key)) && t.NodeId == 0
-                //               select new
-                //               {
-                //                   tId = t.Id,
-                //                   t.ApplyMan,
-                //                   t.ApplyManId,
-                //                   t.ApplyTime,
-                //                   t.Dept,
-                //                   t.FilePDFUrl,
-                //                   t.FileUrl,
-                //                   t.FlowId,
-                //                   t.ImageUrl,
-                //                   t.IsBacked,
-                //                   t.IsEnable,
-                //                   t.IsPost,
-                //                   t.IsSend,
-                //                   t.MediaId,
-                //                   t.MediaIdPDF,
-                //                   t.NodeId,
-                //                   t.OldFilePDFUrl,
-                //                   t.OldFileUrl,
-                //                   t.OldImageUrl,
-                //                   t.PdfState,
-                //                   t.ProjectId,
-                //                   t.ProjectName,
-                //                   t.Title,
-                //                   purchaseList = new List<Purchase>
-                //                   {
-                //                       new Purchase()
-                //                       {
-                //                          Id = p.Id,
-                //                          AllWeight= p.AllWeight,
-                //                          BomId=  p.BomId,
-                //                          Brand= p.Brand,
-                //                          CodeNo= p.CodeNo,
-                //                          Count= p.Count,
-                //                          DrawingNo= p.DrawingNo,
-                //                          IsDown= p.IsDown,
-                //                          Mark= p.Mark,
-                //                          MaterialScience= p.MaterialScience,
-                //                          Name= p.Name,
-                //                          NeedTime=  p.NeedTime,
-                //                          SingleWeight=p.SingleWeight,
-                //                          Sorts = p.Sorts,
-                //                          TaskId  = p.TaskId,
-                //                          Unit= p.Unit
-                //                       }
-                //                   },
-                //               };
+                List<object> list = new List<object>();
+                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t=>t.NodeId==0).ToList();
 
                 var quaryList = context.Tasks.Where(t => (t.TaskId.ToString().Contains(key)
                   || t.ProjectName.Contains(key) || t.Title.Contains(key)
-                    || t.ApplyMan.Contains(key)) && t.NodeId == 0 && t.FlowId == 6).Select(t => new TasksPurcahse
+                    || t.ApplyMan.Contains(key)) && t.NodeId == 0 && t.FlowId == 6).OrderBy(t=>t.TaskId).Select(t => new TasksPurcahse
                     {
                         Id = t.Id,
                         TaskId = t.TaskId,
@@ -114,9 +63,20 @@ namespace DingTalk.Controllers
                         PurchaseList = context.Purchase.Where(p => p.TaskId == t.TaskId.ToString()).ToList()
                     });
 
+                foreach (var item in quaryList)
+                {
+                    foreach (var tasks in tasksList)
+                    {
+                        if (item.TaskId == tasks.TaskId)
+                        {
+                            list.Add(item);
+                        }
+                    }
+                }
+
                 return new NewErrorModel()
                 {
-                    data = quaryList,
+                    data = list,
                     error = new Error(0, "复制成功！", "") { },
                 };
 

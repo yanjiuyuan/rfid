@@ -427,7 +427,7 @@ namespace DingTalk.Controllers
 
                     DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
                     //ClassChangeHelper.ToDataTable(SelectPurchaseList);
-                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束").ToList();
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.NodeName != "结束" && u.IsSend != true).ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
                         if (string.IsNullOrEmpty(nodeInfo.NodePeople))
@@ -444,7 +444,10 @@ namespace DingTalk.Controllers
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
-                    string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
+
+                    ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First();
+                    string ProjectName = projectInfo.ProjectName;
+                    string ProjectNo = projectInfo.ProjectId;
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
@@ -453,11 +456,11 @@ namespace DingTalk.Controllers
 
                     float[] contentWithList = new float[]
                     {
-                        50, 60, 60, 30, 60, 60, 60, 60, 60 , 60, 60
+                        50, 80, 80, 30, 60, 30, 60, 60, 60 , 60, 60
                     };
 
-                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "1", 380, 710, contentList, contentWithList, dtSourse, dtApproveView, null);
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
+                    ProjectName, ProjectNo, "1", 380, 710, contentList, contentWithList, dtSourse, dtApproveView, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     string[] Paths = OldPath.Split(',');
@@ -570,7 +573,7 @@ namespace DingTalk.Controllers
             }
         }
 
-       
+
 
 
         public int GetIndexOfString(string InputString, string CharString, int n)

@@ -2,6 +2,7 @@
 using DingTalk.Bussiness.FlowInfo;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using DingTalk.Models.MobileModels;
 using DingTalkServer;
 using DingTalkServer.Models;
 using Newtonsoft.Json;
@@ -334,23 +335,71 @@ namespace DingTalk.Controllers
             return await dtManager.SendMessage(msgModel);
         }
 
+
+
+        /// <summary>
+        /// 向用户推送链接消息
+        /// </summary>
+        /// <returns></returns>
         [Route("sendLinkMessage")]
         [HttpPost]
-        public async Task<string> SendLinkMessage()
+        public async Task<string> SendLinkMessage(string userId)
         {
-            var msgModel = new LinkMsgModel()
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            HttpsClient _client = new HttpsClient();
+            SendWorkModel sendWorkModel = new SendWorkModel()
             {
-                agentid = "86624962",
-                Link = new Link()
+                //189694580
+                agent_id = long.Parse(DTConfig.AgentId),
+                userid_list = userId,
+                to_all_user = false,
+                msg = (new MsgModel
                 {
-                    MessageUrl = "http://test.xiaogj.com",
-                    PicUrl = "@lADOuMXP4cyWzMg",
-                    Title = "测试",
-                    Text = "测试内容"
-                },
-                touser = "manager9585"
+                    msgtype = "link",
+                    link = new DingTalk.Models.MobileModels.linkTest
+                    {
+                        messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=49312",
+                        //messageUrl= "https://www.baidu.com/",
+                        picUrl = "@lALOACZwe2Rk",
+                        title = "测试啊",
+                        text = "继续测试"
+                    },
+                })
             };
-            return await dtManager.SendMessage(msgModel);
+
+            var access_token = await dtManager.GetAccessToken();
+            AccessTokenModel accessTokenModel = JsonConvert.DeserializeObject<AccessTokenModel>(access_token);
+            _client.QueryString.Add("access_token", accessTokenModel.access_token);
+            var url = _addressConfig.GetWorkMsgUrl;
+            var result = await _client.UploadModel(url, sendWorkModel);
+            return result;
+
+            //TopSDKTest top = new TopSDKTest();
+            //OATextModel oaTextModel = new OATextModel();
+            //oaTextModel.message_url = "eapp://page/start/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=49312";
+            //oaTextModel.head = new head
+            //{
+            //    bgcolor = "FFBBBBBB",
+            //    text = "头部标题111222"
+            //};
+            //oaTextModel.body = new body
+            //{
+            //    form = new form[] {
+            //            new form{ key="姓名",value="11张三"},
+            //            new form{ key="爱好",value="打球"},
+            //        },
+            //    rich = new rich
+            //    {
+            //        num = "15.6",
+            //        unit = "元"
+            //    },
+            //    //title = "正文标题",
+            //    content = "111一大段文字",
+            //    image = "@lADOADmaWMzazQKA",
+            //    file_count = "3",
+            //    author = "李四"
+            //};
+            //return top.SendOaMessage(userId, oaTextModel);
         }
 
 

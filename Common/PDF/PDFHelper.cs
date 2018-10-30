@@ -41,8 +41,10 @@ namespace Common.PDF
         /// <param name="FlowName">流程名</param>
         /// <param name="TaskId">流水号</param>
         /// <param name="ApplyName">申请人</param>
+        /// <param name="Dept">申请部门</param>
         /// <param name="ApplyTime">申请时间</param>
         /// <param name="ProjectName">项目名</param>
+        /// <param name="ProjectNo">项目编号</param>
         /// <param name="ImageNo">图片编号</param>
         /// <param name="ImageX">盖章X轴</param>
         /// <param name="ImageY">盖章Y轴</param>
@@ -53,8 +55,8 @@ namespace Common.PDF
         /// <param name="dtSourse">表单数据</param>
         /// <param name="dtApproveView">审批意见数据</param>
         ///  <param name="keyValuePairs">表单单列数据</param>
-        public string GeneratePDF(string FlowName, string TaskId, string ApplyName,
-            string ApplyTime, string ProjectName, string ImageNo, float ImageX, float ImageY
+        public string GeneratePDF(string FlowName, string TaskId, string ApplyName,string Dept,
+            string ApplyTime, string ProjectName, string ProjectNo, string ImageNo, float ImageX, float ImageY
             , List<string> contentList, float[] contentWithList
             , DataTable dtSourse, DataTable dtApproveView, Dictionary<string, string> keyValuePairs)
         {
@@ -79,11 +81,12 @@ namespace Common.PDF
                 CreateLine();//生成一条下横线
                 //CreateEmptyRow(1);//生成一行空行
 
-                AddHeaderTitleContent(FlowName , fontMiddle, IndentationCenter);//添加表头
+                AddHeaderTitleContent(FlowName, fontSmallNoBold, IndentationCenter);//添加表头
                 //CreateEmptyRow(1);//生成一行空行
 
-                if (!string.IsNullOrEmpty(TaskId)){ AddPartnerContents("流水号", TaskId, "申请人", ApplyName); }
-                if (!string.IsNullOrEmpty(ProjectName)) { AddPartnerContents("申请时间", ApplyTime, "所属项目", ProjectName); }
+                if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents("流水号", TaskId, "申请人", ApplyName); }
+                if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents( "申请时间", ApplyTime.Substring(0, 10),"申请部门", Dept); }               
+                if (!string.IsNullOrEmpty(ProjectName)) { AddSinglePartnerContents("项目", ProjectNo + "-" + ProjectName); }
                 AddPageNumberContent();//添加页码
                 CreateEmptyRow(1);//生成一行空行
 
@@ -116,7 +119,7 @@ namespace Common.PDF
                     //添加表格列头   
                     foreach (var item in contentList)
                     {
-                        table.AddCell(GetPdfCell(item, fontSmallNoBold, Element.ALIGN_CENTER));
+                        table.AddCell(GetPdfCell(item, fontTableSmallNoBold, Element.ALIGN_CENTER));
                     }
                     //添加表格列头宽度   
                     table.SetTotalWidth(contentWithList);
@@ -152,8 +155,6 @@ namespace Common.PDF
                 }
 
                 #endregion
-
-
 
                 #region 打印审批人
 
@@ -191,8 +192,6 @@ namespace Common.PDF
                 }
 
                 #endregion
-
-
 
                 #region 添加文字水印
                 string waterMarkName = "";
@@ -299,9 +298,6 @@ namespace Common.PDF
         }
         #endregion
 
-
-
-
         #region 生成一条横线
         private static void CreateLine()
         {
@@ -335,6 +331,21 @@ namespace Common.PDF
 
         #region 生成表单通用基本数据
 
+        public static void AddSinglePartnerContents(string FieldNameOne, string FieldValueOne)
+        {
+            fontMiddle.SetStyle(Font.UNDERLINE);//文字下划线
+                                                //IndentationLeft = IndentationLeft + 10;
+            Paragraph content = new Paragraph();
+            content.IndentationLeft = IndentationLeft;
+            Chunk chunkNameOne = new Chunk(FieldNameOne + ":", fontSmallNoBold);
+            //Chunk chunkTextOne = new Chunk(GetEmptyString(20, FieldValueOne), fontSmallNoBold);   
+            Chunk chunkTextOne = new Chunk(FieldValueOne, fontSmallNoBold);
+            content.Add(0, chunkNameOne);
+            content.Add(1, chunkTextOne);
+            content.Alignment = 10;
+            doc.Add(content);
+        }
+
         /// <summary>
         /// 生成表单通用基本数据
         /// </summary>
@@ -348,9 +359,11 @@ namespace Common.PDF
             Paragraph content = new Paragraph();
             content.IndentationLeft = IndentationLeft;
             Chunk chunkNameOne = new Chunk(FieldNameOne + ":", fontSmallNoBold);
-            Chunk chunkTextOne = new Chunk(GetEmptyString(20, FieldValueOne), fontMiddle);
+            //Chunk chunkTextOne = new Chunk(GetEmptyString(20, FieldValueOne), fontSmallNoBold);
+            Chunk chunkTextOne = new Chunk(FieldValueOne, fontSmallNoBold);
             Chunk chunkNameTwo = new Chunk(FieldNameTwo + ":", fontSmallNoBold);
-            Chunk chunkTextTwo = new Chunk(GetEmptyString(20, FieldValueTwo), fontMiddle);
+            //Chunk chunkTextTwo = new Chunk(GetEmptyString(20, FieldValueTwo), fontSmallNoBold);
+            Chunk chunkTextTwo = new Chunk(FieldValueTwo, fontSmallNoBold);
             content.Add(0, chunkNameOne);
             content.Add(1, chunkTextOne);
             content.Add(0, chunkNameTwo);

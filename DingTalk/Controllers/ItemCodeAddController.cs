@@ -116,5 +116,69 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 物料批量新增接口(采购物料)
+        /// </summary>
+        /// <param name="kisPurchases"></param>
+        /// <returns></returns>
+        [Route("InsertPurcahse")]
+        [HttpPost]
+        public object InsertPurcahse(List<KisPurchase> kisPurchases)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.BulkInsert(kisPurchases);
+                    context.BulkSaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    count = kisPurchases.Count,
+                    data = kisPurchases,
+                    error = new Error(0, "插入成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 物料批量新增接口(办公用品物料)
+        /// </summary>
+        /// <param name="kisPurchases"></param>
+        /// <returns></returns>
+        [Route("InsertPurcahse")]
+        [HttpPost]
+        public object InsertOffice(List<KisOffice> KisOffices)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.BulkInsert(KisOffices);
+                    context.BulkSaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    count = KisOffices.Count,
+                    data = KisOffices,
+                    error = new Error(0, "插入成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
     }
 }

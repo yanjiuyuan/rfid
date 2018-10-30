@@ -87,6 +87,7 @@
     <Compile Include="DTChange\DtLinqOperators.cs" />
     <Compile Include="Excel\ExcelHelperByNPOI.cs" />
     <Compile Include="Flie\FlieHelper.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Ionic\IonicHelper.cs" />
     <Compile Include="JsonHelper\JsonHelper.cs" />
     <Compile Include="LogHelper\Logger.cs" />

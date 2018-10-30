@@ -3,14 +3,18 @@ using Common.DTChange;
 using Common.Excel;
 using Common.Ionic;
 using Common.PDF;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using DingTalk.Models.KisLocalModels;
 using DingTalk.Models.KisModels;
+using DingTalk.Models.OfficeLocalModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,6 +25,9 @@ using System.Web.Http;
 
 namespace DingTalk.Controllers
 {
+    /// <summary>
+    /// 采购管理
+    /// </summary>
     [RoutePrefix("Purchase")]
     public class PurchaseManageController : ApiController
     {
@@ -107,10 +114,17 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (KisContext context = new KisContext())
+                //using (KisContext context = new KisContext())
+                //{
+                //    var Quary = context.Database.SqlQuery<DingTalk.Models.KisModels.t_ICItem>
+                //        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'  or FModel  like '%{2}%'", Key, Key, Key)).ToList();
+
+                //    return JsonConvert.SerializeObject(Quary);
+                //}
+                using (DDContext context = new DDContext())
                 {
-                    var Quary = context.Database.SqlQuery<t_ICItem>
-                        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'  or FModel  like '%{2}%'", Key, Key, Key)).ToList();
+                    var Quary = context.KisPurchase.Where(k => k.FName.Contains(Key) ||
+                    k.FNumber.Contains(Key) || k.FModel.Contains(Key)).ToList();
                     return JsonConvert.SerializeObject(Quary);
                 }
             }
@@ -123,6 +137,144 @@ namespace DingTalk.Controllers
                 });
             }
         }
+
+     
+
+        /// <summary>
+        /// 金蝶产品信息读取(手机版分页)
+        /// </summary>
+        /// <param name="Key">查询关键字</param>
+        /// <param name="pageIndex">页码</param>
+        /// <param name="pageSize">页容量</param>
+        /// <returns></returns>
+        [Route("Read")]
+        [HttpGet]
+        public object Read(string Key, int pageIndex, int pageSize)
+        {
+            try
+            {
+                EFHelper<KisPurchase> eFHelper = new EFHelper<KisPurchase>();
+                System.Linq.Expressions.Expression<Func<KisPurchase, bool>> expression = null;
+                expression = n => n.FName.Contains(Key) || n.FNumber.Contains(Key) || n.FModel.Contains(Key);
+                List<KisPurchase> t_ICItemListAll = eFHelper.GetListBy(expression);
+                List<KisPurchase> t_ICItem = eFHelper.GetPagedList(pageIndex, pageSize,
+                     expression, n => n.FItemID);
+                return new NewErrorModel()
+                {
+                    count = t_ICItemListAll.Count,
+                    data = t_ICItem,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 通过本地数据(内网)同步金蝶数据
+        /// </summary>
+        /// <param name="State">0表示金蝶物料数据,1表示金蝶办公用品数据</param>
+        /// <returns></returns>
+        [Route("SynchroData")]
+        [HttpGet]
+        public object SynchroData(int State)
+        {
+            try
+            {
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+                int count = 0;
+                if (State == 0)
+                {
+                    using (KisLocalContext kisLocalContext = new KisLocalContext())
+                    {
+                        using (DDContext DDcontext = new DDContext())
+                        {
+                            List<DingTalk.Models.KisLocalModels.t_ICItem> t_ICItemList = kisLocalContext.t_ICItem.ToList();
+                            List<DingTalk.Models.DingModels.KisPurchase> KisPurchaseList = new List<KisPurchase>();
+                            //清理旧数据
+                            EFHelper<DingTalk.Models.DingModels.KisPurchase> eFHelper = new EFHelper<KisPurchase>();
+                            eFHelper.DelBy(k => k.FItemID != null);
+                            //构造数据
+                            foreach (var item in t_ICItemList)
+                            {
+                                KisPurchaseList.Add(new KisPurchase()
+                                {
+                                    FNumber = item.FNumber,
+                                    FItemID = item.FItemID.ToString(),
+                                    FNote = item.FNote,
+                                    FModel = item.FModel,
+                                    FName = item.FName
+                                });
+                            }
+                            //批量插入
+                            DDcontext.BulkInsert(KisPurchaseList);
+                            DDcontext.BulkSaveChanges();
+                            count = t_ICItemList.Count();
+                        }
+                    }
+                    watch.Stop();
+                    return new NewErrorModel()
+                    {
+                        count = count,
+                        data = "耗时：" + watch.ElapsedMilliseconds,
+                        error = new Error(0, "同步成功！", "") { },
+                    };
+                }
+                else
+                {
+                    using (OfficeLocalContext officeLocalContext = new OfficeLocalContext())
+                    {
+                        using (DDContext DDcontext = new DDContext())
+                        {
+                            List<DingTalk.Models.OfficeLocalModels.t_ICItem> t_ICItemList = officeLocalContext.t_ICItem.ToList();
+                            List<DingTalk.Models.DingModels.KisOffice> KisOfficeList = new List<KisOffice>();
+                            //清理旧数据
+                            EFHelper<DingTalk.Models.DingModels.KisOffice> eFHelper = new EFHelper<KisOffice>();
+                            eFHelper.DelBy(k => k.FItemID != null);
+                            //构造数据
+                            foreach (var item in t_ICItemList)
+                            {
+                                KisOfficeList.Add(new KisOffice()
+                                {
+                                    FNumber = item.FNumber,
+                                    FItemID = item.FItemID.ToString(),
+                                    FNote = item.FNote,
+                                    FModel = item.FModel,
+                                    FName = item.FName
+                                });
+                            }
+                            //批量插入
+                            DDcontext.BulkInsert(KisOfficeList);
+                            DDcontext.BulkSaveChanges();
+                            count = t_ICItemList.Count();
+                        }
+                    }
+                    watch.Stop();
+                    return new NewErrorModel()
+                    {
+                        count = count,
+                        data = "耗时：" + watch.ElapsedMilliseconds,
+                        error = new Error(0, "同步成功！", "") { },
+                    };
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
         #endregion
 
 
@@ -202,7 +354,9 @@ namespace DingTalk.Controllers
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
-                    string ProjectName = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First().ProjectName;
+                    ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First();
+                    string ProjectName = projectInfo.ProjectName;
+                    string ProjectNo = projectInfo.ProjectId;
 
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
@@ -215,8 +369,8 @@ namespace DingTalk.Controllers
                         50, 60, 60, 60, 60, 60, 60, 60, 60,60
                     };
 
-                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.ApplyTime,
-                    ProjectName, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null);
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
+                    ProjectName, ProjectNo, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     List<string> newPaths = new List<string>();
@@ -269,7 +423,6 @@ namespace DingTalk.Controllers
                     if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 1))
                     {
                         DingTalkServersController dingTalkServersController = new DingTalkServersController();
-
                         //上盯盘
                         var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/采购单" + time + ".xlsx");
                         //推送用户

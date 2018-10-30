@@ -30,6 +30,19 @@ namespace DingTalk.EF
             db.Set<T>().Add(model);
             return db.SaveChanges();//保存成功后，会将自增的id设置给 model的 主键属性，并返回受影响行数
         }
+
+        /// <summary>
+        /// 批量新增实体
+        /// </summary>
+        /// <param name="models"></param>
+        public void Add(List<T> models)
+        {
+            foreach (var item in models)
+            {
+                db.Set<T>().Add(item);
+                db.SaveChanges();
+            }
+        }
         #endregion
 
         #region 2.0 根据 id 删除 +int Del(T model)

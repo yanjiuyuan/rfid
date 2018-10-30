@@ -207,8 +207,8 @@ namespace DingTalk.Controllers
                     dic.Add("领导阅示", receiving.Leadership);
                     dic.Add("承办部门阅办情况", receiving.Review.Replace("~", "     "));
                     dic.Add("办理落实情况", receiving.HandleImplementation.Replace("~", "     "));
-                    string path = pdfHelper.GeneratePDF(FlowName, null, tasks.ApplyMan, tasks.ApplyTime,
-                    "", "2", 380, 710, null, null, dtSourse, dtApproveView, dic);
+                    string path = pdfHelper.GeneratePDF(FlowName, null, tasks.ApplyMan,tasks.Dept,tasks.ApplyTime,
+                    "","", "2", 380, 710, null, null, dtSourse, dtApproveView, dic);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
                     List<string> newPaths = new List<string>();
                     RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -87,7 +88,7 @@ namespace DingTalk.Controllers
                     //    List<Tasks> taskListNow = context.Tasks.Where(t => t.TaskId == TaskId).ToList();
 
                     //}
-                    
+
                     //是否推送过
                     bool IsTs = true;
                     foreach (var tasks in taskList)
@@ -1127,6 +1128,7 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+
                     //待审批的
                     int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == false).Count();
                     //我发起的
@@ -1138,6 +1140,7 @@ namespace DingTalk.Controllers
                     dic.Add("ApproveCount", iApprove);
                     dic.Add("MyPostCount", iMyPost);
                     dic.Add("SendMyCount", iSendMy);
+
                     return JsonConvert.SerializeObject(dic);
                 }
             }
@@ -1159,7 +1162,7 @@ namespace DingTalk.Controllers
         /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
         /// <param name="ApplyManId">用户名Id</param>
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
-        /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=0&ApplyManId=蔡兴桐Id
+        /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=1&ApplyManId=023752010629202711
         [HttpGet]
         public string GetFlowStateDetail(int Index, string ApplyManId)
         {
@@ -1177,7 +1180,7 @@ namespace DingTalk.Controllers
                         case 1:
                             //我已审批
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-                            return Quary(context, ListTasks, ApplyManId);
+                            return Quary(context, ListTasks, ApplyManId); ;
                         case 2:
                             //我发起的
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
@@ -1209,10 +1212,11 @@ namespace DingTalk.Controllers
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<Object> listQuary = new List<object>();
+            List<Tasks> ListTask = context.Tasks.ToList();
+            List<Flows> ListFlows = context.Flows.ToList();
 
             foreach (int TaskId in ListTasks)
             {
-                //int? NodeId = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.TaskId == TaskId).OrderByDescending(u => u.Id).Select(u => u.NodeId).ToList().First();
                 int StateCount = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
                 int? NodeId = 0;
                 if (StateCount == 0)
@@ -1231,8 +1235,6 @@ namespace DingTalk.Controllers
                     }
                 }
 
-                List<Tasks> ListTask = context.Tasks.ToList();
-                List<Flows> ListFlows = context.Flows.ToList();
                 listQuary.Add(from t in ListTask
                               join f in ListFlows
                               on t.FlowId.ToString() equals f.FlowId.ToString()
@@ -1490,13 +1492,23 @@ namespace DingTalk.Controllers
             {
                 var NodeInfoList = context.NodeInfo;
                 var Quary = from n in NodeInfoList
-                            where n.PeopleId != null
+                            where n.PeopleId != null && !n.PeopleId.Contains(",")
                             select new
                             {
                                 n.PeopleId,
                                 n.NodePeople
                             };
-                return JsonConvert.SerializeObject(Quary);
+                var QuaryPro = from n in Quary
+                               group n by new { PeopleId = n.PeopleId, NodePeople = n.NodePeople }
+                               into g
+                               select new { g.Key.PeopleId, g.Key.NodePeople };
+
+
+                //var Quary = context.Database.SqlQuery<NodeInfo>
+                //       ("select peopleid,NodePeople from NodeInfo  where NodePeople is  not null and charindex(',',NodePeople)=0   group by peopleid,NodePeople");
+
+                return JsonConvert.SerializeObject(QuaryPro);
+
             }
         }
 
@@ -1508,11 +1520,12 @@ namespace DingTalk.Controllers
         /// 发送OA消息
         /// </summary>
         /// 测试数据 /FlowInfo/TestSentOaMsg
+        [HttpGet]
         public string TestSentOaMsg()
         {
             TopSDKTest top = new TopSDKTest();
             OATextModel oaTextModel = new OATextModel();
-            oaTextModel.message_url = "http://dingtalk.com";
+            oaTextModel.message_url = "https://www.baidu.com/";
             oaTextModel.head = new head
             {
                 bgcolor = "FFBBBBBB",
@@ -1535,13 +1548,14 @@ namespace DingTalk.Controllers
                 file_count = "3",
                 author = "李四"
             };
-            return top.SendOaMessage("073110326032521796", oaTextModel);
+            return top.SendOaMessage("083452125733424957", oaTextModel);
         }
 
         /// <summary>
         /// 发送普通消息
         /// </summary>
         /// 测试数据 /FlowInfo/TestSentCommonMsg
+        [HttpGet]
         public string SentCommonMsg(string SendPeoPleId, string Title, string ApplyMan,
             string Content, string Url)
         {

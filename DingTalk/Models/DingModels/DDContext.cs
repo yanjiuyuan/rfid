@@ -45,6 +45,8 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Jobs> Jobs { get; set; }
 
         public virtual DbSet<PurchaseOrder> PurchaseOrder { get; set; }
+        public virtual DbSet<KisPurchase> KisPurchase { get; set; }
+        public virtual DbSet<KisOffice> KisOffice { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
