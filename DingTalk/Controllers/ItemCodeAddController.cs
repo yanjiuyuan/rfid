@@ -152,7 +152,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 物料批量新增接口(办公用品物料)
         /// </summary>
-        /// <param name="kisPurchases"></param>
+        /// <param name="KisOffices"></param>
         /// <returns></returns>
         [Route("InsertPurcahse")]
         [HttpPost]
