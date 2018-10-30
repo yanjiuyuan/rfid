@@ -208,7 +208,7 @@ function getFormData(demo) {
             fileList = []
             pdfList = []
             allData = data
-            handleUrlData(data)
+            handleUrlData(data,demo)
             taskId = allData.TaskId
             console.log(imageList)
             console.log(fileList)
@@ -223,7 +223,7 @@ function getFormData(demo) {
         }
     })
 }
-function handleUrlData(data) {
+function handleUrlData(data,demo) {
     var that = this
     imageList = []
     fileList = []
@@ -236,7 +236,7 @@ function handleUrlData(data) {
                 url: document.location + (img.substring(2)).replace(/\\/g, "/")
             })
         }
-        that.imageList = imageList
+        demo.imageList = imageList
     }
     if (data.FileUrl && data.FileUrl.length > 5) {
         FileUrl = data.FileUrl
@@ -250,7 +250,7 @@ function handleUrlData(data) {
                 mediaId: MediaIdList[i]
             })
         }
-        that.fileList = fileList
+        demo.fileList = fileList
     }
     if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
         FileUrl = data.FilePDFUrl
@@ -266,7 +266,7 @@ function handleUrlData(data) {
                 state: stateList[i]
             })
         }
-        that.pdfList = pdfList
+        demo.pdfList = pdfList
     }
 }
 
