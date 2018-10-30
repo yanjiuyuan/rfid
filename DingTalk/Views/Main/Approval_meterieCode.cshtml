@@ -51,7 +51,7 @@
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="添加到">
+        <el-form-item label="添加到" v-if="Index == '0' && NodeId == 2">
             <el-radio v-model="codeType" label="1">零部件</el-radio>
             <el-radio v-model="codeType" label="2">办公用品</el-radio>
         </el-form-item>
