@@ -195,6 +195,7 @@ function checkRate(input) {
 //获取审批表单信息
 function getFormData(demo) {
     var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+    var that = this
     $.ajax({
         url: url,
         type: "GET",
@@ -223,6 +224,10 @@ function getFormData(demo) {
     })
 }
 function handleUrlData(data) {
+    var that = this
+    imageList = []
+    fileList = []
+    pdfList = []
     if (data.ImageUrl && data.ImageUrl.length > 5) {
         var tempList = data.ImageUrl.split(',')
         for (let img of tempList) {
@@ -231,6 +236,7 @@ function handleUrlData(data) {
                 url: document.location + (img.substring(2)).replace(/\\/g, "/")
             })
         }
+        that.imageList = imageList
     }
     if (data.FileUrl && data.FileUrl.length > 5) {
         FileUrl = data.FileUrl
@@ -244,6 +250,7 @@ function handleUrlData(data) {
                 mediaId: MediaIdList[i]
             })
         }
+        that.fileList = fileList
     }
     if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
         FileUrl = data.FilePDFUrl
@@ -259,6 +266,7 @@ function handleUrlData(data) {
                 state: stateList[i]
             })
         }
+        that.pdfList = pdfList
     }
 }
 

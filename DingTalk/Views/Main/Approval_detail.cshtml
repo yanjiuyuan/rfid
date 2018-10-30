@@ -310,7 +310,7 @@
             totalRows: 0,
             items: {}
         }]
-    if (FlowId != '6' || FlowId != '23') dataArr = []
+    if (FlowId != '6' && FlowId != '23') dataArr = []
     switch (FlowId) {
         case '1':
             items = {
@@ -693,9 +693,11 @@
                         console.log("獲取角色信息")
                         console.log(url)
                         console.log(data)
-                        if ((data[0] && data[0].emplId == DingData.userid) && (Index == "3" || Index == "2")) {
-                            that.ifShowStamppBtn = true
-                            if (FlowId == '8') that.ifShowStamppBtn2 = true
+                        for (let d of data) {
+                            if (d.emplId == DingData.userid && (Index == "3" || Index == "2")) {
+                                that.ifShowStamppBtn = true
+                                if (FlowId == '8') that.ifShowStamppBtn2 = true
+                            }
                         }
                     }
                 })

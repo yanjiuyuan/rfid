@@ -295,7 +295,7 @@ ol li {
     padding-bottom: 0px;
 }
 .el-form-item__content{
-    line-height: 0px;
+    /*line-height: 0px;*/
 }
 .el-card__body {
     padding-top: 5px;

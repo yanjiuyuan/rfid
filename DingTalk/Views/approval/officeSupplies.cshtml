@@ -218,7 +218,7 @@
                 for (let p of this.purchaseList) {
                     if (p.CodeNo == good.FNumber) return
                 }
-                if (!checkRate(good.FNote)) good.FNote = 0
+                //if (!checkRate(good.FNote)) good.FNote = 0
                 console.log(good.FNote)
                 this.purchaseList.push({
                     CodeNo: good.FNumber,
