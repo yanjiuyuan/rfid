@@ -154,7 +154,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="KisOffices"></param>
         /// <returns></returns>
-        [Route("InsertPurcahse")]
+        [Route("InsertOffice")]
         [HttpPost]
         public object InsertOffice(List<KisOffice> KisOffices)
         {
