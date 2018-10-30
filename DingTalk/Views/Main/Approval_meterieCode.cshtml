@@ -20,6 +20,12 @@
                 <span v-else>{{scope.row.CodeNumber}}</span>
             </template>
         </el-table-column>
+        <el-table-column prop="Price" label="预计价格" width="100" v-if="NodeId > '0'">
+            <template slot-scope="scope">
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.FNote" ></el-input>
+                <span v-else>{{scope.row.FNote}}</span>
+            </template>
+        </el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -44,6 +50,10 @@
         </el-form-item>
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="添加到">
+            <el-radio v-model="codeType" label="1">零部件</el-radio>
+            <el-radio v-model="codeType" label="2">办公用品</el-radio>
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
@@ -156,6 +166,7 @@
                 dataArr: dataArr,
                 index: Index,
                 frameUrl: '',
+                codeType: '1',
                 ifShowStamppBtn: false,
                 ifShowStamppBtn2: false,
                 frameShow: false
@@ -177,10 +188,27 @@
                     var param = _cloneArr(this.tableData)
                     console.log(param)
                     this._postData(url, function () {
-                        that.aggreSubmit({
-                            "Id": allData.Id,
-                            "Remark": that.ruleForm.mark
-                        })
+                        let url2 = '/ItemCodeAdd/InsertPurcahse'
+                        if (that.codeType == '2') url2 = '/ItemCodeAdd/InsertOffice'
+                        let paramArr = []
+                        for (let t of that.tableData) {
+                            paramArr.push({
+                                "FNumber": t.CodeNumber,
+                                "FName": t.Name,
+                                "FModel": t.Standard,
+                                "FNote": t.FNote
+                            })
+                        }
+                        console.log(paramArr)
+                        that._postData(url2, function () {
+                            that.aggreSubmit({
+                                "Id": allData.Id,
+                                "Remark": that.ruleForm.mark
+                            })
+                        }, paramArr
+                           )
+                        
+
                     }, param)
                 }
                 else {
