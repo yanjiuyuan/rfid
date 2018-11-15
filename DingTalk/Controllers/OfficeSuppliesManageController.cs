@@ -130,10 +130,16 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (OfficeModel context = new OfficeModel())
+                //using (OfficeModel context = new OfficeModel())
+                //{
+                //    var Quary = context.Database.SqlQuery<t_ICItem>
+                //        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
+                //    return JsonConvert.SerializeObject(Quary);
+                //}
+                using (DDContext context = new DDContext())
                 {
-                    var Quary = context.Database.SqlQuery<t_ICItem>
-                        (string.Format("SELECT * FROM t_ICItem WHERE FName like  '%{0}%' or  FNumber like '%{1}%'", Key, Key)).ToList();
+                    var Quary = context.KisOffice.Where(k => k.FName.Contains(Key) ||
+                    k.FNumber.Contains(Key) || k.FModel.Contains(Key)).ToList();
                     return JsonConvert.SerializeObject(Quary);
                 }
             }

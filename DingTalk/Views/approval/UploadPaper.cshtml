@@ -295,7 +295,7 @@
                             success: function (data) {
                                 console.log("提交审批ok")
                                 var taskId = JSON.parse(data).Content
-                                console.log(paramArr)
+                                console.log(JSON.stringify(paramArr))
                                 console.log(taskId)
                                 that.bindData(taskId)
                             }

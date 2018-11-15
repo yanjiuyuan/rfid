@@ -137,7 +137,7 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 获取时间段内的车辆统计报表
+        /// 获取时间段内的车辆统计
         /// </summary>
         /// <param name="StartTime">开始时间</param>
         /// <param name="EndTime">结束时间</param>

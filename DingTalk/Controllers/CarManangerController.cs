@@ -189,20 +189,20 @@ namespace DingTalk.Controllers
                                     i++;
                                     if (UseTimes.Split('-').Length > 0)
                                     {
-                                        string startT = UseTimes.Split('~')[0];
-                                        string endT = UseTimes.Split('~')[1];
+                                        string startT = UseTimes.Split('-')[0];
+                                        string endT = UseTimes.Split('-')[1];
                                         //判断时间段是否出现重叠
                                         if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
                                            DateTime.Parse(endTime) < DateTime.Parse(startT)))
                                         {
                                             car.IsOccupyCar = true;
                                             UseManResult.Add(UseManSave.Split(',')[i - 1]);
-                                            UseTimeResult.Add(UseManSave.Split(',')[i - 1]);
+                                            UseTimeResult.Add(UseTimeSave.Split(',')[i - 1]);
                                         }
                                     }
                                 }
-                                car.UseTimes = string.Join(",", UseManResult);
-                                car.UseMan = string.Join(",", UseTimeResult);
+                                car.UseTimes = string.Join(",", UseTimeResult);
+                                car.UseMan = string.Join(",", UseManResult);
                             }
                         }
                     }

@@ -39,7 +39,8 @@ namespace DingTalk.Controllers
         /// <param name="path">文件路径</param>
         /// <param name="ApplyMan">用户Id</param>
         /// <param name="ApplyManId">用户Id</param>
-        /// <param name="IsCopy">是否拷贝到研究院项目</param>
+        /// <param name="IsCopy">是否拷贝到研究
+        /// 项目</param>
         /// <returns>返回文件路径</returns>
         [HttpPost]
         public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId, bool? IsCopy = false)

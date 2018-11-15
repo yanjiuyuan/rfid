@@ -55,148 +55,256 @@ namespace DingTalk.Controllers
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     int TaskId = flowInfoServer.FindMaxTaskId();
 
-                    //if (taskList.Count > 1)  //如果有选人
-                    //{
-                    //    using (DDContext contexts = new DDContext())
-                    //    {
-                    //        foreach (var task in taskList)
-                    //        {
-                    //            task.TaskId = TaskId;
-                    //            if (taskList.IndexOf(task) > 0)
-                    //            {
-                    //                if (task.IsSend == true)
-                    //                {
-                    //                    //推送抄送消息
-                    //                    SentCommonMsg(task.ApplyManId,
-                    //                    string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", task.TaskId),
-                    //                    taskNew.ApplyMan, taskNew.Remark, null);
-                    //                    task.IsEnable = 1;
-                    //                }
-                    //                else
-                    //                {
-                    //                    task.IsEnable = 0;
-                    //                }
-                    //                contexts.Tasks.Add(task);
-                    //                contexts.SaveChanges();
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    //using (DDContext context=new DDContext ())
-                    //{
-                    //    List<Tasks> taskListNow = context.Tasks.Where(t => t.TaskId == TaskId).ToList();
-
-                    //}
-
-                    //是否推送过
-                    bool IsTs = true;
-                    foreach (var tasks in taskList)
+                    #region 新版
+                    using (DDContext context = new DDContext())
                     {
-                        tasks.TaskId = TaskId;
-                        using (DDContext context = new DDContext())
+                        int? FlowId = taskList[0].FlowId;
+                        foreach (var tasks in taskList)
                         {
-                            //判断是否与上一节点人员重复
-                            bool IsRepeat = false;
-                            if (taskList.IndexOf(tasks) > 0)
+                            tasks.TaskId = TaskId;
+                            if (tasks.IsSend == true)
                             {
-                                IsRepeat = tasks.ApplyManId == taskList[taskList.IndexOf(tasks) - 1].ApplyManId;
-                            }
-                            //判断之前节点是否还有未审核
-                            bool IsApproved = false;
-                            if (taskList.IndexOf(tasks) > 0)
-                            {
-                                IsApproved = context.Tasks.Where(t => t.NodeId < tasks.NodeId && t.State == 0).ToList().Count() > 0 ? false : true;
-                            }
-
-
-                            //修改任务流状态
-                            if (taskList.IndexOf(tasks) == 0)
-                            {
-                                tasks.NodeId = 0;
-                                tasks.FlowId.ToString();
-                                tasks.IsPost = true;
-                                tasks.State = 1;
-                                tasks.IsEnable = 1;  //判断任务流是否生效
-                                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                context.Tasks.Add(tasks);
-                                context.SaveChanges();
-                                if (tasks.FlowId == 6) //图纸上传
-                                {
-                                    //寻人抄送
-                                    FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
-                                }
+                                tasks.State = 0; tasks.IsEnable = 1;
+                                //抄送推送
+                                SentCommonMsg(tasks.ApplyManId.ToString(), string.Format("您有一条抄送的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskList[0].ApplyMan, taskList[0].Remark, null);
                             }
                             else
                             {
-                                //判断是否与上一节点人员重复 且之前节点已审核
-                                if (IsRepeat && IsApproved)
+                                //State 1 表示流程已审批 0 表示未审批  IsEnable 1 表示流程生效  0 未生效
+                                if (tasks.NodeId == 0)
                                 {
-                                    tasks.IsPost = false;
                                     tasks.State = 1;
                                     tasks.IsEnable = 1;
+                                    tasks.IsPost = true;
                                     tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                    context.Tasks.Add(tasks);
-                                    context.SaveChanges();
                                 }
                                 else
                                 {
-                                    if (taskList.IndexOf(tasks) == 1)
+                                    tasks.State = 0;
+                                    tasks.IsEnable = 0;
+                                }
+                            }
+                            context.Tasks.Add(tasks);
+                            context.SaveChanges();
+                        }
+
+                        List<Tasks> tasksNewList = context.Tasks.Where(t => t.TaskId == TaskId).OrderBy(t => t.NodeId).ToList();
+                        List<NodeInfo> nodeInfoList = context.NodeInfo.Where(f => f.FlowId == FlowId.ToString()).ToList();
+                        //申请人数据
+                        Tasks tasksApplyMan = tasksNewList.Where(t => t.NodeId == 0).FirstOrDefault();
+                        string PreApplyManId = "";  //上一级处理人
+                        int iSendCount = 0;
+                        foreach (var tasks in tasksNewList)
+                        {
+                            PreApplyManId = tasks.ApplyManId;
+                            //开始找人
+                            string PreNodeId = nodeInfoList.Where(n => n.NodeId == tasks.NodeId+ iSendCount).FirstOrDefault().PreNodeId;
+                            NodeInfo nextNodeInfo = nodeInfoList.Where(n => n.NodeId.ToString() == PreNodeId).FirstOrDefault();
+                            //找到节点表预先配置的人
+                            if (!string.IsNullOrEmpty(nextNodeInfo.PeopleId))
+                            {
+                                string[] PeopleIdList = nextNodeInfo.PeopleId.Split(',');
+                                string[] NodePeopleList = nextNodeInfo.NodePeople.Split(',');
+                                if (nextNodeInfo.IsSend != true)  //非抄送
+                                {
+                                    //遍历推送消息
+                                    for (int i = 0; i < PeopleIdList.Length; i++)
                                     {
+                                        Tasks Newtasks = tasks;
+                                        Newtasks.Remark = "";
+                                        Newtasks.NodeId = int.Parse(PreNodeId);
+                                        Newtasks.ApplyMan = NodePeopleList[i];
+                                        Newtasks.ApplyManId = PeopleIdList[i];
+                                        Newtasks.ApplyTime = null;
                                         tasks.IsEnable = 1;
+                                        tasks.State = 0;
+                                        context.Tasks.Add(Newtasks);
+                                        context.SaveChanges();
+                                        //推送OA消息
+                                        SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                    }
+                                    return JsonConvert.SerializeObject(new ErrorModel
+                                    {
+                                        errorCode = 0,
+                                        errorMessage = "创建成功！",
+                                        Content = TaskId.ToString()
+                                    });
+                                }
+                                else  //找到抄送
+                                {
+                                    //遍历推送消息
+                                    iSendCount--;
+                                    for (int i = 0; i < PeopleIdList.Length; i++)
+                                    {
+                                        Tasks Newtasks = tasks;
+                                        Newtasks.IsPost = false;
+                                        Newtasks.IsSend = true;
+                                        Newtasks.Remark = "";
+                                        Newtasks.NodeId = int.Parse(PreNodeId);
+                                        Newtasks.ApplyMan = NodePeopleList[i];
+                                        Newtasks.ApplyManId = PeopleIdList[i];
+                                        Newtasks.ApplyTime = "";
+                                        tasks.IsEnable = 1;
+                                        tasks.State = 0;
+                                        context.Tasks.Add(Newtasks);
+                                        context.SaveChanges();
+                                        //推送OA消息
+                                        SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                    }
+                                }
+                               
+                            }
+                            else  //节点表数据未找到人
+                            {
+                                //找到已选人数据
+                                List<Tasks> tasksChoosedList = tasksNewList.Where(t => t.NodeId.ToString() == PreNodeId).OrderBy(t=>t.NodeId).ToList();
+                                foreach (var tasksChoosed in tasksChoosedList)
+                                {
+                                    //与上一级处理人重复
+                                    if (tasksChoosed.ApplyManId == PreApplyManId && iSendCount==0)
+                                    {
+                                        tasksChoosed.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                        tasksChoosed.State = 1; //修改审批状态
+                                        tasksChoosed.IsEnable = 1; //修改显示状态
+                                        context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
+                                        context.SaveChanges();
                                     }
                                     else
                                     {
-                                        if (IsRepeat)
-                                        {
-                                            tasks.IsEnable = 1;
-                                        }
-                                        else
-                                        {
-                                            tasks.IsEnable = 0;
-                                        }
-                                    }
-                                    tasks.IsPost = false;
-                                    tasks.State = 0;
-                                    context.Tasks.Add(tasks);
-                                    context.SaveChanges();
-                                }
-                            }
-                            if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
-                            {
-                                //寻人推送
-                                Dictionary<string, string> dic =
-                                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, 0);
-                                if (dic["PeopleId"].ToString() != "")
-                                {
-                                    //推送OA消息
-                                    SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
-                                }
-                            }
-                            else  //有选人
-                            {
-                                if (taskList.IndexOf(tasks) > 0 && !IsRepeat && IsTs)
-                                {
-                                    IsTs = false;
-                                    Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
-                                    //推送OA消息
-                                    SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
-                                }
-                                //对最后一条重复数据进行寻人推送
-                                if (IsRepeat && !IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
-                                {
-                                    //寻人推送
-                                    Dictionary<string, string> dic =
-                                    FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, tasks.NodeId);
-                                    if (dic["PeopleId"].ToString() != "")
-                                    {
+                                        PreApplyManId = tasksChoosed.ApplyManId;
+                                        //修改显示状态
+                                        tasksChoosed.IsEnable = 1;
+                                        context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
+                                        context.SaveChanges();
                                         //推送OA消息
-                                        SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                                        SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+
+                                        return JsonConvert.SerializeObject(new ErrorModel
+                                        {
+                                            errorCode = 0,
+                                            errorMessage = "创建成功！",
+                                            Content = TaskId.ToString()
+                                        });
                                     }
                                 }
                             }
                         }
                     }
+
+                    #endregion
+
+                    #region 旧版
+
+                    ////是否推送过
+                    //bool IsTs = true;
+                    //foreach (var tasks in taskList)
+                    //{
+                    //    tasks.TaskId = TaskId;
+                    //    using (DDContext context = new DDContext())
+                    //    {
+                    //        //判断是否与上一节点人员重复
+                    //        bool IsRepeat = false;
+                    //        if (taskList.IndexOf(tasks) > 0)
+                    //        {
+                    //            IsRepeat = tasks.ApplyManId == taskList[taskList.IndexOf(tasks) - 1].ApplyManId;
+                    //        }
+                    //        //判断之前节点是否还有未审核
+                    //        bool IsApproved = false;
+                    //        if (taskList.IndexOf(tasks) > 0)
+                    //        {
+                    //            IsApproved = context.Tasks.Where(t => t.NodeId < tasks.NodeId && t.State == 0).ToList().Count() > 0 ? false : true;
+                    //        }
+
+
+                    //        //修改任务流状态
+                    //        if (taskList.IndexOf(tasks) == 0)
+                    //        {
+                    //            tasks.NodeId = 0;
+                    //            tasks.FlowId.ToString();
+                    //            tasks.IsPost = true;
+                    //            tasks.State = 1;
+                    //            tasks.IsEnable = 1;  //判断任务流是否生效
+                    //            tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    //            context.Tasks.Add(tasks);
+                    //            context.SaveChanges();
+                    //            if (tasks.FlowId == 6) //图纸上传
+                    //            {
+                    //                //寻人抄送
+                    //                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            //判断是否与上一节点人员重复 且之前节点已审核
+                    //            if (IsRepeat && IsApproved)
+                    //            {
+                    //                tasks.IsPost = false;
+                    //                tasks.State = 1;
+                    //                tasks.IsEnable = 1;
+                    //                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    //                context.Tasks.Add(tasks);
+                    //                context.SaveChanges();
+                    //            }
+                    //            else
+                    //            {
+                    //                if (taskList.IndexOf(tasks) == 1)
+                    //                {
+                    //                    tasks.IsEnable = 1;
+                    //                }
+                    //                else
+                    //                {
+                    //                    if (IsRepeat)
+                    //                    {
+                    //                        tasks.IsEnable = 1;
+                    //                    }
+                    //                    else
+                    //                    {
+                    //                        tasks.IsEnable = 0;
+                    //                    }
+                    //                }
+                    //                tasks.IsPost = false;
+                    //                tasks.State = 0;
+                    //                context.Tasks.Add(tasks);
+                    //                context.SaveChanges();
+                    //            }
+                    //        }
+                    //        if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
+                    //        {
+                    //            //寻人推送
+                    //            Dictionary<string, string> dic =
+                    //            FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, 0);
+                    //            if (dic["PeopleId"].ToString() != "")
+                    //            {
+                    //                //推送OA消息
+                    //                SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                    //            }
+                    //        }
+                    //        else  //有选人
+                    //        {
+                    //            if (taskList.IndexOf(tasks) > 0 && !IsRepeat && IsTs)
+                    //            {
+                    //                IsTs = false;
+                    //                Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
+                    //                //推送OA消息
+                    //                SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
+                    //            }
+                    //            //对最后一条重复数据进行寻人推送
+                    //            if (IsRepeat && !IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
+                    //            {
+                    //                //寻人推送
+                    //                Dictionary<string, string> dic =
+                    //                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, tasks.NodeId);
+                    //                if (dic["PeopleId"].ToString() != "")
+                    //                {
+                    //                    //推送OA消息
+                    //                    SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+                    #endregion
 
                     return JsonConvert.SerializeObject(new ErrorModel
                     {

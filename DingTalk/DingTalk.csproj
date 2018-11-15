@@ -341,6 +341,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CarManangerController.cs" />
     <Compile Include="Controllers\CarTableController.cs" />
+    <Compile Include="Controllers\ContractManagerController.cs" />
     <Compile Include="Controllers\DrawingDownController.cs" />
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\FileController.cs" />
@@ -401,13 +402,11 @@
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
-    <Compile Include="Models\DingModels\KisOffice.cs" />
-    <Compile Include="Models\DingModels\KisPurchase.cs" />
-    <Compile Include="Models\DingModels\PurchaseOrder.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
+    <Compile Include="Models\DingModels\Contract.cs" />
     <Compile Include="Models\DingModels\DDContext.cs" />
     <Compile Include="Models\DingModels\FileInfos.cs" />
     <Compile Include="Models\DingModels\FlowMan.cs" />
@@ -416,6 +415,8 @@
     <Compile Include="Models\DingModels\Flows.cs" />
     <Compile Include="Models\DingModels\FlowSort.cs" />
     <Compile Include="Models\DingModels\Jobs.cs" />
+    <Compile Include="Models\DingModels\KisOffice.cs" />
+    <Compile Include="Models\DingModels\KisPurchase.cs" />
     <Compile Include="Models\DingModels\LeaveWord.cs" />
     <Compile Include="Models\DingModels\NewsAndCases.cs" />
     <Compile Include="Models\DingModels\NodeInfo.cs" />
@@ -426,12 +427,13 @@
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
     <Compile Include="Models\DingModels\Purchase.cs" />
     <Compile Include="Models\DingModels\PurchaseDown.cs" />
+    <Compile Include="Models\DingModels\PurchaseOrder.cs" />
     <Compile Include="Models\DingModels\PurchaseProcedureInfo.cs" />
     <Compile Include="Models\DingModels\PurchaseTable.cs" />
     <Compile Include="Models\DingModels\Receiving.cs" />
     <Compile Include="Models\DingModels\Roles.cs" />
-    <Compile Include="Models\DingModels\TasksPurcahse.cs" />
     <Compile Include="Models\DingModels\Tasks.cs" />
+    <Compile Include="Models\DingModels\TasksPurcahse.cs" />
     <Compile Include="Models\DingModels\UserInfo.cs" />
     <Compile Include="Models\DingModels\Vote.cs" />
     <Compile Include="Models\DingModels\Worker.cs" />

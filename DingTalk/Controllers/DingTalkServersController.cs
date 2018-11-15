@@ -347,9 +347,12 @@ namespace DingTalk.Controllers
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
+            //string urls = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port63824");
+            //string results = HttpUtility.UrlEncode(urls);
             SendWorkModel sendWorkModel = new SendWorkModel()
             {
-                //189694580
+                //189694580    083452125733424957
+
                 agent_id = long.Parse(DTConfig.AgentId),
                 userid_list = userId,
                 to_all_user = false,
@@ -358,10 +361,11 @@ namespace DingTalk.Controllers
                     msgtype = "link",
                     link = new DingTalk.Models.MobileModels.linkTest
                     {
-                        messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=49312",
+                        //messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f",
                         //messageUrl= "https://www.baidu.com/",
+                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=63824"),
                         picUrl = "@lALOACZwe2Rk",
-                        title = "测试啊",
+                        title = "测试啊321",
                         text = "继续测试"
                     },
                 })
@@ -454,7 +458,6 @@ namespace DingTalk.Controllers
             {
                 //var fileName = HttpContext.Current.Server.MapPath(fileInfos.FilePath);
                 var fileName = fileInfos.FilePath;
-
                 var uploadFileModel = new UploadMediaRequestModel()
                 {
                     FileName = fileName,
