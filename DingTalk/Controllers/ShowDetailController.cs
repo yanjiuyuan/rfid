@@ -8,6 +8,7 @@ namespace WebZhongZhi.Controllers
 {
     public class ShowDetailController : Controller
     {
+
         // GET: ShowDetail
         public ActionResult Index()
         {
