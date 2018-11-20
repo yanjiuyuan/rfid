@@ -17,7 +17,7 @@
                 <el-input v-model="ruleForm.Title"></el-input>
             </el-form-item>
             <el-form-item label="新闻大类" required="required">
-                <el-select v-model="ruleForm.BigType" v-on:changed="changeBigType">
+                <el-select v-model="ruleForm.BigType" v-on:change="changeBigType">
                     <el-option v-for="s of bigTypes" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
@@ -94,6 +94,12 @@
 
 
 <script>
+    var typeList = [
+        ['研究院新闻', '视频短片', '媒体聚焦', '行业信息'],
+        ['机器人应用', '数控专用设备', '自动化生产线', '数字化车间'],
+        ['校企合作案例', '人才培养集锦', '荣誉成果专利', '院士专家团队']
+    ]
+    var bigTypes = ['新闻', '产品', '团队']
     var Index = 0
     var date = new Date()
     var demo = new Vue({
@@ -101,12 +107,8 @@
         mixins: [mixin],
         data: function () {
             return {
-                typeList: [
-                    ['研究院新闻', '视频短片', '媒体聚焦', '行业信息'],
-                    ['机器人应用', '数控专用设备', '自动化生产线', '数字化车间'],
-                    ['校企合作案例', '人才培养集锦', '荣誉成果专利', '院士专家团队']
-                ],
-                bigTypes: ['新闻', '产品', '团队'],
+                typeList: typeList,
+                bigTypes: bigTypes,
                 types: typeList[0],
                 imageList: [],
                 fileList: [],
