@@ -1,13 +1,18 @@
-﻿using DingTalk.Bussiness.FlowInfo;
+﻿using Common.DTChange;
+using Common.Excel;
+using DingTalk.Bussiness.FlowInfo;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -31,16 +36,28 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    car.FinnalStartTime = DateTime.Now;
-                    car.FinnalEndTime = DateTime.Now;
-                    context.Car.Add(car);
-                    context.SaveChanges();
+                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == car.ApplyManId).ToList().Count > 0)
+                    {
+                        car.FinnalStartTime = DateTime.Now;
+                        car.FinnalEndTime = DateTime.Now;
+                        context.Car.Add(car);
+                        context.SaveChanges();
+                        return new ErrorModel()
+                        {
+                            errorCode = 0,
+                            errorMessage = "添加成功"
+                        };
+                    }
+                    else
+                    {
+                        return new ErrorModel()
+                        {
+                            errorCode = 1,
+                            errorMessage = "没有权限"
+                        };
+                    }
                 }
-                return new ErrorModel()
-                {
-                    errorCode = 0,
-                    errorMessage = "添加成功"
-                };
+
             }
             catch (Exception ex)
             {
@@ -55,28 +72,40 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆删除
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">Id</param>
+        /// <param name="ApplyManId">调用接口人员Id</param>
         /// <returns></returns>
         /// 测试数据: /CarMananger/Delete/
         /// data: JSON.stringify({ Id: "7" }),
         [Route("Delete")]
         [HttpPost]
-        public object Delete(dynamic obj)
+        public object Delete(dynamic obj, string ApplyManId)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    var Id = Convert.ToInt32(obj.Id);
-                    Car car = context.Car.Find(Id);
-                    context.Car.Remove(car);
-                    context.SaveChanges();
+                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == ApplyManId).ToList().Count > 0)
+                    {
+                        var Id = Convert.ToInt32(obj.Id);
+                        Car car = context.Car.Find(Id);
+                        context.Car.Remove(car);
+                        context.SaveChanges();
+                        return new ErrorModel()
+                        {
+                            errorCode = 0,
+                            errorMessage = "删除成功"
+                        };
+                    }
+                    else
+                    {
+                        return new ErrorModel()
+                        {
+                            errorCode = 1,
+                            errorMessage = "没有权限"
+                        };
+                    }
                 }
-                return new ErrorModel()
-                {
-                    errorCode = 0,
-                    errorMessage = "删除成功"
-                };
             }
             catch (Exception ex)
             {
@@ -228,12 +257,13 @@ namespace DingTalk.Controllers
         /// <param name="endTime">结束时间</param>
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页容量</param>
+        /// <param name="applyManId">调用接口人Id</param>
         /// <param name="key">关键字(姓名、车辆信息、部门信息)</param>
         /// <param name="IsSend">是否推送用户(默认否)</param>
         /// <returns></returns>
         [Route("QuaryPrintExcel")]
         [HttpGet]
-        public object QuaryPrintExcel(DateTime startTime, DateTime endTime, int pageIndex, int pageSize, string key = "", bool IsSend = false)
+        public async Task<object> QuaryPrintExcel(DateTime startTime, DateTime endTime, int pageIndex, int pageSize, string applyManId, string key = "", bool IsSend = false)
         {
             try
             {
@@ -247,7 +277,7 @@ namespace DingTalk.Controllers
                                 join t in tasks on ct.TaskId equals t.TaskId.ToString()
                                 join c in cars on ct.CarId equals c.Id.ToString()
                                 where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime
-                                && (key!=""?(t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)):t.ApplyMan!=null)
+                                && (key != "" ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
                                 select new
                                 {
                                     Dept = t.Dept,
@@ -258,9 +288,35 @@ namespace DingTalk.Controllers
                                     UnitPricePerKilometre = c.UnitPricePerKilometre,
                                     AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre
                                 };
+                    var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
+                    if (IsSend)  //生成报表推送用户
+                    {
+                        DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(Quary);
+                        string path = Path.GetFullPath("~/UploadFile/Excel/Templet/用车通用模板.xlsx");
+                        string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                        string newPath = Path.GetFullPath("~/UploadFile/Excel/Templet") + "\\用车数据" + time + ".xlsx";
+                        System.IO.File.Copy(path, newPath);
+                        if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 3))
+                        {
+                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                            //上盯盘
+                            var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/用车数据" + time + ".xlsx");
+                            //推送用户
+                            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                            fileSendModel.UserId = applyManId;
+                            var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "已推送至钉钉！", "") { },
+                            };
+                        }
+                    }
+                    
                     return new NewErrorModel()
                     {
-                        data = Quary,
+                        count = Quary.Count(),
+                        data = takeQuary,
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
