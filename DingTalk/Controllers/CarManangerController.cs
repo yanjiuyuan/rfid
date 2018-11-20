@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -283,21 +284,50 @@ namespace DingTalk.Controllers
                                     Dept = t.Dept,
                                     ApplyMan = t.ApplyMan,
                                     UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
-                                    Remark = t.Remark,
+                                    Name = c.Name + "(" + c.CarNumber + ")",
+                                    MainContent = ct.MainContent,
                                     UseKilometres = ct.UseKilometres,
                                     UnitPricePerKilometre = c.UnitPricePerKilometre,
                                     AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre
+                                    Remark=t.Remark
                                 };
                     var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
 
-                    if (IsSend)  //生成报表推送用户
+                    if (IsSend && Quary.Count() > 0)  //生成报表推送用户
                     {
-                        DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(Quary);
-                        string path = Path.GetFullPath("~/UploadFile/Excel/Templet/用车通用模板.xlsx");
+                        //DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(Quary);
+
+                        DataTable dtReturn = new DataTable();
+                        // column names
+                        PropertyInfo[] oProps = null;
+                        // Could add a check to verify that there is an element 0
+                        foreach (var rec in Quary)
+                        {
+                            // Use reflection to get property names, to create table, Only first time, others will follow
+                            if (oProps == null)
+                            {
+                                oProps = ((Type)rec.GetType()).GetProperties();
+                                foreach (PropertyInfo pi in oProps)
+                                {
+                                    Type colType = pi.PropertyType; if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                                    {
+                                        colType = colType.GetGenericArguments()[0];
+                                    }
+                                    dtReturn.Columns.Add(new DataColumn(pi.Name, colType));
+                                }
+                            }
+                            DataRow dr = dtReturn.NewRow(); foreach (PropertyInfo pi in oProps)
+                            {
+                                dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
+                            }
+                            dtReturn.Rows.Add(dr);
+                        }
+
+                        string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/用车通用模板.xlsx");
                         string time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                        string newPath = Path.GetFullPath("~/UploadFile/Excel/Templet") + "\\用车数据" + time + ".xlsx";
+                        string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\用车数据" + time + ".xlsx";
                         System.IO.File.Copy(path, newPath);
-                        if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 3))
+                        if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 2))
                         {
                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
                             //上盯盘
@@ -312,7 +342,7 @@ namespace DingTalk.Controllers
                             };
                         }
                     }
-                    
+
                     return new NewErrorModel()
                     {
                         count = Quary.Count(),
