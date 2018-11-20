@@ -52,7 +52,7 @@ function loadPage(url) {
 }
 function goHome() {
     $.ajax({
-        url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
+        url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + DingData.userid,
         datatype: 'json',
         success: function (data) {
             if (JSON.parse(data).ApproveCount) {
@@ -454,7 +454,7 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan)) {
+                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId>0)) {
                             console.log(node)
                             console.log(node.ApplyMan)
                             console.log(node.AddPeople)
