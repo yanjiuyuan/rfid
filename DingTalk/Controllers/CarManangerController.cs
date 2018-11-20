@@ -132,14 +132,26 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
-                    context.SaveChanges();
+                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == car.ApplyManId).ToList().Count > 0)
+                    {
+                        context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                        return new ErrorModel()
+                        {
+                            errorCode = 0,
+                            errorMessage = "修改成功"
+                        };
+                    }
+                    else
+                    {
+                        return new ErrorModel()
+                        {
+                            errorCode = 1,
+                            errorMessage = "没有权限"
+                        };
+                    }
+
                 }
-                return new ErrorModel()
-                {
-                    errorCode = 0,
-                    errorMessage = "修改成功"
-                };
             }
             catch (Exception ex)
             {
@@ -289,7 +301,7 @@ namespace DingTalk.Controllers
                                     UseKilometres = ct.UseKilometres,
                                     UnitPricePerKilometre = c.UnitPricePerKilometre,
                                     AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre,
-                                    Remark=t.Remark
+                                    Remark = t.Remark
                                 };
                     var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
 
