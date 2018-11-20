@@ -1,4 +1,5 @@
-﻿using DingTalk.EF;
+﻿using DingTalk.Bussiness.FlowInfo;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
@@ -188,10 +189,10 @@ namespace DingTalk.Controllers
                                 foreach (var UseTimes in UseTimesList)
                                 {
                                     i++;
-                                    if (UseTimes.Split('-').Length > 0)
+                                    if (UseTimes.Split('~').Length > 0)
                                     {
-                                        string startT = UseTimes.Split('-')[0];
-                                        string endT = UseTimes.Split('-')[1];
+                                        string startT = UseTimes.Split('~')[0];
+                                        string endT = UseTimes.Split('~')[1];
                                         //判断时间段是否出现重叠
                                         if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
                                            DateTime.Parse(endTime) < DateTime.Parse(startT)))
@@ -236,20 +237,17 @@ namespace DingTalk.Controllers
         {
             try
             {
-                //EFHelper<CarTable> eFHelper = new EFHelper<CarTable>();
-                //System.Linq.Expressions.Expression<Func<CarTable, bool>> expression = c => c.StartTime > startTime && c.EndTime < endTime;
-                //List<CarTable> CarTablesListAll = eFHelper.GetListBy(expression);
-                //var CarTableList = eFHelper.GetPagedList(pageIndex, pageSize, expression, c => c.Id);
                 using (DDContext context = new DDContext())
                 {
                     List<Car> cars = context.Car.ToList();
-                    List<Tasks> tasks = context.Tasks.ToList();
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //公车任务流
                     List<CarTable> carTables = context.CarTable.ToList();
 
                     var Quary = from ct in carTables
                                 join t in tasks on ct.TaskId equals t.TaskId.ToString()
                                 join c in cars on ct.CarId equals c.Id.ToString()
                                 where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime
+                                && (key!=""?(t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)):t.ApplyMan!=null)
                                 select new
                                 {
                                     Dept = t.Dept,
@@ -260,14 +258,12 @@ namespace DingTalk.Controllers
                                     UnitPricePerKilometre = c.UnitPricePerKilometre,
                                     AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre
                                 };
+                    return new NewErrorModel()
+                    {
+                        data = Quary,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
                 }
-
-                return new NewErrorModel()
-                {
-                    //count = CarTablesListAll.Count,
-                    //data = CarTableList,
-                    error = new Error(0, "读取成功！", "") { },
-                };
             }
             catch (Exception ex)
             {
