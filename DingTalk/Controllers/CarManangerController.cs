@@ -288,7 +288,7 @@ namespace DingTalk.Controllers
                                     MainContent = ct.MainContent,
                                     UseKilometres = ct.UseKilometres,
                                     UnitPricePerKilometre = c.UnitPricePerKilometre,
-                                    AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre
+                                    AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre,
                                     Remark=t.Remark
                                 };
                     var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
