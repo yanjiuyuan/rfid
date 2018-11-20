@@ -48,10 +48,7 @@
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
                  enctype="multipart/form-data" :inline="true">
             <template>
-                <el-form-item v-for="i in items" v-if="i=='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
-                    <el-input v-model="ruleForm[i]" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='FinnalUserMan' && i!='CreateMan'" :key="i" :label="tableItems[i]" prop="i">
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' " :key="i" :label="tableItems[i]" :prop="i">
                     <el-input v-model="ruleForm[i]"></el-input>
                 </el-form-item>
                 <hr />
@@ -147,7 +144,7 @@
                             }
                         })
                     } else {
-                        console.log('添加用户失败')
+                        console.log('添加车辆失败')
                         that.disableAdd = false
                         return false;
                     }
