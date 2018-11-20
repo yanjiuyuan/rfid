@@ -51,22 +51,7 @@
             </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="车辆选择" prop="PlantTravelWay">
-            <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
-                <el-option v-for="item in carList"
-                           :key="item.Id"
-                           :label="item.Name"
-                           :value="item.Id">
-                </el-option>
-            </el-select>
-            <template v-if="CarObj && CarObj.IsOccupyCar">
-                <span style="color:red;">当前被占用,占用情况如下</span>
-                <p v-for="u in useTimeList">
-                    <span>驾驶员:{{u.name}}</span>
-                    <span>占用时间:{{u.time}}</span>
-                </p>
-            </template>
-        </el-form-item>
+        
 
         <hr />
 
@@ -198,7 +183,7 @@
                 var that = this
                 let url = '/CarTable/TableSave'
                 var param = _cloneObj(this.ruleForm)
-                if (this.CarObj.IsOccupyCar) param['OccupyCarId'] = this.CarObj.OccupyCarId
+                //if (this.CarObj.IsOccupyCar) param['OccupyCarId'] = this.CarObj.OccupyCarId
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
@@ -237,7 +222,7 @@
                 }
                 this.ruleForm.CarId = car.Id
                 this.ruleForm.OccupyCarId = car.OccupyCarId
-                this.ruleForm.IsChooseOccupyCar = car.IsChooseOccupyCar
+                this.ruleForm.IsOccupyCar = car.IsOccupyCar
             },
             //选时间操作
             selectTime(value) {
@@ -246,18 +231,18 @@
                 let url = '/CarMananger/QuaryByTime'
                 this.ruleForm.StartTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
-                let param = {
-                    startTime: _timeToString(value[0]),
-                    endTime: _timeToString(value[1])
-                }
-                let callBack = function (data) {
-                    that.carList = data
-                    if (data && data.length > 0) {
-                        that.selectCar(data[0].Id)
-                    }
-                    console.log('选时间操作')
-                }
-                this._getData(url, callBack, param)
+                //let param = {
+                //    startTime: _timeToString(value[0]),
+                //    endTime: _timeToString(value[1])
+                //}
+                //let callBack = function (data) {
+                //    that.carList = data
+                //    if (data && data.length > 0) {
+                //        that.selectCar(data[0].Id)
+                //    }
+                //    console.log('选时间操作')
+                //}
+                //this._getData(url, callBack, param)
             },
             //添加用车人
             addDrivingMan() {
