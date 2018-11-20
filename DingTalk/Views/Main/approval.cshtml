@@ -188,8 +188,6 @@
                     cache: false,
                     success: function (data) {
                         that.menu = data
-                        console.log('/FlowInfo/LoadFlowSort?id=123')
-                        console.log(that.menu)
                         $.ajax({
                             url: '/FlowInfo/LoadFlowInfo?id=123',
                             dataType: 'json',
@@ -216,7 +214,7 @@
                         let isRole = false
                         for (let d of data) {
                             console.log(d)
-                            if (d.name == DingData.nickName) {
+                            if (d.emplId == DingData.userid) {
                                 isRole = true
                                 break
                             }

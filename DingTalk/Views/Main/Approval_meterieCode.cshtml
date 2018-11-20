@@ -89,7 +89,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnSubmit" :disabled="disablePage">退回</el-button>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
         <template v-if="index==2 && state=='被退回'">
@@ -220,12 +220,12 @@
                 
             },
             //退回审批
-            returnSubmit() {
+            reSubmit() {
                 this.disablePage = true
                 var that = this
                 var param = {
                     "Id": allData.Id,
-                    "Remark": this.ruleForm.mark
+                    "Remark": that.ruleForm.mark
                 }
                 this.returnSubmit(param)
             },
