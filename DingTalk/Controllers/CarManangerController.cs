@@ -79,7 +79,7 @@ namespace DingTalk.Controllers
         /// 测试数据: /CarMananger/Delete/
         /// data: JSON.stringify({ Id: "7" }),
         [Route("Delete")]
-        [HttpPost]
+        [HttpGet]
         public object Delete(dynamic obj, string ApplyManId)
         {
             try
