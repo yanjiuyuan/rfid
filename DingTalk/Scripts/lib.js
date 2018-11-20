@@ -350,6 +350,15 @@ var mixin = {
             Type: [
                 { required: true, message: '类别不能为空！', trigger: 'change' }
             ],
+            Name: [
+                { required: true, message: '名称不能为空！', trigger: 'change' }
+            ],
+            CarNumber: [
+                { required: true, message: '车牌号不能为空！', trigger: 'change' }
+            ],
+            UnitPricePerKilometre: [
+                { required: true, message: '每公里单价不能为空！', trigger: 'change' }
+            ],
             Abstract: [
                 { required: true, message: '内容简介不能为空！', trigger: 'change' }
             ],
