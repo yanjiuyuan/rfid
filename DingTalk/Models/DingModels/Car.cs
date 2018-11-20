@@ -86,5 +86,10 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [NotMapped]
         public string TotalKilometres { get; set; }
+        /// <summary>
+        /// 接口调用人Id
+        /// </summary>
+        [NotMapped]
+        public string ApplyManId { get; set; }      
     }
 }
