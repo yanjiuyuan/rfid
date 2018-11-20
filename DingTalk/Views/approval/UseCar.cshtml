@@ -8,6 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         私车申请-{{nodeInfo.NodeName}}
     </div>
+    
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="标题" prop="Title">
@@ -49,9 +50,51 @@
 
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
+            <el-checkbox v-model="checked">本人同意<b style="color:#88B6FF;"><< 私车公用协议书 >></b></el-checkbox>
+        </el-form-item>
+        <el-collapse v-model="activeNames">
+            <el-collapse-item :name="1" :key="1">
+                <template slot="title">
+                    <span style="font-size:20px;">私车公用协议书</span>
+                </template>
+                <div>
+                    <h2 style="text-align:center;">私车公用协议书</h2>
+                    <p>随着研究院（公司）业务的发展和经营规模的扩大，对外经营工作和接待任务的日益增加，交通工具在日常经营管理活动中的作用越来越明显。为提高办事效率、优化资源配置，经甲乙双方共同协商一致，特制定本协议：</p>
+                    <p>甲方（公司）: 泉州华中科技大学智能制造研究院（泉州华数机器人有限公司）</p>
+                    <p>乙方（个人）: {{applyMan}}</p>
+
+                    <p></p>
+                    <h3> 一、车辆现状</h3>
+                    <p>
+                        车辆名称：           车牌号：         车架号：        车辆购置时间：        车辆状况：
+                        登记车主：              （○乙方 / ○非乙方）
+                    </p>
+                    <p>（若登记车主非乙方，需要提供：</p>
+                    <p>1、关系说明文件：如夫妻，提供结婚证复印件一份；如家庭亲属，提供户口本复印件一份）。</p>
+                    <p>2、登记车主签字确认的“知晓并同意乙方私车公用行为，并同意与乙方共同承担该协议约定的义务。”的证明文件。）</p>
+                    <h3>二、甲方的权利义务</h3>
+                    <p>1、甲方享有该车辆的使用权；</p>
+                    <p>2、甲方负责承担乙方在使用该车辆办理公务时，参照研究院《车辆管理规定》（2015006号）文件相关规定执行；</p>
+                    <p>3、甲方除承担第二条第2款中涉及的相关费用外，不再承担任何由该车辆使用造成的费用及法律责任。</p>
+                    <p>4、甲方对于该车辆除使用权外的其他物权纠纷一概不承担责任。</p>
+                    <h3>三、乙方的权利和义务 </h3>
+                    <p>1、乙方将该车辆用于公司事务使用时，享有第二条第2款中相应费用报销的权利。</p>
+                    <p>2、乙方应在 每月10前，经行政部签批确认后，凭正式发票办理费用的报销。</p>
+                    <p>3、乙方在使用该车辆时应严格遵守交通规则和相关法律法规，谨慎安全驾驶并及时维护保养；</p>
+                    <p>4、乙方在使用该车辆执行公务期间，造成的任何侵权责任（含交通事故），均由乙方承担责任。</p>
+                    <h3>四、乙方应在签订本协议的同时，提供身份证复印件、驾照复印件各一份，供甲方留存。</h3>
+                    <h3>五、本协议签订前，乙方已完全理解本协议的全部内容，签订本协议是乙方的真实意思表示，乙方同意按本协议约定内容使用车辆。</h3>
+                    <h3>六、本协议有效期  壹  年，自    年   月    日至   年   月   日止。（本协议只限于有效期内的私车公用情况）</h3>
+                    <h3>七、本协议经双方签字或盖章后生效，若有其他未尽事宜，由双方另行协商解决。</h3>
+                    <h3>八、本协议一式两份，甲乙双方各执一份。</h3>
+                    <p>日期:{{date}}</p>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+        <br />
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="!checked">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
@@ -69,6 +112,9 @@
                 nodeInfo: {},
                 CarObj: '',
                 timeRange: [],
+                date: _getDate(),
+                checked: false,
+                activeNames: [1],
                 ruleForm: {
                     CarId: "",
                     DrivingMan: DingData.nickName,
@@ -172,6 +218,7 @@
             
         
         },
+        
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()

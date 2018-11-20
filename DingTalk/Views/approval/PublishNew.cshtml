@@ -16,7 +16,12 @@
             <el-form-item label="标题" prop="Title">
                 <el-input v-model="ruleForm.Title"></el-input>
             </el-form-item>
-            <el-form-item label="新闻类别" required="required">
+            <el-form-item label="新闻大类" required="required">
+                <el-select v-model="ruleForm.BigType" v-on:changed="changeBigType">
+                    <el-option v-for="s of bigTypes" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="新闻小类" required="required">
                 <el-select v-model="ruleForm.Type">
                     <el-option v-for="s of types" :label="s" :value="s" key="s"></el-option>
                 </el-select>
@@ -28,7 +33,7 @@
             <el-form-item label="上传图片">
                 <el-upload action="/drawingupload/Upload?IsCopy=true"
                            list-type="picture-card"
-                           :file-list="imageList" 
+                           :file-list="imageList"
                            :on-preview="handlePictureCardPreview"
                            :on-remove="handlePictureRemove"
                            :on-success="handlePictureCardSuccess"
@@ -96,7 +101,13 @@
         mixins: [mixin],
         data: function () {
             return {
-                types: ['研究院新闻', '视频短片', '媒体聚焦', '行业信息'],
+                typeList: [
+                    ['研究院新闻', '视频短片', '媒体聚焦', '行业信息'],
+                    ['机器人应用', '数控专用设备', '自动化生产线', '数字化车间'],
+                    ['校企合作案例', '人才培养集锦', '荣誉成果专利', '院士专家团队']
+                ],
+                bigTypes: ['新闻', '产品', '团队'],
+                types: typeList[0],
                 imageList: [],
                 fileList: [],
                 //图片上传参数
@@ -110,7 +121,7 @@
                     Type: '',
                     Abstract: '',
                     ImageUrl: '',
-                    BigType: '新闻',
+                    BigType: bigTypes[0],
                     Contents: '',
                     CreateTime: _dateToString(date)
                 },
@@ -118,6 +129,9 @@
             }
         },
         methods: {
+            changeBigType(value) {
+                console.log(value)
+            },
             //添加新闻
             addProject() {
                 var that = this
