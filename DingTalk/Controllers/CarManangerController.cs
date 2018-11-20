@@ -188,10 +188,10 @@ namespace DingTalk.Controllers
                                 foreach (var UseTimes in UseTimesList)
                                 {
                                     i++;
-                                    if (UseTimes.Split('-').Length > 0)
+                                    if (UseTimes.Split('~').Length > 0)
                                     {
-                                        string startT = UseTimes.Split('-')[0];
-                                        string endT = UseTimes.Split('-')[1];
+                                        string startT = UseTimes.Split('~')[0];
+                                        string endT = UseTimes.Split('~')[1];
                                         //判断时间段是否出现重叠
                                         if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
                                            DateTime.Parse(endTime) < DateTime.Parse(startT)))
