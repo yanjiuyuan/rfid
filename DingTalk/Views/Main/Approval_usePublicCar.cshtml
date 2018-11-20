@@ -111,7 +111,6 @@
                 useTimeList: [],
                 index: Index,
                 NodeId: NodeId,
-                car: {},
                 nodeList: [],
                 nodeInfo: {},
                 reInput: false,
@@ -173,6 +172,7 @@
                     }
                 }
                 this.ruleForm.CarId = car.Id
+                this.ruleForm.Name = car.Name
                 this.ruleForm.OccupyCarId = car.OccupyCarId
                 this.ruleForm.IsOccupyCar = car.IsOccupyCar
             },
@@ -191,21 +191,15 @@
                             if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
                             that.ruleForm = data2[0]
                             that.ruleForm['Mark'] = ''
-                            //for (let car of that.carList) {
-                            //    if (car.Id == data2[0].CarId) {
-                            //        that.ruleForm['Name'] = car.Name
-                            //        that.car = car
-                            //    }
-                            //}
+                            for (let car of that.carList) {
+                                if (car.Id == data2[0].CarId) {
+                                    that.ruleForm['Name'] = car.Name
+                                }
+                            }
                         }
                     , { TaskId: TaskId })
                 }, {key:''})
                 
-            }
-        },
-        computed: {
-            UseKilometres: function () {
-                return this.ruleForm.EndKilometres - this.ruleForm.StartKilometres
             }
         },
         created: function () {
@@ -215,6 +209,17 @@
             this.GetDingList(TaskId)
             if (NodeId == '3' || NodeId == '4') this.reInput = true
             loadHtml("mainPage", "partPage")
+        },
+        computed: {
+            UseKilometres: function () {
+                return this.ruleForm.EndKilometres - this.ruleForm.StartKilometres
+            },
+            CarObj: function () {
+                for (let car of this.carList) {
+                    if (car.Id == this.ruleForm.CarId)
+                        return car
+                }
+            }
         }
     })
     getFormData()

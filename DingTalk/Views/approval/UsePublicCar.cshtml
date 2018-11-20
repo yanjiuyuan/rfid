@@ -183,7 +183,7 @@
                 var that = this
                 let url = '/CarTable/TableSave'
                 var param = _cloneObj(this.ruleForm)
-                if (this.CarObj.IsOccupyCar) param['OccupyCarId'] = this.CarObj.OccupyCarId
+                //if (this.CarObj.IsOccupyCar) param['OccupyCarId'] = this.CarObj.OccupyCarId
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
