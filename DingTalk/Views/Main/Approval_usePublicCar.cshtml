@@ -52,7 +52,25 @@
         <el-form-item label="返回时间">
             <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="使用车辆">
+
+        <el-form-item label="车辆选择" prop="PlantTravelWay" v-if="NodeId == 2">
+            <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
+                <el-option v-for="item in carList"
+                           :key="item.Id"
+                           :label="item.Name"
+                           :value="item.Id">
+                </el-option>
+            </el-select>
+            <template v-if="CarObj && CarObj.IsOccupyCar">
+                <span style="color:red;">当前被占用,占用情况如下</span>
+                <p v-for="u in useTimeList">
+                    <span>驾驶员:{{u.name}}</span>
+                    <span>占用时间:{{u.time}}</span>
+                </p>
+            </template>
+        </el-form-item>
+
+        <el-form-item label="使用车辆" v-if="NodeId > 2">
             <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="意见">
@@ -90,7 +108,9 @@
         data: function () {
             return {
                 carList: [],
+                useTimeList: [],
                 index: Index,
+                NodeId: NodeId,
                 car: {},
                 nodeList: [],
                 nodeInfo: {},
@@ -131,6 +151,31 @@
                 }
                 this.returnSubmit(param)
             },
+            //选车操作
+            selectCar(value) {
+                //value = JSON.parse(value)
+                console.log('选车操作')
+                console.log(value)
+                let car = {}
+                this.useTimeList = []
+                for (let c of this.carList) {
+                    if (c.Id == value) {
+                        car = c
+                        if (!c.UseMan) break
+                        let nameList = c.UseMan.split(',')
+                        let timeList = c.UseTimes.split(',')
+                        for (var i = 0; i < nameList.length; i++) {
+                            this.useTimeList.push({
+                                name: nameList[i],
+                                time: timeList[i]
+                            })
+                        }
+                    }
+                }
+                this.ruleForm.CarId = car.Id
+                this.ruleForm.OccupyCarId = car.OccupyCarId
+                this.ruleForm.IsOccupyCar = car.IsOccupyCar
+            },
             getUseCarTable() {
                 var that = this
             
@@ -146,12 +191,12 @@
                             if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
                             that.ruleForm = data2[0]
                             that.ruleForm['Mark'] = ''
-                            for (let car of that.carList) {
-                                if (car.Id == data2[0].CarId) {
-                                    that.ruleForm['Name'] = car.Name
-                                    that.car = car
-                                }
-                            }
+                            //for (let car of that.carList) {
+                            //    if (car.Id == data2[0].CarId) {
+                            //        that.ruleForm['Name'] = car.Name
+                            //        that.car = car
+                            //    }
+                            //}
                         }
                     , { TaskId: TaskId })
                 }, {key:''})
