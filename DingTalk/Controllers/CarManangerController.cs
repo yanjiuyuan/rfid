@@ -1,4 +1,5 @@
-﻿using DingTalk.Models;
+﻿using DingTalk.EF;
+using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
@@ -208,6 +209,65 @@ namespace DingTalk.Controllers
                     }
                     return cars;
                 }
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel()
+                {
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// 查询数据并推送Excel
+        /// </summary>
+        /// <param name="startTime">开始时间</param>
+        /// <param name="endTime">结束时间</param>
+        /// <param name="pageIndex">页码</param>
+        /// <param name="pageSize">页容量</param>
+        /// <param name="key">关键字(姓名、车辆信息、部门信息)</param>
+        /// <param name="IsSend">是否推送用户(默认否)</param>
+        /// <returns></returns>
+        [Route("QuaryPrintExcel")]
+        [HttpGet]
+        public object QuaryPrintExcel(DateTime startTime, DateTime endTime, int pageIndex, int pageSize, string key = "", bool IsSend = false)
+        {
+            try
+            {
+                //EFHelper<CarTable> eFHelper = new EFHelper<CarTable>();
+                //System.Linq.Expressions.Expression<Func<CarTable, bool>> expression = c => c.StartTime > startTime && c.EndTime < endTime;
+                //List<CarTable> CarTablesListAll = eFHelper.GetListBy(expression);
+                //var CarTableList = eFHelper.GetPagedList(pageIndex, pageSize, expression, c => c.Id);
+                using (DDContext context = new DDContext())
+                {
+                    List<Car> cars = context.Car.ToList();
+                    List<Tasks> tasks = context.Tasks.ToList();
+                    List<CarTable> carTables = context.CarTable.ToList();
+
+                    var Quary = from ct in carTables
+                                join t in tasks on ct.TaskId equals t.TaskId.ToString()
+                                join c in cars on ct.CarId equals c.Id.ToString()
+                                where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime
+                                select new
+                                {
+                                    Dept = t.Dept,
+                                    ApplyMan = t.ApplyMan,
+                                    UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
+                                    Remark = t.Remark,
+                                    UseKilometres = ct.UseKilometres,
+                                    UnitPricePerKilometre = c.UnitPricePerKilometre,
+                                    AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre
+                                };
+                }
+
+                return new NewErrorModel()
+                {
+                    //count = CarTablesListAll.Count,
+                    //data = CarTableList,
+                    error = new Error(0, "读取成功！", "") { },
+                };
             }
             catch (Exception ex)
             {

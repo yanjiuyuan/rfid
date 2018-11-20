@@ -81,5 +81,10 @@ namespace DingTalk.Models.DingModels
         /// 车辆时间段
         /// </summary>
         public string UseTimes { get; set; }
+        /// <summary>
+        /// 总公里数
+        /// </summary>
+        [NotMapped]
+        public string TotalKilometres { get; set; }
     }
 }
