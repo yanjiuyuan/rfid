@@ -32,33 +32,6 @@ namespace DingTalk.Controllers
                 {
                     context.CarTable.Add(carTable);
                     context.SaveChanges();
-                    Car car = context.Car.Find(Int32.Parse(carTable.CarId));
-                    //只保留五条最新数据
-                    if (!string.IsNullOrEmpty(car.UseTimes))
-                    {
-                        if (car.UseTimes.Split(',').Length < 5)
-                        {
-                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
-                            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
-                        }
-                        else
-                        {
-                            car.UseTimes = car.UseTimes.Substring(car.UseTimes.IndexOf(','), car.UseTimes.Length - car.UseTimes.IndexOf(','));
-                            car.UseMan = car.UseMan.Substring(car.UseMan.IndexOf(','), car.UseMan.Length - car.UseMan.IndexOf(','));
-                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
-                            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
-                        }
-                    }
-                    else
-                    {
-                        car.UseTimes = carTable.StartTime + "~" + carTable.EndTime;
-                        car.UseMan = carTable.DrivingMan;
-                    }
-                    car.OccupyCarId = carTable.CarId;
-                    car.FinnalStartTime = carTable.StartTime;
-                    car.FinnalEndTime = carTable.EndTime;
-                    context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
-                    context.SaveChanges();
                 }
                 return new ErrorModel()
                 {
@@ -118,6 +91,33 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
+                    context.SaveChanges();
+                    Car car = context.Car.Find(Int32.Parse(carTable.CarId));
+                    //只保留五条最新数据
+                    if (!string.IsNullOrEmpty(car.UseTimes))
+                    {
+                        if (car.UseTimes.Split(',').Length < 5)
+                        {
+                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
+                            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
+                        }
+                        else
+                        {
+                            car.UseTimes = car.UseTimes.Substring(car.UseTimes.IndexOf(','), car.UseTimes.Length - car.UseTimes.IndexOf(','));
+                            car.UseMan = car.UseMan.Substring(car.UseMan.IndexOf(','), car.UseMan.Length - car.UseMan.IndexOf(','));
+                            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
+                            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
+                        }
+                    }
+                    else
+                    {
+                        car.UseTimes = carTable.StartTime + "~" + carTable.EndTime;
+                        car.UseMan = carTable.DrivingMan;
+                    }
+                    car.OccupyCarId = carTable.CarId;
+                    car.FinnalStartTime = carTable.StartTime;
+                    car.FinnalEndTime = carTable.EndTime;
+                    context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
                 }
                 return new ErrorModel()
