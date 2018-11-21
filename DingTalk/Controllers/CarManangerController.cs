@@ -281,7 +281,6 @@ namespace DingTalk.Controllers
         {
             try
             {
-
                 using (DDContext context = new DDContext())
                 {
                     List<Car> cars = context.Car.ToList();
