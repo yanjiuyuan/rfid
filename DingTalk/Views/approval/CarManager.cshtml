@@ -43,6 +43,55 @@
                        :total="totalRows">
         </el-pagination>
     </div>
+
+    @*用车数据*@
+    <!--检索项目表单-->
+    <el-form :inline="true" :model="searchParam" class="demo-form-inline"
+             size="medium">
+        <el-form-item label="关键字">
+            <el-input v-model="searchParam.key" style="width:200px;"
+                      placeholder="请输入搜索关键字"></el-input>
+        </el-form-item>
+        <el-form-item label="用车时间" prop="StartTime" required="required">
+            <el-date-picker v-model="timeRange"
+                            type="datetimerange"
+                            v-on:change="selectTime"
+                            @*:picker-options="dayPickerOptions"*@
+                            range-separator="至"
+                            start-placeholder="开始时间"
+                            end-placeholder="返回时间">
+            </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="searchData">搜索</el-button>
+            <el-button v-on:click="printData" type="primary">打印表单</el-button>
+        </el-form-item>
+    </el-form>
+    <!--表格實體-->
+    <el-table :data="tableData2" stripe border>
+        <el-table-column prop="Dept" label="使用部门"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="UseTime" label="用车日期"></el-table-column>
+        <el-table-column prop="Name" label="使用车辆"></el-table-column>
+        <el-table-column prop="MainContent" label="用途"></el-table-column>
+        <el-table-column prop="UseKilometres" label="总里程/KM"></el-table-column>
+        <el-table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-table-column>
+        <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange2"
+                       v-on:current-change="handleCurrentChange2"
+                       :current-page="searchParam.pageIndex"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="5"
+                       layout="total, prev, pager, next, jumper"
+                       :total="totalRows2">
+        </el-pagination>
+    </div>
+
+
+
     <!--编辑车辆信息表单-->
     <el-dialog title="编辑车辆信息" :visible.sync="dialogFormVisible">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
@@ -102,6 +151,19 @@
                 formInline: {
                     key: ''
                 },
+                searchParam: {
+                    startTime: '',
+                    endTime: '',
+                    pageIndex: 1,
+                    pageSize: 5,
+                    applyManId: DingData.userid,
+                    key: '',
+                    IsSend: false
+                },
+                timeRange: [],
+                totalRows2: 0,
+                data2: [],
+                tableData2:[],
                 ruleForm: ruleForm,
                 dialogFormVisible: false
             }
@@ -130,11 +192,13 @@
                         that.disableAdd = true
                         var url = '/CarMananger/Add' 
                         console.log("添加车辆")
-                        console.log(that.ruleForm)
+                        var param = _cloneObj(that.ruleForm)
+                        param['ApplyManId'] = DingData.userid
+                        console.log(param)
                         $.ajax({
                             url: url,
                             type: 'POST',
-                            data: that.ruleForm,
+                            data: param,
                             success: function (data) {
                                 console.log("添加车辆ok")
                                 console.log(data)
@@ -159,6 +223,7 @@
                         var url = '/CarMananger/Modify'
                         var param = _cloneObj(that.ruleForm)
                         param['Id'] = id
+                        param['ApplyManId'] = DingData.userid
                         console.log("编辑车辆")
                         console.log(param)
                         $.ajax({
@@ -184,14 +249,15 @@
                 var that = this
                 let url = "/CarMananger/Delete"
                 let param = {
-                    Id: row.Id
+                    Id: row.Id,
+                    ApplyManId: DingData.userid
                 }
                
                 let handle = function (data) {
                     console.log('删除成功')
                     that.getCar()
                 }
-                this._postData(url, handle, param)
+                this._getData(url, handle, param)
             },
             //添加车辆按钮事件
             handleAdd: function () {
@@ -212,6 +278,48 @@
                 for (let i of items) {
                     this.ruleForm[i] = row[i]
                 }
+            },
+
+
+
+
+            //用车数据相关
+            searchData: function () {
+                var that = this
+                let url = "/CarMananger/QuaryPrintExcel"
+                let param = _cloneObj(this.searchParam)
+                let handle = function (data) {
+                    that.totalRows2 = data.length
+                    that.data2 = data
+                    that.getData2()
+                }
+                this._getData(url, handle, param)
+            },
+            printData: function () {
+                let url = "/CarMananger/QuaryPrintExcel"
+                let param = _cloneObj(this.searchParam)
+                param.IsSend = true
+                this._getData(url, handle, param)
+            },
+            //选时间操作
+            selectTime(value) {
+                if (!value[0]) return
+                this.searchParam.startTime = _timeToString(value[0])
+                this.searchParam.endTime = _timeToString(value[1])
+            },
+            //翻頁相關事件
+            getData2() {
+                var start = this.searchParam.pageSize * (this.searchParam.pageIndex - 1)
+                this.tableData2 = this.data2.slice(start, start + this.searchParam.pageSize.pageSize)
+            },
+            handleSizeChange2: function (val) {
+                this.searchParam.pageIndex = 1
+                this.searchParam.pageSize = val
+                this.getData2()
+            },
+            handleCurrentChange2: function (val) {
+                this.searchParam.pageIndex = val
+                this.getData2()
             },
         },
         created: function () {
