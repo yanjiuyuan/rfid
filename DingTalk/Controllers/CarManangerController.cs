@@ -285,7 +285,6 @@ namespace DingTalk.Controllers
                     List<Car> cars = context.Car.ToList();
                     List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //公车任务流
                     List<CarTable> carTables = context.CarTable.ToList();
-
                     var Quary = from ct in carTables
                                 join t in tasks on ct.TaskId equals t.TaskId.ToString()
                                 join c in cars on ct.CarId equals c.Id.ToString()
