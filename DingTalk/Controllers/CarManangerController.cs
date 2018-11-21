@@ -132,6 +132,7 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+
                     if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == car.ApplyManId).ToList().Count > 0)
                     {
                         context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
