@@ -7,7 +7,13 @@ namespace DingTalk.Models
 {
     public class PrintAndSendModel
     {
+        /// <summary>
+        /// 推送用户Id
+        /// </summary>
         public string UserId { get; set; }
+        /// <summary>
+        /// 流水号
+        /// </summary>
         public string TaskId { get; set; }
         public string OldPath { get; set; }
     }

@@ -85,7 +85,7 @@ namespace Common.PDF
                 //CreateEmptyRow(1);//生成一行空行
 
                 if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents("流水号", TaskId, "申请人", ApplyName); }
-                if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents( "申请时间", ApplyTime.Substring(0, 10),"申请部门", Dept); }               
+                if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents( "申请时间", ApplyTime.Substring(0, 10), "申请部门", Dept); }               
                 if (!string.IsNullOrEmpty(ProjectName)) { AddSinglePartnerContents("项目", ProjectNo + "-" + ProjectName); }
                 AddPageNumberContent();//添加页码
                 CreateEmptyRow(1);//生成一行空行
@@ -360,10 +360,10 @@ namespace Common.PDF
             content.IndentationLeft = IndentationLeft;
             Chunk chunkNameOne = new Chunk(FieldNameOne + ":", fontSmallNoBold);
             //Chunk chunkTextOne = new Chunk(GetEmptyString(20, FieldValueOne), fontSmallNoBold);
-            Chunk chunkTextOne = new Chunk(FieldValueOne, fontSmallNoBold);
+            Chunk chunkTextOne = new Chunk(FieldValueOne+"             ", fontSmallNoBold);
             Chunk chunkNameTwo = new Chunk(FieldNameTwo + ":", fontSmallNoBold);
             //Chunk chunkTextTwo = new Chunk(GetEmptyString(20, FieldValueTwo), fontSmallNoBold);
-            Chunk chunkTextTwo = new Chunk(FieldValueTwo, fontSmallNoBold);
+            Chunk chunkTextTwo = new Chunk(FieldValueTwo + "            ", fontSmallNoBold);
             content.Add(0, chunkNameOne);
             content.Add(1, chunkTextOne);
             content.Add(0, chunkNameTwo);
