@@ -290,7 +290,7 @@ namespace DingTalk.Controllers
                                 join t in tasks on ct.TaskId equals t.TaskId.ToString()
                                 join c in cars on ct.CarId equals c.Id.ToString()
                                 where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime && ct.IsPublicCar==true
-                                && (key != "" ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
+                                && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
                                 select new
                                 {
                                     Dept = t.Dept,
