@@ -300,7 +300,9 @@
                 let url = "/CarMananger/QuaryPrintExcel"
                 let param = _cloneObj(this.searchParam)
                 param.IsSend = true
-                this._getData(url, handle, param)
+                this._getData(url, function (result) {
+                    
+                }, param)
             },
             //选时间操作
             selectTime(value) {
