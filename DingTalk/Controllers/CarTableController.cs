@@ -119,19 +119,37 @@ namespace DingTalk.Controllers
                             car.UseMan = carTable.DrivingMan;
                         }
                         car.OccupyCarId = carTable.Id.ToString();
-                        //扣除公里数
-                        if (!string.IsNullOrEmpty(carTable.OccupyCarId))
-                        {
-                            CarTable carTables = context.CarTable.Find(Int32.Parse(carTable.OccupyCarId));
-                            carTables.FactKilometre = (float.Parse(carTables.FactKilometre) - float.Parse(carTable.FactKilometre)).ToString();
-                            context.SaveChanges();
-                        }
-
-
                         car.FinnalStartTime = carTable.StartTime;
                         car.FinnalEndTime = carTable.EndTime;
                         context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
+                    }
+
+                    if (string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.UseKilometres))
+                    {
+                        //判断当前处理节点为车辆管理员确认公里数
+                        if (context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault().NodeId == 4)
+                        {
+                            carTable.FactKilometre = carTable.UseKilometres;
+                            context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                        }
+                    }
+                    //扣除公里数
+                    if (!string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.UseKilometres))
+                    {
+                        //判断当前处理节点为车辆管理员确认公里数
+                        if (context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault().NodeId == 4)
+                        {
+                            CarTable carTableNew = context.CarTable.Find(Int32.Parse(carTable.OccupyCarId));
+                            carTableNew.FactKilometre = (float.Parse(carTableNew.FactKilometre) - float.Parse(carTable.UseKilometres)).ToString();
+                            context.Entry<CarTable>(carTableNew).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                            
+                            carTable.FactKilometre = carTable.UseKilometres;
+                            context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                        }
                     }
                 }
                 return new ErrorModel()
