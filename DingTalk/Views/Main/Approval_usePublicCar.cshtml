@@ -85,6 +85,9 @@
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
+        <el-form-item label="操作" v-if="index==1 || index==2">
+            <el-button type="primary" v-on:click="printPdf">打印</el-button>
+        </el-form-item>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
@@ -176,6 +179,19 @@
                 this.ruleForm.Name = car.Name
                 this.ruleForm.OccupyCarId = car.OccupyCarId
                 this.ruleForm.IsOccupyCar = car.IsOccupyCar
+            },
+            printPdf() {
+                var that = this
+                this._postData("/CarTable/GetPrintPDF", function (result) {
+                        if (result.errcode != 0) {
+                            that.elementAlert('alert',result.errmsg)
+                        }
+                    },
+                    {
+                        UserId: DingData.userid,
+                        TaskId: TaskId
+                    }
+                )
             },
             getUseCarTable() {
                 var that = this
