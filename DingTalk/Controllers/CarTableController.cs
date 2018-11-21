@@ -30,6 +30,7 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    carTable.UseKilometres = carTable.FactKilometre;
                     context.CarTable.Add(carTable);
                     context.SaveChanges();
                 }
@@ -93,7 +94,7 @@ namespace DingTalk.Controllers
                     context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
 
-                    if (!string.IsNullOrEmpty(carTable.CarId) && carTable.StartKilometres==null)
+                    if (!string.IsNullOrEmpty(carTable.CarId) && carTable.StartKilometres == null)
                     {
                         Car car = context.Car.Find(Int32.Parse(carTable.CarId));
                         //只保留五条最新数据
@@ -117,7 +118,16 @@ namespace DingTalk.Controllers
                             car.UseTimes = carTable.StartTime + "~" + carTable.EndTime;
                             car.UseMan = carTable.DrivingMan;
                         }
-                        car.OccupyCarId = carTable.CarId;
+                        car.OccupyCarId = carTable.Id.ToString();
+                        //扣除公里数
+                        if (!string.IsNullOrEmpty(carTable.OccupyCarId))
+                        {
+                            CarTable carTables = context.CarTable.Find(Int32.Parse(carTable.OccupyCarId));
+                            carTables.FactKilometre = (float.Parse(carTables.FactKilometre) - float.Parse(carTable.FactKilometre)).ToString();
+                            context.SaveChanges();
+                        }
+
+
                         car.FinnalStartTime = carTable.StartTime;
                         car.FinnalEndTime = carTable.EndTime;
                         context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
