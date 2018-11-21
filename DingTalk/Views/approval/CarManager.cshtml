@@ -289,9 +289,9 @@
                 var that = this
                 let url = "/CarMananger/QuaryPrintExcel"
                 let param = _cloneObj(this.searchParam)
-                let handle = function (data) {
-                    that.totalRows2 = data.length
-                    that.data2 = data
+                let handle = function (result) {
+                    that.totalRows2 = result.data.length
+                    that.data2 = result.data
                     that.getData2()
                 }
                 this._getData(url, handle, param)
@@ -311,7 +311,7 @@
             //翻頁相關事件
             getData2() {
                 var start = this.searchParam.pageSize * (this.searchParam.pageIndex - 1)
-                this.tableData2 = this.data2.slice(start, start + this.searchParam.pageSize.pageSize)
+                this.tableData2 = this.data2.slice(start, start + this.searchParam.pageSize)
             },
             handleSizeChange2: function (val) {
                 this.searchParam.pageIndex = 1
