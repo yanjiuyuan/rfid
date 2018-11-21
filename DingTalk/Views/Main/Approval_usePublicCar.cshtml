@@ -208,6 +208,11 @@
                         endTime: that.ruleForm.EndTime
                     }
                     that._getData('/CarMananger/QuaryByTime', function (data) {
+                        for (let d of data) {
+                            if (d.Id == that.ruleForm.CarId) {
+                                that.ruleForm['Name'] = d.Name
+                            }
+                        }
                         that.carList = data
                     } , param)
                 }, { TaskId: TaskId })
