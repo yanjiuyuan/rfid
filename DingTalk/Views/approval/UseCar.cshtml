@@ -51,7 +51,7 @@
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
-            <el-checkbox v-model="checked">本人同意<b style="color:#88B6FF;"><< 私车公用协议书 >></b></el-checkbox>
+            <el-checkbox v-model="checked">本人同意<b v-on:click="showMore" style="color:#88B6FF;"><< 私车公用协议书 >></b></el-checkbox>
         </el-form-item>
         <el-collapse v-model="activeNames">
             <el-collapse-item :name="1" :key="1">
@@ -114,7 +114,7 @@
                 timeRange: [],
                 date: _getDate(),
                 checked: false,
-                activeNames: [1],
+                activeNames: [],
                 ruleForm: {
                     CarId: "",
                     DrivingMan: DingData.nickName,
@@ -177,6 +177,10 @@
                     }, param)
                 }
                 this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
+            },
+            showMore() {
+                console.log('hello?')
+                this.activeNames = [1]
             },
             //选时间操作
             selectTime(value) {
