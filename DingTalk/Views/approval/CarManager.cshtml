@@ -52,7 +52,7 @@
             <el-input v-model="searchParam.key" style="width:200px;"
                       placeholder="请输入搜索关键字"></el-input>
         </el-form-item>
-        <el-form-item label="用车时间" prop="StartTime" required="required">
+        <el-form-item label="用车时间" required="required">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
                             v-on:change="selectTime"
