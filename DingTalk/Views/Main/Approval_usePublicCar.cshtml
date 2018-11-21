@@ -71,7 +71,7 @@
         </el-form-item>
 
         <el-form-item label="使用车辆" v-if="NodeId > 2">
-            <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
+            <el-input v-model="carName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="意见">
             <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
@@ -113,6 +113,7 @@
                 NodeId: NodeId,
                 nodeList: [],
                 nodeInfo: {},
+                carName: '',
                 reInput: false,
                 ifDisabeleEdit: Index != 0,
                 ruleForm: {
@@ -208,6 +209,15 @@
                         endTime: that.ruleForm.EndTime
                     }
                     that._getData('/CarMananger/QuaryByTime', function (data) {
+                       
+                        for (let d of data) {
+                            if (d.Id == that.ruleForm.CarId) {
+                                console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                                console.log(d.Name)
+                                that.carName = d.Name
+                                that.ruleForm['Name'] = d.Name
+                            }
+                        }
                         that.carList = data
                     } , param)
                 }, { TaskId: TaskId })
