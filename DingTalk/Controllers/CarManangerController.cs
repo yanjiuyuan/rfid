@@ -285,11 +285,10 @@ namespace DingTalk.Controllers
                     List<Car> cars = context.Car.ToList();
                     List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //公车任务流
                     List<CarTable> carTables = context.CarTable.ToList();
-
                     var Quary = from ct in carTables
                                 join t in tasks on ct.TaskId equals t.TaskId.ToString()
                                 join c in cars on ct.CarId equals c.Id.ToString()
-                                where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime
+                                where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime && ct.IsPublicCar==true
                                 && (key != "" ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
                                 select new
                                 {
@@ -300,8 +299,9 @@ namespace DingTalk.Controllers
                                     MainContent = ct.MainContent,
                                     UseKilometres = ct.UseKilometres,
                                     UnitPricePerKilometre = c.UnitPricePerKilometre,
-                                    AllPrice = float.Parse(ct.UseKilometres) * c.UnitPricePerKilometre,
-                                    Remark = t.Remark
+                                    FactKilometre=ct.FactKilometre,
+                                    AllPrice = float.Parse(ct.FactKilometre) * c.UnitPricePerKilometre,
+                                    //Remark = t.Remark
                                 };
                     var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
 
