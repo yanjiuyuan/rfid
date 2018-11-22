@@ -16,5 +16,9 @@ namespace DingTalk.Models
         /// </summary>
         public string TaskId { get; set; }
         public string OldPath { get; set; }
+        /// <summary>
+        /// 是否是公车
+        /// </summary>
+        public bool IsPublic { get; set; }
     }
 }

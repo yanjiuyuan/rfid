@@ -274,95 +274,179 @@ namespace DingTalk.Controllers
         /// <param name="applyManId">调用接口人Id</param>
         /// <param name="key">关键字(姓名、车辆信息、部门信息)</param>
         /// <param name="IsSend">是否推送用户(默认否)</param>
+        /// <param name="IsPublic">是否是公车(默认是)</param>
         /// <returns></returns>
         [Route("QuaryPrintExcel")]
         [HttpGet]
-        public async Task<object> QuaryPrintExcel(DateTime startTime, DateTime endTime, int pageIndex, int pageSize, string applyManId, string key = "", bool IsSend = false)
+        public async Task<object> QuaryPrintExcel(DateTime startTime, DateTime endTime, int pageIndex, int pageSize, string applyManId, string key = "", bool IsSend = false, bool IsPublic = true)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
                     List<Car> cars = context.Car.ToList();
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //公车任务流
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId(IsPublic == true ? "13" : "14"); //公车任务流13
                     List<CarTable> carTables = context.CarTable.ToList();
-                    var Quary = from ct in carTables
-                                join t in tasks on ct.TaskId equals t.TaskId.ToString()
-                                join c in cars on ct.CarId equals c.Id.ToString()
-                                where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime && ct.IsPublicCar==true
-                                && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
-                                select new
-                                {
-                                    Dept = t.Dept,
-                                    ApplyMan = t.ApplyMan,
-                                    UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
-                                    Name = c.Name + "(" + c.CarNumber + ")",
-                                    MainContent = ct.MainContent,
-                                    UseKilometres = ct.UseKilometres,
-                                    UnitPricePerKilometre = c.UnitPricePerKilometre,
-                                    FactKilometre=ct.FactKilometre,
-                                    AllPrice = float.Parse(ct.FactKilometre) * c.UnitPricePerKilometre,
-                                    //Remark = t.Remark
-                                };
-                    var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
-
-                    if (IsSend && Quary.Count() > 0)  //生成报表推送用户
+                    if (IsPublic)
                     {
-                        //DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(Quary);
-
-                        DataTable dtReturn = new DataTable();
-                        // column names
-                        PropertyInfo[] oProps = null;
-                        // Could add a check to verify that there is an element 0
-                        foreach (var rec in Quary)
-                        {
-                            // Use reflection to get property names, to create table, Only first time, others will follow
-                            if (oProps == null)
-                            {
-                                oProps = ((Type)rec.GetType()).GetProperties();
-                                foreach (PropertyInfo pi in oProps)
-                                {
-                                    Type colType = pi.PropertyType; if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                        var Quary = from ct in carTables
+                                    join t in tasks on ct.TaskId equals t.TaskId.ToString()
+                                    join c in cars on ct.CarId equals c.Id.ToString()
+                                    where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime && ct.IsPublicCar == IsPublic
+                                    && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
+                                    select new
                                     {
-                                        colType = colType.GetGenericArguments()[0];
-                                    }
-                                    dtReturn.Columns.Add(new DataColumn(pi.Name, colType));
-                                }
-                            }
-                            DataRow dr = dtReturn.NewRow(); foreach (PropertyInfo pi in oProps)
-                            {
-                                dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
-                            }
-                            dtReturn.Rows.Add(dr);
-                        }
-
-                        string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/用车通用模板.xlsx");
-                        string time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                        string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\用车数据" + time + ".xlsx";
-                        System.IO.File.Copy(path, newPath);
-                        if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 2))
+                                        Dept = t.Dept,
+                                        ApplyMan = t.ApplyMan,
+                                        UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
+                                        Name = c.Name + "(" + c.CarNumber + ")",
+                                        MainContent = ct.MainContent,
+                                        UseKilometres = ct.UseKilometres,
+                                        UnitPricePerKilometre = c.UnitPricePerKilometre,
+                                        FactKilometre = ct.FactKilometre,
+                                        AllPrice = float.Parse(ct.FactKilometre) * c.UnitPricePerKilometre,
+                                        //Remark = t.Remark
+                                    };
+                        var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+                        if (IsSend && Quary.Count() > 0)  //生成报表推送用户
                         {
-                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                            //上盯盘
-                            var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/用车数据" + time + ".xlsx");
-                            //推送用户
-                            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                            fileSendModel.UserId = applyManId;
-                            var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                            //DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(Quary);
+
+                            DataTable dtReturn = new DataTable();
+                            // column names
+                            PropertyInfo[] oProps = null;
+                            // Could add a check to verify that there is an element 0
+                            foreach (var rec in Quary)
+                            {
+                                // Use reflection to get property names, to create table, Only first time, others will follow
+                                if (oProps == null)
+                                {
+                                    oProps = ((Type)rec.GetType()).GetProperties();
+                                    foreach (PropertyInfo pi in oProps)
+                                    {
+                                        Type colType = pi.PropertyType; if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                                        {
+                                            colType = colType.GetGenericArguments()[0];
+                                        }
+                                        dtReturn.Columns.Add(new DataColumn(pi.Name, colType));
+                                    }
+                                }
+                                DataRow dr = dtReturn.NewRow(); foreach (PropertyInfo pi in oProps)
+                                {
+                                    dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
+                                }
+                                dtReturn.Rows.Add(dr);
+                            }
+
+                            string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/用车通用模板(公车).xlsx");
+                            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                            string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\用车数据(公车)" + time + ".xlsx";
+                            System.IO.File.Copy(path, newPath);
+                            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 2))
+                            {
+                                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                //上盯盘
+                                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/用车数据(公车)" + time + ".xlsx");
+                                //推送用户
+                                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                                fileSendModel.UserId = applyManId;
+                                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(0, "已推送至钉钉！", "") { },
+                                };
+                            }
+                        }
+                        else
+                        {
                             return new NewErrorModel()
                             {
-                                error = new Error(0, "已推送至钉钉！", "") { },
+                                count = Quary.Count(),
+                                data = takeQuary,
+                                error = new Error(0, "读取成功！", "") { },
                             };
                         }
                     }
 
-                    return new NewErrorModel()
+                    else
                     {
-                        count = Quary.Count(),
-                        data = takeQuary,
-                        error = new Error(0, "读取成功！", "") { },
-                    };
+                        var QuaryPri = from ct in carTables
+                                       join t in tasks on ct.TaskId equals t.TaskId.ToString()
+                                       where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime && ct.IsPublicCar == IsPublic
+                                       && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key)) : t.ApplyMan != null)
+                                       select new
+                                       {
+                                           Dept = t.Dept,
+                                           ApplyMan = t.ApplyMan,
+                                           UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
+                                           MainContent = ct.MainContent,
+                                           UseKilometres = ct.UseKilometres,
+                                           //FactKilometre = ct.FactKilometre,
+                                           //Remark = t.Remark
+                                       };
+                        var takeQuaryPri = QuaryPri.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
+                        if (IsSend && QuaryPri.Count() > 0)  //生成报表推送用户
+                        {
+                            //DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(Quary);
+
+                            DataTable dtReturn = new DataTable();
+                            // column names
+                            PropertyInfo[] oProps = null;
+                            // Could add a check to verify that there is an element 0
+                            foreach (var rec in QuaryPri)
+                            {
+                                // Use reflection to get property names, to create table, Only first time, others will follow
+                                if (oProps == null)
+                                {
+                                    oProps = ((Type)rec.GetType()).GetProperties();
+                                    foreach (PropertyInfo pi in oProps)
+                                    {
+                                        Type colType = pi.PropertyType; if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                                        {
+                                            colType = colType.GetGenericArguments()[0];
+                                        }
+                                        dtReturn.Columns.Add(new DataColumn(pi.Name, colType));
+                                    }
+                                }
+                                DataRow dr = dtReturn.NewRow(); foreach (PropertyInfo pi in oProps)
+                                {
+                                    dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
+                                }
+                                dtReturn.Rows.Add(dr);
+                            }
+
+                            string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/用车通用模板(私车).xlsx");
+                            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                            string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\用车数据(私车)" + time + ".xlsx";
+                            System.IO.File.Copy(path, newPath);
+                            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 2))
+                            {
+                                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                //上盯盘
+                                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/用车数据(私车)" + time + ".xlsx");
+                                //推送用户
+                                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                                fileSendModel.UserId = applyManId;
+                                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(0, "已推送至钉钉！", "") { },
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                count = QuaryPri.Count(),
+                                data = takeQuaryPri,
+                                error = new Error(0, "读取成功！", "") { },
+                            };
+                        }
+                    }
                 }
+                return "";
             }
             catch (Exception ex)
             {

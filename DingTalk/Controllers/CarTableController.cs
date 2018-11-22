@@ -265,7 +265,6 @@ namespace DingTalk.Controllers
                     //获取表单信息
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
-                    string ProjectId = tasks.ProjectId;
                     //判断流程是否已结束
                     List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
                     if (tasksList.Count > 0)
@@ -277,18 +276,37 @@ namespace DingTalk.Controllers
                     }
 
                     CarTable ct = context.CarTable.Where(u => u.TaskId == TaskId).FirstOrDefault();
-                    ct.CarId = context.Car.Where(c => c.Id.ToString() == ct.CarId).FirstOrDefault().CarNumber;                   
+                    if (printAndSendModel.IsPublic)
+                    {
+                        ct.CarId = context.Car.Where(c => c.Id.ToString() == ct.CarId).FirstOrDefault().CarNumber;
+                    }
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-                    keyValuePairs.Add("驾驶人", ct.DrivingMan);
-                    keyValuePairs.Add("车牌号", ct.CarId);
-                    keyValuePairs.Add("同行人数", ct.PeerNumber);
-                    keyValuePairs.Add("用车事由", ct.MainContent);
-                    keyValuePairs.Add("计划行车路线", ct.PlantTravelWay);
-                    keyValuePairs.Add("实际行车路线", ct.FactTravelWay);
-                    keyValuePairs.Add("出发时间", ct.StartTime.ToString());
-                    keyValuePairs.Add("归来时间", ct.EndTime.ToString());
-                    keyValuePairs.Add("实际行驶公里数", ct.FactKilometre);
-                    keyValuePairs.Add("总行驶公里数", ct.UseKilometres);
+
+                    if (printAndSendModel.IsPublic)
+                    {
+                        keyValuePairs.Add("驾驶人", ct.DrivingMan);
+                        keyValuePairs.Add("车牌号", ct.CarId);
+                        keyValuePairs.Add("同行人数", ct.PeerNumber);
+                        keyValuePairs.Add("用车事由", ct.MainContent);
+                        keyValuePairs.Add("计划行车路线", ct.PlantTravelWay);
+                        keyValuePairs.Add("实际行车路线", ct.FactTravelWay);
+                        keyValuePairs.Add("出发时间", ct.StartTime.ToString());
+                        keyValuePairs.Add("归来时间", ct.EndTime.ToString());
+                        keyValuePairs.Add("实际行驶公里数", ct.FactKilometre);
+                        keyValuePairs.Add("总行驶公里数", ct.UseKilometres);
+                    }
+                    else
+                    {
+                        keyValuePairs.Add("驾驶人", ct.DrivingMan);
+                        keyValuePairs.Add("同行人数", ct.PeerNumber);
+                        keyValuePairs.Add("用车事由", ct.MainContent);
+                        keyValuePairs.Add("计划行车路线", ct.PlantTravelWay);
+                        keyValuePairs.Add("实际行车路线", ct.FactTravelWay);
+                        keyValuePairs.Add("出发时间", ct.StartTime.ToString());
+                        keyValuePairs.Add("归来时间", ct.EndTime.ToString());
+                        keyValuePairs.Add("总行驶公里数", ct.UseKilometres);
+                    }
+                   
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
