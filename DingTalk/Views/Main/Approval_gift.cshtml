@@ -1,0 +1,123 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="goHome()">
+        <i class="el-icon-arrow-left"></i>
+        礼品招待领用审批-{{nodeInfo.NodeName}}
+    </div>
+    <div>
+        <el-table :data="data" stripe border>
+            <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
+            <el-table-column prop="GiftCount" label="数量"></el-table-column>
+        </el-table>
+    </div>
+
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <template v-if="index==0">
+            <el-form-item label="审批意见" prop="mark">
+                <el-input v-model="ruleForm.Mark" style="width:400px;"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+            </el-form-item>
+        </template>
+    </el-form>
+</el-main>
+
+<script>
+    var allData = {}
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                NodeId: NodeId,
+                index: Index,
+                nodeList: [],
+                nodeInfo: {},
+                ruleForm: {
+                    Mark: ''
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                console.log('submit!')
+                var that = this
+                this.aggreSubmit({
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.Mark
+                })
+            },
+            returnBk() {
+                let param = {
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            getBomInfo() {
+                var that = this
+                this._getData("/Gift/GetTable" , function (result) {
+                    that.data = []
+                    console.log('获取bom表')
+                    console.log(result)
+                    that.data = result.data
+                    
+                   
+                }, { TaskId: TaskId })
+            }
+        },
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            this.getBomInfo()
+            this.GetDingList(TaskId)
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData()
+
+
+    //获取审批表单信息
+    function getFormData() {
+        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log("获取审批表单信息ok")
+                console.log(url)
+                console.log(data)
+                allData = data
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+</script>
+
+
+

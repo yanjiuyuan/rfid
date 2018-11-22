@@ -704,6 +704,8 @@
     <Content Include="Views\approval\PublishProduct.cshtml" />
     <Content Include="Views\approval\PublishRecruit.cshtml" />
     <Content Include="Views\approval\UploadPaperRe.cshtml" />
+    <Content Include="Views\approval\Gift.cshtml" />
+    <Content Include="Views\Main\Approval_gift.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

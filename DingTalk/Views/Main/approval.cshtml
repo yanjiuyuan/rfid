@@ -32,32 +32,22 @@
 </el-main>
 
 <script>
+    var x = -54
+    var y = -46
+    var xTap = -90
+    var yTap = -90
     imgConfig = [
         {
             flowId: 1,
             sortId: 4,
             url: '/approval/officesupplies',
-            position: '-413px -47px'
-        },
-        {
-            flowId: 4,
-            sortId: 2,
-            url: '',
-            //url: '/approval/UseCar',
-            position: '-234px -317px'
-        },
-        {
-            flowId: 5,
-            sortId: 3,
-            url: '',
-            //url: '/approval/UseCar',
-            position: '-594px -227px'
+            position: (x + 4 * xTap) +  'px ' + (y + 0 * yTap) + 'px'
         },
         {
             flowId: 6,
             sortId: 3,
             url: '/approval/UploadPaper',
-            position: '-684px -227px'
+            position: (x + 7 * xTap) + 'px ' + (y + 2 * yTap) + 'px'
         },
         {
             flowId: 23,
@@ -117,7 +107,7 @@
             flowId: 14,
             sortId: 6,
             url: '/approval/UseCar',
-            position: '-504px -407px'
+            position: '-504px -405px'
         },
         {
             flowId: 15,
@@ -154,6 +144,12 @@
             sortId: 8,
             url: '/approval/PublishRecruit',//招聘信息发布
             position: '-778px -138px'
+        },
+        {
+            flowId: 24,
+            sortId: 7,
+            url: '/approval/Gift',//礼品申请
+            position: (x + 0 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
         }
     ]
     var demo = new Vue({

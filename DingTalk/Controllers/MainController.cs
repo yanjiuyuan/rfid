@@ -78,6 +78,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
-    
+        public ActionResult Approval_gift()
+        {
+            return View();
+        }
     }
 }

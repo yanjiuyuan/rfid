@@ -62,13 +62,24 @@
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
+
+        <el-form-item label="用车类型">
+            <el-select v-model="searchParam.IsPublic" v-on:change="selectCarType" filterable placeholder="请选择">
+                <el-option v-for="item in carTypes"
+                           :key="item.key"
+                           :label="item.value"
+                           :value="item.key">
+                </el-option>
+            </el-select>
+        </el-form-item>
+
         <el-form-item>
             <el-button type="primary" v-on:click="searchData">搜索</el-button>
             <el-button v-on:click="printData" type="primary">打印表单</el-button>
         </el-form-item>
     </el-form>
     <!--表格實體-->
-    <el-table :data="tableData2" stripe border>
+    <el-table :data="tableData2" stripe border v-if="searchParam.IsPublic">
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
@@ -78,6 +89,13 @@
         <el-table-column prop="FactKilometre" label="实际里程/KM"></el-table-column>
         <el-table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-table-column>
         <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
+    </el-table>
+    <el-table :data="tableData2" stripe border v-else>
+        <el-table-column prop="Dept" label="使用部门"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="UseTime" label="用车日期"></el-table-column>
+        <el-table-column prop="MainContent" label="用途"></el-table-column>
+        <el-table-column prop="UseKilometres" label="总里程/KM"></el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -152,6 +170,16 @@
                 formInline: {
                     key: ''
                 },
+                carTypes: [
+                    {
+                        key: true,
+                        value: '公车'
+                    },
+                    {
+                        key: false,
+                        value: '私车'
+                    }
+                ],
                 searchParam: {
                     startTime: '',
                     endTime: '',
@@ -159,6 +187,7 @@
                     pageSize: 5,
                     applyManId: DingData.userid,
                     key: '',
+                    IsPublic: true,
                     IsSend: false
                 },
                 timeRange: [],
@@ -304,11 +333,15 @@
                     
                 }, param)
             },
-            //选时间操作
+            //选操作
             selectTime(value) {
                 if (!value[0]) return
                 this.searchParam.startTime = _timeToString(value[0])
                 this.searchParam.endTime = _timeToString(value[1])
+            },
+            selectCarType(value) {
+                this.data2 = []
+                this.tableData2 = []
             },
             //翻頁相關事件
             getData2() {
