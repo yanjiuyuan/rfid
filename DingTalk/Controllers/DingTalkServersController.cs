@@ -27,7 +27,6 @@ namespace DingTalk.Controllers
 
         DingTalkManager dtManager;
         public DingTalkConfig DTConfig { get; set; } = new DingTalkConfig();
-
         public DingTalkServersController()
         {
             dtManager = new DingTalkManager();

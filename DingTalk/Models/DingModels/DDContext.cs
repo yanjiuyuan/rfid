@@ -46,6 +46,7 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Vote> Vote { get; set; }
         public virtual DbSet<Worker> Worker { get; set; }
         public virtual DbSet<WorkTime> WorkTime { get; set; }
+        public virtual DbSet<GiftTable> GiftTable { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -284,7 +285,7 @@ namespace DingTalk.Models.DingModels
             modelBuilder.Entity<Purchase>()
                 .Property(e => e.NeedTime)
                 .IsUnicode(false);
-            
+
             modelBuilder.Entity<Roles>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);
@@ -1180,7 +1181,7 @@ namespace DingTalk.Models.DingModels
             modelBuilder.Entity<PurchaseTable>()
                 .Property(e => e.Mark)
                 .IsUnicode(false);
-            
+
             modelBuilder.Entity<Receiving>()
                 .Property(e => e.Id)
                 .HasPrecision(18, 0);

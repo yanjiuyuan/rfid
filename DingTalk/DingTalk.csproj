@@ -346,6 +346,7 @@
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FlowInfoController.cs" />
+    <Compile Include="Controllers\GiftTableController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemCodeAddController.cs" />
     <Compile Include="Controllers\JobManangerController.cs" />
@@ -405,6 +406,7 @@
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />
+    <Compile Include="Models\DingModels\GiftTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
     <Compile Include="Models\DingModels\Contract.cs" />
     <Compile Include="Models\DingModels\DDContext.cs" />
