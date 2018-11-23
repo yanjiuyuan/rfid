@@ -8,14 +8,27 @@
         <i class="el-icon-arrow-left"></i>
         礼品招待领用审批-{{nodeInfo.NodeName}}
     </div>
-    <div>
-        <el-table :data="data" stripe border>
-            <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
-            <el-table-column prop="GiftCount" label="数量"></el-table-column>
-        </el-table>
-    </div>
 
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        <el-form-item label="标题" v-if="ruleForm.Title">
+            <el-input v-model="ruleForm.Title" :disabled="true" style="width:500px;"></el-input>
+        </el-form-item>
+        <br />
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true" style="width:500px;"></el-input>
+        </el-form-item>
+        <br />
+        <el-form-item label="用途及使用说明">
+            <el-input v-model="ruleForm.Remark" :disabled="true" style="width:500px;"></el-input>
+        </el-form-item>
+        <br />
+        
+        <div>
+            <el-table :data="data" stripe border>
+                <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
+                <el-table-column prop="GiftCount" label="数量"></el-table-column>
+            </el-table>
+        </div>
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <template v-if="index==0">
@@ -26,12 +39,11 @@
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
                 <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
+            <el-form-item label="操作" v-if="index==1 || index==2">
+                <el-button type="primary" v-on:click="printPdf">打印</el-button>
             </el-form-item>
         </template>
+
     </el-form>
 </el-main>
 
@@ -75,6 +87,19 @@
                 }
                 this.returnSubmit(param)
             },
+            printPdf() {
+                var that = this
+                this._getData("/CarTable/GetPrintPDF", function (result) {
+                    if (result.errcode != 0) {
+                        that.elementAlert('alert', result.errmsg)
+                    }
+                },
+                    {
+                        UserId: DingData.userid,
+                        TaskId: TaskId
+                    }
+                )
+            },
             getBomInfo() {
                 var that = this
                 this._getData("/Gift/GetTable" , function (result) {
@@ -110,6 +135,7 @@
                 console.log(url)
                 console.log(data)
                 allData = data
+                demo.ruleForm = data
             },
             error: function (err) {
                 console.log(err);
