@@ -145,9 +145,24 @@ namespace DingTalk.Controllers
                             error = new Error(1, "流程尚未结束", "") { },
                         });
                     }
-                    List<GiftTable>  giftTables = context.GiftTable.Where(u => u.TaskId == TaskId).ToList();
-                
+                    List<GiftTable> giftTables = context.GiftTable.Where(u => u.TaskId == TaskId).ToList();
+
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
+
+                    //绘制BOM表单PDF
+                    List<string> contentList = new List<string>()
+                        {
+                           "礼品名称","数量" 
+                        };
+
+                    float[] contentWithList = new float[]
+                    {
+                        500,100
+                    };
+
+                    Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                    keyValuePairs.Add("用途及使用说明", tasks.Remark);
+
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
                         if (string.IsNullOrEmpty(nodeInfo.NodePeople))
@@ -165,9 +180,9 @@ namespace DingTalk.Controllers
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     DataTable dtGiftTables = ClassChangeHelper.ToDataTable(giftTables);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
-                    
+
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
-                    null, null, "2", 300, 650, null, null, dtGiftTables, dtApproveView, null);
+                    null, null, "2", 300, 650, contentList, contentWithList, dtGiftTables, dtApproveView, keyValuePairs);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     List<string> newPaths = new List<string>();

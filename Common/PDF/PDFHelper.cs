@@ -84,7 +84,7 @@ namespace Common.PDF
                 AddHeaderTitleContent(FlowName, fontSmallNoBold, IndentationCenter);//添加表头
                 //CreateEmptyRow(1);//生成一行空行
 
-                if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents("流水号", TaskId, "申请人", ApplyName); }
+                if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents(" 流水号", TaskId, "申请人", ApplyName); }
                 if (!string.IsNullOrEmpty(TaskId)) { AddPartnerContents( "申请时间", ApplyTime.Substring(0, 10), "申请部门", Dept); }               
                 if (!string.IsNullOrEmpty(ProjectName)) { AddSinglePartnerContents("项目", ProjectNo + "-" + ProjectName); }
                 AddPageNumberContent();//添加页码
@@ -143,6 +143,7 @@ namespace Common.PDF
 
                 if (keyValuePairs != null)
                 {
+                    CreateEmptyRow(1);//生成一行空行
                     PdfPTable table = new PdfPTable(2);
                     float[] fList = { 60, 200 };
                     table.SetTotalWidth(fList);
