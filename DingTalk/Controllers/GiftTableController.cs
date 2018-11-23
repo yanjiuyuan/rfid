@@ -1,10 +1,17 @@
-﻿using DingTalk.Models;
+﻿using Common.ClassChange;
+using Common.Ionic;
+using Common.PDF;
+using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -34,7 +41,7 @@ namespace DingTalk.Controllers
                     context.SaveChanges();
                     return new NewErrorModel()
                     {
-                        error = new Error(0,"添加成功", "") { },
+                        error = new Error(0, "添加成功", "") { },
                     };
                 }
             }
@@ -111,6 +118,85 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 打印盖章
+        /// </summary>
+        /// <param name="TaskId">流水号</param>
+        /// <param name="UserId">推送用户Id</param>
+        /// <returns></returns>
+        [Route("GetPrintPDF")]
+        [HttpPost]
+        public async Task<object> GetPrintPDF(string TaskId, string UserId)
+        {
+            try
+            {
+                PDFHelper pdfHelper = new PDFHelper();
+                using (DDContext context = new DDContext())
+                {
+                    //获取表单信息
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
+                    string FlowId = tasks.FlowId.ToString();
+                    //判断流程是否已结束
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
+                    if (tasksList.Count > 0)
+                    {
+                        return JsonConvert.SerializeObject(new NewErrorModel
+                        {
+                            error = new Error(1, "流程尚未结束", "") { },
+                        });
+                    }
+                    List<GiftTable>  giftTables = context.GiftTable.Where(u => u.TaskId == TaskId).ToList();
+                
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
+                    foreach (NodeInfo nodeInfo in NodeInfoList)
+                    {
+                        if (string.IsNullOrEmpty(nodeInfo.NodePeople))
+                        {
+                            string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
+                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                            nodeInfo.NodePeople = strNodePeople + "  " + ApplyTime;
+                        }
+                        else
+                        {
+                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                            nodeInfo.NodePeople = nodeInfo.NodePeople + "  " + ApplyTime;
+                        }
+                    }
+                    DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
+                    DataTable dtGiftTables = ClassChangeHelper.ToDataTable(giftTables);
+                    string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
+                    
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
+                    null, null, "2", 300, 650, null, null, dtGiftTables, dtApproveView, null);
+                    string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
+
+                    List<string> newPaths = new List<string>();
+                    RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
+                    newPaths.Add(RelativePath);
+                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, FlowName + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                    //文件压缩打包
+                    IonicHelper.CompressMulti(newPaths, SavePath, false);
+
+                    //上传盯盘获取MediaId
+                    SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = UserId;
+                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                    return result;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
 
     }
 }
