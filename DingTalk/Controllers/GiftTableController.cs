@@ -1,4 +1,5 @@
 ﻿using Common.ClassChange;
+using Common.DTChange;
 using Common.Ionic;
 using Common.PDF;
 using DingTalk.Models;
@@ -147,17 +148,25 @@ namespace DingTalk.Controllers
                     }
                     List<GiftTable> giftTables = context.GiftTable.Where(u => u.TaskId == TaskId).ToList();
 
+                    var giftTableList = from g in giftTables
+                                        select new
+                                        {
+                                            g.GiftName,g.GiftCount
+                                        };
+
+
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
+
 
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                           "礼品名称","数量" 
+                          "序号","礼品名称","数量" 
                         };
 
                     float[] contentWithList = new float[]
                     {
-                        500,100
+                        50,500,100
                     };
 
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
@@ -178,7 +187,8 @@ namespace DingTalk.Controllers
                         }
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
-                    DataTable dtGiftTables = ClassChangeHelper.ToDataTable(giftTables);
+                  
+                    DataTable dtGiftTables = DtLinqOperators.CopyToDataTable(giftTableList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,

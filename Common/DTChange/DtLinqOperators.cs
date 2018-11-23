@@ -130,6 +130,7 @@ namespace Common.DTChange
             return table;
         }
 
+
         public object[] ShredObject(DataTable table, T instance)
         {
 
