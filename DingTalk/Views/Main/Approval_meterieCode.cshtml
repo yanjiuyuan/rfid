@@ -92,7 +92,7 @@
                 <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
-        <template v-if="index==2 && state=='被退回'">
+        <template v-if="index==2 && state=='已撤回'">
             <el-form-item>
                 <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
             </el-form-item>

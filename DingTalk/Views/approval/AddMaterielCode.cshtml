@@ -49,7 +49,7 @@
 
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-
+            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -128,11 +128,39 @@
             },
             deleteGood(index) {
                 this.ruleForm.goods.splice(index, 1)
+            },
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                ReApprovalTempData.valid = false
+                let datas = []
+                for (let d of ReApprovalTempData.data) {
+                    let data = {}
+                    for (let a in meterielConfig) {
+                        data[a] = d[a]
+                    }
+                    datas.push(data)
+                }
+                this.ruleForm.goods = datas
+            },
+            //显示临时保存数据
+            saveTempData() {
+                setLocalObj('materiel', this.ruleForm.goods)
+                this.elementAlert('提示信息', '保存成功')
+            },
+            loadTempData() {
+                var data = getLocalObj('materiel')
+                console.log('load materiel')
+                console.log(data)
+                if (data && data.length && data.length > 0) this.ruleForm.goods = data
+                localStorage.removeItem('materiel')
             }
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
+            this.loadTempData()
+            this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
         }
     })
