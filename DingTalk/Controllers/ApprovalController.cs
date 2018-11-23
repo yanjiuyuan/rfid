@@ -89,5 +89,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Gift()
+        {
+            return View();
+        }
     }
 }

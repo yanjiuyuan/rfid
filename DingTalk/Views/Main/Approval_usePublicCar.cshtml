@@ -189,7 +189,8 @@
                     },
                     {
                         UserId: DingData.userid,
-                        TaskId: TaskId
+                        TaskId: TaskId,
+                        IsPublic: true
                     }
                 )
             },
@@ -228,8 +229,6 @@
                        
                         for (let d of data) {
                             if (d.Id == that.ruleForm.CarId) {
-                                console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                                console.log(d.Name)
                                 that.carName = d.Name
                                 that.ruleForm['Name'] = d.Name
                             }
