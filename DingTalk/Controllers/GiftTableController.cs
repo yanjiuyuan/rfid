@@ -125,7 +125,7 @@ namespace DingTalk.Controllers
         /// <param name="UserId">推送用户Id</param>
         /// <returns></returns>
         [Route("GetPrintPDF")]
-        [HttpPost]
+        [HttpGet]
         public async Task<object> GetPrintPDF(string TaskId, string UserId)
         {
             try
