@@ -186,13 +186,7 @@
                     Remark: that.ruleForm.remark
                 }, callBack)
             },
-            //加载重新发起审批传递的数据
-            loadReApprovalData() {
-                if (!ReApprovalTempData.valid) return
-                this.ruleForm.Title = ReApprovalTempData.Title
-                ReApprovalTempData.valid = false
-                this.purchaseList = ReApprovalTempData.data
-            },
+            
             //搜索物料列表
             searchCode(formName) {
                 var that = this
@@ -253,6 +247,13 @@
                 console.log(this.good.index)
                 console.log(this.purchaseList)
             },
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                this.ruleForm.Title = ReApprovalTempData.Title
+                ReApprovalTempData.valid = false
+                this.purchaseList = ReApprovalTempData.data
+            },
             //显示临时保存数据
             saveTempData() {
                 setLocalObj('officeSupplies', this.purchaseList)
@@ -277,10 +278,10 @@
         },
         created: function () {
             //FlowId = 6
-            this.loadTempData()
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
+            this.loadTempData()
             this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
            

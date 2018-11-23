@@ -22,7 +22,7 @@
             <el-input v-model="ruleForm.Remark" :disabled="true" style="width:500px;"></el-input>
         </el-form-item>
         <br />
-        
+
         <div>
             <el-table :data="data" stripe border>
                 <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
@@ -39,11 +39,10 @@
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
                 <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
-            <el-form-item label="操作" v-if="index==1 || index==2">
-                <el-button type="primary" v-on:click="printPdf">打印</el-button>
-            </el-form-item>
         </template>
-
+        <el-form-item label="操作" v-if="index!=0">
+            <el-button type="primary" v-on:click="printPdf">打印</el-button>
+        </el-form-item>
     </el-form>
 </el-main>
 
@@ -89,7 +88,7 @@
             },
             printPdf() {
                 var that = this
-                this._getData("/CarTable/GetPrintPDF", function (result) {
+                this._getData("/Gift/GetPrintPDF", function (result) {
                     if (result.errcode != 0) {
                         that.elementAlert('alert', result.errmsg)
                     }
