@@ -361,9 +361,11 @@ namespace DingTalk.Controllers
                     {
                         //messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f",
                         //messageUrl= "https://www.baidu.com/",
-                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=63824"),
+                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=63824"),
+                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&port=62741"),
+                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&appId=2018051560091226", System.Text.Encoding.GetEncoding(936)),
                         picUrl = "@lALOACZwe2Rk",
-                        title = "测试啊321",
+                        title = "测试啊32166666",
                         text = "继续测试"
                     },
                 })
