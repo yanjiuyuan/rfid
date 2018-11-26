@@ -352,6 +352,7 @@ namespace DingTalk.Controllers
                 //189694580    083452125733424957
 
                 agent_id = long.Parse(DTConfig.AgentId),
+
                 userid_list = userId,
                 to_all_user = false,
                 msg = (new MsgModel
@@ -362,15 +363,15 @@ namespace DingTalk.Controllers
                         //messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f",
                         //messageUrl= "https://www.baidu.com/",
                         //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=63824"),
-                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&port=62741"),
-                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&appId=2018051560091226", System.Text.Encoding.GetEncoding(936)),
+                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/index?corpId=ding1238d49a88c92de535c2f4657eb6378f&&scene=0"),
+                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&appId=2018051560091226", System.Text.Encoding.GetEncoding(936)),
                         picUrl = "@lALOACZwe2Rk",
-                        title = "测试啊32166666",
+                        title = "测试啊666",
                         text = "继续测试"
                     },
                 })
             };
-
+ 
             var access_token = await dtManager.GetAccessToken();
             AccessTokenModel accessTokenModel = JsonConvert.DeserializeObject<AccessTokenModel>(access_token);
             _client.QueryString.Add("access_token", accessTokenModel.access_token);
