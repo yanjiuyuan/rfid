@@ -12,8 +12,6 @@ namespace DingTalk.Models
         public head head { get; set; }
 
         public body body { get; set; }
-
-
     }
 
     public class head
