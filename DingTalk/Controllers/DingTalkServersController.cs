@@ -349,9 +349,9 @@ namespace DingTalk.Controllers
             //string results = HttpUtility.UrlEncode(urls);
             SendWorkModel sendWorkModel = new SendWorkModel()
             {
-                //083452125733424957
-                //E应用agent_id
-                agent_id = 192520113, //long.Parse(DTConfig.AgentId),
+                //manager5312 
+                //E应用agent_id 192520113
+                agent_id = long.Parse(DTConfig.AppAgentId),
                 userid_list = userId,
                 to_all_user = false,
                 dept_id_list = null,
@@ -360,9 +360,6 @@ namespace DingTalk.Controllers
                     msgtype = "link",
                     link = new DingTalk.Models.MobileModels.linkTest
                     {
-                        //messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f",
-                        //messageUrl = "https://www.baidu.com/",
-                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=63824"),
                         messageUrl = HttpUtility.UrlEncode("eapp://page/start/index"),
                         picUrl = "@lALOACZwe2Rk",
                         title = "标题：" + text,
@@ -411,17 +408,19 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <param name="title">标题</param>
+        /// <param name="applyMan">申请人</param>
+        /// <param name="linkUrl">链接路径</param>
         /// <returns></returns>
         [Route("sendOaMessage")]
         [HttpPost]
-        public async Task<object> sendOaMessage(string userId, string title)
+        public async Task<object> sendOaMessage(string userId, string title,
+            string applyMan, string linkUrl = "eapp://page/start/index")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
-
             oa oa = new oa()
             {
-                message_url = "eapp://page/start/index",
+                message_url = linkUrl,
                 head = new head
                 {
                     bgcolor = "FFBBBBBB",
@@ -429,23 +428,22 @@ namespace DingTalk.Controllers
                 },
                 body = new body
                 {
-                    title = "正文标题",
+                    title = title,
                     form = new form[] {
-                        new form{ key="姓名",value="11张三"},
-                        new form{ key="爱好",value="打球"},
+                        new form{ key="申请人：",value=applyMan},
+                        new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
                     },
-                    rich = new rich
-                    {
-                        num = "15.6",
-                        unit = "元"
-                    },
-                    content = "111一大段文字",
-                    image = "@lADOADmaWMzazQKA",
-                    file_count = "3",
-                    author = "李四"
+                    //rich = new rich
+                    //{
+                    //    num = "15.6",
+                    //    unit = "元"
+                    //},
+                    //content = "测试测试",
+                    //image = "@lADOADmaWMzazQKA",
+                    //file_count = "3",
+                    //author = "申请人:" + applyMan
                 }
             };
-
             NewOATestModel newOATestModel = new NewOATestModel()
             {
                 msgtype = "oa",
@@ -455,7 +453,7 @@ namespace DingTalk.Controllers
             DingTalk.Models.SendOAModel sendOAModel = new SendOAModel()
             {
                 //E应用agent_id
-                agent_id = 192520113, //long.Parse(DTConfig.AgentId),
+                agent_id = long.Parse(DTConfig.AppAgentId),
                 userid_list = userId,
                 to_all_user = false,
                 //dept_id_list = null,

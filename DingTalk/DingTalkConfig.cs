@@ -18,6 +18,7 @@ namespace DingTalkServer
                 AgentId = ConfigurationManager.AppSettings["AgentId_hao"];
                 Url = ConfigurationManager.AppSettings["Url_hao"];
                 appkey = ConfigurationManager.AppSettings["appkey_hao"];
+                AppAgentId = ConfigurationManager.AppSettings["appAgentId_hao"];
                 appsecret = ConfigurationManager.AppSettings["appsecret_hao"];
             }
             else
@@ -25,6 +26,7 @@ namespace DingTalkServer
                 CorpId = ConfigurationManager.AppSettings["CorpId"];
                 CorpSecret = ConfigurationManager.AppSettings["CorpSecret"];
                 AgentId = ConfigurationManager.AppSettings["AgentId"];
+                AppAgentId= ConfigurationManager.AppSettings["appAgentId"];
                 Url = ConfigurationManager.AppSettings["Url"];
                 appkey = ConfigurationManager.AppSettings["appkey"];
                 appsecret = ConfigurationManager.AppSettings["appsecret"];
@@ -44,6 +46,8 @@ namespace DingTalkServer
         public string appkey { get; set; }
 
         public string appsecret { get; set; }
+
+        public string AppAgentId { get; set; }
 
     }
 }
