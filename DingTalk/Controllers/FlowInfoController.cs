@@ -10,6 +10,7 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -35,7 +36,7 @@ namespace DingTalk.Controllers
         //];
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
-        public string CreateTaskInfo()
+        public async Task<string> CreateTaskInfo()
         {
             try
             {
@@ -99,7 +100,7 @@ namespace DingTalk.Controllers
                         {
                             PreApplyManId = tasks.ApplyManId;
                             //开始找人
-                            string PreNodeId = nodeInfoList.Where(n => n.NodeId == tasks.NodeId+ iSendCount).FirstOrDefault().PreNodeId;
+                            string PreNodeId = nodeInfoList.Where(n => n.NodeId == tasks.NodeId + iSendCount).FirstOrDefault().PreNodeId;
                             NodeInfo nextNodeInfo = nodeInfoList.Where(n => n.NodeId.ToString() == PreNodeId).FirstOrDefault();
                             //找到节点表预先配置的人
                             if (!string.IsNullOrEmpty(nextNodeInfo.PeopleId))
@@ -122,7 +123,17 @@ namespace DingTalk.Controllers
                                         context.Tasks.Add(Newtasks);
                                         context.SaveChanges();
                                         //推送OA消息
-                                        SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                        if (tasks.FlowId == 8)
+                                        {
+                                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                            await dingTalkServersController.sendOaMessage(PeopleIdList[i].ToString(),
+                                                  string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId),
+                                                  tasksApplyMan.ApplyMan, "eapp://page/approve/approve");
+                                        }
+                                        else
+                                        {
+                                            SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                        }
                                     }
                                     return JsonConvert.SerializeObject(new ErrorModel
                                     {
@@ -153,16 +164,16 @@ namespace DingTalk.Controllers
                                         SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
                                     }
                                 }
-                               
+
                             }
                             else  //节点表数据未找到人
                             {
                                 //找到已选人数据
-                                List<Tasks> tasksChoosedList = tasksNewList.Where(t => t.NodeId.ToString() == PreNodeId).OrderBy(t=>t.NodeId).ToList();
+                                List<Tasks> tasksChoosedList = tasksNewList.Where(t => t.NodeId.ToString() == PreNodeId).OrderBy(t => t.NodeId).ToList();
                                 foreach (var tasksChoosed in tasksChoosedList)
                                 {
                                     //与上一级处理人重复
-                                    if (tasksChoosed.ApplyManId == PreApplyManId && iSendCount==0)
+                                    if (tasksChoosed.ApplyManId == PreApplyManId && iSendCount == 0)
                                     {
                                         tasksChoosed.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                         tasksChoosed.State = 1; //修改审批状态
@@ -177,8 +188,22 @@ namespace DingTalk.Controllers
                                         tasksChoosed.IsEnable = 1;
                                         context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
                                         context.SaveChanges();
+
                                         //推送OA消息
-                                        SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                        if (tasks.FlowId == 8)
+                                        {
+                                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                            await dingTalkServersController.sendOaMessage(tasksChoosed.ApplyManId.ToString(),
+                                                  string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId),
+                                                  tasksApplyMan.ApplyMan, "eapp://page/approve/approve");
+                                        }
+                                        else
+                                        {
+                                            SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                        }
+
+                                        //推送OA消息
+                                        //SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
                                         return JsonConvert.SerializeObject(new ErrorModel
                                         {
@@ -1361,7 +1386,8 @@ namespace DingTalk.Controllers
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
                                   State = flowInfoServer.GetTasksState(t.TaskId.ToString()),
-                                  IsBack = t.IsBacked
+                                  IsBack = t.IsBacked,
+                                  IsSupportMobile = f.IsSupportMobile
                               });
             }
             return JsonConvert.SerializeObject(listQuary);

@@ -34,5 +34,7 @@ namespace DingTalk.Models.DingModels
         public int? IsEnable { get; set; }
 
         public int? SORT_ID { get; set; }
+
+        public bool? IsSupportMobile { get; set; }
     }
 }
