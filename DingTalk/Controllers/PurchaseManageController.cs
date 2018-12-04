@@ -55,10 +55,22 @@ namespace DingTalk.Controllers
                     //}
 
                     EFHelper<PurchaseTable> eFHelper = new EFHelper<PurchaseTable>();
-                    foreach (var item in purchaseTableList)
+                    if (purchaseTableList.Count == 0)
                     {
-                        eFHelper.Add(item);
+                        return JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            errorCode = 1,
+                            errorMessage = "未接收到传递参数"
+                        });
                     }
+                    else
+                    {
+                        foreach (var item in purchaseTableList)
+                        {
+                            eFHelper.Add(item);
+                        }
+                    }
+                   
                 }
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
@@ -75,8 +87,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-
-
+        
         /// <summary>
         /// 采购表单读取
         /// </summary>

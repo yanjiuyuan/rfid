@@ -127,7 +127,7 @@ namespace DingTalk.Controllers
                                         {
                                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
                                             await dingTalkServersController.sendOaMessage(PeopleIdList[i].ToString(),
-                                                  string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId),
+                                                  string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
                                                   tasksApplyMan.ApplyMan, "eapp://page/approve/approve");
                                         }
                                         else
@@ -194,7 +194,7 @@ namespace DingTalk.Controllers
                                         {
                                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
                                             await dingTalkServersController.sendOaMessage(tasksChoosed.ApplyManId.ToString(),
-                                                  string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId),
+                                                  string.Format("您有一条待审批的流程(流水号:{0})，请点击进入研究院信息管理系统进行审批。", TaskId),
                                                   tasksApplyMan.ApplyMan, "eapp://page/approve/approve");
                                         }
                                         else
