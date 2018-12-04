@@ -129,8 +129,13 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    context.BulkInsert(kisPurchases);
-                    context.BulkSaveChanges();
+                    //context.BulkInsert(kisPurchases);
+                    //context.BulkSaveChanges();
+                    foreach (var kis in kisPurchases)
+                    {
+                        context.Entry<KisPurchase>(kis).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                    }
                 }
                 return new NewErrorModel()
                 {
@@ -162,8 +167,14 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    context.BulkInsert(KisOffices);
-                    context.BulkSaveChanges();
+                    //context.BulkInsert(KisOffices);
+                    //context.BulkSaveChanges();
+
+                    foreach (var kis in KisOffices)
+                    {
+                        context.Entry<KisOffice>(kis).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                    }
                 }
                 return new NewErrorModel()
                 {

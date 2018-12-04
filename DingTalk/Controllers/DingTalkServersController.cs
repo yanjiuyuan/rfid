@@ -341,7 +341,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("sendLinkMessage")]
         [HttpPost]
-        public async Task<string> SendLinkMessage(string userId)
+        public async Task<string> SendLinkMessage(string userId, string text)
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
@@ -349,31 +349,28 @@ namespace DingTalk.Controllers
             //string results = HttpUtility.UrlEncode(urls);
             SendWorkModel sendWorkModel = new SendWorkModel()
             {
-                //189694580    083452125733424957
-
-                agent_id = long.Parse(DTConfig.AgentId),
+                //manager5312 
+                //E应用agent_id 192520113
+                agent_id = long.Parse(DTConfig.AppAgentId),
                 userid_list = userId,
                 to_all_user = false,
+                dept_id_list = null,
                 msg = (new MsgModel
                 {
                     msgtype = "link",
                     link = new DingTalk.Models.MobileModels.linkTest
                     {
-                        //messageUrl = "eapp:\\/\\/page/start\\/index?corpId=dingac9b87fa3acab57135c2f4657eb6378f",
-                        //messageUrl= "https://www.baidu.com/",
-                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=dingac9b87fa3acab57135c2f4657eb6378f&port=63824"),
-                        //messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&port=62741"),
-                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/Test/Test?corpId=ding1238d49a88c92de535c2f4657eb6378f&appId=2018051560091226", System.Text.Encoding.GetEncoding(936)),
+                        messageUrl = HttpUtility.UrlEncode("eapp://page/start/index"),
                         picUrl = "@lALOACZwe2Rk",
-                        title = "测试啊32166666",
-                        text = "继续测试"
+                        title = "标题：" + text,
+                        text = text
                     },
                 })
             };
-
-            var access_token = await dtManager.GetAccessToken();
-            AccessTokenModel accessTokenModel = JsonConvert.DeserializeObject<AccessTokenModel>(access_token);
-            _client.QueryString.Add("access_token", accessTokenModel.access_token);
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            //AccessTokenModel accessTokenModel = JsonConvert.DeserializeObject<AccessTokenModel>(access_token);
+            _client.QueryString.Add("access_token", access_token);
             var url = _addressConfig.GetWorkMsgUrl;
             var result = await _client.UploadModel(url, sendWorkModel);
             return result;
@@ -404,6 +401,121 @@ namespace DingTalk.Controllers
             //    author = "李四"
             //};
             //return top.SendOaMessage(userId, oaTextModel);
+        }
+
+        /// <summary>
+        /// 向用户推送OA消息
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="title">标题</param>
+        /// <param name="applyMan">申请人</param>
+        /// <param name="linkUrl">链接路径</param>
+        /// <returns></returns>
+        [Route("sendOaMessage")]
+        [HttpPost]
+        public async Task<object> sendOaMessage(string userId, string title,
+            string applyMan, string linkUrl = "eapp://page/start/index")
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            HttpsClient _client = new HttpsClient();
+            oa oa = new oa()
+            {
+                message_url = linkUrl,
+                head = new head
+                {
+                    bgcolor = "FFBBBBBB",
+                    text = "头部标题111222"
+                },
+                body = new body
+                {
+                    title = title,
+                    form = new form[] {
+                        new form{ key="申请人：",value=applyMan},
+                        new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
+                    },
+                    //rich = new rich
+                    //{
+                    //    num = "15.6",
+                    //    unit = "元"
+                    //},
+                    //content = "测试测试",
+                    //image = "@lADOADmaWMzazQKA",
+                    //file_count = "3",
+                    //author = "申请人:" + applyMan
+                }
+            };
+            NewOATestModel newOATestModel = new NewOATestModel()
+            {
+                msgtype = "oa",
+                oa = oa
+            };
+
+            DingTalk.Models.SendOAModel sendOAModel = new SendOAModel()
+            {
+                //E应用agent_id
+                agent_id = long.Parse(DTConfig.AppAgentId),
+                userid_list = userId,
+                to_all_user = false,
+                //dept_id_list = null,
+                msg = newOATestModel
+            };
+
+
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            _client.QueryString.Add("access_token", access_token);
+            var url = _addressConfig.GetWorkMsgUrl;
+            var result = await _client.UploadModel(url, sendOAModel);
+            return result;
+        }
+
+
+        /// <summary>
+        /// 获取工作通知消息的发送进度
+        /// </summary>
+        /// <param name="task_id">钉钉接口返回的流水号</param>
+        /// <returns></returns>
+        [Route("GetSendProgress")]
+        [HttpPost]
+        public async Task<string> GetSendProgress(long task_id)
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            HttpsClient _client = new HttpsClient();
+            _client.QueryString.Add("access_token", access_token);
+            var url = _addressConfig.GetWorkMsgUrl;
+            SendProgressModel sendProgressModel = new SendProgressModel()
+            {
+                task_id = task_id,
+                agent_id = 192520113
+            };
+            var result = await _client.UploadModel(url, sendProgressModel);
+            return result;
+        }
+
+        /// <summary>
+        /// 获取工作通知消息的发送结果
+        /// </summary>
+        /// <param name="task_id">钉钉接口返回的流水号</param>
+        /// <returns></returns>
+        [Route("GetSendresult")]
+        [HttpPost]
+        public async Task<string> GetSendresult(long task_id)
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            HttpsClient _client = new HttpsClient();
+            _client.QueryString.Add("access_token", access_token);
+            var url = _addressConfig.GetResult;
+            SendProgressModel sendProgressModel = new SendProgressModel()
+            {
+                task_id = task_id,
+                agent_id = 192520113
+            };
+            var result = await _client.UploadModel(url, sendProgressModel);
+            return result;
         }
 
 

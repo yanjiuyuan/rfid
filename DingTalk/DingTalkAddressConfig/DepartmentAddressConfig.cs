@@ -14,7 +14,8 @@ namespace DingTalkServer
         public string DeleteDepartmentUrl { get; private set; }
         public string GetDepartmentByUserId { get; private set; }
         public string GetUserId { get; private set; }
-
         public string GetWorkMsgUrl { get; private set; }
+ 
+        public string GetResult { get; set; }
     }
 }

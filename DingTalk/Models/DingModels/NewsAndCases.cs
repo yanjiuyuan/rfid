@@ -17,11 +17,6 @@ namespace DingTalk.Models.DingModels
         [StringLength(100)]
         public string Type { get; set; }
         /// <summary>
-        /// 大类
-        /// </summary>
-        [StringLength(100)]
-        public string BigType { get; set; }
-        /// <summary>
         /// 图片路径
         /// </summary>
         [StringLength(500)]
@@ -32,7 +27,7 @@ namespace DingTalk.Models.DingModels
         [StringLength(300)]
         public string Title { get; set; }
         /// <summary>
-        /// 内容
+        /// 路径信息
         /// </summary>
         [StringLength(300)]
         public string Contents { get; set; }
@@ -42,10 +37,19 @@ namespace DingTalk.Models.DingModels
         [StringLength(100)]
         public string CreateTime { get; set; }
         /// <summary>
-        /// 简要内容
+        /// 大类
+        /// </summary>
+        [StringLength(100)]
+        public string BigType { get; set; }
+        /// <summary>
+        /// 摘要
         /// </summary>
         [StringLength(200)]
         public string Abstract { get; set; }
-        
+        /// <summary>
+        /// 访问次数
+        /// </summary>
+        public double? visitingtime { get; set; }
+
     }
 }

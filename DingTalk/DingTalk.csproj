@@ -459,6 +459,7 @@
     <Compile Include="Models\MobileModels\UserIdModel.cs" />
     <Compile Include="Models\MobileModels\UserInfoMobileModel.cs" />
     <Compile Include="Models\NewErrorModel.cs" />
+    <Compile Include="Models\NewOATestModel.cs" />
     <Compile Include="Models\OATextModel.cs" />
     <Compile Include="Models\OfficeLocalModels\OfficeLocalContext.cs" />
     <Compile Include="Models\OfficeLocalModels\t_ICItem.cs" />
@@ -467,6 +468,8 @@
     <Compile Include="Models\PrintAndSendModel.cs" />
     <Compile Include="Models\RequestBaseModel.cs" />
     <Compile Include="Models\ResponseBaseModel.cs" />
+    <Compile Include="Models\SendOAModel.cs" />
+    <Compile Include="Models\SendProgressModel.cs" />
     <Compile Include="Models\TextMsgModel.cs" />
     <Compile Include="Models\UploadMediaRequestModel.cs" />
     <Compile Include="Models\UploadMediaType.cs" />
