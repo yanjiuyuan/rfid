@@ -133,7 +133,7 @@ namespace DingTalk.Controllers
                     //context.BulkSaveChanges();
                     foreach (var kis in kisPurchases)
                     {
-                        context.Entry<KisPurchase>(kis).State = System.Data.Entity.EntityState.Modified;
+                        context.KisPurchase.Add(kis);
                         context.SaveChanges();
                     }
                 }
@@ -172,7 +172,7 @@ namespace DingTalk.Controllers
 
                     foreach (var kis in KisOffices)
                     {
-                        context.Entry<KisOffice>(kis).State = System.Data.Entity.EntityState.Modified;
+                        context.KisOffice.Add(kis);
                         context.SaveChanges();
                     }
                 }

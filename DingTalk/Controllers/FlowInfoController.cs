@@ -80,6 +80,7 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
+                                    tasks.IsPost = false;
                                     tasks.State = 0;
                                     tasks.IsEnable = 0;
                                 }
