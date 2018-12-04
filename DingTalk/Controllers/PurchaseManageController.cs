@@ -35,7 +35,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 采购表单批量保存
         /// </summary>
-        /// <param name="purchaseTable"></param>
+        /// <param name="purchaseTableList"></param>
         /// <returns></returns>
         /// 测试数据: /Purchase/SavePurchaseTable
         /// data:[{ "Id": 1.0, "TaskId": "流水号", "CodeNo": "物料编码", "Name": "苹果", "Standard": "型号", "Unit": "单位", "Count": "数量", "Price": "单价", "Purpose": "用途", "UrgentDate": "需用日期", "Mark": "备注" }, { "Id": 2.0, "TaskId": "流水号2", "CodeNo": "物料编码2", "Name": "苹果2", "Standard": "型号2", "Unit": "单位2", "Count": "数量2", "Price": "单价2", "Purpose": "用途2", "UrgentDate": "需用日期2", "Mark": "备注2" }];
@@ -48,10 +48,16 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    foreach (PurchaseTable purchaseTable in purchaseTableList)
+                    //foreach (PurchaseTable purchaseTable in purchaseTableList)
+                    //{
+                    //    context.PurchaseTable.Add(purchaseTable);
+                    //    int i= context.SaveChanges();
+                    //}
+
+                    EFHelper<PurchaseTable> eFHelper = new EFHelper<PurchaseTable>();
+                    foreach (var item in purchaseTableList)
                     {
-                        context.PurchaseTable.Add(purchaseTable);
-                        context.SaveChanges();
+                        eFHelper.Add(item);
                     }
                 }
                 return JsonConvert.SerializeObject(new ErrorModel
