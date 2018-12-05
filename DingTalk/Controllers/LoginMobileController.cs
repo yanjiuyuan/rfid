@@ -35,10 +35,13 @@ namespace DingTalk.Controllers
         {
             try
             {
+                DingTalkServersController dingTalkServersController = new DingTalkServersController();
                 string accessToken = await GetAccessToken();
                 string userId = await GetUserId(accessToken, authCode);
                 string accessTokenT = await GetAccessToken();
-                var userInfo = await GetUserInfo(accessTokenT, userId);
+                UserInfoMobileModel userInfo = await GetUserInfo(accessTokenT, userId);
+                string strDept =await dingTalkServersController.departmentQuaryByUserId(userInfo.userid);
+                userInfo.dept = strDept;
                 return new NewErrorModel()
                 {
                     data = userInfo,
@@ -97,13 +100,13 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetUserInfo")]
-        public async Task<object> GetUserInfo(string access_token, string userId)
+        public async Task<UserInfoMobileModel> GetUserInfo(string access_token, string userId)
         {
             _client.QueryString.Add("access_token", access_token);
             _client.QueryString.Add("userid", userId);
             var url = _addressConfig.GetUserDetailUrl;
             var result = await _client.Get(url);
-            var userInfo = JsonConvert.DeserializeObject<DingTalk.Models.MobileModels.UserInfoMobileModel>(result);
+            UserInfoMobileModel userInfo = JsonConvert.DeserializeObject<DingTalk.Models.MobileModels.UserInfoMobileModel>(result);
             return userInfo;
         }
 

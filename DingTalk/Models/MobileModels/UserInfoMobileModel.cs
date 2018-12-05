@@ -31,6 +31,8 @@ namespace DingTalk.Models.MobileModels
         public string mobile { get; set; }
         public bool isHide { get; set; }
 
+        public string dept { get; set; }
+
         public List<int> department { get; set; }
 
         public List<role> roles { get; set; }
