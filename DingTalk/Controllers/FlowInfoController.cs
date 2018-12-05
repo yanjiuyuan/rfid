@@ -1369,26 +1369,29 @@ namespace DingTalk.Controllers
                         NodeId = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Select(u => u.NodeId).ToList().First();
                     }
                 }
-
-                listQuary.Add(from t in ListTask
-                              join f in ListFlows
-                              on t.FlowId.ToString() equals f.FlowId.ToString()
-                              where t.NodeId == 0 && t.TaskId == TaskId 
-                              && (IsMobile == true?f.IsSupportMobile==true:1==1)
-                              select new
-                              {
-                                  Id = t.Id + 1,
-                                  TaskId = t.TaskId,
-                                  NodeId = NodeId,
-                                  FlowId = t.FlowId,
-                                  FlowName = f.FlowName,
-                                  ApplyMan = t.ApplyMan,
-                                  ApplyManId = t.ApplyManId,
-                                  ApplyTime = t.ApplyTime,
-                                  Title = t.Title,
-                                  State = GetTasksState(t.TaskId.ToString(), ListTask),
-                                  IsBack = t.IsBacked
-                              });
+                var query = from t in ListTask
+                            join f in ListFlows
+                            on t.FlowId.ToString() equals f.FlowId.ToString()
+                            where t.NodeId == 0 && t.TaskId == TaskId
+                            && (IsMobile == true ? f.IsSupportMobile == true : 1 == 1)
+                            select new
+                            {
+                                Id = t.Id + 1,
+                                TaskId = t.TaskId,
+                                NodeId = NodeId,
+                                FlowId = t.FlowId,
+                                FlowName = f.FlowName,
+                                ApplyMan = t.ApplyMan,
+                                ApplyManId = t.ApplyManId,
+                                ApplyTime = t.ApplyTime,
+                                Title = t.Title,
+                                State = GetTasksState(t.TaskId.ToString(), ListTask),
+                                IsBack = t.IsBacked
+                            };
+                if (query.Count() > 0)
+                {
+                    listQuary.Add(query);
+                }
             }
             return JsonConvert.SerializeObject(listQuary);
         }
