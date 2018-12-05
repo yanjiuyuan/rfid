@@ -74,7 +74,7 @@
         </el-table-column>
         <el-table-column prop="Purpose" label="用途">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Purpose"></el-input>
+                <el-input v-model="scope.row.Purpose" :class="{ redborder:scope.row.Purpose ==''}"></el-input>
             </template>
         </el-table-column>
         <el-table-column prop="UrgentDate" label="需用日期" width="140">
@@ -121,7 +121,7 @@
                 <el-input v-model="good.Count" prop="Count"></el-input>
             </el-form-item>
             <el-form-item label="用途">
-                <el-input v-model="good.Purpose"></el-input>
+                <el-input v-model="good.Purpose" prop="Purpose"></el-input>
             </el-form-item>
             <el-form-item label="需用日期">
                 <el-date-picker v-model="good.UrgentDate"
@@ -237,7 +237,7 @@
             onSubmit(formName) {
                 var that = this
                 for (let p of this.purchaseList) {
-                    if (!p.UrgentDate || !p.Unit || !p.Count) {
+                    if (!p.UrgentDate || !p.Unit || !p.Count || !p.Purpose) {
                         this.elementAlert('提示信息', '表单未填写完整')
                         return
                     }
