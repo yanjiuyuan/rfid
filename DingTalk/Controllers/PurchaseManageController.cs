@@ -42,10 +42,11 @@ namespace DingTalk.Controllers
         /// contentType: 'application/json; charset=utf-8',
         [Route("SavePurchaseTable")]
         [HttpPost]
-        public string SavePurchaseTable([FromBody] List<PurchaseTable> purchaseTableList)
+        public string SavePurchaseTable(List<PurchaseTable> purchaseTableList)
         {
             try
             {
+                string contentType = System.Web.HttpContext.Current.Request.ContentType;
                 using (DDContext context = new DDContext())
                 {
                     //foreach (PurchaseTable purchaseTable in purchaseTableList)
@@ -59,6 +60,7 @@ namespace DingTalk.Controllers
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
                         {
+                            Content= contentType,
                             errorCode = 1,
                             errorMessage = "未接收到传递参数"
                         });
@@ -70,10 +72,11 @@ namespace DingTalk.Controllers
                             eFHelper.Add(item);
                         }
                     }
-                   
+
                 }
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
+                    Content = contentType,
                     errorCode = 0,
                     errorMessage = "保存成功"
                 });
@@ -87,7 +90,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-        
+
         /// <summary>
         /// 采购表单读取
         /// </summary>

@@ -42,6 +42,7 @@ namespace DingTalk.Controllers
                 UserInfoMobileModel userInfo = await GetUserInfo(accessTokenT, userId);
                 string DeptInfo = await dingTalkServersController.departmentQuaryByUserId(userInfo.userid);
                 DeptModel dept = JsonConvert.DeserializeObject<DeptModel>(DeptInfo);
+
                 if (dept.errcode == 0)
                 {
                     userInfo.dept = dept.name;
