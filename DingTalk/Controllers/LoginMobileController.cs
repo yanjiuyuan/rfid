@@ -40,8 +40,17 @@ namespace DingTalk.Controllers
                 string userId = await GetUserId(accessToken, authCode);
                 string accessTokenT = await GetAccessToken();
                 UserInfoMobileModel userInfo = await GetUserInfo(accessTokenT, userId);
-                string strDept =await dingTalkServersController.departmentQuaryByUserId(userInfo.userid);
-                userInfo.dept = strDept;
+                string DeptInfo = await dingTalkServersController.departmentQuaryByUserId(userInfo.userid);
+                DeptModel dept = JsonConvert.DeserializeObject<DeptModel>(DeptInfo);
+                if (dept.errcode == 0)
+                {
+                    userInfo.dept = dept.name;
+                }
+                else
+                {
+                    userInfo.dept = dept.errmsg;
+                }
+              
                 return new NewErrorModel()
                 {
                     data = userInfo,

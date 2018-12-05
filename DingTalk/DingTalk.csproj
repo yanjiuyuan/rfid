@@ -403,6 +403,7 @@
     <Compile Include="Models\DepartmentResponseModel.cs" />
     <Compile Include="Models\DepartmentUser.cs" />
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
+    <Compile Include="Models\DeptModel.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />
