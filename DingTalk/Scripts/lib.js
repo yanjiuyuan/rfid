@@ -403,6 +403,9 @@ var mixin = {
             EffectiveTime: [
                 { required: true, message: '有效时间不能为空！', trigger: 'change' }
             ],
+            Purpose: [
+                { required: true, message: '用途不能为空！', trigger: 'change' }
+            ],
             //文件阅办单表单
             MainContent: [
                 { required: true, message: '文件标题不能为空！', trigger: 'blur' }
