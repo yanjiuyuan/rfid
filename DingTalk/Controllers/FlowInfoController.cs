@@ -1295,10 +1295,11 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
         /// <param name="ApplyManId">用户名Id</param>
+        /// <param name="IsSupportMobile">是否是手机端调用接口(默认 false)</param>
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=1&ApplyManId=023752010629202711
         [HttpGet]
-        public string GetFlowStateDetail(int Index, string ApplyManId)
+        public string GetFlowStateDetail(int Index, string ApplyManId,bool IsSupportMobile=false)
         {
             try
             {
@@ -1310,19 +1311,19 @@ namespace DingTalk.Controllers
                         case 0:
                             //待审批的
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-                            return Quary(context, ListTasks, ApplyManId);
+                            return Quary(context, ListTasks, ApplyManId, IsSupportMobile);
                         case 1:
                             //我已审批
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-                            return Quary(context, ListTasks, ApplyManId); ;
+                            return Quary(context, ListTasks, ApplyManId, IsSupportMobile); ;
                         case 2:
                             //我发起的
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-                            return Quary(context, ListTasks, ApplyManId);
+                            return Quary(context, ListTasks, ApplyManId, IsSupportMobile);
                         case 3:
                             //抄送我的
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-                            return Quary(context, ListTasks, ApplyManId);
+                            return Quary(context, ListTasks, ApplyManId, IsSupportMobile);
                         default:
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
@@ -1342,7 +1343,7 @@ namespace DingTalk.Controllers
             }
         }
 
-        public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId)
+        public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId,bool IsMobile)
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<Object> listQuary = new List<object>();
@@ -1351,28 +1352,29 @@ namespace DingTalk.Controllers
 
             foreach (int TaskId in ListTasks)
             {
-                int StateCount = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
+                int StateCount = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
                 int? NodeId = 0;
                 if (StateCount == 0)
                 {
-                    NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString()).Max(n => n.NodeId);
+                    NodeId = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString()).Max(n => n.NodeId);
                 }
                 else
                 {
                     if (StateCount > 1)
                     {
-                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).OrderBy(u => u.NodeId).Select(u => u.NodeId).ToList().First();
+                        NodeId = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).OrderBy(u => u.NodeId).Select(u => u.NodeId).ToList().First();
                     }
                     else
                     {
-                        NodeId = context.Tasks.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Select(u => u.NodeId).ToList().First();
+                        NodeId = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Select(u => u.NodeId).ToList().First();
                     }
                 }
 
                 listQuary.Add(from t in ListTask
                               join f in ListFlows
                               on t.FlowId.ToString() equals f.FlowId.ToString()
-                              where t.NodeId == 0 && t.TaskId == TaskId
+                              where t.NodeId == 0 && t.TaskId == TaskId 
+                              && (IsMobile == true?f.IsSupportMobile==true:1==1)
                               select new
                               {
                                   Id = t.Id + 1,
@@ -1384,12 +1386,39 @@ namespace DingTalk.Controllers
                                   ApplyManId = t.ApplyManId,
                                   ApplyTime = t.ApplyTime,
                                   Title = t.Title,
-                                  State = flowInfoServer.GetTasksState(t.TaskId.ToString()),
-                                  IsBack = t.IsBacked,
-                                  IsSupportMobile = f.IsSupportMobile
+                                  State = GetTasksState(t.TaskId.ToString(), ListTask),
+                                  IsBack = t.IsBacked
                               });
             }
             return JsonConvert.SerializeObject(listQuary);
+        }
+
+        public string GetTasksState(string TaskId, List<Tasks> ListTask)
+        {
+                List<Tasks> tasksListBack = ListTask.Where(t => t.TaskId.ToString() == TaskId && t.IsBacked == true).ToList();
+                if (tasksListBack.Count > 0)
+                {
+                    foreach (Tasks task in tasksListBack)
+                    {
+                        if (task.NodeId == 0)
+                        {
+                            return "已撤回";
+                        }
+                        else
+                        {
+                            return "被退回";
+                        }
+                    }
+                }
+                List<Tasks> tasksListFinished = ListTask.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
+                if (tasksListFinished.Count > 0)
+                {
+                    return "未完成";
+                }
+                else
+                {
+                    return "已完成";
+                }
         }
 
 
