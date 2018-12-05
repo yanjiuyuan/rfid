@@ -164,7 +164,6 @@ namespace DingTalk.Controllers
                                         SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
                                     }
                                 }
-
                             }
                             else  //节点表数据未找到人
                             {
