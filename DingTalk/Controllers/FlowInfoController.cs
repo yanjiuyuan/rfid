@@ -120,6 +120,7 @@ namespace DingTalk.Controllers
                                         Newtasks.ApplyTime = null;
                                         tasks.IsEnable = 1;
                                         tasks.State = 0;
+                                        Newtasks.IsPost = false;
                                         context.Tasks.Add(Newtasks);
                                         context.SaveChanges();
 
