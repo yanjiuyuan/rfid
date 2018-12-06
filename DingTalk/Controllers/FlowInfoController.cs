@@ -122,18 +122,7 @@ namespace DingTalk.Controllers
                                         tasks.State = 0;
                                         context.Tasks.Add(Newtasks);
                                         context.SaveChanges();
-                                        //推送OA消息
-                                        if (tasks.FlowId == 8)
-                                        {
-                                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                                            await dingTalkServersController.sendOaMessage(PeopleIdList[i].ToString(),
-                                                  string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
-                                                  tasksApplyMan.ApplyMan, "eapp://page/approve/approve");
-                                        }
-                                        else
-                                        {
-                                            SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
-                                        }
+
                                     }
                                     return JsonConvert.SerializeObject(new ErrorModel
                                     {
@@ -161,7 +150,9 @@ namespace DingTalk.Controllers
                                         context.Tasks.Add(Newtasks);
                                         context.SaveChanges();
                                         //推送OA消息
-                                        SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+                                        //SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
+
+                                        SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
                                     }
                                 }
                             }
@@ -188,19 +179,8 @@ namespace DingTalk.Controllers
                                         context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
                                         context.SaveChanges();
 
-                                        //推送OA消息
-                                        if (tasks.FlowId == 8)
-                                        {
-                                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                                            await dingTalkServersController.sendOaMessage(tasksChoosed.ApplyManId.ToString(),
-                                                  string.Format("您有一条待审批的流程(流水号:{0})，请点击进入研究院信息管理系统进行审批。", TaskId),
-                                                  tasksApplyMan.ApplyMan, "eapp://page/approve/approve");
-                                        }
-                                        else
-                                        {
-                                            SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
-                                        }
-
+                                        SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(),TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+                                  
                                         //推送OA消息
                                         //SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
@@ -519,9 +499,11 @@ namespace DingTalk.Controllers
                                     if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(), tasks.NodeId.ToString()).Count == 0)
                                     {
                                         //推送OA消息(寻人)
-                                        SentCommonMsg(dic["PeopleId"].ToString(),
-                                        string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                        taskNew.ApplyMan, taskNew.Remark, null);
+                                        //SentCommonMsg(dic["PeopleId"].ToString(),
+                                        //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
+                                        //taskNew.ApplyMan, taskNew.Remark, null);
+
+                                        SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
                                     }
                                 }
                                 else
@@ -534,9 +516,10 @@ namespace DingTalk.Controllers
                                             string[] PeopleIdList = dic["PeopleId"].Split(',');
                                             foreach (var PeopleId in PeopleIdList)
                                             {
-                                                SentCommonMsg(PeopleId,
-                                           string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                           taskNew.ApplyMan, taskNew.Remark, null);
+                                                SendOaMsgNew(tasks.FlowId, PeopleId, tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                           //     SentCommonMsg(PeopleId,
+                                           //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
+                                           //taskNew.ApplyMan, taskNew.Remark, null);
                                             }
                                             i++;
                                         }
@@ -1299,7 +1282,7 @@ namespace DingTalk.Controllers
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=1&ApplyManId=023752010629202711
         [HttpGet]
-        public string GetFlowStateDetail(int Index, string ApplyManId,bool IsSupportMobile=false)
+        public string GetFlowStateDetail(int Index, string ApplyManId, bool IsSupportMobile = false)
         {
             try
             {
@@ -1343,7 +1326,7 @@ namespace DingTalk.Controllers
             }
         }
 
-        public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId,bool IsMobile)
+        public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId, bool IsMobile)
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<Object> listQuary = new List<object>();
@@ -1398,30 +1381,30 @@ namespace DingTalk.Controllers
 
         public string GetTasksState(string TaskId, List<Tasks> ListTask)
         {
-                List<Tasks> tasksListBack = ListTask.Where(t => t.TaskId.ToString() == TaskId && t.IsBacked == true).ToList();
-                if (tasksListBack.Count > 0)
+            List<Tasks> tasksListBack = ListTask.Where(t => t.TaskId.ToString() == TaskId && t.IsBacked == true).ToList();
+            if (tasksListBack.Count > 0)
+            {
+                foreach (Tasks task in tasksListBack)
                 {
-                    foreach (Tasks task in tasksListBack)
+                    if (task.NodeId == 0)
                     {
-                        if (task.NodeId == 0)
-                        {
-                            return "已撤回";
-                        }
-                        else
-                        {
-                            return "被退回";
-                        }
+                        return "已撤回";
+                    }
+                    else
+                    {
+                        return "被退回";
                     }
                 }
-                List<Tasks> tasksListFinished = ListTask.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
-                if (tasksListFinished.Count > 0)
-                {
-                    return "未完成";
-                }
-                else
-                {
-                    return "已完成";
-                }
+            }
+            List<Tasks> tasksListFinished = ListTask.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend != true).ToList();
+            if (tasksListFinished.Count > 0)
+            {
+                return "未完成";
+            }
+            else
+            {
+                return "已完成";
+            }
         }
 
 
@@ -1716,6 +1699,23 @@ namespace DingTalk.Controllers
                 author = "李四"
             };
             return top.SendOaMessage("083452125733424957", oaTextModel);
+        }
+
+
+        public async void SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan, string Remark)
+        {
+            //推送OA消息
+            if (FlowId == 8)
+            {
+                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                await dingTalkServersController.sendOaMessage(ApplyManId,
+                       string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
+                       ApplyMan, "eapp://page/approve/approve");
+            }
+            else
+            {
+                SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
+            }
         }
 
         /// <summary>
