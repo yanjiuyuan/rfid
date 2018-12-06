@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
         //];
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
-        public string CreateTaskInfo()
+        public async Task<string> CreateTaskInfo()
         {
             try
             {
@@ -153,7 +153,7 @@ namespace DingTalk.Controllers
                                         //推送OA消息
                                         //SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
-                                        SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+                                        await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
                                     }
                                 }
                             }
@@ -180,8 +180,8 @@ namespace DingTalk.Controllers
                                         context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
                                         context.SaveChanges();
 
-                                        SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(),TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
-                                  
+                                        await SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(),TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+
                                         //推送OA消息
                                         //SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
@@ -342,7 +342,7 @@ namespace DingTalk.Controllers
         //];
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
-        public string SubmitTaskInfo()
+        public async Task<string> SubmitTaskInfo()
         {
             try
             {
@@ -504,7 +504,7 @@ namespace DingTalk.Controllers
                                         //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
                                         //taskNew.ApplyMan, taskNew.Remark, null);
 
-                                        SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                        await SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
                                     }
                                 }
                                 else
@@ -517,10 +517,10 @@ namespace DingTalk.Controllers
                                             string[] PeopleIdList = dic["PeopleId"].Split(',');
                                             foreach (var PeopleId in PeopleIdList)
                                             {
-                                                SendOaMsgNew(tasks.FlowId, PeopleId, tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
-                                           //     SentCommonMsg(PeopleId,
-                                           //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                           //taskNew.ApplyMan, taskNew.Remark, null);
+                                                await SendOaMsgNew(tasks.FlowId, PeopleId, tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                                //     SentCommonMsg(PeopleId,
+                                                //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
+                                                //taskNew.ApplyMan, taskNew.Remark, null);
                                             }
                                             i++;
                                         }
@@ -1701,19 +1701,22 @@ namespace DingTalk.Controllers
         }
 
 
-        public async void SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan, string Remark)
+        public async Task<object> SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan, string Remark)
         {
+            DingTalkServersController dingTalkServersController = new DingTalkServersController();
             //推送OA消息
             if (FlowId == 8)
             {
-                DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                await dingTalkServersController.sendOaMessage(ApplyManId,
-                       string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
-                       ApplyMan, "eapp://page/approve/approve");
+                return await dingTalkServersController.sendOaMessage(ApplyManId,
+                        string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
+                        ApplyMan, "eapp://page/approve/approve");
             }
             else
             {
-                 SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
+                SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
+                return dingTalkServersController.sendOaMessage("测试",
+                       string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
+                       ApplyMan, "eapp://page/approve/approve");
             }
         }
 
@@ -1749,7 +1752,7 @@ namespace DingTalk.Controllers
                                  //file_count = "3",
             };
             oaTextModel.message_url = Url;
-            return  top.SendOaMessage(SendPeoPleId, oaTextModel);
+            return top.SendOaMessage(SendPeoPleId, oaTextModel);
         }
 
         /// <summary>
