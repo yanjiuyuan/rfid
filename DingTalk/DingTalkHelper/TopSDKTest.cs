@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace DingTalk.Controllers
@@ -25,8 +26,8 @@ namespace DingTalk.Controllers
             //req.DeptIdList = "123,456";
             req.ToAllUser = false;
             //req.Msgcontent = "{\"message_url\": \"http://dingtalk.com\",\"head\": {\"bgcolor\": \"FFBBBBBB\",\"text\": \"头部标题\"},\"body\": {\"title\": \"正文标题\",\"form\": [{\"key\": \"姓名:\",\"value\": \"张三\"},{\"key\": \"爱好:\",\"value\": \"打球、听音乐\"}],\"rich\": {\"num\": \"15.6\",\"unit\": \"元\"},\"content\": \"111大段文本大段文本大段文本大段文本大段文本大段文本大段文本大段文本大段文本大段文本大段文本大段文本\",\"image\": \"@lADOADmaWMzazQKA\",\"file_count\": \"3\",\"author\": \"李四 \"}}";
-
             req.Msgcontent=JsonConvert.SerializeObject(oaTextModel);
+
 
             CorpMessageCorpconversationAsyncsendResponse rsp = client.Execute(req,
             DDApiService.Instance.GetAccessToken());

@@ -42,7 +42,7 @@ namespace DingTalk.Controllers
         /// contentType: 'application/json; charset=utf-8',
         [Route("SavePurchaseTable")]
         [HttpPost]
-        public string SavePurchaseTable(List<PurchaseTable> purchaseTableList)
+        public string SavePurchaseTable([FromBody]List<PurchaseTable> purchaseTableList)
         {
             try
             {

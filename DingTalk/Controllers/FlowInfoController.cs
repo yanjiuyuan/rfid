@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
         //];
         /// <returns>errorCode = 0 成功创建  Content(返回创建的TaskId)</returns>
         [HttpPost]
-        public async Task<string> CreateTaskInfo()
+        public string CreateTaskInfo()
         {
             try
             {
@@ -1245,14 +1245,12 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-
                     //待审批的
                     int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == false).Count();
                     //我发起的
                     int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true).Count();
                     //抄送我的
                     int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost == false).Count();
-
                     Dictionary<string, int> dic = new Dictionary<string, int>();
                     dic.Add("ApproveCount", iApprove);
                     dic.Add("MyPostCount", iMyPost);
@@ -1714,7 +1712,7 @@ namespace DingTalk.Controllers
             }
             else
             {
-                SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
+                 SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
             }
         }
 
@@ -1750,7 +1748,7 @@ namespace DingTalk.Controllers
                                  //file_count = "3",
             };
             oaTextModel.message_url = Url;
-            return top.SendOaMessage(SendPeoPleId, oaTextModel);
+            return  top.SendOaMessage(SendPeoPleId, oaTextModel);
         }
 
         /// <summary>
