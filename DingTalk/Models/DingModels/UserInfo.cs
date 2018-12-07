@@ -10,7 +10,7 @@ namespace DingTalk.Models.DingModels
     public partial class UserInfo
     {
         [Key]
-        public int UId { get; set; }
+        public int Id { get; set; }
 
         [StringLength(100)]
         public string nickName { get; set; }

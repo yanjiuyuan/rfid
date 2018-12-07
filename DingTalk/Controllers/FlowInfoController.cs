@@ -555,7 +555,7 @@ namespace DingTalk.Controllers
         /// var FlowBackList={"Id":157,"TaskId":4,"ApplyMan":"蔡兴桐","ApplyManId":"manager5312","ApplyTime":null,"IsEnable":1,"FlowId":6,"NodeId":1,"Remark":null,"IsSend":false,"State":0,"ImageUrl":"","FileUrl":null,"Title":"图纸上传2018-04-23 16:41","ProjectId":"2018-04-23 16:41","IsPost":false,"OldImageUrl":"","OldFileUrl":null,"IsBack":true,"BackNodeId":0}
 
         [HttpPost]
-        public string FlowBack()
+        public async  Task<string> FlowBack()
         {
             try
             {
@@ -609,35 +609,7 @@ namespace DingTalk.Controllers
                             //根据退回节点Id找人
                             if (newBackNodeId == "0")  //退回节点为发起人
                             {
-                                Tasks newTask = new Tasks();
-                                //newTask = context.Tasks.Where(u => u.TaskId == tasks.TaskId && u.NodeId == 0).First();
-                                //newTask.IsBacked = true;
-                                //context.Entry<Tasks>(newTask).State = EntityState.Modified;
-                                //context.SaveChanges();
-                                //newTask.ApplyTime = null;
-                                //newTask.State = 0;
-                                //newTask.IsBacked = false;
-                                //newTask.Remark = null;
-                                //newTask.IsPost = false;
-                                //context.Tasks.Add(newTask);
-                                //context.SaveChanges();
-                                TopSDKTest top = new TopSDKTest();
-                                OATextModel oaTextModel = new OATextModel();
-                                oaTextModel.head = new head
-                                {
-                                    bgcolor = "FFBBBBBB",
-                                    text = "您有一条待审批的流程，请登入OA系统审批"
-                                };
-                                oaTextModel.body = new body
-                                {
-                                    form = new form[] {
-                    new form{ key="审批人：",value=tasks.ApplyMan},
-                    new form{ key="审批时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
-                },
-                                    title = string.Format("您有一条被退回的流程(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", tasks.TaskId),
-                                    content = newTask.Remark
-                                };
-                                top.SendOaMessage(newTask.ApplyManId, oaTextModel);
+                                await SendOaMsgNew(tasks.FlowId, tasks.ApplyManId, tasks.TaskId.ToString(), tasks.ApplyMan, "");
                             }
                             else
                             {
