@@ -10,6 +10,7 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -180,8 +181,9 @@ namespace DingTalk.Controllers
                                         context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
                                         context.SaveChanges();
 
-                                        await SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(),TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+                                        await SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
 
+                                        Thread.Sleep(500);
                                         //推送OA消息
                                         //SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
@@ -555,7 +557,7 @@ namespace DingTalk.Controllers
         /// var FlowBackList={"Id":157,"TaskId":4,"ApplyMan":"蔡兴桐","ApplyManId":"manager5312","ApplyTime":null,"IsEnable":1,"FlowId":6,"NodeId":1,"Remark":null,"IsSend":false,"State":0,"ImageUrl":"","FileUrl":null,"Title":"图纸上传2018-04-23 16:41","ProjectId":"2018-04-23 16:41","IsPost":false,"OldImageUrl":"","OldFileUrl":null,"IsBack":true,"BackNodeId":0}
 
         [HttpPost]
-        public async  Task<string> FlowBack()
+        public async Task<string> FlowBack()
         {
             try
             {
@@ -609,7 +611,9 @@ namespace DingTalk.Controllers
                             //根据退回节点Id找人
                             if (newBackNodeId == "0")  //退回节点为发起人
                             {
-                                await SendOaMsgNew(tasks.FlowId, tasks.ApplyManId, tasks.TaskId.ToString(), tasks.ApplyMan, "");
+                                Tasks taskApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.NodeId==0).First();
+                                await SendOaMsgNew(tasks.FlowId, taskApplyMan.ApplyManId, tasks.TaskId.ToString(), taskApplyMan.ApplyMan, tasks.Remark);
+                                Thread.Sleep(500);
                             }
                             else
                             {
@@ -1685,7 +1689,7 @@ namespace DingTalk.Controllers
             }
             else
             {
-                SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
+                SentCommonMsg(ApplyManId, string.Format("您发起的流程(流水号:{0})被退回，请及时登入研究院信息管理系统进行重新提交。", TaskId), ApplyMan, Remark, null);
                 return dingTalkServersController.sendOaMessage("测试",
                        string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
                        ApplyMan, "eapp://page/approve/approve");
