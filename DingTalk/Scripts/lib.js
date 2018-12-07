@@ -499,6 +499,7 @@ var mixin = {
                             }
                         }
                     }
+                   
                     $.ajax({
                         url: '/FlowInfo/CreateTaskInfo',
                         type: 'POST',
@@ -511,6 +512,12 @@ var mixin = {
                             console.log(JSON.stringify(paramArr))
                             console.log(taskId)
                             callBack(taskId)
+                        },
+                        error: function(err) {
+                            console.log("提交审批ok之前")
+                            console.log(paramArr)
+                            console.log(JSON.stringify(paramArr))
+                            console.log(err)
                         }
                     })
                 } else {
