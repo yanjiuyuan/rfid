@@ -155,6 +155,7 @@ namespace DingTalk.Controllers
                                         //SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
                                         await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+                                        Thread.Sleep(500);
                                     }
                                 }
                             }
@@ -507,6 +508,7 @@ namespace DingTalk.Controllers
                                         //taskNew.ApplyMan, taskNew.Remark, null);
 
                                         await SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                        Thread.Sleep(500);
                                     }
                                 }
                                 else
@@ -520,6 +522,7 @@ namespace DingTalk.Controllers
                                             foreach (var PeopleId in PeopleIdList)
                                             {
                                                 await SendOaMsgNew(tasks.FlowId, PeopleId, tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                                Thread.Sleep(500);
                                                 //     SentCommonMsg(PeopleId,
                                                 //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
                                                 //taskNew.ApplyMan, taskNew.Remark, null);
