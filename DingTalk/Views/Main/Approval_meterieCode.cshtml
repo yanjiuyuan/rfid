@@ -191,7 +191,7 @@
                         let url2 = '/ItemCodeAdd/InsertPurcahse'
                         if (that.codeType == '2') url2 = '/ItemCodeAdd/InsertOffice'
                         let paramArr = []
-                        for (let t of that.tableData) {
+                        for (let t of that.data) {
                             paramArr.push({
                                 "FNumber": t.CodeNumber,
                                 "FName": t.Name,
