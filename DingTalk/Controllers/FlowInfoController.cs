@@ -1310,7 +1310,6 @@ namespace DingTalk.Controllers
             List<Object> listQuary = new List<object>();
             List<Tasks> ListTask = context.Tasks.ToList();
             List<Flows> ListFlows = context.Flows.ToList();
-
             foreach (int TaskId in ListTasks)
             {
                 int StateCount = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
@@ -1347,7 +1346,8 @@ namespace DingTalk.Controllers
                                 ApplyTime = t.ApplyTime,
                                 Title = t.Title,
                                 State = GetTasksState(t.TaskId.ToString(), ListTask),
-                                IsBack = t.IsBacked
+                                IsBack = t.IsBacked,
+                                IsSupportMobile=f.IsSupportMobile
                             };
                 if (query.Count() > 0)
                 {
