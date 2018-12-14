@@ -712,6 +712,7 @@
     <Content Include="Views\approval\UploadPaperRe.cshtml" />
     <Content Include="Views\approval\Gift.cshtml" />
     <Content Include="Views\Main\Approval_gift.cshtml" />
+    <Content Include="Views\approval\UploadPic.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
