@@ -201,10 +201,8 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆查询(返回当前车辆状态)
         /// </summary>
-        /// <param name="startTime">开始时间</param>
-        /// <param name="endTime">结束时间</param>
-        /// <returns>IsOccupyCar 是否被占用 true 被占用 false 未被占用</returns>
-        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-08-07 00:00:00&endTime=2018-08-27 00:00:00
+        /// <param name="startTime">开始时间(2018-08-07 00:00:00)</param>
+        /// <param name="endTime">结束时间(2018-08-27 00:00:00)</param>
         [Route("QuaryByTime")]
         [HttpGet]
         public object QuaryByTime(string startTime, string endTime)
