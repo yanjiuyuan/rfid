@@ -79,7 +79,7 @@ namespace DingTalk.Controllers
         /// data: JSON.stringify({ Id: "7" }),
         [Route("Delete")]
         [HttpGet]
-        public object Delete(dynamic obj, string ApplyManId)
+        public object Delete(int Id, string ApplyManId)
         {
             try
             {
@@ -87,8 +87,7 @@ namespace DingTalk.Controllers
                 {
                     if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == ApplyManId).ToList().Count > 0)
                     {
-                        var Id = Convert.ToInt32(obj.Id);
-                        Car car = context.Car.Find(Id);
+                        Car car = context.Car.Find(Convert.ToInt32(Id));
                         context.Car.Remove(car);
                         context.SaveChanges();
                         return new ErrorModel()

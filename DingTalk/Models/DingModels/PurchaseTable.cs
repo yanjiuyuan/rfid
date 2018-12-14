@@ -42,5 +42,11 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(500)]
         public string Mark { get; set; }
+
+        /// <summary>
+        /// ËÍ»õµØµã
+        /// </summary>
+        [StringLength(100)]
+        public string SendPosition { get; set; }
     }
 }
