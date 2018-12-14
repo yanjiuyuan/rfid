@@ -614,7 +614,7 @@ namespace DingTalk.Controllers
                             //根据退回节点Id找人
                             if (newBackNodeId == "0")  //退回节点为发起人
                             {
-                                Tasks taskApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.NodeId==0).First();
+                                Tasks taskApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.NodeId == 0).First();
                                 await SendOaMsgNew(tasks.FlowId, taskApplyMan.ApplyManId, tasks.TaskId.ToString(), taskApplyMan.ApplyMan, tasks.Remark);
                                 Thread.Sleep(500);
                             }
@@ -1347,7 +1347,7 @@ namespace DingTalk.Controllers
                                 Title = t.Title,
                                 State = GetTasksState(t.TaskId.ToString(), ListTask),
                                 IsBack = t.IsBacked,
-                                IsSupportMobile=f.IsSupportMobile
+                                IsSupportMobile = f.IsSupportMobile
                             };
                 if (query.Count() > 0)
                 {
@@ -1684,7 +1684,7 @@ namespace DingTalk.Controllers
         {
             DingTalkServersController dingTalkServersController = new DingTalkServersController();
             //推送OA消息
-            if (FlowId == 8)
+            if (FlowId == 8 || FlowId == 13)
             {
                 return await dingTalkServersController.sendOaMessage(ApplyManId,
                         string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
