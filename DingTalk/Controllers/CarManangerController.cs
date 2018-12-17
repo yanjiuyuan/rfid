@@ -79,7 +79,7 @@ namespace DingTalk.Controllers
         /// data: JSON.stringify({ Id: "7" }),
         [Route("Delete")]
         [HttpGet]
-        public object Delete(dynamic obj, string ApplyManId)
+        public object Delete(int Id, string ApplyManId)
         {
             try
             {
@@ -87,8 +87,7 @@ namespace DingTalk.Controllers
                 {
                     if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == ApplyManId).ToList().Count > 0)
                     {
-                        var Id = Convert.ToInt32(obj.Id);
-                        Car car = context.Car.Find(Id);
+                        Car car = context.Car.Find(Convert.ToInt32(Id));
                         context.Car.Remove(car);
                         context.SaveChanges();
                         return new ErrorModel()
@@ -201,10 +200,8 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆查询(返回当前车辆状态)
         /// </summary>
-        /// <param name="startTime">开始时间</param>
-        /// <param name="endTime">结束时间</param>
-        /// <returns>IsOccupyCar 是否被占用 true 被占用 false 未被占用</returns>
-        /// 测试数据：  /CarMananger/QuaryByTime?dateTime=2018-08-07 00:00:00&endTime=2018-08-27 00:00:00
+        /// <param name="startTime">开始时间(2018-08-07 00:00:00)</param>
+        /// <param name="endTime">结束时间(2018-08-27 00:00:00)</param>
         [Route("QuaryByTime")]
         [HttpGet]
         public object QuaryByTime(string startTime, string endTime)

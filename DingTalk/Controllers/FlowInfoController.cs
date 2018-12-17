@@ -154,7 +154,7 @@ namespace DingTalk.Controllers
                                         //推送OA消息
                                         //SentCommonMsg(PeopleIdList[i].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);
 
-                                        await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+                                        await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark,context);
                                         Thread.Sleep(500);
                                     }
                                 }
@@ -182,7 +182,7 @@ namespace DingTalk.Controllers
                                         context.Entry<Tasks>(tasksChoosed).State = EntityState.Modified;
                                         context.SaveChanges();
 
-                                        await SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark);
+                                        await SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark,context);
 
                                         Thread.Sleep(500);
                                         //推送OA消息
@@ -507,7 +507,7 @@ namespace DingTalk.Controllers
                                         //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
                                         //taskNew.ApplyMan, taskNew.Remark, null);
 
-                                        await SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                        await SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark,context);
                                         Thread.Sleep(500);
                                     }
                                 }
@@ -521,7 +521,7 @@ namespace DingTalk.Controllers
                                             string[] PeopleIdList = dic["PeopleId"].Split(',');
                                             foreach (var PeopleId in PeopleIdList)
                                             {
-                                                await SendOaMsgNew(tasks.FlowId, PeopleId, tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark);
+                                                await SendOaMsgNew(tasks.FlowId, PeopleId, tasks.TaskId.ToString(), taskNew.ApplyMan, taskNew.Remark,context);
                                                 Thread.Sleep(500);
                                                 //     SentCommonMsg(PeopleId,
                                                 //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
@@ -614,8 +614,8 @@ namespace DingTalk.Controllers
                             //根据退回节点Id找人
                             if (newBackNodeId == "0")  //退回节点为发起人
                             {
-                                Tasks taskApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.NodeId==0).First();
-                                await SendOaMsgNew(tasks.FlowId, taskApplyMan.ApplyManId, tasks.TaskId.ToString(), taskApplyMan.ApplyMan, tasks.Remark);
+                                Tasks taskApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.NodeId == 0).First();
+                                await SendOaMsgNew(tasks.FlowId, taskApplyMan.ApplyManId, tasks.TaskId.ToString(), taskApplyMan.ApplyMan, tasks.Remark,context);
                                 Thread.Sleep(500);
                             }
                             else
@@ -1310,7 +1310,6 @@ namespace DingTalk.Controllers
             List<Object> listQuary = new List<object>();
             List<Tasks> ListTask = context.Tasks.ToList();
             List<Flows> ListFlows = context.Flows.ToList();
-
             foreach (int TaskId in ListTasks)
             {
                 int StateCount = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
@@ -1347,7 +1346,8 @@ namespace DingTalk.Controllers
                                 ApplyTime = t.ApplyTime,
                                 Title = t.Title,
                                 State = GetTasksState(t.TaskId.ToString(), ListTask),
-                                IsBack = t.IsBacked
+                                IsBack = t.IsBacked,
+                                IsSupportMobile = f.IsSupportMobile
                             };
                 if (query.Count() > 0)
                 {
@@ -1680,11 +1680,11 @@ namespace DingTalk.Controllers
         }
 
 
-        public async Task<object> SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan, string Remark)
+        public async Task<object> SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan, string Remark,DDContext dDContext)
         {
             DingTalkServersController dingTalkServersController = new DingTalkServersController();
             //推送OA消息
-            if (FlowId == 8)
+            if (dDContext.Flows.Where(f=>f.FlowId.ToString()== FlowId.ToString()).First().IsSupportMobile==true)
             {
                 return await dingTalkServersController.sendOaMessage(ApplyManId,
                         string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),

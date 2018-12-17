@@ -122,6 +122,7 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<PicInfo> eFHelper = new EFHelper<PicInfo>();
+                picInfo.LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 int count = eFHelper.Modify(picInfo);
                 return new NewErrorModel()
                 {
