@@ -12,9 +12,9 @@ namespace Common.DbHelper
     public class MySqlHelper
     {
         private static Logger logger = Logger.CreateLogger(typeof(MySqlHelper));
-        //private static string connstr = @"Host=rm-bp1n55m700al7r0g8o.mysql.rds.aliyuncs.com;UserName=meiyang;Password=My123654;Database=QMYSQL;Port=3306;CharSet=utf8;Allow Zero Datetime=true";
+        private static string connstr = @"Host=47.96.172.122;UserName=root;Password=Yjy20252014;Database=materialdata;Port=3306;CharSet=utf8;Allow Zero Datetime=true";
 
-        private static string connstr = System.Configuration.ConfigurationManager.AppSettings["connstr"].ToString();
+        //private static string connstr = System.Configuration.ConfigurationManager.AppSettings["connstr"].ToString();
 
         #region 执行查询语句，返回MySqlDataReader
         /// <summary>
