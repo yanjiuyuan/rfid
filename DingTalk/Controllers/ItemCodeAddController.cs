@@ -1,8 +1,11 @@
-﻿using DingTalk.Models;
+﻿using Common.DbHelper;
+using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -192,5 +195,92 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 同步MySql数据
+        /// </summary>
+        /// <returns></returns>
+        [Route("SynchroMySqldata")]
+        [HttpGet]
+        public object SynchroMySqldata()
+        {
+            try
+            {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                using (DDContext context = new DDContext())
+                {
+
+                    List<MaterialCode> MaterialCodeList = new List<MaterialCode>();
+                    string strSql = "select * from materialcode";
+                    DataSet dataSets = MySqlHelper.GetDataSet(strSql);
+                    DataTable dataTable = dataSets.Tables[0];
+                    foreach (DataRow dr in dataTable.Rows)
+                    {
+                        MaterialCodeList.Add(new MaterialCode()
+                        {
+                            MaterialCodeNumber = dr["materialCodeNumber"].ToString(),
+                            MaterialName = dr["materialName"].ToString(),
+                            MateriaType = dr["materiaType"].ToString(),
+                        });
+                    }
+                    context.BulkInsert(MaterialCodeList);
+                };
+                stopwatch.Stop();
+                return new NewErrorModel()
+                {
+                    //count = KisOffices.Count,
+                    //data = KisOffices,
+                    error = new Error(0, string.Format("同步成功！耗时：{0}", stopwatch.ElapsedMilliseconds), "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+     
+        /// <summary>
+        /// 获取物料分类
+        /// </summary>
+        /// <param name="materialCodeNumber">不传参数默认返回所有大类</param>
+        /// <returns></returns>
+        [Route("GatMaterialCode")]
+        [HttpGet]
+
+        public object GatMaterialCode(string materialCodeNumber="")
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            object data = new object();
+            int count = 0;
+            using (DDContext context = new DDContext())
+            {
+                if (string.IsNullOrEmpty(materialCodeNumber))
+                {
+                    List<MaterialCode> materialCodes = context.MaterialCode.Where(
+                        m => m.MateriaType == "0").ToList();
+                    count = materialCodes.Count();
+                    data = materialCodes;
+                }
+                else
+                {
+                    List<MaterialCode> materialCodes = context.MaterialCode.Where(
+                       m => m.MaterialCodeNumber.Substring(0,2) == materialCodeNumber).ToList();
+                    count = materialCodes.Count();
+                    data = materialCodes;
+                }
+            };
+            stopwatch.Stop();
+            return new NewErrorModel()
+            {
+                count = count,
+                data = data,
+                error = new Error(0, string.Format("同步成功！耗时：{0}毫秒", stopwatch.ElapsedMilliseconds), "") { },
+            };
+        }
     }
 }

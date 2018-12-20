@@ -1,0 +1,207 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        上传图片
+    </div>
+    <!--创建项目表单-->
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        <template>
+            <el-form-item label="图片类型" required="required">
+                <el-select v-model="ruleForm.Type">
+                    <el-option v-for="s of bigTypes" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="内容简介" prop="Content">
+                <el-input v-model="ruleForm.Content" type="textarea"></el-input>
+            </el-form-item>
+
+            <el-form-item label="上传图片">
+                <el-upload action="/drawingupload/Upload?IsCopy=true"
+                           list-type="picture-card"
+                           :file-list="imageList"
+                           :on-preview="handlePictureCardPreview"
+                           :on-remove="handlePictureRemove"
+                           :on-success="handlePictureCardSuccess"
+                           :before-upload="beforePictureUpload">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                    <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
+                <div class="PathModify" style="display:none;margin-top:20px;">
+                    <img src="" style="width:148px;height:148px;"/>
+                </div>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" class="addProject" v-on:click="addProject" :disabled="disablePage">发布</el-button>
+                <el-button type="primary" v-on:click="getData">获取列表</el-button>
+                <el-button type="primary" class="modify" v-on:click="modify()" style="display:none">确认修改</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+    <div>
+        <!--新闻列表表格實體-->
+        <el-table :data="data" stripe border>
+            <el-table-column prop="Content" label="图片简介"></el-table-column>
+            <el-table-column prop="Type" label="类别"></el-table-column>
+            <el-table-column prop="CreateTime" label="发布时间"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="danger"
+                               v-on:click="deletePic(scope.$index, scope.row)">删除</el-button>
+                    <el-button size="mini" type="danger"
+                               v-on:click="PicModify(scope.$index, scope.row)">修改</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:size-change="handleSizeChange"
+                           v-on:current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="pageSize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="totalRows">
+            </el-pagination>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var bigTypes = ['研究院概况', '发展历程']
+    var Index = 0
+    var date = new Date()
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                bigTypes: bigTypes,
+                imageList: [],
+                fileList: [],
+                //图片上传参数
+                dialogImageUrl: '',
+                dialogVisible: false,
+                uploadUrl: '',
+                ruleForm: {
+                    Id:'',
+                    ImageUrl: '',
+                    OldImageUrl: '',
+                    Type: "",
+                    Path: "",
+                    Content: "",
+                    CreateMan: DingData.nickName,
+                    CreateManId: DingData.userid,
+                    CreateTime: "",
+                    LastModifyTime: "",
+                    LastModifyMan: "",
+                    LastModifyManId: ""
+                },
+                data: []
+            }
+        },
+        methods: {
+            changeBigType(value) {
+                console.log(value)
+                this.types = typeList[bigTypes.indexOf(value)]
+                this.ruleForm.Type = this.types[0]
+            },
+            //上传图片
+            addProject() {
+                var that = this
+                this.ruleForm['Path'] = this.ruleForm['ImageUrl']
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid) {
+                        that._postData('/PicManage/Save', function (data) {
+                            that.$alert('恭喜提交成功', '提示信息', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    goHome()
+                                }
+                            })
+                        }, that.ruleForm)
+                    }
+                })
+
+            },
+            //获取图片列表
+            getData() {
+                var that = this
+                var param = {
+                    type: this.ruleForm.Type,
+                    pageIndex: this.currentPage,
+                    pageSize: this.pageSize
+                }
+                this._getData("/PicManage/Read", function (result) {
+                    that.data = result.data
+                    that.totalRows = result.count
+                }, param)
+            },
+            //删除图片
+            deletePic(index,Pic) {
+                var that = this
+                that._getData('/PicManage/DeleteById', function (result) {
+                    if (result.error.errorCode != 0) {
+                        that.elementAlert('报错了', result.error.errorMessage)
+                        return
+                    }
+                    that.getData()
+                }, {
+                        id: Pic.Id
+                    })
+            },
+            //确认修改
+            modify() {
+                var that = this
+                that.getData()
+                this.ruleForm['LastModifyMan'] = DingData.nickName
+                this.ruleForm['LastModifyManId'] = DingData.userid
+                if (this.ruleForm['ImageUrl'] != '') {
+                    this.ruleForm['Path'] = this.ruleForm['ImageUrl']
+                }
+                console.log(this.ruleForm)
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid) {
+                        that._postData('/PicManage/Modify', function (data) {
+                            that.$alert('恭喜提交成功', '提示信息', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    goHome()
+                                }
+                            })
+                        }, that.ruleForm)
+                    }
+                })
+            },
+            //获取修改信息
+            PicModify(index, Pic) {
+                $(".addProject").hide();
+                $(".modify").show();
+                var that = this
+                that.getData()
+                this.ruleForm['Content'] = Pic.Content
+                this.ruleForm['Path'] = Pic.Path
+                this.ruleForm['Id'] = Pic.Id
+                this.ruleForm['CreateMan'] = Pic.CreateMan
+                this.ruleForm['CreateManId'] = Pic.CreateManId
+                this.ruleForm['CreateTime'] = Pic.CreateTime
+                Pic.Path = Pic.Path.substring(1);
+                $(".PathModify").show()
+                $(".PathModify img").attr("src", Pic.Path)
+                
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+</script>

@@ -49,6 +49,9 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<GiftTable> GiftTable { get; set; }
 
         public virtual DbSet<PicInfo> PicInfo { get; set; }
+
+        public virtual DbSet<MaterialCode> MaterialCode { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Approve>()

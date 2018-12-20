@@ -21,6 +21,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult UploadPic()
+        {
+            return View();
+        }
         public ActionResult UseCar()
         {
             return View();

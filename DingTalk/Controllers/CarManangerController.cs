@@ -408,8 +408,7 @@ namespace DingTalk.Controllers
                                     dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
                                 }
                                 dtReturn.Rows.Add(dr);
-                            }
-
+                            } 
                             string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/用车通用模板(私车).xlsx");
                             string time = DateTime.Now.ToString("yyyyMMddHHmmss");
                             string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\用车数据(私车)" + time + ".xlsx";
