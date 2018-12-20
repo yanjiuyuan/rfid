@@ -503,7 +503,6 @@ var mixin = {
                     console.log("提交审批ok之前")
                     console.log(paramArr)
                     console.log(JSON.stringify(paramArr))
-
                     $.ajax({
                         url: '/FlowInfo/CreateTaskInfo',
                         type: 'POST',
