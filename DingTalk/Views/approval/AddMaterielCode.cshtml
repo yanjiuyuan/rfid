@@ -30,6 +30,7 @@
                 </el-button>
             </el-form-item>
             <br />
+
             <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) >=0"
                           :label="meterielConfig[gk]" :rules="{ required: true, message: meterielConfig[gk]+'不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.' + gk">
