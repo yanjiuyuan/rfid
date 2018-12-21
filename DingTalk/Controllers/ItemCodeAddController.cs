@@ -242,7 +242,7 @@ namespace DingTalk.Controllers
             }
         }
 
-     
+
         /// <summary>
         /// 获取物料分类
         /// </summary>
@@ -251,7 +251,7 @@ namespace DingTalk.Controllers
         [Route("GatMaterialCode")]
         [HttpGet]
 
-        public object GatMaterialCode(string materialCodeNumber="")
+        public object GatMaterialCode(string materialCodeNumber = "")
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -269,8 +269,16 @@ namespace DingTalk.Controllers
                 else
                 {
                     List<MaterialCode> materialCodes = context.MaterialCode.Where(
-                       m => m.MaterialCodeNumber.Substring(0,2) == materialCodeNumber).ToList();
+                       m => m.MaterialCodeNumber.Substring(0, 2) == materialCodeNumber &&
+                      m.MateriaType=="2").ToList();
                     count = materialCodes.Count();
+                    foreach (var item in materialCodes)
+                    {
+                        if (item.MaterialCodeNumber.Length > 3)
+                        {
+                            item.MaterialCodeNumber = item.MaterialCodeNumber.Replace(item.MaterialCodeNumber.Substring(0, 3), "");
+                        }
+                    }
                     data = materialCodes;
                 }
             };
