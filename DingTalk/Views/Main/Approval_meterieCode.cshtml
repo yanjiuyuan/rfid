@@ -185,6 +185,9 @@
                         }
                     }
                     let url = '/ItemCodeAdd/TableModify'
+                    //for (let d of this.data) {
+                    //    d.CodeNumber = d.BigCode + '.' + d.SmallCode + '.' + d.CodeNumber 
+                    //}
                     var param = _cloneArr(this.data)
                     console.log(param)
                     this._postData(url, function () {
@@ -273,6 +276,9 @@
                         } else {
                             for (let d of that.data) {
                                 if (d.UrgentDate) d.UrgentDate = d.UrgentDate.substring(0, 10)
+                                if (NodeId == 2 && Index == 0) {
+                                    d.CodeNumber = d.BigCode + '.' + d.SmallCode + '.'
+                                }
                             }
                             that.getData()
                             that.totalRows = that.data.length
