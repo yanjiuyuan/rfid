@@ -134,11 +134,12 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
-
+                console.log(_cloneObj(this.ruleForm))
                 var that = this
                 let url = '/CarTable/TableModify'
                 var param = _cloneObj(this.ruleForm)
                 param.UseKilometres = this.UseKilometres
+                console.log(param)
                 this._postData(url, function () {
 
                     that.aggreSubmit({
