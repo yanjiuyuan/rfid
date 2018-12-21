@@ -33,7 +33,7 @@
 
             <el-form-item label="物料大类" :rules="{ required: true, message: '物料大类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.BigCode'">
-                <el-select v-model="good.BigCode" filterable placeholder="请选择" v-on:change="changeBigCode">
+                <el-select v-model="good.BigCode" filterable placeholder="请选择" v-on:change="changeBigCode" v-on:focus="clearSmallCode(index)">
                     <el-option v-for="item in bigCodes"
                                :key="item.MaterialCodeNumber"
                                :label="item.MaterialName"
@@ -44,7 +44,7 @@
 
             <el-form-item label="物料小类" :rules="{ required: true, message: '物料小类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.SmallCode'">
-                <el-select v-model="good.SmallCode" filterable placeholder="请选择">
+                <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode">
                     <el-option v-for="item in smallCodes"
                                :key="item.MaterialCodeNumber"
                                :label="item.MaterialName"
@@ -160,11 +160,22 @@
                 })
             },
             //选择大类获取小类
-            changeBigCode(bigCode) {
+            changeBigCode(bigCode,e) {
+                console.log(bigCode)
                 var that = this
                 this._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
                     that.smallCodes = res.data
                 }, { materialCodeNumber: bigCode })
+            },
+            //选择大类清除小类
+            clearSmallCode(index) {
+                this.ruleForm.goods[index].SmallCode = ''
+            },
+            //选择小类
+            changeSmallCode() {
+                let a = this.ruleForm.goods[0].Remark
+                this.ruleForm.goods[0].Remark = Math.random() + ''
+                this.ruleForm.goods[0].Remark = a
             },
             //加载重新发起审批传递的数据
             loadReApprovalData() {
