@@ -132,6 +132,7 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+
                     //context.BulkInsert(kisPurchases);
                     //context.BulkSaveChanges();
                     foreach (var kis in kisPurchases)
