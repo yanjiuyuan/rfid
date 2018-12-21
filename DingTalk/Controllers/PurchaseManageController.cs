@@ -54,7 +54,6 @@ namespace DingTalk.Controllers
                     //    context.PurchaseTable.Add(purchaseTable);
                     //    int i= context.SaveChanges();
                     //}
-
                     EFHelper<PurchaseTable> eFHelper = new EFHelper<PurchaseTable>();
                     if (purchaseTableList.Count == 0)
                     {
