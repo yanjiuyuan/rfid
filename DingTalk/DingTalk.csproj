@@ -573,6 +573,7 @@
     <Content Include="JqueryUI\jquery-ui.structure.min.css" />
     <Content Include="JqueryUI\jquery-ui.theme.css" />
     <Content Include="JqueryUI\jquery-ui.theme.min.css" />
+    <Content Include="JsTest.js" />
     <Content Include="Scripts\anyLine.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\canvas.js" />

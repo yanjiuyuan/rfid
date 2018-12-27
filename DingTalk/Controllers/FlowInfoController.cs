@@ -465,9 +465,16 @@ namespace DingTalk.Controllers
 
                                     Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
                                     && t.NodeId == 0).First();
-                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                    tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
-                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    if (!string.IsNullOrEmpty(tasks.ImageUrl))
+                                    {
+                                        tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(tasks.OldImageUrl))
+                                    {
+                                        tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                    }
+                                    
                                     if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
                                     {
                                         if (!string.IsNullOrEmpty(tasks.FileUrl))
@@ -1694,7 +1701,7 @@ namespace DingTalk.Controllers
             }
             else
             {
-                SentCommonMsg(ApplyManId, string.Format("您发起的流程(流水号:{0})被退回，请及时登入研究院信息管理系统进行重新提交。", TaskId), ApplyMan, Remark, null);
+                SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
                 return dingTalkServersController.sendOaMessage("测试",
                        string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。", TaskId),
                        ApplyMan, "eapp://page/approve/approve");
