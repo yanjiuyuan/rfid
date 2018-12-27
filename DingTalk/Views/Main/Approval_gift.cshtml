@@ -33,14 +33,20 @@
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.Mark" style="width:400px;"></el-input>
+                <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
                 <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
-        <el-form-item label="操作" v-if="index!=0">
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item label="操作">
+                <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+        <el-form-item v-if="index!=0">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
     </el-form>
@@ -48,10 +54,12 @@
 
 <script>
     var allData = {}
+    var state = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
+        state = UrlObj.state
         Id = UrlObj.id
         var Index = UrlObj.index
     }
@@ -65,6 +73,7 @@
                 index: Index,
                 nodeList: [],
                 nodeInfo: {},
+                state: state,
                 ruleForm: {
                     Mark: ''
                 }
@@ -83,6 +92,17 @@
                 let param = {
                     "Id": allData.Id,
                     "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var that = this
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.ruleForm.mark
                 }
                 this.returnSubmit(param)
             },

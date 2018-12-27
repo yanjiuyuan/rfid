@@ -76,6 +76,7 @@
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -132,6 +133,17 @@
                 let param = {
                     "Id": allData.Id,
                     "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var that = this
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.ruleForm.mark
                 }
                 this.returnSubmit(param)
             },

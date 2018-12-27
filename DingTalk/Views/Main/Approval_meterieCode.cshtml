@@ -12,9 +12,21 @@
 
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
+        <el-table-column prop="Count" label="物料名称" width="100">
+            <template slot-scope="scope">
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.Name" prop="Name" :class="{ redborder:!scope.row.Name}"></el-input>
+                <span v-else>{{scope.row.Name}}</span>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Count" label="规格型号" width="100">
+            <template slot-scope="scope">
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.Standard" prop="Standard" :class="{ redborder:!scope.row.Standard}"></el-input>
+                <span v-else>{{scope.row.Standard}}</span>
+            </template>
+        </el-table-column>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
-        <el-table-column prop="Count" label="物料编码" width="100" v-if="NodeId > '0'">
+        <el-table-column label="物料编码" width="100" v-if="NodeId > '0'">
             <template slot-scope="scope">
                 <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.CodeNumber" prop="CodeNumber" :class="{ redborder:!scope.row.CodeNumber}"></el-input>
                 <span v-else>{{scope.row.CodeNumber}}</span>
@@ -22,7 +34,7 @@
         </el-table-column>
         <el-table-column prop="Price" label="预计价格" width="100" v-if="NodeId > '0'">
             <template slot-scope="scope">
-                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.FNote" ></el-input>
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.FNote"></el-input>
                 <span v-else>{{scope.row.FNote}}</span>
             </template>
         </el-table-column>
@@ -100,6 +112,7 @@
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -131,9 +144,9 @@
     var items = {
         BigCode: '物料大类编码',
         SmallCode: '物料小类编码',
-        Name: '物料名称',
+        //Name: '物料名称',
         Unit: '单位',
-        Standard: '型号规格',
+        //Standard: '型号规格',
         SurfaceTreatment: '表面处理',
         PerformanceLevel: '性能等级',
         StandardNumber: '标准号',
@@ -232,6 +245,17 @@
                 }
                 this.returnSubmit(param)
             },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var that = this
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.ruleForm.mark
+                }
+                this.returnSubmit(param)
+            },
             //重新发起审批
             reApproval() {
                 this.disablePage = true
@@ -276,9 +300,6 @@
                         } else {
                             for (let d of that.data) {
                                 if (d.UrgentDate) d.UrgentDate = d.UrgentDate.substring(0, 10)
-                                if (NodeId == 2 && Index == 0) {
-                                    d.CodeNumber = d.BigCode + '.' + d.SmallCode + '.'
-                                }
                             }
                             that.getData()
                             that.totalRows = that.data.length
