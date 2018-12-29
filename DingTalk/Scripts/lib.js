@@ -1037,7 +1037,10 @@ var mixin = {
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log(url)
                     console.log(param)
+                    
                     console.log('报错信息！！！！！！！！！！！！！！！！！！！！')
+                    console.log(textStatus)
+                    console.log(errorThrown)
                     console.log(XMLHttpRequest);
                 }
             })
