@@ -552,26 +552,26 @@ namespace DingTalk.Controllers
                         FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                         fileSendModel.UserId = applyManId;
                         var result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                        return new NewErrorModel()
+                        return JsonConvert.SerializeObject(new NewErrorModel()
                         {
                             error = new Error(0, "已推送至钉钉！", "") { },
-                        };
+                        });
                     }
                     else
                     {
-                        return new NewErrorModel()
+                        return JsonConvert.SerializeObject(new NewErrorModel()
                         {
                             error = new Error(2, "文件有误！", "") { },
-                        };
+                        });
                     }
                 }
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
+                return JsonConvert.SerializeObject(new NewErrorModel()
                 {
                     error = new Error(1, ex.Message, "") { },
-                };
+                });
             }
         }
 
