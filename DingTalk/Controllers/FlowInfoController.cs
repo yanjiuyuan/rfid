@@ -96,6 +96,7 @@ namespace DingTalk.Controllers
                         //申请人数据
                         Tasks tasksApplyMan = tasksNewList.Where(t => t.NodeId == 0).FirstOrDefault();
                         string PreApplyManId = "";  //上一级处理人
+                        
                         int iSendCount = 0;
                         foreach (var tasks in tasksNewList)
                         {
@@ -156,6 +157,36 @@ namespace DingTalk.Controllers
 
                                         await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, context);
                                         Thread.Sleep(500);
+
+
+                                        //特殊处理(暂时)
+                                        if (tasks.FlowId.ToString() == "6")
+                                        {
+                                            NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == "6" && n.NodeId.ToString() == "2").FirstOrDefault();
+                                            Tasks taskCurrent = new Tasks()
+                                            {
+                                                TaskId = tasks.TaskId,
+                                                ApplyMan = nodeInfoCurrent.NodePeople,
+                                                ApplyManId = nodeInfoCurrent.PeopleId,
+                                                IsPost=false,
+                                                State = 0,
+                                                IsSend=false,
+                                                NodeId=2,
+                                                IsEnable = 1,
+                                                FlowId = 6
+                                            };
+                                            context.Tasks.Add(taskCurrent);
+                                            context.SaveChanges();
+                                            await SendOaMsgNew(tasks.FlowId, taskCurrent.ApplyManId, TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, context);
+                                            Thread.Sleep(500);
+
+                                            return JsonConvert.SerializeObject(new ErrorModel
+                                            {
+                                                errorCode = 0,
+                                                errorMessage = "创建成功！",
+                                                Content = TaskId.ToString()
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -201,120 +232,7 @@ namespace DingTalk.Controllers
                     }
 
                     #endregion
-
-                    #region 旧版
-
-                    ////是否推送过
-                    //bool IsTs = true;
-                    //foreach (var tasks in taskList)
-                    //{
-                    //    tasks.TaskId = TaskId;
-                    //    using (DDContext context = new DDContext())
-                    //    {
-                    //        //判断是否与上一节点人员重复
-                    //        bool IsRepeat = false;
-                    //        if (taskList.IndexOf(tasks) > 0)
-                    //        {
-                    //            IsRepeat = tasks.ApplyManId == taskList[taskList.IndexOf(tasks) - 1].ApplyManId;
-                    //        }
-                    //        //判断之前节点是否还有未审核
-                    //        bool IsApproved = false;
-                    //        if (taskList.IndexOf(tasks) > 0)
-                    //        {
-                    //            IsApproved = context.Tasks.Where(t => t.NodeId < tasks.NodeId && t.State == 0).ToList().Count() > 0 ? false : true;
-                    //        }
-
-
-                    //        //修改任务流状态
-                    //        if (taskList.IndexOf(tasks) == 0)
-                    //        {
-                    //            tasks.NodeId = 0;
-                    //            tasks.FlowId.ToString();
-                    //            tasks.IsPost = true;
-                    //            tasks.State = 1;
-                    //            tasks.IsEnable = 1;  //判断任务流是否生效
-                    //            tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    //            context.Tasks.Add(tasks);
-                    //            context.SaveChanges();
-                    //            if (tasks.FlowId == 6) //图纸上传
-                    //            {
-                    //                //寻人抄送
-                    //                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, true, TaskId, 0);
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            //判断是否与上一节点人员重复 且之前节点已审核
-                    //            if (IsRepeat && IsApproved)
-                    //            {
-                    //                tasks.IsPost = false;
-                    //                tasks.State = 1;
-                    //                tasks.IsEnable = 1;
-                    //                tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    //                context.Tasks.Add(tasks);
-                    //                context.SaveChanges();
-                    //            }
-                    //            else
-                    //            {
-                    //                if (taskList.IndexOf(tasks) == 1)
-                    //                {
-                    //                    tasks.IsEnable = 1;
-                    //                }
-                    //                else
-                    //                {
-                    //                    if (IsRepeat)
-                    //                    {
-                    //                        tasks.IsEnable = 1;
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        tasks.IsEnable = 0;
-                    //                    }
-                    //                }
-                    //                tasks.IsPost = false;
-                    //                tasks.State = 0;
-                    //                context.Tasks.Add(tasks);
-                    //                context.SaveChanges();
-                    //            }
-                    //        }
-                    //        if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
-                    //        {
-                    //            //寻人推送
-                    //            Dictionary<string, string> dic =
-                    //            FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, 0);
-                    //            if (dic["PeopleId"].ToString() != "")
-                    //            {
-                    //                //推送OA消息
-                    //                SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
-                    //            }
-                    //        }
-                    //        else  //有选人
-                    //        {
-                    //            if (taskList.IndexOf(tasks) > 0 && !IsRepeat && IsTs)
-                    //            {
-                    //                IsTs = false;
-                    //                Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
-                    //                //推送OA消息
-                    //                SentCommonMsg(tasks.ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskNew.ApplyMan, taskNew.Remark, null);
-                    //            }
-                    //            //对最后一条重复数据进行寻人推送
-                    //            if (IsRepeat && !IsApproved && taskList.Count == (taskList.IndexOf(tasks) + 1))
-                    //            {
-                    //                //寻人推送
-                    //                Dictionary<string, string> dic =
-                    //                FindNextPeople(tasks.FlowId.ToString(), tasks.ApplyMan, true, false, TaskId, tasks.NodeId);
-                    //                if (dic["PeopleId"].ToString() != "")
-                    //                {
-                    //                    //推送OA消息
-                    //                    SentCommonMsg(dic["PeopleId"].ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasks.ApplyMan, tasks.Remark, null);
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    #endregion
-
+                    
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
@@ -465,16 +383,9 @@ namespace DingTalk.Controllers
 
                                     Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
                                     && t.NodeId == 0).First();
-                                    if (!string.IsNullOrEmpty(tasks.ImageUrl))
-                                    {
-                                        tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                    }
-
-                                    if (!string.IsNullOrEmpty(tasks.OldImageUrl))
-                                    {
-                                        tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
-                                    }
-                                    
+                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                    tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                    tasksApplyMan.ImageUrl = tasks.ImageUrl;
                                     if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
                                     {
                                         if (!string.IsNullOrEmpty(tasks.FileUrl))
