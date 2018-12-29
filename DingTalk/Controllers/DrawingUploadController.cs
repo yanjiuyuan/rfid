@@ -537,6 +537,7 @@ namespace DingTalk.Controllers
                                                  p.NeedTime,
                                                  p.Mark
                                              };
+
                     DataTable dtpurchaseTables = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
                     string path = Server.MapPath("~/UploadFile/Excel/Templet/图纸BOM导出模板.xlsx");
                     string time = DateTime.Now.ToString("yyyyMMddHHmmss");
