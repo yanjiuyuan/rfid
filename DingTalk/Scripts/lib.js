@@ -958,7 +958,6 @@ var mixin = {
                 success: function (data) {
                     data = JSON.parse(data)
                     console.log('上传文件到钉盘')
-                    console.log('/api/dt/uploadMedia/')
                     console.log(paramObj)
                     if (data.media_id) {
                         console.log(data.media_id)
@@ -1036,6 +1035,9 @@ var mixin = {
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(url)
+                    console.log(param)
+                    console.log('报错信息！！！！！！！！！！！！！！！！！！！！')
                     console.log(XMLHttpRequest);
                 }
             })
