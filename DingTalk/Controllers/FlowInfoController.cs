@@ -157,8 +157,7 @@ namespace DingTalk.Controllers
 
                                         await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, context);
                                         Thread.Sleep(500);
-
-
+                                        
                                         //特殊处理(暂时)
                                         if (tasks.FlowId.ToString() == "6")
                                         {
