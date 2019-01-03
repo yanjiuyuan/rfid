@@ -126,6 +126,9 @@ namespace DingTalk.Controllers
                                         context.Tasks.Add(Newtasks);
                                         context.SaveChanges();
 
+                                        await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, context);
+                                        Thread.Sleep(500);
+
                                     }
                                     return JsonConvert.SerializeObject(new ErrorModel
                                     {
@@ -213,7 +216,6 @@ namespace DingTalk.Controllers
                                         context.SaveChanges();
 
                                         await SendOaMsgNew(tasks.FlowId, tasksChoosed.ApplyManId.ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, context);
-
                                         Thread.Sleep(500);
                                         //推送OA消息
                                         //SentCommonMsg(tasksChoosed.ApplyManId.ToString(), string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, null);

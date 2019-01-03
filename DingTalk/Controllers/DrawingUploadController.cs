@@ -386,7 +386,7 @@ namespace DingTalk.Controllers
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
-
+                    
                     ////判断是否有权限触发按钮
                     //string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
                     //if (UserId != PeopleId)
