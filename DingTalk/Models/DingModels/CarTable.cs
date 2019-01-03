@@ -85,6 +85,12 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string FactKilometre { get; set; }
-        
+
+        /// <summary>
+        /// ³µÅÆºÅ
+        /// </summary>
+        [StringLength(200)]
+        public string CarNo { get; set; }
+
     }
 }
