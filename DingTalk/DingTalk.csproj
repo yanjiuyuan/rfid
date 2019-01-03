@@ -351,6 +351,7 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FlowInfoController.cs" />
     <Compile Include="Controllers\GiftTableController.cs" />
+    <Compile Include="Controllers\GodownManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemCodeAddController.cs" />
     <Compile Include="Controllers\JobManangerController.cs" />
@@ -423,6 +424,7 @@
     <Compile Include="Models\DingModels\FlowQx.cs" />
     <Compile Include="Models\DingModels\Flows.cs" />
     <Compile Include="Models\DingModels\FlowSort.cs" />
+    <Compile Include="Models\DingModels\GoDown.cs" />
     <Compile Include="Models\DingModels\Jobs.cs" />
     <Compile Include="Models\DingModels\KisOffice.cs" />
     <Compile Include="Models\DingModels\KisPurchase.cs" />
