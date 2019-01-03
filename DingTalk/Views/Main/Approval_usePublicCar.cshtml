@@ -57,7 +57,7 @@
             <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
                            :key="item.Id"
-                           :label="item.Name"
+                           :label="item.Name + ' - ' + item.CarNumber"
                            :value="item.Id">
                 </el-option>
             </el-select>
@@ -244,7 +244,7 @@
                        
                         for (let d of data) {
                             if (d.Id == that.ruleForm.CarId) {
-                                that.carName = d.Name
+                                that.carName = d.Name + ' - ' + d.CarNumber
                                 that.ruleForm['Name'] = d.Name
                             }
                         }
