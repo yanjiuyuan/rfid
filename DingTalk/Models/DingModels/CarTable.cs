@@ -90,7 +90,7 @@ namespace DingTalk.Models.DingModels
         /// ³µÅÆºÅ
         /// </summary>
         [StringLength(200)]
-        public string CarNo { get; set; }
+        public string CarNumber { get; set; }
 
     }
 }
