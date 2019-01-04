@@ -210,42 +210,77 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    //List<Car> cars = context.Car.ToList();
+                    //foreach (Car car in cars)
+                    //{
+                    //    if (!string.IsNullOrEmpty(car.UseTimes))
+                    //    {
+                    //        string[] UseTimesList = car.UseTimes.Split(',');
+                    //        if (UseTimesList.Length > 0)
+                    //        {
+                    //            int i = 0;
+                    //            List<string> UseManResult = new List<string>();
+                    //            List<string> UseTimeResult = new List<string>();
+                    //            string UseManSave = car.UseMan;
+                    //            string UseTimeSave = car.UseTimes;
+                    //            foreach (var UseTimes in UseTimesList)
+                    //            {
+                    //                i++;
+                    //                if (UseTimes.Split('~').Length > 0)
+                    //                {
+                    //                    string startT = UseTimes.Split('~')[0];
+                    //                    string endT = UseTimes.Split('~')[1];
+                    //                    //判断时间段是否出现重叠
+                    //                    if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
+                    //                       DateTime.Parse(endTime) < DateTime.Parse(startT)))
+                    //                    {
+                    //                        car.IsOccupyCar = true;
+                    //                        UseManResult.Add(UseManSave.Split(',')[i - 1]);
+                    //                        UseTimeResult.Add(UseTimeSave.Split(',')[i - 1]);
+                    //                    }
+                    //                }
+                    //            }
+                    //            car.UseTimes = string.Join(",", UseTimeResult);
+                    //            car.UseMan = string.Join(",", UseManResult);
+                    //        }
+                    //    }
+                    //}
+                    //return cars;
+
                     List<Car> cars = context.Car.ToList();
-                    foreach (Car car in cars)
+                    List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
+                    List<Car> carsQuery = new List<Car>();//条件过滤集合
+                    List<Car> carsDic = new List<Car>();
+                    foreach (var ct in carTables)
                     {
-                        if (!string.IsNullOrEmpty(car.UseTimes))
+                        if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
                         {
-                            string[] UseTimesList = car.UseTimes.Split(',');
-                            if (UseTimesList.Length > 0)
+                            if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
                             {
-                                int i = 0;
-                                List<string> UseManResult = new List<string>();
-                                List<string> UseTimeResult = new List<string>();
-                                string UseManSave = car.UseMan;
-                                string UseTimeSave = car.UseTimes;
-                                foreach (var UseTimes in UseTimesList)
-                                {
-                                    i++;
-                                    if (UseTimes.Split('~').Length > 0)
-                                    {
-                                        string startT = UseTimes.Split('~')[0];
-                                        string endT = UseTimes.Split('~')[1];
-                                        //判断时间段是否出现重叠
-                                        if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
-                                           DateTime.Parse(endTime) < DateTime.Parse(startT)))
-                                        {
-                                            car.IsOccupyCar = true;
-                                            UseManResult.Add(UseManSave.Split(',')[i - 1]);
-                                            UseTimeResult.Add(UseTimeSave.Split(',')[i - 1]);
-                                        }
-                                    }
-                                }
-                                car.UseTimes = string.Join(",", UseTimeResult);
-                                car.UseMan = string.Join(",", UseManResult);
+                                Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
+                                car.IsOccupyCar = true;
+                                car.OccupyCarId = ct.Id.ToString();
+                                car.UseMan = ct.DrivingMan;
+                                car.UseTimes = ct.StartTime + "---" + ct.EndTime;
+                                carsQuery.Add(car);
                             }
                         }
                     }
-                    return cars;
+
+                    foreach (var c in cars)
+                    {
+                        if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
+                        {
+                            c.OccupyCarId = "";
+                            c.IsOccupyCar = false;
+                            c.UseTimes = "";
+                            carsQuery.Add(c);
+                        }
+                    }
+
+                    return carsQuery;
+
                 }
             }
             catch (Exception ex)
@@ -408,7 +443,7 @@ namespace DingTalk.Controllers
                                     dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
                                 }
                                 dtReturn.Rows.Add(dr);
-                            } 
+                            }
                             string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/用车通用模板(私车).xlsx");
                             string time = DateTime.Now.ToString("yyyyMMddHHmmss");
                             string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\用车数据(私车)" + time + ".xlsx";

@@ -1024,7 +1024,7 @@ var mixin = {
                     console.log(param)
                     console.log(data)
                     if (alertStr) {
-                        that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
+                        that.$alert(alertStr.length > 2 ? alertStr : data.error.errorMessage, alertTitle, {
                             confirmButtonText: '确定',
                             callback: action => {
                                 if (callBack) callBack(data)
@@ -1064,7 +1064,7 @@ var mixin = {
                         return
                     }
                     if (alertStr) {
-                        that.$alert(alertStr.length > 2 ? alertStr : data.errorMessage, alertTitle, {
+                        that.$alert(alertStr.length > 2 ? alertStr : data.error.errorMessage, alertTitle, {
                             confirmButtonText: '确定',
                             callback: action => {
                                 if (callBack) callBack(data)
