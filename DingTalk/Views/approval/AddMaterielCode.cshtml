@@ -33,7 +33,7 @@
 
             <el-form-item label="物料大类" :rules="{ required: true, message: '物料大类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.BigCode'">
-                <el-select v-model="good.BigCode" filterable placeholder="请选择" v-on:change="changeBigCode" v-on:focus="clearSmallCode(index)">
+                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" v-on:focus="clearSmallCode(index,good.BigCode)">
                     <el-option v-for="item in bigCodes"
                                :key="item.MaterialCodeNumber"
                                :label="item.MaterialName"
@@ -45,7 +45,7 @@
             <el-form-item label="物料小类" :rules="{ required: true, message: '物料小类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.SmallCode'">
                 <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode">
-                    <el-option v-for="item in smallCodes"
+                    <el-option v-for="item in good.smallCodes"
                                :key="item.MaterialCodeNumber"
                                :label="item.MaterialName"
                                :value="item.MaterialCodeNumber">
@@ -94,6 +94,7 @@
     for (let m in meterielConfig) {
         meteriel[m] = ''
     }
+    meteriel['smallCodes'] = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -127,7 +128,6 @@
                 var paramArr = []
                 for (let p of this.ruleForm.goods) {
                     p.TaskId = taskId
-                    p.
                     paramArr.push(p)
                 }
                 console.log("物料申請批量保存 paramArr ")
@@ -162,14 +162,22 @@
             },
             //选择大类获取小类
             changeBigCode(bigCode,e) {
-                console.log(bigCode)
+                //console.log(bigCode)
                 var that = this
                 this._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
-                    that.smallCodes = res.data
+                    //that.smallCodes = res.data
+                    for (let g of that.ruleForm.goods) {
+                        if (g.BigCode == bigCode) {
+                            g.smallCodes = res.data
+                        }
+                    }
+                    //that.ruleForm.goods[].smallCodes = res.data
                 }, { materialCodeNumber: bigCode })
             },
             //选择大类清除小类
-            clearSmallCode(index) {
+            clearSmallCode(index, bigCode) {
+                console.log(index)
+                console.log(bigCode)
                 this.ruleForm.goods[index].SmallCode = ''
             },
             //选择小类
