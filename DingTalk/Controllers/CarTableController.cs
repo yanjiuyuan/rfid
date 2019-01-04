@@ -38,7 +38,7 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    carTable.UseKilometres = carTable.FactKilometre;
+                    //carTable.UseKilometres = carTable.FactKilometre;
                     context.CarTable.Add(carTable);
                     context.SaveChanges();
                 }
@@ -99,66 +99,80 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    carTable.FactKilometre = carTable.UseKilometres;
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault();
+                    if (tasks.NodeId == 4)
+                    {
+                        if (!string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.FactKilometre))
+                        {
+                            CarTable carTableOld = context.CarTable.Find(int.Parse(carTable.OccupyCarId));
+                            carTableOld.FactKilometre = (float.Parse(carTableOld.FactKilometre) - float.Parse(carTable.FactKilometre)).ToString();
+                            context.Entry<CarTable>(carTableOld).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                        }
+                    }
                     context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
 
-                    if (!string.IsNullOrEmpty(carTable.CarId) && carTable.StartKilometres == null)
-                    {
-                        Car car = context.Car.Find(Int32.Parse(carTable.CarId));
-                        //只保留五条最新数据
-                        if (!string.IsNullOrEmpty(car.UseTimes))
-                        {
-                            if (car.UseTimes.Split(',').Length < 5)
-                            {
-                                car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
-                                car.UseMan = car.UseMan + "," + carTable.DrivingMan;
-                            }
-                            else
-                            {
-                                car.UseTimes = car.UseTimes.Substring(car.UseTimes.IndexOf(','), car.UseTimes.Length - car.UseTimes.IndexOf(','));
-                                car.UseMan = car.UseMan.Substring(car.UseMan.IndexOf(','), car.UseMan.Length - car.UseMan.IndexOf(','));
-                                car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
-                                car.UseMan = car.UseMan + "," + carTable.DrivingMan;
-                            }
-                        }
-                        else
-                        {
-                            car.UseTimes = carTable.StartTime + "~" + carTable.EndTime;
-                            car.UseMan = carTable.DrivingMan;
-                        }
-                        car.OccupyCarId = carTable.Id.ToString();
-                        car.FinnalStartTime = carTable.StartTime;
-                        car.FinnalEndTime = carTable.EndTime;
-                        context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
-                        context.SaveChanges();
-                    }
+                    //if (!string.IsNullOrEmpty(carTable.CarId) && carTable.StartKilometres == null)
+                    //{
+                    //    Car car = context.Car.Find(Int32.Parse(carTable.CarId));
+                    //    //只保留五条最新数据
+                    //    if (!string.IsNullOrEmpty(car.UseTimes))
+                    //    {
+                    //        if (car.UseTimes.Split(',').Length < 5)
+                    //        {
+                    //            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
+                    //            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
+                    //        }
+                    //        else
+                    //        {
+                    //            car.UseTimes = car.UseTimes.Substring(car.UseTimes.IndexOf(','), car.UseTimes.Length - car.UseTimes.IndexOf(','));
+                    //            car.UseMan = car.UseMan.Substring(car.UseMan.IndexOf(','), car.UseMan.Length - car.UseMan.IndexOf(','));
+                    //            car.UseTimes = car.UseTimes + "," + carTable.StartTime + "~" + carTable.EndTime;
+                    //            car.UseMan = car.UseMan + "," + carTable.DrivingMan;
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        car.UseTimes = carTable.StartTime + "~" + carTable.EndTime;
+                    //        car.UseMan = carTable.DrivingMan;
+                    //    }
+                    //    car.OccupyCarId = carTable.Id.ToString();
+                    //    car.FinnalStartTime = carTable.StartTime;
+                    //    car.FinnalEndTime = carTable.EndTime;
+                    //    context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
+                    //    context.SaveChanges();
+                    //}
 
-                    if (string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.UseKilometres))
-                    {
-                        //判断当前处理节点为车辆管理员确认公里数
-                        if (context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault().NodeId == 4)
-                        {
-                            carTable.FactKilometre = carTable.UseKilometres;
-                            context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
-                            context.SaveChanges();
-                        }
-                    }
-                    //扣除公里数
-                    if (!string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.UseKilometres))
-                    {
-                        //判断当前处理节点为车辆管理员确认公里数
-                        if (context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault().NodeId == 4)
-                        {
-                            CarTable carTableNew = context.CarTable.Find(Int32.Parse(carTable.OccupyCarId));
-                            carTableNew.FactKilometre = (float.Parse(carTableNew.FactKilometre) - float.Parse(carTable.UseKilometres)).ToString();
-                            context.Entry<CarTable>(carTableNew).State = System.Data.Entity.EntityState.Modified;
-                            context.SaveChanges();
+                    //if (string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.UseKilometres))
+                    //{
+                    //    //判断当前处理节点为车辆管理员确认公里数
+                    //    if (context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault().NodeId == 4)
+                    //    {
+                    //        carTable.FactKilometre = carTable.UseKilometres;
+                    //        context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
+                    //        context.SaveChanges();
+                    //    }
+                    //}
+                    ////扣除公里数
+                    //if (!string.IsNullOrEmpty(carTable.OccupyCarId) && !string.IsNullOrEmpty(carTable.UseKilometres))
+                    //{
+                    //    //判断当前处理节点为车辆管理员确认公里数
+                    //    if (context.Tasks.Where(t => t.TaskId.ToString() == carTable.TaskId && t.State == 0 && t.IsEnable == 1).FirstOrDefault().NodeId == 4)
+                    //    {
+                    //        CarTable carTableNew = context.CarTable.Find(Int32.Parse(carTable.OccupyCarId));
+                    //        carTableNew.FactKilometre = (float.Parse(carTableNew.FactKilometre) - float.Parse(carTable.UseKilometres)).ToString();
+                    //        context.Entry<CarTable>(carTableNew).State = System.Data.Entity.EntityState.Modified;
+                    //        context.SaveChanges();
 
-                            carTable.FactKilometre = carTable.UseKilometres;
-                            context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
-                            context.SaveChanges();
-                        }
-                    }
+                    //        carTable.FactKilometre = carTable.UseKilometres;
+                    //        context.Entry<CarTable>(carTable).State = System.Data.Entity.EntityState.Modified;
+                    //        context.SaveChanges();
+                    //    }
+                    //}
+
+
                 }
                 return new ErrorModel()
                 {
@@ -307,7 +321,7 @@ namespace DingTalk.Controllers
                         keyValuePairs.Add("归来时间", ct.EndTime.ToString());
                         keyValuePairs.Add("总行驶公里数", ct.UseKilometres);
                     }
-                   
+
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
@@ -325,7 +339,7 @@ namespace DingTalk.Controllers
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
-                   
+
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
                     null, null, "2", 300, 650, null, null, null, dtApproveView, keyValuePairs);

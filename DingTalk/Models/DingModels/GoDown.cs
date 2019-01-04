@@ -20,49 +20,49 @@
         /// 物料编码
         /// </summary>
         [StringLength(300)]
-        public string FNumber { get; set; }
+        public string fNumber { get; set; }
 
         /// <summary>
         /// 物料名称
         /// </summary>
         [StringLength(300)]
-        public string FName { get; set; }
+        public string fName { get; set; }
 
         /// <summary>
         /// 规格型号
         /// </summary>
         [StringLength(300)]
-        public string FModel { get; set; }
+        public string fModel { get; set; }
 
         /// <summary>
         /// 单位名称
         /// </summary>
         [StringLength(300)]
-        public string UnitName { get; set; }
+        public string unitName { get; set; }
 
         /// <summary>
         /// 实收数量(可编辑)
         /// </summary>
         [StringLength(300)]
-        public string FQty { get; set; }
+        public string fQty { get; set; }
 
         /// <summary>
         /// 单价
         /// </summary>
         [StringLength(300)]
-        public string FPrice { get; set; }
+        public string fPrice { get; set; }
 
         /// <summary>
         /// 金额
         /// </summary>
         [StringLength(300)]
-        public string FAmount { get; set; }
+        public string fAmount { get; set; }
 
         /// <summary>
         /// 供应商
         /// </summary>
         [StringLength(300)]
-        public string FFullName { get; set; }
+        public string fFullName { get; set; }
 
     }
 }
