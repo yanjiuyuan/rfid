@@ -364,7 +364,7 @@
     <Compile Include="Controllers\OfficeSuppliesPurchaseManagerController.cs" />
     <Compile Include="Controllers\OverTimeTableController.cs" />
     <Compile Include="Controllers\PatentManagerController.cs" />
-    <Compile Include="Controllers\PickingController.cs" />
+    <Compile Include="Controllers\PickController.cs" />
     <Compile Include="Controllers\PicManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
@@ -436,7 +436,7 @@
     <Compile Include="Models\DingModels\OfficeSuppliesPurchase.cs" />
     <Compile Include="Models\DingModels\OverTime.cs" />
     <Compile Include="Models\DingModels\PicInfo.cs" />
-    <Compile Include="Models\DingModels\Picking.cs" />
+    <Compile Include="Models\DingModels\Pick.cs" />
     <Compile Include="Models\DingModels\ProcedureInfo.cs" />
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
     <Compile Include="Models\DingModels\Purchase.cs" />

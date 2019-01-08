@@ -179,9 +179,7 @@
             printPdf() {
                 var that = this
                 this._postData("/CarTable/GetPrintPDF", function (result) {
-                    if (result.errcode != 0) {
                         that.elementAlert('alert', result.errmsg)
-                    }
                 },
                     {
                         UserId: DingData.userid,

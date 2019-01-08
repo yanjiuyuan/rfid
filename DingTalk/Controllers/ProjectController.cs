@@ -724,7 +724,6 @@ namespace DingTalk.Controllers
                 string strReplaced = str.Replace(substring, "");
                 return (str.Length - strReplaced.Length) / substring.Length;
             }
-
             return 0;
         }
 

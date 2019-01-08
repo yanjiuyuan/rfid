@@ -91,7 +91,7 @@ namespace DingTalk.Bussiness.FlowInfo
             using (DDContext context = new DDContext())
             {
                 List<Tasks> ListTask = context.Tasks.Where(u => u.State == 0 && u.IsSend != true && u.FlowId.ToString() == FlowId).ToList();
-                List<Tasks> ListTaskFinished = context.Tasks.Where(u => u.State == 1 && u.FlowId.ToString() == FlowId).ToList();
+                List<Tasks> ListTaskFinished = context.Tasks.Where(u => u.State == 1 && u.IsBacked!=true && u.FlowId.ToString() == FlowId).ToList();
 
                 ListTaskFinall = (from tf in ListTaskFinished
                                   where

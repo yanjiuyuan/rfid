@@ -52,9 +52,10 @@ namespace DingTalk.Models.DingModels
 
         public virtual DbSet<MaterialCode> MaterialCode { get; set; }
 
-        public virtual DbSet<Picking> Picking { get; set; }
-
         public virtual DbSet<GoDown> GoDown { get; set; }
+
+        public virtual DbSet<Pick> Pick { get; set; }
+        
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
