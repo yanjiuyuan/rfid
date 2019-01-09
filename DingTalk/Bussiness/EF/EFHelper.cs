@@ -206,9 +206,17 @@ namespace DingTalk.EF
         /// <param name="whereLambda">查询条件 lambda表达式</param>
         /// <param name="orderLambda">排序条件 lambda表达式</param>
         /// <returns></returns>
-        public List<T> GetListBy<TKey>(Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderLambda)
+        public List<T> GetListBy<TKey>(Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderLambda, bool OrderBy = true)
         {
-            return db.Set<T>().Where(whereLambda).OrderBy(orderLambda).ToList();
+            if (OrderBy)
+            {
+                return db.Set<T>().Where(whereLambda).OrderBy(orderLambda).ToList();
+            }
+            else
+            {
+                return db.Set<T>().Where(whereLambda).OrderByDescending(orderLambda).ToList();
+            }
+           
         }
         #endregion
 

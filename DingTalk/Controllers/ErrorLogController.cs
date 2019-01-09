@@ -66,7 +66,7 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<ErrorLogs> eFHelper = new EFHelper<ErrorLogs>();
-                List<ErrorLogs> errorLogs = eFHelper.GetList();
+                List<ErrorLogs> errorLogs = eFHelper.GetListBy(e=>e.ApplyTime!=null, e=>e.Id,false);
                 return new NewErrorModel()
                 {
                     data = errorLogs,
