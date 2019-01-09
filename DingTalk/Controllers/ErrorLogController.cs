@@ -38,7 +38,7 @@ namespace DingTalk.Controllers
 
                 foreach (var SaId in SaIds)
                 {
-                    await dingTalkServersController.sendOaMessage(SaId, "报错反馈", "系统报错", "eapp://page/start/index");
+                    await dingTalkServersController.sendOaMessage(SaId, "报错反馈", "系统报错", "eapp://util/errorPage/errorPage");
                 }
                 
                 return new NewErrorModel()
