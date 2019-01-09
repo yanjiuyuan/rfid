@@ -416,6 +416,7 @@ namespace DingTalk.Controllers
         public async Task<object> sendOaMessage(string userId, string title,
             string applyMan, string linkUrl = "eapp://page/start/index")
         {
+
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
             oa oa = new oa()
