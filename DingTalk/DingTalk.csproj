@@ -439,6 +439,7 @@
     <Compile Include="Models\DingModels\OverTime.cs" />
     <Compile Include="Models\DingModels\PicInfo.cs" />
     <Compile Include="Models\DingModels\Pick.cs" />
+    <Compile Include="Models\DingModels\PrintModel.cs" />
     <Compile Include="Models\DingModels\ProcedureInfo.cs" />
     <Compile Include="Models\DingModels\ProjectInfo.cs" />
     <Compile Include="Models\DingModels\Purchase.cs" />
