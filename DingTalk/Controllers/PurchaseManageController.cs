@@ -59,7 +59,7 @@ namespace DingTalk.Controllers
                     {
                         return JsonConvert.SerializeObject(new ErrorModel
                         {
-                            Content= contentType,
+                            Content = contentType,
                             errorCode = 1,
                             errorMessage = "未接收到传递参数"
                         });
@@ -220,18 +220,28 @@ namespace DingTalk.Controllers
                             //构造数据
                             foreach (var item in t_ICItemList)
                             {
-                                KisPurchaseList.Add(new KisPurchase()
+                                KisPurchase kisPurchase = new KisPurchase()
                                 {
                                     FNumber = item.FNumber,
                                     FItemID = item.FItemID.ToString(),
                                     FNote = item.FNote,
                                     FModel = item.FModel,
                                     FName = item.FName
-                                });
+                                };
+                                DDcontext.KisPurchase.Add(kisPurchase);
+                                DDcontext.SaveChanges();
+                                //KisPurchaseList.Add(new KisPurchase()
+                                //{
+                                //    FNumber = item.FNumber,
+                                //    FItemID = item.FItemID.ToString(),
+                                //    FNote = item.FNote,
+                                //    FModel = item.FModel,
+                                //    FName = item.FName
+                                //});
                             }
                             //批量插入
-                            DDcontext.BulkInsert(KisPurchaseList);
-                            DDcontext.BulkSaveChanges();
+                            //DDcontext.BulkInsert(KisPurchaseList);
+                            //DDcontext.BulkSaveChanges();
                             count = t_ICItemList.Count();
                         }
                     }
