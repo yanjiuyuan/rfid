@@ -3,6 +3,7 @@ using Common.DTChange;
 using Common.Excel;
 using Common.Ionic;
 using Common.PDF;
+using DingTalk.Bussiness.FlowInfo;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
@@ -56,6 +57,45 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 默认读取已验收的数据
+        /// </summary>
+        /// <param name="ApplyManId"></param>
+        /// <param name="TaskId">入库单流水号</param>
+        /// <returns></returns>
+        [Route("ReadDefault")]
+        [HttpGet]
+        public object ReadDefault(string ApplyManId, string TaskId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("27");
+                    List<Tasks> taskQuery = tasks.Where(t=>t.TaskId.ToString()== TaskId).ToList();
+                    List<GoDown> goDowns = new List<GoDown>();
+                    foreach (var task in taskQuery)
+                    {
+                        goDowns.AddRange(context.GoDown.Where(g => g.TaskId == task.TaskId.ToString()));
+                    }
+
+
+                    return new NewErrorModel()
+                    {
+                        count = goDowns.Count,
+                        data = goDowns,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
 
         /// <summary>
         /// 领料单读取
@@ -118,7 +158,7 @@ namespace DingTalk.Controllers
                     }
 
                     List<Pick> GoDownList = context.Pick.Where(u => u.TaskId == TaskId).ToList();
-                    
+
                     string ProjectName = tasks.ProjectId;
                     string ProjectNo = tasks.ProjectName;
 

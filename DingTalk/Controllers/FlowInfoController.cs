@@ -96,7 +96,7 @@ namespace DingTalk.Controllers
                         //申请人数据
                         Tasks tasksApplyMan = tasksNewList.Where(t => t.NodeId == 0).FirstOrDefault();
                         string PreApplyManId = "";  //上一级处理人
-                        
+
                         int iSendCount = 0;
                         foreach (var tasks in tasksNewList)
                         {
@@ -160,7 +160,7 @@ namespace DingTalk.Controllers
 
                                         await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(), TaskId.ToString(), tasksApplyMan.ApplyMan, tasksApplyMan.Remark, context);
                                         Thread.Sleep(500);
-                                        
+
                                         //特殊处理(暂时)
                                         if (tasks.FlowId.ToString() == "6")
                                         {
@@ -170,10 +170,10 @@ namespace DingTalk.Controllers
                                                 TaskId = tasks.TaskId,
                                                 ApplyMan = nodeInfoCurrent.NodePeople,
                                                 ApplyManId = nodeInfoCurrent.PeopleId,
-                                                IsPost=false,
+                                                IsPost = false,
                                                 State = 0,
-                                                IsSend=false,
-                                                NodeId=2,
+                                                IsSend = false,
+                                                NodeId = 2,
                                                 IsEnable = 1,
                                                 FlowId = 6
                                             };
@@ -233,7 +233,7 @@ namespace DingTalk.Controllers
                     }
 
                     #endregion
-                    
+
                     return JsonConvert.SerializeObject(new ErrorModel
                     {
                         errorCode = 0,
@@ -1196,7 +1196,7 @@ namespace DingTalk.Controllers
                         case 1:
                             //我已审批
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-                            return Quary(context, ListTasks, ApplyManId, IsSupportMobile); ;
+                            return Quary(context, ListTasks, ApplyManId, IsSupportMobile);
                         case 2:
                             //我发起的
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
@@ -1227,7 +1227,7 @@ namespace DingTalk.Controllers
         public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId, bool IsMobile)
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
-            List<Object> listQuary = new List<object>();
+            List<object> listQuary = new List<object>();
             List<Tasks> ListTask = context.Tasks.ToList();
             List<Flows> ListFlows = context.Flows.ToList();
             foreach (int TaskId in ListTasks)
@@ -1269,11 +1269,13 @@ namespace DingTalk.Controllers
                                 IsBack = t.IsBacked,
                                 IsSupportMobile = f.IsSupportMobile
                             };
+
                 if (query.Count() > 0)
                 {
                     listQuary.Add(query);
                 }
             }
+           
             return JsonConvert.SerializeObject(listQuary);
         }
 

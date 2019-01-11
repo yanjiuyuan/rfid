@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace DingTalk.Models
+{
+    public class TaskFlowModel
+    {
+        public decimal Id { get; set; }
+
+        public int? TaskId { get; set; }
+        public int? NodeId { get; set; }
+
+        public int? FlowId { get; set; }
+
+        public string ApplyMan { get; set; }
+        public string ApplyManId { get; set; }
+        public string ApplyTime { get; set; }
+        public string Title { get; set; }
+        public string State { get; set; }
+        public bool IsBack { get; set; }
+        public bool IsSupportMobile { get; set; }
+    }
+}
