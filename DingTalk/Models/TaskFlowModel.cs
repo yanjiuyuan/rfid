@@ -18,6 +18,8 @@ namespace DingTalk.Models
         public string ApplyManId { get; set; }
         public string ApplyTime { get; set; }
         public string Title { get; set; }
+        public string FlowName { get; set; }
+       
         public string State { get; set; }
         public bool? IsBack { get; set; }
         public bool? IsSupportMobile { get; set; }

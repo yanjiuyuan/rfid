@@ -270,7 +270,7 @@ namespace DingTalk.Controllers
                 {
                     List<MaterialCode> materialCodes = context.MaterialCode.Where(
                        m => m.MaterialCodeNumber.Substring(0, 2) == materialCodeNumber &&
-                      m.MateriaType=="2").ToList();
+                      m.MateriaType == "2").ToList();
                     count = materialCodes.Count();
                     foreach (var item in materialCodes)
                     {
@@ -301,7 +301,62 @@ namespace DingTalk.Controllers
 
         public object GetAllMaterialCode()
         {
-            return "";
+            using (DDContext context = new DDContext())
+            {
+                List<MaterialCode> materialCodes = context.MaterialCode.ToList();
+                List<BigMaterialCode> bigMaterialCodes = new List<BigMaterialCode>();
+                List<MaterialCode> bigmaterialCodes = materialCodes.Where(m => m.MateriaType == "0").ToList();
+                foreach (var item in bigmaterialCodes)
+                {
+                    List<MaterialCode> materialCodesSmallList = materialCodes.Where(m => m.MaterialCodeNumber.Substring(0, 2) == item.MaterialCodeNumber &&
+                    m.MateriaType == "2").ToList();
+
+                    List<SmallMaterialCode> SmallMaterialCodeList = new List<SmallMaterialCode>();
+                    foreach (var materialCodesSmall in materialCodesSmallList)
+                    {
+                        SmallMaterialCodeList.Add(new SmallMaterialCode()
+                        {
+                            MaterialCodeNumber = materialCodesSmall.MaterialCodeNumber.Length > 3 ? materialCodesSmall.MaterialCodeNumber.Replace(materialCodesSmall.MaterialCodeNumber.Substring(0, 3), "") : materialCodesSmall.MaterialCodeNumber,
+                            MaterialName = materialCodesSmall.MaterialName,
+                            MateriaType = materialCodesSmall.MateriaType,
+                        });
+                    }
+
+                    bigMaterialCodes.Add(new BigMaterialCode
+                    {
+                        MaterialCodeNumber = item.MaterialCodeNumber,
+                        MaterialName = item.MaterialName,
+                        MateriaType = item.MateriaType,
+                        smallMaterialCodes = SmallMaterialCodeList,
+                    });
+                }
+                return new NewErrorModel()
+                {
+                    count = bigMaterialCodes.Count,
+                    data = bigMaterialCodes,
+                    error = new Error(0, "读取成功", "") { },
+                };
+            }
         }
+    }
+
+    public class BigMaterialCode
+    {
+        public string MaterialCodeNumber { get; set; }
+
+        public string MaterialName { get; set; }
+
+        public string MateriaType { get; set; }
+
+        public List<SmallMaterialCode> smallMaterialCodes { get; set; }
+    }
+
+    public class SmallMaterialCode
+    {
+        public string MaterialCodeNumber { get; set; }
+
+        public string MaterialName { get; set; }
+
+        public string MateriaType { get; set; }
     }
 }
