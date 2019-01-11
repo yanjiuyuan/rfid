@@ -283,7 +283,7 @@
     var items = {}
     var allData = {}
 
-    var FileUrl = ''
+    var FilePDFUrl = ''
     var bomUrl = ''
     var dataArr = [
         {
@@ -482,11 +482,11 @@
             
             //图纸盖章并获取文件
             stampAndGet() {
-                FileUrl = FileUrl.replace(/\\/g, '\\\\')
+                FilePDFUrl = FilePDFUrl.replace(/\\/g, '\\\\')
                 var paramObj = {
                     UserId: DingData.userid,
                     TaskId: TaskId,
-                    OldPath: FileUrl
+                    OldPath: FilePDFUrl
                 }
                 var that = this
                 $.ajax({
