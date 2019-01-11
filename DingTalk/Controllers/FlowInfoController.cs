@@ -1178,7 +1178,7 @@ namespace DingTalk.Controllers
         /// <param name="ApplyManId">用户名Id</param>
         /// <param name="IsSupportMobile">是否是手机端调用接口(默认 false)</param>
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
-        /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=1&ApplyManId=023752010629202711
+        /// 测试数据： /FlowInfo/GetFlowStateDetail?Index=1&ApplyManId=083452125733424957
         [HttpGet]
         public string GetFlowStateDetail(int Index, string ApplyManId, bool IsSupportMobile = false)
         {
@@ -1228,6 +1228,7 @@ namespace DingTalk.Controllers
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
+            List<object> listQuaryPro = new List<object>();
             List<Tasks> ListTask = context.Tasks.ToList();
             List<Flows> ListFlows = context.Flows.ToList();
             foreach (int TaskId in ListTasks)
@@ -1275,8 +1276,35 @@ namespace DingTalk.Controllers
                     listQuary.Add(query);
                 }
             }
-           
-            return JsonConvert.SerializeObject(listQuary);
+
+            //foreach (var item in listQuary)
+            //{
+            //    string TaskId = item.GetType().GetProperty("TaskId").GetValue(item).ToString();
+
+            //}
+
+            string strJson = JsonConvert.SerializeObject(listQuary);
+            List<List<TaskFlowModel>> TaskFlowModelListList = JsonConvert.DeserializeObject<List<List<TaskFlowModel>>>(strJson);
+            List<TaskFlowModel> TaskFlowModelList = new List<TaskFlowModel>();
+            List<TaskFlowModel> TaskFlowModelListQuery = new List<TaskFlowModel>();
+            List<List<TaskFlowModel>> TaskFlowModelListListPro = new List<List<TaskFlowModel>>();
+            foreach (var item in TaskFlowModelListList)
+            {
+                TaskFlowModelList.Add(item[0]);
+            }
+
+            foreach (var item in TaskFlowModelList)
+            {
+                if (!TaskFlowModelListQuery.Contains(item))
+                {
+                    List<TaskFlowModel> taskFlowModels = TaskFlowModelListQuery.Where(t => t.TaskId == item.TaskId).ToList();
+                    if (taskFlowModels.Count == 0)
+                    {
+                        TaskFlowModelListQuery.Add(item);
+                    }
+                }
+            }
+            return JsonConvert.SerializeObject(TaskFlowModelListQuery);
         }
 
         public string GetTasksState(string TaskId, List<Tasks> ListTask)

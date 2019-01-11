@@ -72,7 +72,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("27");
-                    List<Tasks> taskQuery = tasks.Where(t=>t.TaskId.ToString()== TaskId).ToList();
+                    List<Tasks> taskQuery = tasks.Where(t=>t.TaskId.ToString()== TaskId && t.NodeId==1).ToList();
                     List<GoDown> goDowns = new List<GoDown>();
                     foreach (var task in taskQuery)
                     {

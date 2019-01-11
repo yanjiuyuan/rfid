@@ -7,7 +7,7 @@ namespace DingTalk.Models
 {
     public class TaskFlowModel
     {
-        public decimal Id { get; set; }
+        public float Id { get; set; }
 
         public int? TaskId { get; set; }
         public int? NodeId { get; set; }
@@ -19,7 +19,7 @@ namespace DingTalk.Models
         public string ApplyTime { get; set; }
         public string Title { get; set; }
         public string State { get; set; }
-        public bool IsBack { get; set; }
-        public bool IsSupportMobile { get; set; }
+        public bool? IsBack { get; set; }
+        public bool? IsSupportMobile { get; set; }
     }
 }

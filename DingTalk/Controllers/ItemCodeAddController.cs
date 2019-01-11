@@ -290,5 +290,18 @@ namespace DingTalk.Controllers
                 error = new Error(0, string.Format("同步成功！耗时：{0}毫秒", stopwatch.ElapsedMilliseconds), "") { },
             };
         }
+
+
+        /// <summary>
+        /// 获取物料大类和小类
+        /// </summary>
+        /// <returns></returns>
+        [Route("GetAllMaterialCode")]
+        [HttpGet]
+
+        public object GetAllMaterialCode()
+        {
+            return "";
+        }
     }
 }
