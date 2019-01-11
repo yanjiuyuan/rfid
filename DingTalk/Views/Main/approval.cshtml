@@ -270,10 +270,14 @@
             }
         },
         created: function () {
-
+            var that = this
             var node = document.getElementById('content');
-            
-            this.getMenu()
+            var intval = window.setInterval(function () {
+                if (DingData.userid) {
+                    that.getMenu()
+                    clearInterval(intval)
+                }
+            },200)
             this.getUserInfo()
             loadHtml("mainPage", "partPage")
         }

@@ -266,7 +266,7 @@ function handleUrlData(data,demo) {
         demo.fileList = fileList
     }
     if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
-        FileUrl = data.FilePDFUrl
+        FilePDFUrl = data.FilePDFUrl
         var urlList = data.FilePDFUrl.split(',')
         var oldUrlList = data.OldFilePDFUrl.split(',')
         var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []

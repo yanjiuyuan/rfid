@@ -106,7 +106,7 @@
                 meteriel: meteriel,
                 needInput: ['BigCode', 'SmallCode', 'Name'],
                 bigCodes: [],
-                smallCodes:[],
+                smallCodes: [],
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
@@ -156,29 +156,40 @@
             //获取物料编码
             getMaterielCode() {
                 var that = this
-                this._getData('/ItemCodeAdd/GatMaterialCode', function(res) {
+                this._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
                     that.bigCodes = res.data
+                    for (let big of that.bigCodes) {
+                        that._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
+                            //that.smallCodes = res.data
+                            for (let g of that.bigCodes) {
+                                if (g.MaterialCodeNumber == big.MaterialCodeNumber) {
+                                    g['smallCodes'] = res.data
+                                }
+                            }
+                            //that.ruleForm.goods[].smallCodes = res.data
+                        }, { materialCodeNumber: big.MaterialCodeNumber })
+                    }
                 })
             },
             //选择大类获取小类
-            changeBigCode(bigCode,e) {
+            changeBigCode(bigCode, e) {
                 //console.log(bigCode)
-                var that = this
-                this._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
-                    //that.smallCodes = res.data
-                    for (let g of that.ruleForm.goods) {
-                        if (g.BigCode == bigCode) {
-                            g.smallCodes = res.data
+                for (let g of this.ruleForm.goods) {
+                    if (g.BigCode == bigCode) {
+                        for (let c of this.bigCodes) {
+                            if (c.MaterialCodeNumber == bigCode) {
+                                g.smallCodes = c.smallCodes
+                            }
                         }
                     }
-                    //that.ruleForm.goods[].smallCodes = res.data
-                }, { materialCodeNumber: bigCode })
+                }
             },
             //选择大类清除小类
             clearSmallCode(index, bigCode) {
                 console.log(index)
                 console.log(bigCode)
                 this.ruleForm.goods[index].SmallCode = ''
+                this.ruleForm.goods[index].smallCodes = []
             },
             //选择小类
             changeSmallCode() {
@@ -190,15 +201,14 @@
             loadReApprovalData() {
                 if (!ReApprovalTempData.valid) return
                 ReApprovalTempData.valid = false
-                let datas = []
+                //let datas = []
                 for (let d of ReApprovalTempData.data) {
-                    let data = {}
-                    for (let a in meterielConfig) {
-                        data[a] = d[a]
+                    for (let a in this.bigCodes) {
+                        if (d.bigcode == a.MaterialCodeNumber )
+                            d['smallCodes'] = a.smallCodes
                     }
-                    datas.push(data)
                 }
-                this.ruleForm.goods = datas
+                this.ruleForm.goods = ReApprovalTempData.data
             },
             //显示临时保存数据
             saveTempData() {
@@ -214,9 +224,12 @@
             }
         },
         created: function () {
+            var that = this
             this.getNodeInfo()
             this.getApproInfo()
-            this.loadTempData()
+            setTimeout(function () {
+                that.loadTempData()
+            },3000)
             this.getMaterielCode()
 
             this.loadReApprovalData()
