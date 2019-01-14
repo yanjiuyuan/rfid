@@ -138,6 +138,7 @@ namespace DingTalk.Controllers
         {
             try
             {
+
                 string TaskId = printAndSendModel.TaskId;
                 string UserId = printAndSendModel.UserId;
                 PDFHelper pdfHelper = new PDFHelper();
