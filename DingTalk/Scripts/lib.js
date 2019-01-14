@@ -1011,9 +1011,11 @@ var mixin = {
         _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
             var that = this
             url = url += _formatQueryStr(param)
+            console.log(url)
             $.ajax({
                 url: url,
                 dataType: "json",
+                headers: { Accept: 'application/json'},
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     if (data.error && data.error.errorCode != 0) {
