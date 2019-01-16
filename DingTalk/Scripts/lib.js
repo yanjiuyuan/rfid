@@ -603,7 +603,7 @@ var mixin = {
                         that.$alert('审批成功', '操作成功', {
                             confirmButtonText: '确定',
                             callback: action => {
-                                loadPage('/main/Approval')
+                                loadPage('/main/Approval_list')
                             }
                         });
                     } else {
@@ -1011,7 +1011,6 @@ var mixin = {
         _getData(url, callBack, param = {}, alertStr, alertTitle = '提示信息') {
             var that = this
             url = url += _formatQueryStr(param)
-            console.log(url)
             $.ajax({
                 url: url,
                 dataType: "json",

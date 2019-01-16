@@ -94,7 +94,7 @@
     for (let m in meterielConfig) {
         meteriel[m] = ''
     }
-    meteriel['smallMaterialCodes'] = []
+    meteriel['SmallCode'] = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -106,7 +106,6 @@
                 meteriel: meteriel,
                 needInput: ['BigCode', 'SmallCode', 'Name'],
                 bigCodes: [],
-                smallMaterialCodes: [],
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
@@ -157,25 +156,9 @@
             getMaterielCode() {
                 var that = this
                 this._getData('/ItemCodeAdd/GetAllMaterialCode', function (res) {
-                    console.log('??????????')
                     that.bigCodes = res.data
-                    
+                    that.loadReApprovalData()
                 })
-                return
-                //this._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
-                //    that.bigCodes = res.data
-                //    for (let big of that.bigCodes) {
-                //        that._getData('/ItemCodeAdd/GatMaterialCode', function (res) {
-                //            //that.smallMaterialCodes = res.data
-                //            for (let g of that.bigCodes) {
-                //                if (g.MaterialCodeNumber == big.MaterialCodeNumber) {
-                //                    g['smallMaterialCodes'] = res.data
-                //                }
-                //            }
-                //            //that.ruleForm.goods[].smallMaterialCodes = res.data
-                //        }, { materialCodeNumber: big.MaterialCodeNumber })
-                //    }
-                //})
             },
             //选择大类获取小类
             changeBigCode(bigCode, e) {
@@ -209,9 +192,10 @@
                 ReApprovalTempData.valid = false
                 //let datas = []
                 for (let d of ReApprovalTempData.data) {
-                    for (let a in this.bigCodes) {
-                        if (d.bigcode == a.MaterialCodeNumber )
+                    for (let a of this.bigCodes) {
+                        if (d.BigCode == a.MaterialCodeNumber) {
                             d['smallMaterialCodes'] = a.smallMaterialCodes
+                        }
                     }
                 }
                 this.ruleForm.goods = ReApprovalTempData.data
