@@ -175,8 +175,13 @@
         },
         methods: {
             getMenu: function () {
-                 
                 var that = this
+                //this.getData('/FlowInfoNew/LoadFlowSort?id=123', function (data) {
+                //    that.menu = data
+                //    that.getData('/FlowInfoNew/LoadFlowInfo?id=123', function (data) {
+                    
+                //    })
+                //})
                 $.ajax({
                     url: '/FlowInfo/LoadFlowSort?id=123',
                     dataType: 'json',

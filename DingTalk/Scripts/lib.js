@@ -311,6 +311,20 @@ var pickerOptions = {
         }
     }]
 }
+
+
+function doWithErrcode(result) {
+    if (!result) {
+        return 1
+    }
+    if (result.error && result.error.errorCode != 0) {
+        alert(result.error.errorMessage)
+        //dd.alert({ content: result.error.errorMessage })
+        return 1
+    }
+    return 0
+}
+//分页面通用类
 var mixin = {
     data: {
         user: {},
@@ -443,6 +457,43 @@ var mixin = {
         
     },
     methods: {
+        getData(url, succe) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    console.log(url)
+                    console.log(data)
+                    if (doWithErrcode(res.data)) {
+                        return
+                    }
+                    succe(data)
+                },
+                error: function (err) {
+                    console.error(url)
+                    console.error(err)
+                }
+            })
+        },
+        postData(url, param, succe) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: JSON.stringify(param),
+                success: function (data) {
+                    console.log(url)
+                    console.log(data)
+                    if (doWithErrcode(res.data)) {
+                        return
+                    }
+                    succe(data)
+                },
+                error: function (err) {
+                    console.error(url)
+                    console.error(err)
+                }
+            })
+        },
         //提交审批
         approvalSubmit(formName, param, callBack, param2 = {}) {
             var that = this
@@ -499,30 +550,22 @@ var mixin = {
                             }
                         }
                     }
-
-                    console.log("提交审批ok之前")
-                    console.log(paramArr)
-                    console.log(JSON.stringify(paramArr))
-                    $.ajax({
-                        url: '/FlowInfo/CreateTaskInfo',
-                        type: 'POST',
-                        data: JSON.stringify(paramArr),
-                        success: function (data) {
-                            console.log("提交审批ok")
-                            console.log(data)
-                            var taskId = JSON.parse(data).Content
-                            console.log(paramArr)
-                            console.log(JSON.stringify(paramArr))
-                            console.log(taskId)
-                            callBack(taskId)
-                        },
-                        error: function(err) {
-                            console.log("提交审批ok之前")
-                            console.log(paramArr)
-                            console.log(JSON.stringify(paramArr))
-                            console.log(err)
-                        }
+                    that.postData('/FlowInfoNew/CreateTaskInfo', paramArr, function (data) {
+                        var taskId = JSON.parse(data).Content
+                        console.log(taskId)
+                        callBack(taskId)
                     })
+                    //$.ajax({
+                    //    url: '/FlowInfo/CreateTaskInfo',
+                    //    type: 'POST',
+                    //    data: JSON.stringify(paramArr),
+                    //    success: function (data) {
+                    //        var taskId = JSON.parse(data).Content
+                    //        callBack(taskId)
+                    //    },
+                    //    error: function(err) {
+                    //    }
+                    //})
                 } else {
                     that.$alert('表单数据不全或有误', '提交错误', {
                         confirmButtonText: '确定'
@@ -1082,41 +1125,6 @@ var mixin = {
         }
     }
 }
-
-var tableData = [{
-    date: '2017-05-03',
-    name: '办公用品1',
-    address: '笔记本'
-}, {
-    date: '2016-05-02',
-    name: '办公用品2',
-    address: '签字笔'
-}, {
-    date: '2016-05-04',
-    name: '办公用品3',
-    address: 'A4纸，透明胶'
-}, {
-    date: '2016-05-01',
-    name: '用车1',
-    address: '去基地'
-}, {
-    date: '2016-05-08',
-    name: '用车2',
-    address: '去软件园'
-}, {
-    date: '2016-05-06',
-    name: '办公用品4',
-    address: '垃圾桶'
-}, {
-    date: '2018-05-07',
-    name: '加班1',
-    address: '赶进度'
-}, {
-    date: '2017-05-07',
-    name: '办公用品5',
-    address: '尺子'
-}]
-
  
 
 //钉钉审批组件
