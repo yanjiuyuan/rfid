@@ -345,12 +345,16 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CarManangerController.cs" />
     <Compile Include="Controllers\CarTableController.cs" />
+    <Compile Include="Controllers\CarTableNewController.cs" />
     <Compile Include="Controllers\ContractManagerController.cs" />
     <Compile Include="Controllers\DrawingDownController.cs" />
     <Compile Include="Controllers\DrawingUploadController.cs" />
+    <Compile Include="Controllers\DrawingUploadNewController.cs" />
     <Compile Include="Controllers\ErrorLogController.cs" />
     <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\FileNewController.cs" />
     <Compile Include="Controllers\FlowInfoController.cs" />
+    <Compile Include="Controllers\FlowInfoNewController.cs" />
     <Compile Include="Controllers\GiftTableController.cs" />
     <Compile Include="Controllers\GodownManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -368,7 +372,9 @@
     <Compile Include="Controllers\PickController.cs" />
     <Compile Include="Controllers\PicManagerController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
+    <Compile Include="Controllers\ProjectNewController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
+    <Compile Include="Controllers\PurchaseNewController.cs" />
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\ReceivingManagerController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />

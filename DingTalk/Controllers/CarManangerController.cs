@@ -293,6 +293,67 @@ namespace DingTalk.Controllers
             }
         }
 
+
+        /// <summary>
+        /// 车辆查询(返回当前车辆状态)
+        /// </summary>
+        /// <param name="startTime">开始时间(2018-08-07 00:00:00)</param>
+        /// <param name="endTime">结束时间(2018-08-27 00:00:00)</param>
+        [Route("QuaryByTimeNew")]
+        [HttpGet]
+        public NewErrorModel QuaryByTimeNew(string startTime, string endTime)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Car> cars = context.Car.ToList();
+                    List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
+                    List<Car> carsQuery = new List<Car>();//条件过滤集合
+                    List<Car> carsDic = new List<Car>();
+                    foreach (var ct in carTables)
+                    {
+                        if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
+                        {
+                            if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
+                            {
+                                Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
+                                car.IsOccupyCar = true;
+                                car.OccupyCarId = ct.Id.ToString();
+                                car.UseMan = ct.DrivingMan;
+                                car.UseTimes = ct.StartTime + "---" + ct.EndTime;
+                                carsQuery.Add(car);
+                            }
+                        }
+                    }
+
+                    foreach (var c in cars)
+                    {
+                        if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
+                        {
+                            c.OccupyCarId = "";
+                            c.IsOccupyCar = false;
+                            c.UseTimes = "";
+                            carsQuery.Add(c);
+                        }
+                    }
+                    return new NewErrorModel()
+                    {
+                        data = carsQuery,
+                        error = new Error(0, "查询成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
         /// <summary>
         /// 查询数据并推送Excel
         /// </summary>

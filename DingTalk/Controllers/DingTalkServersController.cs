@@ -313,8 +313,6 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         /// 测试数据： DingTalkServers/sendFileMessage
-        /// UserId 用户Id   MediaId 盯盘文件唯一Id
-        /// data:{ "UserId":"manager325","Media_Id":"@@lAjPBY0V43mDr87ODCczbc5-853G"}
         [Route("sendFileMessage")]
         [HttpPost]
         public async Task<string> SendFileMessage([FromBody]FileSendModel fileSendModel)
@@ -331,6 +329,32 @@ namespace DingTalk.Controllers
                 messageType = MessageType.File
             };
             return await dtManager.SendMessage(msgModel);
+        }
+
+        /// <summary>
+        /// 向用户推送文件消息(新)
+        /// </summary>
+        /// <returns></returns>
+        [Route("SendFileMessageNew")]
+        [HttpPost]
+        public async Task<NewErrorModel> SendFileMessageNew([FromBody]FileSendModel fileSendModel)
+        {
+            DingTalkConfig dingTalkConfig = new DingTalkConfig();
+            var msgModel = new FileMsgModel()
+            {
+                agentid = dingTalkConfig.AgentId,
+                file = new file
+                {
+                    media_id = fileSendModel.Media_Id
+                },
+                touser = fileSendModel.UserId,
+                messageType = MessageType.File
+            };
+            return new NewErrorModel()
+            {
+                data = await dtManager.SendMessage(msgModel),
+                error = new Error(0, "推送成功！", "") { },
+            };
         }
 
 

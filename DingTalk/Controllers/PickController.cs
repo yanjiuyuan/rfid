@@ -110,7 +110,6 @@ namespace DingTalk.Controllers
             {
                 EFHelper<Pick> eFHelper = new EFHelper<Pick>();
                 List<Pick> pickList = eFHelper.GetListBy(t => t.TaskId == taskId).ToList();
-
                 return new NewErrorModel()
                 {
                     count = pickList.Count,

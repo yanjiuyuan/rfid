@@ -13,42 +13,37 @@ namespace DingTalk.Bussiness.FlowInfo
         /// 流程大类及小类读取
         /// </summary>
         /// <returns></returns>
-        public string GetFlowInfo()
+        public object GetFlowInfo()
         {
-            string strJson = string.Empty;
-            using (DDContext context = new DDContext())
-            {
-                var Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1);
-                var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
-                var Quary = from a in Flows
-                            join b in FlowSort
-                            on (int)a.SORT_ID equals (int)b.SORT_ID
-                            select new
-                            {
-                                sortId = a.SORT_ID,
-                                sortName = b.SORT_NAME,
-                                flowId = a.FlowId,
-                                flowName = a.FlowName,
-                                flowCreateTime = b.CreateTime
-                            };
-                strJson = JsonConvert.SerializeObject(Quary);
-            }
-            return strJson;
+            DDContext context = new DDContext();
+
+
+            var Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1);
+            var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
+            var Quary = from a in Flows
+                        join b in FlowSort
+                        on (int)a.SORT_ID equals (int)b.SORT_ID
+                        select new
+                        {
+                            sortId = a.SORT_ID,
+                            sortName = b.SORT_NAME,
+                            flowId = a.FlowId,
+                            flowName = a.FlowName,
+                            flowCreateTime = b.CreateTime
+                        };
+            return Quary;
+
         }
 
         /// <summary>
         /// 流程大类读取
         /// </summary>
         /// <returns></returns>
-        public string GetFlowSort()
+        public object GetFlowSort()
         {
-            string strJson = string.Empty;
-            using (DDContext context = new DDContext())
-            {
-                var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
-                strJson = JsonConvert.SerializeObject(FlowSort);
-            }
-            return strJson;
+            DDContext context = new DDContext();
+            var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
+            return FlowSort;
         }
 
 
@@ -91,7 +86,7 @@ namespace DingTalk.Bussiness.FlowInfo
             using (DDContext context = new DDContext())
             {
                 List<Tasks> ListTask = context.Tasks.Where(u => u.State == 0 && u.IsSend != true && u.FlowId.ToString() == FlowId).ToList();
-                List<Tasks> ListTaskFinished = context.Tasks.Where(u => u.State == 1 && u.IsBacked!=true && u.FlowId.ToString() == FlowId).ToList();
+                List<Tasks> ListTaskFinished = context.Tasks.Where(u => u.State == 1 && u.IsBacked != true && u.FlowId.ToString() == FlowId).ToList();
 
                 ListTaskFinall = (from tf in ListTaskFinished
                                   where
@@ -171,6 +166,7 @@ namespace DingTalk.Bussiness.FlowInfo
 
             }
         }
+        
 
     }
 }
