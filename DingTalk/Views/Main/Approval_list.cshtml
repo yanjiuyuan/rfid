@@ -154,6 +154,14 @@
                         loadPage('/Main/approval_gift' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 26) {
+                        loadPage('/Main/approval_picking' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 27) {
+                        loadPage('/Main/approval_intoStorage' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },

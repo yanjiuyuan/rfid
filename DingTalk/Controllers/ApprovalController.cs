@@ -97,5 +97,13 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Picking()
+        {
+            return View();
+        }
+        public ActionResult IntoStorage()
+        {
+            return View();
+        }
     }
 }

@@ -457,7 +457,7 @@ var mixin = {
         
     },
     methods: {
-        getData(url, succe) {
+        GetData(url, succe) {
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -475,7 +475,7 @@ var mixin = {
                 }
             })
         },
-        postData(url, param, succe) {
+        PostData(url, param, succe) {
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -550,22 +550,22 @@ var mixin = {
                             }
                         }
                     }
-                    that.postData('/FlowInfoNew/CreateTaskInfo', paramArr, function (data) {
-                        var taskId = JSON.parse(data).Content
-                        console.log(taskId)
-                        callBack(taskId)
-                    })
-                    //$.ajax({
-                    //    url: '/FlowInfo/CreateTaskInfo',
-                    //    type: 'POST',
-                    //    data: JSON.stringify(paramArr),
-                    //    success: function (data) {
-                    //        var taskId = JSON.parse(data).Content
-                    //        callBack(taskId)
-                    //    },
-                    //    error: function(err) {
-                    //    }
+                    //that.postData('/FlowInfoNew/CreateTaskInfo', paramArr, function (data) {
+                    //    var taskId = JSON.parse(data).Content
+                    //    console.log(taskId)
+                    //    callBack(taskId)
                     //})
+                    $.ajax({
+                        url: '/FlowInfo/CreateTaskInfo',
+                        type: 'POST',
+                        data: JSON.stringify(paramArr),
+                        success: function (data) {
+                            var taskId = JSON.parse(data).Content
+                            callBack(taskId)
+                        },
+                        error: function(err) {
+                        }
+                    })
                 } else {
                     that.$alert('表单数据不全或有误', '提交错误', {
                         confirmButtonText: '确定'
