@@ -24,11 +24,12 @@
             <span style="font-size:1.2rem;">文件夹列表</span>
             <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 5" size="small" type="primary">新建文件夹</el-button>
         </div>
-        <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f)" style="cursor:pointer;">
+        <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f.path)" style="cursor:pointer;position:relative;">
             @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
-            <img v-on:click="openFolder(f)" src="~/Content/images/folder.png" />
+            <img v-on:click="openFolder(f.path)" src="~/Content/images/folder.png" />
             @*<i class="el-icon-error" style="color:red;"></i>*@
-            <p>{{f | substring}}</p>
+            <p v-if="f.count>0" style="position:absolute;top:40px;right:20px;" class="el-badge__content">{{f.count}}</p>
+            <p>{{f.path | substring}}</p>
         </div>
         <!--项目详情-->
         <div v-if="pathList.length == 4" style="clear:left;">
@@ -60,7 +61,7 @@
                 <span style="font-size:1.2rem;">文件列表</span>
             </div>
             <el-table :data="tableData" stripe border>
-                <el-table-column prop="name" label="文件名"></el-table-column>
+                <el-table-column prop="path" label="文件名"></el-table-column>
                 <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
                         <el-button size="mini" v-on:click="downloadFile(scope.$index, scope.row)">下载</el-button>
@@ -148,7 +149,7 @@
             getFileData: function () {
                 this.clockFolder = true
                 var that = this
-                var url = "/Project/GetFileMsg?path="
+                var url = "/ProjectNew/GetFileMsg?path="
                 this.uploadUrl = "/drawingupload/Upload?path="
                 for (let p of this.pathList) {
                     url = url + '\\' + p
@@ -156,41 +157,39 @@
                 }
                 url = url + '&userId=' + DingData.userid
                 this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
-                $.ajax({
-                    url: url,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('/获取文件数据')
-                        console.log(url)
-                        console.log(data)
-                        if (data.errorCode == 0) {
-                            that.$alert(data.errorMessage, '提示信息', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    return
-                                }
-                            });
-                        }
-                        if (data.errorCode == 0) {
-                            that.clockFolder = false
-                            that.pathList.pop()
-                            return
-                        }
-                        let folderArr = []
-                        let fileArr = []
-                        for (let d of data) {
-                            d.indexOf('.') > 0 ? fileArr.push({ name: d }) : folderArr.push(d)
-                        }
-                        that.folderList = folderArr
-                        that.data = fileArr
-                        that.totalRows = fileArr.length
-                        that.getData()
-                        that.clockFolder = false
-                    },
-                    error: function (err) {
-                        console.error(err)
+                this.GetData(url, (data) => {
+                    let folderArr = []
+                    let fileArr = []
+                    for (let d of data) {
+                        d.path.indexOf('.') > 0 ? fileArr.push(d) : folderArr.push(d)
                     }
+                    that.folderList = folderArr
+                    that.data = fileArr
+                    that.totalRows = fileArr.length
+                    that.getData()
+                    that.clockFolder = false
                 })
+                //$.ajax({
+                //    url: url,
+                //    success: function (data) {
+                //        data = JSON.parse(data)
+                //        console.log(url)
+                //        console.log(data)
+                //        let folderArr = []
+                //        let fileArr = []
+                //        for (let d of data) {
+                //            d.indexOf('.') > 0 ? fileArr.push({ name: d }) : folderArr.push(d)
+                //        }
+                //        that.folderList = folderArr
+                //        that.data = fileArr
+                //        that.totalRows = fileArr.length
+                //        that.getData()
+                //        that.clockFolder = false
+                //    },
+                //    error: function (err) {
+                //        console.error(err)
+                //    }
+                //})
             },
             //获取项目数据getProject
             getProject(filename) {
