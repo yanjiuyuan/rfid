@@ -252,30 +252,18 @@ namespace DingTalk.Controllers
         /// <returns>返回文件名数组</returns>
         /// 测试数据：/Project/GetFileMsg?Path=\UploadFile\ProjectFile\宝发
         [HttpGet]
-        public NewErrorModel GetFileMsg(string path, string userId)
+        public string GetFileMsg(string path, string userId)
         {
             try
             {
                 string[] AbPathList = FileHelper.GetFileNames(Server.MapPath(path));
-                //List<string> RePathList = new List<string>();
-                Dictionary<string, int> keyValuePairs = new Dictionary<string, int>();
-
-
+                List<string> RePathList = new List<string>();
                 foreach (var item in AbPathList)
                 {
-                    int fileCount = 0;
-                    DirectoryInfo getFolder = new DirectoryInfo(item);
-                    if (getFolder.Exists)
-                    {
-                        FileInfo[] getFileInfos = getFolder.GetFiles();
-                        fileCount = getFileInfos.Length;
-                    }
-
                     //绝对路径转相对
                     string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
                     string FileName = Path.GetFileName(RelativePath);
-                    //RePathList.Add(FileName);
-                    keyValuePairs.Add(FileName, fileCount);
+                    RePathList.Add(FileName);
                 }
 
                 using (DDContext context = new DDContext())
@@ -287,20 +275,12 @@ namespace DingTalk.Controllers
 
                     if (IsProjectControl || IsLeader)
                     {
-                        return new NewErrorModel()
-                        {
-                            data = keyValuePairs,
-                            error = new Error(0, "读取成功！", "") { },
-                        };
+                        return JsonConvert.SerializeObject(RePathList);
                     }
                     int AppearCount = SubstringCount(path, "\\");
                     if (AppearCount < 5)
                     {
-                        return new NewErrorModel()
-                        {
-                            data = keyValuePairs,
-                            error = new Error(0, "读取成功！", "") { },
-                        };
+                        return JsonConvert.SerializeObject(RePathList);
                     }
                     string CheckPath = path;
                     if (AppearCount > 5)
@@ -318,46 +298,40 @@ namespace DingTalk.Controllers
 
                         if (IsProjectLeader || IsGroupMember)
                         {
-                            return new NewErrorModel()
-                            {
-                                data = keyValuePairs,
-                                error = new Error(0, "读取成功！", "") { },
-                            };
+                            return JsonConvert.SerializeObject(RePathList);
                         }
                         else
                         {
-                            return new NewErrorModel()
+                            return JsonConvert.SerializeObject(new ErrorModel()
                             {
-                                error = new Error(1, "没有权限！", "") { },
-                            };
+                                errorCode = 0,
+                                errorMessage = "没有权限"
+                            });
                         }
                     }
                     else
                     {
                         if (CheckPath.Contains("合同") && IsGroupMember) //小组成员没有权限看合同
                         {
-                            return new NewErrorModel()
+                            return JsonConvert.SerializeObject(new ErrorModel()
                             {
-                                error = new Error(1, "没有权限！", "") { },
-                            };
+                                errorCode = 0,
+                                errorMessage = "没有权限"
+                            });
                         }
-                        return new NewErrorModel()
-                        {
-                            data = keyValuePairs,
-                            error = new Error(0, "读取成功！", "") { },
-                        };
+                        return JsonConvert.SerializeObject(RePathList);
                     }
                 }
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
+                return JsonConvert.SerializeObject(new ErrorModel
                 {
-                    error = new Error(2, ex.Message, "") { },
-                };
+                    errorCode = 1,
+                    errorMessage = ex.Message
+                });
             }
         }
-
 
         /// <summary>
         /// 获取参数路径下的所有文件信息
