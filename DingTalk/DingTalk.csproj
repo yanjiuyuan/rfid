@@ -679,9 +679,6 @@
     <Content Include="Views\Main\Approval.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Main\Approval_copyMe.cshtml" />
-    <Content Include="Views\Main\Approval_fromMe.cshtml" />
-    <Content Include="Views\Main\Approval_IDone.cshtml" />
     <Content Include="Views\Main\Approval_list.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
     <Content Include="Views\Main\VoteDetail.cshtml" />
@@ -735,6 +732,8 @@
     <Content Include="Views\approval\UploadPic.cshtml" />
     <Content Include="Views\approval\Picking.cshtml" />
     <Content Include="Views\approval\IntoStorage.cshtml" />
+    <Content Include="Views\Main\Approval_picking.cshtml" />
+    <Content Include="Views\Main\Approval_intoStorage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

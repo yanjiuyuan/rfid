@@ -13,6 +13,7 @@ var ReApprovalTempData = {} //重新发起审批保存的临时数据
 var imageList = []
 var fileList = []
 var pdfList = []
+let jinDomarn = 'http://1858o1s713.51mypc.cn:16579/api/'
 
 //原型方法
 Array.prototype.removeByValue = function (val) {
@@ -313,13 +314,12 @@ var pickerOptions = {
 }
 
 
-function doWithErrcode(result) {
-    if (!result) {
+function doWithErrcode(error) {
+    if (!error) {
         return 1
     }
-    if (result.error && result.error.errorCode != 0) {
-        alert(result.error.errorMessage)
-        //dd.alert({ content: result.error.errorMessage })
+    if (error && error.errorCode != 0) {
+        alert(error.errorMessage)
         return 1
     }
     return 0
@@ -461,13 +461,13 @@ var mixin = {
             $.ajax({
                 url: url,
                 type: 'GET',
-                success: function (data) {
+                success: function (res) {
                     console.log(url)
-                    console.log(data)
-                    if (doWithErrcode(res.data)) {
+                    console.log(res)
+                    if (doWithErrcode(res.error)) {
                         return
                     }
-                    succe(data)
+                    succe(res.data)
                 },
                 error: function (err) {
                     console.error(url)
@@ -479,14 +479,16 @@ var mixin = {
             $.ajax({
                 url: url,
                 type: 'POST',
+                contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
-                success: function (data) {
+                success: function (res) {
                     console.log(url)
-                    console.log(data)
-                    if (doWithErrcode(res.data)) {
+                    console.log(param)
+                    console.log(res)
+                    if (doWithErrcode(res.error)) {
                         return
                     }
-                    succe(data)
+                    succe(res.data)
                 },
                 error: function (err) {
                     console.error(url)
@@ -518,9 +520,6 @@ var mixin = {
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
                         if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId>0)) {
-                            console.log(node)
-                            console.log(node.ApplyMan)
-                            console.log(node.AddPeople)
                             if (node.AddPeople.length == 0) {
                                 this.$alert('您尚未选择审批人', '提交错误', {
                                     confirmButtonText: '确定',
@@ -550,17 +549,15 @@ var mixin = {
                             }
                         }
                     }
-                    //that.postData('/FlowInfoNew/CreateTaskInfo', paramArr, function (data) {
-                    //    var taskId = JSON.parse(data).Content
-                    //    console.log(taskId)
-                    //    callBack(taskId)
-                    //})
                     $.ajax({
                         url: '/FlowInfo/CreateTaskInfo',
                         type: 'POST',
                         data: JSON.stringify(paramArr),
                         success: function (data) {
                             var taskId = JSON.parse(data).Content
+                            console.log('创建流程')
+                            console.log(paramArr)
+                            console.log(data)
                             callBack(taskId)
                         },
                         error: function(err) {
@@ -729,6 +726,7 @@ var mixin = {
                 }
             }
         },
+        
         //翻頁相關事件
         getData() {
             var start = this.pageSize * (this.currentPage - 1)
@@ -842,7 +840,6 @@ var mixin = {
                 url: url,
                 dataType: "json",
                 success: function (data) {
-                    console.log("當前節點信息")
                     console.log(url)
                     console.log(data)
                     that.nodeInfo = data[0]
