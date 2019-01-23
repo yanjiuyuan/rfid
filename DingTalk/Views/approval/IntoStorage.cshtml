@@ -12,9 +12,7 @@
     <!--物料搜索-->
     <div>
         <span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
-        <el-button type="primary" v-on:click="searchCode">添加</el-button>
-    </div>
-    <div>
+        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>
         <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
@@ -47,14 +45,14 @@
         </el-pagination>
     </div>
     <hr />
-    <h3>已选办公用品</h3>
+    <h3>已选物料</h3>
     <!--采购列表表格實體-->
     <el-table :data="purchaseList" stripe border>
         <el-table-column prop="fNumber" label="物料编码"></el-table-column>
         <el-table-column prop="fName" label="物料名称"></el-table-column>
         <el-table-column prop="fQty" label="实收数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.fQty" prop="Count" :class="{ redborder:scope.row.fQty ==''}"></el-input>
+                <el-input v-model="scope.row.fQty" prop="Count" :class="{ redborder:scope.row.fQty =='' || scope.row.fQty > scope.row.have}"></el-input>
             </template>
         </el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
@@ -99,16 +97,8 @@
                 data: [],
                 tableData: [],
                 purchaseList: [],
-                projectList: [],
-                good: {
-                    ExpectPrice: '',
-                    Unit: '',
-                    Count: ''
-                },
-                preApprove: false,
                 nodeList: [],
                 nodeInfo: {},
-                dialogFormVisible: false,
                 searchForm: {
                     business: '', 
                     name: '',
@@ -117,43 +107,35 @@
                     name: DingData.nickName,
                     remark: '',
                     ProjectName: '',
-                    Title: '办公用品申请',
+                    Title: '入库申请',
                     ProjectId: null,
                     inputProjectName: '',
                     inputProjectId: '',
                     Time: ''
-                },
-                preApprover: false
+                }
             }
         },
         methods: {
             onSubmit(formName) {
                 if (!this.purchaseList.length) {
-                    this.elementAlert('提交失败', '没有选择办公用品')
+                    this.elementAlert('提交失败', '没有选择物料')
                     return
                 }
                 for (let p of this.purchaseList) {
-                    if (p.Unit == '' || p.Count == '') {
-                        this.elementAlert('提交失败', '已选物品信息没填全')
+                    if (p.fQty == '' || p.fQty > p.have) {
+                        this.elementAlert('提交失败', '已选物料实收数量不正确')
                         return
                     }
                 }
                 var that = this
-                let url = '/OfficeSupplies/SaveTable'
                 let callBack = function (taskId) {
-                    var param = []
                     for (let p of that.purchaseList) {
-                        p.TaskId = taskId
-                        param.push(p)
+                        p['TaskId'] = taskId
                     }
-                    that._postData(url, function (data) {
-                        that.$alert('恭喜提交成功', '提示信息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                goHome()
-                            }
-                        })
-                    }, param)
+                    that.PostData('/Godown/Save', that.purchaseList, function() {
+                        that.elementAlert('提示信息', '恭喜提交成功')
+                        loadPage('/main/Approval')
+                    })
                 }
                 this.approvalSubmit(formName, {
                     Title: that.ruleForm.Title,
@@ -164,50 +146,39 @@
             searchCode() {
                 var that = this
                 if (!this.searchForm.name) return
-                var url = '/Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
-                this.GetData(url, (res) => {
-
-                    that.data = res
-                    that.totalRows = res.length
+                var url = jinDomarn + '/Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
+                this.GetData(url, function(data) {
+                    that.data = data
+                    that.totalRows = data.length
                     that.getData()
                 })
-                //$.ajax({
-                //    url: url,
-                //    success: function (data) {
-                //        console.log(url)
-                //        console.log("搜索物料列表ok")
-                //        data = JSON.parse(data)
-                //        console.log(data)
-                //        that.data = data
-                //        that.totalRows = data.length
-                //        that.getData()
-                //    }
-                //})
             },
             searchAndAdd() {
-
+                var that = this
+                if (!this.searchForm.business) return
+                var url = jinDomarn + '/Godown/ReadGodownInfo?UnitName=' + that.searchForm.business
+                this.GetData(url, function (data) {
+                    for (let d of data) {
+                        let ifBreak = false
+                        for (let p of that.purchaseList) {
+                            if (d.fNumber == p.fNumber) ifBreak = true
+                        }
+                        if (ifBreak) break
+                        d['have'] = d.fQty
+                        that.purchaseList.push(d)
+                    }
+                })
             },
             //添加申请物料
             addGood(index, good) {
                 for (let p of this.purchaseList) {
-                    if (p.CodeNo == good.FNumber) return
+                    if (p.fNumber == good.fNumber) return
                 }
-                //if (!checkRate(good.FNote)) good.FNote = 0
-                console.log(good.FNote)
-                this.purchaseList.push({
-                    CodeNo: good.FNumber,
-                    Name: good.FName,
-                    Standard: good.FModel,
-                    Unit: '',
-                    ExpectPrice: good.FNote,// == '0' ? '' : good.FNote,
-                    Count: '',
-                    Purpose: '',
-                    UrgentDate: '',
-                    Mark: ''
-                })
+                good['have'] = good.fQty
+                this.purchaseList.push(good)
             },
             //删除申请物料
-            deleteGood(index, good) {
+            deleteGood(index) {
                 this.purchaseList.splice(index, 1)
             },
             //加载重新发起审批传递的数据
@@ -238,7 +209,6 @@
             this.loadTempData()
             this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
-
         }
     })
 
