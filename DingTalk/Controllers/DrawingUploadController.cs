@@ -150,15 +150,15 @@ namespace DingTalk.Controllers
                                 //保存文件
                                 files.SaveAs(Path);
                                 //上传盯盘获取MediaId
-                                var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
-                                var resultUploadMedia = await otherController.UploadMedia(fileInfos.FilePath);
-                                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                                if (fileSendModel.errcode == "3")  //文件太大钉钉报错
+                                if (file.ContentLength > 16591072)
                                 {
                                     fileInfos.MediaId = "";
                                 }
                                 else
                                 {
+                                    var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
+                                    var resultUploadMedia = await otherController.UploadMedia(fileInfos.FilePath);
+                                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                                     fileInfos.MediaId = fileSendModel.Media_Id;
                                 }
                               
