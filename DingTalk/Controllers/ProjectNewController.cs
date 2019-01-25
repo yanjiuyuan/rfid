@@ -221,7 +221,7 @@ namespace DingTalk.Controllers
                         return new NewErrorModel()
                         {
                             data = downLoadLink,
-                            error = new Error(0, "请复制链接到浏览器中下载！", "") { },
+                            error = new Error(0, "请复制链接到浏览器中下载！", "0") { },
                         };
                     }
                     else
@@ -236,7 +236,7 @@ namespace DingTalk.Controllers
                         return new NewErrorModel()
                         {
                             data = result,
-                            error = new Error(0, "已推送至钉钉工作通知中！", "") { },
+                            error = new Error(0, "已推送至钉钉工作通知中！", "1") { },
                         };
                     }
                 }
