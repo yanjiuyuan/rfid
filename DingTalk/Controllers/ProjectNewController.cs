@@ -209,36 +209,36 @@ namespace DingTalk.Controllers
                 {
                     //查找MediaId
                     FileInfos fileInfo = context.FileInfos.Where(f => f.FilePath == downloadFileModel.path).First();
-                    string mediaId = fileInfo.MediaId;
-                    if (string.IsNullOrEmpty(mediaId))
-                    {
-                        string url = System.Web.HttpContext.Current.Request.Url.Authority;
+                    //string mediaId = fileInfo.MediaId;
+                    //if (string.IsNullOrEmpty(mediaId))
+                    //{
+                    string url = System.Web.HttpContext.Current.Request.Url.Authority;
 
-                        //生成下载链接
-                        string downLoadLink = string.Format("{0}/ProjectNew/DownLoad?path=~/{1}", url, downloadFileModel.path);
-                        //推送盯盘下载链接
+                    //生成下载链接
+                    string downLoadLink = string.Format("{0}/ProjectNew/DownLoad?path=~/{1}", url, downloadFileModel.path);
+                    //推送盯盘下载链接
 
-                        return new NewErrorModel()
-                        {
-                            data = downLoadLink,
-                            error = new Error(0, "请复制链接到浏览器中下载！", "1") { },
-                        };
-                    }
-                    else
+                    return new NewErrorModel()
                     {
-                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                        FileSendModel fileSendModel = new FileSendModel()
-                        {
-                            Media_Id = mediaId,
-                            UserId = downloadFileModel.userId
-                        };
-                        string result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                        return new NewErrorModel()
-                        {
-                            data = result,
-                            error = new Error(0, "已推送至钉钉工作通知中！", "0") { },
-                        };
-                    }
+                        data = downLoadLink,
+                        error = new Error(0, "请复制链接到浏览器中下载！", "1") { },
+                    };
+                    //}
+                    //else
+                    //{
+                    //    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    //    FileSendModel fileSendModel = new FileSendModel()
+                    //    {
+                    //        Media_Id = mediaId,
+                    //        UserId = downloadFileModel.userId
+                    //    };
+                    //    string result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                    //    return new NewErrorModel()
+                    //    {
+                    //        data = result,
+                    //        error = new Error(0, "已推送至钉钉工作通知中！", "0") { },
+                    //    };
+                    //}
                 }
             }
             catch (Exception ex)
