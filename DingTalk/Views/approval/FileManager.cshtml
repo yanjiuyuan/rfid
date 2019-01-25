@@ -86,7 +86,8 @@
                        :file-list="fileList"
                        :action="uploadUrl"
                        @*:on-remove="handleFileRemove"*@
-                       @*:before-upload="beforeFileUpload"*@
+                       :on-error="errUpload"
+                       :before-upload="beforeFileUpload"
                        :on-success="handleFileCardSuccess"
                        multiple>
                 <i class="el-icon-upload"></i>
@@ -169,27 +170,7 @@
                     that.getData()
                     that.clockFolder = false
                 })
-                //$.ajax({
-                //    url: url,
-                //    success: function (data) {
-                //        data = JSON.parse(data)
-                //        console.log(url)
-                //        console.log(data)
-                //        let folderArr = []
-                //        let fileArr = []
-                //        for (let d of data) {
-                //            d.indexOf('.') > 0 ? fileArr.push({ name: d }) : folderArr.push(d)
-                //        }
-                //        that.folderList = folderArr
-                //        that.data = fileArr
-                //        that.totalRows = fileArr.length
-                //        that.getData()
-                //        that.clockFolder = false
-                //    },
-                //    error: function (err) {
-                //        console.error(err)
-                //    }
-                //})
+              
             },
             //获取项目数据getProject
             getProject(filename) {
@@ -215,6 +196,14 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+            },
+            beforeFileUpload: function () {
+
+            },
+            errUpload: function (err, file, fileList) {
+                console.warn(err)
+                console.warn(file)
+                console.warn(fileList)
             },
             //打开某文件夹相关操作
             openFolder: function (folderName) {
@@ -244,7 +233,7 @@
                 for (let p of this.pathList) {
                     path = path + p + '\\'
                 }
-                path += row.name
+                path += row.path
                 var paramObj = {
                     "userId": DingData.userid,
                     "path": path

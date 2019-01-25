@@ -314,16 +314,6 @@ var pickerOptions = {
 }
 
 
-function doWithErrcode(error) {
-    if (!error) {
-        return 1
-    }
-    if (error && error.errorCode != 0) {
-        alert(error.errorMessage)
-        return 1
-    }
-    return 0
-}
 //分页面通用类
 var mixin = {
     data: {
@@ -457,14 +447,25 @@ var mixin = {
         
     },
     methods: {
+        doWithErrcode(error) {
+            if (!error) {
+                return 1
+            }
+            if (error && error.errorCode != 0) {
+                this.elementAlert('报错信息',error.errorMessage)
+                return 1
+            }
+            return 0
+        },
         GetData(url, succe) {
+            var that = this
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function (res) {
                     console.log(url)
                     console.log(res)
-                    if (doWithErrcode(res.error)) {
+                    if (that.doWithErrcode(res.error)) {
                         return
                     }
                     succe(res.data)
@@ -476,6 +477,7 @@ var mixin = {
             })
         },
         PostData(url, param, succe) {
+            var that = this
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -485,7 +487,7 @@ var mixin = {
                     console.log(url)
                     console.log(param)
                     console.log(res)
-                    if (doWithErrcode(res.error)) {
+                    if (that.doWithErrcode(res.error)) {
                         return
                     }
                     succe(res.data)
