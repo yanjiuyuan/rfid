@@ -238,18 +238,7 @@
                     "userId": DingData.userid,
                     "path": path
                 }
-                console.log(paramObj)
-                $.ajax({
-                    url: '/Project/DownloadFileModel/',
-                    type: 'POST',
-                    dataType: "json",
-                    data: paramObj,
-                    success: function (data) {
-                        console.log('下载文件')
-                        console.log(data)
-                        
-                    }
-                })
+                this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (res) => { that.elementAlert('提示','获取成功')})
             },
             //删除文件
             deleteFile: function (index, row) {
