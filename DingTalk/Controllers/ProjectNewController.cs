@@ -1,12 +1,16 @@
 ﻿using Common.Flie;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -168,6 +172,11 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+
+
+
+
         /// <summary>
         /// 计算字符串中子串出现的次数
         /// </summary>
@@ -183,6 +192,128 @@ namespace DingTalk.Controllers
             }
             return 0;
         }
+
+
+        /// <summary>
+        /// 文件下载接口(盯盘推送文件)
+        /// </summary>
+        /// <param name="downloadFileModel">下载文件实体</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("DownloadFileModel")]
+        public async Task<NewErrorModel> DownloadFileModel(DownloadFileModel downloadFileModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    //查找MediaId
+                    FileInfos fileInfo = context.FileInfos.Where(f => f.FilePath == downloadFileModel.path).First();
+                    string mediaId = fileInfo.MediaId;
+                    if (string.IsNullOrEmpty(mediaId))
+                    {
+                        string url = System.Web.HttpContext.Current.Request.Url.Authority;
+
+                        //生成下载链接
+                        string downLoadLink = string.Format("{0}/ProjectNew/DownLoad?path=~/{1}", url, downloadFileModel.path);
+                        //推送盯盘下载链接
+
+                        return new NewErrorModel()
+                        {
+                            data = downLoadLink,
+                            error = new Error(0, "请复制链接到浏览器中下载！", "") { },
+                        };
+                    }
+                    else
+                    {
+                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                        FileSendModel fileSendModel = new FileSendModel()
+                        {
+                            Media_Id = mediaId,
+                            UserId = downloadFileModel.userId
+                        };
+                        string result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                        return new NewErrorModel()
+                        {
+                            data = result,
+                            error = new Error(0, "已推送至钉钉工作通知中！", "") { },
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+
+
+        /// <summary>
+        /// 文件下载
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("DownLoad")]
+        public async Task<HttpResponseMessage> DownLoad(string path)
+        {
+            try
+            {
+                string filename = Path.GetFileName(path);
+                string pathOb = System.Web.Hosting.HostingEnvironment.MapPath(path);
+                var stream = new FileStream(pathOb, FileMode.Open);
+                HttpResponseMessage resp = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StreamContent(stream)
+                };
+                resp.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = filename
+                };
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                resp.Content.Headers.ContentLength = stream.Length;
+                return await Task.FromResult(resp);
+            }
+            catch (Exception ex)
+            {
+            }
+            return new HttpResponseMessage(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
+        /// 发送普通消息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SentCommonMsg")]
+        public string SentCommonMsg(string SendPeoPleId, string msg)
+        {
+            TopSDKTest top = new TopSDKTest();
+            OATextModel oaTextModel = new OATextModel();
+            oaTextModel.head = new head
+            {
+                //bgcolor = "FFBBBBBB",
+                //text = "您有一条待审批的流程，请登入OA系统审批"
+            };
+            oaTextModel.body = new body
+            {
+                form = new form[] {
+                    new form{ key="下载链接：",value=msg},
+                    //new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
+                },
+                //title = Title,//"您有一条待审批的流程，请登入OA系统审批",
+                //content = Content//"我要请假~~~~123456",
+                //image = "@lADOADmaWMzazQKA",
+                //file_count = "3",
+            };
+            //oaTextModel.message_url = Url;
+            return top.SendOaMessage(SendPeoPleId, oaTextModel);
+        }
+
 
         /// <summary>
         /// 返回第n次字符出现的索引
@@ -214,6 +345,12 @@ namespace DingTalk.Controllers
     {
         public string path { get; set; }
         public int count { get; set; }
+    }
+
+    public class DownloadFileModel
+    {
+        public string path { get; set; }
+        public string userId { get; set; }
     }
 
 }

@@ -16,6 +16,9 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -149,7 +152,15 @@ namespace DingTalk.Controllers
                                 var otherController = DependencyResolver.Current.GetService<DingTalkServersController>();
                                 var resultUploadMedia = await otherController.UploadMedia(fileInfos.FilePath);
                                 FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                                fileInfos.MediaId = fileSendModel.Media_Id;
+                                if (fileSendModel.errcode == "3")  //文件太大钉钉报错
+                                {
+                                    fileInfos.MediaId = "";
+                                }
+                                else
+                                {
+                                    fileInfos.MediaId = fileSendModel.Media_Id;
+                                }
+                              
                                 context.FileInfos.Add(fileInfos);
                                 context.SaveChanges();
                             }
@@ -179,7 +190,6 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
-
         }
 
 
@@ -239,6 +249,9 @@ namespace DingTalk.Controllers
             }
 
         }
+
+
+
 
         /// <summary>
         /// Excel读取
@@ -573,9 +586,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-
-
-
+        
 
         public int GetIndexOfString(string InputString, string CharString, int n)
         {

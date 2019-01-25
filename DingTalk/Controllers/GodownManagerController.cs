@@ -131,7 +131,7 @@ namespace DingTalk.Controllers
                                                g.fQty,
                                                g.fPrice,
                                                g.fAmount,
-                                               g.fFullName
+                                               //g.fFullName
                                            };
                     DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectGoDownList);
                     //ClassChangeHelper.ToDataTable(SelectPurchaseList);
