@@ -146,6 +146,7 @@ namespace DingTalk.Controllers
                             bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
                             if (IsComPower || IsSuperPower)
                             {
+
                                 //保存文件
                                 files.SaveAs(Path);
                                 //上传盯盘获取MediaId
