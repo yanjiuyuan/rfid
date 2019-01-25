@@ -201,14 +201,14 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("DownloadFileModel")]
-        public async Task<NewErrorModel> DownloadFileModel(DownloadFileModel downloadFileModel)
+        public NewErrorModel DownloadFileModel(DownloadFileModel downloadFileModel)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
                     //查找MediaId
-                    FileInfos fileInfo = context.FileInfos.Where(f => f.FilePath == downloadFileModel.path).First();
+                    //FileInfos fileInfo = context.FileInfos.Where(f => f.FilePath == downloadFileModel.path).First();
                     //string mediaId = fileInfo.MediaId;
                     //if (string.IsNullOrEmpty(mediaId))
                     //{
