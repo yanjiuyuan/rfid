@@ -265,14 +265,14 @@ namespace DingTalk.Controllers
 
         [Route("sendTextMessage")]
         [HttpPost]
-        public async Task<string> SendTextMessage()
+        public async Task<string> SendTextMessage(string msg,string userId)
         {
             var msgModel = new TextMsgModel()
             {
                 agentid = DTConfig.AgentId,
-                Content = "测试一条消息",
+                Content = msg,
                 //Toparty = "32760351"
-                touser = "manager3312",
+                touser = userId,
             };
             return await dtManager.SendMessage(msgModel);
         }

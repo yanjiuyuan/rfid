@@ -90,6 +90,7 @@ namespace DingTalk.Controllers
                                 FileHelper.CreateDirectory(path + "\\12协议书");
                                 FileHelper.CreateDirectory(path + "\\13合同");
                                 FileHelper.CreateDirectory(path + "\\14验收资料");
+                                FileHelper.CreateDirectory(path + "\\15其他资料");
                                 context.SaveChanges();
                                 return JsonConvert.SerializeObject(new ErrorModel
                                 {

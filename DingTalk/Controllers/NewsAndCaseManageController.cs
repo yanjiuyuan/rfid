@@ -37,7 +37,7 @@ namespace DingTalk.Controllers
             {
                 EFHelper<NewsAndCases> eFHelper = new EFHelper<NewsAndCases>();
                 newsAndCases.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                
+
                 eFHelper.Add(newsAndCases);
                 return new NewErrorModel()
                 {
@@ -278,6 +278,10 @@ namespace DingTalk.Controllers
             }
 
         }
+
+
+
+       
 
 
         /// <summary>
