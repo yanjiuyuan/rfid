@@ -11,10 +11,12 @@
     </div>
     <!--物料搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">流水号添加</span><el-input v-model="searchForm.number" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">流水号添加</span><el-input v-model="searchForm.flowid" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchAndAdd2">添加</el-button>
         <span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>
+    </div>
+    <div style="margin-top:10px;">
         <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
@@ -84,7 +86,7 @@
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
+            @*<el-button type="primary" v-on:click="saveTempData">临时保存</el-button>*@
             @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
         </el-form-item>
     </el-form>
@@ -100,17 +102,18 @@
                 tableData: [],
                 purchaseList: [],
                 nodeList: [],
+                projectList: [],
                 nodeInfo: {},
                 searchForm: {
                     business: '',
                     name: '',
-                    number: ''
+                    flowid: ''
                 },
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
                     ProjectName: '',
-                    Title: '入库申请',
+                    Title: '领料申请',
                     ProjectId: null,
                     inputProjectName: '',
                     inputProjectId: '',
@@ -130,27 +133,37 @@
                         return
                     }
                 }
+                var ProjectName
+                for (let p of this.projectList) {
+                    if (p.ProjectId == this.ruleForm.ProjectId) {
+                        ProjectName = p.ProjectName
+                    }
+                }
                 var that = this
-
                 let callBack = function (taskId) {
                     for (let p of that.purchaseList) {
                         p['TaskId'] = taskId
                     }
-                    that.PostData('/Godown/Save', that.purchaseList, () => {
+                    that.PostData('/Pick/Save', that.purchaseList, function () {
                         that.elementAlert('提示信息', '恭喜提交成功')
+                        loadPage('/main/Approval')
                     })
                 }
                 this.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark
-                }, callBack)
+                    Title: this.ruleForm.Title,
+                    Remark: this.ruleForm.remark,
+                    ProjectName: ProjectName,
+                    ProjectId: this.ruleForm.ProjectId
+                }, callBack, {
+                        ProjectId: this.ruleForm.ProjectId
+                    })
             },
             //搜索物料列表
             searchCode() {
                 var that = this
                 if (!this.searchForm.name) return
-                var url = jinDomarn + '/Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
-                this.GetData(url, function(data) {
+                var url = jinDomarn + '/Pick?keyWord=' + that.searchForm.name
+                this.GetData(url, function (data) {
                     that.data = data
                     that.totalRows = data.length
                     that.getData()
@@ -159,7 +172,7 @@
             searchAndAdd() {
                 var that = this
                 if (!this.searchForm.business) return
-                var url = jinDomarn + '/Godown/ReadGodownInfo?UnitName=' + that.searchForm.business
+                var url = jinDomarn + '/Pick/ReadPickingInfo?UnitName=' + that.searchForm.business
                 this.GetData(url, function (data) {
                     for (let d of data) {
                         let ifBreak = false
@@ -174,8 +187,8 @@
             },
             searchAndAdd2() {
                 var that = this
-                if (!this.searchForm.number) return
-                var url = jinDomarn + '/Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: this.searchForm.number })
+                if (!this.searchForm.business) return
+                var url = jinDomarn + '/Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: TaskId })
                 this.GetData(url, function (data) {
                     for (let d of data) {
                         let ifBreak = false
@@ -197,7 +210,7 @@
                 this.purchaseList.push(good)
             },
             //删除申请物料
-            deleteGood(index,) {
+            deleteGood(index) {
                 this.purchaseList.splice(index, 1)
             },
             //加载重新发起审批传递的数据
@@ -210,7 +223,7 @@
             //显示临时保存数据
             saveTempData() {
                 setLocalObj('officeSupplies', this.purchaseList)
-                this.elementAlert('提示信息','保存成功')
+                this.elementAlert('提示信息', '保存成功')
             },
             loadTempData() {
                 var data = getLocalObj('officeSupplies')
@@ -228,7 +241,6 @@
             this.loadTempData()
             this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
-
         }
     })
 
