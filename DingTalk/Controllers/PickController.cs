@@ -38,6 +38,7 @@ namespace DingTalk.Controllers
         {
             try
             {
+                
                 EFHelper<Pick> eFHelper = new EFHelper<Pick>();
                 foreach (var pick in pickList)
                 {
