@@ -212,7 +212,16 @@ namespace DingTalk.Controllers
                     //string mediaId = fileInfo.MediaId;
                     //if (string.IsNullOrEmpty(mediaId))
                     //{
-                    string url = System.Web.HttpContext.Current.Request.Url.Authority;
+
+                    string url = string.Empty;
+                    if (ConfigurationManager.AppSettings["hao"].ToString() == "2")
+                    {
+                        url = "17e245o364.imwork.net:49415"; 
+                    }
+                    else
+                    {
+                        url = System.Web.HttpContext.Current.Request.Url.Authority;
+                    }
 
                     //生成下载链接
                     string downLoadLink = string.Format("{0}/ProjectNew/DownLoad?path=~/{1}", url, downloadFileModel.path);

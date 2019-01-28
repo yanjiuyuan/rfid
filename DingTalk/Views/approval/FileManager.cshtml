@@ -25,9 +25,7 @@
             <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 5" size="small" type="primary">新建文件夹</el-button>
         </div>
         <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f.path)" style="cursor:pointer;position:relative;">
-            @*<div class="approval-box-img" style="backgroundPosition:-414px -47px;"></div>*@
             <img v-on:click="openFolder(f.path)" src="~/Content/images/folder.png" />
-            @*<i class="el-icon-error" style="color:red;"></i>*@
             <p v-if="f.count>0" style="position:absolute;top:40px;right:20px;" class="el-badge__content">{{f.count}}</p>
             <p>{{f.path | substring}}</p>
         </div>
@@ -60,6 +58,7 @@
             <div style="clear:left;">
                 <span style="font-size:1.2rem;">文件列表</span>
             </div>
+            <div v-if="downloadUrl"><p style="color:red;">复制链接到浏览器下载可查看进度=></p><a>{{downloadUrl}}</a></div>
             <el-table :data="tableData" stripe border>
                 <el-table-column prop="path" label="文件名"></el-table-column>
                 <el-table-column label="操作" width="150">
@@ -92,7 +91,7 @@
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">不超过30M</div>
+                <div class="el-upload__tip" slot="tip">不超过200M</div>
             </el-upload>
         </template>
     </div>
@@ -142,6 +141,7 @@
                     Time: ''
                 },
                 ifExtend: false,
+                downloadUrl: '',
                 uploadUrl: ''
             }
         },
@@ -197,8 +197,15 @@
                     }
                 })
             },
-            beforeFileUpload: function () {
-
+            beforeFileUpload: function (file) {
+                file.name = 'helloWorld'
+                isPdf = false
+                const isLt2M = file.size / 1024 / 1024 < 200
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 200MB!')
+                    return false
+                }
+                return true
             },
             errUpload: function (err, file, fileList) {
                 console.warn(err)
@@ -238,7 +245,10 @@
                     "userId": DingData.userid,
                     "path": path
                 }
-                this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (res) => { that.elementAlert('提示','获取成功')})
+                this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (data) => {
+                    that.downloadUrl = 'http://' + data
+                    location.href = that.downloadUrl
+                })
             },
             //删除文件
             deleteFile: function (index, row) {
@@ -272,24 +282,6 @@
                     confirmButtonText: '确定'
                 });
                 this.getFileData()
-                var that = this
-                var paramObj = {
-                    "applyMan": DingData.nickName,
-                    "ApplyManId": DingData.userid,
-                    "FilePath": file.response.Content
-                }
-                console.log(paramObj)
-                $.ajax({
-                    url: '/DingTalkServers/uploadFile/',
-                    type: 'POST',
-                    dataType: "json",
-                    data: paramObj,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('上传文件到钉盘')
-                        console.log(data)
-                    }
-                })
             },
             handleChange: function () {
 
