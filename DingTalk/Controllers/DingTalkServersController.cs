@@ -657,7 +657,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Ding")]
         [HttpGet]
-        public object Ding(string taskId)
+        public NewErrorModel Ding(string taskId)
         {
             try
             {
@@ -666,29 +666,28 @@ namespace DingTalk.Controllers
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     if (flowInfoServer.GetTasksState(taskId) == "已完成")
                     {
-                        return new ErrorModel
+                        return new NewErrorModel()
                         {
-                            errorCode = 0,
-                            errorMessage = "流程已完成"
+                            error = new Error(1, "流程已完成！", "") { },
                         };
                     }
                     else
                     {
                         Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).OrderBy(s => s.NodeId).First();
-                        return new
+
+                        return new NewErrorModel()
                         {
-                            tasks.ApplyMan,
-                            tasks.ApplyManId
+                            data= tasks,
+                            error = new Error(0, "流程已完成！", "") { },
                         };
                     }
                 }
             }
             catch (Exception ex)
             {
-                return new ErrorModel
+                return new NewErrorModel()
                 {
-                    errorCode = 1,
-                    errorMessage = ex.Message
+                    error = new Error(2, ex.Message, "") { },
                 };
             }
         }
