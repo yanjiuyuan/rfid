@@ -1042,8 +1042,9 @@ var mixin = {
         GetDingList(taskId) {
             var that = this
             this._getData('/DingTalkServers/Ding', function (data) {
-                if (data.ApplyManId) {
-                    that.dingList.push(data.ApplyManId)
+                let applyManId = res.data.ApplyManId
+                if (applyManId) {
+                    that.dingList.push(applyManId)
                 }
                 else that.dingList = []
             }, { taskId: taskId })

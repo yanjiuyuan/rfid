@@ -257,7 +257,7 @@
                 for (let p of this.pathList) {
                     url = url + '\\' + p
                 }
-                url = url + '\\' + row.name
+                url = url + '\\' + row.path
                 $.ajax({
                     url: url,
                     success: function (data) {
