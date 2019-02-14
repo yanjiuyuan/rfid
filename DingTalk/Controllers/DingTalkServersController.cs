@@ -83,7 +83,6 @@ namespace DingTalk.Controllers
                     }
                 }
             }
-            //return JsonConvert.SerializeObject(ListDepartmentId);
             var results = await dtManager.SingleDepartment(Int32.Parse(ListDepartmentId[0]));
             return results;
         }
