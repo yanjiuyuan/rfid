@@ -7,11 +7,11 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        入库申请-{{nodeInfo.NodeName}}
+        领料申请-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">流水号添加</span><el-input v-model="searchForm.flowid" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">流水号添加</span><el-input v-model="searchForm.taskid" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchAndAdd2">添加</el-button>
         <span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>
@@ -107,7 +107,7 @@
                 searchForm: {
                     business: '',
                     name: '',
-                    flowid: ''
+                    taskid: ''
                 },
                 ruleForm: {
                     name: DingData.nickName,
@@ -187,8 +187,8 @@
             },
             searchAndAdd2() {
                 var that = this
-                if (!this.searchForm.business) return
-                var url = jinDomarn + '/Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: TaskId })
+                if (!this.searchForm.taskid) return
+                var url = 'Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: this.searchForm.taskid })
                 this.GetData(url, function (data) {
                     for (let d of data) {
                         let ifBreak = false
