@@ -120,7 +120,6 @@ namespace DingTalk.Controllers
             return userInfo;
         }
 
-
         private void SetAppSettings(string name, string value)
         {
             Configuration config = WebConfigurationManager.OpenWebConfiguration("~");
@@ -129,7 +128,5 @@ namespace DingTalk.Controllers
             //刷新，否则程序读取的还是之前的值（可能已装入内存）
             ConfigurationManager.RefreshSection("appSettings");
         }
-
-
     }
 }

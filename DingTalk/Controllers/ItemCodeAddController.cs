@@ -316,17 +316,17 @@ namespace DingTalk.Controllers
                     {
                         SmallMaterialCodeList.Add(new SmallMaterialCode()
                         {
-                            MaterialCodeNumber = materialCodesSmall.MaterialCodeNumber.Length > 3 ? materialCodesSmall.MaterialCodeNumber.Replace(materialCodesSmall.MaterialCodeNumber.Substring(0, 3), "") : materialCodesSmall.MaterialCodeNumber,
-                            MaterialName = materialCodesSmall.MaterialName,
-                            MateriaType = materialCodesSmall.MateriaType,
+                            materialCodeNumber = materialCodesSmall.MaterialCodeNumber.Length > 3 ? materialCodesSmall.MaterialCodeNumber.Replace(materialCodesSmall.MaterialCodeNumber.Substring(0, 3), "") : materialCodesSmall.MaterialCodeNumber,
+                            materialName = materialCodesSmall.MaterialName,
+                            materiaType = materialCodesSmall.MateriaType,
                         });
                     }
 
                     bigMaterialCodes.Add(new BigMaterialCode
                     {
-                        MaterialCodeNumber = item.MaterialCodeNumber,
-                        MaterialName = item.MaterialName,
-                        MateriaType = item.MateriaType,
+                        materialCodeNumber = item.MaterialCodeNumber,
+                        materialName = item.MaterialName,
+                        materiaType = item.MateriaType,
                         smallMaterialCodes = SmallMaterialCodeList,
                     });
                 }
@@ -342,21 +342,21 @@ namespace DingTalk.Controllers
 
     public class BigMaterialCode
     {
-        public string MaterialCodeNumber { get; set; }
+        public string materialCodeNumber { get; set; }
 
-        public string MaterialName { get; set; }
+        public string materialName { get; set; }
 
-        public string MateriaType { get; set; }
+        public string materiaType { get; set; }
 
         public List<SmallMaterialCode> smallMaterialCodes { get; set; }
     }
 
     public class SmallMaterialCode
     {
-        public string MaterialCodeNumber { get; set; }
+        public string materialCodeNumber { get; set; }
 
-        public string MaterialName { get; set; }
+        public string materialName { get; set; }
 
-        public string MateriaType { get; set; }
+        public string materiaType { get; set; }
     }
 }

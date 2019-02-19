@@ -16,8 +16,6 @@ namespace DingTalk.Bussiness.FlowInfo
         public object GetFlowInfo()
         {
             DDContext context = new DDContext();
-
-
             var Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1);
             var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
             var Quary = from a in Flows
