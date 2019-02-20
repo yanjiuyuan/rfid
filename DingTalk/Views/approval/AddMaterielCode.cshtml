@@ -22,8 +22,8 @@
         </el-form-item>
         <el-form-item lable="编码类型">
             <el-radio-group v-model="ruleForm.codeType" v-on:change="changeCodeType">
-                <el-radio label="1">办公用品</el-radio>
-                <el-radio label="2">零部件</el-radio>
+                <el-radio label="1">零部件</el-radio>
+                <el-radio label="2">办公用品</el-radio>
             </el-radio-group>
             
             <span style="color:red;"> 切换编码类型会清空已填编码！！！</span>
@@ -172,7 +172,7 @@
             getMaterielCode() {
                 var that = this
                 let url = ''
-                this.ruleForm.codeType == '1' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
+                this.ruleForm.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
                 this._getData(url, function (res) {
                     that.bigCodes = res.data
                     that.loadReApprovalData()
