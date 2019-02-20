@@ -41,7 +41,7 @@
 
             <el-form-item label="物料大类" :rules="{ required: true, message: '物料大类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.BigCode'">
-                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" v-on:focus="clearSmallCode(index,good.BigCode)">
+                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" >
                     <el-option v-for="item in bigCodes"
                                :key="item.materialCodeNumber"
                                :label="item.materialName"
