@@ -332,37 +332,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-
-        /// <summary>
-        /// 获取参数路径下的所有文件信息
-        /// </summary>
-        /// <param name="path">路径</param>
-        /// <returns></returns>
-        /// 测试数据：/Project/GetAllFilePath?Path=\UploadFile\ProjectFile\宝发
-        //[HttpGet]
-        //public string GetAllFilePath(string path)
-        //{
-        //    try
-        //    {
-        //        string[] AbPathList = FileHelper.GetDirectories(Server.MapPath(path));
-        //        List<string> RePathList = new List<string>();
-        //        foreach (var item in AbPathList)
-        //        {
-        //            //绝对路径转相对
-        //            RePathList.Add(FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item));
-        //        }
-        //        return JsonConvert.SerializeObject(RePathList);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return JsonConvert.SerializeObject(new ErrorModel
-        //        {
-        //            errorCode = 1,
-        //            errorMessage = ex.Message
-        //        });
-        //    }
-
-        //}
+        
 
         /// <summary>
         /// 修改项目文件
