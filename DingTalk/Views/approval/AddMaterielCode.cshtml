@@ -20,6 +20,14 @@
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" style="width:600px;"></el-input>
         </el-form-item>
+        <el-form-item lable="编码类型">
+            <el-radio-group v-model="ruleForm.codeType" v-on:change="changeCodeType">
+                <el-radio label="1">零部件</el-radio>
+                <el-radio label="2">办公用品</el-radio>
+            </el-radio-group>
+            
+            <span style="color:red;"> 切换编码类型会清空已填编码！！！</span>
+        </el-form-item>
         <!--物料明细-->
         <template v-for="(good,index) in ruleForm.goods">
             <hr />
@@ -33,11 +41,11 @@
 
             <el-form-item label="物料大类" :rules="{ required: true, message: '物料大类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.BigCode'">
-                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" v-on:focus="clearSmallCode(index,good.BigCode)">
+                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" >
                     <el-option v-for="item in bigCodes"
-                               :key="item.MaterialCodeNumber"
-                               :label="item.MaterialName"
-                               :value="item.MaterialCodeNumber">
+                               :key="item.materialCodeNumber"
+                               :label="item.materialName"
+                               :value="item.materialCodeNumber">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -46,9 +54,9 @@
                           :prop="'goods.' + index + '.SmallCode'">
                 <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode">
                     <el-option v-for="item in good.smallMaterialCodes"
-                               :key="item.MaterialCodeNumber"
-                               :label="item.MaterialName"
-                               :value="item.MaterialCodeNumber">
+                               :key="item.materialCodeNumber"
+                               :label="item.materialName"
+                               :value="item.materialCodeNumber">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -107,6 +115,7 @@
                 needInput: ['BigCode', 'SmallCode', 'Name'],
                 bigCodes: [],
                 ruleForm: {
+                    codeType: '1',
                     name: DingData.nickName,
                     remark: '',
                     Title: '物料编码申请',
@@ -152,10 +161,19 @@
             deleteGood(index) {
                 this.ruleForm.goods.splice(index, 1)
             },
+            //切换编码类型
+            changeCodeType(e) {
+                console.log(e)
+                this.getMaterielCode()
+                this.ruleForm.goods = []
+                this.ruleForm.goods.push(_cloneObj(meteriel))
+            },
             //获取物料编码
             getMaterielCode() {
                 var that = this
-                this._getData('/ItemCodeAdd/GetAllMaterialCode', function (res) {
+                let url = ''
+                this.ruleForm.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
+                this._getData(url, function (res) {
                     that.bigCodes = res.data
                     that.loadReApprovalData()
                 })
@@ -166,7 +184,7 @@
                 for (let g of this.ruleForm.goods) {
                     if (g.BigCode == bigCode) {
                         for (let c of this.bigCodes) {
-                            if (c.MaterialCodeNumber == bigCode) {
+                            if (c.materialCodeNumber == bigCode) {
                                 g.smallMaterialCodes = c.smallMaterialCodes
                             }
                         }
@@ -193,7 +211,7 @@
                 //let datas = []
                 for (let d of ReApprovalTempData.data) {
                     for (let a of this.bigCodes) {
-                        if (d.BigCode == a.MaterialCodeNumber) {
+                        if (d.BigCode == a.materialCodeNumber) {
                             d['smallMaterialCodes'] = a.smallMaterialCodes
                         }
                     }
@@ -205,24 +223,13 @@
                 setLocalObj('materiel', this.ruleForm.goods)
                 this.elementAlert('提示信息', '保存成功')
             },
-            //loadTempData() {
-            //    var data = getLocalObj('materiel')
-            //    console.log('load materiel')
-            //    console.log(data)
-            //    if (data && data.length && data.length > 0) this.ruleForm.goods = data
-            //    localStorage.removeItem('materiel')
-            //}
         },
         created: function () {
             var that = this
             this.getNodeInfo()
             this.getApproInfo()
-            //setTimeout(function () {
-            //    that.loadReApprovalData()
-            //},3000)
             this.getMaterielCode()
 
-            //this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
         }
     })
