@@ -14,12 +14,12 @@
         public decimal Id { get; set; }
         
         [StringLength(500)]
-        public string MaterialCodeNumber { get; set; }
+        public string materialCodeNumber { get; set; }
 
         [StringLength(500)]
-        public string MaterialName { get; set; }
+        public string materialName { get; set; }
 
         [StringLength(500)]
-        public string MateriaType { get; set; }
+        public string materiaType { get; set; }
     }
 }

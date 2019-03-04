@@ -218,9 +218,9 @@ namespace DingTalk.Controllers
                     {
                         MaterialCodeList.Add(new MaterialCode()
                         {
-                            MaterialCodeNumber = dr["materialCodeNumber"].ToString(),
-                            MaterialName = dr["materialName"].ToString(),
-                            MateriaType = dr["materiaType"].ToString(),
+                            materialCodeNumber = dr["materialCodeNumber"].ToString(),
+                            materialName = dr["materialName"].ToString(),
+                            materiaType = dr["materiaType"].ToString(),
                         });
                     }
                     context.BulkInsert(MaterialCodeList);
@@ -262,21 +262,21 @@ namespace DingTalk.Controllers
                 if (string.IsNullOrEmpty(materialCodeNumber))
                 {
                     List<MaterialCode> materialCodes = context.MaterialCode.Where(
-                        m => m.MateriaType == "0").ToList();
+                        m => m.materiaType == "0").ToList();
                     count = materialCodes.Count();
                     data = materialCodes;
                 }
                 else
                 {
                     List<MaterialCode> materialCodes = context.MaterialCode.Where(
-                       m => m.MaterialCodeNumber.Substring(0, 2) == materialCodeNumber &&
-                      m.MateriaType == "2").ToList();
+                       m => m.materialCodeNumber.Substring(0, 2) == materialCodeNumber &&
+                      m.materiaType == "2").ToList();
                     count = materialCodes.Count();
                     foreach (var item in materialCodes)
                     {
-                        if (item.MaterialCodeNumber.Length > 3)
+                        if (item.materialCodeNumber.Length > 3)
                         {
-                            item.MaterialCodeNumber = item.MaterialCodeNumber.Replace(item.MaterialCodeNumber.Substring(0, 3), "");
+                            item.materialCodeNumber = item.materialCodeNumber.Replace(item.materialCodeNumber.Substring(0, 3), "");
                         }
                     }
                     data = materialCodes;
@@ -305,28 +305,28 @@ namespace DingTalk.Controllers
             {
                 List<MaterialCode> materialCodes = context.MaterialCode.ToList();
                 List<BigMaterialCode> bigMaterialCodes = new List<BigMaterialCode>();
-                List<MaterialCode> bigmaterialCodes = materialCodes.Where(m => m.MateriaType == "0").ToList();
+                List<MaterialCode> bigmaterialCodes = materialCodes.Where(m => m.materiaType == "0").ToList();
                 foreach (var item in bigmaterialCodes)
                 {
-                    List<MaterialCode> materialCodesSmallList = materialCodes.Where(m => m.MaterialCodeNumber.Substring(0, 2) == item.MaterialCodeNumber &&
-                    m.MateriaType == "2").ToList();
+                    List<MaterialCode> materialCodesSmallList = materialCodes.Where(m => m.materialCodeNumber.Substring(0, 2) == item.materialCodeNumber &&
+                    m.materiaType == "2").ToList();
 
                     List<SmallMaterialCode> SmallMaterialCodeList = new List<SmallMaterialCode>();
                     foreach (var materialCodesSmall in materialCodesSmallList)
                     {
                         SmallMaterialCodeList.Add(new SmallMaterialCode()
                         {
-                            materialCodeNumber = materialCodesSmall.MaterialCodeNumber.Length > 3 ? materialCodesSmall.MaterialCodeNumber.Replace(materialCodesSmall.MaterialCodeNumber.Substring(0, 3), "") : materialCodesSmall.MaterialCodeNumber,
-                            materialName = materialCodesSmall.MaterialName,
-                            materiaType = materialCodesSmall.MateriaType,
+                            materialCodeNumber = materialCodesSmall.materialCodeNumber.Length > 3 ? materialCodesSmall.materialCodeNumber.Replace(materialCodesSmall.materialCodeNumber.Substring(0, 3), "") : materialCodesSmall.materialCodeNumber,
+                            materialName = materialCodesSmall.materialName,
+                            materiaType = materialCodesSmall.materiaType,
                         });
                     }
 
                     bigMaterialCodes.Add(new BigMaterialCode
                     {
-                        materialCodeNumber = item.MaterialCodeNumber,
-                        materialName = item.MaterialName,
-                        materiaType = item.MateriaType,
+                        materialCodeNumber = item.materialCodeNumber,
+                        materialName = item.materialName,
+                        materiaType = item.materiaType,
                         smallMaterialCodes = SmallMaterialCodeList,
                     });
                 }
