@@ -44,7 +44,7 @@
                 <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" >
                     <el-option v-for="item in bigCodes"
                                :key="item.materialCodeNumber"
-                               :label="item.materialName"
+                               :label="item.aterialName"
                                :value="item.materialCodeNumber">
                     </el-option>
                 </el-select>
@@ -112,7 +112,7 @@
                 nodeInfo: {},
                 meterielConfig: meterielConfig,
                 meteriel: meteriel,
-                needInput: ['BigCode', 'SmallCode', 'Name'],
+                needInput: ['BigCode', 'SmallCode', 'Name','Standard'],
                 bigCodes: [],
                 ruleForm: {
                     codeType: '1',
