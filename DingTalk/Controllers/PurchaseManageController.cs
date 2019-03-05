@@ -267,7 +267,8 @@ namespace DingTalk.Controllers
                             //构造数据
                             foreach (var item in t_ICItemList)
                             {
-                                KisOfficeList.Add(new KisOffice()
+                                //KisOfficeList.Add();
+                                DDcontext.KisOffice.Add(new KisOffice()
                                 {
                                     FNumber = item.FNumber,
                                     FItemID = item.FItemID.ToString(),
@@ -275,10 +276,12 @@ namespace DingTalk.Controllers
                                     FModel = item.FModel,
                                     FName = item.FName
                                 });
+                                DDcontext.SaveChanges();
                             }
+
                             //批量插入
-                            DDcontext.BulkInsert(KisOfficeList);
-                            DDcontext.BulkSaveChanges();
+                            //DDcontext.BulkInsert(KisOfficeList);
+                            //DDcontext.BulkSaveChanges();
                             count = t_ICItemList.Count();
                         }
                     }

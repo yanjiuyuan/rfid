@@ -348,6 +348,7 @@
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\DrawingUploadNewController.cs" />
     <Compile Include="Controllers\ErrorLogController.cs" />
+    <Compile Include="Controllers\EvectionController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FileNewController.cs" />
     <Compile Include="Controllers\FlowInfoController.cs" />
@@ -419,6 +420,7 @@
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />
     <Compile Include="Models\DingModels\ErrorLogs.cs" />
+    <Compile Include="Models\DingModels\Evection.cs" />
     <Compile Include="Models\DingModels\GiftTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
     <Compile Include="Models\DingModels\Contract.cs" />

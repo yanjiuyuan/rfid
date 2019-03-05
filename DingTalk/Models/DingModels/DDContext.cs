@@ -58,8 +58,8 @@ namespace DingTalk.Models.DingModels
 
         public virtual DbSet<ErrorLogs> ErrorLogs { get; set; }
 
-
-
+        public virtual DbSet<Evection> Evection { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Approve>()
