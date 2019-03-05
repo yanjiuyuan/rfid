@@ -18,10 +18,22 @@
                 <span v-else>{{scope.row.Name}}</span>
             </template>
         </el-table-column>
-        <el-table-column prop="Count" label="规格型号" width="100">
+        <el-table-column prop="Count" label="规格型号" width="200">
             <template slot-scope="scope">
                 <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.Standard" prop="Standard" :class="{ redborder:!scope.row.Standard}"></el-input>
                 <span v-else>{{scope.row.Standard}}</span>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Count" label="物料大类编码" width="100">
+            <template slot-scope="scope">
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.BigCode" prop="Name" :class="{ redborder:!scope.row.BigCode}"></el-input>
+                <span v-else>{{scope.row.BigCode}}</span>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Count" label="物料小类编码" width="100">
+            <template slot-scope="scope">
+                <el-input v-if="Index == '0' && NodeId == 2" v-model="scope.row.SmallCode" prop="SmallCode" :class="{ redborder:!scope.row.SmallCode}"></el-input>
+                <span v-else>{{scope.row.SmallCode}}</span>
             </template>
         </el-table-column>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
@@ -142,8 +154,8 @@
     var fileList = []
     var dataArr = []
     var items = {
-        BigCode: '物料大类编码',
-        SmallCode: '物料小类编码',
+        //BigCode: '物料大类编码',
+        //SmallCode: '物料小类编码',
         //Name: '物料名称',
         Unit: '单位',
         //Standard: '型号规格',

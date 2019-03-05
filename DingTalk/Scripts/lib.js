@@ -335,6 +335,7 @@ var mixin = {
         specialRoleNames: [],
         preApprove: true,
         isBack: false,
+        projectList: [],
         disablePage: false,
         rules: {
             name: [
