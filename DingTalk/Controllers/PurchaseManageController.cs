@@ -216,7 +216,7 @@ namespace DingTalk.Controllers
                             List<DingTalk.Models.DingModels.KisPurchase> KisPurchaseList = new List<KisPurchase>();
                             //清理旧数据
                             EFHelper<DingTalk.Models.DingModels.KisPurchase> eFHelper = new EFHelper<KisPurchase>();
-                            eFHelper.DelBy(k => k.FItemID != null);
+                            eFHelper.DelBy(k => k.FItemID != null || k.FItemID == null);
                             //构造数据
                             foreach (var item in t_ICItemList)
                             {
@@ -263,7 +263,7 @@ namespace DingTalk.Controllers
                             List<DingTalk.Models.DingModels.KisOffice> KisOfficeList = new List<KisOffice>();
                             //清理旧数据
                             EFHelper<DingTalk.Models.DingModels.KisOffice> eFHelper = new EFHelper<KisOffice>();
-                            eFHelper.DelBy(k => k.FItemID != null);
+                            eFHelper.DelBy(k => k.FItemID != null || k.FItemID == null);
                             //构造数据
                             foreach (var item in t_ICItemList)
                             {
