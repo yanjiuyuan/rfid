@@ -29,6 +29,12 @@
         public string Place { get; set; }
 
         /// <summary>
+        /// 定位地点
+        /// </summary>
+        [StringLength(200)]
+        public string LocationPlace { get; set; }
+
+        /// <summary>
         /// 开始时间
         /// </summary>
         [StringLength(100)]
@@ -45,6 +51,6 @@
         /// </summary>
         [StringLength(300)]
         public string Content { get; set; }
-        
+
     }
 }
