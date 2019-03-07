@@ -122,14 +122,21 @@ namespace DingTalk.Controllers
 
                         if (IsWaterMark == true)
                         {
-                            Bitmap bmp = new Bitmap(Path);
-                            Graphics g = Graphics.FromImage(bmp);
-                            String str = DateTime.Now.ToString("yyyy-dd-MM HH:mm:ss");
-                            Font font = new Font("宋体", 8);
-                            SolidBrush sbrush = new SolidBrush(Color.Black);
-                            g.DrawString(str, font, sbrush, new PointF(10, 10));
-                            MemoryStream ms = new MemoryStream();
-                            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                            //保存文件
+                            files.SaveAs(Path);
+                            AddTextToImg(DateTime.Now.ToString(), Path);
+
+                            newFileName = newFileName + "waterMark";
+
+                            //Bitmap bmp = new Bitmap(Path);
+                            //Graphics g = Graphics.FromImage(bmp);
+                            //String str = DateTime.Now.ToString();
+                            //Font font = new Font("宋体", 18);
+                            //SolidBrush sbrush = new SolidBrush(Color.Black);
+                            //g.DrawString(str, font, sbrush, new PointF(10, 10));
+                            //MemoryStream ms = new MemoryStream();
+                            //bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+
                         }
                         else
                         {
@@ -211,7 +218,39 @@ namespace DingTalk.Controllers
         }
 
 
+        private void AddTextToImg(string text,string filePath)
+        {
+            Image image = Image.FromFile(filePath);
+            Bitmap bitmap = new Bitmap(image, image.Width, image.Height);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap);
+            //字体大小
+            float fontSize = 80.0f;
+            //文本的长度
+            float textWidth = text.Length * fontSize;
+            //下面定义一个矩形区域，以后在这个矩形里画上白底黑字
+            float rectX = 120;
+            float rectY = 200;
+            float rectWidth = text.Length * (fontSize + 40);
+            float rectHeight = fontSize + 40;
+            //声明矩形域
+            RectangleF textArea = new RectangleF(rectX, rectY, rectWidth, rectHeight);
+            //定义字体
+            System.Drawing.Font font = new System.Drawing.Font("微软雅黑", fontSize, System.Drawing.FontStyle.Bold);
+            //font.Bold = true;
+            //白笔刷，画文字用
+            Brush whiteBrush = new SolidBrush(System.Drawing.Color.DodgerBlue);
+            //黑笔刷，画背景用
+            //Brush blackBrush = new SolidBrush(Color.Black);   
+            //g.FillRectangle(blackBrush, rectX, rectY, rectWidth, rectHeight);
+            g.DrawString(text, font, whiteBrush, textArea);
 
+            //System.IO.File.Delete(filePath);
+
+            bitmap.Save(filePath.Substring(0, filePath.Length-4)+"waterMark.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            g.Dispose();
+            bitmap.Dispose();
+            image.Dispose();
+        }
 
 
 
