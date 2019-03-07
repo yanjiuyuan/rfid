@@ -1299,7 +1299,9 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
+                    Tasks tasksNew = context.Tasks.Where(t => t.TaskId == tasks.TaskId && t.NodeId == 0).First();
+                    tasksNew.ImageUrl = tasks.ImageUrl;
+                    context.Entry<Tasks>(tasksNew).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
                 }
 
