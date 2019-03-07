@@ -122,6 +122,7 @@ namespace DingTalk.Controllers
 
                         if (IsWaterMark == true)
                         {
+                            files.SaveAs(Path);
                             Bitmap bmp = new Bitmap(Path);
                             Graphics g = Graphics.FromImage(bmp);
                             String str = DateTime.Now.ToString("yyyy-dd-MM HH:mm:ss");
