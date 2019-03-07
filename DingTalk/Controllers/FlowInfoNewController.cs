@@ -1284,6 +1284,42 @@ namespace DingTalk.Controllers
 
         #endregion
 
+        #region 审批流修改
+
+        /// <summary>
+        /// 审批流修改
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        [Route("TaskModify")]
+        [HttpPost]
+        public NewErrorModel ModifyTable(Tasks tasks)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
+                    context.SaveChanges();
+                }
+
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "", "修改成功") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, "", ex.Message) { },
+                };
+            }
+        }
+
+
+        #endregion
+
         #region 审批意见数据读取
 
         /// <summary>
@@ -1453,7 +1489,7 @@ namespace DingTalk.Controllers
         }
 
         #endregion
-        
+
         #region 系统已配置人员信息读取
 
         /// <summary>

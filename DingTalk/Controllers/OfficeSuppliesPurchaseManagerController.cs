@@ -188,7 +188,7 @@ namespace DingTalk.Controllers
                 return JsonConvert.SerializeObject(new ErrorModel
                 {
                     errorCode = 0,
-                    errorMessage = "保存成功"
+                    errorMessage = "修改成功"
                 });
             }
             catch (Exception ex)
