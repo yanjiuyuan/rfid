@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -42,11 +43,12 @@ namespace DingTalk.Controllers
         /// <param name="path">文件路径</param>
         /// <param name="ApplyMan">用户Id</param>
         /// <param name="ApplyManId">用户Id</param>
-        /// <param name="IsCopy">是否拷贝到研究
-        /// 项目</param>
+        /// <param name="IsCopy">是否拷贝到研究项目</param>
+        /// <param name="IsWaterMark">是否加时间水印</param>
         /// <returns>返回文件路径</returns>
         [HttpPost]
-        public async Task<string> Upload(FormCollection form, string path, string ApplyMan, string ApplyManId, bool? IsCopy = false)
+        public async Task<string> Upload(FormCollection form, string path,
+            string ApplyMan, string ApplyManId, bool? IsCopy = false, bool? IsWaterMark = false)
         {
             try
             {
@@ -118,8 +120,23 @@ namespace DingTalk.Controllers
                                 break;
                         }
 
-                        //保存文件
-                        files.SaveAs(Path);
+                        if (IsWaterMark == true)
+                        {
+                            Bitmap bmp = new Bitmap(Path);
+                            Graphics g = Graphics.FromImage(bmp);
+                            String str = DateTime.Now.ToString("yyyy-dd-MM HH:mm:ss");
+                            Font font = new Font("宋体", 8);
+                            SolidBrush sbrush = new SolidBrush(Color.Black);
+                            g.DrawString(str, font, sbrush, new PointF(10, 10));
+                            MemoryStream ms = new MemoryStream();
+                            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                        }
+                        else
+                        {
+                            //保存文件
+                            files.SaveAs(Path);
+                        }
+
                         if (IsCopy == true)
                         {
                             System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\" + newFileName + strExtension);
@@ -161,7 +178,7 @@ namespace DingTalk.Controllers
                                     FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                                     fileInfos.MediaId = fileSendModel.Media_Id;
                                 }
-                              
+
                                 context.FileInfos.Add(fileInfos);
                                 context.SaveChanges();
                             }
@@ -192,6 +209,10 @@ namespace DingTalk.Controllers
                 });
             }
         }
+
+
+
+
 
 
         /// <summary>
@@ -379,7 +400,7 @@ namespace DingTalk.Controllers
             }
         }
 
-        
+
         /// <summary>
         /// 打印表单数据、盖章、推送
         /// </summary>
@@ -400,7 +421,7 @@ namespace DingTalk.Controllers
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
-                    
+
                     ////判断是否有权限触发按钮
                     //string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
                     //if (UserId != PeopleId)
@@ -587,7 +608,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-        
+
 
         public int GetIndexOfString(string InputString, string CharString, int n)
         {
