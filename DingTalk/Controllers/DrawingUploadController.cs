@@ -96,6 +96,10 @@ namespace DingTalk.Controllers
                                 strPath = @"~\UploadFile\Images\";
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
+                            case ".jpeg":
+                                strPath = @"~\UploadFile\Images\";
+                                Path = Server.MapPath(strPath + newFileName + strExtension);
+                                break;
                             case ".png":
                                 strPath = @"~\UploadFile\Images\";
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
@@ -119,15 +123,25 @@ namespace DingTalk.Controllers
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
                         }
-
+                        IsWaterMark = true;
                         if (IsWaterMark == true)
                         {
+                            if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\外出申请")) == false)//如果不存在就创建file文件夹
+                            {
+                                Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\外出申请"));
+                            }
+                            if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd"))) == false)
+                            {
+                                Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")));
+                            }
+
                             //保存文件
-                            files.SaveAs(Path);
-                            AddTextToImg(DateTime.Now.ToString(), Path);
+                            files.SaveAs(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension);
+
+                            AddTextToImg(DateTime.Now.ToString(), Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension);
 
                             newFileName = newFileName + "waterMark";
-
+                            strPath = Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\";
                             //Bitmap bmp = new Bitmap(Path);
                             //Graphics g = Graphics.FromImage(bmp);
                             //String str = DateTime.Now.ToString();
@@ -218,7 +232,7 @@ namespace DingTalk.Controllers
         }
 
 
-        private void AddTextToImg(string text,string filePath)
+        private void AddTextToImg(string text, string filePath)
         {
             Image image = Image.FromFile(filePath);
             Bitmap bitmap = new Bitmap(image, image.Width, image.Height);
@@ -244,9 +258,17 @@ namespace DingTalk.Controllers
             //g.FillRectangle(blackBrush, rectX, rectY, rectWidth, rectHeight);
             g.DrawString(text, font, whiteBrush, textArea);
 
+            string strParh = "";
             //System.IO.File.Delete(filePath);
-
-            bitmap.Save(filePath.Substring(0, filePath.Length-4)+"waterMark.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            if (filePath.Substring(filePath.Length - 4, 4) == ".jpg" || filePath.Substring(filePath.Length - 4, 4) == ".png")
+            {
+                strParh = filePath.Substring(0, filePath.Length - 4) + "waterMark.jpg";
+            }
+            else
+            {
+                strParh = filePath.Substring(0, filePath.Length - 5) + "waterMark.jpeg";
+            }
+            bitmap.Save(strParh, System.Drawing.Imaging.ImageFormat.Jpeg);
             g.Dispose();
             bitmap.Dispose();
             image.Dispose();
