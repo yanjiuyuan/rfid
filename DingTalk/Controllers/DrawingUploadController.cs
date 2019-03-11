@@ -123,7 +123,6 @@ namespace DingTalk.Controllers
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
                         }
-                        IsWaterMark = true;
                         if (IsWaterMark == true)
                         {
                             if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\外出申请")) == false)//如果不存在就创建file文件夹
