@@ -1,0 +1,155 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        外出申请-{{nodeInfo.NodeName}}
+    </div>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="外出地点" prop="Place">
+            <el-input type="textarea" v-model="ruleForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
+            <el-button type="primary" v-on:click="dialogFormVisible = true">添加地点</el-button>
+            <el-button type="danger" v-on:click="removePlace">删除地点</el-button>
+        </el-form-item>
+        <el-form-item label="外出事由" prop="Content">
+            <el-input v-model="ruleForm.Content" style="width:550px;"></el-input>
+        </el-form-item>
+        <el-form-item label="外出时间" prop="StartTime">
+            <el-date-picker v-model="timeRange"
+                            type="datetimerange"
+                            v-on:change="selectTime"
+                            range-separator="至"
+                            start-placeholder="开始时间"
+                            end-placeholder="返回时间">
+            </el-date-picker>
+        </el-form-item>
+        <el-form-item label="时长/小时" prop="Duration">
+            <el-input v-model="ruleForm.Content" value="durHours" style="width:200px;"></el-input>
+        </el-form-item>
+        <hr />
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item>
+            <el-button type="primary" v-on:click="addPlace('ruleForm')" :disabled="disablePage">提交</el-button>
+        </el-form-item>
+    </el-form>
+
+    <el-dialog title="添加外出地点" :visible.sync="dialogFormVisible">
+        <el-form :model="form" :rules="rules" ref="form">
+            <el-form-item label="外出地点" prop="Place" :label-width="formLabelWidth">
+                <el-input v-model="form.Place" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" v-on:click="on('form')">确 定</el-button>
+        </div>
+    </el-dialog>
+
+
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                applyMan: DingData.nickName,
+                nodeList: [],
+                nodeInfo: {},
+                timeRange: [],
+                placeArr: [],
+                placeStr: '',
+                date: _getDate(),
+                dialogFormVisible: false,
+                ruleForm: {
+                    DrivingMan: DingData.nickName,
+                    BeginTime: "",
+                    EndTime: "",
+                    Content: "",
+                    Place: "",
+                    Title: "外出申请"
+                },
+                form: {
+                    Place: "",
+                },
+                rules: {
+                    Content: { required: true, message: '外出事由不能为空', trigger: 'blur' },
+                    Place: { required: true, message: '外出地点不能为空', trigger: 'blur' },
+                    startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
+                    StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
+                    EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
+                },
+                dayPickerOptions: {
+                    shortcuts: [
+                        {
+                            text: '今天',
+                            onClick(picker) {
+                                picker.$emit('pick', new Date());
+                            }
+                        }, {
+                            text: '明天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() + 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        }]
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                console.log('submit!');
+                var that = this
+                let url = '/CarTable/TableSave'
+                var param = _cloneObj(this.ruleForm)
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    param.TaskId = taskId
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    }, param)
+                }
+                this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
+            },
+            addPlace(v) {
+                console.error(v)
+            },
+            removePlace() {
+
+            },
+            //选时间操作
+            selectTime(value) {
+                if (!value[0]) return
+                this.ruleForm.StartTime = _timeToString(value[0])
+                this.ruleForm.EndTime = _timeToString(value[1])
+            },
+        },
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+</script>
+
+
+

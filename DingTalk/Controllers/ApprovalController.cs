@@ -105,5 +105,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult GoOut()
+        {
+            return View();
+        }
     }
 }
