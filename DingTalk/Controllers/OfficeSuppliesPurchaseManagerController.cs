@@ -286,6 +286,7 @@ namespace DingTalk.Controllers
                     //文件压缩打包
                     IonicHelper.CompressMulti(newPaths, SavePath, false);
 
+
                     //上传盯盘获取MediaId
                     SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
                     DingTalkServersController dingTalkServersController = new DingTalkServersController();

@@ -52,5 +52,17 @@
         [StringLength(300)]
         public string Content { get; set; }
 
+        /// <summary>
+        /// 外出人员
+        /// </summary>
+        [StringLength(500)]
+        public string EvectionMan { get; set; }
+
+        /// <summary>
+        /// 外出人员Id
+        /// </summary>
+        [StringLength(500)]
+        public string EvectionManId { get; set; }
+
     }
 }
