@@ -123,6 +123,7 @@ namespace DingTalk.Controllers
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
                         }
+
                         if (IsWaterMark == true)
                         {
                             if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\外出申请")) == false)//如果不存在就创建file文件夹
@@ -140,7 +141,7 @@ namespace DingTalk.Controllers
                             AddTextToImg(DateTime.Now.ToString(), Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension);
 
                             newFileName = newFileName + "waterMark";
-                            strPath = Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\";
+                            strPath = @"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
                             //Bitmap bmp = new Bitmap(Path);
                             //Graphics g = Graphics.FromImage(bmp);
                             //String str = DateTime.Now.ToString();
