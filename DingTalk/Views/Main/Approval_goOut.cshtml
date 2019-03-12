@@ -1,7 +1,176 @@
-﻿
-@{
-    ViewBag.Title = "Approval_goOut";
+﻿@{
+    Layout = null;
 }
 
-<h2>Approval_goOut</h2>
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        外出申请审批-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="form" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.applyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="同行人">
+            <el-input v-model="form.EvectionMan" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="form.EvectionManId" style="display:none;"></el-input>
+        </el-form-item>
+        <hr />
+        <el-form-item label="外出地点">
+            <el-input v-model="form.Place" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="外出事由">
+            <el-input v-model="form.Content" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="开始时间">
+            <el-input v-model="form.BeginTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="返回时间">
+            <el-input v-model="form.EndTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="时长/小时">
+            <el-input v-model="form.Duration" :disabled="true"></el-input>
+        </el-form-item>
+        <hr />
+        <el-form-item label="意见">
+            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
+
+        <!--图片展示-->
+        <el-form-item v-if="imageList.length > 0" label="相关图片">
+            <el-upload action=""
+                       list-type="picture-card"
+                       :on-preview="handlePictureCardPreview"
+                       :file-list="imageList"
+                       :disabled="true">
+            </el-upload>
+        </el-form-item>
+
+        <hr />
+
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item label="操作" v-if="index==0">
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+        </el-form-item>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+</el-main>
+
+<script>
+    var allData = {}
+    var imageList = []
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                carList: [],
+                imageList: imageList,
+                index: Index,
+                NodeId: NodeId,
+                nodeList: [],
+                nodeInfo: {},
+                form: {
+
+                },
+                dialogVisible: false,
+               
+            }
+        },
+        methods: {
+            onSubmit() {
+                console.log(this.form)
+                console.log(this.ruleForm)
+                return
+                this.aggreSubmit({
+                    "Id": allData.Id,
+                    "Remark": that.ruleForm.Mark,
+                    "ImageUrl": that.ruleForm.ImageUrl,
+                    "OldImageUrl": that.ruleForm.OldImageUrl
+                })
+            },
+            returnBk() {
+                let param = {
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.ruleForm.mark
+                }
+                this.returnSubmit(param)
+            },
+            getGooutTable() {
+                var that = this
+                this._getData('/Evection/Read', function (res) {
+                    console.warn(res)
+                    //that.form = res
+                } , { TaskId: TaskId })
+            },
+
+        },
+ 
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            this.getGooutTable()
+            this.GetDingList(TaskId)
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData()
+
+    //获取审批表单信息
+    function getFormData() {
+        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                console.log(url)
+                console.log(data)
+                allData = data
+                if (data.ImageUrl && data.ImageUrl.length > 5) {
+                    var tempList = data.ImageUrl.split(',')
+                    for (let img of tempList) {
+                        imageList.push({
+                            name: 'hello.jpg',
+                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                        })
+                    }
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+</script>
+
+
 
