@@ -1097,10 +1097,11 @@ namespace DingTalk.Controllers
         /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
         /// <param name="ApplyManId">用户名Id</param>
         /// <param name="IsSupportMobile">是否是手机端调用接口(默认 false)</param>
+        /// <param name="Key">关键字模糊查询(流水号、标题、申请人、流程类型)</param>
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         [HttpGet]
         [Route("GetFlowStateDetail")]
-        public NewErrorModel GetFlowStateDetail(int Index, string ApplyManId, bool IsSupportMobile = false)
+        public NewErrorModel GetFlowStateDetail(int Index, string ApplyManId, bool IsSupportMobile = false, string Key = "")
         {
             try
             {
@@ -1115,7 +1116,7 @@ namespace DingTalk.Controllers
 
                             return new NewErrorModel()
                             {
-                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile),
+                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         case 1:
@@ -1124,7 +1125,7 @@ namespace DingTalk.Controllers
 
                             return new NewErrorModel()
                             {
-                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile),
+                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         case 2:
@@ -1132,7 +1133,7 @@ namespace DingTalk.Controllers
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return new NewErrorModel()
                             {
-                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile),
+                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         case 3:
@@ -1140,7 +1141,7 @@ namespace DingTalk.Controllers
                             ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
                             return new NewErrorModel()
                             {
-                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile),
+                                data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         default:
@@ -1166,10 +1167,12 @@ namespace DingTalk.Controllers
         /// <param name="ListTasks"></param>
         /// <param name="ApplyManId"></param>
         /// <param name="IsMobile"></param>
+        /// <param name="Key"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("Quary")]
-        public object Quary(DDContext context, List<int?> ListTasks, string ApplyManId, bool IsMobile)
+        public object Quary(DDContext context, List<int?> ListTasks,
+            string ApplyManId, bool IsMobile, string Key)
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
@@ -1200,6 +1203,11 @@ namespace DingTalk.Controllers
                             on t.FlowId.ToString() equals f.FlowId.ToString()
                             where t.NodeId == 0 && t.TaskId == TaskId
                             && (IsMobile == true ? f.IsSupportMobile == true : 1 == 1)
+                            && ((Key != "" ? f.FlowName.Contains(Key) : 1 == 1) ||
+                                (Key != "" ? t.TaskId.ToString().Contains(Key) : 1 == 1) ||
+                                 (Key != "" ? t.Title.ToString().Contains(Key) : 1 == 1) ||
+                                (Key != "" ? t.ApplyMan.Contains(Key) : 1 == 1)
+                            )
                             select new
                             {
                                 Id = t.Id + 1,
