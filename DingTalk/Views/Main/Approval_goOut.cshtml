@@ -11,7 +11,7 @@
     <el-form :model="form" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="申请人">
-            <el-input v-model="ruleForm.applyMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="同行人">
             <el-input v-model="form.EvectionMan" style="width:500px;" :disabled="true"></el-input>
@@ -34,11 +34,6 @@
         <el-form-item label="时长/小时">
             <el-input v-model="form.Duration" :disabled="true"></el-input>
         </el-form-item>
-        <hr />
-        <el-form-item label="意见">
-            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
-        </el-form-item>
-
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
             <el-upload action=""
@@ -48,7 +43,9 @@
                        :disabled="true">
             </el-upload>
         </el-form-item>
-
+        <el-form-item label="意见">
+            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
         <hr />
 
         <!--添加审批人-->
@@ -124,23 +121,29 @@
                 this.returnSubmit(param)
             },
             getGooutTable() {
-                var that = this
-                this._getData('/Evection/Read', function (res) {
-                    console.warn(res)
-                    //that.form = res
-                } , { TaskId: TaskId })
+                this.GetData('/Evection/Read' + _formatQueryStr({ TaskId: TaskId }), (res)=> {
+                    console.log('233333333333333333333333333')
+                    console.log(res)
+                    console.log('233333333333333333333333333')
+                    this.form = res
+                })
             },
 
         },
  
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
+            //this.getNodeInfo()
+            //this.getApproInfo()
+
             this.getGooutTable()
             this.GetDingList(TaskId)
             loadHtml("mainPage", "partPage")
         }
     })
+
+    getFormData(demo)
+
+    /*
     getFormData()
 
     //获取审批表单信息
@@ -169,6 +172,7 @@
             }
         })
     }
+    */
 
 </script>
 
