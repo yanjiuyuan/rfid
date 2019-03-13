@@ -44,7 +44,7 @@
                 <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" >
                     <el-option v-for="item in bigCodes"
                                :key="item.materialCodeNumber"
-                               :label="item.materialName"
+                               :label="item.materialCodeNumber + ' - ' + item.materialName"
                                :value="item.materialCodeNumber">
                     </el-option>
                 </el-select>
@@ -55,7 +55,7 @@
                 <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode">
                     <el-option v-for="item in good.smallMaterialCodes"
                                :key="item.materialCodeNumber"
-                               :label="item.materialName"
+                               :label="item.materialCodeNumber + ' - ' + item.materialName"
                                :value="item.materialCodeNumber">
                     </el-option>
                 </el-select>
