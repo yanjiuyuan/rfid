@@ -93,14 +93,11 @@
         },
         methods: {
             onSubmit() {
-                console.log(this.form)
-                console.log(this.ruleForm)
-                return
                 this.aggreSubmit({
                     "Id": allData.Id,
-                    "Remark": that.ruleForm.Mark,
-                    "ImageUrl": that.ruleForm.ImageUrl,
-                    "OldImageUrl": that.ruleForm.OldImageUrl
+                    "Remark": this.ruleForm.Mark,
+                    "ImageUrl": this.ruleForm.ImageUrl,
+                    "OldImageUrl": this.ruleForm.OldImageUrl
                 })
             },
             returnBk() {
@@ -122,9 +119,6 @@
             },
             getGooutTable() {
                 this.GetData('/Evection/Read' + _formatQueryStr({ TaskId: TaskId }), (res)=> {
-                    console.log('233333333333333333333333333')
-                    console.log(res)
-                    console.log('233333333333333333333333333')
                     this.form = res
                 })
             },
@@ -132,48 +126,12 @@
         },
  
         created: function () {
-            //this.getNodeInfo()
-            //this.getApproInfo()
-
             this.getGooutTable()
             this.GetDingList(TaskId)
             loadHtml("mainPage", "partPage")
         }
     })
-
     getFormData(demo)
-
-    /*
-    getFormData()
-
-    //获取审批表单信息
-    function getFormData() {
-        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-        $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log(url)
-                console.log(data)
-                allData = data
-                if (data.ImageUrl && data.ImageUrl.length > 5) {
-                    var tempList = data.ImageUrl.split(',')
-                    for (let img of tempList) {
-                        imageList.push({
-                            name: 'hello.jpg',
-                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
-                        })
-                    }
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
-    */
-
 </script>
 
 
