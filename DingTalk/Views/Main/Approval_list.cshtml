@@ -4,12 +4,17 @@
 
 <!--右侧实体内容-->
 <div id="partPage">
+    <!--列表搜索-->
+    <div>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.keyword" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+    </div>
     <!--表格實體-->
     <el-table :data="tableData" stripe border
-                v-loading="showLoading"
-                element-loading-text="数据加载中"
-                element-loading-spinner="el-icon-loading"
-                element-loading-background="rgba(0, 0, 0, 0.8)">
+              v-loading="showLoading"
+              element-loading-text="数据加载中"
+              element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)">
         <el-table-column prop="TaskId" label="流水号"></el-table-column>
         <el-table-column prop="FlowName" label="审批类型"></el-table-column>
         <el-table-column prop="Title" label="标题"></el-table-column>
@@ -51,6 +56,9 @@
                 totalRows: 0,
                 superSearch: false,
                 Index: UrlObj.Index,
+                searchForm: {
+                    keyword: '',
+                },
                 formInline: {
                     user: '',
                     region: '',
@@ -62,35 +70,25 @@
             }
         },
         methods: {
-            //查詢相關頁面
-            onFilter() {
-                console.log(this.formInline)
-            },
-            //切换高级搜索
-            changeSuperSearch() {
-                this.superSearch = !this.superSearch;
+            //搜索列表
+            searchCode() {
+                if (!this.searchForm.keyword) return
+                this.getApproveList(this.searchForm.keyword)
             },
             //获取审批列表
-            getApproveList() {
-                var that = this 
-                $.ajax({
-                    url: 'FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid,
-                    dataType: 'json',
-                    type: 'GET',
-                    success: function (data) {
-                        console.log('FlowInfo/GetFlowStateDetail?Index=' + Index + '&ApplyManId=' + DingData.userid)
-                        console.log(data)
-                        for (let d of data) {
-                            that.data.push(d)
-                        }
-                        that.showLoading = false
-                        //that.tableData = data
-                        that.getData()
-                        that.totalRows = data.length
-                    },
-                    error: function (err) {
-                        console.error(err)
-                    }
+            getApproveList(keyword) {
+                let param = {
+                    Index: Index,
+                    ApplyManId: DingData.userid
+                }
+                
+                if (keyword) param['Key'] = keyword
+                let url = 'FlowInfoNew/GetFlowStateDetail' + _formatQueryStr(param)
+                this.GetData(url, res => {
+                    this.showLoading = false
+                    this.data = res
+                    this.getData()
+                    this.totalRows = res.length
                 })
             },
             //表单操作

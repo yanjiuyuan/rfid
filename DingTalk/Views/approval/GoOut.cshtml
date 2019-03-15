@@ -14,7 +14,11 @@
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
-            <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="同行人">
+            <el-input v-model="ruleForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="外出地点" prop="Place">
             <el-input type="textarea" v-model="ruleForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
@@ -24,7 +28,7 @@
         <el-form-item label="外出事由" prop="Content">
             <el-input v-model="ruleForm.Content" style="width:550px;"></el-input>
         </el-form-item>
-        <el-form-item label="外出时间" prop="StartTime">
+        <el-form-item label="外出时间" prop="BeginTime">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
                             v-on:change="selectTime"
@@ -33,26 +37,26 @@
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="时长/小时" prop="Duration">
-            <el-input v-model="ruleForm.Content" value="durHours" style="width:200px;"></el-input>
+        <el-form-item label="时长/小时" prop="durHours" >
+            <el-input v-model="ruleForm.durHours" style="width:200px;"></el-input>
         </el-form-item>
         <hr />
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
-            <el-button type="primary" v-on:click="addPlace('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
         </el-form-item>
     </el-form>
 
     <el-dialog title="添加外出地点" :visible.sync="dialogFormVisible">
         <el-form :model="form" :rules="rules" ref="form">
-            <el-form-item label="外出地点" prop="Place" :label-width="formLabelWidth">
+            <el-form-item label="外出地点" prop="Place" >
                 <el-input v-model="form.Place" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" v-on:click="on('form')">确 定</el-button>
+            <el-button type="primary" v-on:click="addPlace('form')">确 定</el-button>
         </div>
     </el-dialog>
 
@@ -74,7 +78,9 @@
                 date: _getDate(),
                 dialogFormVisible: false,
                 ruleForm: {
-                    DrivingMan: DingData.nickName,
+                    durHours: "",
+                    EvectionMan: '',
+                    EvectionManId: '',
                     BeginTime: "",
                     EndTime: "",
                     Content: "",
@@ -88,8 +94,8 @@
                     Content: { required: true, message: '外出事由不能为空', trigger: 'blur' },
                     Place: { required: true, message: '外出地点不能为空', trigger: 'blur' },
                     startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
-                    StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
-                    EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
+                    BeginTime: { required: true, message: '外出时间不能为空', trigger: 'blur' },
+                    durHours: { required: true, message: '外出时长不能为空', trigger: 'blur' },
                 },
                 dayPickerOptions: {
                     shortcuts: [
@@ -111,14 +117,12 @@
         },
         methods: {
             onSubmit(formName) {
-                console.log('submit!');
                 var that = this
-                let url = '/CarTable/TableSave'
+                let url = '/Evection/Save'
                 var param = _cloneObj(this.ruleForm)
+                console.log(param)
                 let callBack = function (taskId) {
-                    console.log(taskId)
                     param.TaskId = taskId
-                    console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
                         that.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
@@ -130,18 +134,47 @@
                 }
                 this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
             },
-            addPlace(v) {
-                console.error(v)
+            addPlace(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.placeArr.push(this.form.Place)
+                        this.ruleForm.Place = this.placeArr.join(',')
+                        this.dialogFormVisible = false
+                        this.form.Place = ''
+                    }
+                })
             },
             removePlace() {
-
+                this.placeArr.pop()
+                this.ruleForm.Place = this.placeArr.join(',')
             },
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
-                this.ruleForm.StartTime = _timeToString(value[0])
+                this.ruleForm.durHours = _computeDurTime(value[0], value[1], 'h')
+                this.ruleForm.BeginTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
             },
+            // 添加同行人
+            addPeerNumber() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                users: [],
+                corpId: DingData.CorpId,
+                max: 10,
+                onSuccess: function (data) {
+                    let names = []
+                    let numbers = []
+                    for (let d of data) {
+                        names.push(d.name)
+                        numbers.push(d.emplId)
+                    }
+                    that.ruleForm.EvectionMan = names.join(',')
+                    that.ruleForm.EvectionManId = numbers.join(',')
+                },
+                onFail: function (err) { }
+            });
+        }
         },
         created: function () {
             this.getNodeInfo()

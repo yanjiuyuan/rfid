@@ -179,6 +179,20 @@ function _getDate(split) {
         return year + '年' + month + '月' + day + '日' 
 }
 
+function _computeDurTime(startTime, endTime, type) {
+    var durDate = endTime.getTime() - startTime.getTime()
+    var days = Math.floor(durDate / (24 * 3600 * 1000))
+    var hours = Math.floor(durDate / (3600 * 1000))
+    var minutes = Math.floor(durDate / (60 * 1000))
+    var seconds = Math.floor(durDate / (1000))
+    switch (type) {
+        case 'd': return days; break;
+        case 'h': return hours; break;
+        case 'm': return minutes; break;
+        default: return seconds;
+    }
+}
+
 function _computedTime(startHour, startMinute, endHour, endMinute) {
     if (startMinute > endMinute) {
         endMinute += 60
@@ -333,6 +347,7 @@ var mixin = {
             }
         ],
         specialRoleNames: [],
+        ruleForm: {},
         preApprove: true,
         isBack: false,
         projectList: [],
@@ -1076,6 +1091,7 @@ var mixin = {
                             }
                         })
                     } else {
+                        console.log(data)
                         callBack(data)
                     }
                 },
