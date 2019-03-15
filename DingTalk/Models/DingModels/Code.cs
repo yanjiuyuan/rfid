@@ -18,10 +18,14 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(500)]
         public string CodeNumber { get; set; }
-
+        /// <summary>
+        /// 大类编码
+        /// </summary>
         [StringLength(500)]
         public string BigCode { get; set; }
-
+        /// <summary>
+        /// 小类编码
+        /// </summary>
         [StringLength(500)]
         public string SmallCode { get; set; }
 
@@ -54,5 +58,21 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(500)]
         public string FNote { get; set; }
+
+        /// <summary>
+        /// 大类名称
+        /// </summary>
+        [StringLength(300)]
+        public string BigCodeName { get; set; }
+        /// <summary>
+        /// 小类名称
+        /// </summary>
+        [StringLength(300)]
+        public string SmallCodeName { get; set; }
+        /// <summary>
+        /// 校验是否合格
+        /// </summary>
+        [NotMapped]
+        public bool IsQualified { get; set; }
     }
 }

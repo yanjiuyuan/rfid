@@ -262,7 +262,7 @@ namespace DingTalk.Controllers
                 if (string.IsNullOrEmpty(materialCodeNumber))
                 {
                     List<MaterialCode> materialCodes = context.MaterialCode.Where(
-                        m => m.materiaType == "0").ToList();
+                        m => m.materiaType == "0").OrderBy(x => x.materialCodeNumber).ToList();
                     count = materialCodes.Count();
                     data = materialCodes;
                 }
@@ -338,7 +338,96 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+
+        /// <summary>
+        /// 获取物料大类和小类(后端调用)
+        /// </summary>
+        /// <returns></returns>
+
+        public List<BigMaterialCode> GetAllMaterialCodeBackstage()
+        {
+            using (DDContext context = new DDContext())
+            {
+                List<MaterialCode> materialCodes = context.MaterialCode.ToList();
+                List<BigMaterialCode> bigMaterialCodes = new List<BigMaterialCode>();
+                List<MaterialCode> bigmaterialCodes = materialCodes.Where(m => m.materiaType == "0").ToList();
+                foreach (var item in bigmaterialCodes)
+                {
+                    List<MaterialCode> materialCodesSmallList = materialCodes.Where(m => m.materialCodeNumber.Substring(0, 2) == item.materialCodeNumber &&
+                    m.materiaType == "2").ToList();
+
+                    List<SmallMaterialCode> SmallMaterialCodeList = new List<SmallMaterialCode>();
+                    foreach (var materialCodesSmall in materialCodesSmallList)
+                    {
+                        SmallMaterialCodeList.Add(new SmallMaterialCode()
+                        {
+                            materialCodeNumber = materialCodesSmall.materialCodeNumber.Length > 3 ? materialCodesSmall.materialCodeNumber.Replace(materialCodesSmall.materialCodeNumber.Substring(0, 3), "") : materialCodesSmall.materialCodeNumber,
+                            materialName = materialCodesSmall.materialName,
+                            materiaType = materialCodesSmall.materiaType,
+                        });
+                    }
+
+                    bigMaterialCodes.Add(new BigMaterialCode
+                    {
+                        materialCodeNumber = item.materialCodeNumber,
+                        materialName = item.materialName,
+                        materiaType = item.materiaType,
+                        smallMaterialCodes = SmallMaterialCodeList,
+                    });
+                }
+                return bigMaterialCodes;
+            }
+        }
+
+
+        /// <summary>
+        /// 校对物料编码
+        /// </summary>
+        /// <param name="codeList"></param>
+        /// <returns>IsQualified表示校对结果</returns>
+        [HttpPost]
+        [Route("CheckItemCode")]
+        public NewErrorModel CheckItemCode([FromBody] List<Code> codeList)
+        {
+            List<BigMaterialCode> bigMaterialCodes = GetAllMaterialCodeBackstage();
+            //List<CheckCode> CodeRerurn = new List<CheckCode>();
+            List<Code> CodeRerurn = codeList;
+            foreach (var code in CodeRerurn)
+            {
+                foreach (var bigMaterialCode in bigMaterialCodes)
+                {
+                    if (code.BigCode == bigMaterialCode.materialCodeNumber)
+                    {
+                        if (code.BigCodeName == bigMaterialCode.materialName)
+                        {
+                            foreach (var item in bigMaterialCode.smallMaterialCodes)
+                            {
+                                if (code.SmallCode == item.materialCodeNumber)
+                                {
+                                    if (code.SmallCodeName == item.materialName)
+                                    {
+                                        code.IsQualified = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return new NewErrorModel()
+            {
+                count = CodeRerurn.Count,
+                data = CodeRerurn,
+                error = new Error(0, "校验成功", "") { },
+            };
+        }
+
     }
+
+
+
 
     public class BigMaterialCode
     {
@@ -358,5 +447,44 @@ namespace DingTalk.Controllers
         public string materialName { get; set; }
 
         public string materiaType { get; set; }
+    }
+
+
+    public partial class CheckCode
+    {
+        public decimal Id { get; set; }
+
+        public string TaskId { get; set; }
+
+        public string CodeNumber { get; set; }
+
+        public string BigCode { get; set; }
+
+        public string SmallCode { get; set; }
+
+        public string Name { get; set; }
+
+        public string Unit { get; set; }
+
+        public string Standard { get; set; }
+
+        public string SurfaceTreatment { get; set; }
+
+        public string PerformanceLevel { get; set; }
+
+        public string StandardNumber { get; set; }
+
+        public string Features { get; set; }
+
+        public string purpose { get; set; }
+
+        public string Remark { get; set; }
+
+        public string FNote { get; set; }
+
+        /// <summary>
+        /// 校对物料编码类型是否合格
+        /// </summary>
+        public bool IsQualified { get; set; }
     }
 }

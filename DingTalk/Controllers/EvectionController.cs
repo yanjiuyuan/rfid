@@ -29,6 +29,11 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<Evection> eFHelper = new EFHelper<Evection>();
+                if (string.IsNullOrEmpty(evection.EvectionMan))
+                {
+                    evection.EvectionMan = "";
+                    evection.EvectionManId = "";
+                }
                 eFHelper.Add(evection);
                 return new NewErrorModel()
                 {
