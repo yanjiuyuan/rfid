@@ -31,16 +31,28 @@
         <!--表格實體-->
         <el-table :data="tableData" stripe border>
             <el-table-column prop="CodeNo" type="index"></el-table-column>
-            <el-table-column v-for="(value,key) in allConfig" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+
+            <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+                <template slot-scope="scope">
+                    <el-input v-model="scope.row[key]" :class="{redborder:!scope.row[key]}"></el-input>
+                </template>
+            </el-table-column>
+            <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) <0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row[key]"></el-input>
                 </template>
             </el-table-column>
-            <el-table-column label="操作">
+
+            @*<el-table-column v-for="(value,key) in allConfig" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
-                    <el-button size="mini" typeof="warn" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+                    <el-input v-model="scope.row[key]"></el-input>
                 </template>
-            </el-table-column>
+            </el-table-column>*@
         </el-table>
         <!--上传表單-->
         <el-upload class="upload-demo"
@@ -138,7 +150,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                mediaId: '@@lAzPDeC2t8Eylc_OPHYfbM4TggzZ',
+                mediaId: '@@lAvPDeC2t8bqmM3OExReeM5jC3b9',
                 nodeList: [],
                 nodeInfo: {},
                 excelList: [],
@@ -146,7 +158,7 @@
                 lengthConfig: lengthConfig,
                 meterielConfig: meterielConfig,
                 meteriel: meteriel,
-                needInput: ['BigCode', 'SmallCode', 'Name','Standard'],
+                needInput: ['BigCode', 'SmallCode', 'BigCodeName', 'SmallCodeName', 'Name','Standard'],
                 bigCodes: [{
                     materialCodeNumber: 1,
                     materialName:''
@@ -163,6 +175,13 @@
         methods: {
             onSubmit(formName) {
                 console.error(this.tableData)
+                for (var i = 0; i < this.tableData.length;i++) {
+                    let d = this.tableData[i]
+                    if (!d.BigCode || !d.BigCode || !d.Name || !d.Standard || !d.BigCodeName || !d.SmallCodeName) {
+                        this.elementAlert('提示信息', '第 ' + (i+1) + ' 表单未填写完整')
+                        return
+                    }
+                }
                 this.PostData('ItemCodeAdd/CheckItemCode', this.tableData, (res) => {
                     this.data = res
                     for (let i = 0; i < res.length; i++) {
@@ -172,15 +191,15 @@
                         }
                     }
                     this.approvalSubmit(formName, {
-                        Title: that.ruleForm.Title,
-                        Remark: that.ruleForm.remark
+                        Title: this.ruleForm.Title,
+                        Remark: this.ruleForm.remark
                     }, this.bindAll)
                 })
             },
             bindAll(taskId) {
                 var that = this
                 var paramArr = []
-                for (let p of this.ruleForm.goods) {
+                for (let p of this.tableData) {
                     p.TaskId = taskId
                     paramArr.push(p)
                 }
@@ -202,7 +221,7 @@
 
             //上传文件方法
             handleSuccess(response, file, fileList) {
-                this.tableData = []
+                //this.tableData = []
                 for (let d of response[0].Value) {
                     let tmpData = {}
                     for (let s in d) {
@@ -220,6 +239,10 @@
             },
             //添加编码
             addGoods() {
+                if (!this.ruleForm.goods[0].BigCode || !this.ruleForm.goods[0].BigCode || !this.ruleForm.goods[0].Name || !this.ruleForm.goods[0].Standard) {
+                    this.elementAlert('提示信息', '表单未填写完整')
+                    return
+                }
                 this.tableData.push(_cloneObj(this.ruleForm.goods[0]))
                 //原方法
                 return
