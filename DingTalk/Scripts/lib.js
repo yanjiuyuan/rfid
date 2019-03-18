@@ -346,6 +346,9 @@ var mixin = {
                 members: []
             }
         ],
+        nodeList: [],
+        nodeInfo: {},
+        tableData: [],
         specialRoleNames: [],
         ruleForm: {},
         preApprove: true,
@@ -990,13 +993,25 @@ var mixin = {
 
         //文件上传处理方法
         BeforeFileUpload(file) {
-            console.log('before file')
-            console.log(file)
             file.name = 'helloWorld'
             isPdf = false
             const isLt2M = file.size / 1024 / 1024 < 10
             if (!isLt2M) {
                 this.$message.error('上传图片大小不能超过 10MB!')
+                return false
+            }
+            return true
+        },
+        //EXCEL文件上传处理方法
+        beforeExcelUpload(file) {
+            const isExcel = (file.name.substr(-3) == 'xls' || file.name.substr(-4) == 'xlsx')
+            const isLt2M = file.size / 1024 / 1024 < 4
+            if (!isExcel) {
+                this.$message.error('只能上传 excel 文件!')
+                return false
+            }
+            if (!isLt2M) {
+                this.$message.error('上传文件大小不能超过 4MB!')
                 return false
             }
             return true

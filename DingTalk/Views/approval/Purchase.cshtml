@@ -9,16 +9,6 @@
         <i class="el-icon-arrow-left"></i>
         零部件采购申请-{{nodeInfo.NodeName}}
     </div>
-    <!--物料搜索-->
-    @*<el-form :inline="true" :model="searchForm" class="demo-form-inline" autocomplete="off" v-on:submit.prevent="searchCode('searchForm')"
-             size="medium" :rules="rules">
-        <el-form-item label="关键字" prop="name">
-            <el-input v-model="searchForm.name" style="width:200px;"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" v-on:click="searchCode('searchForm')">搜索</el-button>
-        </el-form-item>
-    </el-form>*@
     <div>
         <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>

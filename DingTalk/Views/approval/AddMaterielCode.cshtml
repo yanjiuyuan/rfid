@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        物料编码审批-{{nodeInfo.NodeName}}
+        {{ruleForm.Title}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
 
@@ -25,23 +25,41 @@
                 <el-radio label="1">零部件</el-radio>
                 <el-radio label="2">办公用品</el-radio>
             </el-radio-group>
-            
             <span style="color:red;"> 切换编码类型会清空已填编码！！！</span>
         </el-form-item>
+
+        <!--表格實體-->
+        <el-table :data="tableData" stripe border>
+            <el-table-column prop="CodeNo" type="index"></el-table-column>
+            <el-table-column v-for="(value,key) in allConfig" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+                <template slot-scope="scope">
+                    <el-input v-model="scope.row[key]"></el-input>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" typeof="warn" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--上传表單-->
+        <el-upload class="upload-demo"
+                   action="/drawingupload/UploadAndGetInfo"
+                   :on-success="handleSuccess"
+                   :before-upload="beforeExcelUpload"
+                   multiple
+                   :limit="1"
+                   :file-list="excelList">
+            <el-button size="small" type="primary">上传excel</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+        </el-upload>
+        <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+        <hr />
         <!--物料明细-->
         <template v-for="(good,index) in ruleForm.goods">
-            <hr />
-            <el-form-item :label="'物料('+(index+1)+')'">
-                <el-button v-on:click="deleteGood(index)" v-if="index>0"
-                           type="danger" style="float:right;" plain>
-                    删除
-                </el-button>
-            </el-form-item>
-            <br />
-
             <el-form-item label="物料大类" :rules="{ required: true, message: '物料大类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.BigCode'">
-                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode" >
+                <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode(good)">
                     <el-option v-for="item in bigCodes"
                                :key="item.materialCodeNumber"
                                :label="item.materialCodeNumber + ' - ' + item.materialName"
@@ -49,10 +67,9 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item label="物料小类" :rules="{ required: true, message: '物料小类不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.SmallCode'">
-                <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode">
+                <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode(good)">
                     <el-option v-for="item in good.smallMaterialCodes"
                                :key="item.materialCodeNumber"
                                :label="item.materialCodeNumber + ' - ' + item.materialName"
@@ -60,37 +77,34 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) >=0 && meterielConfig[gk]"
                           :label="meterielConfig[gk]" :rules="{ required: true, message: meterielConfig[gk]+'不能为空', trigger: 'blur'}"
                           :prop="'goods.' + index + '.' + gk">
                 <el-input v-model="good[gk]"></el-input>
             </el-form-item>
-
             <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) <0 && meterielConfig[gk]"
                           :label="meterielConfig[gk]">
                 <el-input v-model="good[gk]"></el-input>
             </el-form-item>
         </template>
-        <p class="hint">如需添加申请项，请点击“添加明细”</p>
-        <el-button v-on:click="addGoods" type="primary" plain> + 添加明细</el-button>
+        @*<p class="hint">如需添加申请项，请点击“添加明细”</p>*@
+        <el-button v-on:click="addGoods" type="primary" plain> + 添加编码</el-button>
         <hr />
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
 
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
+            @*<el-button type="primary" v-on:click="saveTempData">临时保存</el-button>*@
         </el-form-item>
     </el-form>
 </el-main>
 
 <script>
     var meterielConfig = {
-        //CodeNumber: '物料编码',
         Name: '物料名称',
         Unit: '单位',
-        Standard: '型号规格',
+        Standard: '规格型号',
         SurfaceTreatment: '表面处理',
         PerformanceLevel: '性能等级',
         StandardNumber: '标准号',
@@ -98,22 +112,45 @@
         purpose: '用途',
         Remark: '备注'
     }
+    var allConfig = _cloneObj(meterielConfig)
+    var configDictionary = {}
+    allConfig['BigCodeName'] = '大类名称'
+    allConfig['BigCode'] = '大类编码'
+    allConfig['SmallCodeName'] = '小类名称'
+    allConfig['SmallCode'] = '小类编码'
+    for (let c in allConfig) {
+        configDictionary[allConfig[c]] = c
+    }
     var meteriel = {}
+    var lengthConfig = {}
     for (let m in meterielConfig) {
         meteriel[m] = ''
-    }
-    meteriel['SmallCode'] = []
+        switch (m) {
+            case 'Unit': case 'BigCode': case 'SmallCode': case 'PerformanceLevel': case 'Features': lengthConfig[m] = 100; break;
+            default: lengthConfig[m] = '';
+        }
+    } 
+    meteriel['BigCode'] = ''
+    meteriel['SmallCode'] = ''
+    meteriel['smallMaterialCodes'] = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
+                mediaId: '@@lAzPDeC2t8Eylc_OPHYfbM4TggzZ',
                 nodeList: [],
                 nodeInfo: {},
+                excelList: [],
+                allConfig: allConfig,
+                lengthConfig: lengthConfig,
                 meterielConfig: meterielConfig,
                 meteriel: meteriel,
                 needInput: ['BigCode', 'SmallCode', 'Name','Standard'],
-                bigCodes: [],
+                bigCodes: [{
+                    materialCodeNumber: 1,
+                    materialName:''
+                }],
                 ruleForm: {
                     codeType: '1',
                     name: DingData.nickName,
@@ -125,11 +162,20 @@
         },
         methods: {
             onSubmit(formName) {
-                var that = this
-                that.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark
-                }, this.bindAll)
+                console.error(this.tableData)
+                this.PostData('ItemCodeAdd/CheckItemCode', this.tableData, (res) => {
+                    this.data = res
+                    for (let i = 0; i < res.length; i++) {
+                        if (!res[i].IsQualified) {
+                            this.elementAlert('提示信息', '第 ' + (i+1) + '行物料编码大类小类输入有误')
+                            return
+                        }
+                    }
+                    this.approvalSubmit(formName, {
+                        Title: that.ruleForm.Title,
+                        Remark: that.ruleForm.remark
+                    }, this.bindAll)
+                })
             },
             bindAll(taskId) {
                 var that = this
@@ -138,9 +184,7 @@
                     p.TaskId = taskId
                     paramArr.push(p)
                 }
-                console.log("物料申請批量保存 paramArr ")
                 //console.log(JSON.stringify(paramArr))
-                console.log(paramArr)
                 $.ajax({
                     url: '/ItemCodeAdd/TableSave',
                     contentType: 'application/json; charset=utf-8',
@@ -155,15 +199,43 @@
                     }
                 })
             },
+
+            //上传文件方法
+            handleSuccess(response, file, fileList) {
+                this.tableData = []
+                for (let d of response[0].Value) {
+                    let tmpData = {}
+                    for (let s in d) {
+                        tmpData[configDictionary[s]] = d[s]
+                    }
+                    this.tableData.push(tmpData)
+                }
+                return
+                for (let i = 0; i < tableData.length; i++) {
+                    let data = tableData[i]
+                    if (i != 0 && data['Column1'] && data['Column1'] != "") {
+                        this.tableData.push(data)
+                    }
+                }
+            },
+            //添加编码
             addGoods() {
+                this.tableData.push(_cloneObj(this.ruleForm.goods[0]))
+                //原方法
+                return
                 this.ruleForm.goods.push(_cloneObj(meteriel))
             },
-            deleteGood(index) {
-                this.ruleForm.goods.splice(index, 1)
+            editGood(index, row) {
+
             },
+            deleteGood(index) {
+                this.tableData.splice(index, 1)
+            },
+
             //切换编码类型
             changeCodeType(e) {
                 console.log(e)
+                this.tableData = []
                 this.getMaterielCode()
                 this.ruleForm.goods = []
                 this.ruleForm.goods.push(_cloneObj(meteriel))
@@ -175,61 +247,55 @@
                 this.ruleForm.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
                 this._getData(url, function (res) {
                     that.bigCodes = res.data
-                    that.loadReApprovalData()
+                    //that.loadReApprovalData()
                 })
             },
             //选择大类获取小类
-            changeBigCode(bigCode, e) {
-                //console.log(bigCode)
-                for (let g of this.ruleForm.goods) {
-                    if (g.BigCode == bigCode) {
-                        for (let c of this.bigCodes) {
-                            if (c.materialCodeNumber == bigCode) {
-                                g.smallMaterialCodes = c.smallMaterialCodes
-                            }
-                        }
+            changeBigCode(good) {
+                for (let c of this.bigCodes) {
+                    if (c.materialCodeNumber == good.BigCode) {
+                        good['BigCodeName'] = c.materialName
+                        good.smallMaterialCodes = c.smallMaterialCodes
                     }
                 }
             },
-            //选择大类清除小类
-            clearSmallCode(index, bigCode) {
-                console.log(index)
-                console.log(bigCode)
-                this.ruleForm.goods[index].SmallCode = ''
-                this.ruleForm.goods[index].smallMaterialCodes = []
-            },
             //选择小类
-            changeSmallCode() {
+            changeSmallCode(good) {
+                for (let c of this.bigCodes) {
+                    for (let s of c.smallMaterialCodes) {
+                        if (c.materialCodeNumber == good.BigCode && s.materialCodeNumber == good.SmallCode) {
+                            good['SmallCodeName'] = s.materialName
+                        }
+                    }
+                }
                 let a = this.ruleForm.goods[0].Remark
                 this.ruleForm.goods[0].Remark = Math.random() + ''
                 this.ruleForm.goods[0].Remark = a
             },
-            //加载重新发起审批传递的数据
-            loadReApprovalData() {
-                if (!ReApprovalTempData.valid) return
-                ReApprovalTempData.valid = false
-                //let datas = []
-                for (let d of ReApprovalTempData.data) {
-                    for (let a of this.bigCodes) {
-                        if (d.BigCode == a.materialCodeNumber) {
-                            d['smallMaterialCodes'] = a.smallMaterialCodes
-                        }
-                    }
-                }
-                this.ruleForm.goods = ReApprovalTempData.data
-            },
-            //显示临时保存数据
-            saveTempData() {
-                setLocalObj('materiel', this.ruleForm.goods)
-                this.elementAlert('提示信息', '保存成功')
-            },
+            ////加载重新发起审批传递的数据
+            //loadReApprovalData() {
+            //    if (!ReApprovalTempData.valid) return
+            //    ReApprovalTempData.valid = false
+            //    //let datas = []
+            //    for (let d of ReApprovalTempData.data) {
+            //        for (let a of this.bigCodes) {
+            //            if (d.BigCode == a.materialCodeNumber) {
+            //                d['smallMaterialCodes'] = a.smallMaterialCodes
+            //            }
+            //        }
+            //    }
+            //    this.ruleForm.goods = ReApprovalTempData.data
+            //},
+            ////显示临时保存数据
+            //saveTempData() {
+            //    setLocalObj('materiel', this.ruleForm.goods)
+            //    this.elementAlert('提示信息', '保存成功')
+            //},
         },
         created: function () {
-            var that = this
             this.getNodeInfo()
             this.getApproInfo()
             this.getMaterielCode()
-
             loadHtml("mainPage", "partPage")
         }
     })

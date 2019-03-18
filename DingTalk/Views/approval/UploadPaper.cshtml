@@ -451,21 +451,7 @@
                 })
             },
             
-            beforeExcelUpload(file) {
-                console.log('before excel')
-                console.log(file)
-                const isExcel = file.name.substr(-3) == 'xls'
-                const isLt2M = file.size / 1024 / 1024 < 2
-                if (!isExcel) {
-                    this.$message.error('上传图片只能是 excel 文件!')
-                    return false
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 2MB!')
-                    return false
-                }
-                return true
-            },
+            
             beforePdfFileUpload(file) {
                 console.log('before pdf')
                 console.log(file)
