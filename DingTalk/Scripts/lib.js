@@ -1072,7 +1072,7 @@ var mixin = {
         //根据taskId获取下一个需要审批的人，即要钉的人
         GetDingList(taskId) {
             var that = this
-            this._getData('/DingTalkServers/Ding', function (data) {
+            this._getData('/DingTalkServers/Ding', function (res) {
                 let applyManId = res.data.ApplyManId
                 if (applyManId) {
                     that.dingList.push(applyManId)
@@ -1326,6 +1326,47 @@ Vue.component('sam-approver-list', {
 })
 
 //钉钉----钉一下功能组件
+Vue.component('Ding2', {
+    props: ['dinglist', 'userid','flowid'],
+    template: `
+            <div v-show="dinglist && dinglist.length && dinglist.length>0" style="display:inline-block;">
+                <el-button type="primary" v-on:click="Ding">钉一下</el-button>
+            </div>`,
+    data: function () {
+        return {
+            UserList: [],
+            formLabelWidth: '120px'
+        }
+    },
+    methods: {
+        Ding() {
+            let url = 'DingTalkServers/sendOaMessage'
+            let param = {
+                userId: this.dinglist[0],
+                title: '请帮我审核一下编号为 ' + this.flowid + ' 的流程',
+                applyMan: this.userid,
+                linkUrl: "eapp://page/approve/approve?index=0"
+            }
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                success:  (res) => {
+                    console.log(url)
+                    console.log(param)
+                    console.log(res)
+                    DingTalkPC.device.notification.alert({ message: '已为你催办~', title: '提示信息' })
+                },
+                error: function (err) {
+                    DingTalkPC.device.notification.alert({ message: '催办失败~', title: '提示信息' })
+                    console.error(url)
+                    console.error(err)
+                }
+            })
+        }
+    }
+})
 Vue.component('ding', {
     props: ['dinglist'],
     template: `
