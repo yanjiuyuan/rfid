@@ -9,16 +9,6 @@
         <i class="el-icon-arrow-left"></i>
         零部件采购申请-{{nodeInfo.NodeName}}
     </div>
-    <!--物料搜索-->
-    @*<el-form :inline="true" :model="searchForm" class="demo-form-inline" autocomplete="off" v-on:submit.prevent="searchCode('searchForm')"
-             size="medium" :rules="rules">
-        <el-form-item label="关键字" prop="name">
-            <el-input v-model="searchForm.name" style="width:200px;"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" v-on:click="searchCode('searchForm')">搜索</el-button>
-        </el-form-item>
-    </el-form>*@
     <div>
         <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
@@ -28,7 +18,6 @@
         <el-table-column prop="FNumber" label="物料编码"></el-table-column>
         <el-table-column prop="FName" label="物料名称"></el-table-column>
         <el-table-column prop="FModel" label="规格型号"></el-table-column>
-        @*<el-table-column prop="FOrderPrice" label="单价"></el-table-column>*@
         <el-table-column prop="FNote" label="预计单价"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
@@ -52,6 +41,7 @@
     <h3>已选物料</h3>
     <!--采购列表表格實體-->
     <el-table :data="purchaseList" stripe border>
+        <el-table-column prop="CodeNo" type="index"></el-table-column>
         <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
         <el-table-column prop="Name" label="物料名称"></el-table-column>
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
@@ -63,7 +53,7 @@
         </el-table-column>
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price" >
+                <el-input v-model="scope.row.Price">
                 </el-input>
             </template>
         </el-table-column>
@@ -79,9 +69,8 @@
         </el-table-column>
         <el-table-column prop="UrgentDate" label="需用日期" width="140">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.UrgentDate" :class="{ redborder:scope.row.UrgentDate ==''}" class="repadding" 
-                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd"
-                                >
+                <el-date-picker v-model="scope.row.UrgentDate" :class="{ redborder:scope.row.UrgentDate ==''}" class="repadding"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </template>
         </el-table-column>
