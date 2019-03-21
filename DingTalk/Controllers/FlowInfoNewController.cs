@@ -260,11 +260,18 @@ namespace DingTalk.Controllers
                             {
                                 if (task.IsSend == true)
                                 {
+                                    await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
+                                     task.ToString(), taskNew.ApplyMan,
+                                     task.Remark, contexts, false, false);
+                                    Thread.Sleep(100);
+
                                     //推送抄送消息
-                                    SentCommonMsg(task.ApplyManId,
-                                    string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", task.TaskId),
-                                    taskNew.ApplyMan, taskNew.Remark, null);
+                                    //SentCommonMsg(task.ApplyManId,
+                                    //string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", task.TaskId),
+                                    //taskNew.ApplyMan, taskNew.Remark, null);
                                     task.IsEnable = 1;
+                                    task.State = 0;
+                                    task.ApplyTime = null;
                                 }
                                 else
                                 {
