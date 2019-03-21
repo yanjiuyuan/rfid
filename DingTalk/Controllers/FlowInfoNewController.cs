@@ -288,6 +288,38 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
+                        Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
+                             && t.NodeId == 0).First();
+                        if (!string.IsNullOrEmpty(tasksApplyMan.ImageUrl))
+                        {
+                            tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                        }
+                        if (!string.IsNullOrEmpty(tasksApplyMan.OldImageUrl))
+                        {
+                            tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                        }
+                        
+                        if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
+                        {
+                            if (!string.IsNullOrEmpty(tasks.FileUrl))
+                            {
+                                tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
+                                tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
+                                tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
+                            }
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(tasks.FileUrl))
+                            {
+                                tasksApplyMan.FileUrl = tasks.FileUrl;
+                                tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
+                                tasksApplyMan.MediaId = tasks.MediaId;
+                            }
+                        }
+                        context.Entry(tasksApplyMan).State = EntityState.Modified;
+                        context.SaveChanges();
+
                         if (dic["NodeName"] == "结束")
                         {
                             //修改流程状态
@@ -297,31 +329,7 @@ namespace DingTalk.Controllers
                             context.Entry(tasks).State = EntityState.Modified;
                             context.SaveChanges();
 
-                            Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
-                              && t.NodeId == 0).First();
-                            tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                            tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
-                            tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                            if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
-                            {
-                                if (!string.IsNullOrEmpty(tasks.FileUrl))
-                                {
-                                    tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
-                                    tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
-                                    tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
-                                }
-                            }
-                            else
-                            {
-                                if (!string.IsNullOrEmpty(tasks.FileUrl))
-                                {
-                                    tasksApplyMan.FileUrl = tasks.FileUrl;
-                                    tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
-                                    tasksApplyMan.MediaId = tasks.MediaId;
-                                }
-                            }
-                            context.Entry(tasksApplyMan).State = EntityState.Modified;
-                            context.SaveChanges();
+                           
 
 
                             //推送发起人
@@ -347,31 +355,31 @@ namespace DingTalk.Controllers
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
 
-                                Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
-                                && t.NodeId == 0).First();
-                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
-                                tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
-                                {
-                                    if (!string.IsNullOrEmpty(tasks.FileUrl))
-                                    {
-                                        tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
-                                        tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
-                                        tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
-                                    }
-                                }
-                                else
-                                {
-                                    if (!string.IsNullOrEmpty(tasks.FileUrl))
-                                    {
-                                        tasksApplyMan.FileUrl = tasks.FileUrl;
-                                        tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
-                                        tasksApplyMan.MediaId = tasks.MediaId;
-                                    }
-                                }
-                                context.Entry(tasksApplyMan).State = EntityState.Modified;
-                                context.SaveChanges();
+                                //Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
+                                //&& t.NodeId == 0).First();
+                                //tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                //tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
+                                //tasksApplyMan.ImageUrl = tasks.ImageUrl;
+                                //if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
+                                //{
+                                //    if (!string.IsNullOrEmpty(tasks.FileUrl))
+                                //    {
+                                //        tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
+                                //        tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
+                                //        tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    if (!string.IsNullOrEmpty(tasks.FileUrl))
+                                //    {
+                                //        tasksApplyMan.FileUrl = tasks.FileUrl;
+                                //        tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
+                                //        tasksApplyMan.MediaId = tasks.MediaId;
+                                //    }
+                                //}
+                                //context.Entry(tasksApplyMan).State = EntityState.Modified;
+                                //context.SaveChanges();
                             }
                             else
                             {
