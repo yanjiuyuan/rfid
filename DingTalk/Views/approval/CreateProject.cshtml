@@ -1,5 +1,7 @@
 ﻿@{
-    Layout = null;
+                /**/
+
+                Layout = null;
 }
 
 <!--右侧实体内容-->
@@ -13,6 +15,12 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
+            <el-form-item label="申请人">
+                <el-input v-model="ruleForm.ApplyMan"></el-input>
+            </el-form-item>
+            <el-form-item label="申请人" :visiable="false">
+                <el-input v-model="ruleForm.ApplyManId"></el-input>
+            </el-form-item>
             <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
@@ -25,8 +33,8 @@
                 </el-select>
             </el-form-item>
             @*<el-form-item label="承担部门">
-                <el-input v-model="ruleForm.DeptName"></el-input>
-            </el-form-item>*@
+            <el-input v-model="ruleForm.DeptName"></el-input>
+        </el-form-item>*@
             <el-form-item label="状态" required="required">
                 <el-select v-model="ruleForm.ProjectState">
                     <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
@@ -81,6 +89,9 @@
                 DeptNames: DeptNames,
                 CompanyNames: CompanyNames,
                 ruleForm: {
+                    ApplyMan: DingData.nickName,
+                    ApplyManId: DingData.userid,
+
                     inputProjectName: '',
                     inputProjectId: '',
                     DeptName: '',
@@ -159,7 +170,7 @@
                         })
                     }
                 })
-                
+
             }
         },
         created: function () {

@@ -109,5 +109,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult CreateProject()
+        {
+            return View();
+        }
     }
 }

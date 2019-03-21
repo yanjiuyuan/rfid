@@ -14,6 +14,9 @@ var imageList = []
 var fileList = []
 var pdfList = []
 let jinDomarn = 'http://1858o1s713.51mypc.cn:16579/api/'
+let ProjectTypes = ['自研项目', '纵向项目', '横向项目']
+let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部']
+let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
 //原型方法
 Array.prototype.removeByValue = function (val) {
@@ -1340,18 +1343,20 @@ Vue.component('Ding2', {
     },
     methods: {
         Ding() {
-            let url = 'DingTalkServers/sendOaMessage'
             let param = {
                 userId: this.dinglist[0],
-                title: '请帮我审核一下编号为 ' + this.flowid + ' 的流程',
+                title: '请帮我审核一下流水号为 ' + this.flowid + ' 的流程',
                 applyMan: this.userid,
                 linkUrl: "eapp://page/approve/approve?index=0"
             }
+            let url = 'DingTalkServers/sendOaMessage' + _formatQueryStr(param)
+
             $.ajax({
                 url: url,
-                type: 'POST',
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
+                type: "POST",
+                //data: JSON.stringify(param),
+                dataType: "json",
                 success:  (res) => {
                     console.log(url)
                     console.log(param)
@@ -1361,6 +1366,7 @@ Vue.component('Ding2', {
                 error: function (err) {
                     DingTalkPC.device.notification.alert({ message: '催办失败~', title: '提示信息' })
                     console.error(url)
+                    console.log(param)
                     console.error(err)
                 }
             })
