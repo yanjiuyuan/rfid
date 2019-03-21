@@ -290,11 +290,11 @@ namespace DingTalk.Controllers
                     {
                         Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
                              && t.NodeId == 0).First();
-                        if (!string.IsNullOrEmpty(tasksApplyMan.ImageUrl))
+                        if (!string.IsNullOrEmpty(tasks.ImageUrl))
                         {
                             tasksApplyMan.ImageUrl = tasks.ImageUrl;
                         }
-                        if (!string.IsNullOrEmpty(tasksApplyMan.OldImageUrl))
+                        if (!string.IsNullOrEmpty(tasks.OldImageUrl))
                         {
                             tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
                         }
