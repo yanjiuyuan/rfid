@@ -660,12 +660,12 @@ namespace DingTalk.Controllers
 
                 if (NodeName.Contains("抄送"))
                 {
-                    string[] ListNodeName = NodeName.Split(',');
-                    string[] ListPeopleId = PeopleId.Split(',');
-                    string[] ListNodePeople = NodePeople.Split(',');
-
-                    if (ListPeopleId.Length > 0)
+                    if (!string.IsNullOrEmpty(PeopleId))
                     {
+                        string[] ListNodeName = NodeName.Split(',');
+                        string[] ListPeopleId = PeopleId.Split(',');
+                        string[] ListNodePeople = NodePeople.Split(',');
+
                         Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
@@ -698,10 +698,12 @@ namespace DingTalk.Controllers
                             context.SaveChanges();
                         }
                     }
+                 
+                       
                     
                     if (IsSend == true)
                     {
-                        if (ListPeopleId.Length > 0)
+                        if (!string.IsNullOrEmpty(PeopleId))
                         {
                             return null;
                         }
