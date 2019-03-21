@@ -67,6 +67,20 @@
                                 end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
+            <el-form-item label="上传立项文件">
+                <el-upload class="upload-demo"
+                           drag
+                           :file-list="fileList"
+                           action="/drawingupload/Upload"
+                           :on-remove="handleFileRemove"
+                           :before-upload="beforeFileUpload"
+                           :on-success="HandleFileSuccess"
+                           multiple>
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">不超过30M</div>
+                </el-upload>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="addProject" :disabeld="disablePage">添加</el-button>
             </el-form-item>
