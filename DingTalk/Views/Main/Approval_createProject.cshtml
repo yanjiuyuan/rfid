@@ -1,0 +1,181 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        立项申请审批-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="form" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="申请人">
+            <el-input v-model="form.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="form.ApplyManId" style="display:none;"></el-input>
+            <el-input v-model="form.CreateMan" style="display:none;"></el-input>
+            <el-input v-model="form.CreateManId" style="display:none;"></el-input>
+        </el-form-item>
+
+        <el-form-item label="项目名称">
+            <el-input v-model="form.ProjectName" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目编号">
+            <el-input v-model="form.ProjectId" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目状态">
+            <el-input v-model="form.ProjectState" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="form.IsFinish" style="display:none;"></el-input>
+        </el-form-item>
+        <el-form-item label="公司名称">
+            <el-input v-model="form.CompanyName" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="部门名称">
+            <el-input v-model="form.DeptName" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="负责人">
+            <el-input v-model="form.ResponsibleMan" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="form.ResponsibleManId" style="display:none;"></el-input>
+        </el-form-item>
+        <el-form-item label="团队成员">
+            <el-input v-model="form.TeamMembers" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="form.TeamMembersId" style="display:none;"></el-input>
+        </el-form-item>
+        <el-form-item label="项目类型">
+            <el-input v-model="form.ProjectType" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="创建时间">
+            <el-input v-model="form.CreateTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="开始时间">
+            <el-input v-model="form.StartTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="返回时间">
+            <el-input v-model="form.EndTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="是否评审" v-if="NodeId >= 3" :disabled="NodeId >3">
+            <el-radio v-model="form.IsReview" :label="true">是</el-radio>
+            <el-radio v-model="form.IsReview" :label="false">否</el-radio>
+        </el-form-item>
+        <!--相关文件-->
+        <el-form-item v-if="fileList.length > 0" label="立项文件">
+            <el-card class="box-card">
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                </div>
+            </el-card>
+        </el-form-item>
+        <el-form-item label="意见">
+            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
+        <hr />
+
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item label="操作" v-if="index==0">
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+        </el-form-item>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+</el-main>
+
+<script>
+    var allData = {}
+    var imageList = []
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        State = UrlObj.state
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                carList: [],
+                imageList: imageList,
+                index: Index,
+                FlowId: FlowId,
+                NodeId: NodeId,
+                state: State,
+                nodeList: [],
+                nodeInfo: {},
+                form: {
+
+                },
+                dialogVisible: false,
+               
+            }
+        },
+        methods: {
+            onSubmit() {
+                let aggreParam = {
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.Mark,
+                    //"FileUrl": this.ruleForm.FileUrl,
+                    //"OldFileUrl": this.ruleForm.OldFileUrl
+                }
+                if (NodeId == 3) {
+                    this.nodeList[4].AddPeople = this.copyMans
+                    this.PostData('CreateProject/Modify', this.form, (res) => {
+                        this.aggreSubmit(aggreParam)
+                    })
+                } else {
+                    this.aggreSubmit(aggreParam)
+                }
+            },
+            returnBk() {
+                let param = {
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.ruleForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            getTable() {
+                this.GetData('/CreateProject/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {
+                    if (!res.IsReview && res.IsReview != false) res.IsReview = true
+                    this.form = res
+                    let roleName = ''
+                    if (res.CompanyName == '泉州华中科技大学智能制造研究院') {
+                        roleName = '研究院项目抄送人员'
+                    } else { roleName = '华数项目抄送人员' }
+
+                    this._getData('/Role/GetRoleInfo' + _formatQueryStr({ RoleName: roleName }), (res) => {
+                        this.copyMans = res
+                    })
+                })
+            },
+
+        },
+ 
+        created: function () {
+            this.getTable()
+            this.GetDingList(TaskId)
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData(demo)
+</script>
+
+
+

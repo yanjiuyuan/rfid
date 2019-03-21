@@ -351,7 +351,10 @@ var mixin = {
         ],
         nodeList: [],
         nodeInfo: {},
+        data: [],
         tableData: [],
+        fileList: [],
+        mediaList: [],
         specialRoleNames: [],
         ruleForm: {},
         preApprove: true,
@@ -617,7 +620,7 @@ var mixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
+                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (this.FlowId == 31 && this.NodeId == 3 && node.NodeId == 4)) {
                     if (node.AddPeople.length == 0) {
                         this.$alert('您尚未选择审批人', '提交错误', {
                             confirmButtonText: '确定',
@@ -647,6 +650,7 @@ var mixin = {
                             "OldFileUrl": null,
                             "IsBack": null
                         }
+                        //if (this.FlowId == 31) tmpParam.IsPost = true
                         for (let p2 in param2) {
                             tmpParam[p2] = param2[p2]
                         }
@@ -654,6 +658,8 @@ var mixin = {
                     }
                 }
             }
+            console.log(paramArr)
+            //return
             $.ajax({
                 url: "/FlowInfo/SubmitTaskInfo",
                 type: "POST",
@@ -1034,10 +1040,10 @@ var mixin = {
                 success: function (data) {
                     data = JSON.parse(data)
                     console.log('上传文件到钉盘')
-                    console.log(paramObj)
                     if (data.media_id) {
                         console.log(data.media_id)
                         that.mediaList.push(data.media_id)
+                        fileList[fileList.length - 1]['meidaid'] = data.media_id
                         //that.ruleForm
                     } else {
                         console.log('无media_di')
@@ -1051,6 +1057,7 @@ var mixin = {
             this.ruleForm.OldFilePDFUrl = ''
             this.ruleForm.FileUrl = ''
             this.ruleForm.OldFileUrl = ''
+            this.ruleForm.MediaId = ''
             if (this.pdfList) {
                 for (var i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
@@ -1064,9 +1071,11 @@ var mixin = {
                 for (var i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name
+                    this.ruleForm.MediaId += this.fileList[i].mediaid
                     if (i == this.fileList.length - 1) break
                     this.ruleForm.FileUrl += ','
                     this.ruleForm.OldFileUrl += ','
+                    this.ruleForm.MediaId += ','
                 }
             }
             return true

@@ -12,14 +12,11 @@
         添加项目
     </div>
     <!--创建项目表单-->
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
             <el-form-item label="申请人">
                 <el-input v-model="ruleForm.ApplyMan"></el-input>
-            </el-form-item>
-            <el-form-item label="申请人" :visiable="false">
-                <el-input v-model="ruleForm.ApplyManId"></el-input>
             </el-form-item>
             <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
@@ -67,8 +64,28 @@
                                 end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
+            <el-form-item label="上传立项文件" required="required">
+                <el-upload class="upload-demo"
+                           drag
+                           :file-list="fileList"
+                           action="/drawingupload/Upload"
+                           :on-remove="HandleFileRemove"
+                           :before-upload="BeforeFileUpload"
+                           :on-success="HandleFileSuccess"
+                           multiple>
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">不超过30M</div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+                <el-input v-model="ruleForm.remark"></el-input>
+            </el-form-item>
+            <!--添加审批人-->
+            <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true" >
+            </sam-approver-list>
             <el-form-item>
-                <el-button type="primary" v-on:click="addProject" :disabeld="disablePage">添加</el-button>
+                <el-button type="primary" v-on:click="addProject('ruleForm')" :disabeld="disablePage">提交</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -106,10 +123,11 @@
         },
         methods: {
             //添加项目
-            addProject() {
+            addProject(formName) {
                 var that = this
+                this.fileListToUrl()
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name && this.ruleForm.Time[0]) {
+                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name && this.ruleForm.Time[0] && this.ruleForm.FileUrl) {
                         that.disablePage = true
                         let names = []
                         let ids = []
@@ -136,33 +154,27 @@
                             "CompanyName": this.ruleForm.CompanyName,
                             "ProjectType": this.ruleForm.ProjectType,
                             "CreateManId": DingData.userid,
-                            "CreateMan": DingData.nickName
+                            "CreateMan": DingData.nickName,
+                            "ProjectFileUrl": this.ruleForm.FileUrl
                         }
-                        console.log(param)
-                        $.ajax({
-                            url: "/Project/AddProject",
-                            type: "POST",
-                            dataType: "json",
-                            data: JSON.stringify(param),
-                            success: function (data) {
-                                console.log("添加项目")
-                                console.log(data)
-                                if (data.errorCode == 0) {
-                                    that.$alert(data.errorMessage, '提示信息', {
-                                        confirmButtonText: '确定',
-                                        callback: action => {
-                                            loadPage('/main/Approval')
-                                        }
-                                    });
-                                }
-                                that.$alert(data.errorMessage, '提示信息', {
-                                    confirmButtonText: '确定'
+                        let callBack = function (taskId) {
+                            param['TaskId'] = taskId
+                            that.PostData('CreateProject/Save', param , function (data) {
+                                that.$alert('恭喜提交成功', '提示信息', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        goHome()
+                                    }
                                 })
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                console.log(XMLHttpRequest.status);
-                            }
-                        })
+                            })
+                        }
+                        that.approvalSubmit(formName, {
+                            Title: that.ruleForm.Title,
+                            Remark: that.ruleForm.remark,
+                            FileUrl: that.ruleForm.FileUrl,
+                            MediaId: that.ruleForm.MediaId,
+                            OldFileUrl: that.ruleForm.OldFileUrl,
+                        }, callBack)
                     }
                     else {
                         that.$alert('表单信息不全或有误', '提示信息', {
@@ -174,6 +186,8 @@
             }
         },
         created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
             loadHtml("mainPage", "partPage")
         }
     })

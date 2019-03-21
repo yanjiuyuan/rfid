@@ -70,6 +70,7 @@
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
+        State = UrlObj.state
         Id = UrlObj.id
         var Index = UrlObj.index
     }
@@ -82,6 +83,7 @@
                 imageList: imageList,
                 index: Index,
                 NodeId: NodeId,
+                NodeId: parseInt(NodeId),
                 nodeList: [],
                 nodeInfo: {},
                 form: {
@@ -113,11 +115,11 @@
                 var param = {
                     "Id": allData.Id,
                     "NodeId": 0,
-                    "Remark": this.ruleForm.mark
+                    "Remark": this.ruleForm.Mark
                 }
                 this.returnSubmit(param)
             },
-            getGooutTable() {
+            getTable() {
                 this.GetData('/Evection/Read' + _formatQueryStr({ TaskId: TaskId }), (res)=> {
                     this.form = res
                 })
@@ -126,7 +128,7 @@
         },
  
         created: function () {
-            this.getGooutTable()
+            this.getTable()
             this.GetDingList(TaskId)
             loadHtml("mainPage", "partPage")
         }
