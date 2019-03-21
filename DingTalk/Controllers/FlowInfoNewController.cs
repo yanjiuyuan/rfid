@@ -1573,6 +1573,7 @@ namespace DingTalk.Controllers
             {
                 form = new form[] {
                     new form{ key="姓名",value="11张三"},
+
                     new form{ key="爱好",value="打球"},
                 },
                 rich = new rich
