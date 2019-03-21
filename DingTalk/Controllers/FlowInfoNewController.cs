@@ -658,47 +658,59 @@ namespace DingTalk.Controllers
                 dic.Add("NodePeople", NodePeople);
                 dic.Add("PeopleId", PeopleId);
 
-                if (NodeName == "抄送")
+                if (NodeName.Contains("抄送"))
                 {
                     string[] ListNodeName = NodeName.Split(',');
                     string[] ListPeopleId = PeopleId.Split(',');
                     string[] ListNodePeople = NodePeople.Split(',');
 
-                    Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
-                    for (int i = 0; i < ListPeopleId.Length; i++)
+                    if (ListPeopleId.Length > 0)
                     {
-                        //保存任务流
-                        Tasks newTask = new Tasks()
+                        Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+                        for (int i = 0; i < ListPeopleId.Length; i++)
                         {
-                            TaskId = OldTaskId,
-                            ApplyMan = ListNodePeople[i],
-                            IsEnable = 1,
-                            NodeId = NodeId + 1,
-                            FlowId = Int32.Parse(FlowId),
-                            IsSend = true,
-                            ApplyManId = ListPeopleId[i],
-                            State = 0, //0 表示未审核 1表示已审核
-                            FileUrl = Task.FileUrl,
-                            OldFileUrl = Task.OldFileUrl,
-                            ImageUrl = Task.ImageUrl,
-                            OldImageUrl = Task.OldImageUrl,
-                            Title = Task.Title,
-                            IsPost = false,
-                            ProjectId = Task.ProjectId,
-                        };
+                            //保存任务流
+                            Tasks newTask = new Tasks()
+                            {
+                                TaskId = OldTaskId,
+                                ApplyMan = ListNodePeople[i],
+                                IsEnable = 1,
+                                NodeId = NodeId + 1,
+                                FlowId = Int32.Parse(FlowId),
+                                IsSend = true,
+                                ApplyManId = ListPeopleId[i],
+                                State = 0, //0 表示未审核 1表示已审核
+                                FileUrl = Task.FileUrl,
+                                OldFileUrl = Task.OldFileUrl,
+                                ImageUrl = Task.ImageUrl,
+                                OldImageUrl = Task.OldImageUrl,
+                                Title = Task.Title,
+                                IsPost = false,
+                                ProjectId = Task.ProjectId,
+                            };
 
-                        //推送抄送消息
-                        SentCommonMsg(ListPeopleId[i],
-                        string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
-                        Task.ApplyMan, Task.Remark, null);
+                            //推送抄送消息
+                            SentCommonMsg(ListPeopleId[i],
+                            string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
+                            Task.ApplyMan, Task.Remark, null);
 
-                        context.Tasks.Add(newTask);
-                        context.SaveChanges();
+                            context.Tasks.Add(newTask);
+                            context.SaveChanges();
+                        }
                     }
+                    
                     if (IsSend == true)
                     {
+                        if (ListPeopleId.Length > 0)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
+                        }
                         //return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 2);
-                        return null;
+                        
                     }
                     else
                     {
