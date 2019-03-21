@@ -737,6 +737,7 @@
     <Content Include="Views\Main\Approval_intoStorage.cshtml" />
     <Content Include="Views\Main\Approval_goOut.cshtml" />
     <Content Include="Views\approval\GoOut.cshtml" />
+    <Content Include="Views\approval\CreateProject.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
