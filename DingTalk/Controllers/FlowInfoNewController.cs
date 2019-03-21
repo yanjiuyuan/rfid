@@ -262,7 +262,7 @@ namespace DingTalk.Controllers
                                 {
                                     await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
                                      task.ToString(), taskNew.ApplyMan,
-                                     task.Remark, contexts, false, false);
+                                     task.Remark, contexts, false, true);
                                     Thread.Sleep(100);
 
                                     //推送抄送消息
