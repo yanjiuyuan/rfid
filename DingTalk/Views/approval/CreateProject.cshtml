@@ -15,6 +15,9 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
+            <el-form-item label="标题" prop="Title">
+                <el-input v-model="ruleForm.Title"></el-input>
+            </el-form-item>
             <el-form-item label="申请人">
                 <el-input v-model="ruleForm.ApplyMan"></el-input>
             </el-form-item>
@@ -82,7 +85,7 @@
                 <el-input v-model="ruleForm.remark"></el-input>
             </el-form-item>
             <!--添加审批人-->
-            <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true" >
+            <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true">
             </sam-approver-list>
             <el-form-item>
                 <el-button type="primary" v-on:click="addProject('ruleForm')" :disabeld="disablePage">提交</el-button>
@@ -94,7 +97,7 @@
 
 <script>
     var Index = 0
-    var VUE = new Vue({
+    var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
@@ -108,7 +111,6 @@
                 ruleForm: {
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
-
                     inputProjectName: '',
                     inputProjectId: '',
                     DeptName: '',

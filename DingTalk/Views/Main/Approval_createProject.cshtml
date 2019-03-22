@@ -50,7 +50,7 @@
         <el-form-item label="开始时间">
             <el-input v-model="form.StartTime" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="返回时间">
+        <el-form-item label="结束时间">
             <el-input v-model="form.EndTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="是否评审" v-if="NodeId >= 3" :disabled="NodeId >3">
@@ -128,10 +128,10 @@
                 if (NodeId == 3) {
                     this.nodeList[4].AddPeople = this.copyMans
                     this.PostData('CreateProject/Modify', this.form, (res) => {
-                        this.aggreSubmit(aggreParam)
+                        this.AggreSubmit(aggreParam)
                     })
                 } else {
-                    this.aggreSubmit(aggreParam)
+                    this.AggreSubmit(aggreParam)
                 }
             },
             returnBk() {
