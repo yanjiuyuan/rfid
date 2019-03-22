@@ -16,6 +16,9 @@ namespace DingTalk.Models.DingModels
         [StringLength(500)]
         public string ProjectName { get; set; }
 
+        [StringLength(500)]
+        public string ProjectNo { get; set; }
+
 
         [StringLength(100)]
         public string CreateTime { get; set; }
