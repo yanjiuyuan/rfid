@@ -167,11 +167,13 @@ namespace DingTalk.Controllers
                     
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
                     keyValuePairs.Add("项目名称", createProject.ProjectName);
-                    keyValuePairs.Add("项目编号", createProject.ProjectNo);
-                    keyValuePairs.Add("项目名称", createProject.ProjectName);
-                    keyValuePairs.Add("项目名称", createProject.ProjectName);
-                    keyValuePairs.Add("项目名称", createProject.ProjectName);
-
+                    keyValuePairs.Add("项目编号", createProject.ProjectId);
+                    keyValuePairs.Add("承担部门", createProject.DeptName);
+                    keyValuePairs.Add("公司名称", createProject.CompanyName);
+                    keyValuePairs.Add("项目类型", createProject.ProjectType);
+                    keyValuePairs.Add("项目负责人", createProject.ResponsibleMan);
+                    keyValuePairs.Add("项目组成员", createProject.TeamMembers);
+                    keyValuePairs.Add("是否评审", createProject.IsReview==true?"是":"否");
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
                     null, null, "2", 300, 650, null, null, null, dtApproveView, null, keyValuePairs);
