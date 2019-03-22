@@ -34,7 +34,7 @@ namespace DingTalk.Controllers
         /// 测试数据：/Project/AddProject
         //var ProjectTest = { ProjectName":"集成钉钉的信息管理系统","CreateTime":"2018-04-20 14:40","IsEnable":true,"ProjectState":"在研","DeptName":"智慧工厂事业部","ApplyMan":"蔡兴桐","ApplyManId":"073110326032521796","StartTime":"2017-10-23","EndTime":"2018-09-01","ProjectId":"2017ZL054","FilePath":"项目路径","ResponsibleMan":"负责人","ResponsibleManId":"负责人Id"}
         [HttpPost]
-        public string AddProject()
+        public string AddProject(bool IsPower = false)
         {
             try
             {
@@ -53,19 +53,53 @@ namespace DingTalk.Controllers
                     ProjectInfo projectInfo = JsonHelper.JsonToObject<ProjectInfo>(stream);
                     using (DDContext context = new DDContext())
                     {
-                        //项目管理员
-                        bool IsProjectControl = context.Roles.Where(r => r.UserId == projectInfo.CreateManId && r.RoleName == "项目管理员" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
-                        if (IsProjectControl)
+                        if (IsPower == false)
                         {
-                            ProjectInfo pInfo = context.ProjectInfo.SingleOrDefault(u => u.ProjectId == projectInfo.ProjectId);
-
-                            if (pInfo != null)
+                            //项目管理员
+                            bool IsProjectControl = context.Roles.Where(r => r.UserId == projectInfo.CreateManId && r.RoleName == "项目管理员" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
+                            if (IsProjectControl)
                             {
-                                return JsonConvert.SerializeObject(new ErrorModel
+                                ProjectInfo pInfo = context.ProjectInfo.SingleOrDefault(u => u.ProjectId == projectInfo.ProjectId);
+
+                                if (pInfo != null)
                                 {
-                                    errorCode = 2,
-                                    errorMessage = string.Format("已存在 项目编号{0}", pInfo.ProjectId)
-                                });
+                                    return JsonConvert.SerializeObject(new ErrorModel
+                                    {
+                                        errorCode = 2,
+                                        errorMessage = string.Format("已存在 项目编号{0}", pInfo.ProjectId)
+                                    });
+                                }
+                                else
+                                {
+                                    //建立项目文件夹及其子文件
+                                    string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}",
+                                        projectInfo.CompanyName, projectInfo.ProjectType, projectInfo.ProjectName);
+                                    projectInfo.FilePath = path;
+                                    context.ProjectInfo.Add(projectInfo);
+                                    path = Server.MapPath(path);
+                                    FileHelper.CreateDirectory(path);
+                                    FileHelper.CreateDirectory(path + "\\1需求分析");
+                                    FileHelper.CreateDirectory(path + "\\2进度计划");
+                                    FileHelper.CreateDirectory(path + "\\3立项书");
+                                    FileHelper.CreateDirectory(path + "\\4方案设计");
+                                    FileHelper.CreateDirectory(path + "\\5机械图纸");
+                                    FileHelper.CreateDirectory(path + "\\6电气图纸");
+                                    FileHelper.CreateDirectory(path + "\\7采购单");
+                                    FileHelper.CreateDirectory(path + "\\8源代码");
+                                    FileHelper.CreateDirectory(path + "\\9中试");
+                                    FileHelper.CreateDirectory(path + "\\10验收报告");
+                                    FileHelper.CreateDirectory(path + "\\11使用说明书");
+                                    FileHelper.CreateDirectory(path + "\\12协议书");
+                                    FileHelper.CreateDirectory(path + "\\13合同");
+                                    FileHelper.CreateDirectory(path + "\\14验收资料");
+                                    FileHelper.CreateDirectory(path + "\\15其他资料");
+                                    context.SaveChanges();
+                                    return JsonConvert.SerializeObject(new ErrorModel
+                                    {
+                                        errorCode = 0,
+                                        errorMessage = "创建成功！"
+                                    });
+                                }
                             }
                             else
                             {
@@ -332,7 +366,7 @@ namespace DingTalk.Controllers
                 });
             }
         }
-        
+
 
         /// <summary>
         /// 修改项目文件
