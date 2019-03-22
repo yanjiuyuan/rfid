@@ -600,6 +600,75 @@ var mixin = {
             });
         },
         //同意审批
+        AggreSubmit(param, param2 = {}) {
+            this.disablePage = true
+            var paramArr = []
+            var that = this
+            paramArr.push({
+                "TaskId": TaskId,
+                "ApplyMan": DingData.nickName,
+                "ApplyManId": DingData.userid,
+                "Dept": DingData.departName,
+                "NodeId": NodeId,
+                "ApplyTime": _getTime(),
+                "IsEnable": "1",
+                "FlowId": FlowId,
+                "IsSend": "false",
+                "State": "1",
+            })
+            for (let p in param) {
+                paramArr[0][p] = param[p]
+            }
+            for (let node of this.nodeList) {
+                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (this.FlowId == 31 && this.NodeId == 3 && node.NodeId == 4)) {
+                    if (node.AddPeople.length == 0) {
+                        this.$alert('您尚未选择审批人', '提交错误', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+
+                            }
+                        });
+                        that.disablePage = false
+                        return
+                    }
+                    for (let a of node.AddPeople) {
+                        let tmpParam = {
+                            "ApplyMan": a.name,
+                            "ApplyManId": a.emplId,
+                            "TaskId": TaskId,
+                            "ApplyTime": null,
+                            "IsEnable": 1,
+                            "FlowId": FlowId,
+                            "NodeId": node.NodeId,
+                            "Remark": null,
+                            "IsSend": node.IsSend,
+                            "State": 0,
+                            "ImageUrl": null,
+                            "FileUrl": null,
+                            "IsPost": false,
+                            "OldImageUrl": null,
+                            "OldFileUrl": null,
+                            "IsBack": null
+                        }
+                        //if (this.FlowId == 31) tmpParam.IsPost = true
+                        for (let p2 in param2) {
+                            tmpParam[p2] = param2[p2]
+                        }
+                        paramArr.push(tmpParam)
+                    }
+                }
+            }
+            console.log(paramArr)
+            //return
+            this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
+                this.$alert('审批成功', '操作成功', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        loadPage('/main/Approval_list')
+                    }
+                });
+            })
+        },
         aggreSubmit(param, param2 = {}) {
             this.disablePage = true
             var paramArr = []
