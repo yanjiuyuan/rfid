@@ -1112,7 +1112,7 @@ var mixin = {
                     if (data.media_id) {
                         console.log(data.media_id)
                         that.mediaList.push(data.media_id)
-                        fileList[fileList.length - 1]['meidaid'] = data.media_id
+                        fileList[fileList.length - 1]['mediaid'] = data.media_id
                         //that.ruleForm
                     } else {
                         console.log('无media_di')
