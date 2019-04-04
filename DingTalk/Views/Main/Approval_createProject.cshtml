@@ -83,6 +83,11 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
+        <template v-if="index!=0">
+            <el-form-item>
+                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
+            </el-form-item>
+        </template>
     </el-form>
 </el-main>
 
@@ -119,6 +124,7 @@
         },
         methods: {
             onSubmit() {
+                var that = this
                 let aggreParam = {
                     "Id": allData.Id,
                     "Remark": this.ruleForm.Mark,
@@ -128,7 +134,29 @@
                 if (NodeId == 3) {
                     this.nodeList[4].AddPeople = this.copyMans
                     this.PostData('CreateProject/Modify', this.form, (res) => {
-                        this.AggreSubmit(aggreParam)
+
+                        $.ajax({
+                            url: "/Project/AddProject?IsPower=true",
+                            type: "POST",
+                            dataType: "json",
+                            data: JSON.stringify(that.form),
+                            success: function (data) {
+                                console.log("添加项目")
+                                console.log(data)
+                                if (data.errorCode == 0) {
+                                    that.AggreSubmit(aggreParam)
+                                } else {
+                                    that.$alert(data.errorMessage, '提示信息', {
+                                        confirmButtonText: '确定'
+                                    })
+                                }
+                                
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                console.log(XMLHttpRequest.status);
+                            }
+                        })
+
                     })
                 } else {
                     this.AggreSubmit(aggreParam)
@@ -150,6 +178,12 @@
                     "Remark": this.ruleForm.Mark
                 }
                 this.returnSubmit(param)
+            },
+            printTable() {
+                this.PostData('createProject/PrintPDF', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
+                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
             },
             getTable() {
                 this.GetData('/CreateProject/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {

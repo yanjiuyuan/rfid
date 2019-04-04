@@ -646,7 +646,10 @@
                 console.log(index)
                 this.currentPage = page
                 this.dataArr[index].currentPage = page
-                this.getData()
+
+                var start = this.pageSize * (this.currentPage - 1)
+                this.tableData = this.dataArr[index].data.slice(start, start + this.pageSize)
+
                 this.dataArr[index].tableData = _cloneArr(this.tableData)
             },
             handlePictureCardPreview(file) {

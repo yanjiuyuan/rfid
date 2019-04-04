@@ -77,9 +77,9 @@
         <el-form-item v-if="imageList.length > 0" label="相关图片">
             <el-upload action=""
                        list-type="picture-card"
-                       :on-preview="handlePictureCardPreview"
+                       :on-preview="handlePictureCardPreview2"
                        :file-list="imageList"
-                       :disabled="true">
+                       >
             </el-upload>
         </el-form-item>
 
@@ -88,7 +88,7 @@
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
         <el-form-item label="操作" v-if="index!=0">
@@ -101,6 +101,11 @@
             </el-form-item>
         </template>
     </el-form>
+
+    <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
+        <img :src="preUrl"/>
+    </div>
+
 </el-main>
 
 <script>
@@ -110,6 +115,7 @@
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
+        State = UrlObj.state
         Id = UrlObj.id
         var Index = UrlObj.index
     }
@@ -122,6 +128,7 @@
                 imageList: imageList,
                 index: Index,
                 NodeId: NodeId,
+                state: State,
                 car: {},
                 nodeList: [],
                 nodeInfo: {},
@@ -130,6 +137,7 @@
                 ruleForm: {
 
                 },
+             
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
@@ -143,11 +151,14 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
-
                 var that = this
                 let url = '/CarTable/TableModify'
                 var param = _cloneObj(this.ruleForm)
                 param.UseKilometres = this.UseKilometres
+                if (NodeId == '3'  && !this.ruleForm.ImageUrl) {
+                    this.elementAlert('alert', '未上传图片')
+                    return
+                }
                 this._postData(url, function () {
                     that.aggreSubmit({
                         "Id": allData.Id,
@@ -195,7 +206,6 @@
                     that.data = data
                     that.getData()
                 }
-                this.disablePage = true
                 this._getData("/CarMananger/Quary", function (data) {
                         that.carList = data
                         that._getData('/CarTable/TableQuary', function (data2) {

@@ -361,6 +361,8 @@ var mixin = {
         isBack: false,
         projectList: [],
         disablePage: false,
+        preUrl: '',//预览图片
+        showPre: false,
         rules: {
             name: [
                 { required: true, message: '名称不能为空', trigger: 'blur' },
@@ -840,7 +842,15 @@ var mixin = {
             this.currentPage = val
             this.getData()
         },
-
+        //下拉框选择项目
+        selectProject(id) {
+            console.log(id)
+            for (var project of this.projectList) {
+                if (project.ProjectId == id) {
+                    this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                }
+            }
+        },
         //获取特殊角色详细信息
         getSpecialRoleInfo: function (roleName) {
             var that = this
@@ -1047,8 +1057,14 @@ var mixin = {
             return true
         },
         handlePictureCardPreview(file) {
+            console.warn(file)
             this.dialogImageUrl = file.url;
             this.dialogVisible = true;
+        },
+        handlePictureCardPreview2(file) {
+            console.warn(file)
+            this.preUrl = file.url;
+            this.showPre = true;
         },
         handlePictureRemove(file, fileList) {
             this.changePictureList(fileList)
