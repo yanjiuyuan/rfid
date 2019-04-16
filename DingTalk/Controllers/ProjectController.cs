@@ -38,6 +38,7 @@ namespace DingTalk.Controllers
         {
             try
             {
+
                 StreamReader sr = new StreamReader(Request.InputStream);
                 var stream = sr.ReadToEnd();
                 if (string.IsNullOrEmpty(stream))
