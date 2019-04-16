@@ -37,8 +37,22 @@
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="时长/小时" prop="durHours" >
+        <el-form-item label="时长/小时" prop="durHours">
             <el-input v-model="ruleForm.durHours" style="width:200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="上传相关文件">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="fileList"
+                       action="/drawingupload/Upload"
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
+                       :on-success="HandleFileSuccess"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">不超过30M</div>
+            </el-upload>
         </el-form-item>
         <hr />
         <!--添加审批人-->
@@ -85,6 +99,7 @@
                     EndTime: "",
                     Content: "",
                     Place: "",
+                    LocationPlace: '',
                     Title: "外出申请"
                 },
                 form: {
@@ -120,6 +135,7 @@
                 var that = this
                 let url = '/Evection/Save'
                 var param = _cloneObj(this.ruleForm)
+                this.fileListToUrl()
                 console.log(param)
                 let callBack = function (taskId) {
                     param.TaskId = taskId
@@ -132,7 +148,11 @@
                         })
                     }, param)
                 }
-                this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
+                this.approvalSubmit(formName, {
+                    Title: this.ruleForm.Title,
+                    FileUrl: this.ruleForm.FileUrl,
+                    MediaId: this.ruleForm.MediaId,
+                    OldFileUrl: this.ruleForm.OldFileUrl }, callBack)
             },
             addPlace(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -154,6 +174,9 @@
                 this.ruleForm.durHours = _computeDurTime(value[0], value[1], 'h')
                 this.ruleForm.BeginTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
+                console.log(this.ruleForm.BeginTime)
+                console.log(this.ruleForm.EndTime)
+                console.error(this.ruleForm.durHours)
             },
             // 添加同行人
             addPeerNumber() {

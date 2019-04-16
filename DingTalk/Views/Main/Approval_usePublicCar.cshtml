@@ -51,7 +51,7 @@
             <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="车辆选择" prop="PlantTravelWay" v-if="NodeId == 2">
+        <el-form-item label="车辆选择" prop="CarId" v-if="NodeId == 2">
             <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
                            :key="item.Id"
@@ -80,8 +80,8 @@
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="false">退回</el-button>
         </el-form-item>
         <el-form-item label="操作" v-if="index==1 || index==2">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
@@ -128,6 +128,7 @@
                     
                 },
                 rules: {
+                    CarId: { required: true, message: '选派车辆不能为空', trigger: 'blur' },
                     FactTravelWay: { required: true, message: '实际行车路线不能为空', trigger: 'blur' },
                     StartKilometres: [{ required: true, message: '起始公里数不能为空', trigger: 'blur' }],
                     EndKilometres: [{ required: true, message: '结束公里数不能为空', trigger: 'blur' }]
@@ -137,21 +138,21 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
-                console.log(_cloneObj(this.ruleForm))
                 var that = this
                 let url = '/CarTable/TableModify'
                 var param = _cloneObj(this.ruleForm)
                 param.UseKilometres = this.UseKilometres
                 console.log(param)
-                this._postData(url, function () {
-
-                    that.aggreSubmit({
-                        "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark
-                    })
-
-                },param)
-
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this._postData(url, function () {
+                            that.aggreSubmit({
+                                "Id": allData.Id,
+                                "Remark": that.ruleForm.Mark
+                            })
+                        }, param)
+                    }
+                })
             },
             returnBk() {
                 let param = {
@@ -163,7 +164,6 @@
             //撤回审批
             rebackSubmit() {
                 this.disablePage = true
-                var that = this
                 var param = {
                     "Id": allData.Id,
                     "NodeId": 0,
@@ -211,13 +211,6 @@
             },
             getUseCarTable() {
                 var that = this
-            
-                let handle = function (data) {
-                    that.totalRows = data.length
-                    that.data = data
-                    that.getData()
-                }
-                this.disablePage = true
                 this._getData("/CarTable/TableQuary", function (data2) {
                     if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
                     that.ruleForm = data2[0]
@@ -228,7 +221,6 @@
                         endTime: that.ruleForm.EndTime
                     }
                     that._getData('/CarMananger/QuaryByTime', function (data) {
-                       
                         for (let d of data) {
                             if (d.Id == that.ruleForm.CarId) {
                                 that.carName = d.Name + ' - ' + d.CarNumber

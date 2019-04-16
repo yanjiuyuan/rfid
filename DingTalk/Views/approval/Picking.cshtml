@@ -79,6 +79,19 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
