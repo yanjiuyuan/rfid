@@ -135,6 +135,7 @@ namespace DingTalk.Controllers
                                 Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")));
                             }
 
+
                             //保存文件
                             files.SaveAs(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension);
 
