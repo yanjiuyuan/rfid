@@ -141,10 +141,14 @@ namespace DingTalk.Controllers
                             }
 
 
-                            //保存文件
-                            files.SaveAs(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension);
+                            string strSavePath = Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension;
 
-                            AddTextToImg(DateTime.Now.ToString(), Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension);
+                            //保存文件
+                            files.SaveAs(strSavePath);
+                            //生成水印图片
+                            AddTextToImg(DateTime.Now.ToString(), strSavePath);
+                            //删除图片
+                            System.IO.File.Delete(strSavePath);
 
                             newFileName = newFileName + "waterMark";
                             strPath = @"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
