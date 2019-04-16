@@ -318,6 +318,7 @@
                 var that = this
                 let url = "/CarMananger/QuaryPrintExcel"
                 let param = _cloneObj(this.searchParam)
+                param.pageSize = '9999'
                 let handle = function (result) {
                     that.totalRows2 = result.data.length
                     that.data2 = result.data

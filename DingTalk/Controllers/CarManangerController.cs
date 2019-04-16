@@ -374,8 +374,18 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    FlowInfoServer flowInfoServer = new FlowInfoServer();
                     List<Car> cars = context.Car.ToList();
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId(IsPublic == true ? "13" : "14"); //公车任务流13
+                    List<Tasks> tasksNew = FlowInfoServer.ReturnUnFinishedTaskId(IsPublic == true ? "13" : "14"); //公车任务流13
+                    List<Tasks> tasks = new List<Tasks>();
+                    foreach (var item in tasksNew)
+                    {
+                        if (flowInfoServer.GetTasksState(item.TaskId.ToString()) == "已完成")
+                        {
+                            tasks.Add(item);
+                        }
+                    }
+
                     List<CarTable> carTables = context.CarTable.ToList();
                     if (IsPublic)
                     {

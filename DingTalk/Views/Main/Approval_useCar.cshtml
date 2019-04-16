@@ -154,18 +154,29 @@
                 var that = this
                 let url = '/CarTable/TableModify'
                 var param = _cloneObj(this.ruleForm)
+                let agreeParam = {
+                    "Id": allData.Id,
+                    "Remark": that.ruleForm.Mark,
+                    "ImageUrl": allData.ImageUrl,
+                    "OldImageUrl": allData.OldImageUrl
+                }
                 param.UseKilometres = this.UseKilometres
-                if (NodeId == '3'  && !this.ruleForm.ImageUrl) {
-                    this.elementAlert('alert', '未上传图片')
-                    return
+                if (NodeId == '3') {
+                    if (!this.ruleForm.ImageUrl) {
+                        this.elementAlert('alert', '未上传图片')
+                        return
+                    }
+                    else {
+                        agreeParam = {
+                            "Id": allData.Id,
+                            "Remark": that.ruleForm.Mark,
+                            "ImageUrl": that.ruleForm.ImageUrl,
+                            "OldImageUrl": that.ruleForm.OldImageUrl
+                        }
+                    }
                 }
                 this._postData(url, function () {
-                    that.aggreSubmit({
-                        "Id": allData.Id,
-                        "Remark": that.ruleForm.Mark,
-                        "ImageUrl": that.ruleForm.ImageUrl,
-                        "OldImageUrl": that.ruleForm.OldImageUrl
-                    })
+                    that.aggreSubmit(agreeParam)
                 },param)
 
             },
@@ -234,7 +245,7 @@
             this.getApproInfo()
             this.getUseCarTable()
             this.GetDingList(TaskId)
-            if (NodeId == '3' || NodeId == '4' || NodeId == '5') this.reInput = true
+            if (NodeId == '3' || NodeId == '4' || NodeId == '5' || NodeId == '6') this.reInput = true
             loadHtml("mainPage", "partPage")
         }
     })

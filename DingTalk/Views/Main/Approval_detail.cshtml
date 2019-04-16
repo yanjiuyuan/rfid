@@ -33,12 +33,6 @@
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
             </el-table-column>
-            @*<el-table-column prop="Price" label="单价(实际)" v-if="FlowId == '1' && nodeInfo.NodeId >= '2'">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row.Price" prop="Count" :disabled="nodeInfo.NodeId > '2'"
-                              :class="{ redborder:scope.row.Price ==''}"></el-input>
-                </template>
-            </el-table-column>*@
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
@@ -274,13 +268,14 @@
 
     var state = ''
     var pdfUrl = ''
+    var Index = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
         state = UrlObj.state
         Id = UrlObj.id
-        var Index = UrlObj.index
+        Index = UrlObj.index
     }
     $("#mask").hide()
     var items = {}
@@ -700,11 +695,6 @@
                         console.log(url)
                         console.log(data)
                         for (let d of data) {
-                            //if (d.emplId == DingData.userid && (Index == "3" || Index == "2")) {
-                            //    that.ifShowStamppBtn = true
-                            //    if (FlowId == '8') that.ifShowStamppBtn2 = true
-                            //}
-                        
                             that.ifShowStamppBtn = true
                             if (FlowId == '8') that.ifShowStamppBtn2 = true
                         }
@@ -751,7 +741,7 @@
         },
         created: function () {
             //获取下一个节点的审批人id
-            this.GetDingList(TaskId)
+            if (state == '未完成') this.GetDingList(TaskId)
             if (FlowId == '8') {
                 this.showStamp("采购管理员")
             }
@@ -762,6 +752,7 @@
                 this.ifShowStamppBtn2 = true
             }
             this.getBomInfo()
+            if (Index == '0')
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)

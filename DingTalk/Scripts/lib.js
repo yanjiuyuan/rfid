@@ -13,7 +13,8 @@ var ReApprovalTempData = {} //重新发起审批保存的临时数据
 var imageList = []
 var fileList = []
 var pdfList = []
-let jinDomarn = 'http://1858o1s713.51mypc.cn:16579/api/'
+//let jinDomarn = 'http://1858o1s713.51mypc.cn:16579/api/'
+let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目']
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
@@ -225,8 +226,9 @@ function checkRate(input) {
 
 //获取审批表单信息
 function getFormData(demo) {
+
+    //demo.GetData()
     var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-    var that = this
     $.ajax({
         url: url,
         type: "GET",
@@ -861,11 +863,11 @@ var mixin = {
                     console.log('获取特殊角色详细信息')
                     console.log(url)
                     console.log(data)
-                        for (let s of that.specialRoles) {
-                            if (data[0].RoleName == s.name) {
-                                s.members = data
-                            }
+                    for (let s of that.specialRoles) {
+                        if (data[0].RoleName == s.name) {
+                            s.members = data
                         }
+                    }
                 }
             })
         },

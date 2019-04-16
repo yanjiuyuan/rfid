@@ -38,11 +38,15 @@
         <el-form-item v-if="imageList.length > 0" label="相关图片">
             <el-upload action=""
                        list-type="picture-card"
-                       :on-preview="handlePictureCardPreview"
-                       :file-list="imageList"
-                       :disabled="true">
+                       :on-preview="handlePictureCardPreview2"
+                       :file-list="imageList">
             </el-upload>
         </el-form-item>
+
+        <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
+            <img :src="preUrl" />
+        </div>
+
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
@@ -69,6 +73,9 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
+        <el-form-item label="操作" v-if="index!=0">
+            <el-button type="primary" v-on:click="printPdf">打印</el-button>
+        </el-form-item>
     </el-form>
 </el-main>
 
@@ -94,6 +101,7 @@
                 NodeId: NodeId,
                 NodeId: parseInt(NodeId),
                 nodeList: [],
+                state: State,
                 nodeInfo: {},
                 form: {
 
@@ -133,9 +141,20 @@
                     this.form = res
                 })
             },
-
+            printPdf() {
+                var that = this
+                this._postData("/Evection/GetPrintPDF", function (result) {
+                    that.elementAlert('alert', result.errmsg)
+                },
+                    {
+                        UserId: DingData.userid,
+                        TaskId: TaskId,
+                        IsPublic: false
+                    }
+                )
+            },
         },
- 
+        
         created: function () {
             this.getTable()
             this.GetDingList(TaskId)
