@@ -45,10 +45,11 @@ namespace DingTalk.Controllers
         /// <param name="ApplyManId">用户Id</param>
         /// <param name="IsCopy">是否拷贝到研究项目</param>
         /// <param name="IsWaterMark">是否加时间水印</param>
+        /// <param name="IsUseCar">用车传图片专用</param>
         /// <returns>返回文件路径</returns>
         [HttpPost]
         public async Task<string> Upload(FormCollection form, string path,
-            string ApplyMan, string ApplyManId, bool? IsCopy = false, bool? IsWaterMark = false)
+            string ApplyMan, string ApplyManId, bool? IsCopy = false, bool? IsWaterMark = false, bool? IsUseCar = false)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace DingTalk.Controllers
                         {
                             //Image
                             case ".jpg":
-                                strPath = @"~\UploadFile\Images\";
+                                strPath = @"..\..\..\UploadFile\Images\";
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
                             case ".jpeg":
@@ -124,6 +125,28 @@ namespace DingTalk.Controllers
                                 break;
                         }
 
+                        if (IsUseCar==true)
+                        {
+
+                            if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\用车申请")) == false)//如果不存在就创建file文件夹
+                            {
+                                Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\用车申请"));
+                            }
+                            if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\用车申请\" + DateTime.Now.ToString("yyyyMMdd"))) == false)
+                            {
+                                Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\用车申请\" + DateTime.Now.ToString("yyyyMMdd")));
+                            }
+                            if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\用车申请\" + DateTime.Now.ToString("yyyyMMdd") + "\\resource")) == false)
+                            {
+                                Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\用车申请\" + DateTime.Now.ToString("yyyyMMdd") + "\\resource"));
+                            }
+
+                            string strSavePath = Server.MapPath(@"~\UploadFile\Images\用车申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension;
+
+                            //保存文件
+                            files.SaveAs(strSavePath);
+                        }
+
                         if (IsWaterMark == true)
                         {
                             if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\外出申请")) == false)//如果不存在就创建file文件夹
@@ -139,7 +162,6 @@ namespace DingTalk.Controllers
                             {
                                 Directory.CreateDirectory(Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd") + "\\resource"));
                             }
-
 
                             string strSavePath = Server.MapPath(@"~\UploadFile\Images\外出申请\" + DateTime.Now.ToString("yyyyMMdd")) + "\\" + newFileName + strExtension;
 
@@ -160,7 +182,6 @@ namespace DingTalk.Controllers
                             //g.DrawString(str, font, sbrush, new PointF(10, 10));
                             //MemoryStream ms = new MemoryStream();
                             //bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-
                         }
                         else
                         {

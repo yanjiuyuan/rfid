@@ -667,17 +667,16 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            error = new Error(1, "流程已完成！", "") { },
+                            error = new Error(0, "流程已完成！", "") { },
                         };
                     }
                     else
                     {
-                        Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).OrderBy(s => s.NodeId).First();
-
+                        Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).OrderBy(s => s.NodeId).FirstOrDefault();
                         return new NewErrorModel()
                         {
                             data= tasks,
-                            error = new Error(0, "流程已完成！", "") { },
+                            error = new Error(0, "流程被退回！", "") { },
                         };
                     }
                 }
