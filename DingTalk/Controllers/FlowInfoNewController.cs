@@ -1739,8 +1739,8 @@ namespace DingTalk.Controllers
             {
                 return new NewErrorModel()
                 {
-                    data = true,
-                    error = new Error(0, ConfigurationManager.AppSettings["VersionNumner"], "") { },
+                    data = ConfigurationManager.AppSettings["VersionNumner"],
+                    error = new Error(0, "获取成功！", "") { },
                 };
             }
             catch (Exception ex)
