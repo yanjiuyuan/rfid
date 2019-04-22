@@ -306,7 +306,7 @@ namespace DingTalk.Controllers
                         {
                             tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
                         }
-                        
+
                         if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
                         {
                             if (!string.IsNullOrEmpty(tasks.FileUrl))
@@ -337,7 +337,7 @@ namespace DingTalk.Controllers
                             context.Entry(tasks).State = EntityState.Modified;
                             context.SaveChanges();
 
-                           
+
 
 
                             //推送发起人
@@ -706,9 +706,9 @@ namespace DingTalk.Controllers
                             context.SaveChanges();
                         }
                     }
-                 
-                       
-                    
+
+
+
                     if (IsSend == true)
                     {
                         if (!string.IsNullOrEmpty(PeopleId))
@@ -720,7 +720,7 @@ namespace DingTalk.Controllers
                             return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                         }
                         //return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 2);
-                        
+
                     }
                     else
                     {
@@ -1725,35 +1725,23 @@ namespace DingTalk.Controllers
         #endregion
 
 
-        #region 移动端版本检测
+        #region 移动端版本校对
 
         /// <summary>
-        /// 移动端版本检测
+        /// 移动端版本校对
         /// </summary>
-        /// <param name="VersionNumner">版本号</param>
         /// <returns></returns>
         [HttpGet]
         [Route("CheckVersion")]
-        public NewErrorModel CheckVersion(string VersionNumner)
+        public NewErrorModel CheckVersion()
         {
             try
             {
-                if (ConfigurationManager.AppSettings["VersionNumner"] == VersionNumner)
+                return new NewErrorModel()
                 {
-                    return new NewErrorModel()
-                    {
-                        data = true,
-                        error = new Error(0, "校对成功！", "") { },
-                    };
-                }
-                else
-                {
-                    return new NewErrorModel()
-                    {
-                        data = false,
-                        error = new Error(0, "校对失败！", "") { },
-                    };
-                }
+                    data = true,
+                    error = new Error(0, ConfigurationManager.AppSettings["VersionNumner"], "") { },
+                };
             }
             catch (Exception ex)
             {
