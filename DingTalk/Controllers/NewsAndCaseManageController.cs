@@ -281,7 +281,7 @@ namespace DingTalk.Controllers
 
 
 
-       
+
 
 
         /// <summary>
@@ -315,22 +315,32 @@ namespace DingTalk.Controllers
                     if (FilePDFUrl.Length > 0)
                     {
                         List<string> ListPath = new List<string>(FilePDFUrl);
-                        List<string> ListAbPath = new List<string>();
-
+                        //List<string> ListAbPath = new List<string>();
+                        List<string> ListNewPath = new List<string>();
                         int iCount = 12;  //设置每个文件夹最大文件数量
                         int i = 0;
                         foreach (var item in ListPath)
                         {
-                            if (ListAbPath.Count < iCount)
+                            if (ListNewPath.Count < iCount)
                             {
-                                ListAbPath.Add(HttpContext.Current.Server.MapPath(item));
+                                string newPathName = (HttpContext.Current.Server.MapPath(item).Substring(0, HttpContext.Current.Server.MapPath(item).Length - 18) + ".PDF");
+                                File.Copy(HttpContext.Current.Server.MapPath(item), newPathName, true);
+
+                                ListNewPath.Add(newPathName);
+                                //ListNewPath.Add(HttpContext.Current.Server.MapPath(item));
                             }
-                            if (ListAbPath.Count == iCount || ListPath.IndexOf(item) == ListPath.Count - 1)
+                            if (ListNewPath.Count == iCount || ListPath.IndexOf(item) == ListPath.Count - 1)
                             {
                                 i++;
-                                string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "流水号" + taskId + "图纸打包第" + i + "份" + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                               string SavePath=string.Format(@"{0}\UploadFile\Ionic\{1}.zip",
+                                   AppDomain.CurrentDomain.BaseDirectory,
+                                    "流水号" + taskId + "图纸打包第" + i + "份" +
+                                    DateTime.Now.ToString("yyyyMMddHHmmss"));
+
+
                                 //文件压缩打包
-                                IonicHelper.CompressMulti(ListAbPath, SavePath, false);
+                                IonicHelper.CompressMulti(ListNewPath, SavePath, false);
+
                                 //FileStream filestream = new FileStream((SavePath), FileMode.Open);
                                 //byte[] bt = new byte[filestream.Length];
                                 ////调用read读取方法
@@ -351,10 +361,21 @@ namespace DingTalk.Controllers
                                 FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                                 fileSendModel.UserId = applyManId;
                                 var result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                                ListAbPath.Clear();
+
+                                if (ListNewPath.Count > 0)
+                                {
+                                    //ListNewPath.Add(SavePath);
+                                    foreach (var items in ListNewPath)
+                                    {
+                                        File.Delete(items);
+                                    }
+                                }
+
+                                ListNewPath.Clear();
                             }
                         }
                     }
+
 
                     return new NewErrorModel()
                     {

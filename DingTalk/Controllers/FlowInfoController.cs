@@ -1227,7 +1227,6 @@ namespace DingTalk.Controllers
 
         public string Quary(DDContext context, List<int?> ListTasks, string ApplyManId, bool IsMobile)
         {
-            FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
             List<object> listQuaryPro = new List<object>();
             List<Tasks> ListTask = context.Tasks.ToList();
@@ -1702,6 +1701,6 @@ namespace DingTalk.Controllers
             return j;
         }
         #endregion
-
+        
     }
 }

@@ -6,6 +6,7 @@ using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -1722,5 +1723,49 @@ namespace DingTalk.Controllers
 
 
         #endregion
+
+
+        #region 移动端版本检测
+
+        /// <summary>
+        /// 移动端版本检测
+        /// </summary>
+        /// <param name="VersionNumner">版本号</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("CheckVersion")]
+        public NewErrorModel CheckVersion(string VersionNumner)
+        {
+            try
+            {
+                if (ConfigurationManager.AppSettings["VersionNumner"] == VersionNumner)
+                {
+                    return new NewErrorModel()
+                    {
+                        data = true,
+                        error = new Error(0, "校对成功！", "") { },
+                    };
+                }
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        data = false,
+                        error = new Error(0, "校对失败！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    data = true,
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        #endregion
+
     }
 }
