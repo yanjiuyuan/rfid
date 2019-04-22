@@ -215,7 +215,7 @@
                     if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
                     that.ruleForm = data2[0]
                     //that.ruleForm['Mark'] = ''
-                    //that.ruleForm['CarId'] = ''
+                    if (NodeId<=2)that.ruleForm['CarId'] = ''
                     var param = {
                         startTime: that.ruleForm.StartTime,
                         endTime: that.ruleForm.EndTime

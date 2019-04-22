@@ -183,7 +183,6 @@
                 var that = this
                 let url = '/CarTable/TableSave'
                 var param = _cloneObj(this.ruleForm)
-                //if (this.CarObj.IsOccupyCar) param['OccupyCarId'] = this.CarObj.OccupyCarId
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
@@ -204,50 +203,11 @@
                 console.log('hello?')
                 this.activeNames = [1]
             },
-            //选车操作
-            selectCar(value) {
-                //value = JSON.parse(value)
-                console.log('选车操作')
-                console.log(value)
-                let car = {}
-                this.useTimeList = []
-                for (let c of this.carList) {
-                    if (c.Id == value) {
-                        car = c
-                        if (!c.UseMan) break
-                        let nameList = c.UseMan.split(',')
-                        let timeList = c.UseTimes.split(',')
-                        for (var i = 0; i < nameList.length; i++) {
-                            this.useTimeList.push({
-                                name: nameList[i],
-                                time: timeList[i]
-                            })
-                        }
-                    }
-                }
-                this.ruleForm.CarId = car.Id
-                this.ruleForm.OccupyCarId = car.OccupyCarId
-                this.ruleForm.IsOccupyCar = car.IsOccupyCar
-            },
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
-                var that = this
-                let url = '/CarMananger/QuaryByTime'
                 this.ruleForm.StartTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
-                //let param = {
-                //    startTime: _timeToString(value[0]),
-                //    endTime: _timeToString(value[1])
-                //}
-                //let callBack = function (data) {
-                //    that.carList = data
-                //    if (data && data.length > 0) {
-                //        that.selectCar(data[0].Id)
-                //    }
-                //    console.log('选时间操作')
-                //}
-                //this._getData(url, callBack, param)
             },
             //添加用车人
             addDrivingMan() {
@@ -286,14 +246,7 @@
             this.getApproInfo()
             loadHtml("mainPage", "partPage")
         },
-        computed: {
-            CarObj: function () {
-                for (let car of this.carList) {
-                    if (car.Id == this.ruleForm.CarId)
-                        return car
-                }
-            }
-        }
+        
     })
 
 
