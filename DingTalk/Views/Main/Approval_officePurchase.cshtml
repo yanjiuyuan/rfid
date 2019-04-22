@@ -20,9 +20,9 @@
                 <el-table-column prop="Name" label="物料名称"></el-table-column>
                 <el-table-column prop="Standard" label="规格型号"></el-table-column>
                 <el-table-column prop="Unit" label="单位"></el-table-column>
-                <el-table-column prop="Price" label="实际单价"></el-table-column>
+                <el-table-column prop="Price" label="预计单价"></el-table-column>
                 <el-table-column prop="Count" label="数量"></el-table-column>
-
+                <el-table-column prop="totalPrice" label="总价"></el-table-column>
                 <el-table-column prop="Purpose" label="用途"></el-table-column>
 
                 @*<el-table-column prop="applyMan" label="申请人"></el-table-column>*@
@@ -185,6 +185,7 @@
                     for (let d of data) {
                         for (let l of that.dataList) {
                             if (d.Dept == l.name) {
+                                d['totalPrice'] = (d.Price * d.Count)
                                 l.value.push(d)
                                 l.tmpTotalPrice += (d.Price * d.Count)
                                 that.totalPrice += (d.Price * d.Count)
