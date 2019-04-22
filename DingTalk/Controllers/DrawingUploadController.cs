@@ -94,7 +94,7 @@ namespace DingTalk.Controllers
                         {
                             //Image
                             case ".jpg":
-                                strPath = @"..\..\..\UploadFile\Images\";
+                                strPath = @"~\UploadFile\Images\";
                                 Path = Server.MapPath(strPath + newFileName + strExtension);
                                 break;
                             case ".jpeg":

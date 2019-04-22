@@ -72,7 +72,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆删除
         /// </summary>
-        /// <param name="obj">Id</param>
+        /// <param name="Id">Id</param>
         /// <param name="ApplyManId">调用接口人员Id</param>
         /// <returns></returns>
         /// 测试数据: /CarMananger/Delete/
@@ -481,6 +481,9 @@ namespace DingTalk.Controllers
                                            UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
                                            MainContent = ct.MainContent,
                                            UseKilometres = ct.UseKilometres,
+
+                                           StartKilometres = ct.StartKilometres == null ? "" : ct.StartKilometres,
+                                           EndKilometres = ct.EndKilometres == null ? "" : ct.EndKilometres,
                                            //FactKilometre = ct.FactKilometre,
                                            //Remark = t.Remark
                                        };
