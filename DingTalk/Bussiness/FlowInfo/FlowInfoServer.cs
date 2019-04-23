@@ -94,7 +94,7 @@ namespace DingTalk.Bussiness.FlowInfo
             return ListTaskFinall;
         }
 
-      
+
 
         /// <summary>
         /// 修改任务流状态
@@ -166,7 +166,18 @@ namespace DingTalk.Bussiness.FlowInfo
 
             }
         }
-        
 
+        /// <summary>
+        /// 获取流程信息
+        /// </summary>
+        /// <param name="FlowId"></param>
+        /// <returns></returns>
+        public Flows GetFlow(string FlowId)
+        {
+            using (DDContext context = new DDContext())
+            {
+                return context.Flows.Where(f => f.FlowId.ToString() == FlowId).FirstOrDefault();
+            }
+        }
     }
 }

@@ -423,6 +423,7 @@
     <Compile Include="Models\DingModels\CreateProject.cs" />
     <Compile Include="Models\DingModels\ErrorLogs.cs" />
     <Compile Include="Models\DingModels\Evection.cs" />
+    <Compile Include="Models\DingModels\TasksState.cs" />
     <Compile Include="Models\DingModels\GiftTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
     <Compile Include="Models\DingModels\Contract.cs" />
