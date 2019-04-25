@@ -267,7 +267,7 @@ namespace DingTalk.Controllers
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                            "序号","物料编码","物料名称","规格型号","单位","数量","单价"
+                            "序号","物料编码","物料名称","规格型号","单位","数量","预计单价"
                         };
 
                     float[] contentWithList = new float[]
@@ -275,8 +275,17 @@ namespace DingTalk.Controllers
                         50, 90,90,90,60,60,60
                     };
 
+                    float sum = 0;
+
+                    foreach (var item in OfficeSuppliesPurchaseList)
+                    {
+                        sum += (float.Parse(item.Price) * float.Parse(item.Count));
+                    }
+                    Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                    keyValuePairs.Add("总价", sum.ToString());
+
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
-                    null, null, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null, null);
+                    null, null, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null, keyValuePairs);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     List<string> newPaths = new List<string>();
