@@ -24,7 +24,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("SaveTable")]
         [HttpPost]
-        public string SaveTable([FromBody] List<OfficeSupplies> officeSuppliesTableList)
+        public NewErrorModel SaveTable([FromBody] List<OfficeSupplies> officeSuppliesTableList)
         {
             try
             {
@@ -36,19 +36,17 @@ namespace DingTalk.Controllers
                         context.SaveChanges();
                     }
                 }
-                return JsonConvert.SerializeObject(new ErrorModel
+                return new NewErrorModel()
                 {
-                    errorCode = 0,
-                    errorMessage = "保存成功"
-                });
+                    error = new Error(0, "保存成功！", "") { },
+                };
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
+                return new NewErrorModel()
                 {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                    error = new Error(1, ex.Message, "") { },
+                };
             }
         }
 
@@ -59,7 +57,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("ReadTable")]
         [HttpGet]
-        public string ReadTable(string TaskId)
+        public NewErrorModel ReadTable(string TaskId)
         {
             try
             {
@@ -69,15 +67,19 @@ namespace DingTalk.Controllers
                     OfficeSuppliesTableList = context.OfficeSupplies.Where
                          (p => p.TaskId == TaskId).ToList();
                 }
-                return JsonConvert.SerializeObject(OfficeSuppliesTableList);
+
+                return new NewErrorModel()
+                {
+                    data = OfficeSuppliesTableList,
+                    error = new Error(0, "读取成功！", "") { },
+                };
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
+                return new NewErrorModel()
                 {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                    error = new Error(1, ex.Message, "") { },
+                };
             }
         }
 
@@ -89,7 +91,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("ModifyTable")]
         [HttpPost]
-        public string ModifyTable([FromBody] List<OfficeSupplies> officeSuppliesTableList)
+        public NewErrorModel ModifyTable([FromBody] List<OfficeSupplies> officeSuppliesTableList)
         {
             try
             {
@@ -101,19 +103,18 @@ namespace DingTalk.Controllers
                         context.SaveChanges();
                     }
                 }
-                return JsonConvert.SerializeObject(new ErrorModel
+
+                return new NewErrorModel()
                 {
-                    errorCode = 0,
-                    errorMessage = "保存成功"
-                });
+                    error = new Error(0, "修改成功！", "") { },
+                };
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
+                return new NewErrorModel()
                 {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                    error = new Error(1, ex.Message, "") { },
+                };
             }
         }
 
