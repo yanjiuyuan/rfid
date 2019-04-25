@@ -56,15 +56,11 @@ function loadPage(url) {
     $("#tempPage").load(url)
 }
 function goHome() {
-    $.ajax({
-        url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + DingData.userid,
-        datatype: 'json',
-        success: function (data) {
-            if (JSON.parse(data).ApproveCount) {
-                loadPage('/Main/approval')
-            } else {
-                loadPage('/Main/approval_list?Index=0')
-            }
+    this.GetData('/FlowInfoNew/GetFlowStateCounts?ApplyManId=' + DingData.userid, (res) => {
+        if (res.ApproveCount) {
+            loadPage('/Main/approval')
+        } else {
+            loadPage('/Main/approval_list?Index=0')
         }
     })
     return true
@@ -226,34 +222,20 @@ function checkRate(input) {
 
 //获取审批表单信息
 function getFormData(demo) {
-
-    //demo.GetData()
-    var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-    $.ajax({
-        url: url,
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-            console.log("获取审批表单信息ok")
-            console.log(url)
-            console.log(data)
-            imageList = []
-            fileList = []
-            pdfList = []
-            allData = data
-            handleUrlData(data,demo)
-            taskId = allData.TaskId
-            console.log(imageList)
-            console.log(fileList)
-            console.log(pdfList)
-            demo.ruleForm = allData
-            demo.getNodeInfo()
-            demo.getApproInfo()
-            //demo.getBomInfo()
-        },
-        error: function (err) {
-            console.log(err);
-        }
+    var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+    this.GetData(url, (res) => {
+        imageList = []
+        fileList = []
+        pdfList = []
+        allData = data
+        handleUrlData(data, demo)
+        taskId = allData.TaskId
+        console.log(imageList)
+        console.log(fileList)
+        console.log(pdfList)
+        demo.ruleForm = allData
+        demo.getNodeInfo()
+        demo.getApproInfo()
     })
 }
 function handleUrlData(data,demo) {
@@ -580,19 +562,8 @@ var mixin = {
                             }
                         }
                     }
-                    $.ajax({
-                        url: '/FlowInfo/CreateTaskInfo',
-                        type: 'POST',
-                        data: JSON.stringify(paramArr),
-                        success: function (data) {
-                            var taskId = JSON.parse(data).Content
-                            console.log('创建流程')
-                            console.log(paramArr)
-                            console.log(data)
-                            callBack(taskId)
-                        },
-                        error: function(err) {
-                        }
+                    that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
+                        callBack(res)
                     })
                 } else {
                     that.$alert('表单数据不全或有误', '提交错误', {
@@ -663,7 +634,6 @@ var mixin = {
                 }
             }
             console.log(paramArr)
-            //return
             this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
                 this.$alert('审批成功', '操作成功', {
                     confirmButtonText: '确定',
@@ -733,31 +703,13 @@ var mixin = {
             }
             console.log(paramArr)
             //return
-            $.ajax({
-                url: "/FlowInfo/SubmitTaskInfo",
-                type: "POST",
-                data: JSON.stringify(paramArr),
-                dataType: "json",
-                success: function (data) {
-                    console.log(paramArr)
-                    console.log(JSON.stringify(paramArr))
-                    console.log(data)
-                    if (data && data.errorCode == 0) {
-                        that.$alert('审批成功', '操作成功', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                loadPage('/main/Approval_list')
-                            }
-                        });
-                    } else {
-                        that.$alert('审批发生错误', '操作失败', {
-                            confirmButtonText: '确定'
-                        });
+            this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
+                this.$alert('审批成功', '操作成功', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        loadPage('/main/Approval_list')
                     }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+                });
             })
         },
         //退回审批
@@ -780,26 +732,13 @@ var mixin = {
             for (let o in option) {
                 param[o] = option[o]
             }
-            $.ajax({
-                url: "/FlowInfo/FlowBack",
-                type: "POST",
-                data: JSON.stringify(param),
-                dataType: "json",
-                success: function (data) {
-                    console.log('退回')
-                    console.log("/FlowInfo/FlowBack")
-                    console.log(param)
-                    console.log(data)
-                    that.$alert(data.errorMessage, '信息返回', {
-                        confirmButtonText: '确定',
-                        callback: action => {
-                            loadPage('/Main/Approval_list')
-                        }
-                    })
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+            this.PostData("/FlowInfoNew/FlowBack", param, (res) => {
+                this.$alert('审批成功', '操作成功', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        loadPage('/main/Approval_list')
+                    }
+                });
             })
         },
         resetForm(formName) {
@@ -875,53 +814,37 @@ var mixin = {
         //获取审批/抄送 相关人员列表
         getNodeInfo() {
             var that = this
-            var url = "/FlowInfo/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
-            if (TaskId == 0 || TaskId == '0') {
-                url = "/FlowInfo/GetSign?FlowId=" + FlowId
-            }
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function (result) {
-                    console.log("获取节点数据 GetSign nodeList")
-                    result = JSON.parse(result)
-                    console.log(url)
-                    console.log(result)
-                    that.isBack = result[0].IsBack
-                    that.nodeList = _cloneArr(result)
-                    let lastNode = {}
-                    let tempNodeList = []
-                    //审批人分组
-                    for (let node of that.nodeList) {
-                        if (lastNode.NodeName == node.NodeName && !lastNode.ApplyTime && !node.ApplyTime) {
-                            tempNodeList[tempNodeList.length - 1].ApplyMan = tempNodeList[tempNodeList.length - 1].ApplyMan + ',' + node.ApplyMan
-                        }
-                        else {
-                            tempNodeList.push(node)
-                        }
-                        lastNode = node
+            var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
+            this.GetData(url, (res) => {
+                this.isBack = res[0].IsBack
+                this.nodeList = _cloneArr(res)
+                let lastNode = {}
+                let tempNodeList = []
+                //审批人分组
+                for (let node of this.nodeList) {
+                    if (lastNode.NodeName == node.NodeName && !lastNode.ApplyTime && !node.ApplyTime) {
+                        tempNodeList[tempNodeList.length - 1].ApplyMan = tempNodeList[tempNodeList.length - 1].ApplyMan + ',' + node.ApplyMan
                     }
-                    that.nodeList = _cloneArr(tempNodeList)
+                    else {
+                        tempNodeList.push(node)
+                    }
+                    lastNode = node
+                }
+                this.nodeList = _cloneArr(tempNodeList)
 
-                    for (let node of that.nodeList) {
-                        node['AddPeople'] = []
-                        //抄送人分组
-                        if (node.ApplyMan && node.ApplyMan.length > 0)
-                            node.NodePeople = node.ApplyMan.split(',')
-                        //申请人设置当前人信息
-                        if (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan) {
-                            node.ApplyMan = DingData.nickName
-                            node.AddPeople = [{
-                                name: DingData.nickName,
-                                emplId: DingData.userid
-                            }]
-                        }
+                for (let node of this.nodeList) {
+                    node['AddPeople'] = []
+                    //抄送人分组
+                    if (node.ApplyMan && node.ApplyMan.length > 0)
+                        node.NodePeople = node.ApplyMan.split(',')
+                    //申请人设置当前人信息
+                    if (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan) {
+                        node.ApplyMan = DingData.nickName
+                        node.AddPeople = [{
+                            name: DingData.nickName,
+                            emplId: DingData.userid
+                        }]
                     }
-                    
-                    //that.preApprove = !data[0].IsNeedChose
-                },
-                error: function (err) {
-                    console.log(err);
                 }
             })
             
@@ -946,20 +869,11 @@ var mixin = {
         //获取審批節點數據
         getApproInfo() {
             var that = this
-            var url = "/FlowInfo/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
-            $.ajax({
-                url: url,
-                dataType: "json",
-                success: function (data) {
-                    console.log(url)
-                    console.log(data)
-                    that.nodeInfo = data[0]
-                    NodeId = data[0].NodeId
-                    that.preApprove = !data[0].IsNeedChose
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+            var url = "/FlowInfoNew/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
+            this.GetData(url, (res) => {
+                this.nodeInfo = res[0]
+                NodeId = res[0].NodeId
+                this.preApprove = !res[0].IsNeedChose
             })
         },
         //审批所有流程通过，后续处理
