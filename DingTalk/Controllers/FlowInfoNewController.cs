@@ -1290,7 +1290,8 @@ namespace DingTalk.Controllers
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
             List<object> listQuaryPro = new List<object>();
-            List<Tasks> ListTask = context.Tasks.Where(t => t.ApplyManId == ApplyManId).ToList();
+            List<Tasks> ListTask = context.Tasks.ToList();
+            //List<Tasks> ListTask = context.Tasks.Where(t => t.ApplyManId == ApplyManId).ToList();
             List<Flows> ListFlows = context.Flows.ToList();
             List<TasksState> ListTasksState = context.TasksState.ToList();
             foreach (int TaskId in ListTasks)
