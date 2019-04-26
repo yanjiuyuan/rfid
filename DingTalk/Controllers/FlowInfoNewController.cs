@@ -123,7 +123,7 @@ namespace DingTalk.Controllers
                                         TaskId.ToString(), tasksApplyMan.ApplyMan,
                                         tasksApplyMan.Remark, context, flows.ApproveUrl,
                                         nextNodeInfo.NodeId.ToString(), false, false);
-                                    Thread.Sleep(500);
+                                    Thread.Sleep(200);
                                 }
 
                                 return new NewErrorModel()
@@ -1243,6 +1243,36 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 获取流程状态(单条)
+        /// </summary>
+        /// <param name="TaskId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetFlowStateSingle")]
+        public NewErrorModel GetFlowStateSingle(string TaskId)
+        {
+            try
+            {
+                using (DDContext context=new DDContext ())
+                {
+                    return new NewErrorModel()
+                    {
+                        data = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault(),
+                        error = new Error(0, "获取流程状态成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
         /// <summary>
         /// 辅助查询
         /// </summary>
@@ -1260,8 +1290,9 @@ namespace DingTalk.Controllers
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
             List<object> listQuaryPro = new List<object>();
-            List<Tasks> ListTask = context.Tasks.ToList();
+            List<Tasks> ListTask = context.Tasks.Where(t => t.ApplyManId == ApplyManId).ToList();
             List<Flows> ListFlows = context.Flows.ToList();
+            List<TasksState> ListTasksState = context.TasksState.ToList();
             foreach (int TaskId in ListTasks)
             {
                 int StateCount = ListTask.Where(t => t.TaskId.ToString() == TaskId.ToString() && t.State == 0 && t.IsSend != true).Count();
@@ -1284,6 +1315,8 @@ namespace DingTalk.Controllers
                 var query = from t in ListTask
                             join f in ListFlows
                             on t.FlowId.ToString() equals f.FlowId.ToString()
+                            join ts in ListTasksState
+                            on t.TaskId.ToString() equals ts.TaskId
                             where t.NodeId == 0 && t.TaskId == TaskId
                             && (IsMobile == true ? f.IsSupportMobile == true : 1 == 1)
                             && ((Key != "" ? f.FlowName.Contains(Key) : 1 == 1) ||
@@ -1302,7 +1335,7 @@ namespace DingTalk.Controllers
                                 ApplyManId = t.ApplyManId,
                                 ApplyTime = t.ApplyTime,
                                 Title = t.Title,
-                                State = GetTasksState(t.TaskId.ToString(), ListTask),
+                                State = ts.State,
                                 IsBack = t.IsBacked,
                                 IsSupportMobile = f.IsSupportMobile
                             };
@@ -1819,7 +1852,7 @@ namespace DingTalk.Controllers
         #endregion
 
         #region 获取流程状态
-        
+
         /// <summary>
         /// 获取流程状态
         /// </summary>
@@ -1835,6 +1868,63 @@ namespace DingTalk.Controllers
                     {
                         data = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault(),
                         error = new Error(0, "获取成功！", "") { }
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        #endregion
+
+        #region 同步流程状态(新旧数据交替)
+
+        /// <summary>
+        /// 同步流程状态(新旧数据交替)
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SynTasksState")]
+        public NewErrorModel SynTasksState()
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Tasks> tasks = context.Tasks.ToList();
+                    FlowInfoServer flowInfoServer = new FlowInfoServer();
+                    EFHelper<TasksState> eFHelper = new EFHelper<TasksState>();
+                    eFHelper.DelBy(t => t.TaskId != "");
+                    List<string> taskIdList = new List<string>();
+                    foreach (var item in tasks)
+                    {
+                        if (!taskIdList.Contains(item.TaskId.ToString()))
+                        {
+                            taskIdList.Add(item.TaskId.ToString());
+                        }
+                    }
+                    List<TasksState> TasksStateList = new List<TasksState>();
+                    foreach (var taskId in taskIdList)
+                    {
+                        TasksStateList.Add(new TasksState()
+                        {
+                            TaskId = taskId,
+                            State = flowInfoServer.GetTasksState(taskId)
+                        });
+                    }
+
+                    context.TasksState.AddRange(TasksStateList);
+                    context.SaveChanges();
+
+                    return new NewErrorModel()
+                    {
+                        count = TasksStateList.Count,
+                        error = new Error(0, "同步成功！", "") { }
                     };
                 }
             }
