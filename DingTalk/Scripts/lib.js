@@ -223,7 +223,7 @@ function checkRate(input) {
 //获取审批表单信息
 function getFormData(demo) {
     var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-    this.GetData(url, (res) => {
+    GetData(url, (res) => {
         imageList = []
         fileList = []
         pdfList = []
