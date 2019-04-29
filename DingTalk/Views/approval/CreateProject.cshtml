@@ -1,7 +1,5 @@
 ﻿@{
-                /**/
-
-                Layout = null;
+    Layout = null;
 }
 
 <!--右侧实体内容-->
@@ -19,7 +17,7 @@
                 <el-input v-model="ruleForm.Title"></el-input>
             </el-form-item>
             <el-form-item label="申请人">
-                <el-input v-model="ruleForm.ApplyMan"></el-input>
+                <el-input v-model="ruleForm.ApplyMan" disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
@@ -40,11 +38,11 @@
                     <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="公司名称" required="required">
+            @*<el-form-item label="公司名称" required="required">
                 <el-select v-model="ruleForm.CompanyName" style="width:300px;">
                     <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item>*@
             <el-form-item label="项目类型" required="required">
                 <el-select v-model="ruleForm.ProjectType">
                     <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
@@ -94,7 +92,6 @@
     </el-form>
 </div>
 
-
 <script>
     var Index = 0
     var demo = new Vue({
@@ -107,7 +104,7 @@
                 groupPeople: [{ name: '', emplId: '' }],
                 ProjectTypes: ProjectTypes,
                 DeptNames: DeptNames,
-                CompanyNames: CompanyNames,
+                //CompanyNames: CompanyNames,
                 ruleForm: {
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
@@ -119,7 +116,7 @@
                     ProjectId: null,
                     Time: '',
                     ProjectType: ProjectTypes[0],
-                    CompanyName: CompanyNames[0]
+                    //CompanyName: CompanyNames[0]
                 }
             }
         },
@@ -153,7 +150,7 @@
                             "ResponsibleManId": this.ResponsibleMan[0].emplId,
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
-                            "CompanyName": this.ruleForm.CompanyName,
+                            //"CompanyName": this.ruleForm.CompanyName,
                             "ProjectType": this.ruleForm.ProjectType,
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName,
@@ -184,7 +181,6 @@
                         })
                     }
                 })
-
             }
         },
         created: function () {

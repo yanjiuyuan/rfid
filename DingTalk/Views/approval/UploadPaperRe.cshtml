@@ -264,17 +264,15 @@
             },
             search() {
                 var that = this
-                console.log('hehehe233333333')
                 this._getData('/PurchaseOrder/Quary', function (result) {
-                    console.log('hehehe')
                     that.allData = result.data
-                    let data = result.data
 
                 }, { key: that.keyWord })
             },
             chooseProject(index, row) {
+                console.log(row)
                 this.data = row.PurchaseList
-                handleUrlData(row)
+                handleUrlData(row,this)
                 this.ruleForm.FileUrl = row.FileUrl
                 this.ruleForm.Title = row.Title
                 this.ruleForm.ProjectId = row.ProjectId

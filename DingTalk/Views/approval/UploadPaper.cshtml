@@ -288,17 +288,8 @@
                                 }
                             }
                         }
-                        $.ajax({
-                            url: '/FlowInfo/CreateTaskInfo',
-                            type: 'POST',
-                            data: JSON.stringify(paramArr),
-                            success: function (data) {
-                                console.log("提交审批ok")
-                                var taskId = JSON.parse(data).Content
-                                console.log(JSON.stringify(paramArr))
-                                console.log(taskId)
-                                that.bindData(taskId)
-                            }
+                        that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
+                            bindData(res)
                         })
                     } else {
                         that.$alert('表单数据不全或有误', '提交错误', {
