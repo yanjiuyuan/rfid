@@ -235,6 +235,7 @@ namespace Common.PDF
             }
         }
 
+
         #region 图片水印
         /// <summary>
         /// 加图片水印
@@ -284,8 +285,8 @@ namespace Common.PDF
                 //每一页加水印,也可以设置某一页加水印 
                 for (int i = 1; i <= numberOfPages; i++)
                 {
-                    waterMarkContent = pdfStamper.GetUnderContent(i);//内容下层加水印
-                                                                     //waterMarkContent = pdfStamper.GetOverContent(i);//内容上层加水印
+                    //waterMarkContent = pdfStamper.GetUnderContent(i);//内容下层加水印
+                    waterMarkContent = pdfStamper.GetOverContent(i);//内容上层加水印
                     waterMarkContent.AddImage(image);
                 }
 
