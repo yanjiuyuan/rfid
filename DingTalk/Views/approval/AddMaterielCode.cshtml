@@ -272,6 +272,86 @@
                 var that = this
                 let url = ''
                 this.ruleForm.codeType == '2' ? url = 'http://wuliao5222.55555.io:35705/api/' + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
+                if (this.ruleForm.codeType == '2') {
+                    that.bigCodes = [
+                        {
+                            "materialCodeNumber": "60",
+                            "materialName": "办公用品",
+                            "smallMaterialCodes": [
+                                {
+                                    "materialCodeNumber": "000",
+                                    "materialName": "文件档案管理类"
+                                },
+                                {
+                                    "materialCodeNumber": "001",
+                                    "materialName": "桌面用品"
+                                },
+                                {
+                                    "materialCodeNumber": "002",
+                                    "materialName": "办公本薄"
+                                },
+                                {
+                                    "materialCodeNumber": "003",
+                                    "materialName": "书写修正用品"
+                                },
+                                {
+                                    "materialCodeNumber": "004",
+                                    "materialName": "财务用品"
+                                },
+                                {
+                                    "materialCodeNumber": "005",
+                                    "materialName": "辅助用品"
+                                },
+                                {
+                                    "materialCodeNumber": "006",
+                                    "materialName": "电脑周边用品"
+                                },
+                                {
+                                    "materialCodeNumber": "040",
+                                    "materialName": "打印耗材"
+                                },
+                                {
+                                    "materialCodeNumber": "041",
+                                    "materialName": "装订耗材"
+                                },
+                                {
+                                    "materialCodeNumber": "042",
+                                    "materialName": "办公用纸"
+                                },
+                                {
+                                    "materialCodeNumber": "043",
+                                    "materialName": "IT耗材"
+                                },
+                                {
+                                    "materialCodeNumber": "080",
+                                    "materialName": "日用品"
+                                },
+                                {
+                                    "materialCodeNumber": "081",
+                                    "materialName": "清洁用品"
+                                },
+                                {
+                                    "materialCodeNumber": "120",
+                                    "materialName": "事务设备"
+                                },
+                                {
+                                    "materialCodeNumber": "121",
+                                    "materialName": "IT设备"
+                                },
+                                {
+                                    "materialCodeNumber": "122",
+                                    "materialName": "办公电器"
+                                },
+                                {
+                                    "materialCodeNumber": "160",
+                                    "materialName": "办公家具"
+                                }
+                            ]
+                        }
+                    ]
+                    return
+                }
+                
                 this._getData(url, function (res) {
                     that.bigCodes = res.data
                     //that.loadReApprovalData()
@@ -299,30 +379,18 @@
                 this.ruleForm.goods[0].Remark = Math.random() + ''
                 this.ruleForm.goods[0].Remark = a
             },
-            ////加载重新发起审批传递的数据
-            //loadReApprovalData() {
-            //    if (!ReApprovalTempData.valid) return
-            //    ReApprovalTempData.valid = false
-            //    //let datas = []
-            //    for (let d of ReApprovalTempData.data) {
-            //        for (let a of this.bigCodes) {
-            //            if (d.BigCode == a.materialCodeNumber) {
-            //                d['smallMaterialCodes'] = a.smallMaterialCodes
-            //            }
-            //        }
-            //    }
-            //    this.ruleForm.goods = ReApprovalTempData.data
-            //},
-            ////显示临时保存数据
-            //saveTempData() {
-            //    setLocalObj('materiel', this.ruleForm.goods)
-            //    this.elementAlert('提示信息', '保存成功')
-            //},
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                ReApprovalTempData.valid = false
+                this.tableData = ReApprovalTempData.data
+            },
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
             this.getMaterielCode()
+            this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
         }
     })

@@ -58,13 +58,11 @@
             </el-form-item>
         </template>
 
-        <template v-if="NodeId >= 5">
+        @*<template v-if="NodeId >= 5">
             <el-form-item label="部门阅办情况" prop="Review" v-if="NodeId == 5">
                 <el-input v-model="ruleForm.Review" style="width:500px;" :disabled="NodeId>5"></el-input>
             </el-form-item>
             <el-form-item label="部门阅办情况" v-else>
-                @*<el-card>
-                </el-card>*@
                 <div v-for="r in ReviewList" :key="r" class="text item" style="min-width:400px;">
                     {{r}}
                 </div>
@@ -97,7 +95,7 @@
                     </div>
                 </el-card>
             </el-form-item>
-        </template>
+        </template>*@
 
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="false" :nodedata="nodeInfo"></sam-approver-list>
@@ -161,25 +159,27 @@
                 var that = this
                 let url = '/Receiving/Modify'
                 var param = _cloneObj(this.ruleForm)
+                param.Review = ''
+                param.HandleImplementation = ''
                 this.fileListToUrl()
-                if (NodeId == 5) {
-                    if (!this.ruleForm.Review) {
-                        this.elementAlert('提示','请填写部门阅办情况')
-                        return
-                    }
-                    param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review
-                } else {
-                    param.Review = ''
-                }
-                if (NodeId == 6) {
-                    if (!this.ruleForm.HandleImplementation) {
-                        this.elementAlert('提示', '请填写落实情况')
-                        return
-                    }
-                    param.HandleImplementation = DingData.departName + '-' + DingData.nickName + ': ' + param.HandleImplementation
-                } else {
-                    param.HandleImplementation = ''
-                } 
+                //if (NodeId == 5) {
+                //    if (!this.ruleForm.Review) {
+                //        this.elementAlert('提示','请填写部门阅办情况')
+                //        return
+                //    }
+                //    param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review
+                //} else {
+                //    param.Review = ''
+                //}
+                //if (NodeId == 6) {
+                //    if (!this.ruleForm.HandleImplementation) {
+                //        this.elementAlert('提示', '请填写落实情况')
+                //        return
+                //    }
+                //    param.HandleImplementation = DingData.departName + '-' + DingData.nickName + ': ' + param.HandleImplementation
+                //} else {
+                //    param.HandleImplementation = ''
+                //} 
                 console.log(JSON.stringify(param))
                 //console.log(param)
                 //return

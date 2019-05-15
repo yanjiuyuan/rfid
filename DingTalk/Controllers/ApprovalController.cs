@@ -113,5 +113,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult CrossHelp()
+        {
+            return View();
+        }
     }
 }

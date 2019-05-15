@@ -1,0 +1,171 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        公车申请-{{nodeInfo.NodeName}}
+    </div>
+
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请部门">
+            <el-input v-model="dept" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="协作部门">
+            <el-select v-model="ruleForm.DeptName" style="width:300px;">
+                <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="协作人">
+            <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+        </el-form-item>
+
+        <el-form-item label="协作内容" prop="PlantTravelWay">
+            <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
+        </el-form-item>
+
+        <el-form-item label="协作时间" prop="StartTime">
+            <el-date-picker v-model="timeRange"
+                            type="daterange"
+                            v-on:change="selectTime"
+                            range-separator="至"
+                            start-placeholder="开始时间"
+                            end-placeholder="返回时间">
+            </el-date-picker>
+        </el-form-item>
+        <hr />
+
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="!checked">提交</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                applyMan: DingData.nickName,
+                dept: DingData.departName,
+                nodeList: [],
+                nodeInfo: {},
+                timeRange: [],
+                useTimeList: [],
+                date: _getDate(),
+                checked: false,
+                activeNames: [],
+                DeptNames: DeptNames,
+                ruleForm: {
+                    CarId: "",
+                    DrivingMan: "",
+                    PeerNumber: "",
+                    StartTime: "",
+                    EndTime: "",
+                    MainContent: "",
+                    PlantTravelWay: "",
+                    Title: "跨部门协作申请",
+                    DeptName: '',
+                },
+                rules: {
+                    DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
+                    PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
+                    MainContent: { required: true, message: '用车事由不能为空', trigger: 'blur' },
+                    PlantTravelWay: { required: true, message: '计划路线不能为空', trigger: 'blur' },
+                    startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
+                    StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
+                    EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                console.log('submit!');
+                var that = this
+                let url = '/CarTable/TableSave'
+                var param = _cloneObj(this.ruleForm)
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    param.TaskId = taskId
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    },param)
+                }
+                console.log(param)
+                this.nodeList[4].AddPeople = this.nodeList[2].AddPeople
+                this.approvalSubmit(formName, { Title: this.ruleForm.Title }, callBack)
+            },
+            showMore() {
+                console.log('hello?')
+                this.activeNames = [1]
+            },
+            //选时间操作
+            selectTime(value) {
+                if (!value[0]) return
+                this.ruleForm.StartTime = _timeToString(value[0])
+                this.ruleForm.EndTime = _timeToString(value[1])
+            },
+            //添加用车人
+            addDrivingMan() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    multiple: false,
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        that.ruleForm.DrivingMan = data[0].name
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            //添加同行人
+            addPeerNumber() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        let names = []
+                        for (let d of data) names.push(d.name)
+                        that.ruleForm.PeerNumber = names.join(',')
+                    },
+                    onFail: function (err) { }
+                });
+            }
+        },
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            loadHtml("mainPage", "partPage")
+        },
+
+    })
+
+
+</script>
+
+
+
