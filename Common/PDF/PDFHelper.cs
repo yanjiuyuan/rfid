@@ -281,7 +281,7 @@ namespace Common.PDF
                 //image.SetAbsolutePosition(left, (height - image.Height) - top);
                 image.SetAbsolutePosition(left, (height / 2 - image.Height) - top);
 
-
+                //image.SetAbsolutePosition(200, 200);
                 //每一页加水印,也可以设置某一页加水印 
                 for (int i = 1; i <= numberOfPages; i++)
                 {

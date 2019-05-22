@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1184,7 +1185,10 @@ namespace DingTalk.Controllers
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         [HttpGet]
         [Route("GetFlowStateDetail")]
-        public NewErrorModel GetFlowStateDetail(int Index, string ApplyManId, bool IsSupportMobile = false, string Key = "")
+        public NewErrorModel GetFlowStateDetail(int Index, 
+            string ApplyManId, bool IsSupportMobile = false,
+            
+            string Key = "")
         {
             try
             {
@@ -1290,8 +1294,12 @@ namespace DingTalk.Controllers
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
             List<object> listQuaryPro = new List<object>();
-            List<Tasks> ListTask = context.Tasks.ToList();
-            //List<Tasks> ListTask = context.Tasks.Where(t => t.ApplyManId == ApplyManId).ToList();
+            //List<Tasks> ListTask = context.Tasks.ToList();
+
+            List<Tasks> ListTask = context.Tasks.SqlQuery("select * from tasks where taskid in " +
+                "(select TaskId from tasks where ApplyManId = @applyManId)",new SqlParameter("@applyManId", ApplyManId)).ToList();
+
+        
             List<Flows> ListFlows = context.Flows.ToList();
             List<TasksState> ListTasksState = context.TasksState.ToList();
             foreach (int TaskId in ListTasks)
@@ -1331,13 +1339,13 @@ namespace DingTalk.Controllers
                                 TaskId = t.TaskId,
                                 NodeId = NodeId,
                                 FlowId = t.FlowId,
-                                FlowName = f.FlowName,
                                 ApplyMan = t.ApplyMan,
                                 ApplyManId = t.ApplyManId,
                                 ApplyTime = t.ApplyTime,
                                 Title = t.Title,
                                 State = ts.State,
                                 IsBack = t.IsBacked,
+                                FlowName = f.FlowName,
                                 IsSupportMobile = f.IsSupportMobile
                             };
 
