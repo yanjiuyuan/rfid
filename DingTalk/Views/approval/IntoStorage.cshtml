@@ -166,7 +166,7 @@
             searchCode() {
                 var that = this
                 if (!this.searchForm.name) return
-                var url = jinDomarn + '/Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
+                var url = jinDomarn + 'Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
                 this.GetData(url, function(data) {
                     that.data = data
                     that.totalRows = data.length
@@ -176,7 +176,7 @@
             searchAndAdd() {
                 var that = this
                 if (!this.searchForm.business) return
-                var url = jinDomarn + '/Godown/ReadGodownInfo?UnitName=' + that.searchForm.business
+                var url = jinDomarn + 'Godown/ReadGodownInfo?UnitName=' + that.searchForm.business
                 this.GetData(url, function (data) {
                     for (let d of data) {
                         let ifBreak = false

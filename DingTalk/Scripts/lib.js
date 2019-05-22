@@ -223,7 +223,7 @@ function checkRate(input) {
 //获取审批表单信息
 function getFormData(demo) {
     var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-    this.GetData(url, (res) => {
+    GetData(url, (res) => {
         imageList = []
         fileList = []
         pdfList = []
@@ -335,6 +335,7 @@ var public = {
         data: [],
         tableData: [],
         fileList: [],
+        pdfList: [],
         mediaList: [],
         specialRoleNames: [],
         ruleForm: {},
@@ -709,6 +710,7 @@ var public = {
             var paramObj = {
                 "": file.response.Content
             }
+            that.disablePage = true
             $.ajax({
                 url: '/DingTalkServers/UploadMedia/',
                 type: 'POST',
@@ -725,6 +727,7 @@ var public = {
                         console.log('无media_di')
                     }
                     that.fileList = _cloneArr(fileList)
+                    that.disablePage = false
                 }
             })
         },
@@ -762,6 +765,7 @@ var public = {
 var doMixin = {
     //提交审批
     approvalSubmit(formName, param, callBack, param2 = {}) {
+        if (DingData.userid) return
         var that = this
         this.$refs[formName].validate((valid) => {
             if (valid) {
@@ -831,6 +835,7 @@ var dowithMixin = {
     methods: {
         //同意审批
         aggreSubmit(param, param2 = {}) {
+            if (DingData.userid) return
             this.disablePage = true
             var paramArr = []
             var that = this
@@ -850,7 +855,7 @@ var dowithMixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (this.FlowId == 31 && this.NodeId == 3 && node.NodeId == 4)) {
+                if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
                     if (node.AddPeople.length == 0) {
                         this.$alert('您尚未选择审批人', '提交错误', {
                             confirmButtonText: '确定',
@@ -1064,6 +1069,7 @@ var mixin = {
         data: [],
         tableData: [],
         fileList: [],
+        pdfList: [],
         mediaList: [],
         specialRoleNames: [],
         ruleForm: {},
@@ -1237,6 +1243,7 @@ var mixin = {
         },
         //提交审批
         approvalSubmit(formName, param, callBack, param2 = {}) {
+            if (!DingData.userid) return
             var that = this
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -1301,75 +1308,8 @@ var mixin = {
             });
         },
         //同意审批
-        AggreSubmit(param, param2 = {}) {
-            this.disablePage = true
-            var paramArr = []
-            var that = this
-            paramArr.push({
-                "TaskId": TaskId,
-                "ApplyMan": DingData.nickName,
-                "ApplyManId": DingData.userid,
-                "Dept": DingData.departName,
-                "NodeId": NodeId,
-                "ApplyTime": _getTime(),
-                "IsEnable": "1",
-                "FlowId": FlowId,
-                "IsSend": "false",
-                "State": "1",
-            })
-            for (let p in param) {
-                paramArr[0][p] = param[p]
-            }
-            for (let node of this.nodeList) {
-                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (this.FlowId == 31 && this.NodeId == 3 && node.NodeId == 4)) {
-                    if (node.AddPeople.length == 0) {
-                        this.$alert('您尚未选择审批人', '提交错误', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-
-                            }
-                        });
-                        that.disablePage = false
-                        return
-                    }
-                    for (let a of node.AddPeople) {
-                        let tmpParam = {
-                            "ApplyMan": a.name,
-                            "ApplyManId": a.emplId,
-                            "TaskId": TaskId,
-                            "ApplyTime": null,
-                            "IsEnable": 1,
-                            "FlowId": FlowId,
-                            "NodeId": node.NodeId,
-                            "Remark": null,
-                            "IsSend": node.IsSend,
-                            "State": 0,
-                            "ImageUrl": null,
-                            "FileUrl": null,
-                            "IsPost": false,
-                            "OldImageUrl": null,
-                            "OldFileUrl": null,
-                            "IsBack": null
-                        }
-                        //if (this.FlowId == 31) tmpParam.IsPost = true
-                        for (let p2 in param2) {
-                            tmpParam[p2] = param2[p2]
-                        }
-                        paramArr.push(tmpParam)
-                    }
-                }
-            }
-            console.log(paramArr)
-            this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
-                this.$alert('审批成功', '操作成功', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                        loadPage('/main/Approval_list')
-                    }
-                });
-            })
-        },
         aggreSubmit(param, param2 = {}) {
+            if (!DingData.userid) return
             this.disablePage = true
             var paramArr = []
             var that = this
@@ -1389,7 +1329,7 @@ var mixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (this.FlowId == 31 && this.NodeId == 3 && node.NodeId == 4)) {
+                if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
                     if (node.AddPeople.length == 0) {
                         this.$alert('您尚未选择审批人', '提交错误', {
                             confirmButtonText: '确定',
@@ -1755,6 +1695,12 @@ var mixin = {
         },
         HandleFileSuccess(response, file, fileList) {
             var that = this
+            const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             var paramObj = {
                 "": file.response.Content
             }
@@ -1774,6 +1720,7 @@ var mixin = {
                         console.log('无media_di')
                     }
                     that.fileList = _cloneArr(fileList)
+                    loading.close()
                 }
             })
         },

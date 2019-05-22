@@ -17,32 +17,35 @@
                 <el-input v-model="ruleForm.Title"></el-input>
             </el-form-item>
             <el-form-item label="申请人">
-                <el-input v-model="ruleForm.ApplyMan" disabled="true"></el-input>
+                <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            <el-form-item label="项目编号" prop="inputProjectId">
+            @*<el-form-item label="项目编号" prop="inputProjectId">
                 <el-input v-model="ruleForm.inputProjectId"></el-input>
-            </el-form-item>
+            </el-form-item>*@
             <el-form-item label="承担部门">
                 <el-select v-model="ruleForm.DeptName" style="width:300px;">
                     <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="协作单位" prop="CompanyName">
+                <el-input v-model="ruleForm.CompanyName"></el-input>
+            </el-form-item>
             @*<el-form-item label="承担部门">
             <el-input v-model="ruleForm.DeptName"></el-input>
         </el-form-item>*@
-            <el-form-item label="状态" required="required">
-                <el-select v-model="ruleForm.ProjectState">
-                    <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
-                </el-select>
-            </el-form-item>
+            @*<el-form-item label="状态" required="required">
+            <el-select v-model="ruleForm.ProjectState">
+                <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>*@
             @*<el-form-item label="公司名称" required="required">
-                <el-select v-model="ruleForm.CompanyName" style="width:300px;">
-                    <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-                </el-select>
-            </el-form-item>*@
+            <el-select v-model="ruleForm.CompanyName" style="width:300px;">
+                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>*@
             <el-form-item label="项目类型" required="required">
                 <el-select v-model="ruleForm.ProjectType">
                     <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
@@ -111,12 +114,12 @@
                     inputProjectName: '',
                     inputProjectId: '',
                     DeptName: '',
-                    ProjectState: '',
+                    //ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
                     Time: '',
                     ProjectType: ProjectTypes[0],
-                    //CompanyName: CompanyNames[0]
+                    CompanyName: ''
                 }
             }
         },
@@ -126,7 +129,7 @@
                 var that = this
                 this.fileListToUrl()
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name && this.ruleForm.Time[0] && this.ruleForm.FileUrl) {
+                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name && this.ruleForm.Time[0] && this.ruleForm.FileUrl) {
                         that.disablePage = true
                         let names = []
                         let ids = []
@@ -138,19 +141,19 @@
                             "ProjectName": this.ruleForm.inputProjectName,
                             "CreateTime": _getTime(),
                             "IsEnable": true,
-                            "ProjectState": this.ruleForm.ProjectState,
+                            "ProjectState": '在研',//this.ruleForm.ProjectState,
                             "IsFinish": false,
                             "DeptName": this.ruleForm.DeptName,
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
-                            "StartTime": this.ruleForm.Time[0]?_dateToString(this.ruleForm.Time[0]):'',
-                            "EndTime": this.ruleForm.Time[1]?_dateToString(this.ruleForm.Time[1]):'',
+                            "StartTime": this.ruleForm.Time[0] ? _dateToString(this.ruleForm.Time[0]) : '',
+                            "EndTime": this.ruleForm.Time[1] ? _dateToString(this.ruleForm.Time[1]) : '',
                             "ProjectId": this.ruleForm.inputProjectId,
                             "ResponsibleMan": this.ResponsibleMan[0].name,
                             "ResponsibleManId": this.ResponsibleMan[0].emplId,
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
-                            //"CompanyName": this.ruleForm.CompanyName,
+                            "CompanyName": this.ruleForm.CompanyName,
                             "ProjectType": this.ruleForm.ProjectType,
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName,
@@ -158,7 +161,7 @@
                         }
                         let callBack = function (taskId) {
                             param['TaskId'] = taskId
-                            that.PostData('CreateProject/Save', param , function (data) {
+                            that.PostData('CreateProject/Save', param, function (data) {
                                 that.$alert('恭喜提交成功', '提示信息', {
                                     confirmButtonText: '确定',
                                     callback: action => {

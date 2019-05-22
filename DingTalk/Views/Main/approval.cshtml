@@ -5,7 +5,7 @@
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <br />
-    <template v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯'">
+    <template v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯' || userName == '黄浩伟'">
         <span>我是：</span>
         <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">
             <el-option v-for="item in userList"
@@ -180,6 +180,12 @@
             sortId: 5,
             url: '/approval/createProject',
             position: (x + 8 * xTap -3) + 'px ' + (y + 1 * yTap -3) + 'px'
+        },
+        {
+            flowId: 32,
+            sortId: 7,
+            url: '/approval/crossHelp',
+            position: (x + 6 * xTap) + 'px ' + (y + 3 * yTap) + 'px'
         }
 
 
@@ -201,33 +207,12 @@
         },
         methods: {
             getMenu: function () {
-                var that = this
-                //this.getData('/FlowInfoNew/LoadFlowSort?id=123', function (data) {
-                //    that.menu = data
-                //    that.getData('/FlowInfoNew/LoadFlowInfo?id=123', function (data) {
-                    
-                //    })
-                //})
-                $.ajax({
-                    url: '/FlowInfo/LoadFlowSort?id=123',
-                    dataType: 'json',
-                    type: 'GET',
-                    cache: false,
-                    success: function (data) {
-                        that.menu = data
-                        $.ajax({
-                            url: '/FlowInfo/LoadFlowInfo?id=123',
-                            dataType: 'json',
-                            type: 'GET',
-                            cache: false,
-                            success: function (data) {
-                                that.list = _mergeObjectArr(data, imgConfig, 'flowId')
-                                console.log('/FlowInfo/LoadFlowInfo?id=123')
-                                console.log(data)
-                                that.filterMenuList()
-                            }
-                        })
-                    }
+                this.GetData('FlowInfoNew/LoadFlowSort?id=123', (res) => {
+                    this.menu = res
+                    this.GetData('FlowInfoNew/LoadFlowInfo?id=123', (res) => {
+                        this.list = _mergeObjectArr(res, imgConfig, 'flowId')
+                        this.filterMenuList()
+                    })
                 })
             },
             filterMenuList() {
@@ -236,7 +221,6 @@
                 $.ajax({
                     url: url,
                     success: function (data) {
-                        console.log('获取研究院官网维护人员详细信息')
                         console.log(data)
                         let isRole = false
                         for (let d of data) {
@@ -247,11 +231,31 @@
                             }
                         }
                         if (!isRole) {
-                            console.log('开始过滤-研究院官网维护人员')
-                            console.log(isRole)
                             for (var i = 0; i < that.menu.length; i++) {
                                 if (that.menu[i].SORT_NAME == '研究院官网管理') {
                                     that.menu.splice(i, 1)
+                                }
+                            }
+                        }
+                    }
+                })
+                var url2 = '/Role/GetRoleInfo?RoleName=项目管理员'
+                $.ajax({
+                    url: url2,
+                    success: function (data) {
+                        console.log(data)
+                        let isRole = false
+                        for (let d of data) {
+                            console.log(d)
+                            if (d.emplId == DingData.userid) {
+                                isRole = true
+                                break
+                            }
+                        }
+                        if (!isRole) {
+                            for (var i = 0; i < that.list.length; i++) {
+                                if (that.list[i].flowId == 1) {
+                                    that.list.splice(i, 1)
                                 }
                             }
                         }

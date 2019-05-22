@@ -289,7 +289,7 @@
                             }
                         }
                         that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
-                            bindData(res)
+                            this.bindData(res)
                         })
                     } else {
                         that.$alert('表单数据不全或有误', '提交错误', {
@@ -304,11 +304,6 @@
                 var that = this
                 let url = '123.PDF'
                 url = '/NewsAndCases/DownloadFile'
-                
-                //window.location.href = url
-                //window.open(url)
-
-
                 that._postData(url, function (result) {
                     console.log(result.data.replace("application/pdf", "pdf/octet-stream"))
                     window.location.href = result.data.replace("application/pdf", "pdf/octet-stream")
@@ -417,6 +412,12 @@
 
             handlePdfFileCardSuccess(response, file, fileList) {
                 var that = this
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 var paramObj = {
                     "": file.response.Content
                 }
@@ -431,13 +432,12 @@
                         console.log(paramObj)
                         if (data.media_id) {
                             console.log(data.media_id)
-                            //isPdf ? that.mediaPdfList.push(data.media_id) : that.mediaList.push(data.media_id)
                             that.mediaPdfList.push(data.media_id)
                         } else {
                             console.log('无media_di')
                         }
-                        //that.isPdfFile ? that.pdfList = _cloneArr(fileList) : that.fileList = _cloneArr(fileList)
                         that.pdfList = _cloneArr(fileList)
+                        loading.close()
                     }
                 })
             },

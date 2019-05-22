@@ -742,6 +742,8 @@
     <Content Include="Views\approval\GoOut.cshtml" />
     <Content Include="Views\approval\CreateProject.cshtml" />
     <Content Include="Views\Main\Approval_createProject.cshtml" />
+    <Content Include="Views\approval\CrossHelp.cshtml" />
+    <Content Include="Views\Main\Approval_crossHelp.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
