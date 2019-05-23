@@ -13,7 +13,6 @@ var ReApprovalTempData = {} //重新发起审批保存的临时数据
 var imageList = []
 var fileList = []
 var pdfList = []
-//let jinDomarn = 'http://1858o1s713.51mypc.cn:16579/api/'
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目']
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部']
@@ -258,6 +257,7 @@ function handleUrlData(data,demo) {
         for (var i = 0; i < urlList.length; i++) {
             fileList.push({
                 name: oldUrlList[i],
+                path: urlList[i].replace(/\\/g, "/"),
                 url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
                 mediaId: MediaIdList[i]
             })
@@ -1265,7 +1265,7 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId>0)) {
+                        if ((that.nodeInfo.IsNeedChose && ( (that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0 ) || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) ) || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId>0)) {
                             if (node.AddPeople.length == 0) {
                                 this.$alert('您尚未选择审批人', '提交错误', {
                                     confirmButtonText: '确定',
@@ -1329,7 +1329,7 @@ var mixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) {
+                if (that.nodeInfo.IsNeedChose && ( (that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) ) {
                     if (node.AddPeople.length == 0) {
                         this.$alert('您尚未选择审批人', '提交错误', {
                             confirmButtonText: '确定',

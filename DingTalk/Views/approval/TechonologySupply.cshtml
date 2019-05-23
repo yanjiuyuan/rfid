@@ -8,7 +8,6 @@
         <i class="el-icon-arrow-left"></i>
         跨部门协作申请-{{nodeInfo.NodeName}}
     </div>
-
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="标题" prop="Title">
@@ -20,31 +19,66 @@
         <el-form-item label="申请部门">
             <el-input v-model="dept" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="协作部门" prop="CooperateDept">
-            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
-                <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="协作人" prop="CooperateMan">
+        <el-form-item label="商务对接人" prop="CooperateMan">
             <el-input v-model="ruleForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
 
-        <el-form-item label="协作内容" prop="CooperateContent">
+        <el-form-item label="申请技术支持部门" prop="CooperateDept">
+            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
+                <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="申请对接支持工程师" prop="CooperateMan">
+            <el-input v-model="ruleForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+        </el-form-item>
+        <el-form-item label="紧急程度" prop="CooperateDept">
+            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
+                <el-option v-for="s of ['中','高','低']" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="技术支持内容" prop="CooperateContent">
             <el-input v-model="ruleForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
         </el-form-item>
 
-        <el-form-item label="协作时间" prop="PlanBeginTime">
+        <el-form-item label="要求完成时间" prop="PlanBeginTime">
             <el-date-picker v-model="timeRange"
-                            type="daterange"
+                            type="date"
                             v-on:change="selectTime"
-                            range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="结束时间">
+                            placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="计划天数" prop="PlanDays">
-            <el-input v-model="ruleForm.PlanDays" style="width:200px;"></el-input>
+        <el-form-item label="产品类型" prop="PlanBeginTime">
+            <el-radio v-model="radio" label="1">工业机器人</el-radio>
+            <el-radio v-model="radio" label="2">自动化产线</el-radio>
+            <template v-if="">
+                <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
+                    <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+                <el-checkbox-group v-model="checkList">
+                    <el-checkbox label="复选框 A"></el-checkbox>
+                    <el-checkbox label="复选框 B"></el-checkbox>
+                </el-checkbox-group>
+                <el-input v-model="CooperateMan" style="width:500px;" :disabled="true"></el-input>
+            </template>
+            <template v-else>
+                <el-input v-model="CooperateMan" style="width:500px;" :disabled="true"></el-input>
+            </template>
+        </el-form-item>
+        <el-form-item label="客户数据" required="required">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="fileList"
+                       action="/drawingupload/Upload"
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
+                       :on-success="HandleFileSuccess"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">不超过30M</div>
+            </el-upload>
         </el-form-item>
         <hr />
         <el-form-item label="建议" prop="remark">
@@ -68,7 +102,24 @@
                 dept: DingData.departName,
                 nodeList: [],
                 nodeInfo: {},
-                timeRange: [],
+                machines: [
+                    {
+                        name: '焊接机器人',
+                        types: ['电焊','孤焊','气焊','激光焊']
+                    }, {
+                        name: '装配机器人',
+                        types: ['普通装配', '贴片技术', '钎焊', '制孔及连接', '密封涂胶']
+                    }, {
+                        name: '搬运机器人',
+                        types: ['物料搬运', '上下料', '码垛']
+                    }, {
+                        name: '喷涂机器人',
+                        types: ['涂装']
+                    }, {
+                        name: '其它机器人',
+                        types: ['冲压', '打磨', '抛光', '包装', '浇注', '切削加工','检测','注塑']
+                    }
+                ],
                 useTimeList: [],
                 date: _getDate(),
                 activeNames: [],
@@ -107,9 +158,13 @@
                         })
                     })
                 }
-                this.nodeList[4].AddPeople = this.nodeList[2].AddPeople
-                this.nodeList[6].AddPeople = [...this.nodeList[0].AddPeople, ...this.nodeList[1].AddPeople, ...this.nodeList[2].AddPeople]
-                this.approvalSubmit(formName, { Title: this.ruleForm.Title, Remark: this.ruleForm.remark, }, callBack)
+                this.approvalSubmit(formName, {
+                    Title: this.ruleForm.Title,
+                    Remark: this.ruleForm.remark,
+                    FileUrl: this.ruleForm.FileUrl,
+                    MediaId: this.ruleForm.MediaId,
+                    OldFileUrl: this.ruleForm.OldFileUrl
+                }, callBack)
             },
             //选时间操作
             selectTime(value) {
@@ -134,7 +189,7 @@
                         for (let d of data) {
                             names.push(d.name)
                             ids.push(d.emplId)
-                        } 
+                        }
                         that.ruleForm.CooperateMan = names.join(',')
                         that.ruleForm.CooperateManId = ids.join(',')
                     },

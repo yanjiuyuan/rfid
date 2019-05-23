@@ -19,14 +19,19 @@
         <el-form-item label="申请部门">
             <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="协作部门">
+
+        <el-form-item label="商务对接人">
+            <el-input v-model="tableForm.CooperateMan" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="申请支持部门">
             <el-input v-model="tableForm.CooperateDept" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="协作人">
+        <el-form-item label="申请对接工程师">
             <el-input v-model="tableForm.CooperateMan" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="协作内容">
-            <el-input v-model="tableForm.CooperateContent" style="width:550px;" :disabled="true" type="textarea"></el-input>
+            <el-input v-model="tableForm.CooperateContent" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
         <el-form-item label="计划时间">

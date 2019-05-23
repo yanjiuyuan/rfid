@@ -63,7 +63,8 @@
             <el-card class="box-card">
                 <div v-for="f in fileList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
-                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                    @*<el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>*@
+                    <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
                 </div>
             </el-card>
         </el-form-item>
@@ -167,6 +168,27 @@
                 } else {
                     this.aggreSubmit(aggreParam)
                 }
+            },
+            //下载文件
+            downloadServerFile: function (path, row) {
+                let serverUrl = 'http://17e245o364.imwork.net:49415/' + 'ProjectNew/DownLoad?path=' + path
+                console.log(serverUrl)
+                location.href = serverUrl
+                return
+                var that = this
+                var path = '\\'
+                for (let p of this.pathList) {
+                    path = path + p + '\\'
+                }
+                path += row.path
+                var paramObj = {
+                    "userId": DingData.userid,
+                    "path": path
+                }
+                this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (data) => {
+                    that.downloadUrl = 'http://' + data
+                    location.href = that.downloadUrl
+                })
             },
             returnBk() {
                 let param = {

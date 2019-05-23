@@ -168,6 +168,10 @@
                         loadPage('/Main/approval_createProject' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 32) {
+                        loadPage('/Main/approval_crossHelp' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },

@@ -117,5 +117,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult TechonologySupply()
+        {
+            return View();
+        }
     }
 }
