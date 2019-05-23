@@ -22,7 +22,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Save")]
         [HttpPost]
-        public object Save(List<DrawingChange> DrawingChangeList)
+        public NewErrorModel Save(List<DrawingChange> DrawingChangeList)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public Object Read(string TaskId)
+        public NewErrorModel Read(string TaskId)
         {
             try
             {
@@ -82,9 +82,8 @@ namespace DingTalk.Controllers
         /// 图纸变更接口
         /// </summary>
         /// <returns></returns>
-        [Route("Change")]
         [HttpPost]
-        public object Change(List<DrawingChange> DrawingChangeList)
+        public NewErrorModel Change(List<DrawingChange> DrawingChangeList)
         {
             try
             {
