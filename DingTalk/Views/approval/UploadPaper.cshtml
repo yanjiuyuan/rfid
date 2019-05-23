@@ -446,6 +446,12 @@
             beforePdfFileUpload(file) {
                 console.log('before pdf')
                 console.log(file)
+                if (file.name.indexOf(' ') >= 0) {
+                    this.$alert( '文件名不能带空格','图纸上传失败', {
+                        confirmButtonText: '确定',
+                    });
+                    return false
+                }
                 file.name = 'helloWorld'
                 isPdf = true
                 const isPdfType = file.type === 'application/pdf'
