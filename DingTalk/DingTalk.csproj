@@ -346,6 +346,7 @@
     <Compile Include="Controllers\ContractManagerController.cs" />
     <Compile Include="Controllers\CooperateManagerController.cs" />
     <Compile Include="Controllers\CreateProjectController.cs" />
+    <Compile Include="Controllers\DrawingChangeController.cs" />
     <Compile Include="Controllers\DrawingDownController.cs" />
     <Compile Include="Controllers\DrawingUploadController.cs" />
     <Compile Include="Controllers\DrawingUploadNewController.cs" />
@@ -423,6 +424,7 @@
     <Compile Include="Models\DingModels\CarTable.cs" />
     <Compile Include="Models\DingModels\Cooperate.cs" />
     <Compile Include="Models\DingModels\CreateProject.cs" />
+    <Compile Include="Models\DingModels\DrawingChange.cs" />
     <Compile Include="Models\DingModels\ErrorLogs.cs" />
     <Compile Include="Models\DingModels\Evection.cs" />
     <Compile Include="Models\DingModels\TasksState.cs" />

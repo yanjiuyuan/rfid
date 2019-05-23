@@ -65,6 +65,6 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<TasksState> TasksState { get; set; }
 
         public virtual DbSet<Cooperate> Cooperate { get; set; }
-
+        public virtual DbSet<DrawingChange> DrawingChange { get; set; }
     }
 }
