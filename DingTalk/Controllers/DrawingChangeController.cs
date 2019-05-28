@@ -17,20 +17,24 @@ namespace DingTalk.Controllers
     public class DrawingChangeController : ApiController
     {
         /// <summary>
-        /// 图纸变更表单保存
+        /// 图纸BOM变更表单保存
         /// </summary>
         /// <returns></returns>
         [Route("Save")]
         [HttpPost]
-        public NewErrorModel Save(List<DrawingChange> DrawingChangeList)
+        public NewErrorModel Save(DrawingChangeTable  drawingChangeTable)
         {
             try
             {
                 EFHelper<DrawingChange> eFHelper = new EFHelper<DrawingChange>();
-                foreach (var item in DrawingChangeList)
+                foreach (var item in drawingChangeTable.DrawingChangeList)
                 {
                     eFHelper.Add(item);
                 }
+
+                EFHelper<FileChange> eFHelpers = new EFHelper<FileChange>();
+                eFHelpers.Add(drawingChangeTable.fileChange);
+
                 return new NewErrorModel()
                 {
                     data = "",
@@ -47,7 +51,7 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 图纸变更表单读取
+        /// 图纸BOM变更表单读取
         /// </summary>
         /// <param name="TaskId"></param>
         /// <returns></returns>
@@ -60,10 +64,15 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<DrawingChange> DrawingChangeList = context.DrawingChange.Where(c => c.TaskId == TaskId).ToList();
+
+                    FileChange fileChange=context.FileChange.Where(c => c.TaskId == TaskId).FirstOrDefault();
+                    
                     return new NewErrorModel()
                     {
-                        count = DrawingChangeList.Count,
-                        data = DrawingChangeList,
+                        data = new DrawingChangeTable() {
+                            DrawingChangeList= DrawingChangeList,
+                            fileChange= fileChange,
+                        },
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
@@ -79,34 +88,60 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
-        /// 图纸变更接口
+        /// 图纸BOM变更接口(流程结束后调用)
         /// </summary>
         /// <returns></returns>
+        [Route("ChangeBom")]
         [HttpPost]
-        public NewErrorModel Change(List<DrawingChange> DrawingChangeList)
+        public NewErrorModel ChangeBom(DrawingChangeTable drawingChangeTable)
         {
             try
             {
                 DDContext context = new DDContext();
-
-                foreach (var item in DrawingChangeList)
+                foreach (var item in drawingChangeTable.DrawingChangeList)
                 {
-                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString()
-                      == item.TaskId && t.NodeId == 0).FirstOrDefault();
-                    if (!string.IsNullOrEmpty(item.FilePDFUrl))
+                    if (item.ChangeType == "1") //新增
                     {
-                        tasks.FilePDFUrl.Replace(item.OldFilePDFUrl, item.FilePDFUrl);
-                        tasks.OldFilePDFUrl.Replace(item.OldPDFName, item.PDFName);
+                        Purchase purchase = new Purchase()
+                        {
+                            TaskId = item.OldId,
+                            BomId = item.BomId,
+                            DrawingNo = item.DrawingNo,
+                            CodeNo = item.CodeNo,
+                            Name = item.Name,
+                            Count = item.Count,
+                            MaterialScience = item.MaterialScience,
+                            Unit = item.Unit,
+                            Brand = item.Brand,
+                            Sorts = item.Sorts,
+                            Mark = item.Mark,
+                            SingleWeight = item.SingleWeight,
+                            AllWeight = item.AllWeight,
+                            NeedTime = item.NeedTime,
+                        };
+                        context.Purchase.Add(purchase);
                         context.SaveChanges();
                     }
 
-                    if (!string.IsNullOrEmpty(item.MediaId))
+                    if (item.ChangeType == "2")  //删除
                     {
-                        tasks.FilePDFUrl.Replace(item.OldMediaId, item.MediaId);
-                        tasks.OldFileUrl.Replace(item.OldFileName, item.FileName);
+                        Purchase purchase = context.Purchase.Find(item.OldId);
+                        purchase.ChangeType = item.ChangeType;
+                        context.Entry<Purchase>(purchase).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
                     }
                 }
+
+                Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString()
+                      == drawingChangeTable.fileChange.TaskId.ToString() && t.NodeId == 0).FirstOrDefault();
+                tasks.MediaId = drawingChangeTable.fileChange.MediaId;
+                tasks.MediaIdPDF = drawingChangeTable.fileChange.MediaIdPDF;
+                tasks.FilePDFUrl = drawingChangeTable.fileChange.FilePDFUrl;
+                tasks.OldFilePDFUrl = drawingChangeTable.fileChange.OldFilePDFUrl;
+                tasks.FileUrl = drawingChangeTable.fileChange.FileUrl;
+                tasks.OldFileUrl = drawingChangeTable.fileChange.OldFileUrl;
+                context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
+                context.SaveChanges();
 
                 return new NewErrorModel()
                 {
@@ -122,5 +157,13 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+    }
+
+    public class DrawingChangeTable
+    {
+        public List<DrawingChange> DrawingChangeList { get; set; }
+
+        public FileChange fileChange { get; set; }
     }
 }
