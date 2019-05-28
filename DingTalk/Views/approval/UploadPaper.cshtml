@@ -447,7 +447,7 @@
                 console.log('before pdf')
                 console.log(file)
                 if (file.name.indexOf(' ') >= 0) {
-                    this.$alert( '文件名不能带空格','图纸上传失败', {
+                    this.$alert( '文件名不能带空格','上传失败', {
                         confirmButtonText: '确定',
                     });
                     return false
@@ -470,6 +470,12 @@
             beforeFileUpload(file) {
                 console.log('before file')
                 console.log(file)
+                if (file.name.indexOf(' ') >= 0) {
+                    this.$alert('文件名不能带空格', '上传失败', {
+                        confirmButtonText: '确定',
+                    });
+                    return false
+                }
                 file.name = 'helloWorld'
                 isPdf = false
                 const isLt2M = file.size / 1024 / 1024 < 10
