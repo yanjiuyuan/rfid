@@ -1,4 +1,5 @@
-﻿using DingTalk.EF;
+﻿using DingTalk.Bussiness.FlowInfo;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
@@ -16,6 +17,77 @@ namespace DingTalk.Controllers
     [RoutePrefix("DrawingChange")]
     public class DrawingChangeController : ApiController
     {
+        /// <summary>
+        /// 图纸数据查询
+        /// </summary>
+        /// <returns></returns>
+        [Route("Query")]
+        [HttpGet]
+        public NewErrorModel Query(string ProjectName,string ProjectType)
+        {
+            try
+            {
+                DDContext context = new DDContext();
+                List<object> list = new List<object>();
+                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0).ToList();
+
+                var quaryList = context.Tasks.Where(
+                      t=>t.ProjectName.Contains(ProjectName)  && t.projectType.Contains(ProjectType) && t.NodeId == 0 && t.FlowId == 6).OrderBy(t => t.TaskId).Select(t => new TasksPurcahse
+                    {
+                        Id = t.Id,
+                        TaskId = t.TaskId,
+                        ApplyMan = t.ApplyMan,
+                        ApplyManId = t.ApplyManId,
+                        ApplyTime = t.ApplyTime,
+                        Dept = t.Dept,
+                        FilePDFUrl = t.FilePDFUrl,
+                        FileUrl = t.FileUrl,
+                        FlowId = t.FlowId,
+                        ImageUrl = t.ImageUrl,
+                        IsBacked = t.IsBacked,
+                        IsEnable = t.IsEnable,
+                        IsPost = t.IsPost,
+                        IsSend = t.IsSend,
+                        MediaId = t.MediaId,
+                        MediaIdPDF = t.MediaIdPDF,
+                        NodeId = t.NodeId,
+                        OldFilePDFUrl = t.OldFilePDFUrl,
+                        OldFileUrl = t.OldFileUrl,
+                        OldImageUrl = t.OldImageUrl,
+                        PdfState = t.PdfState,
+                        ProjectId = t.ProjectId,
+                        ProjectName = t.ProjectName,
+                        Title = t.Title,
+                        PurchaseList = context.Purchase.Where(p => p.TaskId == t.TaskId.ToString()).ToList()
+                    });
+
+                foreach (var item in quaryList)
+                {
+                    foreach (var tasks in tasksList)
+                    {
+                        if (item.TaskId == tasks.TaskId)
+                        {
+                            list.Add(item);
+                        }
+                    }
+                }
+
+                return new NewErrorModel()
+                {
+                    data = list,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
         /// <summary>
         /// 图纸BOM变更表单保存
         /// </summary>
