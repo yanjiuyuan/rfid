@@ -60,7 +60,11 @@
             @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
             <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
-
+        <el-form-item label="项目类型" required="required">
+            <el-select v-model="ruleForm.ProjectType">
+                <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
@@ -183,6 +187,7 @@
                 nodeInfo: {},
                 nodeList: [],
                 projectList: [],
+                ProjectTypes: ['电气采购', '机械加工', '机械采购', '其他'],
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
@@ -202,6 +207,7 @@
                     inputProjectId: '',
                     Title: '',
                     ProjectId: null,
+                    ProjectType: ProjectTypes[1],
                     Time: ''
                 }
             }
