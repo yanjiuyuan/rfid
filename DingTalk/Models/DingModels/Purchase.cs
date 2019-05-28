@@ -56,5 +56,8 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(200)]
         public string NeedTime { get; set; }
+
+        [StringLength(200)]
+        public string ChangeType { get; set; }
     }
 }

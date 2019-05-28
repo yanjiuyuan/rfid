@@ -129,6 +129,12 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string NodeName { get; set; }
-        
+
+
+        /// <summary>
+        /// 项目具体类型(电器加工、机械加工、机械采购、其他)
+        /// </summary>
+        [StringLength(200)]
+        public string projectType { get; set; }
     }
 }

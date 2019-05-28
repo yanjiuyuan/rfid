@@ -66,5 +66,8 @@ namespace DingTalk.Models.DingModels
 
         public virtual DbSet<Cooperate> Cooperate { get; set; }
         public virtual DbSet<DrawingChange> DrawingChange { get; set; }
+
+        public virtual DbSet<FileChange> FileChange { get; set; }
+       
     }
 }

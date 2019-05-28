@@ -323,7 +323,8 @@ namespace DingTalk.Controllers
                         {
                             if (ListNewPath.Count < iCount)
                             {
-                                string newPathName = (HttpContext.Current.Server.MapPath(item).Substring(0, HttpContext.Current.Server.MapPath(item).Length - 18) + ".PDF");
+                                string newPathName = (HttpContext.Current.Server.MapPath(item).Substring(0, HttpContext.Current.Server.MapPath(item).Length - 18)) +
+                                 System.IO.Path.GetExtension(HttpContext.Current.Server.MapPath(item));
                                 File.Copy(HttpContext.Current.Server.MapPath(item), newPathName, true);
 
                                 ListNewPath.Add(newPathName);
@@ -332,12 +333,11 @@ namespace DingTalk.Controllers
                             if (ListNewPath.Count == iCount || ListPath.IndexOf(item) == ListPath.Count - 1)
                             {
                                 i++;
-                               string SavePath=string.Format(@"{0}\UploadFile\Ionic\{1}.zip",
-                                   AppDomain.CurrentDomain.BaseDirectory,
-                                    "流水号" + taskId + "图纸打包第" + i + "份" +
-                                    DateTime.Now.ToString("yyyyMMddHHmmss"));
-
-
+                                string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip",
+                                    AppDomain.CurrentDomain.BaseDirectory,
+                                     "流水号" + taskId + "图纸打包第" + i + "份" +
+                                     DateTime.Now.ToString("yyyyMMddHHmmss"));
+                                
                                 //文件压缩打包
                                 IonicHelper.CompressMulti(ListNewPath, SavePath, false);
 
@@ -355,6 +355,9 @@ namespace DingTalk.Controllers
 
                                 DingTalkServersController dingTalkServersController = new DingTalkServersController();
                                 SavePath = "~\\" + FileHelper.RelativePath(HttpContext.Current.Server.MapPath("~/"), SavePath);
+
+
+
                                 //上盯盘
                                 var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
                                 //推送用户

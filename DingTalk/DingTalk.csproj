@@ -427,6 +427,7 @@
     <Compile Include="Models\DingModels\DrawingChange.cs" />
     <Compile Include="Models\DingModels\ErrorLogs.cs" />
     <Compile Include="Models\DingModels\Evection.cs" />
+    <Compile Include="Models\DingModels\FileChange.cs" />
     <Compile Include="Models\DingModels\TasksState.cs" />
     <Compile Include="Models\DingModels\GiftTable.cs" />
     <Compile Include="Models\DingModels\Code.cs" />
