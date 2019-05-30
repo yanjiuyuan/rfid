@@ -121,5 +121,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult ChangePaper()
+        {
+            return View();
+        }
     }
 }
