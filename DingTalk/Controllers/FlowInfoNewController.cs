@@ -188,6 +188,37 @@ namespace DingTalk.Controllers
                                             error = new Error(0, "流程创建成功！", "") { },
                                         };
                                     }
+
+                                    //特殊处理(暂时)
+                                    if (tasks.FlowId.ToString() == "33")
+                                    {
+                                        NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == "33" && n.NodeId.ToString() == "2").FirstOrDefault();
+                                        Tasks taskCurrent = new Tasks()
+                                        {
+                                            TaskId = tasks.TaskId,
+                                            ApplyMan = nodeInfoCurrent.NodePeople,
+                                            ApplyManId = nodeInfoCurrent.PeopleId,
+                                            IsPost = false,
+                                            State = 0,
+                                            IsSend = false,
+                                            NodeId = 2,
+                                            IsEnable = 1,
+                                            FlowId = 6
+                                        };
+                                        context.Tasks.Add(taskCurrent);
+                                        context.SaveChanges();
+                                        await SendOaMsgNew(tasks.FlowId, taskCurrent.ApplyManId,
+                                            TaskId.ToString(), tasksApplyMan.ApplyMan,
+                                            tasksApplyMan.Remark, context, flows.ApproveUrl,
+                                             nextNodeInfo.NodeId.ToString());
+                                        Thread.Sleep(200);
+
+                                        return new NewErrorModel()
+                                        {
+                                            data = TaskId.ToString(),
+                                            error = new Error(0, "流程创建成功！", "") { },
+                                        };
+                                    }
                                 }
                             }
                         }
