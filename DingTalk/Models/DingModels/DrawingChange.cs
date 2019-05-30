@@ -16,6 +16,10 @@
         [StringLength(300)]
         public string TaskId { get; set; }
 
+
+        [StringLength(200)]
+        public string OldId { get; set; }
+
         [StringLength(500)]
         public string BomId { get; set; }
 
@@ -58,22 +62,9 @@
         public string NeedTime { get; set; }
 
         /// <summary>
-        /// 更改类型(目前只有不变(0)、新增(1)、删除(2))
+        /// 变更类型  1 新增 2 删除 
         /// </summary>
         [StringLength(200)]
         public string ChangeType { get; set; }
-
-        /// <summary>
-        /// 图纸审批旧BOM的Id
-        /// </summary>
-        [StringLength(200)]
-        public string OldId { get; set; }
-
-        /// <summary>
-        /// 图纸审批旧BOM的TaskId
-        /// </summary>
-        [StringLength(200)]
-        public string OldTaskId { get; set; }
-        
     }
 }
