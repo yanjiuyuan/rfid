@@ -17,6 +17,7 @@ namespace DingTalk.Controllers
     [RoutePrefix("DrawingChange")]
     public class DrawingChangeController : ApiController
     {
+        
         /// <summary>
         /// 图纸数据查询
         /// </summary>
@@ -86,6 +87,10 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+
+
+
 
 
         /// <summary>
@@ -165,31 +170,32 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("ChangeBom")]
         [HttpPost]
-        public NewErrorModel ChangeBom(DrawingChangeTable drawingChangeTable)
+        public NewErrorModel ChangeBom(List<DrawingChange> DrawingChangeList)
         {
             try
             {
                 DDContext context = new DDContext();
-                foreach (var item in drawingChangeTable.DrawingChangeList)
+                foreach (var item in DrawingChangeList)
                 {
                     if (item.ChangeType == "1") //新增
                     {
                         Purchase purchase = new Purchase()
                         {
-                            TaskId = item.OldId,
-                            BomId = item.BomId,
-                            DrawingNo = item.DrawingNo,
-                            CodeNo = item.CodeNo,
-                            Name = item.Name,
-                            Count = item.Count,
-                            MaterialScience = item.MaterialScience,
-                            Unit = item.Unit,
-                            Brand = item.Brand,
-                            Sorts = item.Sorts,
-                            Mark = item.Mark,
-                            SingleWeight = item.SingleWeight,
-                            AllWeight = item.AllWeight,
-                            NeedTime = item.NeedTime,
+                            TaskId = item.TaskId,
+                            AllWeight=item.AllWeight,
+                            BomId=item.BomId,
+                            Brand=item.Brand,
+                            ChangeType=item.ChangeType,
+                            CodeNo=item.CodeNo,
+                            Count=item.Count,
+                            DrawingNo=item.DrawingNo,
+                            Mark=item.Mark,
+                            MaterialScience=item.MaterialScience,
+                            Name=item.Name,
+                            NeedTime=item.NeedTime,
+                            SingleWeight=item.SingleWeight,
+                            Sorts=item.Sorts,
+                            Unit=item.Unit
                         };
                         context.Purchase.Add(purchase);
                         context.SaveChanges();
@@ -204,16 +210,16 @@ namespace DingTalk.Controllers
                     }
                 }
 
-                Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString()
-                      == drawingChangeTable.fileChange.TaskId.ToString() && t.NodeId == 0).FirstOrDefault();
-                tasks.MediaId = drawingChangeTable.fileChange.MediaId;
-                tasks.MediaIdPDF = drawingChangeTable.fileChange.MediaIdPDF;
-                tasks.FilePDFUrl = drawingChangeTable.fileChange.FilePDFUrl;
-                tasks.OldFilePDFUrl = drawingChangeTable.fileChange.OldFilePDFUrl;
-                tasks.FileUrl = drawingChangeTable.fileChange.FileUrl;
-                tasks.OldFileUrl = drawingChangeTable.fileChange.OldFileUrl;
-                context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
-                context.SaveChanges();
+                //Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString()
+                //      == drawingChangeTable.fileChange.TaskId.ToString() && t.NodeId == 0).FirstOrDefault();
+                //tasks.MediaId = drawingChangeTable.fileChange.MediaId;
+                //tasks.MediaIdPDF = drawingChangeTable.fileChange.MediaIdPDF;
+                //tasks.FilePDFUrl = drawingChangeTable.fileChange.FilePDFUrl;
+                //tasks.OldFilePDFUrl = drawingChangeTable.fileChange.OldFilePDFUrl;
+                //tasks.FileUrl = drawingChangeTable.fileChange.FileUrl;
+                //tasks.OldFileUrl = drawingChangeTable.fileChange.OldFileUrl;
+                //context.Entry<Tasks>(tasks).State = System.Data.Entity.EntityState.Modified;
+                //context.SaveChanges();
 
                 return new NewErrorModel()
                 {
