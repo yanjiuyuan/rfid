@@ -18,7 +18,7 @@ namespace DingTalk.Models.DingModels
         [StringLength(30)]
         public string TaskId { get; set; }
         /// <summary>
-        /// ¿Ò∆∑±‡∫≈(‘§¡Ù)
+        /// ¿Ò∆∑±‡∫≈(‘§¡Ù) ∆Ù∂Ø£¨µ»º€”⁄Id
         /// </summary>
         [StringLength(500)]
         public string GiftNo { get; set; }

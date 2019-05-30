@@ -29,7 +29,7 @@ namespace DingTalk.Controllers
         /// <param name="giftTable"></param>
         [Route("TableSave")]
         [HttpPost]
-        public Object TableSave([FromBody] List<GiftTable> giftTable)
+        public NewErrorModel TableSave([FromBody] List<GiftTable> giftTable)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("GetTable")]
         [HttpGet]
-        public Object GetTable(string TaskId)
+        public NewErrorModel GetTable(string TaskId)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("TableModify")]
         [HttpPost]
-        public Object TableModify([FromBody] List<GiftTable> giftList)
+        public NewErrorModel TableModify([FromBody] List<GiftTable> giftList)
         {
             try
             {
@@ -219,6 +219,105 @@ namespace DingTalk.Controllers
                 return new NewErrorModel()
                 {
                     error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// 库存批量保存接口
+        /// </summary>
+        /// <param name="giftTable"></param>
+        [Route("StockSave")]
+        [HttpPost]
+        public NewErrorModel StockSave([FromBody] List<Gift> giftTable)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    foreach (var gift in giftTable)
+                    {
+                        context.Gift.Add(gift);
+                    }
+                    context.SaveChanges();
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "添加成功", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// 库存信息读取接口
+        /// </summary>
+        /// <returns></returns>
+        [Route("GetStock")]
+        [HttpGet]
+        public NewErrorModel GetStock()
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Gift> giftTable = context.Gift.ToList();
+                    return new NewErrorModel()
+                    {
+                        count = giftTable.Count,
+                        data = giftTable,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 库存批量修改
+        /// </summary>
+        /// <param name="giftTable"></param>
+        [Route("StockSave")]
+        [HttpPost]
+        public Object StockModify([FromBody] List<Gift> giftTable)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    foreach (var gift in giftTable)
+                    {
+                        context.Entry<Gift>(gift).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                    }
+                 
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "修改成功", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
                 };
             }
         }

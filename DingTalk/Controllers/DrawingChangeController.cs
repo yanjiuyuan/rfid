@@ -17,65 +17,53 @@ namespace DingTalk.Controllers
     [RoutePrefix("DrawingChange")]
     public class DrawingChangeController : ApiController
     {
-        
+
         /// <summary>
         /// 图纸数据查询
         /// </summary>
         /// <returns></returns>
         [Route("Query")]
         [HttpGet]
-        public NewErrorModel Query(string ProjectName,string ProjectType)
+        public NewErrorModel Query(string ProjectName, string ProjectType)
         {
             try
             {
                 DDContext context = new DDContext();
                 List<object> list = new List<object>();
-                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0).ToList();
+                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0 && t.ProjectName==ProjectName && t.projectType==ProjectType).ToList();
 
-                var quaryList = context.Tasks.Where(
-                      t=>t.ProjectName.Contains(ProjectName)  && t.projectType.Contains(ProjectType) && t.NodeId == 0 && t.FlowId == 6).OrderBy(t => t.TaskId).Select(t => new TasksPurcahse
-                    {
-                        //Id = t.Id,
-                        //TaskId = t.TaskId,
-                        //ApplyMan = t.ApplyMan,
-                        //ApplyManId = t.ApplyManId,
-                        //ApplyTime = t.ApplyTime,
-                        //Dept = t.Dept,
-                        //FilePDFUrl = t.FilePDFUrl,
-                        //FileUrl = t.FileUrl,
-                        //FlowId = t.FlowId,
-                        //ImageUrl = t.ImageUrl,
-                        //IsBacked = t.IsBacked,
-                        //IsEnable = t.IsEnable,
-                        //IsPost = t.IsPost,
-                        //IsSend = t.IsSend,
-                        //MediaId = t.MediaId,
-                        //MediaIdPDF = t.MediaIdPDF,
-                        //NodeId = t.NodeId,
-                        //OldFilePDFUrl = t.OldFilePDFUrl,
-                        //OldFileUrl = t.OldFileUrl,
-                        //OldImageUrl = t.OldImageUrl,
-                        //PdfState = t.PdfState,
-                        //ProjectId = t.ProjectId,
-                        //ProjectName = t.ProjectName,
-                        //Title = t.Title,
-                        PurchaseList = context.Purchase.Where(p => p.TaskId == t.TaskId.ToString()).ToList()
-                    });
+                List<Purchase> PurchaseList = context.Purchase.ToList();
 
-                foreach (var item in quaryList)
-                {
-                    foreach (var tasks in tasksList)
-                    {
-                        if (item.TaskId == tasks.TaskId)
-                        {
-                            list.Add(item);
-                        }
-                    }
-                }
+                var Query = from t in tasksList
+                            join p in PurchaseList
+        on t.TaskId.ToString() equals p.TaskId
+                            //where t.projectType.Contains(ProjectType) && t.ProjectName.Contains(ProjectName) 
+                            select new
+                            {
+                                Id = p.Id,
+                                TaskId = p.TaskId,
+                                BomId = p.BomId,
+                                DrawingNo = p.DrawingNo,
+                                CodeNo = p.CodeNo,
+                                Name = p.Name,
+                                Count = p.Count,
+                                MaterialScience = p.MaterialScience,
+                                Unit = p.Unit,
+                                Brand = p.Brand,
+                                Sorts = p.Sorts,
+                                Mark = p.Mark,
+                                IsDown = p.IsDown,
+                                SingleWeight = p.SingleWeight,
+                                AllWeight = p.AllWeight,
+                                NeedTime = p.NeedTime,
+                                ChangeType = p.ChangeType,
+                            };
+
+
 
                 return new NewErrorModel()
                 {
-                    data = list,
+                    data = Query,
                     error = new Error(0, "读取成功！", "") { },
                 };
             }
@@ -99,7 +87,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Save")]
         [HttpPost]
-        public NewErrorModel Save(DrawingChangeTable  drawingChangeTable)
+        public NewErrorModel Save(DrawingChangeTable drawingChangeTable)
         {
             try
             {
@@ -142,13 +130,14 @@ namespace DingTalk.Controllers
                 {
                     List<DrawingChange> DrawingChangeList = context.DrawingChange.Where(c => c.TaskId == TaskId).ToList();
 
-                    FileChange fileChange=context.FileChange.Where(c => c.TaskId == TaskId).FirstOrDefault();
-                    
+                    FileChange fileChange = context.FileChange.Where(c => c.TaskId == TaskId).FirstOrDefault();
+
                     return new NewErrorModel()
                     {
-                        data = new DrawingChangeTable() {
-                            DrawingChangeList= DrawingChangeList,
-                            fileChange= fileChange,
+                        data = new DrawingChangeTable()
+                        {
+                            DrawingChangeList = DrawingChangeList,
+                            fileChange = fileChange,
                         },
                         error = new Error(0, "读取成功！", "") { },
                     };
@@ -182,20 +171,20 @@ namespace DingTalk.Controllers
                         Purchase purchase = new Purchase()
                         {
                             TaskId = item.TaskId,
-                            AllWeight=item.AllWeight,
-                            BomId=item.BomId,
-                            Brand=item.Brand,
-                            ChangeType=item.ChangeType,
-                            CodeNo=item.CodeNo,
-                            Count=item.Count,
-                            DrawingNo=item.DrawingNo,
-                            Mark=item.Mark,
-                            MaterialScience=item.MaterialScience,
-                            Name=item.Name,
-                            NeedTime=item.NeedTime,
-                            SingleWeight=item.SingleWeight,
-                            Sorts=item.Sorts,
-                            Unit=item.Unit
+                            AllWeight = item.AllWeight,
+                            BomId = item.BomId,
+                            Brand = item.Brand,
+                            ChangeType = item.ChangeType,
+                            CodeNo = item.CodeNo,
+                            Count = item.Count,
+                            DrawingNo = item.DrawingNo,
+                            Mark = item.Mark,
+                            MaterialScience = item.MaterialScience,
+                            Name = item.Name,
+                            NeedTime = item.NeedTime,
+                            SingleWeight = item.SingleWeight,
+                            Sorts = item.Sorts,
+                            Unit = item.Unit
                         };
                         context.Purchase.Add(purchase);
                         context.SaveChanges();

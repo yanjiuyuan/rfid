@@ -4,7 +4,7 @@ namespace DingTalk.Models.DingModels
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    
+
     public partial class DDContext : DbContext
     {
         public DDContext()
@@ -68,6 +68,8 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<DrawingChange> DrawingChange { get; set; }
 
         public virtual DbSet<FileChange> FileChange { get; set; }
-       
+
+        public virtual DbSet<Gift> Gift { get; set; }
+
     }
 }
