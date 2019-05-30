@@ -39,12 +39,15 @@
         </el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini" type="danger" v-on:click="deleteDevice(scope.$index, scope.row)">删除</el-button>
-                <span style="color:red;" v-if="scope.row.isDelete">已删除</span>
+                <el-button size="mini" type="danger" v-on:click="deleteDevice(scope.$index, scope.row)" v-if="!scope.row.ChangeType">删除</el-button>
+                <el-button size="mini" type="success" v-on:click="deleteDevice(scope.$index, scope.row)" v-else>保留</el-button>
+                <span style="color:red;" v-if="scope.row.ChangeType">已删除</span>
                 <span style="color:green;" v-else>保留</span>
             </template>
         </el-table-column>
     </el-table>
+    <hr />
+    <h3>待新增图纸Bom列表</h3>
     <template v-for="(d,index) in dataArr">
         <!--表格實體-->
         <el-table :data="d.tableData" stripe border>
@@ -65,7 +68,6 @@
         <el-upload class="upload-demo"
                    action="/drawingupload/UploadAndGetInfo"
                    :on-success="handleSuccess"
-                   @*:before-remove="beforeRemove"*@
                    :before-upload="beforeExcelUpload"
                    multiple
                    :limit="1"
@@ -96,7 +98,7 @@
                        drag
                        :file-list="pdfList"
                        action="/drawingupload/Upload"
-                       :on-remove="handlePdfFileRemove"
+                       :on-remove="HandlePdfFileRemove"
                        :before-upload="beforePdfFileUpload"
                        :on-success="handlePdfFileSuccess"
                        multiple>
@@ -105,15 +107,14 @@
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
-
         <el-form-item label="上传其他附件">
             <el-upload class="upload-demo"
                        drag
                        :file-list="fileList"
                        action="/drawingupload/Upload"
-                       @*:on-remove="handleFileRemove"
-                       :before-upload="beforeFileUpload"
-                       :on-success="HandleFileSuccess"*@
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
+                       :on-success="HandleFileSuccess"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -125,12 +126,12 @@
         </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
 </el-main>
 
 <script>
+    var upBom = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -143,7 +144,10 @@
                 projectList: [],
                 fileList: [],
                 pdfList: [],
+                mediaList: [],
+                mediaPdfList: [],
                 excelList: [],
+                bomIndex: 0,
                 //表单参数
                 ProjectId: '',
                 ProjectName: '',
@@ -194,25 +198,46 @@
         methods: {
             //提交审批
             onSubmit(formName) {
+                let deleteItem = []
+                this.allData.forEach((item) => {
+                    if (item.ChangeType) {
+                        deleteItem.push(item)
+                    }
+                })
+                if (!(upBom.length || deleteItem.length)) this.$alert('表单未填写完整', '提交错误')
+                this.fileListToUrl()
+                let changeParam = {
+                    DrawingChangeList: [...deleteItem, ...upBom],
+                    fileChange: {
+                        "FilePDFUrl": this.ruleForm.FilePDFUrl,
+                        "OldFilePDFUrl": this.ruleForm.OldFilePDFUrl,
+                        "FileUrl": this.ruleForm.FileUrl,
+                        "OldFileUrl": this.ruleForm.OldFileUrl,
+                        "MediaId": this.mediaList.join(','),
+                        "MediaIdPDF": this.mediaPdfList.join(',')
+                    }
+                }
+                console.log(changeParam)
+                return
                 var that = this
-                this.approvalSubmit('ruleForm', this.ruleForm, function (taskId) {
-                    that.bindData(taskId)
+                this.approvalSubmit('ruleForm', this.ruleForm, (taskId) => {
+                    
                 })
             },
+            
             search() {
-                if(!this.ProjectName){
+                if (!this.ruleForm.ProjectName){
                     this.$alert('请选择项目名称', '提交错误')
                     return
                 }
                 this.GetData('/DrawingChange/Query' + _formatQueryStr({
-                    ProjectName: this.ProjectName, ProjectType: this.ProjectType
+                    ProjectName: this.ruleForm.ProjectName, ProjectType: this.ProjectType
                 }), (result) => {
                     this.allData = result
                 })
             },
             deleteDevice(index, row) {
-                console.log(row)
-                row['ChangeType'] ? row['ChangeType'] = 0 : row['ChangeType'] = 2
+                row['ChangeType'] == 2 ? this.allData[index]['ChangeType'] = 0 : this.allData[index]['ChangeType'] = 2
             },
             selectProject(id) {
                 for (var project of this.projectList) {
@@ -222,19 +247,6 @@
                         this.ruleForm.ProjectId = project.ProjectId
                     }
                 }
-            },
-            //审批绑定BOM表数据
-            bindData(taskId) {
-                var that = this
-                for (let d of this.data) {
-                    d.TaskId = taskId
-                }
-                this._postData("/PurchaseOrder/Save", function (data) {
-                    console.log("审批绑定BOM表数据ok")
-                    console.log(JSON.stringify(that.data))
-                    console.log(data)
-                    that.doneSubmit()
-                }, that.data)
             },
             //图纸审批相关方法、、、、、、、、、、、、、、、、、、、、
             //bom表格翻页
@@ -282,6 +294,7 @@
                                 AllWeight: data.Column7,
                                 NeedTime: data.Column8,
                                 Mark: data.Column9,
+                                ChangeType: '1',
                                 Sorts: this.dataArr[this.bomIndex].Sorts
                             })
                         }
@@ -295,63 +308,6 @@
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-            },
-
-            beforePdfFileUpload(file) {
-                console.log('before pdf')
-                console.log(file)
-                if (file.name.indexOf(' ') >= 0) {
-                    this.$alert('文件名不能带空格', '上传失败', {
-                        confirmButtonText: '确定',
-                    });
-                    return false
-                }
-                file.name = 'helloWorld'
-                const isPdfType = file.type === 'application/pdf'
-                const isLt2M = file.size / 1024 / 1024 < 10
-                if (!isPdfType) {
-                    this.$message.error('上传图片只能是 PDF 格式!')
-                    return false
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传文件大小不能超过 10MB!')
-                    return false
-                }
-                return true
-            },
-            HandlePdfFileRemove(file, fileList) {
-                this.pdfList = _cloneArr(fileList)
-            },
-            handlePdfFileSuccess(response, file, fileList) {
-                var that = this
-                const loading = this.$loading({
-                    lock: true,
-                    text: 'Loading',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
-                });
-                var paramObj = {
-                    "": file.response.Content
-                }
-                $.ajax({
-                    url: '/DingTalkServers/UploadMedia/',
-                    type: 'POST',
-                    data: paramObj,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('上传文件到钉盘')
-                        console.log('/api/dt/uploadMedia/')
-                        console.log(paramObj)
-                        if (data.media_id) {
-                            console.log(data.media_id)
-                            that.mediaPdfList.push(data.media_id)
-                        } else {
-                            console.log('无media_di')
-                        }
-                        that.pdfList = _cloneArr(fileList)
-                        loading.close()
-                    }
-                })
             },
         },
         created: function () {
