@@ -29,15 +29,12 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext context = new DDContext();
-                List<object> list = new List<object>();
                 List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0 && t.ProjectName==ProjectName && t.projectType==ProjectType).ToList();
 
                 List<Purchase> PurchaseList = context.Purchase.ToList();
-
                 var Query = from t in tasksList
                             join p in PurchaseList
         on t.TaskId.ToString() equals p.TaskId
-                            //where t.projectType.Contains(ProjectType) && t.ProjectName.Contains(ProjectName) 
                             select new
                             {
                                 Id = p.Id,
