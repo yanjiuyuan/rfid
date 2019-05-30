@@ -1,7 +1,212 @@
-﻿
-@{
-    ViewBag.Title = "ChangePaper";
+﻿@{
+    Layout = null;
 }
 
-<h2>ChangePaper</h2>
+<!--右侧实体内容-->
+
+<el-main id="partPage" style="position:relative;margin-left:1%;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        图纸下单-{{nodeInfo.NodeName}}
+    </div>
+    <div>
+        <span>项目名称</span>
+        <el-select v-model="ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+            <el-option v-for="item in projectList"
+                       :key="item.ProjectId"
+                       :label="item.ProjectName"
+                       :value="item.ProjectId">
+                <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px"></span>
+            </el-option>
+        </el-select>
+        <span>图纸用途</span>
+        <el-select v-model="ProjectType">
+            <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
+        </el-select>
+        <el-button v-on:click="search">搜索</el-button>
+    </div>
+    <!--表格實體-->
+    <h3>审批列表</h3>
+    <el-table :data="allData" stripe border>
+        <el-table-column prop="TaskId" label="审批编号">
+        </el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人">
+        </el-table-column>
+        <el-table-column prop="ProjectName" label="项目名称">
+        </el-table-column>
+        <el-table-column prop="Title" label="标题">
+        </el-table-column>
+        <el-table-column prop="ApplyTime" label="申请时间">
+        </el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini" v-on:click="chooseProject(scope.$index, scope.row)">选择</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <h3>零件列表</h3>
+    <el-table :data="data" stripe border>
+        <el-table-column prop="BomId" label="组件名称">
+        </el-table-column>
+        <el-table-column prop="Sorts" label="类型">
+        </el-table-column>
+        <el-table-column prop="DrawingNo" label="代号">
+        </el-table-column>
+        <el-table-column prop="Name" label="名称">
+        </el-table-column>
+        <el-table-column prop="Count" label="数量">
+        </el-table-column>
+        <el-table-column prop="MaterialScience" label="材料">
+        </el-table-column>
+        <el-table-column prop="Unit" label="单位">
+        </el-table-column>
+    </el-table>
+
+    <hr />
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="套数">
+            <el-input v-model="ruleForm.counts"></el-input>
+        </el-form-item>
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
+
+        <!--PDF展示-->
+        <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
+            <el-card class="box-card">
+                <div v-for="f in pdfList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
+                    <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
+                </div>
+            </el-card>
+        </el-form-item>
+        <!--相关文件-->
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
+            <el-card class="box-card">
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                </div>
+            </el-card>
+        </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true">
+        </sam-approver-list>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    $("#mask").hide()
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                nodeInfo: {},
+                nodeList: [],
+                allData: [],
+                data: [],
+                projectList: [],
+                keyWord: '',
+                imageList: [],
+                fileList: [],
+                pdfList: [],
+                //表单参数
+                ProjectId: '',
+                ProjectName: '',
+                ProjectTypes: ['电气采购', '机械加工', '机械采购', '其他'],
+                ProjectType: '机械加工',
+                ruleForm: {
+                    name: DingData.nickName,
+                    remark: '',
+                    counts: 1,
+                    ImageUrl: '',
+                    OldImageUrl: '',
+                    FileUrl: '',
+                    OldFilePDFUrl: '',
+                    FilePDFUrl: '',
+                    OldFileUrl: '',
+                    MediaId: '',
+                    MediaIdPDF: '',
+                    inputProjectId: '',
+                    Title: '',
+                    ProjectId: null,
+                    Time: ''
+                }
+            }
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                var that = this
+                this.approvalSubmit('ruleForm', this.ruleForm, function (taskId) {
+                    that.bindData(taskId)
+                })
+            },
+            search() {
+                if(!this.ProjectName){
+                    this.$alert('请选择项目名称', '提交错误')
+                    return
+                }
+                this.GetData('/DrawingChange/Query' + _formatQueryStr({
+                    ProjectName: this.ProjectName, ProjectType: this.ProjectType
+                }), (result) => {
+                    this.allData = result.data
+
+                })
+            },
+            chooseProject(index, row) {
+                console.log(row)
+                this.data = row.PurchaseList
+                
+            },
+            selectProject(id) {
+                for (var project of this.projectList) {
+                    if (project.ProjectId == id) {
+                        //this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                        this.ProjectName = project.ProjectName
+                    }
+                }
+            },
+            //审批绑定BOM表数据
+            bindData(taskId) {
+                var that = this
+                for (let d of this.data) {
+                    d.TaskId = taskId
+                }
+                this._postData("/PurchaseOrder/Save", function (data) {
+                    console.log("审批绑定BOM表数据ok")
+                    console.log(JSON.stringify(that.data))
+                    console.log(data)
+                    that.doneSubmit()
+                }, that.data)
+            },
+
+        },
+        created: function () {
+            //FlowId = 8
+            this.getNodeInfo()
+            this.getProjects()
+            this.getApproInfo()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
 
