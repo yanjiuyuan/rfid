@@ -275,7 +275,7 @@ namespace DingTalk.Controllers
                     foreach (var gift in giftTable)
                     {
                         Gift gifts = context.Gift.Find(gift.GiftNo);
-                        gifts.Stock = (Int32.Parse(gifts.Stock)- Int32.Parse(gift.GiftCount)).ToString();
+                        gifts.Stock = (Int32.Parse(gifts.Stock) - Int32.Parse(gift.GiftCount)).ToString();
                         context.Entry<Gift>(gifts).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
                     }
@@ -298,16 +298,27 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 库存信息读取接口
         /// </summary>
+        /// <param name="key">名称、类别</param>
         /// <returns></returns>
         [Route("GetStock")]
         [HttpGet]
-        public NewErrorModel GetStock()
+        public NewErrorModel GetStock(string key = "")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    List<Gift> giftTable = context.Gift.ToList();
+                    List<Gift> giftTable = new List<Gift>();
+                    if (key == "")
+                    {
+                        giftTable = context.Gift.Where(g => g.GiftName.Contains(key)
+                 || g.Type.Contains(key)).ToList();
+                    }
+                    else
+                    {
+                        giftTable = context.Gift.ToList();
+                    }
+
                     return new NewErrorModel()
                     {
                         count = giftTable.Count,
@@ -329,7 +340,7 @@ namespace DingTalk.Controllers
         /// 库存批量修改
         /// </summary>
         /// <param name="giftTable"></param>
-        [Route("StockSave")]
+        [Route("StockModify")]
         [HttpPost]
         public Object StockModify([FromBody] List<Gift> giftTable)
         {
@@ -342,6 +353,36 @@ namespace DingTalk.Controllers
                         context.Entry<Gift>(gift).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
                     }
+
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "修改成功", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 库存删除
+        /// </summary>
+        /// <param name="gift"></param>
+        [Route("StockMove")]
+        [HttpPost]
+        public Object StockMove(Gift gift)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.Entry<Gift>(gift).State = System.Data.Entity.EntityState.Deleted;
+                    context.SaveChanges();
 
                     return new NewErrorModel()
                     {
