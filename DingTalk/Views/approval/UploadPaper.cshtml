@@ -57,8 +57,6 @@
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
-            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
         <el-form-item label="图纸用途" required="required">
             <el-select v-model="ruleForm.ProjectType">
@@ -125,9 +123,6 @@
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames">
         </sam-approver-list>
-        <!--添加抄送人-->
-        @*<sam-addapprover :preset="preCopy" :approvers="ruleForm.copyers">
-        </sam-addapprover>*@
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
             <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
@@ -449,12 +444,12 @@
                 })
             },
             
-            
+            //PDF上传处理方法
             beforePdfFileUpload(file) {
                 console.log('before pdf')
                 console.log(file)
                 if (file.name.indexOf(' ') >= 0) {
-                    this.$alert( '文件名不能带空格','上传失败', {
+                    this.$alert('文件名不能带空格', '上传失败', {
                         confirmButtonText: '确定',
                     });
                     return false
@@ -474,6 +469,7 @@
                 this.isPdfFile = true
                 return true
             },
+            
             beforeFileUpload(file) {
                 console.log('before file')
                 console.log(file)
