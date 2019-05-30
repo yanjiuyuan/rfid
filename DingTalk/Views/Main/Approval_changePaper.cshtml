@@ -1,0 +1,441 @@
+﻿@{
+    Layout = null;
+}
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
+        <i class="el-icon-arrow-left"></i>
+        审批处理-{{nodeInfo.NodeName}}
+    </div>
+    <template v-for="(d,index) in dataArr">
+        <h2 style="text-align:center;">{{d.Sorts}}件列表</h2>
+        <!--表格實體-->
+        <el-table :data="d.tableData" stripe border>
+            <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
+            </el-table-column>
+        </el-table>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:current-change="handleBomPageChange($event,index)"
+                           :current-page="d.currentPage"
+                           :page-sizes="[5]"
+                           :page-size="5"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="d.totalRows">
+            </el-pagination>
+        </div>
+    </template>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="标题" v-if="ruleForm.Title">
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目名" v-if="ruleForm.ProjectName">
+            <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目编号" v-if="ruleForm.ProjectId">
+            <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
+        </el-form-item>
+        <!--PDF展示-->
+        <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
+            <el-card class="box-card">
+                <div v-for="f in pdfList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
+                    <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
+
+                    <el-switch v-if="index == 0" v-model="f.state"
+                               active-color="#13ce66" inactive-color="#ff4949"
+                               active-text="通过" inactive-text="不通过"
+                               active-value="1" inactive-value="0"
+                               v-on:change="setPdfState">
+                    </el-switch>
+                    <span v-if="index == 2">{{f.state == '1'? '通过' : '不通过'}}</span>
+                </div>
+            </el-card>
+        </el-form-item>
+        <!--相关文件-->
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
+            <el-card class="box-card">
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
+                </div>
+            </el-card>
+        </el-form-item>
+        @*<el-form-item>
+            <el-button type="primary" v-on:click="" :disabled="disablePage">打印</el-button>
+        </el-form-item>*@
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+
+
+        <!--添加抄送人-->
+        @*<sam-addapprover :preset="preCopy" :approvers="copyers">
+        </sam-addapprover>*@
+        <template v-if="index==0">
+            <el-form-item label="审批意见" prop="mark">
+                <el-input v-model="ruleForm.mark"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+                <span> - </span>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+
+    </el-form>
+
+    <!--显示PDF-->
+    <div @*v-show="frameShow"*@>
+        <div id="dialog" title="PDF画板">
+            <div style="font-size:14px;">
+                <fieldset style="float:left;width:250px;">
+                    <legend>工具</legend>
+                    <div id="toolsOptions">
+                        <input type="radio" id="tools_pencil" name="toolsOption" checked="checked"><label for="tools_pencil">画笔</label> &nbsp;
+                        @*<input type="radio" id="tools_eraser" name="toolsOption"><label for="tools_eraser">橡皮擦</label> &nbsp;
+                            <input type="radio" id="tools_trash" name="toolsOption"><label for="tools_trash">清空</label>*@
+                        <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
+                            <span>
+                                <button v-if="index == 0" id="tools_save">保存</button>&nbsp;&nbsp;&nbsp;
+                                <button id="tools_turn_right">正转</button>
+                                <button id="tools_turn_left">逆转</button>
+                                @*<button id="tools_undo">撤回</button>&nbsp;&nbsp;&nbsp;
+                                    <button id="tools_redo">redo</button>*@
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset style="float:left;">
+                    <legend>多边形</legend>
+                    <div>
+                        <input type="radio" id="tools_line" name="toolsOption"><label for="tools_line">直线</label>
+                        <input type="radio" id="tools_rectangle" name="toolsOption"><label for="tools_rectangle">矩形</label>
+
+                        @*<input type="radio" id="tools_circle" name="toolsOption"><label for="tools_circle">椭圆</label>
+                            <input type="radio" id="tools_text" name="toolsOption"><label for="tools_text">文字</label>*@
+
+                        <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
+                            <span>
+                                <input type="radio" id="tools_circle" name="toolsOption"><label for="tools_circle">椭圆</label>
+                                <input type="radio" id="tools_text" name="toolsOption"><label for="tools_text">文字</label>
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset style="float:left;width:180px;">
+                    <legend>线条设置</legend>
+                    <span style="float: left;margin-top: 6px;">线条粗细: </span>
+                    <select id="penWidth">
+                        <option value="1" selected>1px</option>
+                        <option value="2">2px</option>
+                        <option value="4">4px</option>
+                        <option value="6">6px</option>
+                        <option value="8">8px</option>
+                        <option value="12">12px</option>
+                        <option value="14">14px</option>
+                        <option value="16">16px</option>
+                        <option value="18">18px</option>
+                    </select>
+                    <div style="border-top:1px dashed gray;margin-top:8px;padding-top:8px;">
+                        <span>边框色:<input id="colorpicker-popup" type="text" value="000000" style="width: 72px;display:none; "></span>&nbsp;
+                        <!--span>填充色:<input id="colorpicker-popup2" type="text"  value="fe9810" style="width: 72px;display:none; "></span-->
+                    </div>
+                </fieldset>
+                <fieldset style="float:left;width:160px;">
+                    <legend>字体设置</legend>
+                    <span>
+                        <span style="float: left;margin-top: 6px;">字体大小: </span>
+                        <select id="fontSize">
+                            <option value="22px" selected>22px</option>
+                            <option value="24px">24px</option>
+                            <option value="26px">26px</option>
+                            <option value="28px">28px</option>
+                            <option value="30px">30px</option>
+                            <option value="32px">32px</option>
+                            <option value="34px">34px</option>
+                            <option value="36px">36px</option>
+                        </select>
+                    </span>
+                    <br />
+                    <span>
+                        <span style="float: left;margin-top: 6px;">字体选择:</span>
+                        <select id="fontType" style="top:20px;">
+                            <option value="宋体">宋体</option>
+                            <option value="微软雅黑">微软雅黑</option>
+                            <option value="仿宋">仿宋</option>
+                            <option value="Arial" selected>Arial</option>
+                            <option value="Consolas">Consolas</option>
+                        </select>
+                    </span>
+                    <span style="font-weight:bold;"><input type="checkbox" id="boldOption" name="fontOption"><label for="boldOption">B</label></span>
+                    <span style="font-style: italic;"><input type="checkbox" id="italicOption" name="italicOption"><label for="italicOption">I</label></span>
+                </fieldset>
+
+                <div style="clear:both;"></div>
+            </div>
+
+            <div style="background:white;position:relative;width:1200px;height:900px;" id="container">
+                <div id="temp" style="border:1px solid gray;width:1px;height:1px;position:absolute;display:none;"></div>
+
+                <canvas id="myCanvas" width="1200" height="900" class="container_pencil"></canvas>
+            </div>
+            <span id="show" style="display:none;"></span>
+        </div>
+    </div>
+    <div class="mask" id="mask"></div>
+    <!--显示加載過程-->
+
+
+</el-main>
+<script>
+    var pdfUrl = ''
+    var pdfName = ''
+    var pdfMediaId = ''
+    var taskId = 0
+    var stampRole = {}//圖紙審批 可打印并 下載的角色信息
+</script>
+
+<script>
+
+    var state = ''
+    var pdfUrl = ''
+    var Index = ''
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        state = UrlObj.state
+        Id = UrlObj.id
+        Index = UrlObj.index
+    }
+    $("#mask").hide()
+    var items = {
+        DrawingNo: '代号',
+        Name: '名称',
+        Count: '数量',
+        MaterialScience: '材料',
+        Unit: '单位',
+        Sorts: '类别',
+        SingleWeight: '单重',
+        AllWeight: '总重',
+        NeedTime: '需用日期',
+        Mark: '备注'
+    }
+    var allData = {}
+    var FilePDFUrl = ''
+    var dataArr = [
+        {
+            data: [],
+            tableData: [],
+            Sorts: '标准',
+            currentPage: 1,
+            totalRows: 0,
+            items: {}
+        },
+        {
+            data: [],
+            tableData: [],
+            Sorts: '自制',
+            currentPage: 1,
+            totalRows: 0,
+            items: {}
+        },
+        {
+            data: [],
+            tableData: [],
+            Sorts: '外购',
+            currentPage: 1,
+            totalRows: 0,
+            items: {}
+        }]
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                preApprove: false,
+                preCopy: false,
+                imageList: imageList,
+                fileList: fileList,
+                pdfList: pdfList,
+                data: [],
+                items: items,
+                FlowId: FlowId,
+                tableData: [],
+                totalRows: 0,
+                nodeInfo: {},
+                nodeList: [],
+                ruleForm: {},
+                state: state,
+                tick: 50,
+                dataArr: dataArr,
+                index: Index,
+                frameUrl: '',
+                frameShow: false
+            }
+        },
+        methods: {
+            //提交审批
+            onSubmit(formName) {
+                this.disablePage = true
+                this.aggreSubmit({
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.mark,
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId
+                }, {
+                    "ProjectId": this.ruleForm.ProjectId
+                })
+            },
+            //退回审批
+            reSubmit() {
+                this.disablePage = true
+                var param = {
+                    "Id": allData.Id,
+                    "Remark": this.ruleForm.mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.ruleForm.mark
+                }
+                this.returnSubmit(param)
+            },
+
+            //获取bom表信息
+            getBomInfo() {
+                this.GetData("DrawingChange/Read?TaskId=" + TaskId, (res) => {
+                    for (let a of this.dataArr) {
+                        for (let d of res.DrawingChangeList) {
+                            if (a.Sorts == d.Sorts) {
+                                a.data.push(d)
+                            }
+                        }
+                        a.tableData = a.data.slice(0, 5)
+                        a.totalRows = a.data.length
+                    }
+                })
+            },
+            //圖紙審批bom表格翻页
+            handleBomPageChange(page, index) {
+                console.log(page)
+                console.log(index)
+                this.currentPage = page
+                this.dataArr[index].currentPage = page
+                var start = this.pageSize * (this.currentPage - 1)
+                this.tableData = this.dataArr[index].data.slice(start, start + this.pageSize)
+                this.dataArr[index].tableData = _cloneArr(this.tableData)
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            //文件点击操作
+            clickFile(fileUrl, name, mediaId) {
+                if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
+                    pdfUrl = fileUrl
+                    pdfName = name
+                    pdfMediaId = mediaId
+                    console.log(fileUrl)
+                    $("#mask").show()
+                    this.frameShow = true
+                    this.showPdf(fileUrl)
+                }
+
+            },
+            hideFrame() {
+                this.frameShow = false
+            },
+            //PDF文件查看后，点击按钮设置状态
+            setPdfState() {
+                var states = []
+                for (let p of this.pdfList) {
+                    states.push(p.state)
+                }
+                var url = "/File/UpdatePDFState?TaskId=" + TaskId + "&PDFState=" + states.join(",")
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log("PDF文件查看后，点击按钮设置状态")
+                        console.log(url)
+                        console.log(data)
+                    }
+                })
+            },
+            //显示PDF画板
+            showPdf(url) {
+                var that = this
+                this.disablePage = true
+                pufUrl = url
+                console.log('show pdf')
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                initUI()
+                PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
+                    //
+                    // 获取第一页数据
+                    //
+                    pdf.getPage(1).then(function getPageHelloWorld(page) {
+                        var scale = 1;
+                        var viewport = page.getViewport(scale);
+                        var renderContext = {
+                            canvasContext: ctx,
+                            viewport: viewport
+                        };
+                        page.render(renderContext);
+                        that.disablePage = false
+                        loading.close()
+                        console.log('render pdf')
+                    });
+                });
+
+            }
+
+
+        },
+        created: function () {
+            //获取下一个节点的审批人id
+            if (state == '未完成') this.GetDingList(TaskId)
+            this.getBomInfo()
+            PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData(demo)
+
+</script>
+
+
+<script>
+    //初始化
+    $(function () {
+        $("#dialog").hide()
+    })
+</script>
+
+<script src="~/Scripts/canvas.js"></script>
+
+

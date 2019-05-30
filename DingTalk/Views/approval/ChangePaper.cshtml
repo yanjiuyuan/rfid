@@ -122,7 +122,7 @@
             </el-upload>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true">
+        <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames">
         </sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
@@ -217,11 +217,19 @@
                         "MediaIdPDF": this.mediaPdfList.join(',')
                     }
                 }
-                console.log(changeParam)
-                return
-                var that = this
                 this.approvalSubmit('ruleForm', this.ruleForm, (taskId) => {
-                    
+                    for (let item of changeParam.DrawingChangeList) {
+                        item['TaskId'] = taskId
+                    }
+                    changeParam.fileChange['TaskId'] = taskId
+                    this.PostData('DrawingChange/Save', changeParam, (res) => {
+                        this.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    })
                 })
             },
             
@@ -315,6 +323,10 @@
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
+            for (let s of this.specialRoles) {
+                this.specialRoleNames.push(s.name)
+                this.getSpecialRoleInfo(s.name)
+            }
             loadHtml("mainPage", "partPage")
         }
     })
