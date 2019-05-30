@@ -151,7 +151,8 @@ namespace DingTalk.Controllers
                     var giftTableList = from g in giftTables
                                         select new
                                         {
-                                            g.GiftName,g.GiftCount
+                                            g.GiftName,
+                                            g.GiftCount
                                         };
 
 
@@ -161,7 +162,7 @@ namespace DingTalk.Controllers
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                          "序号","礼品名称","数量" 
+                          "序号","礼品名称","数量"
                         };
 
                     float[] contentWithList = new float[]
@@ -187,7 +188,7 @@ namespace DingTalk.Controllers
                         }
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
-                  
+
                     DataTable dtGiftTables = DtLinqOperators.CopyToDataTable(giftTableList);
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
 
@@ -260,6 +261,41 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
+        /// 库存消减
+        /// </summary>
+        /// <param name="giftTable"></param>
+        [Route("StockReduce")]
+        [HttpPost]
+        public NewErrorModel StockReduce([FromBody] List<GiftTable> giftTable)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    foreach (var gift in giftTable)
+                    {
+                        Gift gifts = context.Gift.Find(gift.GiftNo);
+                        gifts.Stock = (Int32.Parse(gifts.Stock)- Int32.Parse(gift.GiftCount)).ToString();
+                        context.Entry<Gift>(gifts).State = System.Data.Entity.EntityState.Modified;
+                        context.SaveChanges();
+                    }
+                    context.SaveChanges();
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "消减成功", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
         /// 库存信息读取接口
         /// </summary>
         /// <returns></returns>
@@ -306,7 +342,7 @@ namespace DingTalk.Controllers
                         context.Entry<Gift>(gift).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
                     }
-                 
+
                     return new NewErrorModel()
                     {
                         error = new Error(0, "修改成功", "") { },

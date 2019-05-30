@@ -10,4 +10,8 @@
 
         /// <summary>
         /// 单位
-        /// </summary>        [StringLength(100)]        public string Unit { get; set; }    }}
+        /// </summary>        [StringLength(100)]        public string Unit { get; set; }
+
+        /// <summary>
+        /// 单价
+        /// </summary>        [StringLength(100)]        public string Price { get; set; }    }}
