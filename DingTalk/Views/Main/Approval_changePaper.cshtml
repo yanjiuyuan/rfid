@@ -50,6 +50,7 @@
         </el-form-item>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
+            <el-button type="primary" v-on:click="downloadAllPdf">下载所有图纸</el-button>
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
@@ -75,9 +76,9 @@
                 </div>
             </el-card>
         </el-form-item>
-        @*<el-form-item>
-            <el-button type="primary" v-on:click="" :disabled="disablePage">打印</el-button>
-        </el-form-item>*@
+        <el-form-item>
+            <el-button type="primary" v-on:click="print" :disabled="disablePage">打印</el-button>
+        </el-form-item>
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
 
@@ -218,7 +219,6 @@
 <script>
 
     var state = ''
-    var pdfUrl = ''
     var Index = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
@@ -326,7 +326,23 @@
                 }
                 this.returnSubmit(param)
             },
-
+            print() {
+                FilePDFUrl = FilePDFUrl.replace(/\\/g, '\\\\')
+                this.PostData("/DrawingChange/PrintAndSend", {
+                    UserId: DingData.userid,
+                    TaskId: TaskId,
+                    OldPath: FilePDFUrl
+                }, (res) => {
+                    this.elementAlert('alert', "已推送至钉钉！")
+                })
+            },
+            downloadAllPdf() {
+                this.GetData('NewsAndCases/GetAllPDF' + _formatQueryStr({ taskId: TaskId, applyManId: DingData.userid }), (res) => {
+                    this.$alert('获取成功', '提示信息', {
+                        confirmButtonText: '确定'
+                    })
+                })
+            },
             //获取bom表信息
             getBomInfo() {
                 this.GetData("DrawingChange/Read?TaskId=" + TaskId, (res) => {
