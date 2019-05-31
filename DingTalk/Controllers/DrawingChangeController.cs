@@ -45,7 +45,7 @@ namespace DingTalk.Controllers
         on t.TaskId.ToString() equals p.TaskId
                             select new
                             {
-                                Id = p.Id,
+                                OldId = p.Id,
                                 TaskId = p.TaskId,
                                 BomId = p.BomId,
                                 DrawingNo = p.DrawingNo,
