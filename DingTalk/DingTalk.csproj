@@ -751,6 +751,7 @@
     <Content Include="Views\approval\TechonologySupply.cshtml" />
     <Content Include="Views\Main\Approval_techonologySupply.cshtml" />
     <Content Include="Views\approval\ChangePaper.cshtml" />
+    <Content Include="Views\Main\Approval_changePaper.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
