@@ -469,7 +469,6 @@
             //撤回审批
             rebackSubmit() {
                 this.disablePage = true
-                var that = this
                 var param = {
                     "Id": allData.Id,
                     "NodeId": 0,
@@ -592,7 +591,7 @@
                         console.log(bomUrl)
                         if (typeof (data) == 'string') data = JSON.parse(data)
                         that.data = data
-                        if(FlowId == 23) that.data = data.data
+                        if (FlowId == 23 || FlowId == 1) that.data = data.data
                         console.log(data)
                         if (FlowId == 6) {
                             for (let a of that.dataArr) {
