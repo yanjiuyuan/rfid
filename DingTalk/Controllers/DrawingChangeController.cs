@@ -274,7 +274,8 @@ namespace DingTalk.Controllers
                                                  p.AllWeight,
                                                  p.Sorts,
                                                  p.NeedTime,
-                                                 p.Mark
+                                                 p.Mark,
+                                                 ChangeType=p.ChangeType=="1"?"新增":"删除"
                                              };
 
                     DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
@@ -303,16 +304,16 @@ namespace DingTalk.Controllers
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                            "序号","代号","名称","数量","材料","单位","单重","总重","类别","需用日期","备注"
+                            "序号","代号","名称","数量","材料","单位","单重","总重","类别","需用日期","备注","操作"
                         };
 
                     float[] contentWithList = new float[]
                     {
-                        50, 80, 80, 30, 60, 30, 60, 60, 60 , 60, 60
+                        50, 80, 80, 30, 60, 30, 30, 60, 60 , 60, 60,80
                     };
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
-                    ProjectName, ProjectNo, "1", 380, 710, contentList, contentWithList, dtSourse, dtApproveView, null);
+                    ProjectName, ProjectNo, "3", 380, 710, contentList, contentWithList, dtSourse, dtApproveView, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     string[] Paths = OldPath.Split(',');
