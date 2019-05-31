@@ -110,6 +110,10 @@ namespace Common.PDF
                     {
                         ImgaePath = string.Format(@"{0}\Content\images\approveSmall.png", AppDomain.CurrentDomain.BaseDirectory);
                     }
+                    if (ImageNo == "3")
+                    {
+                        ImgaePath = string.Format(@"{0}\Content\images\变更章.png", AppDomain.CurrentDomain.BaseDirectory);
+                    }
                     iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(ImgaePath);
                     //image.SetAbsolutePosition(300, 650);
                     image.SetAbsolutePosition(ImageX, ImageY);
