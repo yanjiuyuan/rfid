@@ -198,11 +198,13 @@ namespace DingTalk.Controllers
                     {
                         string AbPath = AppDomain.CurrentDomain.BaseDirectory + pathChild.Substring(2, pathChild.Length - 2);
                         //PDF盖章 保存路径
-                        newPaths.Add(pdfHelper.PDFWatermark(AbPath,
-                        string.Format(@"{0}\UploadFile\PDF\{1}",
+                        newPaths.Add(
+                            pdfHelper.PDFWatermark(AbPath,
+                        string.Format(@"{0}\UploadFile\PDFPrint\{1}",
                         AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(pathChild)),
                         string.Format(@"{0}\Content\images\受控章.png", AppDomain.CurrentDomain.BaseDirectory),
-                        100, 100));
+                        100, 100)
+                        );
                     }
                     string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, "图纸审核" + DateTime.Now.ToString("yyyyMMddHHmmss"));
                     //文件压缩打包
