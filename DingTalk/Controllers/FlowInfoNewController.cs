@@ -1860,37 +1860,7 @@ namespace DingTalk.Controllers
 
 
         #endregion
-
-        #region 移动端版本校对
-
-        /// <summary>
-        /// 移动端版本校对
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("CheckVersion")]
-        public NewErrorModel CheckVersion()
-        {
-            try
-            {
-                return new NewErrorModel()
-                {
-                    data = ConfigurationManager.AppSettings["VersionNumner"],
-                    error = new Error(0, "获取成功！", "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    data = true,
-                    error = new Error(1, ex.Message, "") { },
-                };
-            }
-        }
-
-        #endregion
-
+        
         #region 获取流程状态
 
         /// <summary>
