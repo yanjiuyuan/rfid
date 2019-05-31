@@ -539,7 +539,7 @@ namespace DingTalk.Controllers
                     }
 
                     //修改流程状态
-                    TasksState tasksState = context.TasksState.Where(t => t.TaskId == taskList[0].TaskId.ToString()).FirstOrDefault();
+                    TasksState tasksState = context.TasksState.Where(t => t.TaskId == tasks.TaskId.ToString()).FirstOrDefault();
                     tasksState.State = "已撤回";
                     context.Entry<TasksState>(tasksState).State = EntityState.Modified;
                     context.SaveChanges();
