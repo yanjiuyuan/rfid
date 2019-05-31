@@ -298,12 +298,11 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
+                this.PostData('/DrawingChange/ChangeBom',)
                 this.aggreSubmit({
                     "Id": allData.Id,
                     "Remark": this.ruleForm.mark,
                     "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId
-                }, {
                     "ProjectId": this.ruleForm.ProjectId
                 })
             },
