@@ -298,12 +298,20 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                this.PostData('/DrawingChange/ChangeBom',)
+                if (NodeId == 5) {
+                    this.PostData('DrawingChange/ChangeBom', this.ruleForm, (res) => {
+                        this.aggreSubmit({
+                            "Id": allData.Id,
+                            "Remark": this.ruleForm.mark,
+                            "Title": this.ruleForm.Title,
+                            "ProjectId": this.ruleForm.ProjectId
+                        })
+                    })
+                    return
+                }
                 this.aggreSubmit({
                     "Id": allData.Id,
-                    "Remark": this.ruleForm.mark,
-                    "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId
+                    "Remark": this.ruleForm.mark
                 })
             },
             //退回审批
