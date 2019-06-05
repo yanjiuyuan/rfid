@@ -84,5 +84,12 @@ namespace DingTalk.Models.DingModels
         ///  «∑Ò∆¿…Û
         /// </summary>
         public bool? IsReview { get; set; }
+
+        /// <summary>
+        /// øÕªß
+        /// </summary>
+        [StringLength(300)]
+        public string Customer { get; set; }
+        
     }
 }
