@@ -997,9 +997,11 @@ var mixin = {
                 for (var i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
                     this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
+                    this.ruleForm.MediaIdPDF += this.pdfList[i].mediaid
                     if (i == this.pdfList.length - 1) break
                     this.ruleForm.FilePDFUrl += ','
                     this.ruleForm.OldFilePDFUrl += ','
+                    this.ruleForm.MediaIdPDF += ','
                 }
             }
             if (this.fileList) {
@@ -1015,7 +1017,9 @@ var mixin = {
             }
             return true
         },
-
+        handleExceed(files, fileList) {
+            this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        },
         //PDF上传处理方法
         beforePdfFileUpload(file) {
             console.log('before pdf')
@@ -1064,6 +1068,7 @@ var mixin = {
                     if (data.media_id) {
                         console.log(data.media_id)
                         that.mediaPdfList.push(data.media_id)
+                        fileList[fileList.length - 1]['mediaid'] = data.media_id
                     } else {
                         console.log('无media_di')
                     }
@@ -1307,14 +1312,12 @@ Vue.component('sam-approver-list', {
         //选人控件添加
         addMember(nodeId, nodename) {
             var that = this
-
             DingTalkPC.biz.contact.choose({
                 multiple: !that.single, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
                 onSuccess: function (data) {
-                    console.log(nodeId)
                     console.log(data)
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
@@ -1325,7 +1328,6 @@ Vue.component('sam-approver-list', {
                             }
                         }
                     }
-                    console.log(that.nodelist)
                 },
                 onFail: function (err) { }
             });

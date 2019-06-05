@@ -9,26 +9,106 @@
         <i class="el-icon-arrow-left"></i>
         礼品招待领用申请-{{nodeInfo.NodeName}}
     </div>
+    <!--礼品管理-->
+    <template>
+        <h1>礼品库存管理</h1>
+        <h2>添加礼品</h2>
+        <!--表格實體-->
+        <el-table :data="excelData" stripe border>
+            <el-table-column prop="CodeNo" type="index"></el-table-column>
+            <el-table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
+            </el-table-column>
+
+        </el-table>
+        <!--上传表單-->
+        <el-upload class="upload-demo"
+                   action="/drawingupload/UploadAndGetInfo"
+                   :on-success="handleSuccess"
+                   :before-upload="beforeExcelUpload"
+                   multiple
+                   :limit="1"
+                   :file-list="excelList">
+            <el-button size="small" type="primary">上传excel</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+        </el-upload>
+        <el-button type="primary" v-on:click="addGifts">添加礼品</el-button>
+        <h2>所有礼品</h2>
+        <!--表格實體-->
+        <el-table :data="allData" stripe border>
+            <el-table-column prop="CodeNo" type="index"></el-table-column>
+            <el-table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
+            </el-table-column>
+            <el-table-column label="操作" width="150">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-on:click="showEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button size="mini" type="danger" v-on:click="deleteGift(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <hr />
+        <hr />
+        <hr />
+        <hr />
+        <hr />
+        <!--编辑项目表单-->
+        <el-dialog title="编辑礼品库存" :visible.sync="dialogFormVisible">
+            <el-form :model="editForm" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                     enctype="multipart/form-data" :inline="true">
+                <template>
+                    <el-form-item v-for="(value,key) in excelConfig" :prop="key" :label="value">
+                        <el-input v-model="editForm[key]"></el-input>
+                    </el-form-item>
+                    <hr />
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="editGift('ruleForm')">保存</el-button>
+                    </el-form-item>
+                </template>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+            </div>
+        </el-dialog>
+    </template>
+
     <!--礼品添加-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">礼品名称</span>
-        <el-select v-model="giftName" filterable placeholder="请选择">
-            <el-option v-for="item in giftList"
-                       :key="item"
-                       :label="item"
-                       :value="item">
-            </el-option>
-        </el-select>
-        <el-input v-model="count" style="width:200px;"></el-input>
-        <el-button type="primary" v-on:click="addGood">添加</el-button>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.key" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchGifts">搜索</el-button>
     </div>
+    <!--搜索结果礼品列表表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="CodeNo" type="index"></el-table-column>
+        <el-table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
+        </el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    @*<div>
+            <span style="color:red">*</span><span style="padding:3px;">礼品名称</span>
+            <el-select v-model="giftName" filterable placeholder="请选择">
+                <el-option v-for="item in giftList"
+                           :key="item"
+                           :label="item"
+                           :value="item">
+                </el-option>
+            </el-select>
+            <el-input v-model="count" style="width:200px;"></el-input>
+            <el-button type="primary" v-on:click="addGood">添加</el-button>
+        </div>*@
 
     <hr />
     <h3>已选礼品</h3>
     <!--采购列表表格實體-->
     <el-table :data="purchaseList" stripe border>
         <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
-        <el-table-column prop="GiftCount" label="礼品数量"></el-table-column>
+        <el-table-column prop="GiftCount" label="礼品数量">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.GiftCount"></el-input>
+            </template>
+        </el-table-column>
         <el-table-column label="操作" width="80">
             <template slot-scope="scope">
                 <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
@@ -38,7 +118,6 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
@@ -57,7 +136,19 @@
 </el-main>
 
 <script>
-    NodeId = '0'
+    var excelConfig = {
+        Type: '大类',
+        ProjectName: '小类',
+        GiftName: '名称',
+        Stock: '库存',
+        Unit: '单位',
+        Price: '单价'
+    }
+    var configDictionary = {}
+    for (let c in excelConfig) {
+        configDictionary[excelConfig[c]] = c
+    }
+
     var giftList = ['泸州老窖', '张裕干红葡萄酒', '卡斯特干红葡萄酒', '狮王干红葡萄酒', '石花霸王醉', '水上坊', '毛铺苦荞酒', '香格里拉干红葡萄酒', '贵州茅台酒']
     var demo = new Vue({
         el: "#partPage",
@@ -81,8 +172,15 @@
                 nodeInfo: {},
                 dialogFormVisible: false,
                 searchForm: {
-                    name: '',
+                    key: '',
                 },
+
+                excelConfig: excelConfig,
+                excelList: [],
+                excelData: [],
+                allData: [],
+                editForm: {},
+                dialogFormVisible: false,
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
@@ -123,31 +221,74 @@
                     Remark: that.ruleForm.remark
                 }, callBack)
             },
-            //添加礼物
-            addGood() {
-                var that = this
-                this.purchaseList.push({
-                    GiftName: that.giftName,
-                    GiftCount: that.count
+            //上传文件方法
+            handleSuccess(response, file, fileList) {
+                //this.tableData = []
+                console.log(response)
+                for (let d of response[0].Value) {
+                    let tmpData = {}
+                    for (let s in d) {
+                        tmpData[configDictionary[s]] = d[s]
+                    }
+                    this.excelData.push(tmpData)
+                }
+            },
+            //添加Bom的礼品列表
+            addGifts() {
+                this.PostData('Gift/StockSave', this.excelData, (res) => {
+                    this.allData = this.allData.concat(this.excelData)
+                    this.elementAlert('提示信息', '添加成功')
                 })
             },
-            //删除申请物料
+            //获取所有库存
+            getAllGifts() {
+                this.GetData('Gift/GetStock', (res) => {
+                    this.allData = res
+                })
+            },
+            //查询库存
+            searchGifts() {
+                this.GetData('Gift/GetStock?key=' + this.searchForm.key, (res) => {
+                    this.tableData = res
+                })
+            },
+            //删除库存
+            deleteGift(index,row) {
+                this.PostData('Gift/StockMove', row, (res) => {
+                    this.getAllGifts()
+                })
+            },
+            //编辑库存
+            editGift() {
+                this.PostData('Gift/StockModify', this.editForm, (res) => {
+                    this.getAllGifts()
+                    this.dialogFormVisible = false
+                })
+            },
+            //打开编辑表单
+            showEdit(index, row) {
+                this.editForm = row
+                this.dialogFormVisible = true
+            },
+            //添加礼品
+            addGood(index,row) {
+                this.purchaseList.push({
+                    GiftNo: row.Id,
+                    GiftName: row.giftName,
+                    GiftCount: 1
+                })
+            },
+            //删除已选礼品
             deleteGood(index, good) {
                 this.purchaseList.splice(index, 1)
-            }
-        },
-        computed: {
-            totalPrice: function () {
-                var totalPrice = 0
-                for (let p of this.purchaseList) {
-                    totalPrice = totalPrice + p.ExpectPrice * p.Count
-                }
-                return totalPrice
             }
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
+
+            this.getAllGifts()
+
             loadHtml("mainPage", "partPage")
 
         }

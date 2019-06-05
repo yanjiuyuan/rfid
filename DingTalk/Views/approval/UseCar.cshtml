@@ -162,6 +162,10 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!');
+                if (this.nodeList[1].AddPeople[0].emplId == "0907095238746571") {
+                    this.$alert('用车无需季老师审批,如是部长级请选本人', '提示信息')
+                    return
+                }
                 var that = this
                 let url = '/CarTable/TableSave'
                 var param = _cloneObj(this.ruleForm)
