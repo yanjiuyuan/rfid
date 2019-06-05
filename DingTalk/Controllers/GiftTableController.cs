@@ -274,7 +274,7 @@ namespace DingTalk.Controllers
                 {
                     foreach (var gift in giftTable)
                     {
-                        Gift gifts = context.Gift.Find(gift.GiftNo);
+                        Gift gifts = context.Gift.Find(Int32.Parse(gift.GiftNo));
                         gifts.Stock = (Int32.Parse(gifts.Stock) - Int32.Parse(gift.GiftCount)).ToString();
                         context.Entry<Gift>(gifts).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
