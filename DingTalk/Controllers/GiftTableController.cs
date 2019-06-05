@@ -311,12 +311,12 @@ namespace DingTalk.Controllers
                     List<Gift> giftTable = new List<Gift>();
                     if (key == "")
                     {
-                        giftTable = context.Gift.Where(g => g.GiftName.Contains(key)
-                 || g.Type.Contains(key)).ToList();
+                        giftTable = context.Gift.ToList();
                     }
                     else
                     {
-                        giftTable = context.Gift.ToList();
+                        giftTable = context.Gift.Where(g => g.GiftName.Contains(key)
+                 || g.Type.Contains(key)).ToList();
                     }
 
                     return new NewErrorModel()
