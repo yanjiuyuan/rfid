@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        添加项目
+        立项申请
     </div>
     <!--创建项目表单-->
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
@@ -109,6 +109,7 @@
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,
                 ruleForm: {
+                    Title:'立项申请',
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
                     inputProjectName: '',
