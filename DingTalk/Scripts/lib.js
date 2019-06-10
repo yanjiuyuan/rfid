@@ -928,7 +928,24 @@ var mixin = {
                 this.ruleForm.OldImageUrl += ','
             }
         },
-
+        judgeRole(roleName) {
+            var url = '/Role/GetRoleInfo?RoleName=' + roleName
+            var that = this
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    console.log(url)
+                    console.log(data)
+                    for (let d of data) {
+                        console.log(d)
+                        if (d.emplId == DingData.userid) {
+                            that.isRole = true
+                            break
+                        }
+                    }
+                }
+            })
+        },
         //文件上传处理方法
         BeforeFileUpload(file) {
             file.name = 'helloWorld'

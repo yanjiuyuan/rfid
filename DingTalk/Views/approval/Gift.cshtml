@@ -10,7 +10,7 @@
         礼品招待领用申请-{{nodeInfo.NodeName}}
     </div>
     <!--礼品管理-->
-    <template>
+    <template v-if="isRole">
         <h1>礼品库存管理</h1>
         <h2>添加礼品</h2>
         <!--表格實體-->
@@ -175,6 +175,7 @@
                     key: '',
                 },
 
+                isRole: false,//是否为特定角色
                 excelConfig: excelConfig,
                 excelList: [],
                 excelData: [],
@@ -248,7 +249,9 @@
             },
             //查询库存
             searchGifts() {
-                this.GetData('Gift/GetStock?key=' + this.searchForm.key, (res) => {
+                let url = 'Gift/GetStock?key=' + this.searchForm.key
+                if (!this.searchForm.key) url = 'Gift/GetStock'
+                this.GetData(url, (res) => {
                     this.tableData = res
                 })
             },
@@ -274,19 +277,20 @@
             addGood(index,row) {
                 this.purchaseList.push({
                     GiftNo: row.Id,
-                    GiftName: row.giftName,
+                    GiftName: row.GiftName,
                     GiftCount: 1
                 })
             },
             //删除已选礼品
             deleteGood(index, good) {
                 this.purchaseList.splice(index, 1)
-            }
+            },
+            
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
-
+            this.judgeRole('礼品管理员')
             this.getAllGifts()
 
             loadHtml("mainPage", "partPage")

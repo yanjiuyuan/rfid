@@ -65,7 +65,7 @@
     }
     var demo = new Vue({
         el: "#partPage",
-        mixins: [public, dowithMixin],
+        mixins: [mixin],
         data: function () {
             return {
                 data: [],
@@ -82,6 +82,15 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
+                if (NodeId == 2) {
+                    this.PostData('Gift/StockReduce', this.data, (res) => {
+                        this.aggreSubmit({
+                            "Id": allData.Id,
+                            "Remark": this.ruleForm.Mark
+                        })
+                    })
+                    return
+                }
                 this.aggreSubmit({
                     "Id": allData.Id,
                     "Remark": this.ruleForm.Mark
@@ -112,10 +121,10 @@
                         that.elementAlert('alert', result.errmsg)
                     }
                 },
-                    {
-                        UserId: DingData.userid,
-                        TaskId: TaskId
-                    }
+                {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
+                }
                 )
             },
             getBomInfo() {
@@ -125,14 +134,11 @@
                     console.log('获取bom表')
                     console.log(result)
                     that.data = result.data
-                    
-                   
                 }, { TaskId: TaskId })
             }
         },
         created: function () {
             this.getBomInfo()
-            
             loadHtml("mainPage", "partPage")
         }
     })
