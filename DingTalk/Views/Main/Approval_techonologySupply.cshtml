@@ -191,6 +191,9 @@
                                 "OldFileUrl": this.ruleForm.OldFileUrl,
                             }
                         }
+                        if (NodeId == 4) {
+                            this.tableForm['IsCreateProject'] = true
+                        }
                         this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                             this.aggreSubmit(param)
                         })

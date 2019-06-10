@@ -88,6 +88,7 @@
                 nodeList: [],
                 nodeInfo: {},
                 date: _getDate(),
+                addPeopleNodes: [1], //额外添加审批人节点数组
                 ruleForm: {
                     DeptName: [],
                     ResponsibleMan: "",
@@ -142,10 +143,16 @@
                         console.log(data)
                         let names = []
                         let ids = []
+                        let addPeoples = []
                         for (let d of data) {
                             names.push(d.name)
                             ids.push(d.emplId)
+                            addPeoples.push({
+                                name: d.name,
+                                emplId: d.emplId
+                            })
                         }
+                        that.nodeList[1].AddPeople = addPeoples
                         that.ruleForm.ResponsibleMan = names.join(',')
                         that.ruleForm.ResponsibleManId = ids.join(',')
                     },
