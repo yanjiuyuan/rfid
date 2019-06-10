@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        跨部门协作申请-{{nodeInfo.NodeName}}
+        技术支持申请-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
@@ -16,70 +16,53 @@
         <el-form-item label="申请人">
             <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="dept" style="width:200px;" :disabled="true"></el-input>
+        <el-form-item label="技术支持部门" prop="DeptName">
+            <el-checkbox-group v-model="ruleForm.DeptName"
+                               :min="1">
+                <el-checkbox v-for="s in depts" :label="s"></el-checkbox>
+            </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="商务对接人" prop="CooperateMan">
-            <el-input v-model="ruleForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
+        <el-form-item label="项目负责人" prop="ResponsibleMan">
+            <el-input v-model="ruleForm.ResponsibleMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
-
-        <el-form-item label="申请技术支持部门" prop="CooperateDept">
-            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
-                <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+        <el-form-item label="其他工程师" prop="OtherEngineers">
+            <el-input v-model="ruleForm.OtherEngineers" style="width:500px;" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumbers()">+ 选人</el-button>
+        </el-form-item>
+        <el-form-item label="客户名称" prop="Customer">
+            <el-input v-model="ruleForm.Customer" style="width:400px;"></el-input>
+        </el-form-item>
+        <el-form-item label="紧急程度">
+            <el-select v-model="ruleForm.EmergencyLevel" style="width:300px;">
+                <el-option v-for="s of ['高','中','低']" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="申请对接支持工程师" prop="CooperateMan">
-            <el-input v-model="ruleForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
-        </el-form-item>
-        <el-form-item label="紧急程度" prop="CooperateDept">
-            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
-                <el-option v-for="s of ['中','高','低']" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="技术支持内容" prop="CooperateContent">
-            <el-input v-model="ruleForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
-        </el-form-item>
-
-        <el-form-item label="要求完成时间" prop="PlanBeginTime">
-            <el-date-picker v-model="timeRange"
+        <el-form-item label="要求完成时间" prop="TimeRequired">
+            <el-date-picker v-model="ruleForm.TimeRequired"
                             type="date"
-                            v-on:change="selectTime"
+                            value-format="yyyy-MM-dd"
+                            @*v-on:change="selectTime"*@
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="产品类型" prop="PlanBeginTime">
-            <el-radio v-model="radio" label="1">工业机器人</el-radio>
-            <el-radio v-model="radio" label="2">自动化产线</el-radio>
-            <template v-if="">
-                <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
-                    <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
-                </el-select>
-                <el-checkbox-group v-model="checkList">
-                    <el-checkbox label="复选框 A"></el-checkbox>
-                    <el-checkbox label="复选框 B"></el-checkbox>
-                </el-checkbox-group>
-                <el-input v-model="CooperateMan" style="width:500px;" :disabled="true"></el-input>
-            </template>
-            <template v-else>
-                <el-input v-model="CooperateMan" style="width:500px;" :disabled="true"></el-input>
-            </template>
+        <el-form-item label="客户项目整体情况" prop="ProjectOverview">
+            <el-input v-model="ruleForm.ProjectOverview" style="width:550px;" type="textarea"></el-input>
         </el-form-item>
-        <el-form-item label="客户数据" required="required">
-            <el-upload class="upload-demo"
-                       drag
-                       :file-list="fileList"
-                       action="/drawingupload/Upload"
-                       :on-remove="HandleFileRemove"
-                       :before-upload="BeforeFileUpload"
-                       :on-success="HandleFileSuccess"
-                       multiple>
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">不超过30M</div>
-            </el-upload>
+        <el-form-item label="技术支持内容要点" prop="MainPoints">
+            <el-input v-model="ruleForm.MainPoints" style="width:550px;" type="textarea"></el-input>
         </el-form-item>
+        
+        @*<el-form-item label="状态" prop="ProjectState ">
+            <el-select v-model="ruleForm.ProjectState " style="width:300px;">
+                <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="所属公司" prop="CooperateDept">
+            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
+                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>*@
         <hr />
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
@@ -99,57 +82,42 @@
         data: function () {
             return {
                 applyMan: DingData.nickName,
-                dept: DingData.departName,
+                depts: DeptNames.slice(1,DeptNames.length),
+                status: status,
+                CompanyNames: CompanyNames,
                 nodeList: [],
                 nodeInfo: {},
-                machines: [
-                    {
-                        name: '焊接机器人',
-                        types: ['电焊','孤焊','气焊','激光焊']
-                    }, {
-                        name: '装配机器人',
-                        types: ['普通装配', '贴片技术', '钎焊', '制孔及连接', '密封涂胶']
-                    }, {
-                        name: '搬运机器人',
-                        types: ['物料搬运', '上下料', '码垛']
-                    }, {
-                        name: '喷涂机器人',
-                        types: ['涂装']
-                    }, {
-                        name: '其它机器人',
-                        types: ['冲压', '打磨', '抛光', '包装', '浇注', '切削加工','检测','注塑']
-                    }
-                ],
-                useTimeList: [],
                 date: _getDate(),
-                activeNames: [],
-                DeptNames: DeptNames,
-                addPeopleNodes: [4, 6], //额外添加审批人节点数组
                 ruleForm: {
-                    remark: '',
-                    CooperateDept: "",
-                    CooperateMan: "",
-                    CooperateManId: "",
-                    PlanBeginTime: "",
-                    PlanEndTime: "",
-                    CooperateContent: "",
-                    PlanDays: "",
-                    Title: "跨部门协作申请"
+                    DeptName: [],
+                    ResponsibleMan: "",
+                    ResponsibleManId: '',
+                    OtherEngineers: "",
+                    OtherEngineersId: "",
+                    Customer: "",
+                    EmergencyLevel : "中",
+                    TimeRequired: "",
+                    ProjectOverview: "",
+                    MainPoints: "",
+                    Title: "技术支持申请"
                 },
                 rules: {
-                    CooperateDept: { required: true, message: '协作部门不能为空', trigger: 'blur' },
-                    CooperateMan: { required: true, message: '协作人不能为空', trigger: 'blur' },
-                    CooperateContent: { required: true, message: '协作内容不能为空', trigger: 'blur' },
-                    PlanDays: { required: true, message: '计划天数不能为空', trigger: 'blur' },
-                    PlanBeginTime: { required: true, message: '计划开始时间不能为空', trigger: 'blur' }
+                    ResponsibleMan: { required: true, message: '项目负责人不能为空', trigger: 'blur' },
+                    Customer: { required: true, message: '客户名称不能为空', trigger: 'blur' },
+                    TimeRequired: { required: true, message: '要求完成时间不能为空', trigger: 'blur' },
+                    ProjectOverview: { required: true, message: '项目整体概况不能为空', trigger: 'blur' },
+                    MainPoints: { required: true, message: '技术支持要点不能为空', trigger: 'blur' }
                 }
             }
         },
         methods: {
             onSubmit(formName) {
+                //console.log(this.ruleForm)
+                //return
                 let callBack = (taskId) => {
                     this.ruleForm['TaskId'] = taskId
-                    this.PostData('Cooperate/Save', this.ruleForm, () => {
+                    this.ruleForm.DeptName = this.ruleForm.DeptName.join(',')
+                    this.PostData('TechnicalSupport/Save', this.ruleForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -160,22 +128,10 @@
                 }
                 this.approvalSubmit(formName, {
                     Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark,
-                    FileUrl: this.ruleForm.FileUrl,
-                    MediaId: this.ruleForm.MediaId,
-                    OldFileUrl: this.ruleForm.OldFileUrl
+                    Remark: this.ruleForm.remark
                 }, callBack)
             },
-            //选时间操作
-            selectTime(value) {
-                console.log(value)
-                if (!value[0]) return
-                let days = (value[1] - value[0])/(3600*24*1000) + 1
-                this.ruleForm.PlanBeginTime = _timeToString(value[0]).substring(0,10)
-                this.ruleForm.PlanEndTime = _timeToString(value[1]).substring(0, 10)
-                this.ruleForm.PlanDays = days - parseInt(days/7) * 2
-            },
-            //添加协作人
+            //添加负责人
             addPeerNumber() {
                 var that = this
                 DingTalkPC.biz.contact.choose({
@@ -190,8 +146,29 @@
                             names.push(d.name)
                             ids.push(d.emplId)
                         }
-                        that.ruleForm.CooperateMan = names.join(',')
-                        that.ruleForm.CooperateManId = ids.join(',')
+                        that.ruleForm.ResponsibleMan = names.join(',')
+                        that.ruleForm.ResponsibleManId = ids.join(',')
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            //添加参与工程师
+            addPeerNumbers() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        let names = []
+                        let ids = []
+                        for (let d of data) {
+                            names.push(d.name)
+                            ids.push(d.emplId)
+                        }
+                        that.ruleForm.OtherEngineers = names.join(',')
+                        that.ruleForm.OtherEngineersId = ids.join(',')
                     },
                     onFail: function (err) { }
                 });

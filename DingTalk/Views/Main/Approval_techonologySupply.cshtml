@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        跨部门协作审批-{{nodeInfo.NodeName}}
+        技术支持审批-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
 
@@ -16,52 +16,104 @@
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
+        <el-form-item label="技术支持部门">
+            <el-input v-model="tableForm.DeptName" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="商务对接人">
-            <el-input v-model="tableForm.CooperateMan" style="width:550px;" :disabled="true"></el-input>
+        <el-form-item label="项目负责人">
+            <el-input v-model="tableForm.ResponsibleMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="申请支持部门">
-            <el-input v-model="tableForm.CooperateDept" style="width:200px;" :disabled="true"></el-input>
+        <el-form-item label="其他工程师">
+            <el-input v-model="tableForm.OtherEngineers" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="申请对接工程师">
-            <el-input v-model="tableForm.CooperateMan" style="width:550px;" :disabled="true"></el-input>
+        <el-form-item label="客户名称">
+            <el-input v-model="tableForm.Customer" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="协作内容">
-            <el-input v-model="tableForm.CooperateContent" style="width:550px;" :disabled="true"></el-input>
+        <el-form-item label="紧急程度">
+            <el-input v-model="tableForm.EmergencyLevel" style="width:100px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="要求完成时间">
+            <el-input v-model="tableForm.TimeRequired" style="width:200px;" :disabled="true"></el-input> 
+        </el-form-item>
+        <el-form-item label="客户项目整体情况">
+            <el-input v-model="tableForm.ProjectOverview" style="width:550px;" type="textarea" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="技术支持内容要点">
+            <el-input v-model="tableForm.MainPoints" style="width:550px;" type="textarea" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="状态">
+            <el-input v-model="tableForm.ProjectState " style="width:100px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="所属公司">
+            <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目类型">
+            <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
-        <el-form-item label="计划时间">
-            <el-input v-model="tableForm.PlanBeginTime" style="width:200px;" :disabled="true"></el-input> -
-            <el-input v-model="tableForm.PlanEndTime" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="计划天数">
-            <el-input v-model="tableForm.PlanDays" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <template v-if="NodeId >= 4">
-            <el-form-item label="实际开始时间" prop="FactBeginTime">
-                <el-input v-model="tableForm.FactBeginTime" style="width:200px;" :disabled="noEdit"></el-input>
-            </el-form-item>
-            <el-form-item label="实际结束时间" prop="FactEndTime">
-                <el-input v-model="tableForm.FactEndTime" style="width:200px;" :disabled="noEdit"></el-input>
-            </el-form-item>
-            <el-form-item label="实际天数" prop="FactDays">
-                <el-input v-model="tableForm.FactDays" style="width:200px;" :disabled="noEdit"></el-input>
-            </el-form-item>
-            @*<el-form-item label="实际协作人" prop="FactCooperateMan">
-                <el-input v-model="tableForm.FactCooperateMan" style="width:550px;" :disabled="noEdit"></el-input>
-            </el-form-item>*@
-            <el-form-item label="实际协作人" prop="FactCooperateMan">
-                <el-input v-model="tableForm.FactCooperateMan" style="width:500px;" :disabled="true"></el-input>
+        <template v-if="NodeId >= 1">
+            <el-form-item label="项目组成员" prop="TeamMembers">
+                <el-input v-model="tableForm.TeamMembers" style="width:500px;" :disabled="true"></el-input>
                 <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()" v-if="!noEdit">+ 选人</el-button>
             </el-form-item>
-            <el-form-item label="实际协作内容" prop="FactCooperateContent">
-                <el-input v-model="tableForm.FactCooperateContent" style="width:550px;" :disabled="noEdit"></el-input>
+            <el-form-item v-if="NodeId==1" label="测试项目周期" required="required">
+                <el-date-picker v-model="tableForm.StartTime"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            <template v-else>
+                <el-form-item label="开始日期">
+                    <el-input v-model="tableForm.StartTime" style="width:200px;" :disabled="noEdit"></el-input>
+                </el-form-item>
+                <el-form-item label="结束日期">
+                    <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="noEdit"></el-input>
+                </el-form-item>
+            </template>
+            <el-form-item label="处理方案" prop="TechnicalProposal">
+                <el-input v-model="tableForm.TechnicalProposal" style="width:550px;" type="textarea" :disabled="noEdit"></el-input>
+            </el-form-item>
+            <el-form-item label="测试项目名称" prop="ProjectName">
+                <el-input v-model="tableForm.ProjectName" style="width:200px;" :disabled="noEdit"></el-input>
+            </el-form-item>
+            <template v-if="NodeId==1">
+                <el-form-item label="方案文件">
+                    <el-upload class="upload-demo"
+                               drag
+                               :file-list="fileList"
+                               action="/drawingupload/Upload"
+                               :on-remove="HandleFileRemove"
+                               :before-upload="BeforeFileUpload"
+                               :on-success="HandleFileSuccess"
+                               multiple>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">不超过30M</div>
+                    </el-upload>
+                </el-form-item>
+            </template>
+            <template v-else>
+                <el-form-item v-if="fileList.length > 0" label="方案文件">
+                    <el-card class="box-card">
+                        <div v-for="f in fileList" :key="f.name" class="text item">
+                            <span>{{ f.name }}</span>
+                            @*<el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>*@
+                            <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
+                        </div>
+                    </el-card>
+                </el-form-item>
+            </template>
+            <el-form-item label="测试项目编号" prop="ProjectNo" v-if="NodeId >= 4">
+                <el-input v-model="tableForm.ProjectNo" style="width:200px;" :disabled="NodeId > 4"></el-input>
             </el-form-item>
         </template>
+
         <el-form-item label="意见">
             <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
@@ -106,14 +158,16 @@
                 nodeList: [],
                 nodeInfo: {},
                 noEdit: true,
+                ruleForm: {},
+                addPeopleNodes: [], //额外添加审批人节点数组
                 tableForm: {
                 },
                 rules: {
-                    FactBeginTime: { required: true, message: '实际开始时间不能为空', trigger: 'blur' },
-                    FactEndTime: { required: true, message: '实际结束时间不能为空', trigger: 'blur' },
-                    FactDays: [{ required: true, message: '实际天数不能为空', trigger: 'blur' }],
-                    FactCooperateContent: [{ required: true, message: '实际协作内容不能为空', trigger: 'blur' }],
-                    FactCooperateMan: [{ required: true, message: '实际协作人不能为空', trigger: 'blur' }]
+                    TeamMembers: { required: true, message: '项目组成员不能为空', trigger: 'blur' },
+                    StartTime: { required: true, message: '测试项目周期不能为空', trigger: 'blur' },
+                    TechnicalProposal: [{ required: true, message: '处理方案不能为空', trigger: 'blur' }],
+                    ProjectName: [{ required: true, message: '测试项目名称不能为空', trigger: 'blur' }],
+                    ProjectNo: [{ required: true, message: '测试项目编号不能为空', trigger: 'blur' }],
                 }
             }
         },
@@ -121,11 +175,24 @@
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.PostData('Cooperate/Modify', this.tableForm, (res) => {
-                            this.aggreSubmit({
+                        let param = {
+                            "Id": allData.Id,
+                            "Remark": this.tableForm.Mark
+                        }
+                        if (NodeId == 1) {
+                            this.fileListToUrl()
+                            this.tableForm['StartTime'] = _dateToString(this.tableForm.StartTime[0])
+                            this.tableForm['EndTime'] = _dateToString(this.tableForm.StartTime[1])
+                            param = {
                                 "Id": allData.Id,
-                                "Remark": this.tableForm.Mark
-                            })
+                                "Remark": this.tableForm.Mark,
+                                "FileUrl": this.ruleForm.FileUrl,
+                                "MediaId": this.ruleForm.MediaId,
+                                "OldFileUrl": this.ruleForm.OldFileUrl,
+                            }
+                        }
+                        this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
+                            this.aggreSubmit(param)
                         })
                     }
                 })
@@ -147,9 +214,10 @@
                 }
                 this.returnSubmit(param)
             },
-            //选择实际协作人
+            //选择项目组成员
             addPeerNumber() {
                 var that = this
+                this.addPeopleNodes = [5]
                 DingTalkPC.biz.contact.choose({
                     users: [],
                     corpId: DingData.CorpId,
@@ -158,33 +226,31 @@
                         console.log(data)
                         let names = []
                         let ids = []
+                        let addPeoples = []
                         for (let d of data) {
                             names.push(d.name)
                             ids.push(d.emplId)
+                            addPeoples.push({
+                                name: d.name,
+                                emplId: d.emplId
+                            })
                         }
-                        that.tableForm.FactCooperateMan = names.join(',')
-                        that.tableForm.FactCooperateManId = ids.join(',')
+                        that.tableForm.TeamMembers = names.join(',')
+                        that.tableForm.TeamMembersId = ids.join(',')
+                        that.nodeList[5].AddPeople = addPeoples
                     },
                     onFail: function (err) { }
                 });
             },
             getHelpTable() {
-                this.GetData('Cooperate/Read?taskid=' + TaskId, (res) => {
-                    if (NodeId == 1) {
-                        res['FactBeginTime'] = res.PlanBeginTime
-                        res['FactEndTime'] = res.PlanEndTime
-                        res['FactDays'] = res.PlanDays
-                        res['FactCooperateContent'] = res.CooperateContent
-                        res['FactCooperateMan'] = res.CooperateMan
-                        res['FactCooperateManId'] = res.CooperateManId
-                    }
+                this.GetData('TechnicalSupport/Read?taskid=' + TaskId, (res) => {
                     this.tableForm = res
                 })
             }
         },
         created: function () {
             this.getHelpTable()
-            if (NodeId == 4) this.noEdit = false
+            if (NodeId == 1) this.noEdit = false
             loadHtml("mainPage", "partPage")
         }
     })
