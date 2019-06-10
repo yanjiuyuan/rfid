@@ -1216,9 +1216,9 @@ namespace DingTalk.Controllers
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         [HttpGet]
         [Route("GetFlowStateDetail")]
-        public NewErrorModel GetFlowStateDetail(int Index, 
+        public NewErrorModel GetFlowStateDetail(int Index,
             string ApplyManId, bool IsSupportMobile = false,
-            
+
             string Key = "")
         {
             try
@@ -1290,7 +1290,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (DDContext context=new DDContext ())
+                using (DDContext context = new DDContext())
                 {
                     return new NewErrorModel()
                     {
@@ -1328,9 +1328,9 @@ namespace DingTalk.Controllers
             //List<Tasks> ListTask = context.Tasks.ToList();
 
             List<Tasks> ListTask = context.Tasks.SqlQuery("select * from tasks where taskid in " +
-                "(select TaskId from tasks where ApplyManId = @applyManId)",new SqlParameter("@applyManId", ApplyManId)).ToList();
+                "(select TaskId from tasks where ApplyManId = @applyManId)", new SqlParameter("@applyManId", ApplyManId)).ToList();
 
-        
+
             List<Flows> ListFlows = context.Flows.ToList();
             List<TasksState> ListTasksState = context.TasksState.ToList();
             foreach (int TaskId in ListTasks)
@@ -1634,7 +1634,7 @@ namespace DingTalk.Controllers
                     using (DDContext context = new DDContext())
                     {
                         Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderByDescending(t => t.Id).First();
-                        Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
+                        Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0 && u.IsSend != true).First();
                         taskOld.Id = task.Id;
                         taskOld.NodeId = task.NodeId;
                         return new NewErrorModel()
@@ -1860,7 +1860,7 @@ namespace DingTalk.Controllers
 
 
         #endregion
-        
+
         #region 获取流程状态
 
         /// <summary>
