@@ -234,7 +234,7 @@ function getFormData(demo) {
         demo.getNodeInfo()
         demo.GetDingList(taskId)
         demo.getApproInfo()
-    },demo)
+    })
 }
 function handleUrlData(data,demo) {
     imageList = []
@@ -1200,25 +1200,25 @@ var mixin = {
     }
 }
 
-function doWithErrcode(error,demo) {
+function doWithErrcode(error) {
     if (!error) {
         return 1
     }
     if (error && error.errorCode != 0) {
         console.error(error.errorMessage)
-        demo.elementAlert('报错信息', error.errorMessage)
+        //this.elementAlert('报错信息', error.errorMessage)
         return 1
     }
     return 0
 }
-function GetData(url, succe, demo) {
+function GetData(url, succe) {
     $.ajax({
         url: url,
         type: 'GET',
         success: function (res) {
             console.log(url)
             console.log(res)
-            if (doWithErrcode(res.error,demo)) {
+            if (doWithErrcode(res.error)) {
                 return
             }
             succe(res.data)
