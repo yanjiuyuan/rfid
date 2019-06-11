@@ -15,6 +15,7 @@ var fileList = []
 var pdfList = []
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目']
+let status = ["在研", "已完成", "终止"]
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
@@ -1002,6 +1003,27 @@ var mixin = {
                     that.fileList = _cloneArr(fileList)
                     loading.close()
                 }
+            })
+        },
+        //下载文件
+        downloadServerFile: function (path, row) {
+            let serverUrl = 'http://17e245o364.imwork.net:49415/' + 'ProjectNew/DownLoad?path=' + path
+            console.log(serverUrl)
+            location.href = serverUrl
+            return
+            var that = this
+            var path = '\\'
+            for (let p of this.pathList) {
+                path = path + p + '\\'
+            }
+            path += row.path
+            var paramObj = {
+                "userId": DingData.userid,
+                "path": path
+            }
+            this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (data) => {
+                that.downloadUrl = 'http://' + data
+                location.href = that.downloadUrl
             })
         },
         fileListToUrl() {
