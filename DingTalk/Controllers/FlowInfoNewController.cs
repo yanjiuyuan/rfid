@@ -1634,7 +1634,7 @@ namespace DingTalk.Controllers
                     using (DDContext context = new DDContext())
                     {
                         Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderByDescending(t => t.Id).First();
-                        Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0 && u.IsSend != true).First();
+                        Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0 && u.IsSend != true && u.State == 0).First();
                         taskOld.Id = task.Id;
                         taskOld.NodeId = task.NodeId;
                         return new NewErrorModel()
