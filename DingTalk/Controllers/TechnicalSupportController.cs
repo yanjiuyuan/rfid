@@ -70,7 +70,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     TechnicalSupport technicalSupport = context.TechnicalSupport.Where(c => c.TaskId == TaskId).FirstOrDefault();
-                    
+
                     return new NewErrorModel()
                     {
                         data = technicalSupport,
@@ -98,7 +98,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-             
+
                 EFHelper<TechnicalSupport> eFHelper = new EFHelper<TechnicalSupport>();
                 eFHelper.Modify(technicalSupport);
                 if (technicalSupport.IsCreateProject)
@@ -114,14 +114,14 @@ namespace DingTalk.Controllers
                         projectInfo.StartTime = technicalSupport.StartTime;
                         projectInfo.EndTime = technicalSupport.EndTime;
                         projectInfo.CompanyName = technicalSupport.CompanyName;
-                     
+
                         //建立项目文件夹及其子文件
                         string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}",
                             projectInfo.CompanyName, technicalSupport.ProjectType, technicalSupport.ProjectName);
                         projectInfo.FilePath = path;
                         projectInfo.ResponsibleMan = technicalSupport.ResponsibleMan;
                         projectInfo.ResponsibleManId = technicalSupport.ResponsibleManId;
-                       
+
                         projectInfo.TeamMembers = technicalSupport.TeamMembers;
                         projectInfo.TeamMembersId = technicalSupport.TeamMembersId;
 
@@ -131,7 +131,7 @@ namespace DingTalk.Controllers
                         FileHelper.CreateDirectory(path);
                     }
                 }
-             
+
 
                 return new NewErrorModel()
                 {
@@ -180,9 +180,9 @@ namespace DingTalk.Controllers
                         };
                     }
 
-                   TechnicalSupport technicalSupport = context.TechnicalSupport.Where(u => u.TaskId == TaskId).First();
+                    TechnicalSupport technicalSupport = context.TechnicalSupport.Where(u => u.TaskId == TaskId).First();
 
-                   List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
                         if (string.IsNullOrEmpty(nodeInfo.NodePeople))
@@ -203,11 +203,30 @@ namespace DingTalk.Controllers
                     string ProjectName = projectInfo.ProjectName;
                     string ProjectNo = projectInfo.ProjectId;
 
+                    Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                    keyValuePairs.Add("项目负责人", technicalSupport.ResponsibleMan);
+                    keyValuePairs.Add("项目名称", technicalSupport.ProjectName);
+                    keyValuePairs.Add("项目编号", technicalSupport.ProjectNo);
+                    keyValuePairs.Add("项目组成员", technicalSupport.TeamMembers);
+                    keyValuePairs.Add("测试项目技术支持部门", technicalSupport.DeptName);
+                    keyValuePairs.Add("其他工程师", technicalSupport.OtherEngineers==""?"无" : technicalSupport.OtherEngineers);
+                    keyValuePairs.Add("客户名称", technicalSupport.Customer);
+                    keyValuePairs.Add("紧急程度", technicalSupport.EmergencyLevel);
+                    keyValuePairs.Add("要求完成时间", technicalSupport.TimeRequired);
+                    keyValuePairs.Add("所属公司", technicalSupport.CompanyName);
+                   
+                    keyValuePairs.Add("测试项目周期", technicalSupport.StartTime+"-"+ technicalSupport.EndTime);
+                  
+
+
+                    Dictionary<string, string> keyValuePairsDb = new Dictionary<string, string>();
+                    keyValuePairs.Add("客户项目整体概况", technicalSupport.ProjectOverview);
+                    keyValuePairs.Add("技术支持内容要点", technicalSupport.MainPoints);
+                    keyValuePairs.Add("处理方案", technicalSupport.TechnicalProposal);
                    
 
-                 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
-                    ProjectName, ProjectNo, "2", 300, 650, null, null, null, dtApproveView, null);
+                    ProjectName, ProjectNo, "2", 300, 650, null, null, null, dtApproveView, keyValuePairs, keyValuePairsDb);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     List<string> newPaths = new List<string>();
