@@ -35,7 +35,7 @@
         </el-form-item>
 
         <el-form-item label="要求完成时间">
-            <el-input v-model="tableForm.TimeRequired" style="width:200px;" :disabled="true"></el-input> 
+            <el-input v-model="tableForm.TimeRequired" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="客户项目整体情况">
             <el-input v-model="tableForm.ProjectOverview" style="width:550px;" type="textarea" :disabled="true"></el-input>
@@ -128,6 +128,11 @@
             <el-form-item>
                 <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index!=0">
+            <el-form-item>
+                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -244,6 +249,12 @@
                     },
                     onFail: function (err) { }
                 });
+            },
+            printTable() {
+                this.PostData('TechnicalSupport/PrintAndSend', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
+                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
             },
             getHelpTable() {
                 this.GetData('TechnicalSupport/Read?taskid=' + TaskId, (res) => {
