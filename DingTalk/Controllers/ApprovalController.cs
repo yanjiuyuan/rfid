@@ -125,5 +125,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult LetGoodsGo()
+        {
+            return View();
+        }
     }
 }
