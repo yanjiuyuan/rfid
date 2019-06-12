@@ -632,7 +632,7 @@ var mixin = {
                     }
                 }
             }
-            console.log(paramArr)
+            console.log(JSON.stringify(paramArr))
             //return
             this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
                 this.$alert('审批成功', '操作成功', {
