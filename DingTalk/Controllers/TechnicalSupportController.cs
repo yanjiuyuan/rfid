@@ -214,7 +214,6 @@ namespace DingTalk.Controllers
                     keyValuePairs.Add("紧急程度", technicalSupport.EmergencyLevel);
                     keyValuePairs.Add("要求完成时间", technicalSupport.TimeRequired);
                     keyValuePairs.Add("所属公司", technicalSupport.CompanyName);
-                   
                     keyValuePairs.Add("测试项目周期", technicalSupport.StartTime+"-"+ technicalSupport.EndTime);
                   
 

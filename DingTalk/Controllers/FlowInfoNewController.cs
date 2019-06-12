@@ -1769,7 +1769,9 @@ namespace DingTalk.Controllers
             {
                 if (IsBack)
                 {
-                    strLink = strLink + "&index=2";
+                    //strLink = strLink + "&index=2";
+                    strLink = "eapp://page/approve/approve?index=2";
+
                     return await dingTalkServersController.sendOaMessage(ApplyManId,
                    string.Format("您的一条被退回的流程(流水号:{0})，详情请及点击进入研究院信息管理系统进行查阅。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
                    ApplyMan, strLink);
@@ -1778,14 +1780,17 @@ namespace DingTalk.Controllers
                 {
                     if (IsSend)
                     {
-                        strLink = strLink + "&index=3";
+                        //strLink = strLink + "&index=3";
+                        strLink = "eapp://page/approve/approve?index=3";
+
                         return await dingTalkServersController.sendOaMessage(ApplyManId,
                   string.Format("您有一条抄送的流程(流水号:{0})，请及点击进入研究院信息管理系统进行查阅。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
                   ApplyMan, strLink);
                     }
                     else
                     {
-                        strLink = strLink + "&index=0";
+                        //strLink = strLink + "&index=0";
+                        strLink = "eapp://page/approve/approve?index=0";
                         return await dingTalkServersController.sendOaMessage(ApplyManId,
                    string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
                    ApplyMan, strLink);
