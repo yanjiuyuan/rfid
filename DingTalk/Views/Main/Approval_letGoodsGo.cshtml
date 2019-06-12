@@ -1,0 +1,276 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        技术支持审批-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
+
+        <el-form-item label="标题">
+            <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="技术支持部门">
+            <el-input v-model="tableForm.DeptName" style="width:300px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="项目负责人">
+            <el-input v-model="tableForm.ResponsibleMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="其他工程师">
+            <el-input v-model="tableForm.OtherEngineers" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="客户名称">
+            <el-input v-model="tableForm.Customer" style="width:300px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="紧急程度">
+            <el-input v-model="tableForm.EmergencyLevel" style="width:100px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="要求完成时间">
+            <el-input v-model="tableForm.TimeRequired" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="客户项目整体情况">
+            <el-input v-model="tableForm.ProjectOverview" style="width:550px;" type="textarea" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="技术支持内容要点">
+            <el-input v-model="tableForm.MainPoints" style="width:550px;" type="textarea" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="状态">
+            <el-input v-model="tableForm.ProjectState " style="width:100px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="所属公司">
+            <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目类型">
+            <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <hr />
+        <template v-if="NodeId >= 1">
+            <el-form-item label="项目组成员" prop="TeamMembers">
+                <el-input v-model="tableForm.TeamMembers" style="width:500px;" :disabled="true"></el-input>
+                <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()" v-if="!noEdit">+ 选人</el-button>
+            </el-form-item>
+            <el-form-item v-if="NodeId==1" label="测试项目周期" required="required">
+                <el-date-picker v-model="tableForm.StartTime"
+                                type="daterange"
+                                :picker-options="pickerOptions"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            <template v-else>
+                <el-form-item label="开始日期">
+                    <el-input v-model="tableForm.StartTime" style="width:200px;" :disabled="noEdit"></el-input>
+                </el-form-item>
+                <el-form-item label="结束日期">
+                    <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="noEdit"></el-input>
+                </el-form-item>
+            </template>
+            <el-form-item label="处理方案" prop="TechnicalProposal">
+                <el-input v-model="tableForm.TechnicalProposal" style="width:550px;" type="textarea" :disabled="noEdit"></el-input>
+            </el-form-item>
+            <el-form-item label="测试项目名称" prop="ProjectName">
+                <el-input v-model="tableForm.ProjectName" style="width:200px;" :disabled="noEdit"></el-input>
+            </el-form-item>
+            <template v-if="NodeId==1">
+                <el-form-item label="方案文件">
+                    <el-upload class="upload-demo"
+                               drag
+                               :file-list="fileList"
+                               action="/drawingupload/Upload"
+                               :on-remove="HandleFileRemove"
+                               :before-upload="BeforeFileUpload"
+                               :on-success="HandleFileSuccess"
+                               multiple>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">不超过30M</div>
+                    </el-upload>
+                </el-form-item>
+            </template>
+            <template v-else>
+                <el-form-item v-if="fileList.length > 0" label="方案文件">
+                    <el-card class="box-card">
+                        <div v-for="f in fileList" :key="f.name" class="text item">
+                            <span>{{ f.name }}</span>
+                            @*<el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>*@
+                            <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
+                        </div>
+                    </el-card>
+                </el-form-item>
+            </template>
+            <el-form-item label="测试项目编号" prop="ProjectNo" v-if="NodeId >= 4">
+                <el-input v-model="tableForm.ProjectNo" style="width:200px;" :disabled="NodeId > 4"></el-input>
+            </el-form-item>
+        </template>
+
+        <el-form-item label="意见">
+            <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
+        <hr />
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item label="操作" v-if="index==0">
+            <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="false">退回</el-button>
+        </el-form-item>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index!=0">
+            <el-form-item>
+                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
+            </el-form-item>
+        </template>
+    </el-form>
+</el-main>
+
+<script>
+    var allData = {}
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        state = UrlObj.state
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                //钉一下需要的参数
+                flowid: UrlObj.flowid,
+                userid: DingData.userid,
+                DingData: DingData,
+                index: Index,
+                state: state,
+                NodeId: NodeId,
+                nodeList: [],
+                nodeInfo: {},
+                noEdit: true,
+                ruleForm: {},
+                addPeopleNodes: [], //额外添加审批人节点数组
+                tableForm: {
+                },
+                rules: {
+                    TeamMembers: { required: true, message: '项目组成员不能为空', trigger: 'blur' },
+                    StartTime: { required: true, message: '测试项目周期不能为空', trigger: 'blur' },
+                    TechnicalProposal: [{ required: true, message: '处理方案不能为空', trigger: 'blur' }],
+                    ProjectName: [{ required: true, message: '测试项目名称不能为空', trigger: 'blur' }],
+                    ProjectNo: [{ required: true, message: '测试项目编号不能为空', trigger: 'blur' }],
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let param = {
+                            "Id": allData.Id,
+                            "Remark": this.tableForm.Mark
+                        }
+                        if (NodeId == 1) {
+                            this.fileListToUrl()
+                            this.tableForm['StartTime'] = _dateToString(this.tableForm.StartTime[0])
+                            this.tableForm['EndTime'] = _dateToString(this.tableForm.StartTime[1])
+                            param = {
+                                "Id": allData.Id,
+                                "Remark": this.tableForm.Mark,
+                                "FileUrl": this.ruleForm.FileUrl,
+                                "MediaId": this.ruleForm.MediaId,
+                                "OldFileUrl": this.ruleForm.OldFileUrl,
+                            }
+                        }
+                        if (NodeId == 4) {
+                            this.tableForm['IsCreateProject'] = true
+                        }
+                        this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
+                            this.aggreSubmit(param)
+                        })
+                    }
+                })
+            },
+            returnBk() {
+                let param = {
+                    "Id": allData.Id,
+                    "Remark": this.tableForm.Mark
+                }
+                this.returnSubmit(param)
+            },
+            //撤回审批
+            rebackSubmit() {
+                this.disablePage = true
+                var param = {
+                    "Id": allData.Id,
+                    "NodeId": 0,
+                    "Remark": this.tableForm.mark
+                }
+                this.returnSubmit(param)
+            },
+            //选择项目组成员
+            addPeerNumber() {
+                var that = this
+                this.addPeopleNodes = [5]
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        let names = []
+                        let ids = []
+                        let addPeoples = []
+                        for (let d of data) {
+                            names.push(d.name)
+                            ids.push(d.emplId)
+                            addPeoples.push({
+                                name: d.name,
+                                emplId: d.emplId
+                            })
+                        }
+                        that.tableForm.TeamMembers = names.join(',')
+                        that.tableForm.TeamMembersId = ids.join(',')
+                        that.nodeList[5].AddPeople = addPeoples
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            printTable() {
+                this.PostData('TechnicalSupport/PrintAndSend', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
+                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
+            },
+            getHelpTable() {
+                this.GetData('TechnicalSupport/Read?taskid=' + TaskId, (res) => {
+                    this.tableForm = res
+                })
+            }
+        },
+        created: function () {
+            this.getHelpTable()
+            if (NodeId == 1) this.noEdit = false
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData(demo)
+
+</script>
+
+
+
