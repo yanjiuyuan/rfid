@@ -72,7 +72,9 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Gift> Gift { get; set; }
 
         public virtual DbSet<TechnicalSupport> TechnicalSupport { get; set; }
-        
+
+        public virtual DbSet<MaterialRelease> MaterialRelease { get; set; }
+
 
     }
 }

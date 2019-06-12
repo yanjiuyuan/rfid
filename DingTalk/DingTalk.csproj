@@ -365,6 +365,7 @@
     <Compile Include="Controllers\LoginMobileController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ApprovalController.cs" />
+    <Compile Include="Controllers\MaterialReleaseController.cs" />
     <Compile Include="Controllers\NewsAndCaseManageController.cs" />
     <Compile Include="Controllers\OfficeSuppliesManageController.cs" />
     <Compile Include="Controllers\OfficeSuppliesPurchaseManagerController.cs" />
@@ -423,6 +424,7 @@
     <Compile Include="Models\DingModels\Approve.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />
+    <Compile Include="Models\DingModels\MaterialRelease.cs" />
     <Compile Include="Models\DingModels\TechnicalSupport.cs" />
     <Compile Include="Models\DingModels\Cooperate.cs" />
     <Compile Include="Models\DingModels\CreateProject.cs" />
