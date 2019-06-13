@@ -8,6 +8,7 @@ using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -689,6 +690,42 @@ namespace DingTalk.Controllers
                 return new NewErrorModel()
                 {
                     error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        #endregion
+
+        #region 本人审批意见修改
+
+        /// <summary>
+        /// 本人审批意见修改
+        /// </summary>
+        /// <param name="changeRemark"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ChangeRemark")]
+        public NewErrorModel ChangeRemark(ChangeRemark changeRemark)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Tasks tasks = context.Tasks.Find(Int32.Parse(changeRemark.Id));
+                    tasks.Remark = changeRemark.Remark;
+                    context.Entry<Tasks>(tasks).State = EntityState.Modified;
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "修改成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
                 };
             }
         }
