@@ -703,7 +703,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="changeRemark"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("ChangeRemark")]
         public NewErrorModel ChangeRemark(ChangeRemark changeRemark)
         {
