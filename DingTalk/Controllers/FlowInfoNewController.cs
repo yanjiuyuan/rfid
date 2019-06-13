@@ -1543,7 +1543,7 @@ namespace DingTalk.Controllers
                                     orderby n.NodeId
                                     select new
                                     {
-                                        Id= tt.Id,
+                                        Id = tt == null ? 0 : tt.Id,
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
                                         IsBack = tt == null ? false : tt.IsBacked,
