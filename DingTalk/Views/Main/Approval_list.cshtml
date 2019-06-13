@@ -180,6 +180,10 @@
                         loadPage('/Main/approval_techonologySupply' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 35) {
+                        loadPage('/Main/approval_letGoodsGo' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },
