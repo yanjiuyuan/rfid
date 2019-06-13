@@ -1543,6 +1543,7 @@ namespace DingTalk.Controllers
                                     orderby n.NodeId
                                     select new
                                     {
+                                        Id= tt.Id,
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
                                         IsBack = tt == null ? false : tt.IsBacked,
@@ -1872,19 +1873,18 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 本人审批意见修改
         /// </summary>
-        /// <param name="Id"></param>
-        /// <param name="Remark">意见</param>
+        /// <param name="changeRemark"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("ChangeRemark")]
-        public NewErrorModel ChangeRemark(string Id, string Remark)
+        public NewErrorModel ChangeRemark(ChangeRemark changeRemark)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    Tasks tasks = context.Tasks.Find(Int32.Parse(Id));
-                    tasks.Remark = Remark;
+                    Tasks tasks = context.Tasks.Find(Int32.Parse(changeRemark.Id));
+                    tasks.Remark = changeRemark.Remark;
                     context.Entry<Tasks>(tasks).State = EntityState.Modified;
                     context.SaveChanges();
                 }

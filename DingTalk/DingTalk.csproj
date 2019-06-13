@@ -414,6 +414,7 @@
     <Compile Include="Models\AddUserRequestModel.cs" />
     <Compile Include="Models\AttendanceRequestModel.cs" />
     <Compile Include="Models\BatchDeleteUserModel.cs" />
+    <Compile Include="Models\ChangeRemark.cs" />
     <Compile Include="Models\CommomModel.cs" />
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\DepartmentListModel.cs" />
