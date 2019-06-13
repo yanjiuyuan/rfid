@@ -1867,6 +1867,44 @@ namespace DingTalk.Controllers
 
         #endregion
 
+        #region 本人审批意见修改
+
+        /// <summary>
+        /// 本人审批意见修改
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="Remark">意见</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ChangeRemark")]
+        public NewErrorModel ChangeRemark(string Id, string Remark)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Tasks tasks = context.Tasks.Find(Int32.Parse(Id));
+                    tasks.Remark = Remark;
+                    context.Entry<Tasks>(tasks).State = EntityState.Modified;
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "修改成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        #endregion
+
+
         #region 获取流程状态
 
         /// <summary>
