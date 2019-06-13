@@ -1873,18 +1873,19 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 本人审批意见修改
         /// </summary>
-        /// <param name="changeRemark"></param>
+        /// <param name="Id"></param>
+        /// <param name="Remark"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [Route("ChangeRemark")]
-        public NewErrorModel ChangeRemark(ChangeRemark changeRemark)
+        public NewErrorModel ChangeRemark(string Id, string Remark)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    Tasks tasks = context.Tasks.Find(Int32.Parse(changeRemark.Id));
-                    tasks.Remark = changeRemark.Remark;
+                    Tasks tasks = context.Tasks.Find(Int32.Parse(Id));
+                    tasks.Remark = Remark;
                     context.Entry<Tasks>(tasks).State = EntityState.Modified;
                     context.SaveChanges();
                 }
