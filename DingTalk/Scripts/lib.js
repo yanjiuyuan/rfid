@@ -445,6 +445,7 @@ var mixin = {
             ],
         },
         pickerOptions: pickerOptions,
+        CompanyNames: CompanyNames,
         showAddProject: false,
         currentPage: 1,
         totalRows: 0,

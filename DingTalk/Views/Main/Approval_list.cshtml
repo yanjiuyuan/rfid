@@ -184,6 +184,10 @@
                         loadPage('/Main/approval_letGoodsGo' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 36) {
+                        loadPage('/Main/approval_intellectualProperty' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },

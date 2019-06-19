@@ -760,6 +760,8 @@
     <Content Include="Views\Main\Approval_changePaper.cshtml" />
     <Content Include="Views\approval\LetGoodsGo.cshtml" />
     <Content Include="Views\Main\Approval_letGoodsGo.cshtml" />
+    <Content Include="Views\approval\IntellectualProperty.cshtml" />
+    <Content Include="Views\Main\Approval_intellectualProperty.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
