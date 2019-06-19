@@ -448,6 +448,14 @@
             beforePdfFileUpload(file) {
                 console.log('before pdf')
                 console.log(file)
+                for (let f of this.fileList) {
+                    if (f.name == file.name) {
+                        this.$alert('不能上传相同名称文件', '上传失败', {
+                            confirmButtonText: '确定',
+                        });
+                        return false
+                    }
+                }
                 if (file.name.indexOf(' ') >= 0) {
                     this.$alert('文件名不能带空格', '上传失败', {
                         confirmButtonText: '确定',
@@ -473,6 +481,14 @@
             beforeFileUpload(file) {
                 console.log('before file')
                 console.log(file)
+                for (let f of this.pdfList) {
+                    if (f.name == file.name) {
+                        this.$alert('不能上传相同名称文件', '上传失败', {
+                            confirmButtonText: '确定',
+                        });
+                        return false
+                    }
+                }
                 if (file.name.indexOf(' ') >= 0) {
                     this.$alert('文件名不能带空格', '上传失败', {
                         confirmButtonText: '确定',

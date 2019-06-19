@@ -129,5 +129,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult IntellectualProperty()
+        {
+            return View();
+        }
     }
 }
