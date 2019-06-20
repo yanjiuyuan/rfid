@@ -67,9 +67,8 @@ namespace DingTalk.Models.DingModels
         public string Mark { get; set; }
 
         /// <summary>
-        /// 建议(新增字段0620)
+        /// 是否删除
         /// </summary>
-        [StringLength(500)]
-        public string Suggest { get; set; }
+        public bool? IsDelete { get; set; }
     }
 }

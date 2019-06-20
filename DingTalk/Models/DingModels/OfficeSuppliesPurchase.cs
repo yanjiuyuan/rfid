@@ -77,13 +77,7 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(300)]
         public string Dept { get; set; }
-
-        /// <summary>
-        /// 建议(新增字段0620)
-        /// </summary>
-        [StringLength(500)]
-        public string Suggest { get; set; }
-
+        
         /// <summary>
         /// 是否删除
         /// </summary>

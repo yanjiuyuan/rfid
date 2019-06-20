@@ -87,7 +87,6 @@ namespace DingTalk.Controllers
                                     o.Purpose,
                                     o.Standard,
                                     o.UrgentDate,
-                                    o.Suggest
                                 };
                     return Quary;
                 }

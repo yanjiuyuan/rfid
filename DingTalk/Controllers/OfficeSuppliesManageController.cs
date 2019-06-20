@@ -65,7 +65,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     OfficeSuppliesTableList = context.OfficeSupplies.Where
-                         (p => p.TaskId == TaskId).ToList();
+                         (p => p.TaskId == TaskId && p.IsDelete!=true).ToList();
                 }
 
                 return new NewErrorModel()
@@ -82,7 +82,6 @@ namespace DingTalk.Controllers
                 };
             }
         }
-
 
         /// <summary>
         /// 办公用品申请表单修改
