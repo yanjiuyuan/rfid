@@ -1,5 +1,8 @@
 ﻿
 /*通用*/
+.redFont{color:red;}
+.greenFont { color: green;}
+.redBg{background-color:red;}
 .clearfix:before,
 .clearfix:after {
     clear: both;
