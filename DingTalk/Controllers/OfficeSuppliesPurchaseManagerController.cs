@@ -86,7 +86,8 @@ namespace DingTalk.Controllers
                                     o.Price,
                                     o.Purpose,
                                     o.Standard,
-                                    o.UrgentDate
+                                    o.UrgentDate,
+                                    o.Suggest
                                 };
                     return Quary;
                 }
@@ -151,7 +152,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     OfficeSuppliesPurchaseTableList = context.OfficeSuppliesPurchase.Where
-                         (p => p.TaskId == TaskId).ToList();
+                         (p => p.TaskId == TaskId && p.IsDelete != true).ToList();
                 }
                 return JsonConvert.SerializeObject(OfficeSuppliesPurchaseTableList);
             }
@@ -232,7 +233,7 @@ namespace DingTalk.Controllers
                         };
                     }
 
-                    List<OfficeSuppliesPurchase> OfficeSuppliesPurchaseList = context.OfficeSuppliesPurchase.Where(u => u.TaskId == TaskId).ToList();
+                    List<OfficeSuppliesPurchase> OfficeSuppliesPurchaseList = context.OfficeSuppliesPurchase.Where(u => u.TaskId == TaskId && u.IsDelete != true).ToList();
 
                     var SelectGoDownList = from g in OfficeSuppliesPurchaseList
                                            select new
