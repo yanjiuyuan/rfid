@@ -66,7 +66,7 @@ namespace DingTalk.Controllers
                         }
                         //}
                     }
-                    List<OfficeSupplies> officeSupplies = context.OfficeSupplies.ToList();
+                    List<OfficeSupplies> officeSupplies = context.OfficeSupplies.Where(o => o.IsDelete != true).ToList();
 
                     var Quary = from t in officeModeldList
                                 join o in officeSupplies
