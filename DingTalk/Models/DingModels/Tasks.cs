@@ -135,6 +135,6 @@ namespace DingTalk.Models.DingModels
         /// 项目具体类型(电器加工、机械加工、机械采购、其他)
         /// </summary>
         [StringLength(200)]
-        public string projectType { get; set; }
+        public string ProjectType { get; set; }
     }
 }
