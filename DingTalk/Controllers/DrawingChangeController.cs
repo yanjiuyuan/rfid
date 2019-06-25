@@ -37,7 +37,7 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext context = new DDContext();
-                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0 && t.ProjectName==ProjectName && t.projectType==ProjectType).ToList();
+                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0 && t.ProjectName==ProjectName && t.ProjectType == ProjectType).ToList();
 
                 List<Purchase> PurchaseList = context.Purchase.ToList();
                 var Query = from t in tasksList
