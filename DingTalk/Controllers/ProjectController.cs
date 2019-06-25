@@ -136,10 +136,33 @@ namespace DingTalk.Controllers
                         }
                         else
                         {
+                            //建立项目文件夹及其子文件
+                            string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}",
+                                projectInfo.CompanyName, projectInfo.ProjectType, projectInfo.ProjectName);
+                            projectInfo.FilePath = path;
+                            context.ProjectInfo.Add(projectInfo);
+                            path = Server.MapPath(path);
+                            FileHelper.CreateDirectory(path);
+                            FileHelper.CreateDirectory(path + "\\1需求分析");
+                            FileHelper.CreateDirectory(path + "\\2进度计划");
+                            FileHelper.CreateDirectory(path + "\\3立项书");
+                            FileHelper.CreateDirectory(path + "\\4方案设计");
+                            FileHelper.CreateDirectory(path + "\\5机械图纸");
+                            FileHelper.CreateDirectory(path + "\\6电气图纸");
+                            FileHelper.CreateDirectory(path + "\\7采购单");
+                            FileHelper.CreateDirectory(path + "\\8源代码");
+                            FileHelper.CreateDirectory(path + "\\9中试");
+                            FileHelper.CreateDirectory(path + "\\10验收报告");
+                            FileHelper.CreateDirectory(path + "\\11使用说明书");
+                            FileHelper.CreateDirectory(path + "\\12协议书");
+                            FileHelper.CreateDirectory(path + "\\13合同");
+                            FileHelper.CreateDirectory(path + "\\14验收资料");
+                            FileHelper.CreateDirectory(path + "\\15其他资料");
+                            context.SaveChanges();
                             return JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 0,
-                                errorMessage = "没有权限"
+                                errorMessage = "创建成功！"
                             });
                         }
                     }
