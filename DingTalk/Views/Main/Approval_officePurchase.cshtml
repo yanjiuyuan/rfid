@@ -24,7 +24,12 @@
                 <el-table-column prop="Count" label="数量"></el-table-column>
                 <el-table-column prop="totalPrice" label="总价"></el-table-column>
                 <el-table-column prop="Purpose" label="用途"></el-table-column>
-
+                <el-table-column label="是否删除" width="150" v-if="NodeId == 2">
+                    <template slot-scope="scope">
+                        <el-button size="mini" v-if="NodeId == 2" :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
+                        <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
+                    </template>
+                </el-table-column>
                 @*<el-table-column prop="applyMan" label="申请人"></el-table-column>*@
                 @*<el-table-column prop="dept" label="部门"></el-table-column>*@
                 @*<el-table-column prop="Mark" label="备注"></el-table-column>*@
@@ -96,21 +101,16 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
-                this.aggreSubmit({
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                })
-                return
                 var that = this
                 if (NodeId == '2') {
-                    for (let d of that.dataList) {
-                        for (let v of d.value) {
-                            if (v.Price == '' || v.Price == null) {
-                                this.elementAlert('提示信息', '有实际单价未填')
-                                return
-                            }
-                        }
-                    }
+                    //for (let d of that.dataList) {
+                    //    for (let v of d.value) {
+                    //        if (v.Price == '' || v.Price == null) {
+                    //            this.elementAlert('提示信息', '有实际单价未填')
+                    //            return
+                    //        }
+                    //    }
+                    //}
                     let url = '/OfficeSuppliesPurchase/ModifyTable'
                     var param = []
                     for (let d of that.dataList) {
@@ -157,6 +157,10 @@
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
+            },
+            //设置BOM表单状态
+            setState(index, row) {
+                row.IsDelete = !row.IsDelete
             },
             getBomInfo() {
                 var that = this

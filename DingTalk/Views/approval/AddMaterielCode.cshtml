@@ -271,7 +271,7 @@
             getMaterielCode() {
                 var that = this
                 let url = ''
-                this.ruleForm.codeType == '2' ? url = 'http://wuliao5222.55555.io:35705/api/' + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
+                this.ruleForm.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
                 if (this.ruleForm.codeType == '2') {
                     that.bigCodes = [
                         {

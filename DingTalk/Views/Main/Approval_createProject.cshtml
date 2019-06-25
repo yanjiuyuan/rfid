@@ -20,8 +20,8 @@
         <el-form-item label="项目名称">
             <el-input v-model="form.ProjectName" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目编号">
-            <el-input v-if="NodeId==1" v-model="form.ProjectId" style="width:550px;"></el-input>
+        <el-form-item label="项目编号" v-if="NodeId >= 3" prop="ProjectId">
+            <el-input v-if="NodeId==3" v-model="form.ProjectId" style="width:550px;"></el-input>
             <el-input v-else v-model="form.ProjectId" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         @*<el-form-item label="项目状态">
@@ -54,9 +54,9 @@
         <el-form-item label="结束时间">
             <el-input v-model="form.EndTime" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="是否评审" v-if="NodeId >= 3" :disabled="NodeId >3">
-            <el-radio v-model="form.IsReview" :label="true">是</el-radio>
-            <el-radio v-model="form.IsReview" :label="false">否</el-radio>
+        <el-form-item label="是否评审" v-if="NodeId >= 2">
+            <el-radio :disabled="NodeId >2" v-model="form.IsReview" :label="true">是</el-radio>
+            <el-radio :disabled="NodeId >2" v-model="form.IsReview" :label="false">否</el-radio>
         </el-form-item>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="立项文件">
@@ -110,7 +110,6 @@
         data: function () {
             return {
                 carList: [],
-                imageList: imageList,
                 index: Index,
                 FlowId: FlowId,
                 NodeId: NodeId,
@@ -133,8 +132,8 @@
                     //"FileUrl": this.ruleForm.FileUrl,
                     //"OldFileUrl": this.ruleForm.OldFileUrl
                 }
-                if (NodeId == 3 || NodeId == 1) {
-                    if (!this.form.ProjectId) {
+                if (NodeId == 3 || NodeId == 2) {
+                    if (NodeId == 3 && !this.form.ProjectId) {
                         this.$alert('项目编号不能为空', '提示信息', {
                             confirmButtonText: '确定'
                         })
@@ -142,6 +141,10 @@
                     }
                     //if (NodeId == 1) this.nodeList[5].AddPeople = this.copyMans
                     this.PostData('CreateProject/Modify', this.form, (res) => {
+                        if (NodeId != 3) {
+                            that.aggreSubmit(aggreParam)
+                            return
+                        }
                         $.ajax({
                             url: "/Project/AddProject?IsPower=true",
                             type: "POST",
