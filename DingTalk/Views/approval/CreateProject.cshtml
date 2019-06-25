@@ -23,8 +23,8 @@
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
             @*<el-form-item label="项目编号" prop="inputProjectId">
-                <el-input v-model="ruleForm.inputProjectId"></el-input>
-            </el-form-item>*@
+            <el-input v-model="ruleForm.inputProjectId"></el-input>
+        </el-form-item>*@
             <el-form-item label="承担部门">
                 <el-select v-model="ruleForm.DeptName" style="width:300px;">
                     <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
@@ -51,10 +51,13 @@
                     <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="项目负责人" required="required">
+            <el-form-item label="项目负责人">
+                <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+            </el-form-item>
+            @*<el-form-item label="项目负责人" required="required">
                 <span>{{ResponsibleMan[0].name}} &nbsp;</span>
                 <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
-            </el-form-item>
+            </el-form-item>*@
             <el-form-item label="项目组成员" required="required">
                 <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
                 <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
@@ -130,7 +133,7 @@
                 var that = this
                 this.fileListToUrl()
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name && this.ruleForm.Time[0] && this.ruleForm.FileUrl) {
+                    if (valid && this.groupPeople[0].name && this.ruleForm.Time[0] && this.ruleForm.FileUrl) {
                         that.disablePage = true
                         let names = []
                         let ids = []
@@ -150,8 +153,8 @@
                             "StartTime": this.ruleForm.Time[0] ? _dateToString(this.ruleForm.Time[0]) : '',
                             "EndTime": this.ruleForm.Time[1] ? _dateToString(this.ruleForm.Time[1]) : '',
                             "ProjectId": this.ruleForm.inputProjectId,
-                            "ResponsibleMan": this.ResponsibleMan[0].name,
-                            "ResponsibleManId": this.ResponsibleMan[0].emplId,
+                            "ResponsibleMan": this.ruleForm.ApplyMan,
+                            "ResponsibleManId": this.ruleForm.ApplyManId,
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
                             "CompanyName": this.ruleForm.CompanyName,

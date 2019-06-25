@@ -33,6 +33,12 @@
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
             </el-table-column>
+            <el-table-column label="是否删除" width="150" v-if="FlowId == 1 && NodeId >= 3">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-if="NodeId == 3" :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
+                    <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
+                </template>
+            </el-table-column>
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
@@ -406,12 +412,13 @@
             return {
                 preApprove: false,
                 preCopy: false,
-                imageList: imageList,
-                fileList: fileList,
-                pdfList: pdfList,
+                imageList: [],
+                fileList: [],
+                pdfList: [],
                 data: [],
                 items: items,
                 FlowId: FlowId,
+                NodeId: NodeId,
                 tableData: [],
                 totalRows: 0,
                 nodeInfo: {},
@@ -435,6 +442,7 @@
                 if (FlowId == '1') {
                     let url = '/OfficeSupplies/ModifyTable'
                     console.log(this.data)
+                    //return
                     that._postData(url, function (data) {
                         that.aggreSubmit({
                             "Id": allData.Id,
@@ -617,6 +625,14 @@
                     }
                 })
             },
+
+            //设置BOM表单状态
+            setState(index, row) {
+                row.IsDelete = !row.IsDelete
+            },
+
+
+
             //圖紙審批bom表格翻页
             handleBomPageChange(page, index) {
                 console.log(page)

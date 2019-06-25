@@ -104,7 +104,7 @@
             </el-upload>
         </el-form-item>
 
-        <el-form-item label="上传其他附件">
+        <el-form-item label="上传其他附件" required="required">
             <el-upload class="upload-demo"
                        drag
                        :file-list="fileList"
@@ -115,7 +115,7 @@
                        :on-success="HandleFileSuccess"
                        multiple>
                 <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__text">上传excelBom表、3D文件 --><em>点击上传</em></div>
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
@@ -226,8 +226,8 @@
                         for (var i = 0; i < that.pdfList.length; i++) {
                             stateArr.push(0)
                         }
-                        if (!that.ruleForm.FilePDFUrl) {
-                            this.$alert('图纸未上传', '提交错误', {
+                        if (!that.ruleForm.FilePDFUrl || !that.ruleForm.FileUrl) {
+                            this.$alert('图纸或文件未上传', '提交错误', {
                                 confirmButtonText: '确定',
                                 callback: action => {
 

@@ -176,8 +176,11 @@
             onSubmit(formName) {
                 console.error(this.tableData)
                 if (this.tableData.length == 0) {
-                    this.elementAlert('提示信息', '未添加编码')
-                    return
+                    this.addGoods()
+                    if (this.tableData.length == 0) {
+                        this.elementAlert('提示信息', '未添加编码')
+                        return
+                    }
                 }
                 for (var i = 0; i < this.tableData.length;i++) {
                     let d = this.tableData[i]
@@ -271,7 +274,7 @@
             getMaterielCode() {
                 var that = this
                 let url = ''
-                this.ruleForm.codeType == '2' ? url = 'http://wuliao5222.55555.io:35705/api/' + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
+                this.ruleForm.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
                 if (this.ruleForm.codeType == '2') {
                     that.bigCodes = [
                         {
