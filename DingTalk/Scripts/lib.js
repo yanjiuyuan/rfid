@@ -798,7 +798,6 @@ var mixin = {
         },
         //获取審批節點數據
         getApproInfo() {
-            var that = this
             var url = "/FlowInfoNew/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
             this.GetData(url, (res) => {
                 this.nodeInfo = res[0]
