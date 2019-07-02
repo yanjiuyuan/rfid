@@ -123,7 +123,7 @@ namespace DingTalk.Controllers
                                     await SendOaMsgNew(tasks.FlowId, PeopleIdList[i].ToString(),
                                         TaskId.ToString(), tasksApplyMan.ApplyMan,
                                         tasksApplyMan.Remark, context, flows.ApproveUrl,
-                                        nextNodeInfo.NodeId.ToString(), false, false);
+                                        nextNodeInfo.NodeId.ToString());
                                     Thread.Sleep(200);
                                 }
 
@@ -396,9 +396,17 @@ namespace DingTalk.Controllers
                             context.SaveChanges();
 
                             //推送发起人
-                            SentCommonMsg(taskNew.ApplyManId,
-                            string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", tasks.TaskId),
-                            taskNew.ApplyMan, taskNew.Remark, null);
+                            //SentCommonMsg(taskNew.ApplyManId,
+                            //string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", tasks.TaskId),
+                            //taskNew.ApplyMan, taskNew.Remark, null);
+
+                            await SendOaMsgNew(taskNew.FlowId, taskNew.ApplyManId.ToString(), tasks.TaskId.ToString(),
+                                       taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
+                                       taskNew.NodeId.ToString(),
+                                       false, false);
+                            Thread.Sleep(100);
+
+
 
                             JsonConvert.SerializeObject(new ErrorModel
                             {
@@ -1753,74 +1761,96 @@ namespace DingTalk.Controllers
         /// <param name="NodeId"></param>
         /// <param name="IsBack"></param>
         /// <param name="IsSend"></param>
+        /// <param name="IsFinnish"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("SendOaMsgNew")]
         public async Task<object> SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan,
             string Remark, DDContext dDContext,
             string LinkUrl, string NodeId,
-            bool IsBack = false, bool IsSend = false)
+            bool IsBack = false, bool IsSend = false,bool IsFinnish=false)
         {
             DingTalkServersController dingTalkServersController = new DingTalkServersController();
 
             string strLink = LinkUrl + "?taskid=" + TaskId +
                             "&flowid=" + FlowId +
                             "&nodeid=" + NodeId;
-            //推送OA消息(手机端)
-            if (dDContext.Flows.Where(f => f.FlowId.ToString() == FlowId.ToString()).First().IsSupportMobile == true)
-            {
-                if (IsBack)
-                {
-                    //strLink = strLink + "&index=2";
-                    strLink = "eapp://page/approve/approve?index=2";
 
-                    return await dingTalkServersController.sendOaMessage(ApplyManId,
-                   string.Format("您的一条被退回的流程(流水号:{0})，详情请及点击进入研究院信息管理系统进行查阅。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
-                   ApplyMan, strLink);
-                }
-                else
+            if (IsFinnish)
+            {
+
+                //推送OA消息(手机端)
+                if (dDContext.Flows.Where(f => f.FlowId.ToString() == FlowId.ToString()).First().IsSupportMobile == true)
                 {
-                    if (IsSend)
+                    if (IsBack)
                     {
-                        //strLink = strLink + "&index=3";
-                        strLink = "eapp://page/approve/approve?index=3";
+                        //strLink = strLink + "&index=2";
+                        strLink = "eapp://page/approve/approve?index=2";
 
                         return await dingTalkServersController.sendOaMessage(ApplyManId,
-                  string.Format("您有一条抄送的流程(流水号:{0})，请及点击进入研究院信息管理系统进行查阅。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
-                  ApplyMan, strLink);
+                       string.Format("您的一条被退回的流程(流水号:{0})，详情请及点击进入研究院信息管理系统进行查阅。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
+                       ApplyMan, strLink);
                     }
                     else
                     {
-                        //strLink = strLink + "&index=0";
-                        strLink = "eapp://page/approve/approve?index=0";
-                        return await dingTalkServersController.sendOaMessage(ApplyManId,
-                   string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
-                   ApplyMan, strLink);
+                        if (IsSend)
+                        {
+                            //strLink = strLink + "&index=3";
+                            strLink = "eapp://page/approve/approve?index=3";
+
+                            return await dingTalkServersController.sendOaMessage(ApplyManId,
+                      string.Format("您有一条抄送的流程(流水号:{0})，请及点击进入研究院信息管理系统进行查阅。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
+                      ApplyMan, strLink);
+                        }
+                        else
+                        {
+                            //strLink = strLink + "&index=0";
+                            strLink = "eapp://page/approve/approve?index=0";
+                            return await dingTalkServersController.sendOaMessage(ApplyManId,
+                       string.Format("您有一条待审批的流程(流水号:{0})，请及点击进入研究院信息管理系统进行审批。(Ps:如果点击没有反应，请尝试升级手机钉钉版本)", TaskId),
+                       ApplyMan, strLink);
+                        }
                     }
+                }
+                else    //推送OA消息(电脑端)
+                {
+                    if (IsBack)
+                    {
+                        SentCommonMsg(ApplyManId, string.Format("您有被退回的流程(流水号:{0})，请进入研究院信息管理系统进行查阅。", TaskId), ApplyMan, Remark, null);
+                    }
+                    else
+                    {
+                        if (IsSend)
+                        {
+                            SentCommonMsg(ApplyManId, string.Format("您有一条抄送的流程(流水号:{0})，请进入研究院信息管理系统进行查阅。", TaskId), ApplyMan, Remark, null);
+                        }
+                        else
+                        {
+                            SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
+                        }
+                    }
+                    return dingTalkServersController.sendOaMessage("测试",
+                           string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId),
+                           ApplyMan, "eapp://page/approve/approve");
                 }
             }
-            else    //推送OA消息(电脑端)
+            else
             {
-                if (IsBack)
+                //推送OA消息(手机端)
+                if (dDContext.Flows.Where(f => f.FlowId.ToString() == FlowId.ToString()).First().IsSupportMobile == true)
                 {
-                    SentCommonMsg(ApplyManId, string.Format("您有被退回的流程(流水号:{0})，请进入研究院信息管理系统进行查阅。", TaskId), ApplyMan, Remark, null);
+                    strLink = "eapp://page/approve/approve?index=0";
+                    return await dingTalkServersController.sendOaMessage(ApplyManId,
+               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId),
+               ApplyMan, strLink);
                 }
                 else
                 {
-                    if (IsSend)
-                    {
-                        SentCommonMsg(ApplyManId, string.Format("您有一条抄送的流程(流水号:{0})，请进入研究院信息管理系统进行查阅。", TaskId), ApplyMan, Remark, null);
-                    }
-                    else
-                    {
-                        SentCommonMsg(ApplyManId, string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId), ApplyMan, Remark, null);
-                    }
+                    SentCommonMsg(ApplyManId, string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId), ApplyMan, Remark, null);
                 }
-
-
                 return dingTalkServersController.sendOaMessage("测试",
-                       string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId),
-                       ApplyMan, "eapp://page/approve/approve");
+                          string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId),
+                          ApplyMan, "eapp://page/approve/approve");
             }
         }
 
