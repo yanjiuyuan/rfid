@@ -37,7 +37,7 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext context = new DDContext();
-                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0 && t.ProjectName==ProjectName && t.ProjectType == ProjectType).ToList();
+                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0 && t.ProjectName == ProjectName && t.ProjectType == ProjectType).ToList();
 
                 List<Purchase> PurchaseList = context.Purchase.ToList();
                 var Query = from t in tasksList
@@ -80,7 +80,7 @@ namespace DingTalk.Controllers
                 };
             }
         }
-        
+
 
         /// <summary>
         /// 图纸BOM变更表单保存
@@ -194,7 +194,7 @@ namespace DingTalk.Controllers
 
                     if (item.ChangeType == "2")  //删除
                     {
-                        Purchase purchase = context.Purchase.Find(item.OldId);
+                        Purchase purchase = context.Purchase.Find(Int32.Parse(item.OldId));
                         purchase.ChangeType = item.ChangeType;
                         context.Entry<Purchase>(purchase).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
@@ -275,7 +275,7 @@ namespace DingTalk.Controllers
                                                  p.Sorts,
                                                  p.NeedTime,
                                                  p.Mark,
-                                                 ChangeType=p.ChangeType=="1"?"新增":"删除"
+                                                 ChangeType = p.ChangeType == "1" ? "新增" : "删除"
                                              };
 
                     DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);

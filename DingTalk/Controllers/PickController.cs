@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -38,7 +39,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-                
+
                 EFHelper<Pick> eFHelper = new EFHelper<Pick>();
                 foreach (var pick in pickList)
                 {
@@ -58,11 +59,52 @@ namespace DingTalk.Controllers
             }
         }
 
+
+        ///// <summary>
+        ///// 默认读取已验收的数据
+        ///// </summary>
+        ///// <param name="ApplyManId"></param>
+        ///// <param name="TaskId">入库单流水号</param>
+        ///// <returns></returns>
+        //[Route("ReadDefault")]
+        //[HttpGet]
+        //public object ReadDefault(string ApplyManId, string TaskId)
+        //{
+        //    try
+        //    {
+        //        using (DDContext context = new DDContext())
+        //        {
+        //            List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("27");
+        //            List<Tasks> taskQuery = tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 1).ToList();
+        //            List<GoDown> goDowns = new List<GoDown>();
+        //            foreach (var task in taskQuery)
+        //            {
+        //                goDowns.AddRange(context.GoDown.Where(g => g.TaskId == task.TaskId.ToString()));
+        //            }
+
+
+        //            return new NewErrorModel()
+        //            {
+        //                count = goDowns.Count,
+        //                data = goDowns,
+        //                error = new Error(0, "读取成功！", "") { },
+        //            };
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(1, ex.Message, "") { },
+        //        };
+        //    }
+        //}
+
         /// <summary>
         /// 默认读取已验收的数据
         /// </summary>
         /// <param name="ApplyManId"></param>
-        /// <param name="TaskId">入库单流水号</param>
+        /// <param name="TaskId">钉钉零部件申请流水号</param>
         /// <returns></returns>
         [Route("ReadDefault")]
         [HttpGet]
@@ -70,21 +112,49 @@ namespace DingTalk.Controllers
         {
             try
             {
+                //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                //keyValuePairs.Add("FBillNo", "88");
+                //string result = HttpPost("http://wuliao5222.55555.io:35705/api/GoDown/GetGodownInfoByFBillNo",
+                //   keyValuePairs);
+
+
+                HttpWebResponse httpWebResponse = CreateGetHttpResponse("http://wuliao5222.55555.io:35705/api/Pick/GetAll", 5000, null, null);
+
+                StreamReader reader = new StreamReader(httpWebResponse.GetResponseStream(), Encoding.UTF8);
+                string content = reader.ReadToEnd();
+                NewErrorModel newErrorModel = new NewErrorModel()
+                {
+                    data = new List<GodownModel>() { },
+                };
+                newErrorModel = JsonConvert.DeserializeObject<NewErrorModel>(content);
+
                 using (DDContext context = new DDContext())
                 {
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("27");
-                    List<Tasks> taskQuery = tasks.Where(t=>t.TaskId.ToString()== TaskId && t.NodeId==1).ToList();
-                    List<GoDown> goDowns = new List<GoDown>();
+                    List<GodownModel> goDowns = JsonConvert.DeserializeObject<List<GodownModel>>(newErrorModel.data.ToString()); ;
+                    Flows flows = context.Flows.Where(f => f.FlowName.Contains("零部件")).First();
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId(flows.FlowId.ToString());
+                    List<Tasks> taskQuery = tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 1).ToList();
+                    List<PurchaseTable> PurchaseTables = new List<PurchaseTable>();
                     foreach (var task in taskQuery)
                     {
-                        goDowns.AddRange(context.GoDown.Where(g => g.TaskId == task.TaskId.ToString()));
+                        PurchaseTables.AddRange(context.PurchaseTable.Where(g => g.TaskId == task.TaskId.ToString()));
                     }
-
+                    List<GodownModel> GodownModelList = new List<GodownModel>();
+                    foreach (var goDown in goDowns)
+                    {
+                        foreach (var PurchaseTable in PurchaseTables)
+                        {
+                            if (goDown.FNumber == PurchaseTable.CodeNo)
+                            {
+                                GodownModelList.Add(goDown);
+                            }
+                        }
+                    }
 
                     return new NewErrorModel()
                     {
-                        count = goDowns.Count,
-                        data = goDowns,
+                        count = GodownModelList.Count,
+                        data = GodownModelList,
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
@@ -295,5 +365,140 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 同步Post
+        /// </summary>
+        /// <param name="Url"></param>
+        /// <param name="Params"></param>
+        /// <returns>返回json格式</returns>
+        public static string HttpPost(string Url, IDictionary<string, string> Params)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
+            request.Method = "POST";
+            //request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentType = "application/json";
+
+            //发送POST数据  
+            StringBuilder bufferParams = new StringBuilder();
+            if (!(Params == null || Params.Count == 0))
+            {
+                int i = 0;
+                foreach (string key in Params.Keys)
+                {
+                    if (i > 0)
+                    {
+                        bufferParams.AppendFormat("&{0}={1}", key, Params[key]);
+                    }
+                    else
+                    {
+                        bufferParams.AppendFormat("{0}={1}", key, Params[key]);
+                        i++;
+                    }
+                }
+            }
+            request.ContentLength = Encoding.UTF8.GetByteCount(bufferParams.ToString());
+
+            Stream myRequestStream = request.GetRequestStream();
+            StreamWriter myStreamWriter = new StreamWriter(myRequestStream, Encoding.GetEncoding("gb2312"));
+            myStreamWriter.Write(bufferParams);
+            myStreamWriter.Close();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            Stream myResponseStream = response.GetResponseStream();
+            StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+            string retString = myStreamReader.ReadToEnd();
+            #region ContentType = "application/x-www-form-urlencoded"处理方式
+            //服务器端返回的是一个XML格式的字符串，XML的Content才是我们所需要的数据
+            //XmlTextReader Reader = new XmlTextReader(myResponseStream);
+            //Reader.MoveToContent();
+            //string retString = Reader.ReadInnerXml();//取出Content中的数据
+            //Reader.Close();
+            #endregion
+            myStreamReader.Close();
+            myResponseStream.Close();
+
+            return retString;
+        }
+
+        ///// <summary>  
+        /// 创建GET方式的HTTP请求  
+        /// </summary>  
+        /// <param name="url">请求的URL</param>  
+        /// <param name="timeout">请求的超时时间</param>  
+        /// <param name="userAgent">请求的客户端浏览器信息，可以为空</param>  
+        /// <param name="cookies">随同HTTP请求发送的Cookie信息，如果不需要身份验证可以为空</param>  
+        /// <returns></returns>  
+        public static HttpWebResponse CreateGetHttpResponse(string url, int? timeout, string userAgent, CookieCollection cookies)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentNullException("url");
+            }
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Method = "GET";
+            //request.UserAgent = DefaultUserAgent;
+            if (!string.IsNullOrEmpty(userAgent))
+            {
+                request.UserAgent = userAgent;
+            }
+            if (timeout.HasValue)
+            {
+                request.Timeout = timeout.Value;
+            }
+            if (cookies != null)
+            {
+                request.CookieContainer = new CookieContainer();
+                request.CookieContainer.Add(cookies);
+            }
+            return request.GetResponse() as HttpWebResponse;
+        }
+
+    }
+
+    public class GodownModel
+    {
+        /// <summary>
+        /// 物料编码
+        /// </summary>
+        public string FNumber { get; set; }
+        /// <summary>
+        /// 物料名称
+        /// </summary>
+        public string FName { get; set; }
+        /// <summary>
+        /// 规格型号
+        /// </summary>
+        public string FModel { get; set; }
+        /// <summary>
+        /// 单位名称
+        /// </summary>
+        public string UnitName { get; set; }
+
+        /// <summary>
+        /// 实收数量(可编辑)
+        /// </summary>
+        public Decimal FQty { get; set; }
+
+        /// <summary>
+        /// 单价
+        /// </summary>
+        public Decimal FPrice { get; set; }
+        /// <summary>
+        /// 金额
+        /// </summary>
+        public Decimal FAmount { get; set; }
+
+        /// <summary>
+        /// 供应商
+        /// </summary>
+        public string FFullName { get; set; }
+
+        /// <summary>
+        /// 入库数量
+        /// </summary>
+        public Decimal FCommitQty { get; set; }
+
     }
 }
