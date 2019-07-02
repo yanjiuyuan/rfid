@@ -65,6 +65,9 @@
         <el-form-item label="项目编号" v-if="ruleForm.ProjectId">
             <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="图纸用途" v-if="FlowId == 6">
+            <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
