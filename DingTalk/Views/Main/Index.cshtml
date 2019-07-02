@@ -47,13 +47,8 @@
                 },
                 //菜单数据加载
                 loadMenuData(id) {
-                    var that = this
-                    $.ajax({
-                        url: '/FlowInfo/GetFlowStateCounts?ApplyManId=' + id,
-                        datatype: 'json',
-                        success: function (data) {
-                            that.menuStatus = JSON.parse(data)
-                        }
+                    this.GetData("FlowInfoNew/GetFlowStateCounts?ApplyManId=" + id, (res) => {
+                        this.menuStatus = res
                     })
                 }
             },

@@ -52,6 +52,20 @@
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
+        <el-form-item label="上传图片" required="required">
+            <el-upload action="/drawingupload/Upload"
+                       list-type="picture-card"
+                       :file-list="imageList"
+                       :on-preview="handlePictureCardPreview"
+                       :on-remove="handlePictureRemove"
+                       :on-success="handlePictureCardSuccess"
+                       :before-upload="beforePictureUpload">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+        </el-form-item>
         <hr />
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
@@ -74,8 +88,12 @@
                 CompanyNames: CompanyNames,
                 nodeList: [],
                 nodeInfo: {},
+                imageList: [],
                 date: _getDate(),
                 addPeopleNodes: [1], //额外添加审批人节点数组
+                //图片上传参数
+                dialogImageUrl: '',
+                dialogVisible: false,
                 ruleForm: {
                     CarNo: "",
                     Company: '泉州华中科技大学智能制造研究院',
@@ -85,6 +103,8 @@
                     Unit: "",
                     Cause: "",
                     Date: "",
+                    ImageUrl: '',
+                    OldImageUrl: '',
                     Title: "物资放行条"
                 },
                 rules: {
@@ -102,6 +122,11 @@
             onSubmit(formName) {
                 //console.log(this.ruleForm)
                 //return
+                this.fileListToUrl()
+                if (!this.ruleForm.ImageUrl) {
+                    this.elementAlert('alert', '未上传图片')
+                    return
+                }
                 let callBack = (taskId) => {
                     this.ruleForm['TaskId'] = taskId
                     this.PostData('MaterialRelease/Save', this.ruleForm, () => {
@@ -115,7 +140,9 @@
                 }
                 this.approvalSubmit(formName, {
                     Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark
+                    Remark: this.ruleForm.remark,
+                    "ImageUrl": this.ruleForm.ImageUrl,
+                    "OldImageUrl": this.ruleForm.OldImageUrl
                 }, callBack)
             }
         },

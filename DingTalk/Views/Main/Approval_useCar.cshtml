@@ -110,7 +110,6 @@
 
 <script>
     var allData = {}
-    var imageList = []
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -125,7 +124,7 @@
         data: function () {
             return {
                 carList: [],
-                imageList: imageList,
+                imageList: [],
                 index: Index,
                 NodeId: NodeId,
                 state: State,

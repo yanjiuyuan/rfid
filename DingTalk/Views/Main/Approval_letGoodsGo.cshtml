@@ -48,6 +48,14 @@
         <el-form-item label="意见">
             <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
+        <!--图片展示-->
+        <el-form-item v-if="imageList.length > 0" label="相关图片">
+            <el-upload action=""
+                       list-type="picture-card"
+                       :on-preview="handlePictureCardPreview2"
+                       :file-list="imageList">
+            </el-upload>
+        </el-form-item>
         <hr />
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
@@ -96,6 +104,7 @@
                 noEdit: true,
                 ruleForm: {},
                 addPeopleNodes: [], //额外添加审批人节点数组
+                imageList: [],
                 tableForm: {
                 },
             }

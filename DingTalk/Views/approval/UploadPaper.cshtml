@@ -211,7 +211,7 @@
             //提交审批
             onSubmit(formName) {
                 var that = this
-                that.fileListToUrl()
+                this.fileListToUrl()
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
                         that.disablePage = true

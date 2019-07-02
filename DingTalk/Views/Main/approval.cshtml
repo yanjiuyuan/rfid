@@ -320,12 +320,9 @@
                 }
             },
             getUserInfo: function () {
-                var that = this
-                let url = '/FlowInfo/GetUserInfo'
-                let handle = function (data) {
-                    that.userList = data
-                }
-                this._getData(url, handle)
+                this.GetData("FlowInfoNew/GetUserInfo", (res) => {
+                    this.userList = res
+                })
             }
         },
         created: function () {
