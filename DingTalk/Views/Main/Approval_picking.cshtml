@@ -132,9 +132,6 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                console.log(this.ruleForm.ImageUrl)
-                console.log(this.ruleForm.OldImageUrl)
-                return
                 this.aggreSubmit({
                     "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.mark,
