@@ -35,6 +35,20 @@
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="上传图片" v-if="NodeId >= 3" required="required">
+            <el-upload action="/drawingupload/Upload"
+                       list-type="picture-card"
+                       :file-list="imageList"
+                       :on-preview="handlePictureCardPreview"
+                       :on-remove="handlePictureRemove"
+                       :on-success="handlePictureCardSuccess"
+                       :before-upload="beforePictureUpload">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+        </el-form-item>
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <template v-if="index==0">
@@ -47,10 +61,10 @@
             </el-form-item>
         </template>
         @*<template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-                <el-form-item>
-                    <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-                </el-form-item>
-            </template>*@
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>*@
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
@@ -70,7 +84,7 @@
 <script>
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
+        NodeId = parseInt(UrlObj.nodeid)
         TaskId = UrlObj.taskid
         State = UrlObj.state
         Id = UrlObj.id
@@ -108,15 +122,24 @@
                 index: Index,
                 ifShowStamppBtn: false,
                 ifShowStamppBtn2: false,
+                //图片上传参数
+                imageList:[],
+                dialogImageUrl: '',
+                dialogVisible: false,
             }
         },
         methods: {
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
+                console.log(this.ruleForm.ImageUrl)
+                console.log(this.ruleForm.OldImageUrl)
+                return
                 this.aggreSubmit({
                     "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark
+                    "Remark": this.ruleForm.mark,
+                    "ImageUrl": this.ruleForm.ImageUrl,
+                    "OldImageUrl": this.ruleForm.OldImageUrl
                 })
             },
             //退回审批
@@ -162,12 +185,12 @@
                 })
             },
             //获取审批表单信息
-            getFormData() {
-                var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-                this.GetData(url, (data) => {
-                    this.ruleForm = data
-                })
-            },
+            //getFormData() {
+            //    var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+            //    this.GetData(url, (data) => {
+            //        this.ruleForm = data
+            //    })
+            //},
             printTable() {
                 this.PostData('Pick/PrintPDF',{
                     UserId: DingData.userid,
@@ -182,12 +205,9 @@
             }
         },
         created: function () {
-            this.getFormData()
-            this.GetDingList(TaskId)
-            this.getNodeInfo()
-            this.getApproInfo()
             this.getBomInfo()
             loadHtml("mainPage", "partPage")
         }
     })
+    getFormData(demo)
 </script>

@@ -96,16 +96,11 @@
                 console.log(index, row);
                 var that = this
                 if (Index == '3') {
-                    var url = '/FlowInfo/ChangeSendState?TaskId=' + row.TaskId + '&UserId=' + DingData.userid
-                    $.ajax({
-                        url: url, 
-                        success: function (data) {
-                            console.log('设置抄送审批为已读')
-                            console.log(url)
-                            console.log(data)
-                            that.loader(row)
-                        }
+                    var url = '/FlowInfoNew/ChangeSendState?TaskId=' + row.TaskId + '&UserId=' + DingData.userid
+                    this.GetData(url, (res) => {
+                        this.loader(row)
                     })
+                  
                 } else {
                     this.loader(row)
                 }
