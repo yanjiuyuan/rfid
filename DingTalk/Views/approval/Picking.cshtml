@@ -24,11 +24,13 @@
     <el-table :data="tableData" stripe border>
         <el-table-column prop="fNumber" label="物料编码"></el-table-column>
         <el-table-column prop="fName" label="物料名称"></el-table-column>
-        <el-table-column prop="fQty" label="实收数量"></el-table-column>
+        @*<el-table-column prop="fQty" label="领料数量"></el-table-column>*@
+        <el-table-column prop="fCommitQty" label="入库数量"></el-table-column>
+        <el-table-column prop="FQtyInvoice" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        <el-table-column prop="fPrice" label="单价"></el-table-column>
-        <el-table-column prop="fAmount" label="金额"></el-table-column>
+        @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
+        @*<el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
@@ -54,15 +56,16 @@
     <el-table :data="purchaseList" stripe border>
         <el-table-column prop="fNumber" label="物料编码"></el-table-column>
         <el-table-column prop="fName" label="物料名称"></el-table-column>
-        <el-table-column prop="fQty" label="实收数量" width="100">
+        <el-table-column prop="fQty" label="领料数量" width="100">
             <template slot-scope="scope">
                 <el-input v-model="scope.row.fQty" prop="Count" :class="{ redborder:scope.row.fQty =='' || scope.row.fQty > scope.row.have}"></el-input>
             </template>
         </el-table-column>
+        <el-table-column prop="FQtyInvoice" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        <el-table-column prop="fPrice" label="单价"></el-table-column>
-        <el-table-column prop="fAmount" label="金额"></el-table-column>
+        @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
+        @*<el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作" width="80">
             <template slot-scope="scope">
@@ -173,13 +176,12 @@
             },
             //搜索物料列表
             searchCode() {
-                var that = this
                 if (!this.searchForm.name) return
-                var url = jinDomarn + '/Pick?keyWord=' + that.searchForm.name
-                this.GetData(url, function (data) {
-                    that.data = data
-                    that.totalRows = data.length
-                    that.getData()
+                var url = jinDomarn + 'Pick/ReadPickInfoSingle?keyWord=' + this.searchForm.name
+                this.GetData(url, (data) => {
+                    this.data = data
+                    this.totalRows = data.length
+                    this.getData()
                 })
             },
             searchAndAdd() {
@@ -213,6 +215,20 @@
                         that.purchaseList.push(d)
                     }
                 })
+            },
+            //下拉框选择项目
+            selectProject(id) {
+                console.log(id)
+                for (var project of this.projectList) {
+                    if (project.ProjectId == id) {
+                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                        this.nodeList[1].AddPeople = [{
+                            name: project.ApplyMan,
+                            emplId: project.ApplyManId
+                        }]
+                        $("#1").after('<span class="el-tag ' + '1' + '" style="width: 60px; text-align: center; ">' + project.ApplyMan.substring(0, 3) + '</span >')
+                    }
+                }
             },
             //添加申请物料
             addGood(index, good) {
