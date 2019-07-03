@@ -210,6 +210,8 @@
                 if (!this.searchForm.taskid) return
                 var url = 'Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: this.searchForm.taskid })
                 this.GetData(url, function (data) {
+                    console.log('23333333')
+                    console.log(data)
                     for (let d of data) {
                         let ifBreak = false
                         for (let p of that.purchaseList) {
