@@ -26,7 +26,7 @@
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
         @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
-        <el-table-column prop="fAmount" label="金额"></el-table-column>
+        @*<el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
@@ -59,8 +59,8 @@
         </el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        <el-table-column prop="fPrice" label="单价"></el-table-column>
-        <el-table-column prop="fAmount" label="金额"></el-table-column>
+        @*<el-table-column prop="fPrice" label="单价"></el-table-column>
+        <el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作" width="80">
             <template slot-scope="scope">
@@ -78,7 +78,7 @@
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目名" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectName"
@@ -119,6 +119,7 @@
                     no:'',
                     name: '',
                 },
+                addPeopleNodes: [2],
                 ruleForm: {
                     name: DingData.nickName,
                     remark: '',
@@ -133,6 +134,8 @@
         },
         methods: {
             onSubmit(formName) {
+                //console.log(this.nodeList) 
+                //return
                 if (!this.purchaseList.length) {
                     this.elementAlert('提交失败', '没有选择物料')
                     return
@@ -175,6 +178,22 @@
                     that.totalRows = data.length
                     that.getData()
                 })
+            },
+            //下拉框选择项目
+            selectProject(id) {
+                console.log(id)
+                for (var project of this.projectList) {
+                    if (project.ProjectId == id) {
+                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                        let index = 2
+                        this.nodeList[index].AddPeople = [{
+                            name: project.ApplyMan,
+                            emplId: project.ApplyManId
+                        }]
+                        $("." + index).remove()
+                        $("#" + index).after('<span class="el-tag ' + index + '" style="width: 60px; text-align: center; ">' + project.ApplyMan.substring(0, 3) + '</span >')
+                    }
+                }
             },
             searchNo() {
                 var that = this
