@@ -1763,14 +1763,14 @@ namespace DingTalk.Controllers
         /// <param name="NodeId"></param>
         /// <param name="IsBack"></param>
         /// <param name="IsSend"></param>
-        /// <param name="IsFinnish"></param>
+        /// <param name="IsFinnish">是否完结</param>
         /// <returns></returns>
         [HttpGet]
         [Route("SendOaMsgNew")]
         public async Task<object> SendOaMsgNew(int? FlowId, string ApplyManId, string TaskId, string ApplyMan,
             string Remark, DDContext dDContext,
             string LinkUrl, string NodeId,
-            bool IsBack = false, bool IsSend = false,bool IsFinnish=false)
+            bool IsBack = false, bool IsSend = false, bool IsFinnish = false)
         {
             DingTalkServersController dingTalkServersController = new DingTalkServersController();
 
@@ -1778,9 +1778,8 @@ namespace DingTalk.Controllers
                             "&flowid=" + FlowId +
                             "&nodeid=" + NodeId;
 
-            if (IsFinnish)
+            if (IsFinnish == false)
             {
-
                 //推送OA消息(手机端)
                 if (dDContext.Flows.Where(f => f.FlowId.ToString() == FlowId.ToString()).First().IsSupportMobile == true)
                 {
@@ -1936,7 +1935,7 @@ namespace DingTalk.Controllers
         }
 
         #endregion
-        
+
         #region 获取流程状态
 
         /// <summary>
