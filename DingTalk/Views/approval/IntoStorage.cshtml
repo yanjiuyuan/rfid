@@ -11,8 +11,10 @@
     </div>
     <!--物料搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
-        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>
+        @*<span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>*@
+        <span style="color:red">*</span><span style="padding:3px;">采购单编号搜索</span><el-input v-model="searchForm.no" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchNo">搜索</el-button>
         <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
@@ -23,7 +25,7 @@
         <el-table-column prop="fQty" label="实收数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        <el-table-column prop="fPrice" label="单价"></el-table-column>
+        @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
         <el-table-column prop="fAmount" label="金额"></el-table-column>
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作">
@@ -114,6 +116,7 @@
                 nodeInfo: {},
                 searchForm: {
                     business: '', 
+                    no:'',
                     name: '',
                 },
                 ruleForm: {
@@ -170,6 +173,22 @@
                 this.GetData(url, function(data) {
                     that.data = data
                     that.totalRows = data.length
+                    that.getData()
+                })
+            },
+            searchNo() {
+                var that = this
+                if (!this.searchForm.no) return
+                var url = jinDomarn + 'Godown/GetGodownInfoByFBillNo?FBillNo=' + that.searchForm.no
+                this.GetData(url, function (data) {
+                    let tmpArr = []
+                    for (let d of data) {
+                        if (d.fQty == d.fCommitQty) continue
+                        tmpArr.push(d)
+                    }
+                    that.data = tmpArr
+                    //that.data = data
+                    that.totalRows = that.data.length
                     that.getData()
                 })
             },
