@@ -149,10 +149,10 @@
                     arr.push(p.fFullName)
                 }
                 var set = new Set(arr)
-                if (set.size != 1) {
-                    this.elementAlert('提交失败', '物料为空或供应商不唯一')
-                    return
-                }
+                //if (set.size != 1) {
+                //    this.elementAlert('提交失败', '物料为空或供应商不唯一')
+                //    return
+                //}
                 var that = this
                 let callBack = function (taskId) {
                     for (let p of that.purchaseList) {
@@ -177,6 +177,8 @@
                     that.data = data
                     that.totalRows = data.length
                     that.getData()
+
+                    
                 })
             },
             //下拉框选择项目
@@ -200,15 +202,26 @@
                 if (!this.searchForm.no) return
                 var url = jinDomarn + 'Godown/GetGodownInfoByFBillNo?FBillNo=' + that.searchForm.no
                 this.GetData(url, function (data) {
-                    let tmpArr = []
                     for (let d of data) {
-                        if (d.fQty == d.fCommitQty) continue
-                        tmpArr.push(d)
+                        let ifBreak = false
+                        for (let p of that.purchaseList) {
+                            if (d.fNumber == p.fNumber) ifBreak = true
+                        }
+                        if (ifBreak) break
+                        d['have'] = d.fQty
+                        that.purchaseList.push(d)
                     }
-                    that.data = tmpArr
-                    //that.data = data
-                    that.totalRows = that.data.length
-                    that.getData()
+
+
+                    //let tmpArr = []
+                    //for (let d of data) {
+                    //    if (d.fQty == d.fCommitQty) continue
+                    //    tmpArr.push(d)
+                    //}
+                    //that.data = tmpArr
+                    ////that.data = data
+                    //that.totalRows = that.data.length
+                    //that.getData()
                 })
             },
             searchAndAdd() {

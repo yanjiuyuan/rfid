@@ -97,8 +97,8 @@
         fQty: '实收数量',
         unitName: '单位',
         fModel: '型号规格',
-        fPrice: '单价',
-        fAmount: '金额',
+        //fPrice: '单价',
+        //fAmount: '金额',
         fFullName: '供应商'
     }
     var demo = new Vue({
@@ -132,9 +132,6 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                console.log(this.ruleForm.ImageUrl)
-                console.log(this.ruleForm.OldImageUrl)
-                return
                 this.aggreSubmit({
                     "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.mark,
