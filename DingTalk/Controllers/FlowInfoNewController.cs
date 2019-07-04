@@ -403,7 +403,7 @@ namespace DingTalk.Controllers
                             await SendOaMsgNew(taskNew.FlowId, taskNew.ApplyManId.ToString(), tasks.TaskId.ToString(),
                                        taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
                                        taskNew.NodeId.ToString(),
-                                       false, false);
+                                       false, false,true);
                             Thread.Sleep(100);
 
 
