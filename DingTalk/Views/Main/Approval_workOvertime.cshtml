@@ -156,37 +156,13 @@
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
             this.getTable()
-            this.GetDingList(TaskId)
             if (NodeId == '1' || NodeId == '2') this.reInput = true
             if (NodeId == '2' || Index > 0) this.disabledRemark = true
             loadHtml("mainPage", "partPage")
         }
     })
-    getFormData()
-
-
-    //获取审批表单信息
-    function getFormData() {
-        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-        $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("获取审批表单信息ok")
-                console.log(url)
-                console.log(data)
-                allData = data
-                demo.allData = data
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
+    getFormData(demo)
 
 </script>
 
