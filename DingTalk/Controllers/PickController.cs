@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -367,6 +368,246 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 领料管理关键字查询
+        /// </summary>
+        /// <param name="applyManId"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="IsSend">是否推送Excel</param> 
+        /// <param name="projectId"></param>
+        /// <param name="key">申请人、申请部门、物料名称</param>
+        /// <returns></returns>
+        [Route("Query")]
+        [HttpGet]
+        public async Task<object> Query(string applyManId, DateTime startTime, DateTime endTime, bool IsSend = false, string projectId = null, string key = null)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Pick> picks = context.Pick.ToList();
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("26");
+                    List<Tasks> tasksNew = tasks.Where(t => t.NodeId.ToString() == "0").ToList();
+                    tasksNew = tasksNew.Where(t =>
+                     projectId == null ? 1 == 1 : t.ProjectId == projectId &&
+                    (startTime == null || endTime == null) ? 1 == 1 :
+                    DateTime.Parse(t.ApplyTime) > startTime && DateTime.Parse(t.ApplyTime) < endTime).ToList(); //过滤审批后的流程
+                    List<Roles> roles = context.Roles.Where(r => r.RoleName == "领料管理人员" && r.UserId == applyManId).ToList();
+
+                    if (roles.Count > 0 ? true : false)  //领料管理员
+                    {
+                        if (IsSend)
+                        {
+                            var Query = from t in tasksNew
+                                        join p in picks on
+                                        t.TaskId.ToString() equals p.TaskId
+                                        where
+                                        key != null ?
+                                        (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || p.fName.Contains(key)) : 1 == 1
+                                        select new
+                                        {
+                                            t.ProjectName,
+                                            t.ApplyMan,
+                                            t.ApplyTime,
+                                            t.TaskId,
+                                            p.fName,
+                                            p.fNumber,
+                                            p.fModel,
+                                            p.fFullName,
+                                            p.fQty,
+                                            p.fPrice,
+                                            p.fAmount,
+                                            p.unitName,
+                                            t.Remark
+                                        };
+                            DataTable dtReturn = new DataTable();
+                            PropertyInfo[] oProps = null;
+                            foreach (var rec in Query)
+                            {
+                                if (oProps == null)
+                                {
+                                    oProps = ((Type)rec.GetType()).GetProperties();
+                                    foreach (PropertyInfo pi in oProps)
+                                    {
+                                        Type colType = pi.PropertyType; if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                                        {
+                                            colType = colType.GetGenericArguments()[0];
+                                        }
+                                        dtReturn.Columns.Add(new DataColumn(pi.Name, colType));
+                                    }
+                                }
+                                DataRow dr = dtReturn.NewRow(); foreach (PropertyInfo pi in oProps)
+                                {
+                                    dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
+                                }
+                                dtReturn.Rows.Add(dr);
+                            }
+                            string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/领料数据统计模板.xlsx");
+                            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                            string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\领料数据统计" + time + ".xlsx";
+                            System.IO.File.Copy(path, newPath);
+                            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 1))
+                            {
+                                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                //上盯盘
+                                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/领料数据统计" + time + ".xlsx");
+                                //推送用户
+                                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia.ToString());
+                                fileSendModel.UserId = applyManId;
+                                var result = dingTalkServersController.SendFileMessage(fileSendModel);
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(0, "已推送至钉钉", "") { },
+                                };
+                            }
+                        }
+                        else
+                        {
+                            var Query = from t in tasksNew
+                                        join p in picks on
+                                        t.TaskId.ToString() equals p.TaskId
+                                        where
+                                        key != null ?
+                                        (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || p.fName.Contains(key)) : 1 == 1
+                                        select new
+                                        {
+                                            t.ProjectName,
+                                            t.ApplyMan,
+                                            t.ApplyTime,
+                                            t.TaskId,
+                                            p.fName,
+                                            p.fNumber,
+                                            p.fModel,
+                                            p.fFullName,
+                                            p.fQty,
+                                            p.fPrice,
+                                            p.fAmount,
+                                            p.unitName,
+                                            t.Remark
+                                        };
+                            return new NewErrorModel()
+                            {
+                                data = Query,
+                                error = new Error(0, "查询成功", "") { },
+                            };
+                        }
+                    }
+                    else
+                    {
+                        List<ProjectInfo> projectInfos = context.ProjectInfo.
+                            Where(p => p.ResponsibleManId == applyManId).ToList();
+                        if (projectInfos.Count > 0)
+                        {
+                            if (IsSend)
+                            {
+                                var Query = from pi in projectInfos
+                                            join t in tasksNew on pi.ProjectId equals t.ProjectId
+                                            join p in picks on t.TaskId.ToString()
+                                            equals p.TaskId
+                                            select new
+                                            {
+                                                t.ProjectName,
+                                                t.ApplyMan,
+                                                t.ApplyTime,
+                                                t.TaskId,
+                                                p.fName,
+                                                p.fNumber,
+                                                p.fModel,
+                                                p.fFullName,
+                                                p.fQty,
+                                                p.fPrice,
+                                                p.fAmount,
+                                                p.unitName,
+                                                t.Remark
+                                            };
+                                DataTable dtReturn = new DataTable();
+                                PropertyInfo[] oProps = null;
+                                foreach (var rec in Query)
+                                {
+                                    if (oProps == null)
+                                    {
+                                        oProps = ((Type)rec.GetType()).GetProperties();
+                                        foreach (PropertyInfo pi in oProps)
+                                        {
+                                            Type colType = pi.PropertyType; if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                                            {
+                                                colType = colType.GetGenericArguments()[0];
+                                            }
+                                            dtReturn.Columns.Add(new DataColumn(pi.Name, colType));
+                                        }
+                                    }
+                                    DataRow dr = dtReturn.NewRow(); foreach (PropertyInfo pi in oProps)
+                                    {
+                                        dr[pi.Name] = pi.GetValue(rec, null) == null ? DBNull.Value : pi.GetValue(rec, null);
+                                    }
+                                    dtReturn.Rows.Add(dr);
+                                }
+                                string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/领料数据统计模板.xlsx");
+                                string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                                string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\领料数据统计" + time + ".xlsx";
+                                System.IO.File.Copy(path, newPath);
+                                if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 1))
+                                {
+                                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                                    //上盯盘
+                                    var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/领料数据统计" + time + ".xlsx");
+                                    //推送用户
+                                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia.ToString());
+                                    fileSendModel.UserId = applyManId;
+                                    var result = dingTalkServersController.SendFileMessage(fileSendModel);
+                                    return new NewErrorModel()
+                                    {
+                                        error = new Error(0, "已推送至钉钉", "") { },
+                                    };
+                                }
+                            }
+                            else
+                            {
+                                var Query = from pi in projectInfos
+                                            join t in tasksNew on pi.ProjectId equals t.ProjectId
+                                            join p in picks on t.TaskId.ToString()
+                                            equals p.TaskId
+                                            select new
+                                            {
+                                                t.ProjectName,
+                                                t.ApplyMan,
+                                                t.ApplyTime,
+                                                t.TaskId,
+                                                p.fName,
+                                                p.fNumber,
+                                                p.fModel,
+                                                p.fFullName,
+                                                p.fQty,
+                                                p.fPrice,
+                                                p.fAmount,
+                                                p.unitName,
+                                                t.Remark
+                                            };
+                                return new NewErrorModel()
+                                {
+                                    data = Query,
+                                    error = new Error(0, "查询成功", "") { },
+                                };
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, null) { },
+                };
+            }
+        }
+
+
+
+
+
+        /// <summary>
         /// 同步Post
         /// </summary>
         /// <param name="Url"></param>
@@ -454,6 +695,9 @@ namespace DingTalk.Controllers
             }
             return request.GetResponse() as HttpWebResponse;
         }
+
+
+
 
     }
 
