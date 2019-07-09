@@ -76,6 +76,8 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<MaterialRelease> MaterialRelease { get; set; }
 
         public virtual DbSet<IntellectualProperty> IntellectualProperty { get; set; }
+
+        public virtual DbSet<Borrow> Borrow { get; set; }
         
     }
 }

@@ -340,6 +340,7 @@
     <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Bussiness\Word\WordHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BorrowController.cs" />
     <Compile Include="Controllers\CarManangerController.cs" />
     <Compile Include="Controllers\CarTableController.cs" />
     <Compile Include="Controllers\CarTableNewController.cs" />
@@ -423,6 +424,7 @@
     <Compile Include="Models\DepartmentUserResponseModel.cs" />
     <Compile Include="Models\DeptModel.cs" />
     <Compile Include="Models\DingModels\Approve.cs" />
+    <Compile Include="Models\DingModels\Borrow.cs" />
     <Compile Include="Models\DingModels\Car.cs" />
     <Compile Include="Models\DingModels\CarTable.cs" />
     <Compile Include="Models\DingModels\IntellectualProperty.cs" />
