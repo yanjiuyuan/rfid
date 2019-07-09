@@ -233,10 +233,7 @@
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
             this.getUseCarTable()
-            this.GetDingList(TaskId)
             if (NodeId == '3' || NodeId == '4') this.reInput = true
             loadHtml("mainPage", "partPage")
         },
@@ -252,27 +249,7 @@
             }
         }
     })
-    getFormData()
-
-
-    //获取审批表单信息
-    function getFormData() {
-        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-        $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("获取审批表单信息ok")
-                console.log(url)
-                console.log(data)
-                allData = data
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
+    getFormData(demo)
 
 </script>
 

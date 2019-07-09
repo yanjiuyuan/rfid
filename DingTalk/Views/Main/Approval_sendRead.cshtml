@@ -244,47 +244,11 @@
         },
         created: function () {
             //获取下一个节点的审批人id
-            this.GetDingList(TaskId)
-            this.getNodeInfo()
-            this.getApproInfo()
             this.getTable()
-
             loadHtml("mainPage", "partPage")
         }
     })
-    getFormData()
-
-
-    //获取审批表单信息
-    function getFormData() {
-        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-        $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("获取审批表单信息ok")
-                console.log(url)
-                console.log(data)
-                demo.allData = data
-                if (data.FileUrl && data.FileUrl.length > 5) {
-                    var urlList = data.FileUrl.split(',')
-                    var oldUrlList = data.OldFileUrl.split(',')
-                    var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
-                    for (var i = 0; i < urlList.length; i++) {
-                        demo.FileList.push({
-                            name: oldUrlList[i],
-                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                            mediaId: MediaIdList[i]
-                        })
-                    }
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
+    getFormData(demo)
 
 </script>
 

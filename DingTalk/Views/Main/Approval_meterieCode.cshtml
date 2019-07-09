@@ -344,60 +344,11 @@
         },
         created: function () {
             this.GetDingList(TaskId)
+            this.getBomInfo()
             loadHtml("mainPage", "partPage")
         }
     })
-    getFormData()
-
-
-    //获取审批表单信息
-    function getFormData() {
-        var url = "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-        $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("获取审批表单信息ok")
-                console.log(url)
-                console.log(data)
-                allData = data
-                if (data.ImageUrl && data.ImageUrl.length > 5) {
-                    var tempList = data.ImageUrl.split(',')
-                    for (let img of tempList) {
-                        imageList.push({
-                            name: 'hello.jpg',
-                            url: document.location + (img.substring(2)).replace(/\\/g, "/")
-                        })
-                    }
-                }
-                if (data.FileUrl && data.FileUrl.length > 5) {
-                    FileUrl = data.FileUrl
-                    var urlList = data.FileUrl.split(',')
-                    var oldUrlList = data.OldFileUrl.split(',')
-                    var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
-                    for (var i = 0; i < urlList.length; i++) {
-                        fileList.push({
-                            name: oldUrlList[i],
-                            url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                            mediaId: MediaIdList[i]
-                        })
-                    }
-                }
-                taskId = allData.TaskId
-                console.log(imageList)
-                console.log(fileList)
-                demo.ruleForm = allData
-                demo.getNodeInfo()
-                demo.getApproInfo()
-                demo.getBomInfo()
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
-
+    getFormData(demo)
 </script>
 
 

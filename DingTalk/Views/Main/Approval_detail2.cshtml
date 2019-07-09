@@ -250,33 +250,13 @@
         },
         created: function () {
             //this.getNodeList()
-            this.getNodeInfo()
-            this.getProjects()
             this.getBomInfo()
             this.showEdit = (DingData.nickName == '胡锡涛' || DingData.nickName == '胡工') ? false : true
             loadHtml("mainPage", "partPage")
         }
     })
-    getFormData()
+    getFormData(demo)
 
-
-    //获取审批表单信息
-    function getFormData() {
-        $.ajax({
-            url: "/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid,
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                console.log("获取审批表单信息ok")
-                console.log("/FlowInfo/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid)
-                console.log(data)
-                allData = data
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
-            }
-        })
-    }
 
 </script>
 
