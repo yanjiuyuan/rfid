@@ -41,13 +41,17 @@
                 @*<el-table-column prop="dept" label="部门"></el-table-column>*@
                 <el-table-column prop="Price" label="预计单价">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row.Price" v-on:change="compute"
-                                  :class="{ redborder:scope.row.Price ==''}"></el-input>
+                        <el-input v-model="scope.row.Price" v-on:change="compute" :class="{ redborder:scope.row.Price ==''}"></el-input>
                     </template>
                 </el-table-column>
                 <el-table-column prop="Purpose" label="用途">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row.Purpose" ></el-input>
+                        <el-input v-model="scope.row.Purpose"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button size="mini" v-on:click="deleteItem(scope.$index, scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -146,6 +150,18 @@
                     Title: that.ruleForm.Title,
                     Remark: that.ruleForm.remark
                 }, callBack)
+            },
+            //删除不需要的物品
+            deleteItem(index, row) {
+                console.log(row)
+                console.log(demo.dataList)
+                for (let d of demo.dataList) {
+                    if (row.dept == d.name) {
+                        this.totalPrice -= parseFloat(row.Price * row.Count).toFixed(2)
+                        d.tmpTotalPrice -= parseFloat(row.Price * row.Count).toFixed(2)
+                        d.value.splice(index, 1)
+                    }
+                }
             },
             //搜索列表
             searchCode(formName) {
