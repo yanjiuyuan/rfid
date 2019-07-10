@@ -78,6 +78,9 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<IntellectualProperty> IntellectualProperty { get; set; }
 
         public virtual DbSet<Borrow> Borrow { get; set; }
+
+        public virtual DbSet<Maintain> Maintain { get; set; }
         
+
     }
 }

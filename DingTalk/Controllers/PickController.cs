@@ -454,7 +454,7 @@ namespace DingTalk.Controllers
                                 //推送用户
                                 FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia.ToString());
                                 fileSendModel.UserId = applyManId;
-                                var result = dingTalkServersController.SendFileMessage(fileSendModel);
+                                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
                                 return new NewErrorModel()
                                 {
                                     error = new Error(0, "已推送至钉钉", "") { },
@@ -554,7 +554,7 @@ namespace DingTalk.Controllers
                                     //推送用户
                                     FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia.ToString());
                                     fileSendModel.UserId = applyManId;
-                                    var result = dingTalkServersController.SendFileMessage(fileSendModel);
+                                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
                                     return new NewErrorModel()
                                     {
                                         error = new Error(0, "已推送至钉钉", "") { },
