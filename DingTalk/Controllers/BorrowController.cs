@@ -157,16 +157,17 @@ namespace DingTalk.Controllers
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                            "序号","供应商","物料名称","规格型号","单位","数量","单价(预计)","用途","周期","备注"
+                            "序号","供应商","物料名称","物料编码","规格型号","单位","数量","单价(预计)","用途","周期","备注"
                         };
 
                     float[] contentWithList = new float[]
                     {
-                        50, 60, 60, 60, 60, 60, 60, 60,60,100
+                        50, 60 ,60, 60, 60, 60, 60, 60, 60, 60,100
                     };
-
+                    string projectName = tasks.ProjectName.ToString();
+                    string projectNo = tasks.ProjectId.ToString();
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
-                    null, null, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null, null);
+                    projectName, projectNo, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     List<string> newPaths = new List<string>();
