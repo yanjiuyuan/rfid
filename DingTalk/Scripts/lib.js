@@ -723,6 +723,19 @@ var mixin = {
                 }
             }
         },
+        setProject(id, index) {
+            for (var project of this.projectList) {
+                if (project.ProjectId == id) {
+                    this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+                    this.nodeList[index].AddPeople = [{
+                        name: project.ResponsibleMan,
+                        emplId: project.ResponsibleManId
+                    }]
+                    $("." + index).remove()
+                    $("#" + index).after('<span class="el-tag ' + index + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
+                }
+            }
+        },
         //获取特殊角色详细信息
         getSpecialRoleInfo: function (roleName) {
             var that = this
@@ -882,7 +895,24 @@ var mixin = {
                 onFail: function (err) { }
             });
         },
-
+        //搜索物料列表
+        searchCode(formName) {
+            var that = this
+            if (!this.searchForm.name) return
+            var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    console.log(url)
+                    console.log("搜索物料列表ok")
+                    data = JSON.parse(data)
+                    console.log(data)
+                    that.data = data
+                    that.totalRows = data.length
+                    that.getData()
+                }
+            })
+        },
         //图片上传事件
         beforePictureUpload(file) {
             console.log('before file')

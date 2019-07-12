@@ -767,6 +767,10 @@
     <Content Include="Views\approval\IntellectualProperty.cshtml" />
     <Content Include="Views\Main\Approval_intellectualProperty.cshtml" />
     <Content Include="Views\approval\PickingManager.cshtml" />
+    <Content Include="Views\approval\BorrowThing.cshtml" />
+    <Content Include="Views\approval\Maintain.cshtml" />
+    <Content Include="Views\Main\Approval_borrowThing.cshtml" />
+    <Content Include="Views\Main\Approval_maintain.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

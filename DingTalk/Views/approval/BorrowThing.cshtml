@@ -1,0 +1,273 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        借入申请-{{nodeInfo.NodeName}}
+    </div>
+    <div>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+    </div>
+    <!--物料列表表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="FNumber" label="物料编码"></el-table-column>
+        <el-table-column prop="FName" label="物料名称"></el-table-column>
+        <el-table-column prop="FModel" label="规格型号"></el-table-column>
+        <el-table-column prop="FNote" label="预计单价"></el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini"
+                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+    <hr />
+    <h3>已选物料</h3>
+    <!--采购列表表格實體-->
+    <el-table :data="purchaseList" stripe border>
+        <el-table-column prop="CodeNo" type="index"></el-table-column>
+        <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
+        <el-table-column prop="Name" label="物料名称"></el-table-column>
+        <el-table-column prop="Supplier" label="供应商" width="300">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Supplier" prop="Unit" :class="{ redborder:scope.row.Supplier ==''}">
+                </el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Unit" label="单位">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Unit" prop="Unit" :class="{ redborder:scope.row.Unit ==''}">
+                </el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Price" label="单价" width="100">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Price">
+                </el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Count" label="数量" width="100">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Count" prop="Count" :class="{ redborder:scope.row.Count ==''}"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Purpose" label="用途">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Purpose" :class="{ redborder:scope.row.Purpose ==''}"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column label="开始日期" width="140">
+            <template slot-scope="scope">
+                <el-date-picker v-model="scope.row.StartTime" :class="{ redborder:scope.row.StartTime ==''}"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
+            </template>
+        </el-table-column>
+        <el-table-column label="结束日期" width="140">
+            <template slot-scope="scope">
+                <el-date-picker v-model="scope.row.EndTime" :class="{ redborder:scope.row.EndTime ==''}"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Standard" label="规格型号"></el-table-column>
+        <el-table-column prop="Mark" label="备注">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Mark"></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" width="80">
+            <template slot-scope="scope">
+                @*<el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>*@
+                <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
+                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+        </el-form-item>
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人" prop="name">
+            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :nodedata="nodeInfo" :nodelist="nodeList" :single="true"></sam-approver-list>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    NodeId = '0'
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                tableData: [],
+                purchaseList: [],
+                projectList: [],
+                good: {
+                    Price: '',
+                    Unit: '',
+                    Count: ''
+                },
+                preApprove: false,
+                nodeList: [],
+                nodeInfo: {},
+                addPeopleNodes: [1],
+                searchForm: {
+                    name:'',
+                },
+                ruleForm: {
+                    name: DingData.nickName,
+                    remark: '',
+                    ProjectName: '',
+                    Title: '借入申请',
+                    ProjectId: null
+                },
+                preApprover: false
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                var that = this
+                for (let p of this.purchaseList) {
+                    if (!p.StartTime || !p.EndTime || !p.Unit || !p.Count || !p.Purpose || !p.Supplier) {
+                        this.elementAlert('提示信息', '表单未填写完整')
+                        return
+                    }
+                }
+                var ProjectName
+                for (let p of this.projectList) {
+                    if (p.ProjectId == this.ruleForm.ProjectId) {
+                        ProjectName = p.ProjectName
+                    }
+                }
+                let callBack = function (taskId) {
+                    that.bindAll(taskId)
+                }
+                this.approvalSubmit(formName, {
+                    Title: this.ruleForm.Title,
+                    Remark: this.ruleForm.remark,
+                    ProjectName: ProjectName,
+                    ProjectId: this.ruleForm.ProjectId
+                }, callBack)
+            },
+            bindAll(taskId) {
+                var paramArr = []
+                for (let p of this.purchaseList) {
+                    p.TaskId = taskId
+                    paramArr.push(p)
+                }
+                this.PostData('Borrow/Save', paramArr, (res) => {
+                    this.doneSubmit()
+                })
+            },
+            //搜索物料列表
+            searchCode(formName) {
+                var that = this
+                if (!this.searchForm.name) return
+                var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log(url)
+                        console.log("搜索物料列表ok")
+                        data = JSON.parse(data)
+                        console.log(data)
+                        that.data = data
+                        that.totalRows = data.length
+                        that.getData()
+                    }
+                })
+            },
+            //下拉框选择项目
+            selectProject(id) {
+                console.log(id)
+                this.setProject(id, 1)
+            },
+            //添加申请物料
+            addGood(index, good) {
+                for (let p of this.purchaseList) {
+                    if (p.CodeNo == good.FNumber) return
+                }
+                if (!checkRate(good.FNote)) good.FNote = 0
+                console.log(good.FNote)
+                this.purchaseList.push({
+                    CodeNo: good.FNumber,
+                    Name: good.FName,
+                    Standard: good.FModel,
+                    Unit: '',
+                    Price: good.FNote == '0' ? '' : good.FNote,
+                    Count: '',
+                    Purpose: '',
+                    StartTime: '',
+                    EndTime: '',
+                    Supplier: '',
+                    Mark: ''
+                })
+            },
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                this.ruleForm.ProjectId = ReApprovalTempData.ProjectId
+                ReApprovalTempData.valid = false
+                this.purchaseList = ReApprovalTempData.data
+            },
+            //删除申请物料
+            deleteGood(index, good) {
+                this.purchaseList.splice(index, 1)
+            }
+        },
+        created: function () {
+            //FlowId = 6
+            this.getNodeInfo()
+            this.getProjects()
+            this.getApproInfo()
+            this.loadReApprovalData()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+
+
