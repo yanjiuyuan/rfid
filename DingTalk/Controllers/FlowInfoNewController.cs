@@ -303,6 +303,14 @@ namespace DingTalk.Controllers
 
                 if (taskList.Count > 1)  //如果有选人
                 {
+                    if (taskList[0].Id == 0 )
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "流程有误请联系管理员！", "") { },
+                        };
+                    }
+
                     using (DDContext contexts = new DDContext())
                     {
                         foreach (var task in taskList)
