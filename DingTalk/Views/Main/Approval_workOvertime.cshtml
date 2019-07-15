@@ -8,20 +8,20 @@
         <i class="el-icon-arrow-left"></i>
         基地加班审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form :model="tableForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="标题">
-            <el-input v-model="allData.Title" :disabled="true" style="width:90%;"></el-input>
+            <el-input v-model="ruleForm.Title" :disabled="true" style="width:90%;"></el-input>
         </el-form-item>
         <el-form-item label="加班事由" prop="OverTimeContent">
-            <el-input v-model="ruleForm.OverTimeContent" :disabled="true" style="width:90%;"></el-input>
+            <el-input v-model="tableForm.OverTimeContent" :disabled="true" style="width:90%;"></el-input>
         </el-form-item>
 
         <hr />
 
         <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
-                <el-date-picker v-model="ruleForm.DateTime" :disabled="true"
+                <el-date-picker v-model="tableForm.DateTime" :disabled="true"
                                 type="date"
                                 value-format="yyyy-MM-dd"
                                 placeholder="选择日期"
@@ -33,7 +33,7 @@
 
         <el-form-item label="加班时间" prop="StartTime">
             <el-time-select placeholder="起始时间" :disabled="true"
-                            v-model="ruleForm.StartTime"
+                            v-model="tableForm.StartTime"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
@@ -42,7 +42,7 @@
                             }">
             </el-time-select>
             <el-time-select placeholder="结束时间" :disabled="true"
-                            v-model="ruleForm.EndTimeTime"
+                            v-model="tableForm.EndTimeTime"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
@@ -51,13 +51,13 @@
                             }">
         </el-form-item>
         <el-form-item label="加班时长(小时)">
-            <el-input v-model="ruleForm.UseTime" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.UseTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
 
         <template v-if="reInput">
             <el-form-item label="有效加班时长(小时)" prop="EffectiveTime">
-                <el-input v-model="ruleForm.EffectiveTime" style="width:550px;" :disabled="disabledRemark"></el-input>
+                <el-input v-model="tableForm.EffectiveTime" style="width:550px;" :disabled="disabledRemark"></el-input>
             </el-form-item>
         </template>
 
@@ -84,11 +84,11 @@
 
 <script>
     var allData = {}
-    var Index = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
         TaskId = UrlObj.taskid
+        state = UrlObj.state
         Id = UrlObj.id
         Index = UrlObj.index
     }
@@ -97,12 +97,13 @@
         mixins: [mixin],
         data: function () {
             return {
-                allData: allData,
                 index: Index,
+                state: state,
                 nodeList: [],
                 nodeInfo: {},
                 reInput: false,
                 disabledRemark: false,
+                tableForm: {},
                 ruleForm: {
 
                 }
@@ -110,18 +111,15 @@
         },
         methods: {
             onSubmit(formName) {
-                console.log('submit!')
-
                 var that = this
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         let url = '/OverTimeTable/OverTimeTableModify'
-                        var param = _cloneObj(this.ruleForm)
+                        var param = _cloneObj(this.tableForm)
                         param.UseKilometres = this.UseKilometres
                         that._postData(url, function () {
-
                             that.aggreSubmit({
-                                "Id": allData.Id,
+                                "Id": that.ruleForm.Id,
                                 "Remark": that.ruleForm.Mark
                             })
 
@@ -131,7 +129,7 @@
             },
             returnBk() {
                 let param = {
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.Mark
                 }
                 this.returnSubmit(param)
@@ -139,9 +137,8 @@
             //撤回审批
             rebackSubmit() {
                 this.disablePage = true
-                var that = this
                 var param = {
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "NodeId": 0,
                     "Remark": this.ruleForm.mark
                 }
@@ -150,8 +147,8 @@
             getTable() {
                 var that = this
                 that._getData('/OverTimeTable/OverTimeTableQuary', function (data2) {
-                    that.ruleForm = data2
-                    if (!data2.EffectiveTime) that.ruleForm['EffectiveTime'] = ''
+                    that.tableForm = data2
+                    if (!data2.EffectiveTime) that.tableForm['EffectiveTime'] = ''
                 }, { TaskId: TaskId })
             }
         },

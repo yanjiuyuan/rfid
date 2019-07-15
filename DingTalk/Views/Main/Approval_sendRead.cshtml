@@ -8,38 +8,38 @@
         <i class="el-icon-arrow-left"></i>
         文件阅办单审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form id="formImg" :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form id="formImg" :model="tableForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="标题">
-            <el-input v-model="allData.Title" style="width:300px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
-            <el-input v-model="allData.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="来文单位" prop="ReceivingUnit">
-            <el-input v-model="ruleForm.ReceivingUnit" style="width:500px;" :disabled="true"></el-input>
+        <el-form-item label="来文单位">
+            <el-input v-model="tableForm.ReceivingUnit" style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="文件文号">
-            <el-input v-model="ruleForm.FileNo" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.FileNo" style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="收文时间" prop="ReceivingTime">
-            <el-date-picker v-model="ruleForm.ReceivingTime" :disabled="true"
+        <el-form-item label="收文时间">
+            <el-date-picker v-model="tableForm.ReceivingTime" :disabled="true"
                             value-format="yyyy-MM-dd"
                             type="date"
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="主要内容" prop="MainIdea">
-            <el-input v-model="ruleForm.MainIdea" type="textarea" :row="5" style="width:600px;" :disabled="true" :autosize="{ minRows: 4, maxRows: 6}"></el-input>
+        <el-form-item label="主要内容">
+            <el-input v-model="tableForm.MainIdea" type="textarea" :row="5" style="width:600px;" :disabled="true" :autosize="{ minRows: 4, maxRows: 6}"></el-input>
         </el-form-item>
 
         <!--相关文件-->
-        <el-form-item v-if="FileList.length > 0" label="相关文件">
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
-                <div v-for="f in FileList" :key="f.name" class="text item">
+                <div v-for="f in fileList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>
                 </div>
@@ -47,54 +47,16 @@
         </el-form-item>
 
         <el-form-item label="拟办意见" prop="Suggestion">
-            <el-input v-model="ruleForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1"></el-input>
+            <el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1"></el-input>
         </el-form-item>
 
         <hr />
 
         <template v-if="NodeId >= 3">
             <el-form-item label="领导阅示" prop="Leadership">
-                <el-input v-model="ruleForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>3"></el-input>
+                <el-input v-model="tableForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>3"></el-input>
             </el-form-item>
         </template>
-
-        @*<template v-if="NodeId >= 5">
-            <el-form-item label="部门阅办情况" prop="Review" v-if="NodeId == 5">
-                <el-input v-model="ruleForm.Review" style="width:500px;" :disabled="NodeId>5"></el-input>
-            </el-form-item>
-            <el-form-item label="部门阅办情况" v-else>
-                <div v-for="r in ReviewList" :key="r" class="text item" style="min-width:400px;">
-                    {{r}}
-                </div>
-            </el-form-item>
-        </template>
-
-        <template v-if="NodeId >= 6">
-            <el-form-item label="办理落实情况" prop="HandleImplementation" v-if="NodeId == 6">
-                <el-input v-model="ruleForm.HandleImplementation" style="width:500px;" :disabled="NodeId>6"></el-input>
-
-                <el-upload class="upload-demo"
-                           drag
-                           :file-list="fileList"
-                           action="/drawingupload/Upload"
-                           :on-remove="HandleFileRemove"
-                           :before-upload="BeforeFileUpload"
-                           :on-success="HandleFileSuccess"
-                           multiple>
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">不超过30M</div>
-                </el-upload>
-
-            </el-form-item>
-            <el-form-item label="办理落实情况" v-else>
-                <el-card class="box-card">
-                    <div v-for="h in HandleImplementationList" :key="h" class="text item">
-                        {{h}}
-                    </div>
-                </el-card>
-            </el-form-item>
-        </template>*@
 
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="false" :nodedata="nodeInfo"></sam-approver-list>
@@ -121,7 +83,6 @@
 </el-main>
 
 <script>
-    var state = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -135,18 +96,16 @@
         mixins: [mixin],
         data: function () {
             return {
-                FileList: [],
                 fileList: [],
                 mediaList: [],
                 index: Index,
-                allData: {},
                 NodeId: NodeId,
                 nodeList: [],
                 nodeInfo: {},
                 state: state,
                 ReviewList: [],
                 HandleImplementationList: [],
-                ruleForm: {
+                tableForm: {
 
                 }
             }
@@ -154,53 +113,30 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!')
+                console.log(this.tableForm)
                 this.disablePage = true
                 var that = this
                 let url = '/Receiving/Modify'
-                var param = _cloneObj(this.ruleForm)
-                param.Review = ''
-                param.HandleImplementation = ''
-                this.fileListToUrl()
-                //if (NodeId == 5) {
-                //    if (!this.ruleForm.Review) {
-                //        this.elementAlert('提示','请填写部门阅办情况')
-                //        return
-                //    }
-                //    param.Review = DingData.departName + '-' + DingData.nickName + ': ' + param.Review
-                //} else {
-                //    param.Review = ''
-                //}
-                //if (NodeId == 6) {
-                //    if (!this.ruleForm.HandleImplementation) {
-                //        this.elementAlert('提示', '请填写落实情况')
-                //        return
-                //    }
-                //    param.HandleImplementation = DingData.departName + '-' + DingData.nickName + ': ' + param.HandleImplementation
-                //} else {
-                //    param.HandleImplementation = ''
-                //} 
-                console.log(JSON.stringify(param))
+                this.tableForm.Review = ''
+                this.tableForm.HandleImplementation = ''
                 //console.log(param)
                 //return
                 this._postData(url, function (data) {
                     if (data.error.errorCode == 0) {
                         that.aggreSubmit({
-                            Id: that.allData.Id,
-                            Remark: that.ruleForm.Remark,
-                            FileUrl: that.ruleForm.FileUrl,
-                            OldFileUrl: that.ruleForm.OldFileUrl,
-                            MediaId: that.mediaList.join(','),
+                            Id: that.ruleForm.Id,
+                            Remark: that.ruleForm.Remark
                         })
                     }
                     else {
                         that.element.alert('提示信息','提交失败')
                     }
-                },param)
+                }, this.tableForm)
 
             },
             returnBk() {
                 let param = {
-                    "Id": that.allData.Id,
+                    "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.Remark
                 }
                 this.returnSubmit(param)
@@ -208,9 +144,8 @@
             //撤回审批
             rebackSubmit() {
                 this.disablePage = true
-                var that = this
                 var param = {
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "NodeId": 0,
                     "Remark": this.ruleForm.mark
                 }
@@ -219,16 +154,14 @@
             getTable() {
                 var that = this
                 that._getData('/Receiving/Read', function (data) {
-                    that.ruleForm = data.data[0]
-                    that.ruleForm['Remark'] = ''
+                    that.tableForm = data.data[0]
                     if (data.error.errorCode != 0) {
                         that.elementAlert('提示信息', error.errorMessage)
                         return
                     }
                     if (data.data[0].Review) that.ReviewList = data.data[0].Review.split('~')
                     if (data.data[0].HandleImplementation) that.HandleImplementationList = data.data[0].HandleImplementation.split('~')
-                }
-                    , { TaskId: TaskId })
+                }, { TaskId: TaskId })
             },
             print() {
                 var that = this

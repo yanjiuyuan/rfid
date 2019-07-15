@@ -2,6 +2,7 @@
 var FlowId = 0 //当前审批类别ID
 var NodeId = 0 //审批节点ID
 var TaskId = 0 //审批任务ID
+var state = ''//流程状态
 var State = 0 //多异步辅助状态
 var Index = 0 //审批列表类型参数 0-带我审批 1-我已审批 2-我发起的 3-抄送我的
 var UrlObj = {} //url参数对象
@@ -227,10 +228,9 @@ function getFormData(demo) {
         imageList = []
         fileList = []
         pdfList = []
-        allData = res
         handleUrlData(res, demo)
-        taskId = allData.TaskId
-        demo.ruleForm = allData
+        taskId = res.TaskId
+        demo.ruleForm = res
         demo.getNodeInfo()
         demo.GetDingList(taskId)
         demo.getApproInfo()
