@@ -137,5 +137,13 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult BorrowThing()
+        {
+            return View();
+        }
+        public ActionResult Maintain()
+        {
+            return View();
+        }
     }
 }

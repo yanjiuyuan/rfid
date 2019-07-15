@@ -5,7 +5,7 @@
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <br />
-    <template v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯' || userName == '黄浩伟' || userName == '黄龙贤'">
+    <template v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯' || userName == '黄浩伟' || userName == '黄龙贤' || userName == '胡晓辉'">
         <span>我是：</span>
         <el-select v-model="userName" v-on:change="selectUser" filterable placeholder="请选择">
             <el-option v-for="item in userList"
@@ -217,6 +217,18 @@
             sortId: 4,
             url: '/approval/pickingManager',
             position: (x + 5 * xTap) + 'px ' + (y + 0 * yTap) + 'px'
+        },
+        {
+            flowId: 67,
+            sortId: 4,
+            url: '/approval/borrowThing',
+            position: (x + 6 * xTap) + 'px ' + (y + 0 * yTap) + 'px'
+        },
+        {
+            flowId: 68,
+            sortId: 4,
+            url: '/approval/maintain',
+            position: (x + 4 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
         }
 
     ]

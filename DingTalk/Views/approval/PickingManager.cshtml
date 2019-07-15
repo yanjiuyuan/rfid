@@ -260,6 +260,9 @@
                 let param = _cloneObj(this.searchParam)
                 param.IsSend = true
                 this.GetData("/Pick/Query" + _formatQueryStr(param), (res) => {
+                    this.$alert('提示', '已推送到钉钉', {
+                        confirmButtonText: '确定'
+                    });
                 })
                 
             },

@@ -183,6 +183,14 @@
                         loadPage('/Main/approval_intellectualProperty' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 67) {
+                        loadPage('/Main/approval_borrowThing' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 68) {
+                        loadPage('/Main/approval_maintain' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },
