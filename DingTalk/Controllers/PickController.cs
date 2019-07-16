@@ -386,7 +386,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<Pick> picks = context.Pick.ToList();
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("26");
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskIdByFlowName("领料申请");
                     List<Tasks> tasksNew = tasks.Where(t => t.NodeId.ToString() == "0").ToList();
                     tasksNew = tasksNew.Where(t =>
                      projectId == null ? 1 == 1 : t.ProjectId == projectId &&
