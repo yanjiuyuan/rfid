@@ -83,7 +83,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -126,23 +125,6 @@
                         }, param)
                     }
                 })
-            },
-            returnBk() {
-                let param = {
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": this.ruleForm.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
             },
             getTable() {
                 var that = this

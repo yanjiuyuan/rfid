@@ -215,12 +215,6 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid && this.data.length > 0) {
                         that.disablePage = true
-                        var ProjectName
-                        for (let p of that.projectList) {
-                            if (p.ProjectId == that.ruleForm.ProjectId) {
-                                ProjectName = p.ProjectName
-                            }
-                        }
                         var paramArr = []
                         var stateArr = []
                         for (var i = 0; i < that.pdfList.length; i++) {
@@ -255,7 +249,7 @@
                             "MediaId": that.mediaList.join(','),
                             "MediaIdPDF": that.mediaPdfList.join(','),
                             "Title": that.ruleForm.Title,
-                            "ProjectName": ProjectName,
+                            "ProjectName": that.ruleForm.ProjectName,
                             "ProjectType": that.ruleForm.ProjectType,
                             "ProjectId": that.ruleForm.ProjectId,
                             "PdfState": stateArr.join(',')
@@ -319,6 +313,7 @@
             handleBomPageChange(page, index) {
                 console.log(page)
                 console.log(index)
+                this.data = this.dataArr[index].data
                 this.currentPage = page
                 this.dataArr[index].currentPage = page
                 this.getData()
@@ -345,14 +340,6 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
-            },
-            selectProject(id) {
-                console.log(id)
-                for (var project of this.projectList) {
-                    if (project.ProjectId == id) {
-                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-                    }
-                }
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {

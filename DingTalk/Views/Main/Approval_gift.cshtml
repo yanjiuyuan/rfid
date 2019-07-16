@@ -37,7 +37,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
         <template v-if="index==2 && state=='未完成'">
@@ -53,7 +53,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     var state = ''
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
@@ -85,34 +84,16 @@
                 if (NodeId == 2) {
                     this.PostData('Gift/StockReduce', this.data, (res) => {
                         this.aggreSubmit({
-                            "Id": allData.Id,
+                            "Id": this.ruleForm.Id,
                             "Remark": this.ruleForm.Mark
                         })
                     })
                     return
                 }
                 this.aggreSubmit({
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.Mark
                 })
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var that = this
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
             },
             printPdf() {
                 var that = this

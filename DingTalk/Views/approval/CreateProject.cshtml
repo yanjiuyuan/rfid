@@ -30,8 +30,8 @@
                     <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="协作单位" prop="CompanyName">
-                <el-input v-model="ruleForm.CompanyName"></el-input>
+            <el-form-item label="协作单位" prop="Customer">
+                <el-input v-model="ruleForm.Customer"></el-input>
             </el-form-item>
             @*<el-form-item label="承担部门">
             <el-input v-model="ruleForm.DeptName"></el-input>
@@ -41,7 +41,7 @@
                 <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>*@
-            @*<el-form-item label="公司名称" required="required">
+        @*<el-form-item label="公司名称" required="required">
             <el-select v-model="ruleForm.CompanyName" style="width:300px;">
                 <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
             </el-select>
@@ -112,18 +112,19 @@
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,
                 ruleForm: {
-                    Title:'立项申请',
+                    Title: '立项申请',
+                    CompanyName: '泉州华中科技大学智能制造研究院',
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
                     inputProjectName: '',
                     inputProjectId: '',
                     DeptName: '',
+                    Customer: '',
                     //ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
                     Time: '',
-                    ProjectType: ProjectTypes[0],
-                    CompanyName: ''
+                    ProjectType: ProjectTypes[0]
                 }
             }
         },
@@ -142,25 +143,26 @@
                             ids.push(p.emplId)
                         }
                         var param = {
-                            "ProjectName": this.ruleForm.inputProjectName,
                             "CreateTime": _getTime(),
                             "IsEnable": true,
                             "ProjectState": '在研',//this.ruleForm.ProjectState,
                             "IsFinish": false,
-                            "DeptName": this.ruleForm.DeptName,
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
                             "StartTime": this.ruleForm.Time[0] ? _dateToString(this.ruleForm.Time[0]) : '',
                             "EndTime": this.ruleForm.Time[1] ? _dateToString(this.ruleForm.Time[1]) : '',
-                            "ProjectId": this.ruleForm.inputProjectId,
-                            "ResponsibleMan": this.ruleForm.ApplyMan,
-                            "ResponsibleManId": this.ruleForm.ApplyManId,
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
-                            "CompanyName": this.ruleForm.CompanyName,
-                            "ProjectType": this.ruleForm.ProjectType,
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName,
+                            "ProjectName": this.ruleForm.inputProjectName,
+                            "ProjectId": this.ruleForm.inputProjectId,
+                            "CompanyName": this.ruleForm.CompanyName,
+                            "Customer": this.ruleForm.Customer,
+                            "DeptName": this.ruleForm.DeptName,
+                            "ProjectType": this.ruleForm.ProjectType,
+                            "ResponsibleMan": this.ruleForm.ApplyMan,
+                            "ResponsibleManId": this.ruleForm.ApplyManId,
                             "ProjectFileUrl": this.ruleForm.FileUrl
                         }
                         let callBack = function (taskId) {

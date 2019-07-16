@@ -71,7 +71,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -113,35 +112,17 @@
                     console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
                         that.aggreSubmit({
-                            "Id": allData.Id,
+                            "Id": that.ruleForm.Id,
                             "Remark": that.ruleForm.Mark
                         })
                     }, param)
                 }
                 else {
                     this.aggreSubmit({
-                        "Id": allData.Id,
+                        "Id": this.ruleForm.Id,
                         "Remark": this.ruleForm.Mark
                     })
                 }
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var that = this
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
             },
             //打印表单
             printTable() {
