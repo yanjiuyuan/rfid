@@ -154,12 +154,6 @@
                 //    return
                 //}
                 var that = this
-                var ProjectName
-                for (let p of this.projectList) {
-                    if (p.ProjectId == this.ruleForm.ProjectId) {
-                        ProjectName = p.ProjectName
-                    }
-                }
                 let callBack = function (taskId) {
                     for (let p of that.purchaseList) {
                         p['TaskId'] = taskId
@@ -172,38 +166,9 @@
                 this.approvalSubmit(formName, {
                     Title: that.ruleForm.Title,
                     Remark: that.ruleForm.remark,
-                    ProjectName: ProjectName,
+                    ProjectName: this.ruleForm.ProjectName,
                     ProjectId: this.ruleForm.ProjectId
                 }, callBack)
-            },
-            //搜索物料列表
-            searchCode() {
-                var that = this
-                if (!this.searchForm.name) return
-                var url = jinDomarn + 'Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
-                this.GetData(url, function(data) {
-                    that.data = data
-                    that.totalRows = data.length
-                    that.getData()
-
-                    
-                })
-            },
-            //下拉框选择项目
-            selectProject(id) {
-                console.log(id)
-                for (var project of this.projectList) {
-                    if (project.ProjectId == id) {
-                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-                        let index = 2
-                        this.nodeList[index].AddPeople = [{
-                            name: project.ResponsibleMan,
-                            emplId: project.ResponsibleManId
-                        }]
-                        $("." + index).remove()
-                        $("#" + index).after('<span class="el-tag ' + index + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
-                    }
-                }
             },
             searchNo() {
                 var that = this
@@ -219,17 +184,6 @@
                         d['have'] = d.fQty
                         that.purchaseList.push(d)
                     }
-
-
-                    //let tmpArr = []
-                    //for (let d of data) {
-                    //    if (d.fQty == d.fCommitQty) continue
-                    //    tmpArr.push(d)
-                    //}
-                    //that.data = tmpArr
-                    ////that.data = data
-                    //that.totalRows = that.data.length
-                    //that.getData()
                 })
             },
             searchAndAdd() {

@@ -46,14 +46,14 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
-        @*<template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
             <el-form-item>
                 <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
             </el-form-item>
-        </template>*@
+        </template>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
@@ -79,7 +79,6 @@
         Id = UrlObj.id
         Index = UrlObj.index
     }
-    var allData = {}
     var items = {
         fNumber: '物料编码',
         fName: '物料名称',
@@ -121,25 +120,6 @@
                     "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.mark
                 })
-            },
-            //退回审批
-            reSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": this.ruleForm.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
             },
             //重新发起审批
             reApproval() {

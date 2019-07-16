@@ -80,7 +80,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     var imageList = []
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
@@ -113,28 +112,11 @@
         methods: {
             onSubmit() {
                 this.aggreSubmit({
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.Mark,
                     "ImageUrl": this.ruleForm.ImageUrl,
                     "OldImageUrl": this.ruleForm.OldImageUrl
                 })
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
             },
             getTable() {
                 this.GetData('/Evection/Read' + _formatQueryStr({ TaskId: TaskId }), (res)=> {

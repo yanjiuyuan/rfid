@@ -28,8 +28,11 @@
             <el-input v-model="form.ProjectState" style="width:550px;" :disabled="true"></el-input>
             <el-input v-model="form.IsFinish" style="display:none;"></el-input>
         </el-form-item>*@
-        <el-form-item label="协作单位">
+        @*<el-form-item label="公司名称">
             <el-input v-model="form.CompanyName" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>*@
+        <el-form-item label="协作单位">
+            <el-input v-model="form.Customer" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="部门名称">
             <el-input v-model="form.DeptName" style="width:550px;" :disabled="true"></el-input>
@@ -77,7 +80,7 @@
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item label="操作" v-if="index==0">
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk">退回</el-button>
         </el-form-item>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
@@ -94,7 +97,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     var imageList = []
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
@@ -127,7 +129,7 @@
             onSubmit() {
                 var that = this
                 let aggreParam = {
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.Mark,
                     //"FileUrl": this.ruleForm.FileUrl,
                     //"OldFileUrl": this.ruleForm.OldFileUrl
@@ -172,44 +174,6 @@
                     this.aggreSubmit(aggreParam)
                 }
             },
-            //下载文件
-            downloadServerFile: function (path, row) {
-                let serverUrl = 'http://17e245o364.imwork.net:49415/' + 'ProjectNew/DownLoad?path=' + path
-                console.log(serverUrl)
-                location.href = serverUrl
-                return
-                var that = this
-                var path = '\\'
-                for (let p of this.pathList) {
-                    path = path + p + '\\'
-                }
-                path += row.path
-                var paramObj = {
-                    "userId": DingData.userid,
-                    "path": path
-                }
-                this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (data) => {
-                    that.downloadUrl = 'http://' + data
-                    location.href = that.downloadUrl
-                })
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
             printTable() {
                 this.PostData('createProject/PrintPDF', {
                     UserId: DingData.userid,
@@ -220,14 +184,6 @@
                 this.GetData('/CreateProject/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {
                     if (!res.IsReview && res.IsReview != false) res.IsReview = true
                     this.form = res
-                    //let roleName = ''
-                    //if (res.CompanyName == '泉州华中科技大学智能制造研究院') {
-                    //    roleName = '研究院项目抄送人员'
-                    //} else { roleName = '华数项目抄送人员' }
-                    //if (NodeId == 1)
-                    //    this._getData('/Role/GetRoleInfo' + _formatQueryStr({ RoleName: '研究院项目抄送人员' }), (res) => {
-                    //        this.copyMans = res
-                    //    })
                 })
             },
 

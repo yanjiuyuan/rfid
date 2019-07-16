@@ -140,7 +140,7 @@
             <el-form-item>
                 <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
                 <span> - </span>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="reSubmit" :disabled="disablePage">退回</el-button>
+                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
         <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
@@ -288,8 +288,6 @@
     }
     $("#mask").hide()
     var items = {}
-    var allData = {}
-
     var FilePDFUrl = ''
     var bomUrl = ''
     var dataArr = [
@@ -448,7 +446,7 @@
                     //return
                     that._postData(url, function (data) {
                         that.aggreSubmit({
-                            "Id": allData.Id,
+                            "Id": that.ruleForm.Id,
                             "Remark": that.ruleForm.mark,
                             "Title": that.ruleForm.Title,
                             "ProjectId": that.ruleForm.ProjectId
@@ -458,7 +456,7 @@
                     }, that.data)
                 } else {
                     this.aggreSubmit({
-                        "Id": allData.Id,
+                        "Id": this.ruleForm.Id,
                         "Remark": this.ruleForm.mark,
                         "Title": this.ruleForm.Title,
                         "ProjectId": this.ruleForm.ProjectId
@@ -466,26 +464,6 @@
                             "ProjectId": this.ruleForm.ProjectId
                         })
                 }
-            },
-            //退回审批
-            reSubmit() {
-                this.disablePage = true
-                var that = this
-                var param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
             },
             
             //图纸盖章并获取文件

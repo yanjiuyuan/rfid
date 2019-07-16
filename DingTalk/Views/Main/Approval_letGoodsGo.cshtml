@@ -78,7 +78,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -112,27 +111,10 @@
         methods: {
             onSubmit(formName) {
                 let param = {
-                    "Id": allData.Id,
+                    "Id": this.ruleForm.Id,
                     "Remark": this.tableForm.Mark
                 }
                 this.aggreSubmit(param)
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.tableForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.tableForm.mark
-                }
-                this.returnSubmit(param)
             },
             printTable() {
                 this.PostData('MaterialRelease/PrintAndSend', {

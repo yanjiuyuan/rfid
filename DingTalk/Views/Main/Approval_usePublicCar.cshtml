@@ -96,7 +96,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -147,29 +146,12 @@
                     if (valid) {
                         this._postData(url, function () {
                             that.aggreSubmit({
-                                "Id": allData.Id,
+                                "Id": that.ruleForm.Id,
                                 "Remark": that.ruleForm.Mark
                             })
                         }, param)
                     }
                 })
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.ruleForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
-                }
-                this.returnSubmit(param)
             },
             //选车操作
             selectCar(value) {

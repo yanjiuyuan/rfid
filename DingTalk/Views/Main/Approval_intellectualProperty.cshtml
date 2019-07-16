@@ -87,7 +87,6 @@
 </el-main>
 
 <script>
-    var allData = {}
     if (UrlObj.flowid) {
         FlowId = UrlObj.flowid
         NodeId = UrlObj.nodeid
@@ -128,7 +127,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         let param = {
-                            "Id": allData.Id,
+                            "Id": this.ruleForm.Id,
                             "Remark": this.tableForm.Mark
                         }
                         this.PostData('IntellectualProperty/Modify', this.tableForm, (res) => {
@@ -136,23 +135,6 @@
                         })
                     }
                 })
-            },
-            returnBk() {
-                let param = {
-                    "Id": allData.Id,
-                    "Remark": this.tableForm.Mark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": allData.Id,
-                    "NodeId": 0,
-                    "Remark": this.tableForm.mark
-                }
-                this.returnSubmit(param)
             },
             //选择项目组成员
             addPeerNumber() {

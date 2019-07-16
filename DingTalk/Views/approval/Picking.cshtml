@@ -170,22 +170,9 @@
                 this.approvalSubmit(formName, {
                     Title: this.ruleForm.Title,
                     Remark: this.ruleForm.remark,
-                    ProjectName: ProjectName,
+                    ProjectName: this.ruleFormProjectName,
                     ProjectId: this.ruleForm.ProjectId
                 }, callBack)
-            },
-            //搜索物料列表
-            searchCode() {
-                if (!this.searchForm.name) return
-                var url = jinDomarn + 'Pick/ReadPickInfoSingle?keyWord=' + this.searchForm.name
-                this.GetData(url, (data) => {
-                    for (let d of data) {
-                        d['left'] = parseInt(d.fQty) - parseInt(d.fQtyInvoice)
-                    }
-                    this.data = data
-                    this.totalRows = data.length
-                    this.getData()
-                })
             },
             searchAndAdd() {
                 var that = this
@@ -220,22 +207,6 @@
                         that.purchaseList.push(d)
                     }
                 })
-            },
-            //下拉框选择项目
-            selectProject(id) {
-                console.log(id)
-                for (var project of this.projectList) {
-                    if (project.ProjectId == id) {
-                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-                        let index = 1
-                        this.nodeList[index].AddPeople = [{
-                            name: project.ResponsibleMan,
-                            emplId: project.ResponsibleManId
-                        }]
-                        $("." + index).remove()
-                        $("#" + index).after('<span class="el-tag ' + index + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
-                    }
-                }
             },
             //添加申请物料
             addGood(index, good) {

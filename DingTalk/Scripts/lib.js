@@ -15,6 +15,8 @@ var imageList = []
 var fileList = []
 var pdfList = []
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
+//let serverUrl = 'http://17e245o364.imwork.net:49415/'
+let serverUrl = 'http://47.96.172.122:8093/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目','测试项目']
 let status = ["在研", "已完成", "终止"]
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
@@ -230,6 +232,7 @@ function getFormData(demo) {
         pdfList = []
         handleUrlData(res, demo)
         taskId = res.TaskId
+        allData = res
         demo.ruleForm = res
         demo.getNodeInfo()
         demo.GetDingList(taskId)
@@ -644,7 +647,24 @@ var mixin = {
                 });
             })
         },
-        //退回审批
+        //退回审批 
+        returnBk() {
+            let param = {
+                "Id": this.ruleForm.Id,
+                "Remark": this.ruleForm.Mark
+            }
+            this.returnSubmit(param)
+        },
+        //撤回审批
+        rebackSubmit() {
+            this.disablePage = true
+            var param = {
+                "Id": this.ruleForm.Id,
+                "NodeId": 0,
+                "Remark": this.ruleForm.Mark
+            }
+            this.returnSubmit(param)
+        },
         returnSubmit(option) {
             this.disablePage = true
             var param = {
@@ -717,22 +737,22 @@ var mixin = {
         //下拉框选择项目
         selectProject(id) {
             console.log(id)
-            for (var project of this.projectList) {
-                if (project.ProjectId == id) {
-                    this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+            let project = {}
+            for (var proj of this.projectList) {
+                if (proj.ProjectId == id) {
+                    this.ruleForm.ProjectName = proj.ProjectName
+                    project = proj
                 }
             }
-        },
-        setProject(id, index) {
-            for (var project of this.projectList) {
-                if (project.ProjectId == id) {
-                    this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-                    this.nodeList[index].AddPeople = [{
+            //this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
+            for (let i = 0; i < this.nodeList.length; i++) {
+                if (this.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
+                    this.nodeList[i].AddPeople = [{
                         name: project.ResponsibleMan,
                         emplId: project.ResponsibleManId
                     }]
-                    $("." + index).remove()
-                    $("#" + index).after('<span class="el-tag ' + index + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
+                    $("." + i).remove()
+                    $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
                 }
             }
         },
@@ -904,7 +924,6 @@ var mixin = {
                 url: url,
                 success: function (data) {
                     console.log(url)
-                    console.log("搜索物料列表ok")
                     data = JSON.parse(data)
                     console.log(data)
                     that.data = data
@@ -1037,24 +1056,8 @@ var mixin = {
         },
         //下载文件
         downloadServerFile: function (path, row) {
-            let serverUrl = 'http://17e245o364.imwork.net:49415/' + 'ProjectNew/DownLoad?path=' + path
-            console.log(serverUrl)
-            location.href = serverUrl
-            return
-            var that = this
-            var path = '\\'
-            for (let p of this.pathList) {
-                path = path + p + '\\'
-            }
-            path += row.path
-            var paramObj = {
-                "userId": DingData.userid,
-                "path": path
-            }
-            this.PostData('/ProjectNew/DownloadFileModel/', paramObj, (data) => {
-                that.downloadUrl = 'http://' + data
-                location.href = that.downloadUrl
-            })
+            console.log(serverUrl + 'ProjectNew/DownLoad?path=' + path)
+            location.href = serverUrl + 'ProjectNew/DownLoad?path=' + path
         },
         fileListToUrl() {
             this.ruleForm.FilePDFUrl = ''

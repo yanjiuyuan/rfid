@@ -42,9 +42,14 @@
     <!--采购列表表格實體-->
     <el-table :data="purchaseList" stripe border>
         <el-table-column prop="CodeNo" type="index"></el-table-column>
+        <el-table-column label="操作" width="80">
+            <template slot-scope="scope">
+                <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
         <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
         <el-table-column prop="Name" label="物料名称"></el-table-column>
-        <el-table-column prop="Supplier" label="供应商" width="300">
+        <el-table-column prop="Supplier" label="供应商" width="250">
             <template slot-scope="scope">
                 <el-input v-model="scope.row.Supplier" prop="Unit" :class="{ redborder:scope.row.Supplier ==''}">
                 </el-input>
@@ -53,12 +58,6 @@
         <el-table-column prop="Unit" label="单位">
             <template slot-scope="scope">
                 <el-input v-model="scope.row.Unit" prop="Unit" :class="{ redborder:scope.row.Unit ==''}">
-                </el-input>
-            </template>
-        </el-table-column>
-        <el-table-column prop="Price" label="单价" width="100">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.Price">
                 </el-input>
             </template>
         </el-table-column>
@@ -86,16 +85,16 @@
                 </el-date-picker>
             </template>
         </el-table-column>
+        <el-table-column prop="Price" label="单价" width="100">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Price">
+                </el-input>
+            </template>
+        </el-table-column>
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
         <el-table-column prop="Mark" label="备注">
             <template slot-scope="scope">
                 <el-input v-model="scope.row.Mark"></el-input>
-            </template>
-        </el-table-column>
-        <el-table-column label="操作" width="80">
-            <template slot-scope="scope">
-                @*<el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>*@
-                <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -154,7 +153,7 @@
                 nodeInfo: {},
                 addPeopleNodes: [1],
                 searchForm: {
-                    name:'',
+                    name: '',
                 },
                 ruleForm: {
                     name: DingData.nickName,
@@ -200,29 +199,6 @@
                 this.PostData('Borrow/Save', paramArr, (res) => {
                     this.doneSubmit()
                 })
-            },
-            //搜索物料列表
-            searchCode(formName) {
-                var that = this
-                if (!this.searchForm.name) return
-                var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
-                $.ajax({
-                    url: url,
-                    success: function (data) {
-                        console.log(url)
-                        console.log("搜索物料列表ok")
-                        data = JSON.parse(data)
-                        console.log(data)
-                        that.data = data
-                        that.totalRows = data.length
-                        that.getData()
-                    }
-                })
-            },
-            //下拉框选择项目
-            selectProject(id) {
-                console.log(id)
-                this.setProject(id, 1)
             },
             //添加申请物料
             addGood(index, good) {
