@@ -14,7 +14,7 @@
         <span style="color:red">*</span><span style="padding:3px;">采购流程流水号添加</span><el-input v-model="searchForm.taskid" style="width:200px;"></el-input>
         <el-button type="primary" v-on:click="searchAndAdd2">添加</el-button>
         @*<span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
-        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>*@
+            <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>*@
     </div>
     <div style="margin-top:10px;">
         <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
@@ -26,7 +26,7 @@
         <el-table-column prop="fName" label="物料名称"></el-table-column>
         @*<el-table-column prop="fQty" label="入库数量"></el-table-column>*@
         @*<el-table-column prop="fQtyInvoice" label="出库数量"></el-table-column>*@
-        <el-table-column prop="left" label="库存数量"></el-table-column>
+        <el-table-column prop="fQty" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
         @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
@@ -62,7 +62,7 @@
                           :class="{ redborder:scope.row.fQty =='' || scope.row.fQty > scope.row.left}"></el-input>
             </template>
         </el-table-column>
-        <el-table-column prop="left" label="库存数量"></el-table-column>
+        <el-table-column prop="fQty" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
         @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
@@ -94,7 +94,7 @@
                 </el-option>
             </el-select>
             @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
+                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -170,9 +170,21 @@
                 this.approvalSubmit(formName, {
                     Title: this.ruleForm.Title,
                     Remark: this.ruleForm.remark,
-                    ProjectName: this.ruleFormProjectName,
+                    ProjectName: ProjectName,
                     ProjectId: this.ruleForm.ProjectId
-                }, callBack)
+                }, callBack, {
+                        ProjectId: this.ruleForm.ProjectId
+                    })
+            },
+            //搜索物料列表
+            searchCode() {
+                if (!this.searchForm.name) return
+                var url = jinDomarn + 'Pick/ReadPickInfoSingle?keyWord=' + this.searchForm.name
+                this.GetData(url, (data) => {
+                    this.data = data
+                    this.totalRows = data.length
+                    this.getData()
+                })
             },
             searchAndAdd() {
                 var that = this
@@ -185,7 +197,6 @@
                             if (d.fNumber == p.fNumber) ifBreak = true
                         }
                         if (ifBreak) break
-                        d['left'] = d.fQty
                         that.purchaseList.push(d)
                     }
                 })
@@ -203,7 +214,6 @@
                             if (d.fNumber == p.fNumber) ifBreak = true
                         }
                         if (ifBreak) break
-                        d['left'] = d.fQty
                         that.purchaseList.push(d)
                     }
                 })

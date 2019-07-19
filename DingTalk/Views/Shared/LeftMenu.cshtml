@@ -10,7 +10,7 @@
                 <!--左侧导航栏-->
                 <el-aside width="auto" style="background-color: rgb(238, 241, 246)">
                     <el-menu :default-openeds="['2']" :collapse="isCollapse" v-on:open="handleOpen" v-on:close="handleClose"
-                             :default-active="'2-1'" class="el-menu-vertical-demo"> 
+                             :default-active="'2-1'" class="el-menu-vertical-demo">
                         <el-button v-on:click="isCollapse=!isCollapse" type="info" :icon="isCollapse?'el-icon-caret-bottom':'el-icon-caret-left'" circle></el-button>
                         <el-submenu index="2">
                             <template slot="title">
@@ -19,12 +19,14 @@
                             </template>
                             <el-menu-item-group>
                                 <el-menu-item index="2-1" onclick="loadPage('/Main/approval')">
-                                    发起审批</el-menu-item>
+                                    发起审批
+                                </el-menu-item>
                                 <el-menu-item index="2-2" onclick="loadPage('/Main/approval_list?Index=0')">
                                     待我审批<el-badge class="mark" :value="menuStatus.ApproveCount" />
                                 </el-menu-item>
                                 <el-menu-item index="2-3" onclick="loadPage('/Main/approval_list?Index=1')">
-                                    我已审批</el-menu-item>
+                                    我已审批
+                                </el-menu-item>
                                 <el-menu-item index="2-4" onclick="loadPage('/Main/approval_list?Index=2')">
                                     我发起的@*<el-badge class="mark" :value="menuStatus.MyPostCount" />*@
                                 </el-menu-item>
@@ -33,6 +35,17 @@
                                 </el-menu-item>
                                 <el-menu-item index="2-6" onclick="loadPage('/Main/VoteList')">
                                     投票列表
+                                </el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="3" v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯'">
+                            <template slot="title">
+                                <i class="el-icon-edit"></i>
+                                <span slot="title">流程配置</span>
+                            </template>
+                            <el-menu-item-group>
+                                <el-menu-item index="3-1" onclick="loadPage('/Register/list')">
+                                    流程列表
                                 </el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>

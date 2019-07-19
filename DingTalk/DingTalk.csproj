@@ -771,6 +771,8 @@
     <Content Include="Views\approval\Maintain.cshtml" />
     <Content Include="Views\Main\Approval_borrowThing.cshtml" />
     <Content Include="Views\Main\Approval_maintain.cshtml" />
+    <Content Include="Views\Register\List.cshtml" />
+    <Content Include="Views\Register\flowInformation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
