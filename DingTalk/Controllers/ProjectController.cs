@@ -57,7 +57,7 @@ namespace DingTalk.Controllers
                         if (IsPower == false)
                         {
                             //项目管理员
-                            bool IsProjectControl = context.Roles.Where(r => r.UserId == projectInfo.CreateManId && r.RoleName == "项目管理员" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
+                            bool IsProjectControl = context.Roles.Where(r => r.UserId == projectInfo.ApplyManId && r.RoleName == "项目管理员" && r.IsEnable == true).ToList().Count() > 0 ? true : false;
                             if (IsProjectControl)
                             {
                                 ProjectInfo pInfo = context.ProjectInfo.SingleOrDefault(u => u.ProjectId == projectInfo.ProjectId);
