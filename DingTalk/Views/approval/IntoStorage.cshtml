@@ -86,8 +86,8 @@
                     <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
-            </el-select>@*备品备件采购项目*@
-            <el-button v-if="ruleForm.ProjectName == '猛龙总冠军'" class="button-new-tag" size="small" v-on:click="chooseMan()">+ 选人</el-button>
+            </el-select>@*备品备件采购项目 - 猛龙总冠军*@
+            <el-button v-if="ruleForm.ProjectName == '备品备件采购项目'" class="button-new-tag" size="small" v-on:click="chooseMan()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -214,22 +214,20 @@
             },
             //选人特殊处理
             chooseMan() {
-                var that = this
                 DingTalkPC.biz.contact.choose({
                     users: [],
                     multiple: false,
                     corpId: DingData.CorpId,
                     max: 10,
-                    onSuccess: function (data) {
+                    onSuccess: (data) => {
                         console.log(data)
-                        that.ruleForm.DrivingMan = data[0].name
                         let i = 2
                         this.nodeList[i].AddPeople = [{
                             name: data[0].name,
                             emplId: data[0].emplId
                         }]
                         $("." + i).remove()
-                        $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
+                        $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + data[0].name.substring(0, 3) + '</span >')
                     },
                     onFail: function (err) { }
                 });
