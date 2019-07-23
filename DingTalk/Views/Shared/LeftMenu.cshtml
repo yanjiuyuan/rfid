@@ -9,7 +9,7 @@
             <el-container style="border: 1px solid #eee">
                 <!--左侧导航栏-->
                 <el-aside width="auto" style="background-color: rgb(238, 241, 246)">
-                    <el-menu :default-openeds="['2']" :collapse="isCollapse" v-on:open="handleOpen" v-on:close="handleClose"
+                    <el-menu :default-openeds="['2','3']" :collapse="isCollapse" v-on:open="handleOpen" v-on:close="handleClose"
                              :default-active="'2-1'" class="el-menu-vertical-demo">
                         <el-button v-on:click="isCollapse=!isCollapse" type="info" :icon="isCollapse?'el-icon-caret-bottom':'el-icon-caret-left'" circle></el-button>
                         <el-submenu index="2">
@@ -39,6 +39,7 @@
                             </el-menu-item-group>
                         </el-submenu>
                         <el-submenu index="3" v-if="userName == '蔡兴桐' || userName == '黄浩炜' || userName == '詹姆斯'">
+                        @*<el-submenu index="3">*@
                             <template slot="title">
                                 <i class="el-icon-edit"></i>
                                 <span slot="title">流程配置</span>

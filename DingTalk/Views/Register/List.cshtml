@@ -27,7 +27,7 @@
         {
             flowId: 1,
             sortId: 4,
-            url: '/approval/officesupplies',
+            url: '/register/flowInformation',
             position: (x + 4 * xTap) +  'px ' + (y + 0 * yTap) + 'px'
         },
         {
@@ -251,31 +251,8 @@
                 $("#tempPage").load(url)
             }
         },
-        addMemberTest() {
-            var that = this
-
-            DingTalkPC.biz.contact.choose({
-                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
-                corpId: DingData.CorpId, //企业id
-                max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
-                onSuccess: function (data) {
-                    console.log(data)
-                    that.name = data[0].name
-                    that.id = data[0].emplId
-                    DingData.userid = data[0].emplId
-                    DingData.nickName = data[0].name
-                },
-                onFail: function (err) { }
-            });
-        },
         created: function () {
-            var that = this
-            var intval = window.setInterval(function () {
-                if (DingData.userid) {
-                    that.getMenu()
-                    clearInterval(intval)
-                }
-            },200)
+            this.getMenu()
             loadHtml("mainPage", "partPage")
         }
     })

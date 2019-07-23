@@ -17,7 +17,12 @@ var pdfList = []
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 //let serverUrl = 'http://17e245o364.imwork.net:49415/'
 let serverUrl = 'http://47.96.172.122:8093/'
-let ProjectTypes = ['自研项目', '纵向项目', '横向项目','测试项目']
+let ProjectTypes = ['自研项目', '纵向项目', '横向项目', '测试项目']
+let PTypes = [
+    { label: '研发类', value: '研发类', children: [{ value: '自研', label: '自研' }, { value: '横向', label: '横向' }, { value: '纵向', label: '纵向' }, { value: '测试', label: '测试' }] },
+    { label: '产品类', value: '产品类', children: [{ value: '产品', label: '产品' }, { value: '测试', label: '测试' }] },
+    { label: '教育类', value: '教育类', children: [{ value: '教育', label: '教育' }, { value: '测试', label: '测试' }] }
+]
 let status = ["在研", "已完成", "终止"]
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
@@ -453,7 +458,8 @@ var mixin = {
         currentPage: 1,
         totalRows: 0,
         pageSize: 5,
-        dingList: []
+        dingList: [],
+        PTypes: PTypes
     },
     created:function() {
         
