@@ -90,6 +90,12 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(300)]
         public string Customer { get; set; }
-        
+
+        /// <summary>
+        /// 项目小类(新增)
+        /// </summary>
+        [StringLength(200)]
+        public string ProjectSmallType { get; set; }
+
     }
 }

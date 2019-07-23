@@ -255,6 +255,14 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
+                                if (string.IsNullOrEmpty(projectInfo.CompanyName) || string.IsNullOrEmpty(projectInfo.ProjectType) 
+                                 || string.IsNullOrEmpty(projectInfo.ProjectSmallType) || string.IsNullOrEmpty(projectInfo.ProjectName))
+                                {
+                                    return new NewErrorModel()
+                                    {
+                                        error = new Error(1, string.Format("项目数据不完整", pi.ProjectId), "") { },
+                                    };
+                                }
                                 //建立项目文件夹及其子文件
                                 string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}\\{3}\\",
                                     projectInfo.CompanyName, projectInfo.ProjectType, projectInfo.ProjectSmallType, projectInfo.ProjectName);
@@ -429,12 +437,6 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    //查找MediaId
-                    //FileInfos fileInfo = context.FileInfos.Where(f => f.FilePath == downloadFileModel.path).First();
-                    //string mediaId = fileInfo.MediaId;
-                    //if (string.IsNullOrEmpty(mediaId))
-                    //{
-
                     string url = string.Empty;
                     if (ConfigurationManager.AppSettings["hao"].ToString() == "2")
                     {
@@ -454,22 +456,6 @@ namespace DingTalk.Controllers
                         data = downLoadLink,
                         error = new Error(0, "请复制链接到浏览器中下载！", "1") { },
                     };
-                    //}
-                    //else
-                    //{
-                    //    DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                    //    FileSendModel fileSendModel = new FileSendModel()
-                    //    {
-                    //        Media_Id = mediaId,
-                    //        UserId = downloadFileModel.userId
-                    //    };
-                    //    string result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                    //    return new NewErrorModel()
-                    //    {
-                    //        data = result,
-                    //        error = new Error(0, "已推送至钉钉工作通知中！", "0") { },
-                    //    };
-                    //}
                 }
             }
             catch (Exception ex)
