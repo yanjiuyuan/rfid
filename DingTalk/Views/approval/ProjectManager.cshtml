@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        项目列表-{{nodeInfo.NodeName}}
+        项目列表
     </div>
     <!--检索项目表单-->
     <el-form :inline="true" :model="formInline" class="demo-form-inline"
@@ -39,6 +39,7 @@
 
         <el-form-item>
             <el-button type="primary" v-on:click="getProject">搜索</el-button>
+            <el-button type="primary" v-on:click="printout">批量导出</el-button>
             <span v-if="superSearch" v-on:click="superSearch = !superSearch" class="clickable-text">关闭高级搜索</span>
             <span v-else v-on:click="superSearch = !superSearch" class="clickable-text">高级搜索</span>
         </el-form-item>
@@ -56,11 +57,14 @@
                 </el-form>
             </template>
         </el-table-column>
+        <el-table-column type="index"></el-table-column>
+        <el-table-column prop="type" label="项目类别"></el-table-column>
         <el-table-column prop="ProjectId" label="项目编号"></el-table-column>
         <el-table-column prop="ProjectName" label="项目名称"></el-table-column>
+        <el-table-column prop="Customer" label="合作单位"></el-table-column>
         <el-table-column prop="DeptName" label="部门名称"></el-table-column>
-        <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
         <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
+        <el-table-column prop="hello" label="商务对接人"></el-table-column>
         <el-table-column prop="showProjectState" label="状态"></el-table-column>
         <el-table-column label="操作" style="width:300px;">
             <template slot-scope="scope" style="width:300px;">
@@ -95,15 +99,18 @@
                     <el-input v-model="ruleForm.DeptName"></el-input>
                 </el-form-item>
                 <el-form-item label="状态" required="required">
-                    <el-select v-model="ruleForm.ProjectState" >
+                    <el-select v-model="ruleForm.ProjectState">
                         <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="公司名称" required="required">
                     <el-input v-model="ruleForm.CompanyName" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="项目类型" required="required">
+                <el-form-item label="项目大类" required="required">
                     <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="项目小类" required="required">
+                    <el-input v-model="ruleForm.ProjectSmallType" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="项目负责人" required="required">
                     <span>{{ResponsibleMan[0].name}} &nbsp;</span>
@@ -198,6 +205,7 @@
                         var dateStr = _dateToString(date)
                         console.log(dateStr)
                         for (let d of data) {
+                            d["type"] = d.ProjectType + '-' + d.ProjectSmallType
                             d["showProjectState"] = d.ProjectState
                             if (d.ProjectState == '在研' && dateStr > d.EndTime) {
                                 //d.ProjectState += '-已延期'
@@ -212,6 +220,9 @@
                         console.log(XMLHttpRequest.status);
                     }
                 })
+            },
+            printout() {
+                GetData('ProjectNew/Print?applyManId=' + )
             },
             //编辑项目并保存
             editProject(formName) {

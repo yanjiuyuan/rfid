@@ -91,6 +91,7 @@
                     that.data = data
                     that.getData()
                 }
+                console.log(_formatQueryStr(param))
                 this.GetData("/Pick/Query" + _formatQueryStr(param), handle)
             },
             printData: function () {

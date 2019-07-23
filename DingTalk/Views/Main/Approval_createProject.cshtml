@@ -24,14 +24,7 @@
             <el-input v-if="NodeId==3" v-model="form.ProjectId" style="width:550px;"></el-input>
             <el-input v-else v-model="form.ProjectId" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
-        @*<el-form-item label="项目状态">
-            <el-input v-model="form.ProjectState" style="width:550px;" :disabled="true"></el-input>
-            <el-input v-model="form.IsFinish" style="display:none;"></el-input>
-        </el-form-item>*@
-        @*<el-form-item label="公司名称">
-            <el-input v-model="form.CompanyName" style="width:550px;" :disabled="true"></el-input>
-        </el-form-item>*@
-        <el-form-item label="协作单位">
+        <el-form-item label="合作单位">
             <el-input v-model="form.Customer" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="部门名称">
@@ -45,8 +38,11 @@
             <el-input v-model="form.TeamMembers" style="width:500px;" :disabled="true"></el-input>
             <el-input v-model="form.TeamMembersId" style="display:none;"></el-input>
         </el-form-item>
-        <el-form-item label="项目类型">
-            <el-input v-model="form.ProjectType" style="width:550px;" :disabled="true"></el-input>
+        <el-form-item label="项目大类">
+            <el-input v-model="form.ProjectType" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目小类">
+            <el-input v-model="form.ProjectSmallType" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="创建时间">
             <el-input v-model="form.CreateTime" :disabled="true"></el-input>

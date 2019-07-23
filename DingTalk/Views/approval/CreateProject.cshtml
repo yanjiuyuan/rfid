@@ -22,9 +22,6 @@
             <el-form-item label="项目名称" prop="inputProjectName">
                 <el-input v-model="ruleForm.inputProjectName"></el-input>
             </el-form-item>
-            @*<el-form-item label="项目编号" prop="inputProjectId">
-            <el-input v-model="ruleForm.inputProjectId"></el-input>
-        </el-form-item>*@
             <el-form-item label="承担部门">
                 <el-select v-model="ruleForm.DeptName" style="width:300px;">
                     <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
@@ -33,31 +30,17 @@
             <el-form-item label="协作单位" prop="Customer">
                 <el-input v-model="ruleForm.Customer"></el-input>
             </el-form-item>
-            @*<el-form-item label="承担部门">
-            <el-input v-model="ruleForm.DeptName"></el-input>
-        </el-form-item>*@
-            @*<el-form-item label="状态" required="required">
-            <el-select v-model="ruleForm.ProjectState">
-                <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>*@
-        @*<el-form-item label="公司名称" required="required">
-            <el-select v-model="ruleForm.CompanyName" style="width:300px;">
-                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>*@
             <el-form-item label="项目类型" required="required">
-                <el-select v-model="ruleForm.ProjectType">
-                    <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
-                </el-select>
+                <div class="block">
+                    <el-cascader v-model="ptypes"
+                                 :options="PTypes"
+                                 :props="{ expandTrigger: 'hover' }"
+                                 v-on:change="handleChange"></el-cascader>
+                </div>
             </el-form-item>
             <el-form-item label="项目负责人">
                 <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
             </el-form-item>
-            @*<el-form-item label="项目负责人" required="required">
-                <span>{{ResponsibleMan[0].name}} &nbsp;</span>
-                <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
-            </el-form-item>*@
             <el-form-item label="项目组成员" required="required">
                 <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
                 <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
@@ -108,7 +91,7 @@
                 status: ['在研', '已完成', '终止'],
                 ResponsibleMan: [{ name: '', emplId: '' }],
                 groupPeople: [{ name: '', emplId: '' }],
-                ProjectTypes: ProjectTypes,
+                ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,
                 ruleForm: {
@@ -123,8 +106,7 @@
                     //ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
-                    Time: '',
-                    ProjectType: ProjectTypes[0]
+                    Time: ''
                 }
             }
         },
@@ -160,7 +142,8 @@
                             "CompanyName": this.ruleForm.CompanyName,
                             "Customer": this.ruleForm.Customer,
                             "DeptName": this.ruleForm.DeptName,
-                            "ProjectType": this.ruleForm.ProjectType,
+                            "ProjectType": this.ptypes[0],
+                            "ProjectSmallType": this.ptypes[1],
                             "ResponsibleMan": this.ruleForm.ApplyMan,
                             "ResponsibleManId": this.ruleForm.ApplyManId,
                             "ProjectFileUrl": this.ruleForm.FileUrl
@@ -190,6 +173,10 @@
                         })
                     }
                 })
+            },
+            handleChange(value) {
+                console.log(value)
+                this.ptypes = value
             }
         },
         created: function () {
