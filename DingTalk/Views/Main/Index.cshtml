@@ -27,7 +27,8 @@
                         ApproveCount: 0,
                         MyPostCount: 0,
                         SendMyCount: 0
-                    }
+                    },
+                    userName: DingData.nickName
                 }
             },
             computed: {
@@ -57,6 +58,7 @@
                 this.loadMenuData(DingData.userid)
 
                 window.setInterval(function () {
+                    that.userName = DingData.nickName
                     that.loadMenuData(DingData.userid)
                 }, 5000)
             }

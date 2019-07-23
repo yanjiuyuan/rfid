@@ -1,0 +1,63 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        流程编辑-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="流程名称" prop="name">
+            <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="流程类别">
+            <el-input v-model="ruleForm.sort"></el-input>
+        </el-form-item>
+        <el-form-item label="创建人">
+            <el-input v-model="ruleForm.createMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+            <el-input v-model="ruleForm.remark"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                ruleForm: {
+                    name: '',
+                    sort: '',
+                    createMan: DingData.nickName,
+                    remark: ''
+                },
+                preApprover: false
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                
+            },
+        },
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+
+

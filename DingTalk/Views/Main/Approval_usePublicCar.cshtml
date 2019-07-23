@@ -8,32 +8,32 @@
         <i class="el-icon-arrow-left"></i>
         公车申请审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="驾驶员">
-            <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="同行人">
-            <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="用车事由">
-            <el-input v-model="ruleForm.MainContent" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.MainContent" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
         <el-form-item label="计划行车路线">
-            <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.PlantTravelWay" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
 
         <template v-if="reInput">
             <el-form-item label="实际行车路线" prop="FactTravelWay">
-                <el-input v-model="ruleForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
+                <el-input v-model="tableForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
             </el-form-item>
             <el-form-item label="起始公里数" prop="StartKilometres">
-                <el-input v-model="ruleForm.StartKilometres" :disabled="ifDisabeleEdit"></el-input>
+                <el-input v-model="tableForm.StartKilometres" :disabled="ifDisabeleEdit"></el-input>
             </el-form-item>
             <el-form-item label="结束公里数" prop="EndKilometres">
-                <el-input v-model="ruleForm.EndKilometres" :disabled="ifDisabeleEdit"></el-input>
+                <el-input v-model="tableForm.EndKilometres" :disabled="ifDisabeleEdit"></el-input>
             </el-form-item>
             <el-form-item label="使用公里数">
                 <el-input v-model="UseKilometres" :disabled="true"></el-input>
@@ -42,17 +42,17 @@
 
 
         @*<el-form-item label="起始公里数">
-            <el-input v-model="ruleForm.StartKilometres" :disabled="true"></el-input>
+            <el-input v-model="tableForm.StartKilometres" :disabled="true"></el-input>
         </el-form-item>*@
         <el-form-item label="开始时间">
-            <el-input v-model="ruleForm.StartTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.StartTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="返回时间">
-            <el-input v-model="ruleForm.EndTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="车辆选择" prop="CarId" v-if="NodeId == 2">
-            <el-select v-model="ruleForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
+            <el-select v-model="tableForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
                            :key="item.Id"
                            :label="item.Name + ' - ' + item.CarNumber"
@@ -72,7 +72,7 @@
             <el-input v-model="carName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="意见">
-            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+            <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
 
         <hr />
@@ -80,7 +80,7 @@
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
+            <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="false">退回</el-button>
         </el-form-item>
         <el-form-item label="操作" v-if="index==1 || index==2">
@@ -123,7 +123,7 @@
                 carName: '',
                 reInput: false,
                 ifDisabeleEdit: Index != 0,
-                ruleForm: {
+                tableForm: {
                     
                 },
                 rules: {
@@ -139,7 +139,7 @@
                 console.log('submit!')
                 var that = this
                 let url = '/CarTable/TableModify'
-                var param = _cloneObj(this.ruleForm)
+                var param = _cloneObj(this.tableForm)
                 param.UseKilometres = this.UseKilometres
                 console.log(param)
                 this.$refs[formName].validate((valid) => {
@@ -174,10 +174,10 @@
                         }
                     }
                 }
-                this.ruleForm.CarId = car.Id
-                this.ruleForm.Name = car.Name
-                this.ruleForm.OccupyCarId = car.OccupyCarId
-                this.ruleForm.IsOccupyCar = car.IsOccupyCar
+                this.tableForm.CarId = car.Id
+                this.tableForm.Name = car.Name
+                this.tableForm.OccupyCarId = car.OccupyCarId
+                this.tableForm.IsOccupyCar = car.IsOccupyCar
             },
             printPdf() {
                 var that = this
@@ -195,18 +195,18 @@
                 var that = this
                 this._getData("/CarTable/TableQuary", function (data2) {
                     if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
-                    that.ruleForm = data2[0]
+                    that.tableForm = data2[0]
                     //that.ruleForm['Mark'] = ''
-                    if (NodeId<=2)that.ruleForm['CarId'] = ''
+                    if (NodeId <= 2) that.tableForm['CarId'] = ''
                     var param = {
-                        startTime: that.ruleForm.StartTime,
-                        endTime: that.ruleForm.EndTime
+                        startTime: that.tableForm.StartTime,
+                        endTime: that.tableForm.EndTime
                     }
                     that._getData('/CarMananger/QuaryByTime', function (data) {
                         for (let d of data) {
                             if (d.Id == that.ruleForm.CarId) {
                                 that.carName = d.Name + ' - ' + d.CarNumber
-                                that.ruleForm['Name'] = d.Name
+                                that.tableForm['Name'] = d.Name
                             }
                         }
                         that.carList = data
@@ -221,11 +221,11 @@
         },
         computed: {
             UseKilometres: function () {
-                return this.ruleForm.EndKilometres - this.ruleForm.StartKilometres
+                return this.tableForm.EndKilometres - this.tableForm.StartKilometres
             },
             CarObj: function () {
                 for (let car of this.carList) {
-                    if (car.Id == this.ruleForm.CarId)
+                    if (car.Id == this.tableForm.CarId)
                         return car
                 }
             }

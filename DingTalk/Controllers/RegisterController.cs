@@ -14,5 +14,13 @@ namespace WebZhongZhi.Controllers
             ViewBag.needLogin = false;
             return View();
         }
+        public ActionResult List()
+        {
+            return View();
+        }
+        public ActionResult flowInformation()
+        {
+            return View();
+        }
     }
 }

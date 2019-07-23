@@ -1,0 +1,259 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="margin-top:20px;">
+    <br />
+    <el-collapse v-model="activeNames">
+        <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
+            <template slot="title">
+                <span style="font-size:20px;">{{m.SORT_NAME}}</span>
+            </template>
+            <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url" class="approval-box" v-on:click="toApprove(l.url,l.flowId)" style="cursor:pointer;">
+                <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
+                <p>{{l.flowName}}</p>
+            </div>
+        </el-collapse-item>
+    </el-collapse>
+</el-main>
+
+<script>
+    var x = -54
+    var y = -46
+    var xTap = -90
+    var yTap = -90
+    imgConfig = [
+        {
+            flowId: 1,
+            sortId: 4,
+            url: '/register/flowInformation',
+            position: (x + 4 * xTap) +  'px ' + (y + 0 * yTap) + 'px'
+        },
+        {
+            flowId: 6,
+            sortId: 3,
+            url: '/approval/UploadPaper',
+            position: (x + 7 * xTap) + 'px ' + (y + 2 * yTap) + 'px'
+        },
+        {
+            flowId: 23,
+            sortId: 3,
+            url: '/approval/UploadPaperRe',
+            position: '-144px -47px'
+        },
+        {
+            flowId: 7,
+            sortId: 3,
+            url: '/approval/DownloadPaper',
+            position: '-324px -227px'
+        },
+        {
+            flowId: 33,
+            sortId: 3,
+            url: '/approval/ChangePaper',
+            position: (x + 2 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
+        },
+        {
+            flowId: 8,
+            sortId: 4,
+            url: '/approval/Purchase',
+            position: '-414px -137px'
+        },
+        {
+            flowId: 12,
+            sortId: 4,
+            url: '/approval/AddMaterielCode',
+            position: '-54px -227px'
+        },
+        {
+            flowId: 18,
+            sortId: 4,
+            url: '/approval/officePurchase',
+            position: '-413px -47px'
+        },
+        {
+            flowId: 9,
+            sortId: 5,
+            url: '/approval/FileManager',
+            position: '-774px -227px'
+        },
+        {
+            flowId: 10,
+            sortId: 5,
+            url: '/approval/ProjectManager',
+            position: '-232px -317px'
+        },
+        {
+            flowId: 11,
+            sortId: 5,
+            url: '/approval/AddProject',
+            position: '-594px -227px'
+        },
+        {
+            flowId: 13,
+            sortId: 6,
+            url: '/approval/UsePublicCar',
+            position: '-775px -317px'
+        },
+        {
+            flowId: 14,
+            sortId: 6,
+            url: '/approval/UseCar',
+            position: '-504px -405px'
+        },
+        {
+            flowId: 15,
+            sortId: 6,
+            url: '/approval/CarManager',
+            position: '-144px -227px'
+        },
+        {
+            flowId: 16,
+            sortId: 7,
+            url: '/approval/Vote',
+            position: '-594px -47px'
+        },
+        {
+            flowId: 17,
+            sortId: 7,
+            url: '/approval/WorkOvertime',
+            position: '-323px -47px'
+        },
+        {
+            flowId: 19,
+            sortId: 7,
+            url: '/approval/SendRead',
+            position: '-778px -138px'
+        },
+        {
+            flowId: 20,
+            sortId: 8,
+            url: '/approval/PublishNew',//新闻发布
+            position: '-54px -138px'
+        },
+        {
+            flowId: 21,
+            sortId: 8,
+            url: '/approval/PublishRecruit',//招聘信息发布
+            position: '-778px -138px'
+        },
+        {
+            flowId: 24,
+            sortId: 7,
+            url: '/approval/Gift',//礼品申请
+            position: (x + 0 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
+        },
+        {
+            flowId: 25,
+            sortId: 8,
+            url: '/approval/UploadPic',
+            position: (x + 2 * xTap) + 'px ' + (y + 3 * yTap) + 'px'
+        },
+        {
+            flowId: 26,
+            sortId: 4,
+            url: '/approval/picking',
+            position: (x + 1 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
+        },
+        {
+            flowId: 27,
+            sortId: 4,
+            url: '/approval/intoStorage',
+            position: (x + 3 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
+        },
+        {
+            flowId: 30,
+            sortId: 7,
+            url: '/approval/goOut',
+            position: (x + 1 * xTap) + 'px ' + (y + 3 * yTap) + 'px'
+        },
+        {
+            flowId: 31,
+            sortId: 5,
+            url: '/approval/createProject',
+            position: (x + 8 * xTap -3) + 'px ' + (y + 1 * yTap -3) + 'px'
+        },
+        {
+            flowId: 32,
+            sortId: 7,
+            url: '/approval/crossHelp',
+            position: (x + 6 * xTap) + 'px ' + (y + 3 * yTap) + 'px'
+        }
+        ,
+        {
+            flowId: 34,
+            sortId: 5,
+            url: '/approval/techonologySupply',
+            position: (x + 2 * xTap) + 'px ' + (y + 1 * yTap) + 'px'
+        },
+        {
+            flowId: 35,
+            sortId: 7,
+            url: '/approval/letGoodsGo',
+            position: (x + 8 * xTap -4) + 'px ' + (y + 0 * yTap) + 'px'
+        },
+        {
+            flowId: 36,
+            sortId: 5,
+            url: '/approval/intellectualProperty',
+            position: (x + 2 * xTap) + 'px ' + (y + 2 * yTap) + 'px'
+        },
+        {
+            flowId: 66,
+            sortId: 4,
+            url: '/approval/pickingManager',
+            position: (x + 5 * xTap) + 'px ' + (y + 0 * yTap) + 'px'
+        },
+        {
+            flowId: 67,
+            sortId: 4,
+            url: '/approval/borrowThing',
+            position: (x + 6 * xTap) + 'px ' + (y + 0 * yTap) + 'px'
+        },
+        {
+            flowId: 68,
+            sortId: 4,
+            url: '/approval/maintain',
+            position: (x + 4 * xTap) + 'px ' + (y + 4 * yTap) + 'px'
+        }
+
+    ]
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                activeNames: [1,2,3,4,5],
+                count: 2,
+                name: '',
+                id: '',
+                menu: [],
+                list: [],
+                userList: userList,
+                userName: DingData.nickName
+            }
+        },
+        methods: {
+            getMenu: function () {
+                this.GetData('FlowInfoNew/LoadFlowSort?id=123', (res) => {
+                    this.menu = res
+                    this.GetData('FlowInfoNew/LoadFlowInfo?id=123', (res) => {
+                        this.list = _mergeObjectArr(res, imgConfig, 'flowId')
+                    })
+                })
+            },
+            toApprove: function (url, id) {
+                FlowId = id
+                loadPage(url)
+            },
+            loadPage: function (url) {
+                $("#tempPage").load(url)
+            }
+        },
+        created: function () {
+            this.getMenu()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+</script>
