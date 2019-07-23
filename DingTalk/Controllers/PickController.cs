@@ -740,6 +740,7 @@ namespace DingTalk.Controllers
         /// </summary>
         public string fFullName { get; set; }
 
+
         /// <summary>
         /// 入库数量
         /// </summary>
