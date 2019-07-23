@@ -24,23 +24,27 @@
                     <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            @*<el-form-item label="承担部门">
-                <el-input v-model="ruleForm.DeptName"></el-input>
-            </el-form-item>*@
+
             <el-form-item label="状态" required="required">
                 <el-select v-model="ruleForm.ProjectState">
                     <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="公司名称" required="required">
-                <el-select v-model="ruleForm.CompanyName" style="width:300px;">
-                    <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-                </el-select>
+            @*<el-form-item label="公司名称" required="required">
+            <el-select v-model="ruleForm.CompanyName" style="width:300px;">
+                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>*@
+            <el-form-item label="合作单位">
+                <el-input v-model="ruleForm.Customer"></el-input>
             </el-form-item>
             <el-form-item label="项目类型" required="required">
-                <el-select v-model="ruleForm.ProjectType">
-                    <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
-                </el-select>
+                <div class="block">
+                    <el-cascader v-model="ptypes"
+                                 :options="PTypes"
+                                 :props="{ expandTrigger: 'hover' }"
+                                 v-on:change="handleChange"></el-cascader>
+                </div>
             </el-form-item>
             <el-form-item label="项目负责人" required="required">
                 <span>{{ResponsibleMan[0].name}} &nbsp;</span>
@@ -74,12 +78,12 @@
         mixins: [mixin],
         data: function () {
             return {
-                status: ['在研', '已完成', '终止'],
+                status: ['在研', '已完成', '终止', '暂停'],
                 ResponsibleMan: [{ name: '', emplId: '' }],
                 groupPeople: [{ name: '', emplId: '' }],
                 ProjectTypes: ProjectTypes,
                 DeptNames: DeptNames,
-                CompanyNames: CompanyNames,
+                ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 ruleForm: {
                     inputProjectName: '',
                     inputProjectId: '',
@@ -87,9 +91,7 @@
                     ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
-                    Time: '',
-                    ProjectType: ProjectTypes[0],
-                    CompanyName: CompanyNames[0]
+                    Time: ''
                 }
             }
         },
@@ -123,7 +125,8 @@
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
                             "CompanyName": this.ruleForm.CompanyName,
-                            "ProjectType": this.ruleForm.ProjectType,
+                            "ProjectType": this.ptypes[0],
+                            "ProjectSmallType": this.ptypes[1],
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName
                         }
@@ -161,6 +164,10 @@
                 })
                 
             }
+        },
+        handleChange(value) {
+            console.log(value)
+            this.ptypes = value
         },
         created: function () {
             loadHtml("mainPage", "partPage")
