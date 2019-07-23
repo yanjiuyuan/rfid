@@ -389,8 +389,7 @@ namespace DingTalk.Controllers
                     List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskIdByFlowName("领料申请");
                     List<Tasks> tasksNew = tasks.Where(t => t.NodeId.ToString() == "0").ToList();
                     tasksNew = tasksNew.Where(t =>
-                    (t.ProjectId == projectId) &&
-                    //(projectId == null ? 1 == 1 : t.ProjectId == projectId) &&
+                    (projectId == null ? 1 == 1 : t.ProjectId == projectId) &&
                     // (startTime == null || endTime == null) ? 1 == 1 :
                     (DateTime.Parse(t.ApplyTime) > startTime && DateTime.Parse(t.ApplyTime) < endTime)).ToList(); //过滤审批后的流程
                     List<Roles> roles = context.Roles.Where(r => r.RoleName == "领料管理人员" && r.UserId == applyManId).ToList();
