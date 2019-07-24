@@ -40,6 +40,17 @@
         <el-form-item>
             <el-button type="primary" v-on:click="getProject">搜索</el-button>
             <el-button type="primary" v-on:click="printout">批量导出</el-button>
+            <!--上传表單-->
+            <el-upload class="upload-demo"
+                       action="/drawingupload/UploadAndGetInfo"
+                       :on-success="handleSuccess"
+                       :before-upload="beforeExcelUpload"
+                       multiple
+                       :limit="1"
+                       :file-list="excelList">
+                <el-button size="small" type="primary">批量导入</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            </el-upload>
             <span v-if="superSearch" v-on:click="superSearch = !superSearch" class="clickable-text">关闭高级搜索</span>
             <span v-else v-on:click="superSearch = !superSearch" class="clickable-text">高级搜索</span>
         </el-form-item>
@@ -222,7 +233,16 @@
                 })
             },
             printout() {
-                GetData('ProjectNew/Print?applyManId=' + )
+                GetData('ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
+                    DingTalkPC.device.notification.alert({ message: '获取成功~', title: '提示信息' })
+                })
+            },
+            //上传文件方法
+            handleSuccess(response, file, fileList) {
+                //this.tableData = []
+                console.log(response)
+                console.log(file)
+                DingTalkPC.device.notification.alert({ message: '导入成功~', title: '提示信息' })
             },
             //编辑项目并保存
             editProject(formName) {
