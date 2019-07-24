@@ -655,13 +655,13 @@ namespace DingTalk.Controllers
                     List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
                     if (string.IsNullOrEmpty(key))
                     {
-                        ProjectInfoList = context.ProjectInfo.ToList();
+                        ProjectInfoList = context.ProjectInfo.OrderBy(p => (p.ProjectId.Substring(0, 4) + p.ProjectId.Substring(p.ProjectId.Length - 3, 3))).ToList();
                     }
                     else
                     {
                         ProjectInfoList = context.ProjectInfo.Where(p => p.ApplyMan.Contains(key) ||
                       p.DeptName.Contains(key) || p.ProjectName.Contains(key) ||
-                      p.ProjectId.Contains(key) || p.FilePath.Contains(key)).ToList();
+                      p.ProjectId.Contains(key) || p.FilePath.Contains(key)).OrderBy(p => (p.ProjectId.Substring(0, 4) + p.ProjectId.Substring(p.ProjectId.Length - 3, 3))).ToList();
                     }
 
 

@@ -366,15 +366,15 @@ namespace DingTalk.Controllers
                             }
                             dtReturn.Rows.Add(dr);
                         }
-                        string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/项目数据统计模板.xlsx");
+                        string path = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet/项目数据统计模板.xls");
                         string time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                        string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\项目数据统计" + time + ".xlsx";
+                        string newPath = System.Web.Hosting.HostingEnvironment.MapPath("~/UploadFile/Excel/Templet") + "\\项目数据统计" + time + ".xls";
                         System.IO.File.Copy(path, newPath);
                         if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtReturn, 0, 1))
                         {
                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
                             //上盯盘
-                            var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/项目数据统计" + time + ".xlsx");
+                            var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/项目数据统计" + time + ".xls");
                             //推送用户
                             FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia.ToString());
                             fileSendModel.UserId = applyManId;
