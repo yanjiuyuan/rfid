@@ -243,10 +243,11 @@
                 console.log(response)
                 let param = []
                 for (let r of response[0].Value) {
+                    let ifTrue = r['是否启用'] == ('True' || 'true')? true : false
                     param.push({
                         ProjectName: r['项目名'],
                         CreateTime: r['创建时间'],
-                        IsEnable: r['是否启用'],
+                        IsEnable: ifTrue,
                         ProjectState: r['状态'],
                         DeptName: r['部门'],
                         ApplyMan: r['创建人'],
@@ -257,7 +258,8 @@
                         FilePath: r['项目文件路径'],
                         ResponsibleMan: r['项目负责人'],
                         ResponsibleManId: r['项目负责人Id'],
-                        CompanyName: r['合作单位'],
+                        CompanyName: r['公司名称'],
+                        CooperativeUnit: r['合作单位'],
                         ProjectType: r['项目大类'],
                         ProjectSmallType: r['项目小类'],
                         TeamMembers: r['小组成员'],
