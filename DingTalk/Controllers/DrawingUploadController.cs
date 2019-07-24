@@ -315,10 +315,9 @@ namespace DingTalk.Controllers
         /// 上传Excel并读取数据接口
         /// </summary>
         /// <param name="form"></param>
-        /// <param name="IsExcel2007">是否是新版2007Excel</param>
         /// <returns></returns>
         [HttpPost]
-        public string UploadAndGetInfo(FormCollection form, bool IsExcel2007 = false)
+        public string UploadAndGetInfo(FormCollection form)
         {
             try
             {
@@ -346,7 +345,8 @@ namespace DingTalk.Controllers
                 {
                     //文件大小不为0
                     HttpPostedFileBase files = Request.Files[0];
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
+                    bool IsExcel2007 = System.IO.Path.GetExtension(files.FileName) == ".xls" ? false : true;
+                    string newFileName = IsExcel2007 == false ? DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls" : DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
                     string Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
                     files.SaveAs(Path);
                     return LoadExcel(Path, IsExcel2007);
