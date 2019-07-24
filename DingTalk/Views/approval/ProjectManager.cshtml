@@ -233,7 +233,7 @@
                 })
             },
             printout() {
-                GetData('ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
+                this.GetData('ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
                     DingTalkPC.device.notification.alert({ message: '获取成功~', title: '提示信息' })
                 })
             },
@@ -246,7 +246,7 @@
                     DingTalkPC.device.notification.alert({ message: '导入失败，文件有误~', title: '提示信息' })
                     return
                 }
-                GetData('ProjectNew/AddProjectFile?path=' + response[0].Key, (res) => {
+                this.GetData('ProjectNew/AddProjectFile?path=' + response[0].Key, (res) => {
                     DingTalkPC.device.notification.alert({ message: '导入成功~', title: '提示信息' })
                 })
             },
