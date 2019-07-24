@@ -116,5 +116,10 @@ namespace DingTalk.Models.DingModels
         /// 小组成员Id
         /// </summary>
         public string TeamMembersId { get; set; }
+
+        /// <summary>
+        /// 合作单位(新增)
+        /// </summary>
+        public string CooperativeUnit { get; set; }
     }
 }

@@ -342,7 +342,8 @@ namespace DingTalk.Controllers
                                         p.FilePath,
                                         p.IsEnable,
                                         p.TeamMembers,
-                                        p.TeamMembersId
+                                        p.TeamMembersId,
+                                        p.CooperativeUnit
                                     };
                         DataTable dtReturn = new DataTable();
                         PropertyInfo[] oProps = null;
