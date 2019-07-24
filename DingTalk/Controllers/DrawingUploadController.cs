@@ -346,7 +346,8 @@ namespace DingTalk.Controllers
                 {
                     //文件大小不为0
                     HttpPostedFileBase files = Request.Files[0];
-                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
+
+                    string newFileName = IsExcel2007 == false ? DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls" : DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
                     string Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
                     files.SaveAs(Path);
                     return LoadExcel(Path, IsExcel2007);
