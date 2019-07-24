@@ -471,7 +471,7 @@ var mixin = {
                 return 1
             }
             if (error && error.errorCode != 0) {
-                this.elementAlert('报错信息',error.errorMessage)
+                //this.elementAlert('报错信息',error.errorMessage)
                 return 1
             }
             return 0
