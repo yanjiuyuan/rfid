@@ -343,6 +343,7 @@ var mixin = {
         tableData: [],
         fileList: [],
         pdfList: [],
+        excelList: [],
         mediaList: [],
         specialRoleNames: [],
         ruleForm: {},
