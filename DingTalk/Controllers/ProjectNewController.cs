@@ -304,6 +304,7 @@ namespace DingTalk.Controllers
             }
         }
 
+
         /// <summary>
         /// 导出所有项目数据Excel
         /// </summary>
@@ -342,7 +343,8 @@ namespace DingTalk.Controllers
                                         p.FilePath,
                                         p.IsEnable,
                                         p.TeamMembers,
-                                        p.TeamMembersId
+                                        p.TeamMembersId,
+                                        p.CooperativeUnit
                                     };
                         DataTable dtReturn = new DataTable();
                         PropertyInfo[] oProps = null;
