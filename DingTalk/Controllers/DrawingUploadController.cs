@@ -129,7 +129,7 @@ namespace DingTalk.Controllers
                                 break;
                         }
 
-                        if (IsUseCar==true)
+                        if (IsUseCar == true)
                         {
 
                             if (Directory.Exists(Server.MapPath(@"~\UploadFile\Images\用车申请")) == false)//如果不存在就创建file文件夹
@@ -315,9 +315,10 @@ namespace DingTalk.Controllers
         /// 上传Excel并读取数据接口
         /// </summary>
         /// <param name="form"></param>
+        /// <param name="IsExcel2007">是否是新版2007Excel</param>
         /// <returns></returns>
         [HttpPost]
-        public string UploadAndGetInfo(FormCollection form)
+        public string UploadAndGetInfo(FormCollection form, bool IsExcel2007 = false)
         {
             try
             {
@@ -348,7 +349,7 @@ namespace DingTalk.Controllers
                     string newFileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";
                     string Path = Server.MapPath(@"~\UploadFile\Excel\" + newFileName);
                     files.SaveAs(Path);
-                    return LoadExcel(Path);
+                    return LoadExcel(Path, IsExcel2007);
                     //    JsonConvert.SerializeObject(new ErrorModel
                     //{
                     //    errorCode = 0,
@@ -374,18 +375,26 @@ namespace DingTalk.Controllers
         /// <summary>
         /// Excel读取
         /// </summary>
-        /// <param name="Path">Excel路径</param>
+        /// <param name="Path"></param>
+        /// <param name="IsExcel2007"></param>
         /// <returns></returns>
-        /// 测试数据/DrawingUpload/LoadExcel?path=C:\\Users\\tong\\Source\\Repos\\DingTalk\\DingTalk\\UploadFile\\Excel\\20180408163044.xlsx
         [HttpGet]
-        public string LoadExcel(string Path)
+        public string LoadExcel(string Path, bool IsExcel2007)
         {
             if (Path == null)  //测试暂用
             {
                 Path = "C:\\Users\\tong\\Source\\Repos\\DingTalk\\DingTalk\\UploadFile\\Excel\\BOM表提交模板.xls";
             }
 
-            DataTable db = ExcelHelperByNPOI.ImportExcel2003toDt(Path);
+            DataTable db = new DataTable();
+            if (!IsExcel2007)
+            {
+                db = ExcelHelperByNPOI.ImportExcel2003toDt(Path);
+            }
+            else
+            {
+                db = ExcelHelperByNPOI.ImportExcel2007toDt(Path);
+            }
             Dictionary<string, DataTable> dic = new Dictionary<string, DataTable>();
             dic.Add(Path, db);
             return JsonConvert.SerializeObject(dic.ToArray());
