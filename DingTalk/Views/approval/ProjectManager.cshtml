@@ -242,7 +242,13 @@
                 //this.tableData = []
                 console.log(response)
                 console.log(file)
-                DingTalkPC.device.notification.alert({ message: '导入成功~', title: '提示信息' })
+                if (!response[0].Key) {
+                    DingTalkPC.device.notification.alert({ message: '导入失败，文件有误~', title: '提示信息' })
+                    return
+                }
+                GetData('ProjectNew/AddProjectFile?path=' + response[0].Key, (res) => {
+                    DingTalkPC.device.notification.alert({ message: '导入成功~', title: '提示信息' })
+                })
             },
             //编辑项目并保存
             editProject(formName) {
