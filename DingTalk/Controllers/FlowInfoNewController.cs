@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -303,7 +304,7 @@ namespace DingTalk.Controllers
 
                 if (taskList.Count > 1)  //如果有选人
                 {
-                    if (taskList[0].Id == 0 )
+                    if (taskList[0].Id == 0)
                     {
                         return new NewErrorModel()
                         {
@@ -411,7 +412,7 @@ namespace DingTalk.Controllers
                             await SendOaMsgNew(taskNew.FlowId, taskNew.ApplyManId.ToString(), tasks.TaskId.ToString(),
                                        taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
                                        taskNew.NodeId.ToString(),
-                                       false, false,true);
+                                       false, false, true);
                             Thread.Sleep(100);
 
 
@@ -1229,13 +1230,14 @@ namespace DingTalk.Controllers
         /// <param name="ApplyManId">用户名Id</param>
         /// <param name="IsSupportMobile">是否是手机端调用接口(默认 false)</param>
         /// <param name="Key">关键字模糊查询(流水号、标题、申请人、流程类型)</param>
+        /// <param name="pageIndex">页码(默认3页)</param>
+        /// <param name="pageSize">页容量(默认每页5条)</param>
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         [HttpGet]
         [Route("GetFlowStateDetail")]
         public NewErrorModel GetFlowStateDetail(int Index,
             string ApplyManId, bool IsSupportMobile = false,
-
-            string Key = "")
+            string Key = "", int pageIndex = 3, int pageSize = 5)
         {
             try
             {
@@ -1246,8 +1248,9 @@ namespace DingTalk.Controllers
                     {
                         case 0:
                             //待审批的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
-
+                            ListTasks = context.Tasks.
+                            Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
+                            .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                             return new NewErrorModel()
                             {
                                 data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
@@ -1255,7 +1258,8 @@ namespace DingTalk.Controllers
                             };
                         case 1:
                             //我已审批
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
+                                .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
                             return new NewErrorModel()
                             {
@@ -1264,7 +1268,9 @@ namespace DingTalk.Controllers
                             };
                         case 2:
                             //我发起的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
+                                .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+
                             return new NewErrorModel()
                             {
                                 data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
@@ -1272,7 +1278,9 @@ namespace DingTalk.Controllers
                             };
                         case 3:
                             //抄送我的
-                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true).OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList();
+                            ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
+                                .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+
                             return new NewErrorModel()
                             {
                                 data = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key),
