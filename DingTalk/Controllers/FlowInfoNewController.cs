@@ -1237,7 +1237,7 @@ namespace DingTalk.Controllers
         [Route("GetFlowStateDetail")]
         public NewErrorModel GetFlowStateDetail(int Index,
             string ApplyManId, bool IsSupportMobile = false,
-            string Key = "", int pageIndex = 1, int pageSize = 5)
+            string Key = "", int pageIndex = 1, int pageSize = 99)
         {
             try
             {
