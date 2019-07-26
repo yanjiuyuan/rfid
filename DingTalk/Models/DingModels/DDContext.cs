@@ -80,7 +80,10 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Borrow> Borrow { get; set; }
 
         public virtual DbSet<Maintain> Maintain { get; set; }
+
+        public virtual DbSet<TasksQuery> TasksQuery { get; set; }
         
+
 
     }
 }

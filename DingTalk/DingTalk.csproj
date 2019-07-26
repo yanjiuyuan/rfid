@@ -411,6 +411,7 @@
     <Compile Include="HttpsClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Models\DingModels\TasksQuery.cs" />
     <Compile Include="Models\ServerModels\AccessTokenResponseModel.cs" />
     <Compile Include="Models\ServerModels\AddRepartmentModel.cs" />
     <Compile Include="Models\ServerModels\AddUserRequestModel.cs" />
