@@ -245,6 +245,15 @@ namespace DingTalk.Controllers
                     {
                         foreach (var projectInfo in projectInfos)
                         {
+                            if (string.IsNullOrEmpty(projectInfo.CompanyName) || string.IsNullOrEmpty(projectInfo.ProjectType)
+                                || string.IsNullOrEmpty(projectInfo.ProjectSmallType) || string.IsNullOrEmpty(projectInfo.ProjectName) || string.IsNullOrEmpty(projectInfo.ProjectId))
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, string.Format("项目数据不完整 {0}", projectInfo.ProjectId), "") { },
+                                };
+                            }
+
                             ProjectInfo pi = context.ProjectInfo.SingleOrDefault(u => u.ProjectId == projectInfo.ProjectId);
                             if (pi != null)
                             {
@@ -255,14 +264,7 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
-                                if (string.IsNullOrEmpty(projectInfo.CompanyName) || string.IsNullOrEmpty(projectInfo.ProjectType) 
-                                 || string.IsNullOrEmpty(projectInfo.ProjectSmallType) || string.IsNullOrEmpty(projectInfo.ProjectName))
-                                {
-                                    return new NewErrorModel()
-                                    {
-                                        error = new Error(1, string.Format("项目数据不完整", pi.ProjectId), "") { },
-                                    };
-                                }
+
                                 //建立项目文件夹及其子文件
                                 string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}\\{3}\\",
                                     projectInfo.CompanyName, projectInfo.ProjectType, projectInfo.ProjectSmallType, projectInfo.ProjectName);
@@ -303,6 +305,7 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
 
 
         /// <summary>
