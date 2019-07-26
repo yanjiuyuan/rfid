@@ -33,9 +33,9 @@
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
-                           :label="item.ProjectName"
+                           :label="item.ProjectId + '-' + item.ProjectName"
                            :value="item.ProjectId">
-                    <span style="float: left">{{ item.ProjectName }} -编号: {{item.ProjectId}}</span>
+                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
