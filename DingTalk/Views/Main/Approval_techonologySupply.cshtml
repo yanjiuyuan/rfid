@@ -224,7 +224,6 @@
                                 "ProjectFileUrl": this.ruleForm.FileUrl
                             }
                             console.log(param2)
-                            return
                             this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                                 this.PostData('ProjectNew/AddProject', [param2], (res) => {
                                     this.aggreSubmit(param)
