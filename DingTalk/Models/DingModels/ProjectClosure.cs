@@ -65,9 +65,15 @@
         /// 实际周期
         /// </summary>
         [StringLength(200)]
-        public string ActualCycle { get; set; }
+        public string ActualCycleStart { get; set; }
 
+        /// <summary>
+        /// 实际周期
+        /// </summary>
+        [StringLength(200)]
+        public string ActualCycleEnd { get; set; }
         
+
 
         /// <summary>
         /// 是否横向
