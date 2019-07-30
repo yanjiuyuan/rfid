@@ -38,7 +38,6 @@ namespace DingTalk.Controllers
                 EFHelper<TechnicalSupport> eFHelper = new EFHelper<TechnicalSupport>();
                 technicalSupport.CompanyName = "泉州华中科技大学智能制造研究院";
                 technicalSupport.ProjectState = "在研";
-                technicalSupport.ProjectType = "测试项目";
                 eFHelper.Add(technicalSupport);
 
                 return new NewErrorModel()
