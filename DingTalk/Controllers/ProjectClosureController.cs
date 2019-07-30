@@ -41,6 +41,10 @@ namespace DingTalk.Controllers
                     {
                         dDContext.ProjectFunding.AddRange(projectClosureModel.projectFundingList);
                     }
+                    if (projectClosureModel.longitudinalProject.Count > 0)
+                    {
+                        dDContext.LongitudinalProject.AddRange(projectClosureModel.longitudinalProject);
+                    }
                     dDContext.ProjectClosure.Add(projectClosureModel.projectClosure);
                     dDContext.SaveChanges();
                 }
@@ -76,10 +80,13 @@ namespace DingTalk.Controllers
                 List<DetailedList> detailedLists = dDContext.DetailedList.Where(d => d.TaskId == taskId).ToList();
                 List<ApplicationUnit> applicationUnitList = dDContext.ApplicationUnit.Where(d => d.TaskId == taskId).ToList();
                 List<ProjectFunding> projectFundingList = dDContext.ProjectFunding.Where(d => d.TaskId == taskId).ToList();
+                List<LongitudinalProject> longitudinalProjects= dDContext.LongitudinalProject.Where(d => d.TaskId == taskId).ToList();
+
                 projectClosureModel.projectClosure = projectClosure;
                 projectClosureModel.detailedLists = detailedLists;
                 projectClosureModel.applicationUnitList = applicationUnitList;
                 projectClosureModel.projectFundingList = projectFundingList;
+                projectClosureModel.longitudinalProject = longitudinalProjects;
                 return new NewErrorModel()
                 {
                     data = projectClosureModel,
@@ -122,6 +129,10 @@ namespace DingTalk.Controllers
                 {
                     dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
                 });
+                projectClosureModel.longitudinalProject.ToList().ForEach(d =>
+                {
+                    dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
+                });
                 dDContext.SaveChanges();
                 
                 return new NewErrorModel()
@@ -158,5 +169,11 @@ namespace DingTalk.Controllers
         /// 项目经费使用情况
         /// </summary>
         public List<ProjectFunding> projectFundingList { get; set; }
+
+        /// <summary>
+        /// 纵向项目基本情况表
+        /// </summary>
+        public List<LongitudinalProject> longitudinalProject { get; set; }
+        
     }
 }

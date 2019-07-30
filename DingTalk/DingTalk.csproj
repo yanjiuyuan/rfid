@@ -414,6 +414,7 @@
     </Compile>
     <Compile Include="Models\DingModels\ApplicationUnit.cs" />
     <Compile Include="Models\DingModels\DetailedList.cs" />
+    <Compile Include="Models\DingModels\LongitudinalProject.cs" />
     <Compile Include="Models\DingModels\ProjectClosure.cs" />
     <Compile Include="Models\DingModels\ProjectFunding.cs" />
     <Compile Include="Models\DingModels\TasksQuery.cs" />
