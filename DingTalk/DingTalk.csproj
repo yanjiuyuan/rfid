@@ -375,6 +375,7 @@
     <Compile Include="Controllers\OverTimeTableController.cs" />
     <Compile Include="Controllers\PickController.cs" />
     <Compile Include="Controllers\PicManagerController.cs" />
+    <Compile Include="Controllers\ProjectClosureController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\ProjectNewController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
@@ -411,6 +412,10 @@
     <Compile Include="HttpsClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Models\DingModels\ApplicationUnit.cs" />
+    <Compile Include="Models\DingModels\DetailedList.cs" />
+    <Compile Include="Models\DingModels\ProjectClosure.cs" />
+    <Compile Include="Models\DingModels\ProjectFunding.cs" />
     <Compile Include="Models\DingModels\TasksQuery.cs" />
     <Compile Include="Models\ServerModels\AccessTokenResponseModel.cs" />
     <Compile Include="Models\ServerModels\AddRepartmentModel.cs" />

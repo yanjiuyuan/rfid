@@ -82,8 +82,11 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<Maintain> Maintain { get; set; }
 
         public virtual DbSet<TasksQuery> TasksQuery { get; set; }
-        
 
+        public virtual DbSet<ProjectFunding> ProjectFunding { get; set; }
+        public virtual DbSet<ApplicationUnit> ApplicationUnit { get; set; }
+        public virtual DbSet<DetailedList> DetailedList { get; set; }
+        public virtual DbSet<ProjectClosure> ProjectClosure { get; set; }
 
     }
 }
