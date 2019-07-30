@@ -1,0 +1,134 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        知识产权申请-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请名称" prop="Name">
+            <el-input v-model="ruleForm.Name" style="width:550px;"></el-input>
+        </el-form-item>
+        <el-form-item label="申请类别" prop="Type">
+            <el-select v-model="ruleForm.Type" style="width:300px;">
+                <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectId + '-' + item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="申请发明人" prop="Inventor">
+            <el-input v-model="ruleForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+        </el-form-item>
+
+        <hr />
+        <el-form-item label="建议" prop="remark">
+            <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
+        </el-form-item>
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                nodeList: [],
+                nodeInfo: {},
+                addPeopleNodes: [2,5], //额外添加审批人节点数组
+                ruleForm: {
+                    Title: "结题申请",
+                    ApplyMan: DingData.nickName,
+                    ApplyManId: DingData.userid,
+
+                    ProjectId: '',
+                    ProjectType : '',
+                    ResponsibleMan : '',
+                    TeamMembers : '',
+                    TeamMembersId : '',
+                    StartTime: '',
+                    EndTime: '',
+
+                    IsTransverse : false,
+                    ContractAmount : '',
+                    ContractNo : '',
+                    ActualMoney: '',
+
+                    IsPortrait : false,
+                    ContractAmount: '',
+                    ContractNo: '',
+                    ActualMoney: '',
+                },
+                rules: {
+                    Company: { required: true, message: '申报单位不能为空', trigger: 'blur' },
+                    Name: { required: true, message: '申请名称不能为空', trigger: 'blur' },
+                    Type: { required: true, message: '申请类别不能为空', trigger: 'blur' },
+                    Inventor: { required: true, message: '申请发明人不能为空', trigger: 'blur' },
+                    ProjectId: { required: true, message: '项目不能为空', trigger: 'blur' }
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                //设置项目名
+                for (let p of this.projectList) {
+                    if (p.ProjectId == this.ruleForm.ProjectId) {
+                        this.ruleForm['Project'] = p.ProjectName
+                    }
+                }
+                //根据类型添加审批人
+                this.ruleForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
+                let callBack = (taskId) => {
+                    this.ruleForm['TaskId'] = taskId
+                    this.PostData('IntellectualProperty/Save', this.ruleForm, () => {
+                        this.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    })
+                }
+                this.approvalSubmit(formName, {
+                    Title: this.ruleForm.Title,
+                    Remark: this.ruleForm.remark
+                }, callBack)
+            },
+        },
+        created: function () {
+            this.getNodeInfo()
+            this.getApproInfo()
+            this.getProjects()
+            loadHtml("mainPage", "partPage")
+        },
+
+    })
+</script>
+
+
+

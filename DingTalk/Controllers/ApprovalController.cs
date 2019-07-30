@@ -145,5 +145,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult ProjectClosure()
+        {
+            return View();
+        }
     }
 }
