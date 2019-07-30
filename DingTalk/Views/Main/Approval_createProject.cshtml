@@ -143,28 +143,12 @@
                             that.aggreSubmit(aggreParam)
                             return
                         }
-                        $.ajax({
-                            url: "/Project/AddProject?IsPower=true",
-                            type: "POST",
-                            dataType: "json",
-                            data: JSON.stringify(that.form),
-                            success: function (data) {
-                                console.log("添加项目")
-                                console.log(data)
-                                if (data.errorCode == 0) {
-                                    that.aggreSubmit(aggreParam)
-                                } else {
-                                    that.$alert(data.errorMessage, '提示信息', {
-                                        confirmButtonText: '确定'
-                                    })
-                                }
-                                
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                console.log(XMLHttpRequest.status);
-                            }
+                        this.form['CooperativeUnit'] = this.form.Customer
+                        this.form.ApplyMan = this.nodeInfo.NodePeople
+                        this.form.ApplyManId = this.nodeInfo.PeopleId
+                        this.PostData('ProjectNew/AddProject', [this.form], (res) => {
+                            this.aggreSubmit(aggreParam)
                         })
-
                     })
                 } else {
                     this.aggreSubmit(aggreParam)

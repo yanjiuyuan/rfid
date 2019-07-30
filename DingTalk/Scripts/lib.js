@@ -571,6 +571,7 @@ var mixin = {
                             }
                         }
                     }
+                    console.log(paramArr)
                     that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
                         callBack(res)
                     })
