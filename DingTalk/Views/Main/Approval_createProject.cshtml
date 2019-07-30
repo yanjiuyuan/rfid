@@ -143,6 +143,9 @@
                             that.aggreSubmit(aggreParam)
                             return
                         }
+                        this.form['CooperativeUnit'] = this.form.Customer
+                        this.form.ApplyMan = this.nodeInfo.NodePeople
+                        this.form.ApplyManId = this.nodeInfo.PeopleId
                         this.PostData('ProjectNew/AddProject', [this.form], (res) => {
                             this.aggreSubmit(aggreParam)
                         })

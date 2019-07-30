@@ -27,8 +27,11 @@
         <el-form-item label="其他工程师">
             <el-input v-model="tableForm.OtherEngineers" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称">
+        <el-form-item label="合作单位">
             <el-input v-model="tableForm.Customer" style="width:300px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目大类">
+            <el-input v-model="tableForm.ProjectType" style="width:100px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="紧急程度">
             <el-input v-model="tableForm.EmergencyLevel" style="width:100px;" :disabled="true"></el-input>
@@ -195,9 +198,42 @@
                                 "OldFileUrl": this.ruleForm.OldFileUrl,
                             }
                         }
+                        
                         if (NodeId == 4) {
                             this.tableForm['IsCreateProject'] = true
+                            var param2 = {
+                                "CreateTime": _getTime(),
+                                "IsEnable": true,
+                                "ProjectState": '在研',
+                                "IsFinish": false,
+                                "ApplyMan": this.nodeInfo.NodePeople,
+                                "ApplyManId": this.nodeInfo.PeopleId,
+                                "StartTime": this.tableForm.StartTime,
+                                "EndTime": this.tableForm.EndTime,
+                                "TeamMembers": this.tableForm.TeamMembers,
+                                "TeamMembersId": this.tableForm.TeamMembersId,
+                                "ProjectName": this.tableForm.ProjectName,
+                                "ProjectId": this.tableForm.ProjectNo,
+                                "CompanyName": this.tableForm.CompanyName,
+                                "CooperativeUnit": this.tableForm.Customer,
+                                "DeptName": this.tableForm.DeptName,
+                                "ProjectType": this.tableForm.ProjectType,
+                                "ProjectSmallType": '测试',
+                                "ResponsibleMan": this.tableForm.ResponsibleMan,
+                                "ResponsibleManId": this.tableForm.ResponsibleManId,
+                                "ProjectFileUrl": this.ruleForm.FileUrl
+                            }
+                            console.log(param2)
+                            return
+                            this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
+                                this.PostData('ProjectNew/AddProject', [param2], (res) => {
+                                    this.aggreSubmit(param)
+                                })
+                            })
+                            return
                         }
+                        console.log(param)
+                        //return
                         this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                             this.aggreSubmit(param)
                         })
