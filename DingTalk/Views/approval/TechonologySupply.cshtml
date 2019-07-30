@@ -33,11 +33,11 @@
         <el-form-item label="合作单位" prop="Customer">
             <el-input v-model="ruleForm.Customer" style="width:400px;"></el-input>
         </el-form-item>
-        <el-form-item label="项目大类">
+        @*<el-form-item label="项目大类">
             <el-select v-model="ruleForm.ProjectType" style="width:300px;">
                 <el-option v-for="s of ['研发类','产品类','教育类']" :label="s" :value="s" key="s"></el-option>
             </el-select>
-        </el-form-item>
+        </el-form-item>*@
         <el-form-item label="紧急程度">
             <el-select v-model="ruleForm.EmergencyLevel" style="width:300px;">
                 <el-option v-for="s of ['高','中','低']" :label="s" :value="s" key="s"></el-option>
@@ -101,7 +101,7 @@
                     OtherEngineers: "",
                     OtherEngineersId: "",
                     Customer: "",
-                    ProjectType: "研发类",
+                    ProjectType: "测试类",
                     EmergencyLevel : "中",
                     TimeRequired: "",
                     ProjectOverview: "",
