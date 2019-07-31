@@ -487,7 +487,7 @@ var mixin = {
                     if (that.doWithErrcode(res.error)) {
                         return
                     }
-                    succe(res.data)
+                    res.count ?succe(res.data, res.count):succe(res.data)
                 },
                 error: function (err) {
                     console.error(url)
@@ -729,6 +729,7 @@ var mixin = {
         },
         
         //翻頁相關事件
+        //获取全部方法
         getData() {
             var start = this.pageSize * (this.currentPage - 1)
             this.tableData = this.data.slice(start, start + this.pageSize)
@@ -741,6 +742,16 @@ var mixin = {
         handleCurrentChange: function (val) {
             this.currentPage = val
             this.getData()
+        },
+        //分页获取方法
+        handleSizeChange2: function (val) {
+            this.currentPage = 1
+            this.pageSize = val
+            this.getData2()
+        },
+        handleCurrentChange2: function (val) {
+            this.currentPage = val
+            this.getData2()
         },
         //下拉框选择项目
         selectProject(id) {
@@ -1262,7 +1273,7 @@ function GetData(url, succe, demo) {
             if (doWithErrcode(res.error,demo)) {
                 return
             }
-            succe(res.data)
+            res.count ? succe(res.data, res.count) : succe(res.data)
         },
         error: function (err) {
             console.error(url)
