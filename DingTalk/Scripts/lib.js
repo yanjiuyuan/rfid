@@ -692,7 +692,7 @@ var mixin = {
                 param[o] = option[o]
             }
             this.PostData("/FlowInfoNew/FlowBack", param, (res) => {
-                this.$alert('审批成功', '操作成功', {
+                this.$alert('操作成功', '提示', {
                     confirmButtonText: '确定',
                     callback: action => {
                         loadPage('/main/Approval_list')
@@ -719,15 +719,22 @@ var mixin = {
                 imageList: this.imageList,
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
-                items: items
+                ruleForm: this.tableForm
             }
+            //if(items) ReApprovalTempData['items'] = items
             for (let img of imgConfig) {
                 if (img.flowId == FlowId) {
                     loadPage(img.url)
                 }
             }
         },
-        
+        //加载重新发起审批传递的数据
+        loadReApprovalData() {
+            if (!ReApprovalTempData.valid) return
+            this.ruleForm = ReApprovalTempData.ruleForm
+            ReApprovalTempData.valid = false
+            this.purchaseList = ReApprovalTempData.data
+        },
         //翻頁相關事件
         //获取全部方法
         getData() {
@@ -856,6 +863,7 @@ var mixin = {
                 NodeId = res[0].NodeId
                 this.preApprove = !res[0].IsNeedChose
             })
+            this.loadReApprovalData()
         },
         //审批所有流程通过，后续处理
         doneSubmit(text) {
