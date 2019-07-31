@@ -1244,27 +1244,36 @@ namespace DingTalk.Controllers
                 List<int?> ListTasks = new List<int?>();
                 List<TaskFlowModel> TaskFlowModelList = new List<TaskFlowModel>();
                 DDContext context = new DDContext();
-                
+
+                int count = 0;
                 if (Index == 0)
                 {
+                    count= context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
+                    .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count();
                     //待审批的
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
                     .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 if (Index == 1)
                 {
+                    count= context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
+                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
                     //我已审批
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();  
                 }
                 if (Index == 2)
                 {
+                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
+                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
                     //我发起的
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();  
                 }
                 if (Index == 3)
                 {
+                    count= context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
+                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
                     //抄送我的
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
@@ -1272,7 +1281,7 @@ namespace DingTalk.Controllers
                 TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key);
                 return new NewErrorModel()
                 {
-                    count = TaskFlowModelList.Count,
+                    count = count,
                     data = TaskFlowModelList,
                     error = new Error(0, "读取成功！", "") { },
                 };
