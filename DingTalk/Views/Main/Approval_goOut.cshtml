@@ -8,31 +8,31 @@
         <i class="el-icon-arrow-left"></i>
         外出申请审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="form" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+    <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="同行人">
-            <el-input v-model="form.EvectionMan" style="width:500px;" :disabled="true"></el-input>
-            <el-input v-model="form.EvectionManId" style="display:none;"></el-input>
+            <el-input v-model="tableForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EvectionManId" style="display:none;"></el-input>
         </el-form-item>
         <hr />
         <el-form-item label="外出地点">
-            <el-input v-model="form.Place" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.Place" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="外出事由">
-            <el-input v-model="form.Content" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.Content" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="开始时间">
-            <el-input v-model="form.BeginTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.BeginTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="返回时间">
-            <el-input v-model="form.EndTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="时长/小时">
-            <el-input v-model="form.Duration" :disabled="true"></el-input>
+            <el-input v-model="tableForm.Duration" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
@@ -67,6 +67,11 @@
             <el-button v-if="NodeId != 2" type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
@@ -102,7 +107,7 @@
                 nodeList: [],
                 state: State,
                 nodeInfo: {},
-                form: {
+                tableForm: {
 
                 },
                 dialogVisible: false,
@@ -120,7 +125,7 @@
             },
             getTable() {
                 this.GetData('/Evection/Read' + _formatQueryStr({ TaskId: TaskId }), (res)=> {
-                    this.form = res
+                    this.tableForm = res
                 })
             },
             printPdf() {

@@ -83,6 +83,11 @@
             <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="false">退回</el-button>
         </el-form-item>
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
         <el-form-item label="操作" v-if="index==1 || index==2">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
