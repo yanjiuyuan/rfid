@@ -8,54 +8,54 @@
         <i class="el-icon-arrow-left"></i>
         立项申请审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="form" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+    <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="申请人">
-            <el-input v-model="form.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-            <el-input v-model="form.ApplyManId" style="display:none;"></el-input>
-            <el-input v-model="form.CreateMan" style="display:none;"></el-input>
-            <el-input v-model="form.CreateManId" style="display:none;"></el-input>
+            <el-input v-model="tableForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ApplyManId" style="display:none;"></el-input>
+            <el-input v-model="tableForm.CreateMan" style="display:none;"></el-input>
+            <el-input v-model="tableForm.CreateManId" style="display:none;"></el-input>
         </el-form-item>
 
         <el-form-item label="项目名称">
-            <el-input v-model="form.ProjectName" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectName" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目编号" v-if="NodeId >= 3" prop="ProjectId">
-            <el-input v-if="NodeId==3" v-model="form.ProjectId" style="width:550px;"></el-input>
-            <el-input v-else v-model="form.ProjectId" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-if="NodeId==3" v-model="tableForm.ProjectId" style="width:550px;"></el-input>
+            <el-input v-else v-model="tableForm.ProjectId" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="合作单位">
-            <el-input v-model="form.Customer" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.Customer" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="部门名称">
-            <el-input v-model="form.DeptName" style="width:550px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.DeptName" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="负责人">
-            <el-input v-model="form.ResponsibleMan" style="width:500px;" :disabled="true"></el-input>
-            <el-input v-model="form.ResponsibleManId" style="display:none;"></el-input>
+            <el-input v-model="tableForm.ResponsibleMan" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ResponsibleManId" style="display:none;"></el-input>
         </el-form-item>
         <el-form-item label="团队成员">
-            <el-input v-model="form.TeamMembers" style="width:500px;" :disabled="true"></el-input>
-            <el-input v-model="form.TeamMembersId" style="display:none;"></el-input>
+            <el-input v-model="tableForm.TeamMembers" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.TeamMembersId" style="display:none;"></el-input>
         </el-form-item>
         <el-form-item label="项目大类">
-            <el-input v-model="form.ProjectType" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectType" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目小类">
-            <el-input v-model="form.ProjectSmallType" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectSmallType" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="创建时间">
-            <el-input v-model="form.CreateTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.CreateTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="开始时间">
-            <el-input v-model="form.StartTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.StartTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="结束时间">
-            <el-input v-model="form.EndTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="是否评审" v-if="NodeId >= 2">
-            <el-radio :disabled="NodeId >2" v-model="form.IsReview" :label="true">是</el-radio>
-            <el-radio :disabled="NodeId >2" v-model="form.IsReview" :label="false">否</el-radio>
+            <el-radio :disabled="NodeId >2" v-model="tableForm.IsReview" :label="true">是</el-radio>
+            <el-radio :disabled="NodeId >2" v-model="tableForm.IsReview" :label="false">否</el-radio>
         </el-form-item>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="立项文件">
@@ -78,6 +78,11 @@
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk">退回</el-button>
         </el-form-item>
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
@@ -114,7 +119,7 @@
                 state: State,
                 nodeList: [],
                 nodeInfo: {},
-                form: {
+                tableForm: {
 
                 },
                 dialogVisible: false,
@@ -138,15 +143,15 @@
                         return
                     }
                     //if (NodeId == 1) this.nodeList[5].AddPeople = this.copyMans
-                    this.PostData('CreateProject/Modify', this.form, (res) => {
+                    this.PostData('CreateProject/Modify', this.tableForm, (res) => {
                         if (NodeId != 3) {
                             that.aggreSubmit(aggreParam)
                             return
                         }
-                        this.form['CooperativeUnit'] = this.form.Customer
-                        this.form.ApplyMan = this.nodeInfo.NodePeople
-                        this.form.ApplyManId = this.nodeInfo.PeopleId
-                        this.PostData('ProjectNew/AddProject', [this.form], (res) => {
+                        this.tableForm['CooperativeUnit'] = this.tableForm.Customer
+                        this.tableForm.ApplyMan = this.nodeInfo.NodePeople
+                        this.tableForm.ApplyManId = this.nodeInfo.PeopleId
+                        this.PostData('ProjectNew/AddProject', [this.tableForm], (res) => {
                             this.aggreSubmit(aggreParam)
                         })
                     })
@@ -163,7 +168,7 @@
             getTable() {
                 this.GetData('/CreateProject/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {
                     if (!res.IsReview && res.IsReview != false) res.IsReview = true
-                    this.form = res
+                    this.tableForm = res
                 })
             },
 
