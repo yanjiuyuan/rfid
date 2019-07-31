@@ -30,8 +30,8 @@
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
-        <el-pagination v-on:size-change="handleSizeChange"
-                       v-on:current-change="handleCurrentChange"
+        <el-pagination v-on:size-change="handleSizeChange2"
+                       v-on:current-change="handleCurrentChange2"
                        :current-page="currentPage"
                        :page-sizes="[1, 3, 5, 10]"
                        :page-size="5"
@@ -56,6 +56,7 @@
                 totalRows: 0,
                 superSearch: false,
                 Index: UrlObj.Index,
+                bomUrl:'',
                 searchForm: {
                     keyword: '',
                 },
@@ -73,23 +74,41 @@
             //搜索列表
             searchCode() {
                 if (!this.searchForm.keyword) return
-                this.getApproveList(this.searchForm.keyword)
+                this.getData2(this.searchForm.keyword)
             },
             //获取审批列表
-            getApproveList(keyword) {
+            //getApproveList(keyword) {
+            //    let param = {
+            //        Index: Index,
+            //        ApplyManId: DingData.userid
+            //    }
+                
+            //    if (keyword) param['Key'] = keyword
+            //    let url = 'FlowInfoNew/GetFlowStateDetail' + _formatQueryStr(param)
+            //    this.GetData(url, res => {
+            //        this.showLoading = false
+            //        this.data = res
+            //        this.getData()
+            //        this.totalRows = res.length
+            //    })
+            //},
+            getData2(keyword) {
                 let param = {
                     Index: Index,
-                    ApplyManId: DingData.userid
+                    ApplyManId: DingData.userid,
+                    pageIndex: this.currentPage,
+                    pageSize: this.pageSize
                 }
-                
                 if (keyword) param['Key'] = keyword
-                let url = 'FlowInfoNew/GetFlowStateDetail' + _formatQueryStr(param)
-                this.GetData(url, res => {
+                this.GetData('FlowInfoNew/GetFlowStateDetail' + _formatQueryStr(param), (res,count) => {
+                    console.log(res)
                     this.showLoading = false
-                    this.data = res
-                    this.getData()
-                    this.totalRows = res.length
+                    this.tableData = res
+                    this.totalRows = count
                 })
+
+                //var start = this.pageSize * (this.currentPage - 1)
+                //this.tableData = this.data.slice(start, start + this.pageSize)
             },
             //表单操作
             handleEdit(index, row) {
@@ -202,7 +221,7 @@
             console.log('UrlObj')
             console.log(UrlObj)
             Index = UrlObj.Index
-            this.getApproveList()
+            this.getData2()
             loadHtml("mainPage", "partPage")
         }
     })
