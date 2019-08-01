@@ -1248,7 +1248,7 @@ namespace DingTalk.Controllers
                 int count = 0;
                 if (Index == 0)
                 {
-                    count= context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
+                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
                     .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count();
                     //待审批的
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
@@ -1256,11 +1256,11 @@ namespace DingTalk.Controllers
                 }
                 if (Index == 1)
                 {
-                    count= context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
+                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
                     //我已审批
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();  
+                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 if (Index == 2)
                 {
@@ -1268,11 +1268,11 @@ namespace DingTalk.Controllers
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
                     //我发起的
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();  
+                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 if (Index == 3)
                 {
-                    count= context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
+                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
                     //抄送我的
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
@@ -1653,7 +1653,8 @@ namespace DingTalk.Controllers
                     {
                         //Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend != true).OrderByDescending(t => t.Id).First();
 
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderBy(t => t.NodeId).First();
+                        //Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderBy(t => t.NodeId).First();
+                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderByDescending(t => t.Id).First();
                         Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
                         taskOld.Id = task.Id;
                         taskOld.NodeId = task.NodeId;
