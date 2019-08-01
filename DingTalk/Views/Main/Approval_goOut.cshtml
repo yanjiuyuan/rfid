@@ -64,7 +64,7 @@
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item label="操作" v-if="index==0">
-            <el-button v-if="NodeId != 2" type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
         <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
