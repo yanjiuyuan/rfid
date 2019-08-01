@@ -73,6 +73,11 @@
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>

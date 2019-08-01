@@ -40,6 +40,11 @@
                 <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
         <template v-if="index==2 && state=='未完成'">
             <el-form-item label="操作">
                 <ding :dinglist="dingList"></ding>

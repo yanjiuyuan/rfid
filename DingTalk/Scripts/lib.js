@@ -719,7 +719,7 @@ var mixin = {
                 imageList: this.imageList,
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
-                ruleForm: this.tableForm
+                ruleForm: Object.assign(this.tableForm, this.ruleForm)
             }
             //if(items) ReApprovalTempData['items'] = items
             for (let img of imgConfig) {
