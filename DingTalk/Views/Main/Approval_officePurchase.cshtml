@@ -26,7 +26,7 @@
                 <el-table-column prop="Purpose" label="用途"></el-table-column>
                 <el-table-column label="是否删除" width="150" v-if="NodeId == 2">
                     <template slot-scope="scope">
-                        <el-button size="mini" v-if="NodeId == 2" :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
+                        <el-button size="mini" @*v-if="NodeId == 2"*@ :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
                         <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
                     </template>
                 </el-table-column>

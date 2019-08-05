@@ -103,12 +103,6 @@
         },
         methods: {
             onSubmit(formName) {
-                //设置项目名
-                for (let p of this.projectList) {
-                    if (p.ProjectId == this.ruleForm.ProjectId) {
-                        this.ruleForm['Project'] = p.ProjectName
-                    }
-                }
                 //根据类型添加审批人
                 this.ruleForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 let callBack = (taskId) => {

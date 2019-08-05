@@ -136,7 +136,7 @@
                     //"OldFileUrl": this.ruleForm.OldFileUrl
                 }
                 if (NodeId == 3 || NodeId == 2) {
-                    if (NodeId == 3 && !this.form.ProjectId) {
+                    if (NodeId == 3 && !this.tableForm.ProjectId) {
                         this.$alert('项目编号不能为空', '提示信息', {
                             confirmButtonText: '确定'
                         })
@@ -155,7 +155,8 @@
                             this.aggreSubmit(aggreParam)
                         })
                     })
-                } else {
+                }
+                else {
                     this.aggreSubmit(aggreParam)
                 }
             },
