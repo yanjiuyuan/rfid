@@ -529,6 +529,11 @@ var mixin = {
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
                         "Dept": DingData.departName,
+                        "Title": that.ruleForm.Title,
+                        "ProjectName": that.ruleForm.ProjectName,
+                        "ProjectId": that.ruleForm.ProjectId,
+                        "ProjectName": that.ruleForm.ProjectName,
+                        "ProjectType": that.ruleForm.ProjectType,
                         "NodeId": "0",
                         "ApplyTime": _getTime(),
                         "IsEnable": "1",
@@ -710,12 +715,11 @@ var mixin = {
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
+            if (!this.tableForm) this.tableForm = {}
             ReApprovalTempData = {
                 valid: true,
                 data: this.data,
                 dataArr: this.dataArr,
-                ProjectId: this.ruleForm.ProjectId,
-                Title: this.ruleForm.Title,
                 imageList: this.imageList,
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
@@ -766,7 +770,9 @@ var mixin = {
             let project = {}
             for (var proj of this.projectList) {
                 if (proj.ProjectId == id) {
-                    this.ruleForm.ProjectName = proj.ProjectName
+                    delete proj.ApplyMan
+                    delete proj.ApplyManId
+                    Object.assign(this.ruleForm, proj)
                     project = proj
                 }
             }
@@ -835,8 +841,12 @@ var mixin = {
                         }]
                     }
                 }
+                this.getNodeInfo_done(this.nodeList)
             })
             
+        },
+        getNodeInfo_done(nodeList) {
+
         },
         //获取项目数据
         getProjects() {
@@ -959,6 +969,10 @@ var mixin = {
                 }
             })
         },
+
+
+
+
         //图片上传事件
         beforePictureUpload(file) {
             console.log('before file')
@@ -1029,7 +1043,7 @@ var mixin = {
             isPdf = false
             const isLt2M = file.size / 1024 / 1024 < 10
             if (!isLt2M) {
-                this.$message.error('上传图片大小不能超过 10MB!')
+                this.$message.error('上传文件大小不能超过 10MB!')
                 return false
             }
             return true
@@ -1177,6 +1191,18 @@ var mixin = {
             })
         },
 
+
+        //选时间操作
+        selectTime(value) {
+            if (!value[0]) return
+            this.ruleForm.StartTime = _timeToString(value[0])
+            this.ruleForm.EndTime = _timeToString(value[1])
+        },
+        selectActualTime(value) {
+            if (!value[0]) return
+            this.ruleForm.ActualCycleStart = _timeToString(value[0])
+            this.ruleForm.ActualCycleEnd = _timeToString(value[1])
+        },
         //根据taskId获取下一个需要审批的人，即要钉的人
         GetDingList(taskId) {
             this.GetData('/DingTalkServers/Ding' + _formatQueryStr({ taskId: taskId }), (res) => {

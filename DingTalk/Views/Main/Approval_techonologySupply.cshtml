@@ -27,7 +27,7 @@
         <el-form-item label="其他工程师">
             <el-input v-model="tableForm.OtherEngineers" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="合作单位">
+        <el-form-item label="合作单位" v-if="showSome">
             <el-input v-model="tableForm.Customer" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目大类">
@@ -40,19 +40,19 @@
         <el-form-item label="要求完成时间">
             <el-input v-model="tableForm.TimeRequired" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="客户项目整体情况">
+        <el-form-item label="客户项目整体情况" v-if="showSome">
             <el-input v-model="tableForm.ProjectOverview" style="width:550px;" type="textarea" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="技术支持内容要点">
+        <el-form-item label="技术支持内容要点" v-if="showSome">
             <el-input v-model="tableForm.MainPoints" style="width:550px;" type="textarea" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="状态">
             <el-input v-model="tableForm.ProjectState " style="width:100px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="所属公司">
+        @*<el-form-item label="所属公司">
             <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
-        </el-form-item>
+        </el-form-item>*@
         <el-form-item label="项目类型">
             <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -79,7 +79,7 @@
                     <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="noEdit"></el-input>
                 </el-form-item>
             </template>
-            <el-form-item label="处理方案" prop="TechnicalProposal">
+            <el-form-item label="处理方案" prop="TechnicalProposal" v-if="showSome">
                 <el-input v-model="tableForm.TechnicalProposal" style="width:550px;" type="textarea" :disabled="noEdit"></el-input>
             </el-form-item>
             <el-form-item label="测试项目名称" prop="ProjectName">
@@ -167,8 +167,9 @@
                 index: Index,
                 state: state,
                 NodeId: NodeId,
+                showSome: true,
                 nodeList: [],
-                nodeInfo: {},
+                nodeInfo: {},//nodeInfo.NodeName
                 noEdit: true,
                 ruleForm: {},
                 addPeopleNodes: [], //额外添加审批人节点数组
@@ -231,6 +232,7 @@
                             console.log(param2)
                             this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                                 this.PostData('ProjectNew/AddProject', [param2], (res) => {
+                                    //return
                                     this.aggreSubmit(param)
                                 })
                             })
@@ -282,7 +284,15 @@
                 this.GetData('TechnicalSupport/Read?taskid=' + TaskId, (res) => {
                     this.tableForm = res
                 })
-            }
+            },
+            //显示内容特殊处理
+            getNodeInfo_done(nodeList) {
+                for (let node of nodeList) {
+                    if (node.NodeName == '抄送' && node.ApplyMan.indexOf(DingData.nickName) >= 0) {
+                        this.showSome = false
+                    }
+                }
+            },
         },
         created: function () {
             this.getHelpTable()

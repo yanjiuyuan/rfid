@@ -99,6 +99,17 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="项目名" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectId + '-' + item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+        </el-form-item>
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
@@ -152,20 +163,12 @@
                         return
                     }
                 }
-                var ProjectName
-                for (let p of this.projectList) {
-                    if (p.ProjectId == this.ruleForm.ProjectId) {
-                        ProjectName = p.ProjectName
-                    }
-                }
                 let callBack = function (taskId) {
                     that.bindAll(taskId)
                 }
                 this.approvalSubmit(formName, {
                     Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark,
-                    ProjectName: ProjectName,
-                    ProjectId: this.ruleForm.ProjectId
+                    Remark: this.ruleForm.remark
                 }, callBack)
             },
             bindAll(taskId) {
