@@ -1,4 +1,5 @@
-﻿using DingTalk.EF;
+﻿using DingTalk.Bussiness.FlowInfo;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
@@ -81,7 +82,7 @@ namespace DingTalk.Controllers
                 List<DetailedList> detailedLists = dDContext.DetailedList.Where(d => d.TaskId == taskId).ToList();
                 List<ApplicationUnit> applicationUnitList = dDContext.ApplicationUnit.Where(d => d.TaskId == taskId).ToList();
                 List<ProjectFunding> projectFundingList = dDContext.ProjectFunding.Where(d => d.TaskId == taskId).ToList();
-                List<LongitudinalProject> longitudinalProjects= dDContext.LongitudinalProject.Where(d => d.TaskId == taskId).ToList();
+                List<LongitudinalProject> longitudinalProjects = dDContext.LongitudinalProject.Where(d => d.TaskId == taskId).ToList();
 
                 projectClosureModel.projectClosure = projectClosure;
                 projectClosureModel.detailedLists = detailedLists;
@@ -102,6 +103,113 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+
+        /// <summary>
+        /// 立项书或建议书、PPT数据读取
+        /// </summary>
+        /// <param projectId="">项目Id</param>
+        /// <returns></returns>
+        [Route("ReadDefault")]
+        [HttpGet]
+        public NewErrorModel ReadDefault(string projectId)
+        {
+            try
+            {
+                DDContext context = new DDContext();
+                //立项数据(附件)
+                string FlowId = context.Flows.Where(t => t.FlowName == "立项申请").First().FlowId.ToString();
+                List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId(FlowId);
+                List<Tasks> tasksListQuery = tasksList.Where(t => t.FlowId.ToString() == FlowId && t.NodeId == 0).ToList();
+                CreateProject createProject = context.CreateProject.Where(c => c.ProjectId == projectId).FirstOrDefault();
+                if (createProject != null)
+                {
+                    Tasks tasks = tasksListQuery.Where(t => t.TaskId.ToString() == createProject.TaskId).FirstOrDefault();
+                    FileUrlModel fileUrlModel = new FileUrlModel()
+                    {
+                        fileName = tasks.OldFileUrl,
+                        fileUrl = tasks.FileUrl,
+                        mediaId = tasks.MediaId,
+                    };
+                    return new NewErrorModel()
+                    {
+                        data = fileUrlModel,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        data = "",
+                        error = new Error(0, "暂无数据！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// 项目采购清单、借用清单、维修清单、受理知识产权清单  流程数据读取
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        [Route("ReadFlowInfo")]
+        [HttpGet]
+        public NewErrorModel ReadFlowInfo(string projectId)
+        {
+            try
+            {
+                DDContext context = new DDContext();
+                List<FlowModel> FlowModelList = new List<FlowModel>();
+                List<Flows> flowsList = context.Flows.Where(t => t.FlowName.Contains("采购") || t.FlowName.Contains("借入") ||
+                t.FlowName.Contains("维修") || t.FlowName.Contains("知识产权"))
+                    .ToList();
+                foreach (var flows in flowsList)
+                {
+                    string FlowId = flows.FlowId.ToString();
+                    string FlowName = flows.FlowName.ToString();
+                    List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId(FlowId).Where(t => t.ProjectId == projectId).ToList();
+                    List<Tasks> tasksListQuery = tasksList.Where(t => t.FlowId.ToString() == FlowId && t.NodeId == 0).ToList();
+                    CreateProject createProject = context.CreateProject.Where(c => c.ProjectId == projectId).FirstOrDefault();
+                    if (createProject != null)
+                    {
+                        foreach (var item in tasksListQuery)
+                        {
+                            FlowModelList.Add(new FlowModel()
+                            {
+                                flowName = FlowName,
+                                ApplyMan = item.ApplyMan,
+                                ApplyManId = item.ApplyManId,
+                                ApplyTime = item.ApplyTime,
+                                taskId = item.TaskId.ToString()
+                            });
+                        }
+                    }
+                }
+                return new NewErrorModel()
+                {
+                    data = FlowModelList,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
 
 
         /// <summary>
@@ -135,7 +243,7 @@ namespace DingTalk.Controllers
                     dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
                 });
                 dDContext.SaveChanges();
-                
+
                 return new NewErrorModel()
                 {
                     data = projectClosureModel,
@@ -150,6 +258,31 @@ namespace DingTalk.Controllers
                 };
             }
         }
+    }
+
+    public class FlowModel
+    {
+        public string flowName { get; set; }
+        public string taskId { get; set; }
+        public string ApplyMan { get; set; }
+        public string ApplyManId { get; set; }
+        public string ApplyTime { get; set; }
+    }
+
+    public class FileUrlModel
+    {
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string fileUrl { get; set; }
+        /// <summary>
+        /// 盯盘Id
+        /// </summary>
+        public string mediaId { get; set; }
+        /// <summary>
+        /// 文件名
+        /// </summary>
+        public string fileName { get; set; }
     }
 
     public class ProjectClosureModel
@@ -175,6 +308,6 @@ namespace DingTalk.Controllers
         /// 纵向项目基本情况表
         /// </summary>
         public List<LongitudinalProject> longitudinalProject { get; set; }
-        
+
     }
 }
