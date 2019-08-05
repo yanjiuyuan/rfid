@@ -189,7 +189,7 @@ namespace DingTalk.Controllers
                                 ApplyMan = item.ApplyMan,
                                 ApplyManId = item.ApplyManId,
                                 ApplyTime = item.ApplyTime,
-                                taskId = item.TaskId.ToString()
+                                OldtaskId = item.TaskId.ToString()
                             });
                         }
                     }
@@ -267,6 +267,10 @@ namespace DingTalk.Controllers
         public string ApplyMan { get; set; }
         public string ApplyManId { get; set; }
         public string ApplyTime { get; set; }
+        /// <summary>
+        /// 其他流程的TaskId
+        /// </summary>
+        public string OldtaskId { get; set; }
     }
 
     public class FileUrlModel
@@ -287,6 +291,7 @@ namespace DingTalk.Controllers
 
     public class ProjectClosureModel
     {
+
         public ProjectClosure projectClosure { get; set; }
 
         /// <summary>

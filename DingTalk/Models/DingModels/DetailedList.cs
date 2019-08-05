@@ -42,6 +42,12 @@
         /// </summary>
         [StringLength(500)]
         public string ApplyTime { get; set; }
-        
+
+        /// <summary>
+        /// 传过来的TaskId
+        /// </summary>
+        [StringLength(500)]
+        public string OldTaskId { get; set; }
+
     }
 }
