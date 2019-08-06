@@ -210,6 +210,10 @@
                         loadPage('/Main/approval_maintain' + _formatQueryStr(param))
                         return
                     }
+                    if (row.FlowId == 69) {
+                        loadPage('/Main/approval_projectClosure' + _formatQueryStr(param))
+                        return
+                    }
                     loadPage('/Main/approval_detail' + _formatQueryStr(param))
                 }
             },
