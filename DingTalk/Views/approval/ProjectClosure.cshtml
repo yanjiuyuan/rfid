@@ -55,7 +55,14 @@
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
-
+        <el-form-item label="项目相关数据">
+            <el-table :data="DetailedList" stripe border>
+                <el-table-column type="index"></el-table-column>
+                <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
+                </el-table-column>
+            </el-table>
+        </el-form-item>
+        
 
         <el-form-item label="是否有横向合作单位">
             <el-radio-group v-model="ruleForm.IsTransverse">
@@ -120,21 +127,21 @@
         </template>
 
         <template v-for="config in uploadFileConfig" style="border:1px solid">
-            <el-form-item :label="config.label" required="required" label-width="220px">
+            <el-form-item :label="config.label" :required="config.must" label-width="220px">
                 <el-upload class="upload-demo"
-                           :file-list="fileList"
+                           :file-list="config.fileList"
                            action="/drawingupload/Upload"
                            :on-remove="handleRemove"
                            :before-upload="beforeUpload"
                            :on-success="handleSuccess"
                            multiple>
                     <el-button v-on:click="upClick(config.attribute)" size="small" type="primary">点击上传</el-button>
-                    <div v-on:click="upClick" class="el-upload__tip" slot="tip">{{config.point}}</div>
+                    <div v-on:click="upClick(config.attribute)" class="el-upload__tip" slot="tip">{{config.point}}</div>
                 </el-upload>
             </el-form-item>
             <hr />
         </template>
-        
+
 
         <el-form-item label="申请发明人" prop="Inventor">
             <el-input v-model="ruleForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
@@ -167,96 +174,112 @@
                         label: '立项书或建议书',
                         attribute: 'SuggestBook1',
                         point: '系统有的内容自动关联文件，没有就是手动上传',
+                        fileList: [],
                         must: true
                     },
                     {
                         label: '评审PPT',
                         attribute: 'PPT2',
                         point: '系统有的内容自动关联文件，没有就是手动上传',
+                        fileList: [],
                         must: true
                     },
                     {
                         label: '需求规格说明书、产品总体设计书',
                         attribute: 'DemandBook3',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '机械设计图纸',
                         attribute: 'Drawing4',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '电气图纸',
                         attribute: 'Electrical5',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: 'BOM表',
                         attribute: 'Bom6',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '软件源代码',
                         attribute: 'SourceCode7',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '使用说明书/操作手册/技术方案/规格说明书',
                         attribute: 'UseBook8',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '合作协议',
                         attribute: 'CooperationAgreement9',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '产品（样机/成品）图片/影像',
                         attribute: 'Product10',
                         point: '打包上传',
+                        fileList: [],
                         must: true
                     },
                     {
                         label: '阶段性整理的问题的分析、解决方案及计划表',
                         attribute: 'Solution11',
                         point: '打包上传',
+                        fileList: [],
                         must: true
                     },
                     {
                         label: '纵向项目申请/中期检查/验收资料',
                         attribute: 'AcceptanceData14',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '其他过程文档设计报告、评审报告、项目计划、设计更改报告等',
                         attribute: 'ProcessDocumentation15',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '项目终止情况报告',
                         attribute: 'TerminationReport16',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '装箱单',
                         attribute: 'PackingList17',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     },
                     {
                         label: '客户验收单',
                         attribute: 'AcceptanceSlip18',
                         point: '打包上传',
+                        fileList: [],
                         must: false
                     }],
                 timeRange: [],
@@ -272,11 +295,16 @@
                     Post: '职务',
                     Tel: '联系方式'
                 },
+                DetailedListConfig: {
+                    flowName: '类型',
+                    ApplyMan : '申请人',
+                    ApplyTime: '申请时间',
+                    OldTaskId: '流水号'
+                },
                 table1: {},
-                table2: {},
-                table3: {},
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
+                DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、维修清单、受理知识产权清单)
                 ruleForm: {
                     Title: "结题申请",
                     ApplyMan: DingData.nickName,
@@ -329,19 +357,23 @@
                 //根据类型添加审批人
                 let callBack = (taskId) => {
                     this.ruleForm['TaskId'] = taskId
-                    for (let long of LongitudinalProject) {
+                    for (let det of this.DetailedListConfig) {
+                        det['TaskId'] = taskId
+                    }
+                    for (let long of this.LongitudinalProject) {
                         long['TaskId'] = taskId
                     }
-                    for (let app of ApplicationUnit) {
+                    for (let app of this.ApplicationUnit) {
                         app['TaskId'] = taskId
                     }
                     let param = {
                         projectClosure: this.ruleForm,
+                        detailedLists: this.DetailedListConfig,
+                        applicationUnitList: this.ApplicationUnit,
                         longitudinalProject: this.LongitudinalProject,
-                        applicationUnitList: this.ApplicationUnit
                     }
 
-                    this.PostData('IntellectualProperty/Save', this.ruleForm, () => {
+                    this.PostData('ProjectClosure/Save', param, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -365,6 +397,51 @@
                         proj.ProjectType == '研发类' && proj.ProjectSmallType == '纵向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
                     }
                 }
+                //根据项目显示文件
+                this.GetData('ProjectClosure/ReadDefault?projectId=' + id, (res) => {
+                    this.uploadFileConfig[0].fileList = []
+                    this.uploadFileConfig[1].fileList = []
+                    let param1 = []
+                    let param2 = []
+                    let fileUrl = res.fileUrl.split(',')
+                    let mediaId = res.mediaId.split(',')
+                    let fileName = res.fileName.split(',')
+                    for (let i = 0; i < fileName.length; i++) {
+                        let file = {
+                            "name": fileName[i],
+                            "mediaid": mediaId[i],
+                            "response": {
+                                "Content": fileUrl[i]
+                            }
+                        }
+                        let param = {
+                            "FileUrl": fileUrl[i],
+                            "MediaId": mediaId[i],
+                            "FileName": fileName[i]
+                        }
+
+                        if (fileName[i].indexOf('ppt') > 0 || fileName[i].indexOf('pptx') > 0) {
+                            this.uploadFileConfig[1].fileList.push(file)
+                            param2.push(param)
+                        } else {
+                            this.uploadFileConfig[0].fileList.push(file)
+                            param1.push(param)
+                        }
+                    }
+                    console.log(this.uploadFileConfig[0])
+                    console.log(this.uploadFileConfig[1])
+                    console.log(param1)
+                    console.log(param2)
+                    this.ruleForm['SuggestBook1'] = JSON.stringify(param1)
+                    this.ruleForm['PPT2'] = JSON.stringify(param2)
+                 
+                })
+                //根据项目显示bom
+                this.GetData('ProjectClosure/ReadFlowInfo?projectId=' + id, (res) => {
+                    console.log('1res~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                    console.log(res)
+                    this.DetailedList = res
+                })
             },
             //文件上传处理方法
             upClick(attr) {
@@ -388,9 +465,7 @@
                         "FileName": file.name
                     })
                 }
-                console.log(param)
                 this.ruleForm[attribute] = JSON.stringify(param)
-                console.log(that.ruleForm)
             },
             handleSuccess(response, file, fileList) {
                 var that = this
