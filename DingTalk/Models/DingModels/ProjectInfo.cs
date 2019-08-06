@@ -121,5 +121,11 @@ namespace DingTalk.Models.DingModels
         /// 合作单位(新增)
         /// </summary>
         public string CooperativeUnit { get; set; }
+
+        /// <summary>
+        /// 商务对接人
+        /// </summary>
+        public string BusinessDocker { get; set; }
+        
     }
 }

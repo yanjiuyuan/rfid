@@ -100,6 +100,7 @@ namespace DingTalk.Controllers
 
                 EFHelper<TechnicalSupport> eFHelper = new EFHelper<TechnicalSupport>();
                 eFHelper.Modify(technicalSupport);
+                technicalSupport.IsCreateProject = false;
                 if (technicalSupport.IsCreateProject)
                 {
                     using (DDContext context = new DDContext())
