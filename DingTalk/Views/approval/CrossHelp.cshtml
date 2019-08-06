@@ -46,6 +46,20 @@
         <el-form-item label="计划天数" prop="PlanDays">
             <el-input v-model="ruleForm.PlanDays" style="width:200px;"></el-input>
         </el-form-item>
+        <el-form-item label="上传相关文件">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="fileList"
+                       action="/drawingupload/Upload"
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
+                       :on-success="HandleFileSuccess"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">不超过30M</div>
+            </el-upload>
+        </el-form-item>
         <hr />
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
@@ -96,6 +110,7 @@
         },
         methods: {
             onSubmit(formName) {
+                this.fileListToUrl()
                 let callBack = (taskId) => {
                     this.ruleForm['TaskId'] = taskId
                     this.PostData('Cooperate/Save', this.ruleForm, () => {
@@ -109,7 +124,13 @@
                 }
                 this.nodeList[4].AddPeople = this.nodeList[2].AddPeople
                 this.nodeList[6].AddPeople = [...this.nodeList[0].AddPeople, ...this.nodeList[1].AddPeople, ...this.nodeList[2].AddPeople]
-                this.approvalSubmit(formName, { Title: this.ruleForm.Title, Remark: this.ruleForm.remark, }, callBack)
+                this.approvalSubmit(formName, {
+                    Title: this.ruleForm.Title,
+                    Remark: this.ruleForm.remark,
+                    FileUrl: this.ruleForm.FileUrl,
+                    MediaId: this.ruleForm.MediaId,
+                    OldFileUrl: this.ruleForm.OldFileUrl
+                }, callBack)
             },
             //选时间操作
             selectTime(value) {

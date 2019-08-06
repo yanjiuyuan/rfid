@@ -139,14 +139,7 @@
                     <div v-on:click="upClick(config.attribute)" class="el-upload__tip" slot="tip">{{config.point}}</div>
                 </el-upload>
             </el-form-item>
-            <hr />
         </template>
-
-
-        <el-form-item label="申请发明人" prop="Inventor">
-            <el-input v-model="ruleForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
-        </el-form-item>
 
         <hr />
         <el-form-item label="建议" prop="remark">
@@ -299,7 +292,7 @@
                     flowName: '类型',
                     ApplyMan : '申请人',
                     ApplyTime: '申请时间',
-                    OldTaskId: '流水号'
+                    OldtaskId: '流水号'
                 },
                 table1: {},
                 LongitudinalProject: [],//纵向，表1
@@ -313,22 +306,9 @@
                     ProjectId: '',
                     ProjectName: '',
 
-                    //ProjectType : '',
-                    //ResponsibleMan : '',
-                    //TeamMembers : '',
-                    //TeamMembersId : '',
-                    //StartTime: '',
-                    //EndTime: '',
-
                     IsTransverse: true,
-                    //ContractAmount : '',
-                    //ContractNo : '',
-                    //ActualMoney: '',
-
                     IsPortrait: true,
-                    //ContractAmount: '',
-                    //ContractNo: '',
-                    //ActualMoney: '',
+ 
                 },
                 rules: {
                     ActualCycleStart: { required: true, message: '项目开发周期不能为空', trigger: 'blur' },
@@ -354,10 +334,13 @@
                 this.ApplicationUnit.push(_cloneObj(this.table1))
             },
             onSubmit(formName) {
+                console.log()
+                console.log()
+                console.log()
                 //根据类型添加审批人
                 let callBack = (taskId) => {
                     this.ruleForm['TaskId'] = taskId
-                    for (let det of this.DetailedListConfig) {
+                    for (let det of this.DetailedList) {
                         det['TaskId'] = taskId
                     }
                     for (let long of this.LongitudinalProject) {
@@ -368,11 +351,12 @@
                     }
                     let param = {
                         projectClosure: this.ruleForm,
-                        detailedLists: this.DetailedListConfig,
+                        detailedLists: this.DetailedList,
                         applicationUnitList: this.ApplicationUnit,
+                        projectFundingList: [],
                         longitudinalProject: this.LongitudinalProject,
                     }
-
+                    console.log(JSON.stringify(param))
                     this.PostData('ProjectClosure/Save', param, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',

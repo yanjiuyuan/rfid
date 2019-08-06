@@ -57,6 +57,16 @@
                 <el-input v-model="tableForm.FactCooperateContent" style="width:550px;" :disabled="noEdit"></el-input>
             </el-form-item>
         </template>
+        <!--相关文件-->
+        <el-form-item v-if="fileList.length > 0" label="相关文件">
+            <el-card class="box-card">
+                <div v-for="f in fileList" :key="f.name" class="text item">
+                    <span>{{ f.name }}</span>
+                    @*<el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)">下载</el-button>*@
+                    <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
+                </div>
+            </el-card>
+        </el-form-item>
         <el-form-item label="意见">
             <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
         </el-form-item>

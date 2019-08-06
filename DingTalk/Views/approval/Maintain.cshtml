@@ -158,7 +158,7 @@
             onSubmit(formName) {
                 var that = this
                 for (let p of this.purchaseList) {
-                    if (!p.Unit || !p.Count || !p.MaintainContent || !p.NeedTime) {
+                    if (!p.Unit || !p.Count || !p.MaintainContent || !p.NeedTime || this.purchaseList.length == 0) {
                         this.elementAlert('提示信息', '表单未填写完整')
                         return
                     }

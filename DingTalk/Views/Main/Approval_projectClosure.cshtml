@@ -1,7 +1,376 @@
-﻿
-@{
-    ViewBag.Title = "Approval_projectClosure";
+﻿@{
+    Layout = null;
 }
 
-<h2>Approval_projectClosure</h2>
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        结题申请审批-{{nodeInfo.NodeName}}
+    </div>
+    <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+
+        <el-form-item label="标题" prop="Title">
+            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+            <el-input v-model="tableForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="申请部门">
+            <el-input v-model="tableForm.Dept" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+
+
+        <el-form-item label="项目名">
+            <el-input v-model="tableForm.ProjectName" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目类型">
+            <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目负责人">
+            <el-input v-model="tableForm.ResponsibleMan" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="小组成员">
+            <el-input v-model="tableForm.TeamMembers" type="textarea" autosize style="width:500px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="计划开始时间">
+            <el-input v-model="tableForm.StartTime" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="计划结束时间">
+            <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="实际开始时间">
+            <el-input v-model="tableForm.StartTime" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="实际结束时间">
+            <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目相关数据">
+            <el-table :data="DetailedList" stripe border>
+                <el-table-column type="index"></el-table-column>
+                <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
+                </el-table-column>
+            </el-table>
+        </el-form-item>
+
+
+        <el-form-item label="是否有横向合作单位">
+            <el-radio-group v-model="tableForm.IsTransverse" disabled>
+                <el-radio :label=true>是</el-radio>
+                <el-radio :label=false>否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <template v-if="tableForm.IsTransverse">
+            <el-form-item label="合同金额" prop="ContractAmount">
+                <el-input v-model="tableForm.ContractAmount" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="合同编码" prop="ContractNo">
+                <el-input v-model="tableForm.ContractNo" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="实际到账" prop="ActualMoney">
+                <el-input v-model="tableForm.ActualMoney" :disabled="true"></el-input>
+            </el-form-item>
+            <el-table :data="ApplicationUnit" stripe border>
+                <el-table-column type="index"></el-table-column>
+                <el-table-column v-for="(value,key) in ApplicationUnitConfig" :prop="key" :label="value" :key="key">
+                </el-table-column>
+            </el-table>
+        </template>
+
+
+        <el-form-item label="是否有申报纵向项目">
+            <el-radio-group v-model="tableForm.IsPortrait" disabled>
+                <el-radio :label=true>是</el-radio>
+                <el-radio :label=false>否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <template v-if="tableForm.IsPortrait">
+            <el-table :data="LongitudinalProject" stripe border>
+                <el-table-column type="index"></el-table-column>
+                <el-table-column v-for="(value,key) in LongitudinalProjectConfig" :prop="key" :label="value" :key="key">
+                </el-table-column>
+            </el-table>
+        </template>
+
+        <template v-for="config in uploadFileConfig" style="border:1px solid">
+            <el-form-item :label="config.label" :required="config.must" label-width="220px">
+                <el-upload class="upload-demo"
+                           :file-list="config.fileList"
+                           action="/drawingupload/Upload"
+                           :on-remove="handleRemove"
+                           :before-upload="beforeUpload"
+                           :on-success="handleSuccess"
+                           multiple>
+                    <el-button v-on:click="upClick(config.attribute)" size="small" type="primary">点击上传</el-button>
+                    <div v-on:click="upClick(config.attribute)" class="el-upload__tip" slot="tip">{{config.point}}</div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item v-if="fileList.length > 0" label="立项文件">
+                <el-card class="box-card">
+                    <div v-for="f in fileList" :key="f.name" class="text item">
+                        <span>{{ f.name }}</span>
+                        <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
+                    </div>
+                </el-card>
+            </el-form-item>
+            <hr />
+        </template>
+
+        <el-form-item label="意见">
+            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+        </el-form-item>
+        <hr />
+
+        <!--添加审批人-->
+        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
+        <el-form-item label="操作" v-if="index==0">
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk">退回</el-button>
+        </el-form-item>
+        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+            <el-form-item>
+                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
+            </el-form-item>
+        </template>
+        <template v-if="index==2 && state=='未完成'">
+            <el-form-item>
+                <ding :dinglist="dingList"></ding>
+                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+            </el-form-item>
+        </template>
+        @*<template v-if="index!=0">
+            <el-form-item>
+                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
+            </el-form-item>
+        </template>*@
+    </el-form>
+</el-main>
+
+<script>
+    var imageList = []
+    if (UrlObj.flowid) {
+        FlowId = UrlObj.flowid
+        NodeId = UrlObj.nodeid
+        TaskId = UrlObj.taskid
+        State = UrlObj.state
+        Id = UrlObj.id
+        var Index = UrlObj.index
+    }
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                index: Index,
+                FlowId: FlowId,
+                NodeId: NodeId,
+                state: State,
+                nodeList: [],
+                nodeInfo: {},
+
+
+                uploadFileConfig: [
+                    {
+                        label: '立项书或建议书',
+                        attribute: 'SuggestBook1',
+                        point: '系统有的内容自动关联文件，没有就是手动上传',
+                        fileList: [],
+                        must: true
+                    },
+                    {
+                        label: '评审PPT',
+                        attribute: 'PPT2',
+                        point: '系统有的内容自动关联文件，没有就是手动上传',
+                        fileList: [],
+                        must: true
+                    },
+                    {
+                        label: '需求规格说明书、产品总体设计书',
+                        attribute: 'DemandBook3',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '机械设计图纸',
+                        attribute: 'Drawing4',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '电气图纸',
+                        attribute: 'Electrical5',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: 'BOM表',
+                        attribute: 'Bom6',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '软件源代码',
+                        attribute: 'SourceCode7',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '使用说明书/操作手册/技术方案/规格说明书',
+                        attribute: 'UseBook8',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '合作协议',
+                        attribute: 'CooperationAgreement9',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '产品（样机/成品）图片/影像',
+                        attribute: 'Product10',
+                        point: '打包上传',
+                        fileList: [],
+                        must: true
+                    },
+                    {
+                        label: '阶段性整理的问题的分析、解决方案及计划表',
+                        attribute: 'Solution11',
+                        point: '打包上传',
+                        fileList: [],
+                        must: true
+                    },
+                    {
+                        label: '纵向项目申请/中期检查/验收资料',
+                        attribute: 'AcceptanceData14',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '其他过程文档设计报告、评审报告、项目计划、设计更改报告等',
+                        attribute: 'ProcessDocumentation15',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '项目终止情况报告',
+                        attribute: 'TerminationReport16',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '装箱单',
+                        attribute: 'PackingList17',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    },
+                    {
+                        label: '客户验收单',
+                        attribute: 'AcceptanceSlip18',
+                        point: '打包上传',
+                        fileList: [],
+                        must: false
+                    }],
+                timeRange: [],
+                LongitudinalProjectConfig: {
+                    Name: '申报政策名称',
+                    No: '专项专题编号',
+                    Money: '国拨经费/万',
+                    ActualMoney: '实际到账/万'
+                },
+                ApplicationUnitConfig: {
+                    ApplicationUnitName: '转化/应用单位',
+                    Customer: '客户/联系人',
+                    Post: '职务',
+                    Tel: '联系方式'
+                },
+                DetailedListConfig: {
+                    flowName: '类型',
+                    ApplyMan: '申请人',
+                    ApplyTime: '申请时间',
+                    OldtaskId: '流水号'
+                },
+                table1: {},
+                LongitudinalProject: [],//纵向，表1
+                ApplicationUnit: [],//横向，表2
+                DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、维修清单、受理知识产权清单)
+
+
+                tableForm: {
+
+                },
+            }
+        },
+        methods: {
+            onSubmit() {
+                var that = this
+                let aggreParam = {
+                    "Id": this.ruleForm.Id,
+                    "Remark": this.ruleForm.Mark,
+                    //"FileUrl": this.ruleForm.FileUrl,
+                    //"OldFileUrl": this.ruleForm.OldFileUrl
+                }
+                if (NodeId == 3 || NodeId == 2) {
+                    if (NodeId == 3 && !this.tableForm.ProjectId) {
+                        this.$alert('项目编号不能为空', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                        return
+                    }
+                    //if (NodeId == 1) this.nodeList[5].AddPeople = this.copyMans
+                    this.PostData('CreateProject/Modify', this.tableForm, (res) => {
+                        if (NodeId != 3) {
+                            that.aggreSubmit(aggreParam)
+                            return
+                        }
+                        this.tableForm['CooperativeUnit'] = this.tableForm.Customer
+                        this.tableForm.ApplyMan = this.nodeInfo.NodePeople
+                        this.tableForm.ApplyManId = this.nodeInfo.PeopleId
+                        this.PostData('ProjectNew/AddProject', [this.tableForm], (res) => {
+                            this.aggreSubmit(aggreParam)
+                        })
+                    })
+                }
+                else {
+                    this.aggreSubmit(aggreParam)
+                }
+            },
+            printTable() {
+                this.PostData('createProject/PrintPDF', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
+                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
+            },
+            getTable() {
+                this.GetData('/ProjectClosure/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {
+                    this.tableForm = res.projectClosure
+                    this.tableForm = res.detailedLists
+                    this.tableForm = res.applicationUnitList
+                    this.tableForm = res.longitudinalProject
+                    this.tableForm = res.projectFundingList
+                })
+            },
+
+        },
+
+        created: function () {
+            this.getTable()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    getFormData(demo)
+</script>
+
+
 
