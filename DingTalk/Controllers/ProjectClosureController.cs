@@ -185,7 +185,7 @@ namespace DingTalk.Controllers
                         {
                             FlowModelList.Add(new FlowModel()
                             {
-                                flowName = FlowName,
+                                Type = FlowName,
                                 ApplyMan = item.ApplyMan,
                                 ApplyManId = item.ApplyManId,
                                 ApplyTime = item.ApplyTime,
@@ -219,10 +219,18 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Modify")]
         [HttpPost]
-        public object Modify([FromBody] ProjectClosureModel projectClosureModel)
+        public NewErrorModel Modify([FromBody] ProjectClosureModel projectClosureModel)
         {
             try
             {
+                if (string.IsNullOrEmpty(projectClosureModel.NodeId))
+                {
+                    return new NewErrorModel()
+                    {
+                        data = projectClosureModel,
+                        error = new Error(1, "NodeId 没传！", "") { },
+                    };
+                }
                 DDContext dDContext = new DDContext();
                 ProjectClosure projectClosure = projectClosureModel.projectClosure;
                 dDContext.Entry<ProjectClosure>(projectClosure).State = System.Data.Entity.EntityState.Modified;
@@ -244,6 +252,16 @@ namespace DingTalk.Controllers
                 });
                 dDContext.SaveChanges();
 
+                Flows flows = dDContext.Flows.Where(f => f.FlowName.Contains("结题")).FirstOrDefault();
+                NodeInfo nodeInfo = dDContext.NodeInfo.Where(n => n.NodeName == "结束" && n.FlowId.ToString() == flows.FlowId.ToString()
+                ).FirstOrDefault();
+
+                //最后一步保存路径
+                if (nodeInfo.NodeId == Int32.Parse(projectClosureModel.NodeId) + 1)
+                {
+
+                }
+
                 return new NewErrorModel()
                 {
                     data = projectClosureModel,
@@ -262,7 +280,7 @@ namespace DingTalk.Controllers
 
     public class FlowModel
     {
-        public string flowName { get; set; }
+        public string Type { get; set; }
         public string taskId { get; set; }
         public string ApplyMan { get; set; }
         public string ApplyManId { get; set; }
@@ -291,7 +309,10 @@ namespace DingTalk.Controllers
 
     public class ProjectClosureModel
     {
-
+        /// <summary>
+        /// 当前NodeId 用于判断流程是否结束
+        /// </summary>
+        public string NodeId { get; set; }
         public ProjectClosure projectClosure { get; set; }
 
         /// <summary>
