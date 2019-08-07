@@ -125,5 +125,11 @@
         /// </summary>
         [NotMapped]
         public bool IsCreateProject { get; set; }
-}
+
+        /// <summary>
+        /// 商务对接人
+        /// </summary>
+        [StringLength(100)]
+        public string BusinessDocker { get; set; }
+    }
 }

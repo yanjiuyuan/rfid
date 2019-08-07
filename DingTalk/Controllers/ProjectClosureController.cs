@@ -2,8 +2,10 @@
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -232,6 +234,7 @@ namespace DingTalk.Controllers
                     };
                 }
                 DDContext dDContext = new DDContext();
+                Flows flows = dDContext.Flows.Where(f => f.FlowName.Contains("结题")).FirstOrDefault();
                 ProjectClosure projectClosure = projectClosureModel.projectClosure;
                 dDContext.Entry<ProjectClosure>(projectClosure).State = System.Data.Entity.EntityState.Modified;
                 projectClosureModel.detailedLists.ToList().ForEach(d =>
@@ -242,25 +245,31 @@ namespace DingTalk.Controllers
                 {
                     dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
                 });
-                projectClosureModel.projectFundingList.ToList().ForEach(d =>
-                {
-                    dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
-                });
+
+                dDContext.ProjectFunding.AddRange(projectClosureModel.projectFundingList);
+               
                 projectClosureModel.longitudinalProject.ToList().ForEach(d =>
                 {
                     dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
                 });
-                dDContext.SaveChanges();
+                List<NodeInfo> nodeInfos= dDContext.NodeInfo.Where(n => n.NodeName.Contains("财务负责人")  && n.FlowId.ToString() == flows.FlowId.ToString()
+                ).ToList();
+                if (nodeInfos.Count > 0)
+                {
+                    dDContext.ProjectFunding.AddRange(projectClosureModel.projectFundingList);
+                }
 
-                Flows flows = dDContext.Flows.Where(f => f.FlowName.Contains("结题")).FirstOrDefault();
                 NodeInfo nodeInfo = dDContext.NodeInfo.Where(n => n.NodeName == "结束" && n.FlowId.ToString() == flows.FlowId.ToString()
                 ).FirstOrDefault();
 
                 //最后一步保存路径
                 if (nodeInfo.NodeId == Int32.Parse(projectClosureModel.NodeId) + 1)
                 {
-
+                    Tasks tasks = dDContext.Tasks.Where(t => t.TaskId.ToString() == projectClosureModel.projectClosure.TaskId.ToString() && t.NodeId.ToString() == "0").FirstOrDefault();
+                    ProjectInfo projectInfo = dDContext.ProjectInfo.Where(p => p.ProjectId == tasks.ProjectId.ToString()).FirstOrDefault();
+                    SavePath(projectInfo.FilePath + "立项书或建议书", projectClosureModel.projectClosure.SuggestBook1);
                 }
+                dDContext.SaveChanges();
 
                 return new NewErrorModel()
                 {
@@ -276,6 +285,25 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        public void SavePath(string path, string strObject)
+        {
+            List<FlieUrlModel> flieUrlModels = JsonConvert.DeserializeObject<List<FlieUrlModel>>(strObject);
+            if (flieUrlModels.Count > 0 && string.IsNullOrEmpty(path))
+            {
+                foreach (var url in flieUrlModels)
+                {
+                    File.Copy(path, url.FileUrl);
+                }
+            }
+        }
+    }
+
+    public class FlieUrlModel
+    {
+        public string FileUrl { get; set; }
+        public string MediaId { get; set; }
+        public string FileName { get; set; }
     }
 
     public class FlowModel
