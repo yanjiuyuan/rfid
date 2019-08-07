@@ -253,7 +253,7 @@ namespace DingTalk.Controllers
                     dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
                 });
                 List<NodeInfo> nodeInfos= dDContext.NodeInfo.Where(n => n.NodeName.Contains("财务负责人")  && n.FlowId.ToString() == flows.FlowId.ToString()
-                ).ToList();
+                && n.NodeId.ToString()== projectClosureModel.NodeId).ToList();
                 if (nodeInfos.Count > 0)
                 {
                     dDContext.ProjectFunding.AddRange(projectClosureModel.projectFundingList);
