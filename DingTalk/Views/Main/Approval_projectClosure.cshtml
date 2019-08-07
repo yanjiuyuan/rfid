@@ -8,21 +8,21 @@
         <i class="el-icon-arrow-left"></i>
         结题申请审批-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+    <el-form :model="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="标题" prop="Title">
+        <el-form-item label="标题">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
-            <el-input v-model="tableForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请部门">
-            <el-input v-model="tableForm.Dept" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
 
         <el-form-item label="项目名">
-            <el-input v-model="tableForm.ProjectName" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.ProjectName" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目类型">
             <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
@@ -45,7 +45,7 @@
         <el-form-item label="实际结束时间">
             <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目相关数据">
+        <el-form-item label="项目相关数据" v-if="NodeId != 1">
             <el-table :data="DetailedList" stripe border>
                 <el-table-column type="index"></el-table-column>
                 <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
@@ -92,34 +92,39 @@
             </el-table>
         </template>
 
-        <template v-for="config in uploadFileConfig" style="border:1px solid">
-            <el-form-item :label="config.label" :required="config.must" label-width="220px">
-                <el-upload class="upload-demo"
-                           :file-list="config.fileList"
-                           action="/drawingupload/Upload"
-                           :on-remove="handleRemove"
-                           :before-upload="beforeUpload"
-                           :on-success="handleSuccess"
-                           multiple>
-                    <el-button v-on:click="upClick(config.attribute)" size="small" type="primary">点击上传</el-button>
-                    <div v-on:click="upClick(config.attribute)" class="el-upload__tip" slot="tip">{{config.point}}</div>
-                </el-upload>
+        <template v-if="NodeId != 1">
+            <el-form-item label="项目经费使用情况表（实际支出）">
+                <el-table :data="ProjectFundingList" stripe border>
+                    <el-table-column type="index"></el-table-column>
+                    @*<el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button size="mini" type="danger" v-on:click="deleteProjectFundingList(scope.$index, scope.row)">删除</el-button>
+                        </template>
+                    </el-table-column>*@
+                    <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row[key]"></el-input>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </el-form-item>
-            <el-form-item v-if="fileList.length > 0" label="立项文件">
+        </template>
+
+
+        <template v-for="config in uploadFileConfig" style="border:1px solid" v-if="NodeId != 1 && NodeId != 2">
+            <el-form-item v-if="config.fileList.length > 0" :label="config.label">
                 <el-card class="box-card">
-                    <div v-for="f in fileList" :key="f.name" class="text item">
+                    <div v-for="f in config.fileList" :key="f.name" class="text item">
                         <span>{{ f.name }}</span>
                         <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
                     </div>
                 </el-card>
             </el-form-item>
-            <hr />
         </template>
-
+        <hr />
         <el-form-item label="意见">
             <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
-        <hr />
 
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
@@ -295,17 +300,114 @@
                     Post: '职务',
                     Tel: '联系方式'
                 },
+                ProjectFundingListConfig: {
+                    Subject : '科目(备注)',
+                    Money: '支出数(各科目合计数)',
+                    NameAndMoney: '支出数计算依据(名称+金额)'
+                },
                 DetailedListConfig: {
-                    flowName: '类型',
+                    Type: '类型',
                     ApplyMan: '申请人',
                     ApplyTime: '申请时间',
-                    OldtaskId: '流水号'
+                    OldTaskId: '流水号'
                 },
                 table1: {},
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
                 DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、维修清单、受理知识产权清单)
-
+                ProjectFundingList: [],//项目经费使用情况
+                defaultProjectFundingList: [
+                    {
+                        Subject: '1、设备费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '其中：购置',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '试制',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '2、材料费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '3、测试化验加工费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '4、燃料动力费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '5、差旅费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '6、会议费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '7、合作与交流费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '8、出版/文献/信息传播/知识产权事务费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '9、劳务费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '10、专家咨询费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '11、管理费',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '12、其他(如用车成本等)',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    },
+                    {
+                        Subject: '合计',
+                        Money: '',
+                        NameAndMoney: '',
+                        TaskId: TaskId
+                    }
+                ],
 
                 tableForm: {
 
@@ -314,32 +416,32 @@
         },
         methods: {
             onSubmit() {
-                var that = this
                 let aggreParam = {
                     "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark,
-                    //"FileUrl": this.ruleForm.FileUrl,
-                    //"OldFileUrl": this.ruleForm.OldFileUrl
+                    "Remark": this.ruleForm.Mark
                 }
-                if (NodeId == 3 || NodeId == 2) {
-                    if (NodeId == 3 && !this.tableForm.ProjectId) {
-                        this.$alert('项目编号不能为空', '提示信息', {
-                            confirmButtonText: '确定'
-                        })
-                        return
-                    }
-                    //if (NodeId == 1) this.nodeList[5].AddPeople = this.copyMans
-                    this.PostData('CreateProject/Modify', this.tableForm, (res) => {
-                        if (NodeId != 3) {
-                            that.aggreSubmit(aggreParam)
-                            return
+                if (NodeId == 2 || NodeId == 8) {
+                    if (NodeId == 2) {
+                        for (let fund of this.ProjectFundingList) {
+                            if ((!fund.Money || !fund.NameAndMoney) && fund.Money != '0' && fund.NameAndMoney != '0') {
+                                this.$alert('项目经费使用情况表没填写完整', '提示信息', {
+                                    confirmButtonText: '确定'
+                                })
+                                return
+                            }
                         }
-                        this.tableForm['CooperativeUnit'] = this.tableForm.Customer
-                        this.tableForm.ApplyMan = this.nodeInfo.NodePeople
-                        this.tableForm.ApplyManId = this.nodeInfo.PeopleId
-                        this.PostData('ProjectNew/AddProject', [this.tableForm], (res) => {
-                            this.aggreSubmit(aggreParam)
-                        })
+                    }
+                    let param = {
+                        NodeId: NodeId,
+                        projectClosure: this.tableForm,
+                        detailedLists: this.DetailedList,
+                        applicationUnitList: this.ApplicationUnit,
+                        projectFundingList: this.ProjectFundingList,
+                        longitudinalProject: this.LongitudinalProject,
+                    }
+                    console.log(JSON.stringify(param))
+                    this.PostData('ProjectClosure/Modify', param, (res) => {
+                        this.aggreSubmit(aggreParam)
                     })
                 }
                 else {
@@ -355,15 +457,26 @@
             getTable() {
                 this.GetData('/ProjectClosure/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {
                     this.tableForm = res.projectClosure
-                    this.tableForm = res.detailedLists
-                    this.tableForm = res.applicationUnitList
-                    this.tableForm = res.longitudinalProject
-                    this.tableForm = res.projectFundingList
+                    this.DetailedList = res.detailedLists
+                    this.ApplicationUnit = res.applicationUnitList
+                    this.LongitudinalProject = res.longitudinalProject
+                    this.ProjectFundingList = res.projectFundingList
+                    if (this.ProjectFundingList.length == 0) this.ProjectFundingList = this.defaultProjectFundingList
+                    for (let con of this.uploadFileConfig) {
+                        if (this.tableForm[con.attribute]) {
+                            let urlObj = JSON.parse(this.tableForm[con.attribute])
+                            for (let obj of urlObj) {
+                                con.fileList.push({
+                                    name: obj.FileName,
+                                    path: obj.FileUrl
+                                })
+                            }
+                        }
+                    }
                 })
             },
 
         },
-
         created: function () {
             this.getTable()
             loadHtml("mainPage", "partPage")

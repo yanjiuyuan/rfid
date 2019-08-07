@@ -139,9 +139,10 @@
                     <div v-on:click="upClick(config.attribute)" class="el-upload__tip" slot="tip">{{config.point}}</div>
                 </el-upload>
             </el-form-item>
+            <hr />
         </template>
 
-        <hr />
+        
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
         </el-form-item>
@@ -289,7 +290,7 @@
                     Tel: '联系方式'
                 },
                 DetailedListConfig: {
-                    flowName: '类型',
+                    Type: '类型',
                     ApplyMan : '申请人',
                     ApplyTime: '申请时间',
                     OldtaskId: '流水号'
@@ -305,7 +306,6 @@
                     Dept: DingData.departName,
                     ProjectId: '',
                     ProjectName: '',
-
                     IsTransverse: true,
                     IsPortrait: true,
  
@@ -334,10 +334,20 @@
                 this.ApplicationUnit.push(_cloneObj(this.table1))
             },
             onSubmit(formName) {
-                console.log()
-                console.log()
-                console.log()
-                //根据类型添加审批人
+                for (let con of this.uploadFileConfig) {
+                    if (con.must && !this.ruleForm[con.attribute]) {
+                        this.$alert(con.label + ' 未上传', '提示信息')
+                        return
+                    }
+                }
+                if (this.ruleForm.IsTransverse && this.ApplicationUnit.length == 0) {
+                    this.$alert('未填写转化/应用单位情况表', '提示信息')
+                    return
+                }
+                if (this.ruleForm.IsPortrait && this.LongitudinalProject.length == 0) {
+                    this.$alert('未填写纵向项目基本情况表', '提示信息')
+                    return
+                }
                 let callBack = (taskId) => {
                     this.ruleForm['TaskId'] = taskId
                     for (let det of this.DetailedList) {
@@ -422,8 +432,6 @@
                 })
                 //根据项目显示bom
                 this.GetData('ProjectClosure/ReadFlowInfo?projectId=' + id, (res) => {
-                    console.log('1res~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                    console.log(res)
                     this.DetailedList = res
                 })
             },
