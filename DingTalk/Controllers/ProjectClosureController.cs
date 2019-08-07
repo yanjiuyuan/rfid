@@ -1,14 +1,21 @@
-﻿using DingTalk.Bussiness.FlowInfo;
+﻿using Common.ClassChange;
+using Common.Excel;
+using Common.Flie;
+using DingTalk.App_Start;
+using DingTalk.Bussiness.FlowInfo;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -211,9 +218,6 @@ namespace DingTalk.Controllers
             }
         }
 
-
-
-
         /// <summary>
         /// 项目结题修改
         /// </summary>
@@ -247,13 +251,13 @@ namespace DingTalk.Controllers
                 });
 
                 dDContext.ProjectFunding.AddRange(projectClosureModel.projectFundingList);
-               
+
                 projectClosureModel.longitudinalProject.ToList().ForEach(d =>
                 {
                     dDContext.Entry(d).State = System.Data.Entity.EntityState.Modified;
                 });
-                List<NodeInfo> nodeInfos= dDContext.NodeInfo.Where(n => n.NodeName.Contains("财务负责人")  && n.FlowId.ToString() == flows.FlowId.ToString()
-                && n.NodeId.ToString()== projectClosureModel.NodeId).ToList();
+                List<NodeInfo> nodeInfos = dDContext.NodeInfo.Where(n => n.NodeName.Contains("财务负责人") && n.FlowId.ToString() == flows.FlowId.ToString()
+                 && n.NodeId.ToString() == projectClosureModel.NodeId).ToList();
                 if (nodeInfos.Count > 0)
                 {
                     dDContext.ProjectFunding.AddRange(projectClosureModel.projectFundingList);
@@ -267,10 +271,29 @@ namespace DingTalk.Controllers
                 {
                     Tasks tasks = dDContext.Tasks.Where(t => t.TaskId.ToString() == projectClosureModel.projectClosure.TaskId.ToString() && t.NodeId.ToString() == "0").FirstOrDefault();
                     ProjectInfo projectInfo = dDContext.ProjectInfo.Where(p => p.ProjectId == tasks.ProjectId.ToString()).FirstOrDefault();
-                    SavePath(projectInfo.FilePath + "立项书或建议书", projectClosureModel.projectClosure.SuggestBook1);
+
+                    SavePath(projectInfo.FilePath + "1立项书或建议书", projectClosureModel.projectClosure.SuggestBook1);
+                    SavePath(projectInfo.FilePath + "2评审PPT", projectClosureModel.projectClosure.PPT2);
+                    SavePath(projectInfo.FilePath + "3需求规格说明书、产品总体设计书", projectClosureModel.projectClosure.DemandBook3);
+                    SavePath(projectInfo.FilePath + "4机械设计图纸", projectClosureModel.projectClosure.Drawing4);
+                    SavePath(projectInfo.FilePath + "5电气图纸", projectClosureModel.projectClosure.Electrical5);
+                    SavePath(projectInfo.FilePath + "6BOM表", projectClosureModel.projectClosure.Bom6);
+                    SavePath(projectInfo.FilePath + "7软件源代码", projectClosureModel.projectClosure.SourceCode7);
+                    SavePath(projectInfo.FilePath + "8使用说明书、操作手册、技术方案、规格说明书", projectClosureModel.projectClosure.UseBook8);
+                    SavePath(projectInfo.FilePath + "9合作协议", projectClosureModel.projectClosure.CooperationAgreement9);
+                    SavePath(projectInfo.FilePath + "10产品（样机、成品）图片、影像", projectClosureModel.projectClosure.Product10);
+                    SavePath(projectInfo.FilePath + "11阶段性整理的问题的分析、解决方案及计划表", projectClosureModel.projectClosure.Solution11);
+                    //SavePath(projectInfo.FilePath + "12项目采购清单", projectClosureModel.projectClosure);
+                    //SavePath(projectInfo.FilePath + "13受理知识产权清单及申请资料", projectClosureModel.projectClosure);
+                    SavePath(projectInfo.FilePath + "14纵向项目申请、中期检查、验收资料", projectClosureModel.projectClosure.AcceptanceData14);
+                    SavePath(projectInfo.FilePath + "15其他过程文档", projectClosureModel.projectClosure.ProcessDocumentation15);
+                    SavePath(projectInfo.FilePath + "16项目终止情况报告", projectClosureModel.projectClosure.TerminationReport16);
+                    SavePath(projectInfo.FilePath + "17装箱单", projectClosureModel.projectClosure.PackingList17);
+                    SavePath(projectInfo.FilePath + "18客户验收单", projectClosureModel.projectClosure.AcceptanceSlip18);
+                    //SavePath(projectInfo.FilePath + "19转化、应用单位情况表", projectClosureModel.projectClosure.);
+                    //SavePath(projectInfo.FilePath + "20项目经费使用情况表", projectClosureModel.projectClosure);
                 }
                 dDContext.SaveChanges();
-
                 return new NewErrorModel()
                 {
                     data = projectClosureModel,
@@ -286,17 +309,225 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 导出三张表格
+        /// </summary>
+        /// <param name="printAndSendModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("PrintExcel")]
+        public async Task<object> PrintExcel([FromBody]PrintModelNew printAndSendModel)
+        {
+            try
+            {
+                if (printAndSendModel.Type == 0)
+                {
+                    return new NewErrorModel()
+                    {
+                        data = printAndSendModel,
+                        error = new Error(1, "Type 没传！", "") { },
+                    };
+                }
+
+                using (DDContext context = new DDContext())
+                {
+                    DataTable dtpurchaseTables = new DataTable();
+                    switch (printAndSendModel.Type)
+                    {
+                        //纵向项目基本情况表
+                        case 1:
+                            List<LongitudinalProject> longitudinalProject = context.LongitudinalProject.Where(p => p.TaskId == printAndSendModel.TaskId).ToList();
+                            return await PrintsLongitudinalProject(longitudinalProject, printAndSendModel.UserId, "纵向项目基本情况表模板",
+                                "纵向项目基本情况表", 1, 2);
+                        //转化应用单位情况表
+                        case 2:
+                            List<ApplicationUnit> applicationUnitList = context.ApplicationUnit.Where(p => p.TaskId == printAndSendModel.TaskId).ToList();
+                            return await PrintsApplicationUnit(applicationUnitList, printAndSendModel.UserId, "转化应用单位情况表模板",
+                                "转化应用单位情况表", 1, 2);
+                        //项目经费使用情况表
+                        case 3:
+                            List<ProjectFunding> projectFundingList = context.ProjectFunding.Where(p => p.TaskId == printAndSendModel.TaskId).ToList();
+                            return await PrintsProjectFunding(projectFundingList, printAndSendModel.UserId, "项目经费使用情况表模板",
+                                   "项目经费使用情况表", 0, 3);
+                    }
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(1, "Type 类型有误", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        
+        public async Task<NewErrorModel> PrintsLongitudinalProject(List<LongitudinalProject> items, string userId, string templetName, string fileName, int column,
+            int row, string sheetName = "Sheet1")
+        {
+            if (items == null)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "暂无数据", "") { },
+                };
+            }
+            DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(items,new List<string>() {
+                "Id","TaskId"
+            });
+            string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", templetName));
+            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
+            File.Copy(path, newPath);
+            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+            {
+                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                //上盯盘
+                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
+                //推送用户
+                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                fileSendModel.UserId = userId;
+                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                //删除文件
+                File.Delete(newPath);
+                return new NewErrorModel()
+                {
+                    error = new Error(0, result, "") { },
+                };
+            }
+            else
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, "文件有误", "") { },
+                };
+            }
+        }
+
+        public async Task<NewErrorModel> PrintsApplicationUnit(List<ApplicationUnit> items, string userId, string templetName, string fileName, int column,
+         int row, string sheetName = "Sheet1")
+        {
+            if (items == null)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "暂无数据", "") { },
+                };
+            }
+            DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(items, new List<string>() {
+                "Id","TaskId"
+            });
+            string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", templetName));
+            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
+            File.Copy(path, newPath);
+            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+            {
+                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                //上盯盘
+                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
+                //推送用户
+                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                fileSendModel.UserId = userId;
+                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                //删除文件
+                File.Delete(newPath);
+                return new NewErrorModel()
+                {
+                    error = new Error(0, result, "") { },
+                };
+            }
+            else
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, "文件有误", "") { },
+                };
+            }
+        }
+
+
+        public async Task<NewErrorModel> PrintsProjectFunding(List<ProjectFunding> items, string userId, string templetName, string fileName, int column,
+       int row, string sheetName = "Sheet1")
+        {
+            if (items == null)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "暂无数据", "") { },
+                };
+            }
+            DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(items, new List<string>() {
+                "Id","TaskId"
+            });
+            string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", templetName));
+            string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
+            File.Copy(path, newPath);
+            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+            {
+                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                //上盯盘
+                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
+                //推送用户
+                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                fileSendModel.UserId = userId;
+                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                //删除文件
+                File.Delete(newPath);
+                return new NewErrorModel()
+                {
+                    error = new Error(0, result, "") { },
+                };
+            }
+            else
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, "文件有误", "") { },
+                };
+            }
+        }
+
         public void SavePath(string path, string strObject)
         {
-            List<FlieUrlModel> flieUrlModels = JsonConvert.DeserializeObject<List<FlieUrlModel>>(strObject);
-            if (flieUrlModels.Count > 0 && string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(strObject))
             {
-                foreach (var url in flieUrlModels)
+                List<FlieUrlModel> flieUrlModels = JsonConvert.DeserializeObject<List<FlieUrlModel>>(strObject);
+                if (flieUrlModels.Count > 0 && !string.IsNullOrEmpty(path))
                 {
-                    File.Copy(path, url.FileUrl);
+                    foreach (var url in flieUrlModels)
+                    {
+                        string filename = System.IO.Path.GetFileName(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl));
+                        FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
+                            System.Web.HttpContext.Current.Server.MapPath("~" + path) + "\\" + filename);
+
+                        //File.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
+                        //    System.Web.HttpContext.Current.Server.MapPath("~" + path));
+                    }
                 }
             }
         }
+    }
+
+    public class PrintModelNew
+    {
+        /// <summary>
+        /// 推送用户Id
+        /// </summary>
+        public string UserId { get; set; }
+        /// <summary>
+        /// 流水号
+        /// </summary>
+        public string TaskId { get; set; }
+        /// <summary>
+        /// 打印类型 1 表示 纵向项目基本情况表 2 表示转化/应用单位情况表 3 项目经费使用情况表（实际支出）
+        /// </summary>
+        public int Type { get; set; }
     }
 
     public class FlieUrlModel
