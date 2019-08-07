@@ -109,7 +109,7 @@
         <el-form-item label="操作">
             <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         </el-form-item>
-        <el-button type="primary" v-on:click="stampAndGet2" v-if="FlowId == '24'">打印表单</el-button>
+        <el-button type="primary" v-on:click="stampAndGet2" v-if="FlowId == '8'">打印表单</el-button>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
@@ -431,7 +431,7 @@
                 index: Index,
                 frameUrl: '',
                 ifShowStamppBtn: false,
-                ifShowStamppBtn2: false,
+                ifShowStamppBtn2: true,
                 frameShow: false
             }
         },
@@ -721,15 +721,15 @@
         created: function () {
             //获取下一个节点的审批人id
             if (state == '未完成') this.GetDingList(TaskId)
-            if (FlowId == '8') {
-                this.showStamp("采购管理员")
-            }
+            //if (FlowId == '8') {
+            //    this.showStamp("采购管理员")
+            //}
             if (FlowId == '6') {
                 this.showStamp("图纸管理员")
             }
-            if (FlowId == '8' && (Index == "3" || Index == "2")) {
-                this.ifShowStamppBtn2 = true
-            }
+            //if (FlowId == '8' && (Index == "3" || Index == "2")) {
+            //    this.ifShowStamppBtn2 = true
+            //}
             this.getBomInfo()
             if (Index == '0')
             for (let s of this.specialRoles) {
