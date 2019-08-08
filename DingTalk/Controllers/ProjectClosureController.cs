@@ -1,6 +1,9 @@
 ﻿using Common.ClassChange;
+using Common.DTChange;
 using Common.Excel;
 using Common.Flie;
+using Common.Ionic;
+using Common.PDF;
 using DingTalk.App_Start;
 using DingTalk.Bussiness.FlowInfo;
 using DingTalk.EF;
@@ -293,6 +296,17 @@ namespace DingTalk.Controllers
                     //SavePath(projectInfo.FilePath + "19转化、应用单位情况表", projectClosureModel.projectClosure.);
                     //SavePath(projectInfo.FilePath + "20项目经费使用情况表", projectClosureModel.projectClosure);
 
+                    foreach (var item in projectClosureModel.detailedLists)
+                    {
+                        if (item.Type.Contains("零部件采购"))
+                        {
+                            Tasks taskP = dDContext.Tasks.Where(t=>t.TaskId.ToString()== item.OldTaskId && t.NodeId==0).FirstOrDefault();
+                            PrintAndSendPurcahse(taskP, System.Web.HttpContext.Current.Server.MapPath
+                           (projectInfo.FilePath + string.Format("12项目采购清单//项目采购清单流水号{0}.zip", item.OldTaskId)));
+                        }
+                    }
+                 
+
 
 
                     List<LongitudinalProject> longitudinalProject = dDContext.LongitudinalProject.Where(p => p.TaskId == projectClosureModel.projectClosure.TaskId).ToList();
@@ -307,7 +321,7 @@ namespace DingTalk.Controllers
                            (projectInfo.FilePath + "19转化、应用单位情况表//转化应用单位情况表.xlsx"));
 
                     List<ProjectFunding> projectFundingList = dDContext.ProjectFunding.Where(p => p.TaskId == projectClosureModel.projectClosure.TaskId).ToList();
-                    await  PrintsProjectFunding(projectFundingList, "", "项目经费使用情况表模板",
+                    await PrintsProjectFunding(projectFundingList, "", "项目经费使用情况表模板",
                            "项目经费使用情况表", 0, 3, System.Web.HttpContext.Current.Server.MapPath
                            (projectInfo.FilePath + "20项目经费使用情况表//项目经费使用情况表.xlsx"));
 
@@ -385,6 +399,93 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 后端打印用
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <param name="strpath"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("PrintAndSendPurcahse")]
+        public NewErrorModel PrintAndSendPurcahse(Tasks tasks,string strpath)
+        {
+            try
+            {
+                DDContext context = new DDContext();
+                List<PurchaseTable> PurchaseTableList = context.PurchaseTable.Where(u => u.TaskId == tasks.TaskId.ToString()).ToList();
+
+                var SelectPurchaseList = from p in PurchaseTableList
+                                         select new
+                                         {
+                                             p.CodeNo,
+                                             p.Name,
+                                             p.Standard,
+                                             p.Unit,
+                                             p.Count,
+                                             p.Price,
+                                             p.Purpose,
+                                             p.UrgentDate,
+                                             p.Mark
+                                         };
+                DataTable dtSourse = DtLinqOperators.CopyToDataTable(SelectPurchaseList);
+                //ClassChangeHelper.ToDataTable(SelectPurchaseList);
+                List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == tasks.FlowId.ToString() && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
+                foreach (NodeInfo nodeInfo in NodeInfoList)
+                {
+                    if (string.IsNullOrEmpty(nodeInfo.NodePeople))
+                    {
+                        string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == tasks.TaskId.ToString() && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
+                        string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == tasks.TaskId.ToString() && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                        nodeInfo.NodePeople = strNodePeople + "  " + ApplyTime;
+                    }
+                    else
+                    {
+                        string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == tasks.TaskId.ToString() && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                        nodeInfo.NodePeople = nodeInfo.NodePeople + "  " + ApplyTime;
+                    }
+                }
+                DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
+                string FlowName = context.Flows.Where(f => f.FlowId.ToString() == tasks.FlowId.ToString()).First().FlowName.ToString();
+                ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == tasks.ProjectId).First();
+                string ProjectName = projectInfo.ProjectName;
+                string ProjectNo = projectInfo.ProjectId;
+
+                //绘制BOM表单PDF
+                List<string> contentList = new List<string>()
+                        {
+                            "序号","物料编码","物料名称","规格型号","单位","数量","单价","用途","需用日期","备注"
+                        };
+
+                float[] contentWithList = new float[]
+                {
+                        50, 60, 60, 60, 60, 60, 60, 60, 60,60
+                };
+                PDFHelper pdfHelper = new PDFHelper();
+                string path = pdfHelper.GeneratePDF(FlowName, tasks.TaskId.ToString(), tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
+                ProjectName, ProjectNo, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null);
+                string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
+
+                List<string> newPaths = new List<string>();
+                RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
+                newPaths.Add(RelativePath);
+                //string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, FlowName + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                //文件压缩打包
+                IonicHelper.CompressMulti(newPaths, strpath, false);
+
+
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
 
         public async Task<NewErrorModel> PrintsLongitudinalProject(List<LongitudinalProject> items, string userId, string templetName, string fileName, int column,
             int row, string copyPath = "", string sheetName = "Sheet1")
@@ -402,7 +503,7 @@ namespace DingTalk.Controllers
             string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", templetName));
             string time = DateTime.Now.ToString("yyyyMMddHHmmss");
             string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
-            File.Copy(path, newPath,true);
+            File.Copy(path, newPath, true);
             if (copyPath == "")
             {
                 if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
