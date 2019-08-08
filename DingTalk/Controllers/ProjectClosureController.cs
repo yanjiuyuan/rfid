@@ -225,7 +225,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Modify")]
         [HttpPost]
-        public NewErrorModel Modify([FromBody] ProjectClosureModel projectClosureModel)
+        public async Task<NewErrorModel> Modify([FromBody] ProjectClosureModel projectClosureModel)
         {
             try
             {
@@ -292,7 +292,27 @@ namespace DingTalk.Controllers
                     SavePath(projectInfo.FilePath + "18客户验收单", projectClosureModel.projectClosure.AcceptanceSlip18);
                     //SavePath(projectInfo.FilePath + "19转化、应用单位情况表", projectClosureModel.projectClosure.);
                     //SavePath(projectInfo.FilePath + "20项目经费使用情况表", projectClosureModel.projectClosure);
+
+
+
+                    List<LongitudinalProject> longitudinalProject = dDContext.LongitudinalProject.Where(p => p.TaskId == projectClosureModel.projectClosure.TaskId).ToList();
+
+                    await PrintsLongitudinalProject(longitudinalProject, "", "纵向项目基本情况表模板",
+                        "纵向项目基本情况表", 1, 2, System.Web.HttpContext.Current.Server.MapPath
+                           (projectInfo.FilePath + "14纵向项目申请、中期检查、验收资料//纵向项目基本情况表.xlsx"));
+
+                    List<ApplicationUnit> applicationUnitList = dDContext.ApplicationUnit.Where(p => p.TaskId == projectClosureModel.projectClosure.TaskId).ToList();
+                    await PrintsApplicationUnit(applicationUnitList, "", "转化应用单位情况表模板",
+                        "转化应用单位情况表", 1, 2, System.Web.HttpContext.Current.Server.MapPath
+                           (projectInfo.FilePath + "19转化、应用单位情况表//转化应用单位情况表.xlsx"));
+
+                    List<ProjectFunding> projectFundingList = dDContext.ProjectFunding.Where(p => p.TaskId == projectClosureModel.projectClosure.TaskId).ToList();
+                    await  PrintsProjectFunding(projectFundingList, "", "项目经费使用情况表模板",
+                           "项目经费使用情况表", 0, 3, System.Web.HttpContext.Current.Server.MapPath
+                           (projectInfo.FilePath + "20项目经费使用情况表//项目经费使用情况表.xlsx"));
+
                 }
+
                 dDContext.SaveChanges();
                 return new NewErrorModel()
                 {
@@ -365,9 +385,9 @@ namespace DingTalk.Controllers
             }
         }
 
-        
+
         public async Task<NewErrorModel> PrintsLongitudinalProject(List<LongitudinalProject> items, string userId, string templetName, string fileName, int column,
-            int row, string sheetName = "Sheet1")
+            int row, string copyPath = "", string sheetName = "Sheet1")
         {
             if (items == null)
             {
@@ -376,40 +396,53 @@ namespace DingTalk.Controllers
                     error = new Error(0, "暂无数据", "") { },
                 };
             }
-            DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(items,new List<string>() {
+            DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(items, new List<string>() {
                 "Id","TaskId"
             });
             string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", templetName));
             string time = DateTime.Now.ToString("yyyyMMddHHmmss");
             string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
-            File.Copy(path, newPath);
-            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+            File.Copy(path, newPath,true);
+            if (copyPath == "")
             {
-                DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                //上盯盘
-                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
-                //推送用户
-                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                fileSendModel.UserId = userId;
-                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+                {
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    //上盯盘
+                    var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = userId;
+                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                    //删除文件
+                    File.Delete(newPath);
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, result, "") { },
+                    };
+                }
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, "文件有误", "") { },
+                    };
+                }
+            }
+            else
+            {
+                ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
+                File.Copy(path, newPath, true);
                 //删除文件
                 File.Delete(newPath);
                 return new NewErrorModel()
                 {
-                    error = new Error(0, result, "") { },
-                };
-            }
-            else
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, "文件有误", "") { },
+                    error = new Error(0, "复制成功！", "") { },
                 };
             }
         }
-
         public async Task<NewErrorModel> PrintsApplicationUnit(List<ApplicationUnit> items, string userId, string templetName, string fileName, int column,
-         int row, string sheetName = "Sheet1")
+         int row, string copyPath = "", string sheetName = "Sheet1")
         {
             if (items == null)
             {
@@ -425,34 +458,48 @@ namespace DingTalk.Controllers
             string time = DateTime.Now.ToString("yyyyMMddHHmmss");
             string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
             File.Copy(path, newPath);
-            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+            if (copyPath == "")
             {
-                DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                //上盯盘
-                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
-                //推送用户
-                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                fileSendModel.UserId = userId;
-                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+                {
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    //上盯盘
+                    var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = userId;
+                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                    //删除文件
+                    File.Delete(newPath);
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, result, "") { },
+                    };
+                }
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, "文件有误", "") { },
+                    };
+                }
+            }
+            else
+            {
+                ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
+                File.Copy(path, newPath, true);
                 //删除文件
                 File.Delete(newPath);
                 return new NewErrorModel()
                 {
-                    error = new Error(0, result, "") { },
-                };
-            }
-            else
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, "文件有误", "") { },
+                    error = new Error(0, "复制成功！", "") { },
                 };
             }
         }
 
 
         public async Task<NewErrorModel> PrintsProjectFunding(List<ProjectFunding> items, string userId, string templetName, string fileName, int column,
-       int row, string sheetName = "Sheet1")
+       int row, string copyPath = "", string sheetName = "Sheet1")
         {
             if (items == null)
             {
@@ -468,27 +515,42 @@ namespace DingTalk.Controllers
             string time = DateTime.Now.ToString("yyyyMMddHHmmss");
             string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + fileName + time + ".xlsx";
             File.Copy(path, newPath);
-            if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+
+            if (copyPath == "")
             {
-                DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                //上盯盘
-                var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
-                //推送用户
-                FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                fileSendModel.UserId = userId;
-                var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row))
+                {
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    //上盯盘
+                    var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + fileName + time + ".xlsx");
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = userId;
+                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                    //删除文件
+                    File.Delete(newPath);
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, result, "") { },
+                    };
+                }
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, "文件有误", "") { },
+                    };
+                }
+            }
+            else
+            {
+                ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
+                File.Copy(path, newPath, true);
                 //删除文件
                 File.Delete(newPath);
                 return new NewErrorModel()
                 {
-                    error = new Error(0, result, "") { },
-                };
-            }
-            else
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, "文件有误", "") { },
+                    error = new Error(0, "复制成功！", "") { },
                 };
             }
         }
