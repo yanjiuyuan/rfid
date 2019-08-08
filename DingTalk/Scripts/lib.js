@@ -482,6 +482,7 @@ var mixin = {
                 url: url,
                 type: 'GET',
                 success: function (res) {
+                    if (typeof (res) == 'string') res = JSON.parse(res)
                     console.log(url)
                     console.log(res)
                     if (that.doWithErrcode(res.error)) {
@@ -1302,6 +1303,7 @@ function GetData(url, succe, demo) {
         url: url,
         type: 'GET',
         success: function (res) {
+            if (typeof (res) == 'string') res = JSON.parse(data)
             console.log(url)
             console.log(res)
             if (doWithErrcode(res.error,demo)) {

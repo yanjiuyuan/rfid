@@ -45,14 +45,7 @@
         <el-form-item label="实际结束时间">
             <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目相关数据" v-if="NodeId != 1">
-            <el-table :data="DetailedList" stripe border>
-                <el-table-column type="index"></el-table-column>
-                <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
-                </el-table-column>
-            </el-table>
-        </el-form-item>
-
+        
 
         <el-form-item label="是否有横向合作单位">
             <el-radio-group v-model="tableForm.IsTransverse" disabled>
@@ -70,11 +63,6 @@
             <el-form-item label="实际到账" prop="ActualMoney">
                 <el-input v-model="tableForm.ActualMoney" :disabled="true"></el-input>
             </el-form-item>
-            <el-table :data="ApplicationUnit" stripe border>
-                <el-table-column type="index"></el-table-column>
-                <el-table-column v-for="(value,key) in ApplicationUnitConfig" :prop="key" :label="value" :key="key">
-                </el-table-column>
-            </el-table>
         </template>
 
 
@@ -92,38 +80,103 @@
             </el-table>
         </template>
 
-        <template v-if="NodeId != 1">
-            <el-form-item label="项目经费使用情况表（实际支出）">
-                <el-table :data="ProjectFundingList" stripe border>
+
+        
+
+        <el-collapse v-model="activeNames">
+            <el-collapse-item :name="1" :key="1">
+                <template slot="title">
+                    <span style="font-size:20px;">相关文件</span>
+                </template>
+                <template v-for="config in uploadFileConfig" style="border:1px solid">
+                    <el-form-item v-if="(config.fileList.length > 0) && ((NodeId != 1 && NodeId != 2)|| config.label == 'BOM表')" :label="config.label">
+                        <el-card class="box-card">
+                            <div v-for="f in config.fileList" :key="f.name" class="text item">
+                                <span>{{ f.name }}</span>
+                                <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
+                            </div>
+                        </el-card>
+                    </el-form-item>
+                </template>
+            </el-collapse-item>
+            <el-collapse-item :name="2" :key="2">
+                <template slot="title">
+                    <span style="font-size:20px;">项目采购清单、借用清单、维修清单</span>
+                </template>
+                <el-table :data="DetailedList1" stripe border>
                     <el-table-column type="index"></el-table-column>
-                    @*<el-table-column label="操作">
+                    <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="danger" v-on:click="deleteProjectFundingList(scope.$index, scope.row)">删除</el-button>
+                            <el-button size="mini" type="primary" v-on:click="showDetailedList1(scope.$index, scope.row)">详情</el-button>
                         </template>
-                    </el-table-column>*@
+                    </el-table-column>
+                    <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
+                    </el-table-column>
+                </el-table>
+                <el-form-item label="详细信息">
+                    <el-table :data="DetailedList1_detail" stripe border>
+                        <el-table-column type="index"></el-table-column>
+                        <el-table-column v-for="(value,key) in DetailedList1_detailConfig" :prop="key" :label="value" :key="key">
+                        </el-table-column>
+                    </el-table>
+                </el-form-item>
+            </el-collapse-item>
+            <el-collapse-item :name="3" :key="3" v-if="NodeId != 1">
+                <template slot="title">
+                    <span style="font-size:20px;">受理知识产权清单</span>
+                </template>
+                <el-table :data="DetailedList2" stripe border>
+                    <el-table-column type="index"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button size="mini" type="primary" v-on:click="showDetailedList2(scope.$index, scope.row)">详情</el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
+                    </el-table-column>
+                </el-table>
+                <el-form-item label="申请名称">
+                    <el-input v-model="DetailedList2_detail.Name" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="申请发明人">
+                    <el-input v-model="DetailedList2_detail.Inventor" :disabled="true"></el-input>
+                </el-form-item>
+            </el-collapse-item>
+            <el-collapse-item :name="4" :key="4" v-if="tableForm.IsTransverse">
+                <template slot="title">
+                    <span style="font-size:20px;">转化/应用单位情况表</span>
+                </template>
+                <el-table :data="ApplicationUnit" stripe border>
+                    <el-table-column type="index"></el-table-column>
+                    <el-table-column v-for="(value,key) in ApplicationUnitConfig" :prop="key" :label="value" :key="key">
+                    </el-table-column>
+                </el-table>
+            </el-collapse-item>
+            <el-collapse-item :name="5" :key="5" v-if="NodeId != 1">
+                <template slot="title">
+                    <span style="font-size:20px;">项目经费使用情况表</span>
+                </template>
+                <el-table :data="ProjectFundingList" stripe border v-if="NodeId == 2">
+                    <el-table-column type="index"></el-table-column>
                     <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                         <template slot-scope="scope">
-                            <el-input v-model="scope.row[key]"></el-input>
+                            <el-input type="textarea" v-model="scope.row[key]"></el-input>
                         </template>
                     </el-table-column>
                 </el-table>
-            </el-form-item>
-        </template>
+                <el-table :data="ProjectFundingList" stripe border v-else>
+                    <el-table-column type="index"></el-table-column>
+                    <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
+                    </el-table-column>
+                </el-table>
+            </el-collapse-item>
+        </el-collapse>
 
 
-        <template v-for="config in uploadFileConfig" style="border:1px solid" v-if="NodeId != 1 && NodeId != 2">
-            <el-form-item v-if="config.fileList.length > 0" :label="config.label">
-                <el-card class="box-card">
-                    <div v-for="f in config.fileList" :key="f.name" class="text item">
-                        <span>{{ f.name }}</span>
-                        <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
-                    </div>
-                </el-card>
-            </el-form-item>
-        </template>
+
         <hr />
         <el-form-item label="意见">
-            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
+            <el-input type="textarea" v-model="ruleForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
 
         <!--添加审批人-->
@@ -172,7 +225,7 @@
                 state: State,
                 nodeList: [],
                 nodeInfo: {},
-
+                activeNames: [],
 
                 uploadFileConfig: [
                     {
@@ -315,6 +368,8 @@
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
                 DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、维修清单、受理知识产权清单)
+                DetailedList1: [], DetailedList1_detail: [], DetailedList1_detailConfig: {},
+                DetailedList2: [], DetailedList2_detail: {},
                 ProjectFundingList: [],//项目经费使用情况
                 defaultProjectFundingList: [
                     {
@@ -440,6 +495,7 @@
                         longitudinalProject: this.LongitudinalProject,
                     }
                     console.log(JSON.stringify(param))
+                    return
                     this.PostData('ProjectClosure/Modify', param, (res) => {
                         this.aggreSubmit(aggreParam)
                     })
@@ -448,12 +504,73 @@
                     this.aggreSubmit(aggreParam)
                 }
             },
+            //打印相关
             printTable() {
                 this.PostData('createProject/PrintPDF', {
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
             },
+            //详细信息获取
+            showDetailedList1(index, row) {
+                console.log(row)
+                let url = ''
+                switch (row.Type) {
+                    case '零部件采购申请':
+                        url = 'PurchaseNew/ReadPurchaseTable';
+                        this.DetailedList1_detailConfig = {
+                            CodeNo: '物料编码',
+                            Name: '物料名称',
+                            Standard: '规格型号',
+                            Unit: '单位',
+                            Count: '数量',
+                            Price: '单价(预计)',
+                            Purpose: '用途',
+                            UrgentDate: '需用日期',
+                            Mark: '备注'
+                        }
+                        break;
+                    case '借入申请':
+                        url = 'Borrow/Read';
+                        this.DetailedList1_detailConfig = {
+                            Supplier: '供应商',
+                            CodeNo: '物料编码',
+                            Name: '物料名称',
+                            Standard: '规格型号',
+                            Unit: '单位',
+                            Count: '数量',
+                            Price: '单价(预计)',
+                            Purpose: '用途',
+                            StartTime: '开始日期',
+                            EndTime: '结束日期',
+                            Mark: '备注'
+                        }
+                        break;
+                    case '维修申请':
+                        url = 'Maintain/Read';
+                        this.DetailedList1_detailConfig = {
+                            CodeNo: '物料编码',
+                            Name: '物料名称',
+                            Standard: '规格型号',
+                            Unit: '单位',
+                            Count: '数量',
+                            Price: '单价(预计)',
+                            MaintainContent: '维修内容',
+                            NeedTime: '需用时间',
+                            Mark: '备注'
+                        }
+                        break;
+                }
+                this.GetData(url + '?TaskId=' + row.OldTaskId, (res) => {
+                    this.DetailedList1_detail = res
+                })
+            },
+            showDetailedList2(index, row) {
+                this.GetData('IntellectualProperty/Read?TaskId=' + row.OldTaskId, (res) => {
+                    this.DetailedList2_detail = res
+                })
+            },
+            //获取数据
             getTable() {
                 this.GetData('/ProjectClosure/Read' + _formatQueryStr({ TaskId: TaskId }), (res) => {
                     this.tableForm = res.projectClosure
@@ -462,6 +579,10 @@
                     this.LongitudinalProject = res.longitudinalProject
                     this.ProjectFundingList = res.projectFundingList
                     if (this.ProjectFundingList.length == 0) this.ProjectFundingList = this.defaultProjectFundingList
+
+                    for (let detail of this.DetailedList) {
+                        detail.Type == '知识产权申请' ? this.DetailedList2.push(detail) : this.DetailedList1.push(detail)
+                    }
                     for (let con of this.uploadFileConfig) {
                         if (this.tableForm[con.attribute]) {
                             let urlObj = JSON.parse(this.tableForm[con.attribute])
