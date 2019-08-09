@@ -476,6 +476,7 @@
                 //根据项目显示bom
                 this.GetData('ProjectClosure/ReadFlowInfo?projectId=' + id, (res) => {
                     this.DetailedList = res
+                    this.DetailedList['ProjectType'] = res.ProjectType + '(' + res.ProjectSmallType + ')'
                 })
             },
             //加载重新发起审批传递的数据
