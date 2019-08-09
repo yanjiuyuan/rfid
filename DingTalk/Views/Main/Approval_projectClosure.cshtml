@@ -502,7 +502,6 @@
                         longitudinalProject: this.LongitudinalProject,
                     }
                     console.log(JSON.stringify(param))
-                    return
                     this.PostData('ProjectClosure/Modify', param, (res) => {
                         this.aggreSubmit(aggreParam)
                     })
