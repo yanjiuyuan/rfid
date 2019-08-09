@@ -21,7 +21,7 @@
         </el-form-item>
 
 
-        <el-form-item label="项目名">
+        <el-form-item label="项目名称">
             <el-input v-model="ruleForm.ProjectName" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目类型">
@@ -45,7 +45,7 @@
         <el-form-item label="实际结束时间">
             <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        
+
 
         <el-form-item label="是否有横向合作单位">
             <el-radio-group v-model="tableForm.IsTransverse" disabled>
@@ -78,10 +78,11 @@
                 <el-table-column v-for="(value,key) in LongitudinalProjectConfig" :prop="key" :label="value" :key="key">
                 </el-table-column>
             </el-table>
+            <el-button type="primary" v-on:click="printTable(1)">打印纵向项目基本情况表</el-button>
         </template>
 
 
-        
+
 
         <el-collapse v-model="activeNames">
             <el-collapse-item :name="1" :key="1">
@@ -89,7 +90,7 @@
                     <span style="font-size:20px;">相关文件</span>
                 </template>
                 <template v-for="config in uploadFileConfig" style="border:1px solid">
-                    <el-form-item v-if="(config.fileList.length > 0) && ((NodeId != 1 && NodeId != 2)|| config.label == 'BOM表')" :label="config.label">
+                    <el-form-item v-if="(config.fileList.length > 0) && ((NodeId > 3)|| config.label == 'BOM表')" :label="config.label">
                         <el-card class="box-card">
                             <div v-for="f in config.fileList" :key="f.name" class="text item">
                                 <span>{{ f.name }}</span>
@@ -135,12 +136,16 @@
                     <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
                     </el-table-column>
                 </el-table>
-                <el-form-item label="申请名称">
+                <el-form-item label="申报名称">
                     <el-input v-model="DetailedList2_detail.Name" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="申请发明人">
+                <el-form-item label="申报发明人">
                     <el-input v-model="DetailedList2_detail.Inventor" :disabled="true"></el-input>
                 </el-form-item>
+                <el-form-item label="申报类别">
+                    <el-input v-model="DetailedList2_detail.Name" :disabled="true"></el-input>
+                </el-form-item>
+   
             </el-collapse-item>
             <el-collapse-item :name="4" :key="4" v-if="tableForm.IsTransverse">
                 <template slot="title">
@@ -151,6 +156,7 @@
                     <el-table-column v-for="(value,key) in ApplicationUnitConfig" :prop="key" :label="value" :key="key">
                     </el-table-column>
                 </el-table>
+                <el-button type="primary" v-on:click="printTable(2)">打印转化/应用单位情况表</el-button>
             </el-collapse-item>
             <el-collapse-item :name="5" :key="5" v-if="NodeId != 1">
                 <template slot="title">
@@ -169,10 +175,11 @@
                     <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                     </el-table-column>
                 </el-table>
+                <el-button type="primary" v-on:click="printTable(3)">打印项目经费使用情况表</el-button>
             </el-collapse-item>
         </el-collapse>
 
-
+            
 
         <hr />
         <el-form-item label="意见">
@@ -504,11 +511,39 @@
                     this.aggreSubmit(aggreParam)
                 }
             },
+            //重新发起审批
+            reApproval() {
+                this.disablePage = true
+                ReApprovalTempData = {
+                    valid: true,
+                    data: this.data,
+                    dataArr: this.dataArr,
+                    imageList: this.imageList,
+                    fileList: this.fileList,
+                    LongitudinalProject: this.LongitudinalProject,
+                    ApplicationUnit: this.ApplicationUnit,
+                    DetailedList: this.DetailedList,
+                    ProjectFundingList: this.ProjectFundingList,
+                    ruleForm: Object.assign(this.ruleForm,this.tableForm)
+                }
+                console.log('111')
+                console.log(JSON.stringify(this.tableForm))
+                console.log('222')
+                console.log(JSON.stringify(this.ruleForm))
+                console.log('333')
+                console.log(JSON.stringify(ReApprovalTempData))
+                for (let img of imgConfig) {
+                    if (img.flowId == FlowId) {
+                        loadPage(img.url)
+                    }
+                }
+            },
             //打印相关
-            printTable() {
-                this.PostData('createProject/PrintPDF', {
+            printTable(index) {
+                this.PostData('ProjectClosure/PrintExcel', {
                     UserId: DingData.userid,
-                    TaskId: TaskId
+                    TaskId: TaskId,
+                    Type: index
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
             },
             //详细信息获取

@@ -483,8 +483,10 @@ var mixin = {
                 type: 'GET',
                 success: function (res) {
                     if (typeof (res) == 'string') res = JSON.parse(res)
-                    console.log(url)
-                    console.log(res)
+                    if (url.indexOf('GetFlowStateCounts') <= 0) {
+                        console.log(url)
+                        console.log(res)
+                    }
                     if (that.doWithErrcode(res.error)) {
                         return
                     }
@@ -716,7 +718,6 @@ var mixin = {
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
-            if (!this.tableForm) this.tableForm = {}
             ReApprovalTempData = {
                 valid: true,
                 data: this.data,
@@ -843,6 +844,13 @@ var mixin = {
                     }
                 }
                 this.getNodeInfo_done(this.nodeList)
+                //设置当前角色正确节点
+                if (this.index && this.index != '0' && this.index != '3') {
+                    for (let i = this.nodeList.length - 1; i >= 0; i--) {
+                        if (this.nodeList[i].ApplyManId == DingData.userid)
+                            this.NodeId = this.nodeList[i].NodeId
+                    }
+                }
             })
             
         },
