@@ -300,14 +300,11 @@ namespace DingTalk.Controllers
                     {
                         if (item.Type.Contains("零部件采购"))
                         {
-                            Tasks taskP = dDContext.Tasks.Where(t=>t.TaskId.ToString()== item.OldTaskId && t.NodeId==0).FirstOrDefault();
+                            Tasks taskP = dDContext.Tasks.Where(t => t.TaskId.ToString() == item.OldTaskId && t.NodeId == 0).FirstOrDefault();
                             PrintAndSendPurcahse(taskP, System.Web.HttpContext.Current.Server.MapPath
                            (projectInfo.FilePath + string.Format("12项目采购清单//项目采购清单流水号{0}.zip", item.OldTaskId)));
                         }
                     }
-                 
-
-
 
                     List<LongitudinalProject> longitudinalProject = dDContext.LongitudinalProject.Where(p => p.TaskId == projectClosureModel.projectClosure.TaskId).ToList();
 
@@ -400,14 +397,254 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 后端打印用
+        /// 打印并推送表单
+        /// </summary>
+        /// <param name="printAndSendModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("PrintAndSend")]
+        public async Task<NewErrorModel> PrintAndSend([FromBody]PrintAndSendModel printAndSendModel)
+        {
+            try
+            {
+                string TaskId = printAndSendModel.TaskId;
+                string UserId = printAndSendModel.UserId;
+                PDFHelper pdfHelper = new PDFHelper();
+                using (DDContext context = new DDContext())
+                {
+                    //获取表单信息
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
+                    string FlowId = tasks.FlowId.ToString();
+                    string ProjectId = tasks.ProjectId;
+                    //判断流程是否已结束
+
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
+                    if (tasksList.Count > 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "流程未结束！", "") { },
+                        };
+                    }
+
+
+                    ProjectClosure purchaseTableList = context.ProjectClosure.Where(u => u.TaskId == TaskId).FirstOrDefault();
+                    Dictionary<string, string> keyValuePairsHead = new Dictionary<string, string>();
+                    keyValuePairsHead.Add("项目类别", purchaseTableList.ProjectType);
+                    keyValuePairsHead.Add("项目负责人", purchaseTableList.ResponsibleMan);
+                    keyValuePairsHead.Add("项目成员", purchaseTableList.TeamMembers);
+                    keyValuePairsHead.Add("小组成员", purchaseTableList.TeamMembers);
+                    keyValuePairsHead.Add("项目周期", purchaseTableList.StartTime + "-" + purchaseTableList.EndTime);
+                    keyValuePairsHead.Add("项目实际开发周期", purchaseTableList.ActualCycleStart + "-" + purchaseTableList.ActualCycleEnd);
+                    keyValuePairsHead.Add("是否有横向合作单位", purchaseTableList.IsTransverse == true ? "是" : "否");
+                    if (purchaseTableList.IsTransverse == true)
+                    {
+                        keyValuePairsHead.Add("合同金额", purchaseTableList.ContractAmount);
+                        keyValuePairsHead.Add("合同编码", purchaseTableList.ContractNo);
+                        keyValuePairsHead.Add("实际到账", purchaseTableList.ActualMoney);
+                    }
+                    keyValuePairsHead.Add("是否有申报纵向项目", purchaseTableList.IsPortrait == true ? "是" : "否");
+
+                    List<PrintPDFModel> printPDFModels = new List<PrintPDFModel>();
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "立项书或建议书",
+                        Count = CalCounts(purchaseTableList.SuggestBook1).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "评审PPT",
+                        Count = CalCounts(purchaseTableList.PPT2).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "需求规格说明书、产品总体设计书",
+                        Count = CalCounts(purchaseTableList.DemandBook3).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "机械设计图纸",
+                        Count = CalCounts(purchaseTableList.Drawing4).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "电气图纸",
+                        Count = CalCounts(purchaseTableList.Electrical5).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "BOM表",
+                        Count = CalCounts(purchaseTableList.Bom6).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "软件源代码",
+                        Count = CalCounts(purchaseTableList.SourceCode7).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "使用说明书/操作手册/技术方案/规格说明书",
+                        Count = CalCounts(purchaseTableList.UseBook8).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "合作协议",
+                        Count = CalCounts(purchaseTableList.CooperationAgreement9).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "产品（样机/成品）图片/影像",
+                        Count = CalCounts(purchaseTableList.Product10).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "阶段性整理的问题的分析、解决方案及计划表",
+                        Count = CalCounts(purchaseTableList.Solution11).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "项目采购清单、借用清单、维修清单",
+                        Count = context.DetailedList.Where(t => t.TaskId == TaskId && t.Type.Contains("零部件采购")).ToList().Count.ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "受理知识产权清单",
+                        Count = context.DetailedList.Where(t => t.TaskId == TaskId && t.Type.Contains("知识产权")).ToList().Count.ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "纵向项目申请/中期检查/验收资料",
+                        Count = CalCounts(purchaseTableList.AcceptanceData14).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "其他过程文档、设计报告、评审报告、项目计划、设计更改报告等",
+                        Count = CalCounts(purchaseTableList.ProcessDocumentation15).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "项目终止情况报告",
+                        Count = CalCounts(purchaseTableList.TerminationReport16).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "装箱单",
+                        Count = CalCounts(purchaseTableList.PackingList17).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "客户验收单",
+                        Count = CalCounts(purchaseTableList.AcceptanceSlip18).ToString()
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "转化/应用单位情况表",
+                        Count = "1"
+                    });
+                    printPDFModels.Add(new PrintPDFModel()
+                    {
+                        Name = "项目经费使用情况表",
+                        Count = "1"
+                    });
+
+                    DataTable dtSourse = DtLinqOperators.CopyToDataTable(printPDFModels);
+                    //ClassChangeHelper.ToDataTable(SelectPurchaseList);
+                    List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
+                    foreach (NodeInfo nodeInfo in NodeInfoList)
+                    {
+                        if (string.IsNullOrEmpty(nodeInfo.NodePeople))
+                        {
+                            string strNodePeople = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyMan;
+                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                            nodeInfo.NodePeople = strNodePeople + "  " + ApplyTime;
+                        }
+                        else
+                        {
+                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
+                            nodeInfo.NodePeople = nodeInfo.NodePeople + "  " + ApplyTime;
+                        }
+                    }
+                    DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
+                    string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
+                    ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == ProjectId).First();
+                    string ProjectName = projectInfo.ProjectName;
+                    string ProjectNo = projectInfo.ProjectId;
+
+                    //绘制BOM表单PDF
+                    List<string> contentList = new List<string>()
+                        {
+                            "序号","文件类别", "份数"
+                        };
+
+                    float[] contentWithList = new float[]
+                    {
+                        50, 350, 60,
+                    };
+
+                    string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
+                    ProjectName, ProjectNo, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null, keyValuePairsHead);
+                    string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
+
+                    List<string> newPaths = new List<string>();
+                    RelativePath = AppDomain.CurrentDomain.BaseDirectory + RelativePath.Substring(2, RelativePath.Length - 2).Replace('/', '\\');
+                    newPaths.Add(RelativePath);
+                    string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip", AppDomain.CurrentDomain.BaseDirectory, FlowName + DateTime.Now.ToString("yyyyMMddHHmmss"));
+                    //文件压缩打包
+                    IonicHelper.CompressMulti(newPaths, SavePath, false);
+
+                    //上传盯盘获取MediaId
+                    SavePath = string.Format(@"~\UploadFile\Ionic\{0}", Path.GetFileName(SavePath));
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    var resultUploadMedia = await dingTalkServersController.UploadMedia(SavePath);
+                    //推送用户
+                    FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                    fileSendModel.UserId = UserId;
+                    var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, result, "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 计算文件数
+        /// </summary>
+        /// <param name="strObj"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("CalCounts")]
+        public int CalCounts(string strObj)
+        {
+            if (string.IsNullOrEmpty(strObj))
+            {
+                return 0;
+            }
+            else
+            {
+                List<FileUrlModel> fileUrlModels = JsonConvert.DeserializeObject<List<FileUrlModel>>(strObj);
+                return fileUrlModels.Count;
+            }
+        }
+
+        /// <summary>
+        /// 后端打印用(采购表单)
         /// </summary>
         /// <param name="tasks"></param>
         /// <param name="strpath"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("PrintAndSendPurcahse")]
-        public NewErrorModel PrintAndSendPurcahse(Tasks tasks,string strpath)
+        public NewErrorModel PrintAndSendPurcahse(Tasks tasks, string strpath)
         {
             try
             {
@@ -698,6 +935,12 @@ namespace DingTalk.Controllers
         public string FileUrl { get; set; }
         public string MediaId { get; set; }
         public string FileName { get; set; }
+    }
+
+    public class PrintPDFModel
+    {
+        public string Name { get; set; }
+        public string Count { get; set; }
     }
 
     public class FlowModel
