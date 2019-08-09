@@ -483,8 +483,10 @@ var mixin = {
                 type: 'GET',
                 success: function (res) {
                     if (typeof (res) == 'string') res = JSON.parse(res)
-                    console.log(url)
-                    console.log(res)
+                    if (url.indexOf('GetFlowStateCounts') <= 0) {
+                        console.log(url)
+                        console.log(res)
+                    }
                     if (that.doWithErrcode(res.error)) {
                         return
                     }
