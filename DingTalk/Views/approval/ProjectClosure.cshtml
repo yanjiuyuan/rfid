@@ -9,6 +9,17 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
 
+        <el-upload class="upload-demo"
+                   action="https://jsonplaceholder.typicode.com/posts/"
+                   :before-remove="beforeRemove"
+                   multiple
+                   :limit="3"
+                   :on-exceed="handleExceed"
+                   :file-list="fileList">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
@@ -20,7 +31,7 @@
         </el-form-item>
 
 
-        <el-form-item label="项目名" prop="ProjectId">
+        <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
@@ -62,7 +73,7 @@
                 </el-table-column>
             </el-table>
         </el-form-item>
-        
+
 
         <el-form-item label="是否有横向合作单位">
             <el-radio-group v-model="ruleForm.IsTransverse">
@@ -126,12 +137,15 @@
             <el-button v-on:click="addLongitudinalProject" type="primary" plain> + 添加</el-button>
         </template>
 
+
+
         <template v-for="config in uploadFileConfig" style="border:1px solid">
             <el-form-item :label="config.label" :required="config.must" label-width="220px">
                 <el-upload class="upload-demo"
                            :file-list="config.fileList"
                            action="/drawingupload/Upload"
                            :on-remove="handleRemove"
+                           :before-remove="beforeRemoveFile"
                            :before-upload="beforeUpload"
                            :on-success="handleSuccess"
                            multiple>
@@ -142,7 +156,7 @@
             <hr />
         </template>
 
-        
+
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
         </el-form-item>
@@ -289,16 +303,25 @@
                     Post: '职务',
                     Tel: '联系方式'
                 },
+                fileList: [{
+                    name: 'food.jpeg',
+                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+                },
+                {
+                    name: 'food2.jpeg',
+                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+                }],
                 DetailedListConfig: {
                     Type: '类型',
                     ApplyMan : '申请人',
                     ApplyTime: '申请时间',
-                    OldtaskId: '流水号'
+                    OldTaskId: '流水号'
                 },
                 table1: {},
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
                 DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、维修清单、受理知识产权清单)
+                projectFundingList: [],//项目经费使用情况
                 ruleForm: {
                     Title: "结题申请",
                     ApplyMan: DingData.nickName,
@@ -320,6 +343,19 @@
             }
         },
         methods: {
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            },
+            beforeRemove(file, fileList) {
+                return this.$confirm(`确定移除 ${file.name}？`);
+            },
+
             //删除表格项
             deleteLongitudinalProject(index) {
                 this.LongitudinalProject.splice(index, 1)
@@ -363,7 +399,7 @@
                         projectClosure: this.ruleForm,
                         detailedLists: this.DetailedList,
                         applicationUnitList: this.ApplicationUnit,
-                        projectFundingList: [],
+                        projectFundingList: this.projectFundingList,
                         longitudinalProject: this.LongitudinalProject,
                     }
                     console.log(JSON.stringify(param))
@@ -395,6 +431,11 @@
                 this.GetData('ProjectClosure/ReadDefault?projectId=' + id, (res) => {
                     this.uploadFileConfig[0].fileList = []
                     this.uploadFileConfig[1].fileList = []
+                    if (!res.fileUrl) {
+                        this.ruleForm['SuggestBook1'] = ''
+                        this.ruleForm['PPT2'] = ''
+                        return
+                    }
                     let param1 = []
                     let param2 = []
                     let fileUrl = res.fileUrl.split(',')
@@ -435,6 +476,30 @@
                     this.DetailedList = res
                 })
             },
+            //加载重新发起审批传递的数据
+            loadReApprovalData() {
+                if (!ReApprovalTempData.valid) return
+                this.ruleForm = ReApprovalTempData.ruleForm
+                this.LongitudinalProject = ReApprovalTempData.LongitudinalProject
+                this.ApplicationUnitConfig = ReApprovalTempData.ApplicationUnitConfig
+                this.DetailedList = ReApprovalTempData.DetailedList
+                this.ProjectFundingList = ReApprovalTempData.ProjectFundingList
+
+                for (let con of this.uploadFileConfig) {
+                    if (this.ruleForm[con.attribute]) {
+                        let urlObj = JSON.parse(this.ruleForm[con.attribute])
+                        for (let obj of urlObj) {
+                            con.fileList.push({
+                                name: obj.FileName,
+                                path: obj.FileUrl
+                            })
+                        }
+                    }
+                }
+
+                ReApprovalTempData.valid = false
+                this.purchaseList = ReApprovalTempData.data
+            },
             //文件上传处理方法
             upClick(attr) {
                 console.log(attr)
@@ -447,6 +512,10 @@
                     return false
                 }
                 return true
+            },
+            beforeRemoveFile(file, fileList) {
+                console.log(file)
+                return this.$confirm(`确定移除 ${file.name}？`);
             },
             handleRemove(file, fileList) {
                 let param = []
