@@ -36,11 +36,8 @@
         <el-form-item label="标题" v-if="ruleForm.Title">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目名" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="项目编号" v-if="ruleForm.ProjectId">
-            <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>
+        <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
+            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>

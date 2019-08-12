@@ -847,8 +847,10 @@ var mixin = {
                 //设置当前角色正确节点
                 if (this.index && this.index != '0' && this.index != '3') {
                     for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                        if (this.nodeList[i].ApplyManId == DingData.userid)
+                        if (this.nodeList[i].ApplyManId == DingData.userid) {
                             this.NodeId = this.nodeList[i].NodeId
+                            break
+                        }
                     }
                 }
             })

@@ -32,8 +32,8 @@
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目名" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
+        <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
+            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>

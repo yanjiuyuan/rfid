@@ -83,7 +83,7 @@
                 <el-input v-model="tableForm.TechnicalProposal" style="width:550px;" type="textarea" :disabled="noEdit"></el-input>
             </el-form-item>
             <el-form-item label="测试项目名称" prop="ProjectName">
-                <el-input v-model="tableForm.ProjectName" style="width:200px;" :disabled="noEdit"></el-input>
+                <el-input v-model="ruleForm.ProjectId + ' - ' + tableForm.ProjectName" :disabled="noEdit"></el-input>
             </el-form-item>
             <template v-if="NodeId==1">
                 <el-form-item label="方案文件">
@@ -288,7 +288,7 @@
             //显示内容特殊处理
             getNodeInfo_done(nodeList) {
                 for (let node of nodeList) {
-                    if (node.NodeName == '抄送' && node.ApplyMan.indexOf(DingData.nickName) >= 0) {
+                    if (node.NodeName == '抄送小组成员' && node.ApplyMan.indexOf(DingData.nickName) >= 0) {
                         this.showSome = false
                     }
                 }
