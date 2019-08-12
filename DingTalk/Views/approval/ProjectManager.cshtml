@@ -246,7 +246,7 @@
                 for (let r of response[0].Value) {
                     let ifTrue = r['是否启用'] == ('True' || 'true')? true : false
                     param.push({
-                        ProjectName: r['项目名'],
+                        ProjectName: r['项目名称'],
                         CreateTime: r['创建时间'],
                         IsEnable: ifTrue,
                         ProjectState: r['状态'],

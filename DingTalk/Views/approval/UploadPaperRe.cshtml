@@ -11,7 +11,7 @@
     </div>
     <div>
         <span>关键字查询</span>
-        <el-input v-model="keyWord" placeholder="(项目名、标题、申请人、流水号)" style="width:300px;"></el-input>
+        <el-input v-model="keyWord" placeholder="(项目名称、标题、申请人、流水号)" style="width:300px;"></el-input>
         <el-button v-on:click="search">搜索</el-button>
     </div>
     <!--表格實體-->
@@ -64,7 +64,7 @@
     <hr />
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名" prop="ProjectId">
+        <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"

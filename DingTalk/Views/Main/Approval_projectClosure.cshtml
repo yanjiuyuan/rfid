@@ -22,7 +22,7 @@
 
 
         <el-form-item label="项目名称">
-            <el-input v-model="ruleForm.ProjectName" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目类型">
             <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
@@ -100,7 +100,7 @@
                     </el-form-item>
                 </template>
             </el-collapse-item>
-            <el-collapse-item :name="2" :key="2">
+            <el-collapse-item :name="2" :key="2" v-if="showDetailedList1.length">
                 <template slot="title">
                     <span style="font-size:20px;">项目采购清单、借用清单、维修清单</span>
                 </template>
@@ -122,7 +122,7 @@
                     </el-table>
                 </el-form-item>
             </el-collapse-item>
-            <el-collapse-item :name="3" :key="3" v-if="NodeId != 1">
+            <el-collapse-item :name="3" :key="3" v-if="NodeId != 1 && showDetailedList2.length">
                 <template slot="title">
                     <span style="font-size:20px;">受理知识产权清单</span>
                 </template>
@@ -147,7 +147,7 @@
                 </el-form-item>
    
             </el-collapse-item>
-            <el-collapse-item :name="4" :key="4" v-if="tableForm.IsTransverse">
+            <el-collapse-item :name="4" :key="4" v-if="((tableForm.IsTransverse && NodeId > 3) || index == 2) && ApplicationUnit.length">
                 <template slot="title">
                     <span style="font-size:20px;">转化/应用单位情况表</span>
                 </template>
@@ -203,11 +203,11 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
-        @*<template v-if="index!=0">
+        <template v-if="index!=0">
             <el-form-item>
-                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
+                <el-button type="primary" v-on:click="printPdf" :disabled="disablePage">打印表单</el-button>
             </el-form-item>
-        </template>*@
+        </template>
     </el-form>
 </el-main>
 
@@ -525,11 +525,6 @@
                     ProjectFundingList: this.ProjectFundingList,
                     ruleForm: Object.assign(this.ruleForm,this.tableForm)
                 }
-                console.log('111')
-                console.log(JSON.stringify(this.tableForm))
-                console.log('222')
-                console.log(JSON.stringify(this.ruleForm))
-                console.log('333')
                 console.log(JSON.stringify(ReApprovalTempData))
                 for (let img of imgConfig) {
                     if (img.flowId == FlowId) {
@@ -543,6 +538,12 @@
                     UserId: DingData.userid,
                     TaskId: TaskId,
                     Type: index
+                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
+            },
+            printPdf() {
+                this.PostData('ProjectClosure/PrintAndSend', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
             },
             //详细信息获取

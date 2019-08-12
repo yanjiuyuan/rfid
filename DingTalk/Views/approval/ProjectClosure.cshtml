@@ -315,7 +315,7 @@
                     Type: '类型',
                     ApplyMan : '申请人',
                     ApplyTime: '申请时间',
-                    OldTaskId: '流水号'
+                    OldtaskId: '流水号'
                 },
                 table1: {},
                 LongitudinalProject: [],//纵向，表1
@@ -426,6 +426,7 @@
                         delete proj.ApplyMan
                         delete proj.ApplyManId
                         Object.assign(this.ruleForm, proj)
+                        this.ruleForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
                         proj.ProjectType == '研发类' && proj.ProjectSmallType == '纵向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
                     }
                 }
@@ -476,7 +477,6 @@
                 //根据项目显示bom
                 this.GetData('ProjectClosure/ReadFlowInfo?projectId=' + id, (res) => {
                     this.DetailedList = res
-                    this.DetailedList['ProjectType'] = res.ProjectType + '(' + res.ProjectSmallType + ')'
                 })
             },
             //加载重新发起审批传递的数据
@@ -484,7 +484,7 @@
                 if (!ReApprovalTempData.valid) return
                 this.ruleForm = ReApprovalTempData.ruleForm
                 this.LongitudinalProject = ReApprovalTempData.LongitudinalProject
-                this.ApplicationUnitConfig = ReApprovalTempData.ApplicationUnitConfig
+                this.ApplicationUnit = ReApprovalTempData.ApplicationUnit
                 this.DetailedList = ReApprovalTempData.DetailedList
                 this.ProjectFundingList = ReApprovalTempData.ProjectFundingList
 
