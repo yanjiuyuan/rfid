@@ -770,9 +770,7 @@ namespace DingTalk.Controllers
             else
             {
                 ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
-                File.Copy(path, newPath, true);
-                //删除文件
-                File.Delete(newPath);
+                File.Copy(newPath, copyPath, true);
                 return new NewErrorModel()
                 {
                     error = new Error(0, "复制成功！", "") { },
@@ -825,9 +823,7 @@ namespace DingTalk.Controllers
             else
             {
                 ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
-                File.Copy(path, newPath, true);
-                //删除文件
-                File.Delete(newPath);
+                File.Copy(newPath, copyPath, true);
                 return new NewErrorModel()
                 {
                     error = new Error(0, "复制成功！", "") { },
@@ -883,9 +879,7 @@ namespace DingTalk.Controllers
             else
             {
                 ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
-                File.Copy(path, newPath, true);
-                //删除文件
-                File.Delete(newPath);
+                File.Copy(newPath, copyPath, true);
                 return new NewErrorModel()
                 {
                     error = new Error(0, "复制成功！", "") { },
