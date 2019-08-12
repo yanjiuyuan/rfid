@@ -426,8 +426,7 @@ namespace DingTalk.Controllers
                             error = new Error(1, "流程未结束！", "") { },
                         };
                     }
-
-
+                    
                     ProjectClosure purchaseTableList = context.ProjectClosure.Where(u => u.TaskId == TaskId).FirstOrDefault();
                     Dictionary<string, string> keyValuePairsHead = new Dictionary<string, string>();
                     keyValuePairsHead.Add("项目类别", purchaseTableList.ProjectType);
