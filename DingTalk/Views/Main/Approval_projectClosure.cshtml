@@ -175,7 +175,7 @@
                     <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                     </el-table-column>
                 </el-table>
-                <el-button type="primary" v-on:click="printTable(3)">打印项目经费使用情况表</el-button>
+                <el-button v-if="NodeId > 2" type="primary" v-on:click="printTable(3)">打印项目经费使用情况表</el-button>
             </el-collapse-item>
         </el-collapse>
 
@@ -375,98 +375,98 @@
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
                 DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、维修清单、受理知识产权清单)
-                DetailedList1: [], DetailedList1_detail: [], DetailedList1_detailConfig: {},
+                DetailedList1: [], DetailedList1_detail: [], DetailedList1_detailConfig: {}, dt1Index: 0,
                 DetailedList2: [], DetailedList2_detail: {},
                 ProjectFundingList: [],//项目经费使用情况
                 defaultProjectFundingList: [
                     {
                         Subject: '1、设备费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '其中：购置',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '试制',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '2、材料费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '3、测试化验加工费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '4、燃料动力费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '5、差旅费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '6、会议费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '7、合作与交流费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '8、出版/文献/信息传播/知识产权事务费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '9、劳务费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '10、专家咨询费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '11、管理费',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '12、其他(如用车成本等)',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     },
                     {
                         Subject: '合计',
-                        Money: '',
-                        NameAndMoney: '',
+                        Money: '0',
+                        NameAndMoney: '0',
                         TaskId: TaskId
                     }
                 ],
@@ -549,6 +549,7 @@
             //详细信息获取
             showDetailedList1(index, row) {
                 console.log(row)
+                this.dt1Index = index
                 let url = ''
                 switch (row.Type) {
                     case '零部件采购申请':
@@ -629,6 +630,7 @@
                             }
                         }
                     }
+                    this.showDetailedList1(1, { Type: this.ProjectFundingList[0].Type })
                 })
             },
 
