@@ -16,6 +16,9 @@ using System.Data;
 using System.IO;
 using Common.Ionic;
 using Common.ClassChange;
+using DingTalk.Bussiness.FlowInfo;
+using System.Web;
+using Common.Excel;
 
 namespace DingTalk.Controllers
 {
@@ -102,7 +105,7 @@ namespace DingTalk.Controllers
                     context.Entry<Evection>(evection).State = EntityState.Modified;
                     context.SaveChanges();
                 }
-               
+
                 return new NewErrorModel()
                 {
                     error = new Error(0, "修改成功！", "") { },
@@ -116,6 +119,88 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 外出报表导出与查询
+        /// </summary>
+        /// <param name="dateStartTime">开始时间</param>
+        /// <param name="dateEndTime">结束时间</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [Route("GetReport")]
+        [HttpPost]
+        public async Task<NewErrorModel> GetReport(DateTime dateStartTime, DateTime dateEndTime, string userId, string key = "")
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+
+                    List<Evection> evectionsPro = new List<Evection>();
+                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskIdByFlowName("外出申请").Where(t => t.NodeId == 0).ToList() ;
+                    List<Evection> evections = context.Evection.ToList();
+                    List<Evection> evectionPro = new List<Evection> ();
+                    List<Evection> evectionProP = new List<Evection>();
+                    DateTime dateTime = new DateTime();
+                    foreach (var item in evections)
+                    {
+                        if (DateTime.TryParse(item.BeginTime, out dateTime))
+                        {
+                            if (DateTime.Parse(item.BeginTime) > dateStartTime && DateTime.Parse(item.EndTime) < dateEndTime)
+                            {
+                                evectionPro.Add(item);
+                            }
+                        }
+                    }
+                    foreach (var task in tasks)
+                    {
+                        foreach (var evection in evectionPro)
+                        {
+                            if (task.TaskId.ToString() == evection.TaskId)
+                            {
+                                //借用字段
+                                evection.Duration = task.ApplyMan;
+                                evectionProP.Add(evection);
+                            }
+                        }
+                    }
+
+                    DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(evectionProP, new List<string>() {
+                    "Id","EvectionManId","LocationPlace"
+                      });
+                    string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", "外出数据导出模板"));
+                    string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + "外出数据" + time + ".xlsx";
+                    File.Copy(path, newPath,true);
+
+                    if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 1))
+                    {
+                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                        //上盯盘 
+                        var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + "\\" + "外出数据"+ time + ".xlsx");
+                        //推送用户
+                        FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                        fileSendModel.UserId = userId;
+                        var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                        //删除文件
+                        File.Delete(newPath);
+                    }
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "推送成功!", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
 
         /// <summary>
         /// 打印盖章
@@ -147,10 +232,10 @@ namespace DingTalk.Controllers
                     }
 
                     Evection ct = context.Evection.Where(u => u.TaskId == TaskId).FirstOrDefault();
-            
+
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-                
+
                     keyValuePairs.Add("外出人员", ct.EvectionMan);
                     keyValuePairs.Add("外出地点", ct.Place);
                     keyValuePairs.Add("开始时间", ct.BeginTime);
@@ -199,7 +284,6 @@ namespace DingTalk.Controllers
                     return result;
                 }
             }
-
             catch (Exception ex)
             {
                 return new NewErrorModel()
