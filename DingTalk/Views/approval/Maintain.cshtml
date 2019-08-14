@@ -99,7 +99,7 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目名称" prop="ProjectId">
+        @*<el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
@@ -109,7 +109,7 @@
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
-        </el-form-item>
+        </el-form-item>*@
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
