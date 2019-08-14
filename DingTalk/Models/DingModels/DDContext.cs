@@ -93,7 +93,7 @@ namespace DingTalk.Models.DingModels
 
         public virtual DbSet<LongitudinalProject> LongitudinalProject { get; set; }
 
-
+        public virtual DbSet<ProcessingProgress> ProcessingProgress { get; set; }
 
     }
 }
