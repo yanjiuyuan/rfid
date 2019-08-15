@@ -157,7 +157,48 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员))
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetPower")]
+        public NewErrorModel GetPower(string applyManId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    int iPower = 2;
+                    if (context.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == applyManId).ToList().Count > 0)
+                    {
+                        iPower = 0;
+                    }
+                    else
+                    {
+                        if (context.Roles.Where(r => r.RoleName == "生产加工进度分配人" && r.UserId == applyManId).ToList().Count > 0)
+                        {
+                            iPower = 1;
+                        }
+                    }
+                    return new NewErrorModel()
+                    {
+                        data = iPower,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
     }
+
+   
 
     public class ProcessingProgressModel
     {
