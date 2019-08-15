@@ -235,6 +235,12 @@
             sortId: 5,
             url: '/approval/projectClosure',
             position: (x + 8 * xTap -3) + 'px ' + (y + 4 * yTap) + 'px'
+        },
+        {
+            flowId: 70,//
+            sortId: 9,
+            url: '/approval/produceRate',
+            position: (x + 5 * xTap) + 'px ' + (y + 2 * yTap) + 'px'
         }
 
     ]
@@ -243,7 +249,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [1,2,3,4,5],
+                activeNames: [2,7],
                 count: 2,
                 name: '',
                 id: '',
