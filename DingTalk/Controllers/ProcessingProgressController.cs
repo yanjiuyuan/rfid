@@ -29,7 +29,7 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext dDContext = new DDContext();
-                string eappUrl = "eapp://page/start/pushNotice/pushNotice";
+                string eappUrl = string.Format("eapp://page/start/pushNotice/pushNotice?taskid={0}", processingProgressModel.processingProgresses[0].TaskId);
                 if (dDContext.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == processingProgressModel.applyManId).ToList().Count == 0)
                 {
                     return new NewErrorModel()
