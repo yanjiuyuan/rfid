@@ -17,31 +17,61 @@
             <el-table-column prop="Column1" width="150" label="单位"></el-table-column>
             <el-table-column prop="Column2" width="150" label="大类别"></el-table-column>
             <el-table-column prop="Column3" width="150" label="小类别"></el-table-column>
-            <el-table-column prop="Column4" width="150" label="项目编码"></el-table-column>
-            <el-table-column prop="Column5" width="150" label="项目名称"></el-table-column>
-            <el-table-column prop="Column6" width="150" label="流水号"></el-table-column>
-            <el-table-column prop="Column7" width="150" label="bom"></el-table-column>
-            <el-table-column prop="Column8" width="150" label="走账"></el-table-column>
-            <el-table-column prop="Column9" width="150" label="单位"></el-table-column>
-            <el-table-column prop="Column10" width="150" label="单位"></el-table-column>
-            <el-table-column label="配送信息">
-                <el-table-column prop="name"
-                                 label="姓名"
-                                 width="120">
-                </el-table-column>
-                <el-table-column prop="name" label="地址" width="120">
-
-                </el-table-column>
+            <el-table-column prop="Column4" width="150" label="备注"></el-table-column>
+            <el-table-column prop="Column5" width="150" label="项目编码"></el-table-column>
+            <el-table-column prop="Column6" width="150" label="项目名称"></el-table-column>
+            <el-table-column prop="Column7" width="150" label="流水号"></el-table-column>
+            <el-table-column prop="Column8" width="150" label="bom"></el-table-column>
+            <el-table-column prop="Column9" width="150" label="走账"></el-table-column>
+            <el-table-column prop="Column10" width="150" label="设计员"></el-table-column>
+            <el-table-column label="资料接收时间">
+                <el-table-column prop="Column11" width="150" label="BOM"></el-table-column>
+                <el-table-column prop="Column12" width="150" label="2D"></el-table-column>
+                <el-table-column prop="Column13" width="150" label="3D"></el-table-column>
             </el-table-column>
+            <el-table-column prop="Column14" width="150" label="需求时间"></el-table-column>
+            <el-table-column prop="Column15" width="150" label="需求数量"></el-table-column>
+            <el-table-column prop="Column16" width="150" label="预计开工时间"></el-table-column>
+            <el-table-column prop="Column17" width="150" label="预计完成时间"></el-table-column>
+            <el-table-column prop="Column18" width="150" label="开始时间"></el-table-column>
+            <el-table-column label="零件加工">
+                <el-table-column prop="Column19" width="150" label="自制数（件）"></el-table-column>
+                <el-table-column prop="Column20" width="150" label="加工时间（天）"></el-table-column>
+                <el-table-column prop="Column21" width="150" label="进度（件）"></el-table-column>
+                <el-table-column prop="Column22" width="150" label="外协数（件）"></el-table-column>
+                <el-table-column prop="Column23" width="150" label="加工时间（天）"></el-table-column>
+                <el-table-column prop="Column24" width="150" label="进度"></el-table-column>
+            </el-table-column>
+            <el-table-column prop="Column25" width="150" label="实际加工完成时间"></el-table-column>
+            <el-table-column label="组装">
+                <el-table-column prop="Column26" width="150" label="组装（%）"></el-table-column>
+                <el-table-column prop="Column27" width="150" label="调试（%）"></el-table-column>
+                <el-table-column prop="Column28" width="150" label="进度说明"></el-table-column>
+            </el-table-column>
+            <el-table-column prop="Column29" width="150" label="备注"></el-table-column>
+            <el-table-column prop="Column30" width="150" label="部门负责人"></el-table-column>
+            <el-table-column prop="Column31" width="150" label="记录人"></el-table-column>
+            <el-table-column prop="Column32" width="150" label="设计员确认收货"></el-table-column>
+            <el-table-column prop="Column33" width="150" label="备注"></el-table-column>
         </el-table>
-        <el-table :data="tableData" stripe border>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:size-change="handleSizeChange"
+                           v-on:current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="pageSize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="totalRows">
+            </el-pagination>
+        </div>
+        @*<el-table :data="tableData" stripe border>
             <el-table-column prop="CodeNo" type="index"></el-table-column>
-            @*<el-table-column label="操作">
+            <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
                 </template>
-            </el-table-column>*@
-
+            </el-table-column>
             <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row[key]" :class="{redborder:!scope.row[key]}"></el-input>
@@ -52,7 +82,7 @@
                     <el-input v-model="scope.row[key]"></el-input>
                 </template>
             </el-table-column>
-        </el-table>
+        </el-table>*@
         <!--上传表單-->
         <el-upload class="upload-demo"
                    action="/drawingupload/UploadAndGetInfo"
@@ -71,34 +101,41 @@
 </el-main>
 
 <script>
-    var meterielConfig = {
-        Name: '物料名称',
-        Unit: '单位',
-        Standard: '规格型号',
-        SurfaceTreatment: '表面处理',
-        PerformanceLevel: '性能等级',
-        StandardNumber: '标准号',
-        Features: '典型特征',
-        purpose: '用途',
-        Remark: '备注'
-    }
-    var allConfig = _cloneObj(meterielConfig)
-    var configDictionary = {}
-    allConfig['BigCodeName'] = '大类名称'
-    allConfig['BigCode'] = '大类编码'
-    allConfig['SmallCodeName'] = '小类名称'
-    allConfig['SmallCode'] = '小类编码'
-    for (let c in allConfig) {
-        configDictionary[allConfig[c]] = c
-    }
-    var meteriel = {}
-    var lengthConfig = {}
-    for (let m in meterielConfig) {
-        meteriel[m] = ''
-        switch (m) {
-            case 'Unit': case 'BigCode': case 'SmallCode': case 'PerformanceLevel': case 'Features': lengthConfig[m] = 100; break;
-            default: lengthConfig[m] = '';
-        }
+    let a = 'DesignerId,设计员Id  HeadOfDepartmentsId,部门负责人Id'
+    let tableConfig = {
+        Column1: 'CompanyName',
+        Column2: 'ProjectType',
+        Column3: 'ProjectSmallType',
+        Column4: 'Remark1',
+        Column5: 'ProjectId',
+        Column6: 'ProjectName',
+        Column7: 'TaskId ',
+        Column8: 'Bom',
+        Column9: 'AccountKeeping',
+        Column10: 'Designer',
+        Column11: 'BomTime',
+        Column12: 'TwoD',
+        Column13: 'ThreeD',
+        Column14: 'NeedTime',
+        Column15: 'NeedCount',
+        Column16: 'ScheduledDate',
+        Column17: 'CompletionTime',
+        Column18: 'BeginTime',
+        Column19: 'HomemadeNumber',
+        Column20: 'ProcessingTimeZZ',
+        Column21: 'ProgressNumberZZ',
+        Column22: 'ExternalNumberZZ',
+        Column23: 'ProcessingTimeYX',
+        Column24: 'ProgressNumberYX',
+        Column25: 'ExternalNumberYX',
+        Column26: 'SpeedOfProgress',
+        Column27: 'ActualCompletionTime',
+        Column28: 'Assemble ',
+        Column29: 'Debugging',
+        Column30: 'ProgressStatement',
+        Column31: 'Remark2',
+        Column32: 'HeadOfDepartments',
+        Column33: ''
     }
     var demo = new Vue({
         el: "#partPage",
@@ -107,15 +144,11 @@
             return {
                 mediaId: '@@lAvPDeC2t8bqmM3OExReeM5jC3b9',
                 excelList: [],
+                data: [],
                 tableData: [],
-                allConfig: allConfig,
-                lengthConfig: lengthConfig,
-                meterielConfig: meterielConfig,
-                meteriel: meteriel,
-                needInput: ['BigCode', 'SmallCode', 'BigCodeName', 'SmallCodeName', 'Name', 'Standard', 'Unit', 'Remark'],
                 ruleForm: {
                     name: DingData.nickName,
-                    goods: [_cloneObj(meteriel)]
+                   
                 }
             }
         },
@@ -168,14 +201,12 @@
             handleSuccess(response, file, fileList) {
                 //this.tableData = []
                 console.log(response)
-                this.tableData = []
-                for (let d of response[0].Value) {
-                    let tmpData = {}
-                    for (let s in d) {
-                        tmpData[configDictionary[s]] = d[s]
-                    }
-                    this.tableData.push(tmpData)
+                this.data = []
+                for (let i = 2; i < response[0].Value.length; i++) {
+                    this.data.push(response[0].Value[i])
                 }
+                this.totalRows = response[0].Value.length - 2
+                this.getData()
             },
         },
         created: function () {
