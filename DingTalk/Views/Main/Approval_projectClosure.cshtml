@@ -72,7 +72,7 @@
                 <el-radio :label=false>否</el-radio>
             </el-radio-group>
         </el-form-item>
-        <template v-if="tableForm.IsPortrait">
+        <template v-if="((tableForm.IsPortrait && NodeId > 3) || index == 2) && LongitudinalProject.length">
             <el-table :data="LongitudinalProject" stripe border>
                 <el-table-column type="index"></el-table-column>
                 <el-table-column v-for="(value,key) in LongitudinalProjectConfig" :prop="key" :label="value" :key="key">
@@ -114,7 +114,7 @@
                     <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
                     </el-table-column>
                 </el-table>
-                <el-form-item label="详细信息">
+                <el-form-item :label="'详细信息('+ dt1Index + ')'">
                     <el-table :data="DetailedList1_detail" stripe border>
                         <el-table-column type="index"></el-table-column>
                         <el-table-column v-for="(value,key) in DetailedList1_detailConfig" :prop="key" :label="value" :key="key">
@@ -122,7 +122,7 @@
                     </el-table>
                 </el-form-item>
             </el-collapse-item>
-            <el-collapse-item :name="3" :key="3" v-if="NodeId != 1 && showDetailedList2.length">
+            <el-collapse-item :name="3" :key="3" v-if="NodeId != 1 && DetailedList2.length">
                 <template slot="title">
                     <span style="font-size:20px;">受理知识产权清单</span>
                 </template>
@@ -549,7 +549,7 @@
             //详细信息获取
             showDetailedList1(index, row) {
                 console.log(row)
-                this.dt1Index = index
+                this.dt1Index = index + 1
                 let url = ''
                 switch (row.Type) {
                     case '零部件采购申请':
@@ -630,7 +630,7 @@
                             }
                         }
                     }
-                    this.showDetailedList1(1, { Type: this.ProjectFundingList[0].Type })
+                    this.showDetailedList1(0, this.DetailedList1[0])
                 })
             },
 

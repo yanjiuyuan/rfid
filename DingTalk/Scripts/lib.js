@@ -339,6 +339,7 @@ var mixin = {
         ],
         nodeList: [],
         nodeInfo: {},
+        NodeIds: [],
         data: [],
         tableData: [],
         fileList: [],
@@ -845,6 +846,13 @@ var mixin = {
                 }
                 this.getNodeInfo_done(this.nodeList)
                 //设置当前角色正确节点
+                if (this.index && this.index != '0' && this.index != '3') {
+                    for (let i = this.nodeList.length - 1; i >= 0; i--) {
+                        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                            this.NodeIds.push(this.nodeList[i].NodeId)
+                        }
+                    }
+                }
                 if (this.index && this.index != '0' && this.index != '3') {
                     for (let i = this.nodeList.length - 1; i >= 0; i--) {
                         if (this.nodeList[i].ApplyManId == DingData.userid) {

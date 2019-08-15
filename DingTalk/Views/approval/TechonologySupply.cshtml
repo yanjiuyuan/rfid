@@ -33,7 +33,7 @@
         <el-form-item label="合作单位" prop="Customer">
             <el-input v-model="ruleForm.Customer" style="width:400px;"></el-input>
         </el-form-item>
-        <el-form-item label="项目大类">
+        <el-form-item label="项目大类" prop="ProjectType">
             <el-select v-model="ruleForm.ProjectType" style="width:300px;">
                 <el-option v-for="s of ['研发类','产品类','教育类']" :label="s" :value="s" key="s"></el-option>
             </el-select>
@@ -101,7 +101,7 @@
                     OtherEngineers: "",
                     OtherEngineersId: "",
                     Customer: "",
-                    ProjectType: "研发类",
+                    ProjectType: "",
                     EmergencyLevel : "中",
                     TimeRequired: "",
                     ProjectOverview: "",
@@ -109,6 +109,7 @@
                     Title: "技术支持申请"
                 },
                 rules: {
+                    ProjectType: { required: true, message: '项目大类不能为空', trigger: 'blur' },
                     ResponsibleMan: { required: true, message: '项目负责人不能为空', trigger: 'blur' },
                     Customer: { required: true, message: '客户名称不能为空', trigger: 'blur' },
                     TimeRequired: { required: true, message: '要求完成时间不能为空', trigger: 'blur' },

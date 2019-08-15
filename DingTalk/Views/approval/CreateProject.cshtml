@@ -10,7 +10,7 @@
         立项申请
     </div>
     <!--创建项目表单-->
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
             <el-form-item label="标题" prop="Title">
@@ -27,8 +27,8 @@
                     <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="协作单位" prop="Customer">
-                <el-input v-model="ruleForm.Customer"></el-input>
+            <el-form-item label="合作单位（填写）" prop="Customer">
+                <el-input v-model="ruleForm.Customer" placeholder="没有填'无'"></el-input>
             </el-form-item>
             <el-form-item label="项目类型" required="required">
                 <div class="block">
@@ -54,7 +54,7 @@
                                 end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="上传立项文件（如测试项目需上传:项目立项书或项目答辩PPT）" required="required">
+            <el-form-item label="项目立项书和项目答辩PPT，测试项目上传方案" required="required">
                 <el-upload class="upload-demo"
                            drag
                            :file-list="fileList"
