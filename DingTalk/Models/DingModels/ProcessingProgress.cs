@@ -49,15 +49,15 @@
         [StringLength(200)]        public string BomTime { get; set; }
 
         /// <summary>
-        /// 3D
+        /// 2D
         /// </summary>
         [StringLength(200)]        public string TwoD { get; set; }
         /// <summary>
-        /// 需求时间
+        /// 3D
         /// </summary>
         [StringLength(200)]        public string ThreeD { get; set; }
         /// <summary>
-        /// 
+        /// 需求时间
         /// </summary>
         [StringLength(200)]        public string NeedTime { get; set; }
         /// <summary>
@@ -144,5 +144,18 @@
         /// <summary>
         /// 是否已读
         /// </summary>        public bool? IsAlreadyRead { get; set; }
-    
-    }}
+
+        /// <summary>
+        /// 部门负责人
+        /// </summary>
+        [StringLength(200)]
+        public string HeadOfDepartments { get; set; }
+
+        /// <summary>
+        /// 部门负责人Id
+        /// </summary>
+        [StringLength(200)]
+        public string HeadOfDepartmentsId { get; set; }
+
+
+    }}

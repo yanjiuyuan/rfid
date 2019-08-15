@@ -37,8 +37,7 @@ namespace DingTalk.Controllers
                         error = new Error(1, "没有权限上传！", "") { },
                     };
                 }
-
-
+                
                 List<ProjectInfo> projectInfos = dDContext.ProjectInfo.ToList();
                 foreach (var processingProgresse in processingProgressModel.processingProgresses)
                 {
@@ -79,21 +78,24 @@ namespace DingTalk.Controllers
                                     processingProgresse.DesignerId = tasks[0].ApplyManId;
                                     dDContext.ProcessingProgress.Add(processingProgresse);
                                 }
-
                             }
                         }
                     }
                 }
                 if (!processingProgressModel.IsExcelUpload)  //单条添加
                 {
-                    Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度处理人").FirstOrDefault();
-                    //推送钉钉消息给设计人员和胡工
+                    Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
+                    //推送钉钉消息给设计人员和部门负责人(胡工)
                     DingTalkServersController dingTalkServersController = new DingTalkServersController();
                     await dingTalkServersController.SendProcessingProgress(processingProgressModel.processingProgresses[0].DesignerId, 0, processingProgressModel.applyMan,processingProgressModel.processingProgresses[0].Bom
                         , processingProgressModel.processingProgresses[0].TaskId,"eapp://page/start/pushNotice/pushNotice");
 
                     await dingTalkServersController.SendProcessingProgress(roles.UserId, 0, processingProgressModel.applyMan, processingProgressModel.processingProgresses[0].Bom
                       , processingProgressModel.processingProgresses[0].TaskId, "eapp://page/start/pushNotice/pushNotice");
+                   
+                    processingProgressModel.processingProgresses[0].HeadOfDepartments = roles.UserName;
+                    processingProgressModel.processingProgresses[0].HeadOfDepartments = roles.UserId;
+                    dDContext.ProcessingProgress.Add(processingProgressModel.processingProgresses[0]);
                 }
                 dDContext.SaveChanges();
                 return new NewErrorModel()
