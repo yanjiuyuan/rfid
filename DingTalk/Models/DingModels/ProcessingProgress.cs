@@ -80,7 +80,7 @@
         /// 自制数（件）
         /// </summary>
         [StringLength(200)]
-        public string HomemadeNumber { get; set; }
+        public string HomemadeNumberZZ { get; set; }
         /// <summary>
         /// 加工时间（天）自制
         /// </summary>
@@ -90,22 +90,14 @@
         /// </summary>
         [StringLength(200)]        public string ProgressNumberZZ { get; set; }
         /// <summary>
-        /// 外协数（件）自制
+        /// 外协数（件）外协
         /// </summary>
-        [StringLength(200)]        public string ExternalNumberZZ { get; set; }
+        [StringLength(200)]        public string ExternalNumberYX { get; set; }
 
         /// <summary>
         /// 加工时间（天）外协
         /// </summary>
         [StringLength(200)]        public string ProcessingTimeYX { get; set; }
-        /// <summary>
-        /// 进度（件）外协
-        /// </summary>
-        [StringLength(200)]        public string ProgressNumberYX { get; set; }
-        /// <summary>
-        /// 外协数（件）外协
-        /// </summary>
-        [StringLength(200)]        public string ExternalNumberYX { get; set; }
 
 
         /// <summary>
@@ -136,6 +128,12 @@
         /// 记录人
         /// </summary>
         [StringLength(200)]        public string NoteTaker { get; set; }
+
+        /// <summary>
+        /// 记录人Id
+        /// </summary>
+        [StringLength(200)]        public string NoteTakerId { get; set; }
+
         /// <summary>
         /// 备注(设计人员)
         /// </summary>
@@ -157,5 +155,15 @@
         [StringLength(200)]
         public string HeadOfDepartmentsId { get; set; }
 
+        /// <summary>
+        /// 制表人(蔡靓弥)
+        /// </summary>
+        [StringLength(200)]
+        public string Tabulator { get; set; }
 
+        /// <summary>
+        /// 制表人Id
+        /// </summary>
+        [StringLength(200)]
+        public string TabulatorId { get; set; }
     }}
