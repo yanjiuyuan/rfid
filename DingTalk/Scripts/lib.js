@@ -1224,10 +1224,14 @@ var mixin = {
         },
         //根据taskId获取下一个需要审批的人，即要钉的人
         GetDingList(taskId) {
+            console.log('111s')
             this.GetData('/DingTalkServers/Ding' + _formatQueryStr({ taskId: taskId }), (res) => {
+                console.log('23333333333')
+                console.log(res)
                 if (!res) return
+                console.log('332')
                 this.dingList = []
-                this.dingList.push(res.applyManId)
+                this.dingList.push(res.ApplyManId)
             })
         },
 
@@ -1538,7 +1542,7 @@ Vue.component('Ding2', {
         Ding() {
             let param = {
                 userId: this.dinglist[0],
-                title: '请帮我审核一下流水号为 ' + this.flowid + ' 的流程',
+                title: '请帮我审核一下流水号为 ' + TaskId + ' 的流程',
                 applyMan: this.userid,
                 linkUrl: "eapp://page/approve/approve?index=0"
             }
