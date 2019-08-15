@@ -869,6 +869,7 @@
     <Content Include="Views\Register\flowInformation.cshtml" />
     <Content Include="Views\approval\ProjectClosure.cshtml" />
     <Content Include="Views\Main\Approval_projectClosure.cshtml" />
+    <Content Include="Views\approval\ProduceRate.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

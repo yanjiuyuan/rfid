@@ -149,5 +149,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult ProduceRate()
+        {
+            return View();
+        }
     }
 }
