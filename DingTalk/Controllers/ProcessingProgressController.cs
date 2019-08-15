@@ -29,7 +29,7 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext dDContext = new DDContext();
-
+                string eappUrl = "eapp://page/start/pushNotice/pushNotice";
                 if (dDContext.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == processingProgressModel.applyManId).ToList().Count == 0)
                 {
                     return new NewErrorModel()
@@ -37,7 +37,7 @@ namespace DingTalk.Controllers
                         error = new Error(1, "没有权限上传！", "") { },
                     };
                 }
-                
+
                 List<ProjectInfo> projectInfos = dDContext.ProjectInfo.ToList();
                 foreach (var processingProgresse in processingProgressModel.processingProgresses)
                 {
@@ -65,17 +65,21 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
-                                List<Tasks> tasks = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Designer)).ToList();
-                                if (tasks.Count == 0)
+                                List<Tasks> tasksDesigner = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Designer)).ToList();
+                                List<Tasks> tasksNoteTaker = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.NoteTaker)).ToList();
+                                List<Tasks> tasksHeadOfDepartments = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartmentsId)).ToList();
+                                if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0)
                                 {
                                     return new NewErrorModel()
                                     {
-                                        error = new Error(1, string.Format("系统中找不到设计人：{0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        error = new Error(1, string.Format("系统中找不到：{0} 的Id   ！", processingProgresse.Designer), "") { },
                                     };
                                 }
                                 else
                                 {
-                                    processingProgresse.DesignerId = tasks[0].ApplyManId;
+                                    processingProgresse.DesignerId = tasksDesigner[0].ApplyManId;
+                                    processingProgresse.NoteTakerId= tasksNoteTaker[0].ApplyManId;
+                                    processingProgresse.HeadOfDepartmentsId = tasksHeadOfDepartments[0].ApplyManId;
                                     dDContext.ProcessingProgress.Add(processingProgresse);
                                 }
                             }
@@ -87,14 +91,12 @@ namespace DingTalk.Controllers
                     Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
                     //推送钉钉消息给设计人员和部门负责人(胡工)
                     DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                    await dingTalkServersController.SendProcessingProgress(processingProgressModel.processingProgresses[0].DesignerId, 0, processingProgressModel.applyMan,processingProgressModel.processingProgresses[0].Bom
-                        , processingProgressModel.processingProgresses[0].TaskId,"eapp://page/start/pushNotice/pushNotice");
+                    await dingTalkServersController.SendProcessingProgress(processingProgressModel.processingProgresses[0].DesignerId, 0, processingProgressModel.applyMan, processingProgressModel.processingProgresses[0].Bom
+                        , processingProgressModel.processingProgresses[0].TaskId, eappUrl);
 
                     await dingTalkServersController.SendProcessingProgress(roles.UserId, 0, processingProgressModel.applyMan, processingProgressModel.processingProgresses[0].Bom
-                      , processingProgressModel.processingProgresses[0].TaskId, "eapp://page/start/pushNotice/pushNotice");
-                   
-                    processingProgressModel.processingProgresses[0].HeadOfDepartments = roles.UserName;
-                    processingProgressModel.processingProgresses[0].HeadOfDepartments = roles.UserId;
+                      , processingProgressModel.processingProgresses[0].TaskId, eappUrl);
+                    
                     dDContext.ProcessingProgress.Add(processingProgressModel.processingProgresses[0]);
                 }
                 dDContext.SaveChanges();
@@ -116,22 +118,26 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 生产加工进度表批量读取
         /// </summary>
-        /// <param name="taskId"></param>
+        /// <param name="applyManId">查询人Id</param>
+        /// <param name="taskId">不传查全部</param>
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public NewErrorModel Read(string taskId)
+        public NewErrorModel Read(string applyManId, string taskId = "")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    List<ProcessingProgress> processingProgresses = context.ProcessingProgress.Where(t => t.TaskId == taskId).ToList();
+                    List<ProcessingProgress> processingProgresses = context.ProcessingProgress.Where(t =>
+                   (taskId == "" ? t.TaskId == taskId : 1 == 2) || t.TabulatorId.Contains(applyManId) ||
+                   t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
+                   || t.NoteTakerId.Contains(applyManId)).ToList();
                     return new NewErrorModel()
                     {
                         count = processingProgresses.Count,
                         data = processingProgresses,
-                        error = new Error(0, "保存成功！", "") { },
+                        error = new Error(0, "读取成功！", "") { },
                     };
                 }
             }

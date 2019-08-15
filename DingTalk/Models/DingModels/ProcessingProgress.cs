@@ -136,6 +136,12 @@
         /// 记录人
         /// </summary>
         [StringLength(200)]        public string NoteTaker { get; set; }
+
+        /// <summary>
+        /// 记录人Id
+        /// </summary>
+        [StringLength(200)]        public string NoteTakerId { get; set; }
+
         /// <summary>
         /// 备注(设计人员)
         /// </summary>
@@ -157,5 +163,15 @@
         [StringLength(200)]
         public string HeadOfDepartmentsId { get; set; }
 
+        /// <summary>
+        /// 制表人(蔡靓弥)
+        /// </summary>
+        [StringLength(200)]
+        public string Tabulator { get; set; }
 
+        /// <summary>
+        /// 制表人Id
+        /// </summary>
+        [StringLength(200)]
+        public string TabulatorId { get; set; }
     }}
