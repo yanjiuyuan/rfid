@@ -166,4 +166,11 @@
         /// </summary>
         [StringLength(200)]
         public string TabulatorId { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        [StringLength(200)]
+        public string CreateTime { get; set; }
+        
     }}

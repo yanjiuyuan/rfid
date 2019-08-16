@@ -95,6 +95,7 @@ namespace DingTalk.Controllers
                         count = fileCount,
                     });
                 }
+                FileModelsList.OrderBy(f => f.path);
 
                 using (DDContext context = new DDContext())
                 {

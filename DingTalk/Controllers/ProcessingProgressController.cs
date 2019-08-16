@@ -80,24 +80,31 @@ namespace DingTalk.Controllers
                                     processingProgresse.DesignerId = tasksDesigner[0].ApplyManId;
                                     processingProgresse.NoteTakerId= tasksNoteTaker[0].ApplyManId;
                                     processingProgresse.HeadOfDepartmentsId = tasksHeadOfDepartments[0].ApplyManId;
+                                    processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
                                     dDContext.ProcessingProgress.Add(processingProgresse);
                                 }
                             }
                         }
                     }
                 }
-                if (!processingProgressModel.IsExcelUpload)  //单条添加
+                if (!processingProgressModel.IsExcelUpload)  //操作界面添加
                 {
-                    Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
-                    //推送钉钉消息给设计人员和部门负责人(胡工)
-                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                    await dingTalkServersController.SendProcessingProgress(processingProgressModel.processingProgresses[0].DesignerId, 0, processingProgressModel.applyMan, processingProgressModel.processingProgresses[0].Bom
-                        , processingProgressModel.processingProgresses[0].TaskId, eappUrl);
+                    List<ProcessingProgress> ProcessingProgressList = new List<ProcessingProgress>();
+                    foreach (var processingProgresse in processingProgressModel.processingProgresses)
+                    {
+                        Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
+                        //推送钉钉消息给设计人员和部门负责人(胡工)
+                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                        await dingTalkServersController.SendProcessingProgress(processingProgresse.DesignerId, 0, processingProgressModel.applyMan, processingProgresse.Bom
+                            , processingProgresse.TaskId, eappUrl);
 
-                    await dingTalkServersController.SendProcessingProgress(roles.UserId, 0, processingProgressModel.applyMan, processingProgressModel.processingProgresses[0].Bom
-                      , processingProgressModel.processingProgresses[0].TaskId, eappUrl);
-                    
-                    dDContext.ProcessingProgress.Add(processingProgressModel.processingProgresses[0]);
+                        await dingTalkServersController.SendProcessingProgress(roles.UserId, 0, processingProgressModel.applyMan, processingProgresse.Bom
+                          , processingProgresse.TaskId, eappUrl);
+
+                        processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
+                        ProcessingProgressList.Add(processingProgresse);
+                    }
+                    dDContext.ProcessingProgress.AddRange(ProcessingProgressList);
                 }
                 dDContext.SaveChanges();
                 return new NewErrorModel()
@@ -150,7 +157,48 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员))
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetPower")]
+        public NewErrorModel GetPower(string applyManId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    int iPower = 2;
+                    if (context.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == applyManId).ToList().Count > 0)
+                    {
+                        iPower = 0;
+                    }
+                    else
+                    {
+                        if (context.Roles.Where(r => r.RoleName == "生产加工进度分配人" && r.UserId == applyManId).ToList().Count > 0)
+                        {
+                            iPower = 1;
+                        }
+                    }
+                    return new NewErrorModel()
+                    {
+                        data = iPower,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
     }
+
+   
 
     public class ProcessingProgressModel
     {
