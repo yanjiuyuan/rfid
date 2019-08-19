@@ -128,6 +128,19 @@
         },
         methods: {
             onSubmit(formName) {
+                if (this.NodeId == 4) {
+                    let names = this.tableForm.FactCooperateMan.split(',')
+                    let ids = this.tableForm.FactCooperateManId.split(',')
+                    let a = 6
+                    this.addPeopleNodes = [a]//额外添加审批人节点数组
+                    this.nodeList[a].AddPeople = []
+                    for (let i = 0; i < names.length; i++) {
+                        this.nodeList[a].AddPeople.push({
+                            name: names[i],
+                            emplId: ids[i]
+                        })
+                    }
+                } 
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.PostData('Cooperate/Modify', this.tableForm, (res) => {
@@ -150,9 +163,20 @@
                         console.log(data)
                         let names = []
                         let ids = []
+                        let addPeoples = []
+                        let i = that.addPeopleNodes[0]
                         for (let d of data) {
                             names.push(d.name)
                             ids.push(d.emplId)
+                            addPeoples.push({
+                                name: d.name,
+                                emplId: d.emplId
+                            })
+                        }
+                        that.nodeList[i].AddPeople = addPeoples
+                        for (let app of addPeoples) {
+                            $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + app.name.substring(0, 3) + '</span >')
+
                         }
                         that.tableForm.FactCooperateMan = names.join(',')
                         that.tableForm.FactCooperateManId = ids.join(',')
