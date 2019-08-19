@@ -325,11 +325,7 @@ namespace DingTalk.Controllers
                                      task.NodeId.ToString(),
                                      false, true);
                                     Thread.Sleep(100);
-
-                                    //推送抄送消息
-                                    //SentCommonMsg(task.ApplyManId,
-                                    //string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", task.TaskId),
-                                    //taskNew.ApplyMan, taskNew.Remark, null);
+                                    
                                     task.IsEnable = 1;
                                     task.State = 0;
                                     task.ApplyTime = null;
@@ -433,32 +429,6 @@ namespace DingTalk.Controllers
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 context.Entry(tasks).State = EntityState.Modified;
                                 context.SaveChanges();
-
-                                //Tasks tasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString()
-                                //&& t.NodeId == 0).First();
-                                //tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                //tasksApplyMan.OldImageUrl = tasks.OldImageUrl;
-                                //tasksApplyMan.ImageUrl = tasks.ImageUrl;
-                                //if (!string.IsNullOrEmpty(tasksApplyMan.FileUrl))
-                                //{
-                                //    if (!string.IsNullOrEmpty(tasks.FileUrl))
-                                //    {
-                                //        tasksApplyMan.FileUrl = tasksApplyMan.FileUrl + "," + tasks.FileUrl;
-                                //        tasksApplyMan.OldFileUrl = tasksApplyMan.OldFileUrl + "," + tasks.OldFileUrl;
-                                //        tasksApplyMan.MediaId = tasksApplyMan.MediaId + "," + tasks.MediaId;
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    if (!string.IsNullOrEmpty(tasks.FileUrl))
-                                //    {
-                                //        tasksApplyMan.FileUrl = tasks.FileUrl;
-                                //        tasksApplyMan.OldFileUrl = tasks.OldFileUrl;
-                                //        tasksApplyMan.MediaId = tasks.MediaId;
-                                //    }
-                                //}
-                                //context.Entry(tasksApplyMan).State = EntityState.Modified;
-                                //context.SaveChanges();
                             }
                             else
                             {
@@ -756,7 +726,6 @@ namespace DingTalk.Controllers
                     tasksState.State = "已完成";
                     context.Entry<TasksState>(tasksState).State = EntityState.Modified;
                     context.SaveChanges();
-
                     return dic;
                 }
                 string PeopleId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).PeopleId;
@@ -776,6 +745,24 @@ namespace DingTalk.Controllers
                         string[] ListNodePeople = NodePeople.Split(',');
 
                         Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
+
+                        //推送已选择的抄送
+                        List<Tasks> TaskSendList = context.Tasks.Where(t => t.TaskId.ToString() == OldTaskId.ToString() && t.IsEnable == 0
+                        && t.IsSend == true && t.NodeId.ToString() == FindNodeId).ToList();
+                        if (TaskSendList.Count > 0)
+                        {
+                            foreach (var item in TaskSendList)
+                            {
+                                item.IsEnable = 1;
+                                context.Entry<Tasks>(item).State = EntityState.Modified;
+                                //推送抄送消息
+                                SentCommonMsg(item.ApplyManId,
+                                string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
+                                Task.ApplyMan, Task.Remark, null);
+                                context.SaveChanges();
+                            }
+                        }
+
                         for (int i = 0; i < ListPeopleId.Length; i++)
                         {
                             //保存任务流
@@ -797,7 +784,7 @@ namespace DingTalk.Controllers
                                 IsPost = false,
                                 ProjectId = Task.ProjectId,
                             };
-
+                            
                             //推送抄送消息
                             SentCommonMsg(ListPeopleId[i],
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
@@ -821,7 +808,6 @@ namespace DingTalk.Controllers
                             return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                         }
                         //return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 2);
-
                     }
                     else
                     {
@@ -944,7 +930,6 @@ namespace DingTalk.Controllers
                             string[] ListNodeName = NodeName.Split(',');
                             string[] ListPeopleId = PeopleId.Split(',');
                             string[] ListNodePeople = NodePeople.Split(',');
-
                             Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                             for (int i = 0; i < ListPeopleId.Length; i++)
                             {

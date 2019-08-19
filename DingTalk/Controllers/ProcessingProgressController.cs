@@ -78,7 +78,7 @@ namespace DingTalk.Controllers
                                 else
                                 {
                                     processingProgresse.DesignerId = tasksDesigner[0].ApplyManId;
-                                    processingProgresse.NoteTakerId= tasksNoteTaker[0].ApplyManId;
+                                    processingProgresse.NoteTakerId = tasksNoteTaker[0].ApplyManId;
                                     processingProgresse.HeadOfDepartmentsId = tasksHeadOfDepartments[0].ApplyManId;
                                     processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
                                     dDContext.ProcessingProgress.Add(processingProgresse);
@@ -158,32 +158,62 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 获取用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员))
+        /// 获取用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人)
         /// </summary>
+        /// <param name="applyManId">用户Id</param>
+        /// <param name="taskId">可不传(传了只返回当前流水号对应的权限)</param>
         /// <returns></returns>
         [HttpGet]
         [Route("GetPower")]
-        public NewErrorModel GetPower(string applyManId)
+        public NewErrorModel GetPower(string applyManId, string taskId = "")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    int iPower = 2;
-                    if (context.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == applyManId).ToList().Count > 0)
+                    List<int> vs = new List<int>();
+                    if (string.IsNullOrEmpty(taskId))
                     {
-                        iPower = 0;
+                        if (context.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == applyManId).ToList().Count > 0)
+                        {
+                            vs.Add(0);
+                        }
+                        else
+                        {
+                            if (context.Roles.Where(r => r.RoleName == "生产加工进度分配人" && r.UserId == applyManId).ToList().Count > 0)
+                            {
+                                vs.Add(1);
+                            }
+                            else
+                            {
+                                vs.Add(2);
+                            }
+                        }
                     }
                     else
                     {
-                        if (context.Roles.Where(r => r.RoleName == "生产加工进度分配人" && r.UserId == applyManId).ToList().Count > 0)
+                        ProcessingProgress processingProgress = context.ProcessingProgress.Where(p => p.TaskId == taskId).FirstOrDefault();
+                        if (applyManId == processingProgress.DesignerId)
                         {
-                            iPower = 1;
+                            vs.Add(2);
+                        }
+                        if (applyManId == processingProgress.NoteTakerId) //记录人
+                        {
+                            vs.Add(3);
+                        }
+                        if (applyManId == processingProgress.TabulatorId) //制表人
+                        {
+                            vs.Add(0);
+                        }
+                        if (applyManId == processingProgress.HeadOfDepartmentsId) //分配人
+                        {
+                            vs.Add(1);
                         }
                     }
+
                     return new NewErrorModel()
                     {
-                        data = iPower,
+                        data = vs,
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
@@ -198,7 +228,7 @@ namespace DingTalk.Controllers
         }
     }
 
-   
+
 
     public class ProcessingProgressModel
     {
@@ -210,6 +240,12 @@ namespace DingTalk.Controllers
         /// 用户名
         /// </summary>
         public string applyMan { get; set; }
+
+        /// <summary>
+        /// 公司Id  研究院 0 华数 1
+        /// </summary>
+        public int CompanyId { get; set; }
+
         /// <summary>
         /// 是否是Excel上传
         /// </summary>

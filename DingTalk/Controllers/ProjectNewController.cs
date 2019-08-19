@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -73,8 +74,6 @@ namespace DingTalk.Controllers
                 string[] AbPathList = FileHelper.GetFileNames(System.Web.Hosting.HostingEnvironment.MapPath(path));
                 //List<string> RePathList = new List<string>();
                 List<FileModels> FileModelsList = new List<FileModels>();
-
-
                 foreach (var item in AbPathList)
                 {
                     int fileCount = 0;
@@ -84,18 +83,25 @@ namespace DingTalk.Controllers
                         FileInfo[] getFileInfos = getFolder.GetFiles();
                         fileCount = getFileInfos.Length;
                     }
-
+                    int i = 0;
                     //绝对路径转相对
                     string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
                     string FileName = Path.GetFileName(RelativePath);
                     //RePathList.Add(FileName);
+                    if (FileName.Length>2)
+                    {
+                        if (!Int32.TryParse(FileName.Substring(0, 2), out i))
+                        {
+                            Int32.TryParse(FileName.Substring(0, 1), out i);
+                        }
+                    }
                     FileModelsList.Add(new FileModels()
                     {
+                        order=i,
                         path = FileName,
                         count = fileCount,
                     });
                 }
-                FileModelsList.OrderBy(f => f.path);
 
                 using (DDContext context = new DDContext())
                 {
@@ -108,7 +114,7 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            data = FileModelsList,
+                            data = FileModelsList.OrderBy(f => f.order),
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -117,7 +123,7 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            data = FileModelsList,
+                            data = FileModelsList.OrderBy(f => f.order),
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -139,7 +145,7 @@ namespace DingTalk.Controllers
                         {
                             return new NewErrorModel()
                             {
-                                data = FileModelsList,
+                                data = FileModelsList.OrderBy(f => f.order),
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         }
@@ -162,7 +168,7 @@ namespace DingTalk.Controllers
                         }
                         return new NewErrorModel()
                         {
-                            data = FileModelsList,
+                            data = FileModelsList.OrderBy(f => f.order),
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -406,10 +412,6 @@ namespace DingTalk.Controllers
                         };
                     }
                 }
-                return new NewErrorModel()
-                {
-                    error = new Error(0, "已推送至钉钉", "") { },
-                };
             }
             catch (Exception ex)
             {
@@ -581,6 +583,8 @@ namespace DingTalk.Controllers
     {
         public string path { get; set; }
         public int count { get; set; }
+        public int order { get; set; }
+
     }
 
     public class DownloadFileModel

@@ -60,6 +60,11 @@ namespace DingTalk.Models.DingModels
         [StringLength(200)]
         public string ChangeType { get; set; }
 
+        [StringLength(200)]
+        public string Designer { get; set; }
+
+        [StringLength(200)]
+        public string DesignerId { get; set; }
 
     }
 }
