@@ -812,6 +812,8 @@ var mixin = {
 
         //获取审批/抄送 相关人员列表
         getNodeInfo() {
+            console.log('老铁，666666666666666')
+            console.warn('老铁，666666666666666')
             var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             this.GetData(url, (res) => {
                 this.isBack = res[0].IsBack
@@ -846,14 +848,14 @@ var mixin = {
                 }
                 this.getNodeInfo_done(this.nodeList)
                 //设置当前角色正确节点
-                if (this.index && this.index != '0' && this.index != '3') {
+                if (this.index && this.index != '0' && this.index != '2') {
                     for (let i = this.nodeList.length - 1; i >= 0; i--) {
                         if (this.nodeList[i].ApplyManId == DingData.userid) {
                             this.NodeIds.push(this.nodeList[i].NodeId)
                         }
                     }
                 }
-                if (this.index && this.index != '0' && this.index != '3') {
+                if (this.index && this.index != '0' && this.index != '2') {
                     for (let i = this.nodeList.length - 1; i >= 0; i--) {
                         if (this.nodeList[i].ApplyManId == DingData.userid) {
                             this.NodeId = this.nodeList[i].NodeId
