@@ -574,7 +574,7 @@ var mixin = {
                                     "IsEnable": 1,
                                     "FlowId": FlowId + '',
                                     "NodeId": node.NodeId + '',
-                                    "IsSend": false,
+                                    "IsSend": node.IsSend,
                                     "State": 0,
                                     "OldFileUrl": null,
                                     "IsBack": null
