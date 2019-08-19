@@ -325,7 +325,7 @@ namespace DingTalk.Controllers
                                      task.NodeId.ToString(),
                                      false, true);
                                     Thread.Sleep(100);
-                                    
+
                                     task.IsEnable = 1;
                                     task.State = 0;
                                     task.ApplyTime = null;
@@ -747,7 +747,7 @@ namespace DingTalk.Controllers
                         Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
 
                         //推送已选择的抄送
-                        List<Tasks> TaskSendList = context.Tasks.Where(t => t.TaskId.ToString() == OldTaskId.ToString() && t.IsEnable == 0
+                        List<Tasks> TaskSendList = context.Tasks.Where(t => t.TaskId.ToString() == OldTaskId.ToString() && t.IsEnable == 0 && t.State == 0
                         && t.IsSend == true && t.NodeId.ToString() == FindNodeId).ToList();
                         if (TaskSendList.Count > 0)
                         {
@@ -785,7 +785,7 @@ namespace DingTalk.Controllers
                                 IsPost = false,
                                 ProjectId = Task.ProjectId,
                             };
-                            
+
                             //推送抄送消息
                             SentCommonMsg(ListPeopleId[i],
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
@@ -1639,10 +1639,21 @@ namespace DingTalk.Controllers
                         //Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend != true).OrderByDescending(t => t.Id).First();
 
                         //Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderBy(t => t.NodeId).First();
-                        Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend != true).OrderByDescending(t => t.Id).First();
                         Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
-                        taskOld.Id = task.Id;
-                        taskOld.NodeId = task.NodeId;
+                        List<Tasks> tasksList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend != true).OrderByDescending(t => t.Id).ToList();
+                        if (tasksList.Count > 0)
+                        {
+                            taskOld.Id = tasksList[0].Id;
+                            taskOld.NodeId = tasksList[0].NodeId;
+                        }
+                        else
+                        {
+                            List<Tasks> tasksListSend = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend == true).OrderByDescending(t => t.Id).ToList();
+                            taskOld.Id = tasksListSend[0].Id;
+                            taskOld.NodeId = tasksListSend[0].NodeId;
+                        }
+                     
+                      
                         return new NewErrorModel()
                         {
                             data = taskOld,
