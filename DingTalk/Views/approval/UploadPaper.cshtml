@@ -69,6 +69,10 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="图纸设计人员">
+            <el-input v-model="ruleForm.tpName" style="width:500px;" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+        </el-form-item>
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
@@ -190,6 +194,8 @@
                 ruleForm: {
                     name: DingData.nickName,
                     Dept: DingData.departName,
+                    tpName: DingData.nickName,
+                    counts: JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid}),
                     remark: '',
                     ImageUrl: '',
                     OldImageUrl: '',
@@ -249,6 +255,7 @@
                             "MediaId": that.mediaList.join(','),
                             "MediaIdPDF": that.mediaPdfList.join(','),
                             "Title": that.ruleForm.Title,
+                            "counts": that.ruleForm.counts,
                             "ProjectName": that.ruleForm.ProjectName,
                             "ProjectType": that.ruleForm.ProjectType,
                             "ProjectId": that.ruleForm.ProjectId,
@@ -294,6 +301,23 @@
                         console.log('error submit!!');
                         return false;
                     }
+                });
+            },
+            //添加图纸审计人员
+            addPeerNumber() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    multiple: false,
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        let d = data[0]
+                        that.ruleForm.tpName = d.name
+                        that.ruleForm.counts = JSON.stringify({ Designer: d.name, DesignerId: d.emplId })
+                    },
+                    onFail: function (err) { }
                 });
             },
             downLoad() {

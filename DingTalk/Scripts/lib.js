@@ -242,7 +242,11 @@ function getFormData(demo) {
         demo.getNodeInfo()
         demo.GetDingList(taskId)
         demo.getApproInfo()
+        getFormData_done(res)
     },demo)
+}
+function getFormData_done(res) {
+
 }
 function handleUrlData(data,demo) {
     imageList = []
@@ -550,7 +554,9 @@ var mixin = {
                     }
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
-                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0 ) || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)|| (node.NodeName.indexOf('申请人') >= 0 && node.NodeId>0)) {
+                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
+                            || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
+                            || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
                             if (node.AddPeople.length == 0) {
                                 this.$alert('您尚未选择审批人', '提交错误', {
                                     confirmButtonText: '确定',
@@ -615,7 +621,8 @@ var mixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if ( (that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0) || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0) ) {
+                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
+                    || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
                     if (node.AddPeople.length == 0) {
                         this.$alert('您尚未选择审批人', '提交错误', {
                             confirmButtonText: '确定',

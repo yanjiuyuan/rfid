@@ -59,15 +59,21 @@
         <el-form-item label="标题" v-if="ruleForm.Title">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="图纸用途" v-if="FlowId == 6">
-            <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
+            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
+        </el-form-item>
+        <template v-if="FlowId == 6">
+            <el-form-item label="图纸用途">
+                <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="图纸审计人员">
+                <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
+            </el-form-item>
+        </template>
+
         <el-form-item label="套数" v-if="FlowId == 23">
             <el-input v-model="ruleForm.counts" :disabled="true"></el-input>
         </el-form-item>
@@ -738,7 +744,11 @@
         }
     })
     getFormData(demo)
-
+    function getFormData_done(res) {
+        if (FlowId == '6') {
+            demo.ruleForm['tpName'] = JSON.parse(res.counts).Designer
+        }
+    }
 </script>
 
 
