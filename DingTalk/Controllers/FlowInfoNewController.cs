@@ -1652,8 +1652,8 @@ namespace DingTalk.Controllers
                             taskOld.Id = tasksListSend[0].Id;
                             taskOld.NodeId = tasksListSend[0].NodeId;
                         }
-                     
-                      
+
+
                         return new NewErrorModel()
                         {
                             data = taskOld,
@@ -2029,5 +2029,37 @@ namespace DingTalk.Controllers
 
         #endregion
 
+        #region 流程图数据读取
+
+        /// <summary>
+        /// 流程图数据读取
+        /// </summary>
+        /// <param name="flowId">流程Id</param>
+        /// <returns></returns>
+        [Route("ReadFlows")]
+        [HttpGet]
+        public NewErrorModel ReadFlows(string flowId)
+        {
+            try
+            {
+                DDContext context = new DDContext();
+                List<NodeInfo> flows = context.NodeInfo.Where(f => f.FlowId.ToString() == flowId).ToList();
+                return new NewErrorModel()
+                {
+                    data= flows,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+                
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        #endregion
     }
 }
