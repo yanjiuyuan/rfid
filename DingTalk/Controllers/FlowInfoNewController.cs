@@ -754,6 +754,7 @@ namespace DingTalk.Controllers
                             foreach (var item in TaskSendList)
                             {
                                 item.IsEnable = 1;
+                                item.State = 0;
                                 context.Entry<Tasks>(item).State = EntityState.Modified;
                                 //推送抄送消息
                                 SentCommonMsg(item.ApplyManId,
