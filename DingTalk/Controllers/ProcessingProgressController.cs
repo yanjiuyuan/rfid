@@ -70,10 +70,27 @@ namespace DingTalk.Controllers
                                 List<Tasks> tasksHeadOfDepartments = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartmentsId)).ToList();
                                 if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0)
                                 {
-                                    return new NewErrorModel()
+                                    if (tasksDesigner.Count == 0)
                                     {
-                                        error = new Error(1, string.Format("系统中找不到：{0} 的Id   ！", processingProgresse.Designer), "") { },
-                                    };
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("系统中找不到：设计员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
+                                    if (tasksNoteTaker.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("系统中找不到：记录员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
+                                    if (tasksHeadOfDepartments.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
                                 }
                                 else
                                 {
