@@ -273,7 +273,6 @@ namespace DingTalk.Controllers
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault();
                     ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == tasks.ProjectId.ToString()).FirstOrDefault();
                     Purchase purchase = context.Purchase.Where(p => p.TaskId == taskId).FirstOrDefault();
-
                     processingProgress.ProjectType = projectInfo.ProjectType;
                     processingProgress.ProjectSmallType = projectInfo.ProjectSmallType;
                     processingProgress.ProjectId = projectInfo.ProjectId;
