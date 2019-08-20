@@ -67,7 +67,7 @@ namespace DingTalk.Controllers
                             {
                                 List<Tasks> tasksDesigner = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Designer)).ToList();
                                 List<Tasks> tasksNoteTaker = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.NoteTaker)).ToList();
-                                List<Tasks> tasksHeadOfDepartments = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartmentsId)).ToList();
+                                List<Tasks> tasksHeadOfDepartments = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartments)).ToList();
                                 if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0)
                                 {
                                     if (tasksDesigner.Count == 0)
@@ -88,7 +88,7 @@ namespace DingTalk.Controllers
                                     {
                                         return new NewErrorModel()
                                         {
-                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartmentsId), "") { },
+                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartments), "") { },
                                         };
                                     }
                                 }
