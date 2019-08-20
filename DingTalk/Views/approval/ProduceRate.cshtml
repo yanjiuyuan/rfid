@@ -29,68 +29,37 @@
             </el-table-column>
             <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't4'" :prop="con.param" width="150" :label="con.label"></el-table-column>
         </el-table>
-        <el-upload class="upload-demo"
-                   action="/drawingupload/UploadAndGetInfo"
-                   :on-success="handleSuccess"
-                   :before-upload="beforeExcelUpload"
-                   multiple
-                   :limit="1"
-                   :file-list="excelList">
-            <el-button size="small" type="primary">上传excel</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
-        </el-upload>
-        <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
-        <hr />
-        <h1>添加一条进度 </h1>
-        <el-table :data="inputTable" stripe border
-                  style="width: 100%">
-            <el-table-column label="操作">
-                <template slot-scope="scope">
-                    <el-button size="mini" v-on:click="addGood(scope.$index, scope.row)">添加</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[con.param]"></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column label="资料接收时间">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label">
+        <templete @*v-if="ruleIndex == 0"*@>
+            <el-upload class="upload-demo"
+                       action="/drawingupload/UploadAndGetInfo"
+                       :on-success="handleSuccess"
+                       :before-upload="beforeExcelUpload"
+                       multiple
+                       :limit="1"
+                       :file-list="excelList">
+                <el-button size="small" type="primary">上传excel</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            </el-upload>
+            <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+
+            <hr />
+            <h1>添加一条进度 </h1>
+            <el-table :data="inputTable" stripe border
+                      style="width: 100%">
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button size="mini" v-on:click="addGood(scope.$index, scope.row)">添加</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-model="scope.row[con.param]"></el-input>
                     </template>
                 </el-table-column>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't2'" :prop="con.param" width="150" :label="con.label">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[con.param]"></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column label="零件加工">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label">
-                    <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]"></el-input>
-                    </template>
-                </el-table-column>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[con.param]"></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column label="组装">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label">
-                    <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]"></el-input>
-                    </template>
-                </el-table-column>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't4'" :prop="con.param" width="150" :label="con.label">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[con.param]"></el-input>
-                </template>
-            </el-table-column>
-        </el-table>
+
+            </el-table>
+        </templete>
+        
         @*<el-table :data="tableData" stripe border>
             <el-table-column prop="CodeNo" type="index"></el-table-column>
             <el-table-column label="操作">
@@ -134,7 +103,7 @@
         Column13: { param: 'ThreeD', label: '3D', upLabel: '资料接收时间' },
 
         Column14: { param: 'NeedTime', label: '需求时间', upLabel: 't2' },
-        Column15: { param: 'NeedCount', label: '需求数量', upLabel: 't2'},
+        Column15: { param: 'NeedCount', label: '需求建议', upLabel: 't2'},
         Column16: { param: 'ScheduledDate', label: '预计开工时间', upLabel: 't2' },
         Column17: { param: 'CompletionTime', label: '预计完成时间', upLabel: 't2' },
         Column18: { param: 'BeginTime', label: '开始时间', upLabel: 't2' },
@@ -163,6 +132,8 @@
     for (let con in tableConfig) {
         initTable[tableConfig[con].param] = ''
     }
+    initTable['Tabulator'] = DingData.nickName
+    initTable['TabulatorId'] = DingData.userid
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -174,6 +145,7 @@
                 data: [],
                 tableData: [],
                 inputTable: [initTable],
+                ruleIndex: 2,//用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                 ruleForm: {
                     name: DingData.nickName,
                    
@@ -183,21 +155,6 @@
         methods: {
             onSubmit(formName) {
  
-                //if (this.tableData.length == 0) {
-                //    this.addGoods()
-                //    if (this.tableData.length == 0) {
-                //        this.elementAlert('提示信息', '未添加编码')
-                //        return
-                //    }
-                //}
-                //for (var i = 0; i < this.tableData.length;i++) {
-                //    let d = this.tableData[i]
-                //    if (!d.BigCode || !d.BigCode || !d.Name || !d.Standard || !d.BigCodeName || !d.SmallCodeName) {
-                //        this.elementAlert('提示信息', '第 ' + (i+1) + ' 表单未填写完整')
-                //        return
-                //    }
-                //}
-                
             },
             //添加加工进度
             addGood(index, good) {
@@ -207,7 +164,7 @@
                     applyMan: DingData.nickName,
                     CompanyId: 0,
                     IsExcelUpload: false,
-                    processingProgresses: good
+                    processingProgresses: [good]
                 }
                 this.PostData('ProcessingProgress/Save', param, (res) => {
                     this.$alert('保存成功', '提示');
@@ -254,10 +211,30 @@
                 this.GetData('ProcessingProgress/Read?applyManId=' + DingData.userid, (res) => {
                     this.tableData = res
                 })
+            },
+            //设置角色数据
+            setRuleData() {
+                var that = this
+                var url = '/Role/GetRoleInfo?RoleName=生产加工进度分配人'
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log(data)
+                        that.inputTable[0].HeadOfDepartmentsId = data[0].emplId
+                        that.inputTable[0].HeadOfDepartments = data[0].name
+                        that.inputTable[0].NoteTakerId = data[0].emplId
+                        that.inputTable[0].NoteTaker = data[0].name
+                    }
+                })
+
+                this.GetData('ProcessingProgress/GetPower?applyManId=' + DingData.userid, (res) => {
+                    this.ruleIndex = res[0]
+                })
             }
         },
         created: function () {
             this.getTable()
+            this.setRuleData()
             loadHtml("mainPage", "partPage")
         }
     })
