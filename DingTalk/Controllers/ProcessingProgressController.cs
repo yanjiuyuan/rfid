@@ -158,6 +158,32 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 批量修改
+        /// </summary>
+        /// <param name="processingProgressModel"></param>
+        /// <returns></returns>
+        [Route("Modify")]
+        [HttpPost]
+        public async Task<NewErrorModel> Modify(ProcessingProgressModel processingProgressModel)
+        {
+            try
+            {
+                using (DDContext context=new DDContext ())
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
         /// 获取用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人)
         /// </summary>
         /// <param name="applyManId">用户Id</param>
@@ -233,11 +259,11 @@ namespace DingTalk.Controllers
     public class ProcessingProgressModel
     {
         /// <summary>
-        /// 用户Id
+        /// 用户Id(当前操作处理人)
         /// </summary>
         public string applyManId { get; set; }
         /// <summary>
-        /// 用户名
+        /// 用户名(当前操作处理人)
         /// </summary>
         public string applyMan { get; set; }
 

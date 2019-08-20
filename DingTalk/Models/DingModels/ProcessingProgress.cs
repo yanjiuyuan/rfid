@@ -172,5 +172,11 @@
         /// </summary>
         [StringLength(200)]
         public string CreateTime { get; set; }
-        
+
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        [StringLength(200)]
+        public string FinishTime { get; set; }
+
     }}
