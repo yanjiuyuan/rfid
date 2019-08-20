@@ -475,12 +475,13 @@ namespace DingTalk.Controllers
         /// <param name="applyMan"></param>
         /// <param name="bom"></param>
         /// <param name="taskId"></param>
+        /// <param name="speedOfProgress"></param>
         /// <param name="linkUrl"></param>
         /// <returns></returns>
         [Route("SendProcessingProgress")]
         [HttpPost]
         public async Task<object> SendProcessingProgress(string userId, int type,
-        string applyMan,string bom,string taskId,string linkUrl = "eapp://page/start/index")
+        string applyMan,string bom,string taskId,string speedOfProgress, string linkUrl = "eapp://page/start/index")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
@@ -508,6 +509,7 @@ namespace DingTalk.Controllers
                         new form{ key=string.Format("{0}时间：",keyword),value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
                         new form{ key=string.Format("流水号：",keyword),value=bom},
                         new form{ key=string.Format("{0}BOM：",keyword),value=bom},
+                        new form{ key=string.Format("进度状态："),value=speedOfProgress},
                     },
                 }
             };

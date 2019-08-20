@@ -1,6 +1,7 @@
 ﻿using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,12 +45,20 @@ namespace DingTalk.Controllers
                     //校对数据
                     if (!string.IsNullOrEmpty(processingProgresse.TaskId))
                     {
-                        if (projectInfos.Where(p => p.ProjectId == processingProgresse.ProjectId &&
-                         p.ProjectName == p.ProjectName).ToList().Count == 0)
+                        List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId).ToList();
+                        if (ProcessingProgressList.Count > 0)
                         {
                             return new NewErrorModel()
                             {
-                                error = new Error(1, string.Format("项目Id {0} 、 项目名 {1} 与系统中的数据不吻合！", processingProgresse.ProjectId, processingProgresse.ProjectName), "") { },
+                                error = new Error(1, string.Format("保存失败,系统中已存在流水号 {0} 的数据", processingProgresse.TaskId), "") { },
+                            };
+                        }
+                        if (projectInfos.Where(p => p.ProjectId == processingProgresse.ProjectId &&
+                         p.ProjectName == processingProgresse.ProjectName).ToList().Count == 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, string.Format("保存失败,项目Id {0} 、 项目名 {1} 与系统中的数据不吻合！", processingProgresse.ProjectId, processingProgresse.ProjectName), "") { },
                             };
                         }
                         else
@@ -60,7 +69,7 @@ namespace DingTalk.Controllers
                             {
                                 return new NewErrorModel()
                                 {
-                                    error = new Error(1, string.Format("项目Id {0} 、 项目名 {1} 与系统中的大类、小类不吻合！", processingProgresse.ProjectId, processingProgresse.ProjectName), "") { },
+                                    error = new Error(1, string.Format("保存失败,项目Id {0} 、 项目名 {1} 与系统中的大类、小类不吻合！", processingProgresse.ProjectId, processingProgresse.ProjectName), "") { },
                                 };
                             }
                             else
@@ -68,32 +77,41 @@ namespace DingTalk.Controllers
                                 List<Tasks> tasksDesigner = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Designer)).ToList();
                                 List<Tasks> tasksNoteTaker = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.NoteTaker)).ToList();
                                 List<Tasks> tasksHeadOfDepartments = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartments)).ToList();
-                                if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0)
+                                List<Tasks> tasksTabulator = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Tabulator)).ToList();
+                                if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0 || tasksTabulator.Count == 0)
                                 {
+                                    if (tasksTabulator.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：制表人 {0} 的Id   ！", processingProgresse.Tabulator), "") { },
+                                        };
+                                    }
                                     if (tasksDesigner.Count == 0)
                                     {
                                         return new NewErrorModel()
                                         {
-                                            error = new Error(1, string.Format("系统中找不到：设计员 {0} 的Id   ！", processingProgresse.NoteTaker), "") { },
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：设计员 {0} 的Id   ！", processingProgresse.NoteTaker), "") { },
                                         };
                                     }
                                     if (tasksNoteTaker.Count == 0)
                                     {
                                         return new NewErrorModel()
                                         {
-                                            error = new Error(1, string.Format("系统中找不到：记录员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：记录员 {0} 的Id   ！", processingProgresse.Designer), "") { },
                                         };
                                     }
                                     if (tasksHeadOfDepartments.Count == 0)
                                     {
                                         return new NewErrorModel()
                                         {
-                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartments), "") { },
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartments), "") { },
                                         };
                                     }
                                 }
                                 else
                                 {
+                                    processingProgresse.TabulatorId = tasksTabulator[0].ApplyManId;
                                     processingProgresse.DesignerId = tasksDesigner[0].ApplyManId;
                                     processingProgresse.NoteTakerId = tasksNoteTaker[0].ApplyManId;
                                     processingProgresse.HeadOfDepartmentsId = tasksHeadOfDepartments[0].ApplyManId;
@@ -113,10 +131,10 @@ namespace DingTalk.Controllers
                         //推送钉钉消息给设计人员和部门负责人(胡工)
                         DingTalkServersController dingTalkServersController = new DingTalkServersController();
                         await dingTalkServersController.SendProcessingProgress(processingProgresse.DesignerId, 0, processingProgressModel.applyMan, processingProgresse.Bom
-                            , processingProgresse.TaskId, eappUrl);
+                            , processingProgresse.TaskId, processingProgresse.SpeedOfProgress, eappUrl);
 
                         await dingTalkServersController.SendProcessingProgress(roles.UserId, 0, processingProgressModel.applyMan, processingProgresse.Bom
-                          , processingProgresse.TaskId, eappUrl);
+                          , processingProgresse.TaskId, processingProgresse.SpeedOfProgress,eappUrl);
 
                         processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
                         ProcessingProgressList.Add(processingProgresse);
@@ -126,7 +144,7 @@ namespace DingTalk.Controllers
                 dDContext.SaveChanges();
                 return new NewErrorModel()
                 {
-                    error = new Error(0, "保存成功！", "") { },
+                    error = new Error(0, string.Format("保存成功！共计{0}条数据 ", processingProgressModel.processingProgresses.Count), "") { },
                 };
             }
             catch (Exception ex)
@@ -185,10 +203,39 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (DDContext context=new DDContext ())
+                using (DDContext context = new DDContext())
                 {
-                    return null;
+                    DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                    foreach (var item in processingProgressModel.processingProgresses)
+                    {
+                        string eappUrl = string.Format("eapp://page/start/pushNotice/pushNotice?taskid={0}", item.TaskId);
+                        //判断当前修改权限
+                        NewErrorModel errorModel = GetPower(processingProgressModel.applyManId, item.TaskId);
+                        List<int> vs = (List<int>)errorModel.data;
+                        if (vs== new List<int>() { 1,3}) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                            if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
+                            {
+                                //推送制表人
+                                await dingTalkServersController.SendProcessingProgress(item.TabulatorId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId,item.SpeedOfProgress, eappUrl);
+                                //推送设计人员
+                                await dingTalkServersController.SendProcessingProgress(item.DesignerId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                            }
+                        }
+                        if (vs == new List<int>() { 0 }) //制表人
+                        {
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                    context.SaveChanges();
                 }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "修改成功！", "") { },
+                };
             }
             catch (Exception ex)
             {
@@ -276,9 +323,10 @@ namespace DingTalk.Controllers
     public class ProcessingProgressModel
     {
         /// <summary>
-        /// 用户Id(当前操作处理人)
+        /// 用户Id(当前操作处理人Id)
         /// </summary>
         public string applyManId { get; set; }
+
         /// <summary>
         /// 用户名(当前操作处理人)
         /// </summary>
@@ -293,6 +341,8 @@ namespace DingTalk.Controllers
         /// 是否是Excel上传
         /// </summary>
         public bool IsExcelUpload { get; set; }
+
         public List<ProcessingProgress> processingProgresses { get; set; }
+
     }
 }
