@@ -134,7 +134,7 @@ namespace DingTalk.Controllers
                             , processingProgresse.TaskId, processingProgresse.SpeedOfProgress, eappUrl);
 
                         await dingTalkServersController.SendProcessingProgress(roles.UserId, 0, processingProgressModel.applyMan, processingProgresse.Bom
-                          , processingProgresse.TaskId, processingProgresse.SpeedOfProgress,eappUrl);
+                          , processingProgresse.TaskId, processingProgresse.SpeedOfProgress, eappUrl);
 
                         processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
                         ProcessingProgressList.Add(processingProgresse);
@@ -212,20 +212,20 @@ namespace DingTalk.Controllers
                         //判断当前修改权限
                         NewErrorModel errorModel = GetPower(processingProgressModel.applyManId, item.TaskId);
                         List<int> vs = (List<int>)errorModel.data;
-                        if (vs== new List<int>() { 1,3}) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        if (vs == new List<int>() { 1, 3 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                             if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
                             {
                                 //推送制表人
                                 await dingTalkServersController.SendProcessingProgress(item.TabulatorId, 0, processingProgressModel.applyMan, item.Bom
-                                    , item.TaskId,item.SpeedOfProgress, eappUrl);
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
                                 //推送设计人员
                                 await dingTalkServersController.SendProcessingProgress(item.DesignerId, 0, processingProgressModel.applyMan, item.Bom
                                     , item.TaskId, item.SpeedOfProgress, eappUrl);
                             }
                         }
-                        if (vs == new List<int>() { 0 }) //制表人
+                        if (vs == new List<int>() { 0 }) //制表人 暂时不通知
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
@@ -235,6 +235,63 @@ namespace DingTalk.Controllers
                 return new NewErrorModel()
                 {
                     error = new Error(0, "修改成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 图纸审批默认数据读取
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("DefaultRead")]
+        public NewErrorModel DefaultRead(string taskId)
+        {
+            try
+            {
+                ProcessingProgress processingProgress = new ProcessingProgress();
+                using (DDContext context = new DDContext())
+                {
+                    //判断流程是否已结束
+                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).ToList();
+                    if (tasksList.Count > 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "流程未结束！", "") { },
+                        };
+                    }
+                    Tasks tasksFinish = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 5).FirstOrDefault();
+                    Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault();
+                    ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == tasks.ProjectId.ToString()).FirstOrDefault();
+                    Purchase purchase = context.Purchase.Where(p => p.TaskId == taskId).FirstOrDefault();
+
+                    processingProgress.ProjectType = projectInfo.ProjectType;
+                    processingProgress.ProjectSmallType = projectInfo.ProjectSmallType;
+                    processingProgress.ProjectId = projectInfo.ProjectId;
+                    processingProgress.ProjectName = projectInfo.ProjectName;
+                    processingProgress.TaskId = taskId;
+                    processingProgress.Bom = projectInfo.ProjectName + "(流水号" + taskId + ")";
+                    processingProgress.Designer =  JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).Designer;
+                    processingProgress.DesignerId = JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).DesignerId;
+                    processingProgress.BomTime = tasksFinish.ApplyTime;
+                    processingProgress.TwoD = tasksFinish.ApplyTime;
+                    processingProgress.ThreeD = tasksFinish.ApplyTime;
+                    processingProgress.NeedTime = purchase.NeedTime;
+                    processingProgress.NeedCount = tasks.Remark;
+                }
+                return new NewErrorModel()
+                {
+                    data = processingProgress,
+                    error = new Error(0, "读取成功！", "") { },
                 };
             }
             catch (Exception ex)
@@ -344,5 +401,11 @@ namespace DingTalk.Controllers
 
         public List<ProcessingProgress> processingProgresses { get; set; }
 
+    }
+
+    public class DesignerModel
+    {
+        public string Designer { get; set; }
+        public string DesignerId { get; set; }
     }
 }
