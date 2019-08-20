@@ -53,6 +53,7 @@
             <el-table-column prop="Column31" width="150" label="记录人"></el-table-column>
             @*<el-table-column prop="Column32" width="150" label="设计员确认收货"></el-table-column>*@
             <el-table-column prop="Column33" width="150" label="备注"></el-table-column>
+            <el-table-column prop="Column34" width="150" label="图纸审核员"></el-table-column>
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
@@ -135,7 +136,8 @@
         Column30: 'HeadOfDepartments', 
         Column31: 'NoteTaker',
         //Column32: 'Tabulator',
-        Column33: 'Remark3'
+        Column33: 'Remark3',
+        Column34: 'Tabulator'
     }
     var demo = new Vue({
         el: "#partPage",
@@ -196,8 +198,6 @@
                         }
                     }
                 }
-                console.log('233333333')
-                console.log(this.tableData)
                 let param = {
                     applyManId: DingData.userid,
                     applyMan: DingData.nickName,
