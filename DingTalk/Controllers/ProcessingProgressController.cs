@@ -70,10 +70,27 @@ namespace DingTalk.Controllers
                                 List<Tasks> tasksHeadOfDepartments = dDContext.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartmentsId)).ToList();
                                 if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0)
                                 {
-                                    return new NewErrorModel()
+                                    if (tasksDesigner.Count == 0)
                                     {
-                                        error = new Error(1, string.Format("系统中找不到：{0} 的Id   ！", processingProgresse.Designer), "") { },
-                                    };
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("系统中找不到：设计员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
+                                    if (tasksNoteTaker.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("系统中找不到：记录员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
+                                    if (tasksHeadOfDepartments.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
                                 }
                                 else
                                 {
@@ -158,6 +175,32 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 批量修改
+        /// </summary>
+        /// <param name="processingProgressModel"></param>
+        /// <returns></returns>
+        [Route("Modify")]
+        [HttpPost]
+        public async Task<NewErrorModel> Modify(ProcessingProgressModel processingProgressModel)
+        {
+            try
+            {
+                using (DDContext context=new DDContext ())
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
         /// 获取用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人)
         /// </summary>
         /// <param name="applyManId">用户Id</param>
@@ -233,11 +276,11 @@ namespace DingTalk.Controllers
     public class ProcessingProgressModel
     {
         /// <summary>
-        /// 用户Id
+        /// 用户Id(当前操作处理人)
         /// </summary>
         public string applyManId { get; set; }
         /// <summary>
-        /// 用户名
+        /// 用户名(当前操作处理人)
         /// </summary>
         public string applyMan { get; set; }
 
