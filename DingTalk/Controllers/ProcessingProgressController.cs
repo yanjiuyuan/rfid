@@ -74,7 +74,7 @@ namespace DingTalk.Controllers
                                     {
                                         return new NewErrorModel()
                                         {
-                                            error = new Error(1, string.Format("系统中找不到：设计员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                            error = new Error(1, string.Format("系统中找不到：设计员 {0} 的Id   ！", processingProgresse.NoteTaker), "") { },
                                         };
                                     }
                                     if (tasksNoteTaker.Count == 0)
@@ -88,7 +88,7 @@ namespace DingTalk.Controllers
                                     {
                                         return new NewErrorModel()
                                         {
-                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                            error = new Error(1, string.Format("系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartmentsId), "") { },
                                         };
                                     }
                                 }
