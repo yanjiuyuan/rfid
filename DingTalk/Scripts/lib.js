@@ -1349,7 +1349,7 @@ function GetData(url, succe, demo) {
     })
 }
 
-function PostData(url, param, succe) {
+function PostData(url, param, succe, error) {
     $.ajax({
         url: url,
         type: 'POST',
@@ -1365,6 +1365,7 @@ function PostData(url, param, succe) {
             succe(res.data)
         },
         error: function (err) {
+            error(err)
             console.error(url)
             console.error(err)
         }
