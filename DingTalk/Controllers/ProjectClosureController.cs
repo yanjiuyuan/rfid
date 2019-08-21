@@ -274,7 +274,8 @@ namespace DingTalk.Controllers
                 {
                     Tasks tasks = dDContext.Tasks.Where(t => t.TaskId.ToString() == projectClosureModel.projectClosure.TaskId.ToString() && t.NodeId.ToString() == "0").FirstOrDefault();
                     ProjectInfo projectInfo = dDContext.ProjectInfo.Where(p => p.ProjectId == tasks.ProjectId.ToString()).FirstOrDefault();
-
+                    projectInfo.ProjectState = "已完成";
+                    dDContext.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
                     SavePath(projectInfo.FilePath + "1立项书或建议书", projectClosureModel.projectClosure.SuggestBook1);
                     SavePath(projectInfo.FilePath + "2评审PPT", projectClosureModel.projectClosure.PPT2);
                     SavePath(projectInfo.FilePath + "3需求规格说明书、产品总体设计书", projectClosureModel.projectClosure.DemandBook3);
