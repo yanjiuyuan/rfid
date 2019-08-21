@@ -269,6 +269,7 @@ namespace DingTalk.Controllers
                 NodeInfo nodeInfo = dDContext.NodeInfo.Where(n => n.NodeName == "结束" && n.FlowId.ToString() == flows.FlowId.ToString()
                 ).FirstOrDefault();
 
+
                 //最后一步保存路径
                 if (nodeInfo.NodeId == Int32.Parse(projectClosureModel.NodeId) + 1)
                 {
