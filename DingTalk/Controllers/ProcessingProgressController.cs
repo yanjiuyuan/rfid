@@ -162,19 +162,26 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="applyManId">查询人Id</param>
         /// <param name="taskId">不传查全部</param>
+        /// <param name="pageIndex">页码</param>
+        /// <param name="pageSize">页容量</param>
+        /// <param name="projectType">项目大类</param>
+        /// <param name="projectSmallType">小类</param>
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public NewErrorModel Read(string applyManId, string taskId = "")
+        public NewErrorModel Read(string applyManId, int pageIndex, int pageSize, string projectType = "", string projectSmallType = "",  string taskId = "")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
                     List<ProcessingProgress> processingProgresses = context.ProcessingProgress.Where(t =>
-                   (taskId == "" ? t.TaskId == taskId : 1 == 2) || t.TabulatorId.Contains(applyManId) ||
+                   (taskId == "" ? t.TaskId == taskId : 1 == 2)
+                   ||  (projectType == "" ? t.ProjectType == taskId : 1 == 2)
+                   || (projectSmallType == "" ? t.ProjectSmallType == taskId : 1 == 2)
+                   || t.TabulatorId.Contains(applyManId) ||
                    t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
-                   || t.NoteTakerId.Contains(applyManId)).ToList();
+                   || t.NoteTakerId.Contains(applyManId)).OrderBy(t=>t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                     return new NewErrorModel()
                     {
                         count = processingProgresses.Count,
@@ -236,16 +243,14 @@ namespace DingTalk.Controllers
                                     , item.TaskId, item.SpeedOfProgress, eappUrl);
                             }
                         }
-                        if (vs == new List<int>() { 0 }) //制表人 暂时不通知
+                        if (vs == new List<int>() { 0 }) //制表人 暂时不通知(添加的时候通知了)
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
                         if (vs == new List<int>() { 2 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
-                            return new NewErrorModel()
-                            {
-                                error = new Error(1, "没有权限！", "") { },
-                            };
+                            //修改已读状态
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
                         if (vs == new List<int>() { 3 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
