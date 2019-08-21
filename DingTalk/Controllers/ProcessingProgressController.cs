@@ -161,20 +161,30 @@ namespace DingTalk.Controllers
         /// 生产加工进度表批量读取
         /// </summary>
         /// <param name="applyManId">查询人Id</param>
-        /// <param name="taskId">不传查全部</param>
+        /// <param name="pageIndex">页码</param>
+        /// <param name="pageSize">页容量</param>
+        /// <param name="projectType">项目大类</param>
+        /// <param name="projectSmallType">小类</param>
+        /// <param name="taskId">流水号</param>
+        /// <param name="key">关键字(项目名、BOM、设计员、记录人)</param>
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public NewErrorModel Read(string applyManId, string taskId = "")
+        public NewErrorModel Read(string applyManId, int pageIndex, int pageSize, string projectType = "", 
+            string projectSmallType = "",  string taskId = "",string key="")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
                     List<ProcessingProgress> processingProgresses = context.ProcessingProgress.Where(t =>
-                   (taskId == "" ? t.TaskId == taskId : 1 == 2) || t.TabulatorId.Contains(applyManId) ||
+                   (taskId == "" ? t.TaskId == taskId : 1 == 2)
+                   || (key == "" ? (t.ProjectName.Contains(key) || (t.Bom.Contains(key) || (t.Designer.Contains(key) || (t.NoteTaker.Contains(key))))): 1 == 2)
+                   ||  (projectType == "" ? t.ProjectType == taskId : 1 == 2)
+                   || (projectSmallType == "" ? t.ProjectSmallType == taskId : 1 == 2)
+                   || t.TabulatorId.Contains(applyManId) ||
                    t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
-                   || t.NoteTakerId.Contains(applyManId)).ToList();
+                   || t.NoteTakerId.Contains(applyManId)).OrderBy(t=>t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                     return new NewErrorModel()
                     {
                         count = processingProgresses.Count,
@@ -225,10 +235,43 @@ namespace DingTalk.Controllers
                                     , item.TaskId, item.SpeedOfProgress, eappUrl);
                             }
                         }
-                        if (vs == new List<int>() { 0 }) //制表人 暂时不通知
+
+                        if (vs == new List<int>() { 1 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                            if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
+                            {
+                                //推送实际记录人
+                                await dingTalkServersController.SendProcessingProgress(item.NoteTakerId, 3, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                            }
+                        }
+                        if (vs == new List<int>() { 0 }) //制表人 暂时不通知(添加的时候通知了)
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
+                        if (vs == new List<int>() { 2 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            //修改已读状态
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        if (vs == new List<int>() { 3 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                            if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
+                            {
+                                //推送制表人
+                                await dingTalkServersController.SendProcessingProgress(item.TabulatorId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                                //推送设计人员
+                                await dingTalkServersController.SendProcessingProgress(item.DesignerId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                                //推送分配人
+                                await dingTalkServersController.SendProcessingProgress(item.HeadOfDepartmentsId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                            }
+                        }
+
                     }
                     context.SaveChanges();
                 }

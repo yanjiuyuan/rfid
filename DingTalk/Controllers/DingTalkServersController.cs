@@ -491,6 +491,7 @@ namespace DingTalk.Controllers
                 case 0: keyword = "新增"; break;
                 case 1: keyword = "确认"; break;
                 case 2: keyword = "修改"; break;
+                case 3: keyword = "分配"; break;
             };
           
             oa oa = new oa()
