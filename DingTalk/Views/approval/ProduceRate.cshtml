@@ -28,8 +28,8 @@
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label"></el-table-column>
             </el-table-column>
             <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't4'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-        </el-table>
-        <templete @*v-if="ruleIndex == 0"*@>
+        </el-table> @*v-if="ruleIndex == 0"*@
+        <template>
             <el-upload class="upload-demo"
                        action="/drawingupload/UploadAndGetInfo"
                        :on-success="handleSuccess"
@@ -44,6 +44,8 @@
 
             <hr />
             <h1>添加一条进度 </h1>
+            <span style="padding:3px;">流水号</span><el-input v-model="taskid" style="width:200px;"></el-input>
+            <el-button type="primary" v-on:click="search">搜索</el-button>
             <el-table :data="inputTable" stripe border
                       style="width: 100%">
                 <el-table-column label="操作">
@@ -56,10 +58,21 @@
                         <el-input v-model="scope.row[con.param]"></el-input>
                     </template>
                 </el-table-column>
-
+                <el-table-column label="资料接收时间">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row[con.param]"></el-input>
+                        </template>
+                    </el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't2' && (con.label == '需求时间' || con.label == '需求建议)" :prop="con.param" width="150" :label="con.label">
+                    <template slot-scope="scope">
+                        <el-input v-model="scope.row[con.param]"></el-input>
+                    </template>
+                </el-table-column>
             </el-table>
-        </templete>
-        
+        </template>
+
         @*<el-table :data="tableData" stripe border>
             <el-table-column prop="CodeNo" type="index"></el-table-column>
             <el-table-column label="操作">
@@ -132,8 +145,7 @@
     for (let con in tableConfig) {
         initTable[tableConfig[con].param] = ''
     }
-    initTable['Tabulator'] = DingData.nickName
-    initTable['TabulatorId'] = DingData.userid
+    
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -145,6 +157,7 @@
                 data: [],
                 tableData: [],
                 inputTable: [initTable],
+                taskid: 0,
                 ruleIndex: 2,//用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                 ruleForm: {
                     name: DingData.nickName,
@@ -206,10 +219,32 @@
                     this.getTable()
                 }, (res) => { loading.close() })
             },
+            search() {
+                this.GetData('ProcessingProgress/DefaultRead?taskId=' + this.taskid, (res) => {
+                    for (let r in res) {
+                        if (res[r] == null) {
+                            res[r] = ''
+                        }
+                    }
+
+                    for (let c in tableConfig) {
+                        let p = tableConfig[c].param
+                        this.inputTable[0][p] = res[p]
+                    }
+
+
+                    //this.inputTable[0] = res
+
+                    this.setRuleData()
+                })
+            },
             //获取bom数据
             getTable() {
                 this.GetData('ProcessingProgress/Read?applyManId=' + DingData.userid, (res) => {
                     this.tableData = res
+                })
+                this.GetData('ProcessingProgress/GetPower?applyManId=' + DingData.userid, (res) => {
+                    this.ruleIndex = res[0]
                 })
             },
             //设置角色数据
@@ -224,11 +259,9 @@
                         that.inputTable[0].HeadOfDepartments = data[0].name
                         that.inputTable[0].NoteTakerId = data[0].emplId
                         that.inputTable[0].NoteTaker = data[0].name
+                        that.inputTable[0]['Tabulator'] = DingData.nickName
+                        that.inputTable[0]['TabulatorId'] = DingData.userid
                     }
-                })
-
-                this.GetData('ProcessingProgress/GetPower?applyManId=' + DingData.userid, (res) => {
-                    this.ruleIndex = res[0]
                 })
             }
         },
