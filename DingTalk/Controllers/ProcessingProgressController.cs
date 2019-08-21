@@ -225,10 +225,45 @@ namespace DingTalk.Controllers
                                     , item.TaskId, item.SpeedOfProgress, eappUrl);
                             }
                         }
+
+                        if (vs == new List<int>() { 1 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                            if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
+                            {
+                                //推送实际记录人
+                                await dingTalkServersController.SendProcessingProgress(item.NoteTakerId, 3, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                            }
+                        }
                         if (vs == new List<int>() { 0 }) //制表人 暂时不通知
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
+                        if (vs == new List<int>() { 2 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "没有权限！", "") { },
+                            };
+                        }
+                        if (vs == new List<int>() { 3 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        {
+                            context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
+                            if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
+                            {
+                                //推送制表人
+                                await dingTalkServersController.SendProcessingProgress(item.TabulatorId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                                //推送设计人员
+                                await dingTalkServersController.SendProcessingProgress(item.DesignerId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                                //推送分配人
+                                await dingTalkServersController.SendProcessingProgress(item.HeadOfDepartmentsId, 0, processingProgressModel.applyMan, item.Bom
+                                    , item.TaskId, item.SpeedOfProgress, eappUrl);
+                            }
+                        }
+
                     }
                     context.SaveChanges();
                 }
