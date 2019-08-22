@@ -179,4 +179,9 @@
         [StringLength(200)]
         public string FinishTime { get; set; }
 
+        /// <summary>
+        /// 对应权限
+        /// </summary>
+        [NotMapped]
+        public List<int> Power { get; set; }
     }}
