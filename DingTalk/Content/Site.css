@@ -62,6 +62,16 @@ form{
     border: 1px solid #F56C6C;
 }
 
+.el-table .warning-row {
+    background: oldlace;
+}
+.el-table .error-row {
+    background: oldlace;
+}
+.el-table .success-row {
+    background: #f0f9eb;
+}
+
 /*总体布局*/
 body {
     margin: 0;

@@ -31,10 +31,10 @@
                 </el-select>
             </el-form-item>
             @*<el-form-item label="公司名称" required="required">
-            <el-select v-model="ruleForm.CompanyName" style="width:300px;">
-                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>*@
+                    <el-select v-model="ruleForm.CompanyName" style="width:300px;">
+                        <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
+                    </el-select>
+                </el-form-item>*@
             <el-form-item label="合作单位">
                 <el-input v-model="ruleForm.Customer"></el-input>
             </el-form-item>
@@ -160,8 +160,11 @@
                         })
                     }
                 })
-                
-            }
+            },
+            handleChange(value) {
+                console.log(value)
+                this.ptypes = value
+            },
         },
         handleChange(value) {
             console.log(value)
