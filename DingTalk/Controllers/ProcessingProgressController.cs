@@ -177,14 +177,21 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    List<ProcessingProgress> processingProgresses = context.ProcessingProgress.Where(t =>
-                   (taskId == "" ? t.TaskId == taskId : 1 == 2)
-                   || (key == "" ? (t.ProjectName.Contains(key) || (t.Bom.Contains(key) || (t.Designer.Contains(key) || (t.NoteTaker.Contains(key))))): 1 == 2)
-                   ||  (projectType == "" ? t.ProjectType == taskId : 1 == 2)
-                   || (projectSmallType == "" ? t.ProjectSmallType == taskId : 1 == 2)
-                   || t.TabulatorId.Contains(applyManId) ||
+                    List<ProcessingProgress> processingProgresses =
+                        context.ProcessingProgress.Where(t =>
+                    t.TabulatorId.Contains(applyManId) ||
                    t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
-                   || t.NoteTakerId.Contains(applyManId)).OrderBy(t=>t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                   || t.NoteTakerId.Contains(applyManId)).ToList();
+                    processingProgresses = processingProgresses.Where(t =>
+                   (taskId != "" ? t.TaskId == taskId : 1 == 1)
+                  || (key != "" ? (t.ProjectName.Contains(key) || (t.Bom.Contains(key) || (t.Designer.Contains(key) || (t.NoteTaker.Contains(key))))) : 1 == 1)
+                  || (projectType != "" ? t.ProjectType == projectType : 1 == 1)
+                  || (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                    foreach (var item in processingProgresses)
+                    {
+                        NewErrorModel errorModel = GetPower(applyManId, item.TaskId);
+                        item.Power = (List<int>)errorModel.data;
+                    }
                     return new NewErrorModel()
                     {
                         count = processingProgresses.Count,
