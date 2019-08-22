@@ -170,8 +170,8 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public NewErrorModel Read(string applyManId, int pageIndex, int pageSize, string projectType = "", 
-            string projectSmallType = "",  string taskId = "",string key="")
+        public NewErrorModel Read(string applyManId, int pageIndex, int pageSize, string projectType = "",
+            string projectSmallType = "", string taskId = "", string key = "")
         {
             try
             {
@@ -182,10 +182,14 @@ namespace DingTalk.Controllers
                     t.TabulatorId.Contains(applyManId) ||
                    t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
                    || t.NoteTakerId.Contains(applyManId)).ToList();
+
                     processingProgresses = processingProgresses.Where(t =>
-                   (taskId != "" ? t.TaskId == taskId : 1 == 1)
-                  || (key != "" ? (t.ProjectName.Contains(key) || (t.Bom.Contains(key) || (t.Designer.Contains(key) || (t.NoteTaker.Contains(key))))) : 1 == 1)
-                  || (projectType != "" ? t.ProjectType == projectType : 1 == 1)
+                   (taskId != "" ? t.TaskId == taskId : 1 == 1)).ToList() ;
+                    processingProgresses = processingProgresses.Where(t =>
+                   (key != "" ? (t.ProjectName.Contains(key) || (t.Bom.Contains(key) || (t.Designer.Contains(key) || (t.NoteTaker.Contains(key))))) : 1 == 1)).ToList();
+
+                     processingProgresses = processingProgresses.Where(t =>
+                  (projectType != "" ? t.ProjectType == projectType : 1 == 1)
                   || (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                     foreach (var item in processingProgresses)
                     {
@@ -229,7 +233,9 @@ namespace DingTalk.Controllers
                         //判断当前修改权限
                         NewErrorModel errorModel = GetPower(processingProgressModel.applyManId, item.TaskId);
                         List<int> vs = (List<int>)errorModel.data;
-                        if (vs == new List<int>() { 1, 3 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+
+                        
+                        if (vs.Contains(1) && vs.Contains(3)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                             if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
@@ -243,7 +249,7 @@ namespace DingTalk.Controllers
                             }
                         }
 
-                        if (vs == new List<int>() { 1 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        if (vs.Count==1 && vs.Contains(1)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                             if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
@@ -253,16 +259,16 @@ namespace DingTalk.Controllers
                                     , item.TaskId, item.SpeedOfProgress, eappUrl);
                             }
                         }
-                        if (vs == new List<int>() { 0 }) //制表人 暂时不通知(添加的时候通知了)
+                        if (vs.Count == 1 && vs.Contains(0)) //制表人 暂时不通知(添加的时候通知了)
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
-                        if (vs == new List<int>() { 2 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        if (vs.Count == 1 && vs.Contains(2)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             //修改已读状态
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
-                        if (vs == new List<int>() { 3 }) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        if (vs.Count == 1 && vs.Contains(3)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                             if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
@@ -329,7 +335,7 @@ namespace DingTalk.Controllers
                     processingProgress.ProjectName = projectInfo.ProjectName;
                     processingProgress.TaskId = taskId;
                     processingProgress.Bom = projectInfo.ProjectName + "(流水号" + taskId + ")";
-                    processingProgress.Designer =  JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).Designer;
+                    processingProgress.Designer = JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).Designer;
                     processingProgress.DesignerId = JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).DesignerId;
                     processingProgress.BomTime = tasksFinish.ApplyTime;
                     processingProgress.TwoD = tasksFinish.ApplyTime;
