@@ -143,7 +143,7 @@
                     <el-input v-model="DetailedList2_detail.Inventor" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="申报类别">
-                    <el-input v-model="DetailedList2_detail.Name" :disabled="true"></el-input>
+                    <el-input v-model="DetailedList2_detail.ActualType" :disabled="true"></el-input>
                 </el-form-item>
    
             </el-collapse-item>
@@ -166,7 +166,7 @@
                     <el-table-column type="index"></el-table-column>
                     <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                         <template slot-scope="scope">
-                            <el-input type="textarea" v-model="scope.row[key]"></el-input>
+                            <el-input type="textarea" v-model="scope.row[key]" v-on:change = "computeCount(scope.$index,scope.row)"></el-input>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -381,92 +381,92 @@
                 defaultProjectFundingList: [
                     {
                         Subject: '1、设备费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '其中：购置',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '试制',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '2、材料费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '3、测试化验加工费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '4、燃料动力费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '5、差旅费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '6、会议费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '7、合作与交流费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '8、出版/文献/信息传播/知识产权事务费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '9、劳务费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '10、专家咨询费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '11、管理费',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '12、其他(如用车成本等)',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     },
                     {
                         Subject: '合计',
-                        Money: '0',
-                        NameAndMoney: '0',
+                        Money: '',
+                        NameAndMoney: '',
                         TaskId: TaskId
                     }
                 ],
@@ -564,6 +564,15 @@
                 else {
                     this.aggreSubmit(aggreParam)
                 }
+            },
+            computeCount(index, row) {
+                let tmpMoney = 0
+                for (let i = 1; i < this.ProjectFundingList.length - 1; i++) {
+                    if (!this.ProjectFundingList[i].Money) this.ProjectFundingList[i].Money = 0
+                    tmpMoney += parseFloat(this.ProjectFundingList[i].Money)
+                } 
+                this.ProjectFundingList[0].Money = (this.ProjectFundingList[1].Money - 0) + (this.ProjectFundingList[2].Money - 0)
+                this.ProjectFundingList[this.ProjectFundingList.length - 1].Money = tmpMoney.toFixed(2)
             },
             //重新发起审批
             reApproval() {

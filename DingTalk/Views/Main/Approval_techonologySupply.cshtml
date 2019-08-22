@@ -86,7 +86,7 @@
                 <el-input v-model="tableForm.ProjectName" :disabled="noEdit"></el-input>
             </el-form-item>
             <template v-if="NodeId==1">
-                <el-form-item label="方案文件">
+                <el-form-item label="方案文件" required>
                     <el-upload class="upload-demo"
                                drag
                                :file-list="fileList"
@@ -193,6 +193,10 @@
                             "Remark": this.tableForm.Mark
                         }
                         if (NodeId == 1) {
+                            if (this.fileList.length == 0) {
+                                this.elementAlert('提示信息', '未上传文件') 
+                                return
+                            }
                             this.fileListToUrl()
                             this.tableForm['StartTime'] = _dateToString(this.tableForm.StartTime[0])
                             this.tableForm['EndTime'] = _dateToString(this.tableForm.StartTime[1])

@@ -12,22 +12,54 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
         <!--表格實體-->
         <h1>当前加工进度表</h1>
-        <el-table :data="tableData" stripe border
+        <el-table :data="tableData" :row-class-name="tableRowClassName"
                   style="width: 100%">
             <el-table-column prop="CodeNo" type="index"></el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            <el-table-column label="资料接收时间">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't2'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            <el-table-column label="零件加工">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            <el-table-column label="组装">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </el-table-column>
-            <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't4'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+            <!--用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人-->
+            <!-- 0 生产加工进度发起人-->
+            <template>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label" style="background:red;background-color:red;"></el-table-column>
+                <el-table-column label="资料接收时间">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+            </template>
+            <template>
+
+            </template>
+           
+
+            <!-- 3.实际记录人-->
+            <template>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column label="零件加工">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column label="组装">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+            </template>
+            <template>
+
+            </template>
+            
+            <!-- 1 生产加工进度分配人-->
+            <template>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't42'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+
+            </template>
+            <template>
+
+            </template>
+            <!-- 2 没权限(设计人员)-->
+            <template>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+            </template>
+            <template>
+
+            </template>
         </el-table> @*v-if="ruleIndex == 0"*@
         <template>
             <el-upload class="upload-demo"
@@ -65,7 +97,7 @@
                         </template>
                     </el-table-column>
                 </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't2' && (con.label == '需求时间' || con.label == '需求建议)" :prop="con.param" width="150" :label="con.label">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't2' && (con.label == '需求时间' || con.label == '需求建议')" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-model="scope.row[con.param]"></el-input>
                     </template>
@@ -100,6 +132,7 @@
 <script>
     let a = 'DesignerId,设计员Id  HeadOfDepartmentsId,部门负责人Id   NoteTakerId,记录人Id ,TabulatorId,制表人Id  Tabulator,制表人'
     let tableConfig = {
+        //1制表人编辑区~~~~~~~~~~~
         Column1: { param: 'CompanyName', label: '单位', upLabel: 't1' },
         Column2: { param: 'ProjectType', label: '大类别', upLabel: 't1' },
         Column3: { param: 'ProjectSmallType', label: '小类别', upLabel: 't1'},
@@ -115,11 +148,13 @@
         Column12: { param: 'TwoD', label: '2D', upLabel: '资料接收时间' },
         Column13: { param: 'ThreeD', label: '3D', upLabel: '资料接收时间' },
 
-        Column14: { param: 'NeedTime', label: '需求时间', upLabel: 't2' },
-        Column15: { param: 'NeedCount', label: '需求建议', upLabel: 't2'},
-        Column16: { param: 'ScheduledDate', label: '预计开工时间', upLabel: 't2' },
-        Column17: { param: 'CompletionTime', label: '预计完成时间', upLabel: 't2' },
-        Column18: { param: 'BeginTime', label: '开始时间', upLabel: 't2' },
+        Column14: { param: 'NeedTime', label: '需求时间', upLabel: 't21' },
+        Column15: { param: 'NeedCount', label: '需求建议', upLabel: 't21' },
+
+        //2记录人编辑区~~~~~~~~~~~~~
+        Column16: { param: 'ScheduledDate', label: '预计开工时间', upLabel: 't22' },
+        Column17: { param: 'CompletionTime', label: '预计完成时间', upLabel: 't22' },
+        Column18: { param: 'BeginTime', label: '开始时间', upLabel: 't22' },
         //零件加工
         Column19: { param: 'HomemadeNumberZZ', label: '自制数（件）', upLabel: '零件加工' },
         Column20: { param: 'ProcessingTimeZZ', label: '加工时间（天）', upLabel: '零件加工' },
@@ -134,12 +169,16 @@
         Column27: { param: 'Debugging', label: '调试（%）', upLabel: '组装' },
         Column28: { param: 'ProgressStatement', label: '进度说明', upLabel: '组装' },
 
-        Column29: { param: 'Remark2', label: '备注', upLabel: 't4'},
-        Column30: { param: 'HeadOfDepartments', label: '部门负责人', upLabel: 't4' },
-        Column31: { param: 'NoteTaker', label: '记录人', upLabel: 't4' },
+        Column29: { param: 'Remark2', label: '备注', upLabel: 't41' },
+
+        //3部长编辑区~~~~~~~~~~~~~
+        Column30: { param: 'HeadOfDepartments', label: '部门负责人', upLabel: 't42' },
+        Column31: { param: 'NoteTaker', label: '记录人', upLabel: 't42' },
+
+        //4设计人编辑区~~~~~~~~~~~~~
         //Column32: '设计员确认收货',
-        Column33: { param: 'Remark3', label: '备注', upLabel: 't4' },
-        Column34: { param: 'Tabulator', label: '图纸审核员', upLabel: 't4'}
+        Column33: { param: 'Remark3', label: '备注', upLabel: 't43' },
+        Column34: { param: 'Tabulator', label: '图纸审核员', upLabel: 't43'}
     }
     let initTable = {}
     for (let con in tableConfig) {
@@ -166,6 +205,14 @@
             }
         },
         methods: {
+            tableRowClassName({ row, rowIndex }) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 0) {
+                    return 'error-row';
+                }
+                return '';
+            },
             onSubmit(formName) {
  
             },
@@ -273,3 +320,18 @@
     })
 
 </script>
+
+
+<style>
+    .el-table .warning-row {
+        background: oldlace;
+    }
+
+    .el-table .error-row {
+        background: #FDE2E2;
+    }
+
+    .el-table .success-row {
+        background: #f0f9eb;
+    }
+</style>

@@ -76,7 +76,7 @@
 
 
         <el-form-item label="是否有横向合作单位">
-            <el-radio-group v-model="ruleForm.IsTransverse">
+            <el-radio-group v-model="ruleForm.IsTransverse" v-on:change="heng">
                 <el-radio :label=true>是</el-radio>
                 <el-radio :label=false>否</el-radio>
             </el-radio-group>
@@ -112,7 +112,7 @@
 
 
         <el-form-item label="是否有申报纵向项目">
-            <el-radio-group v-model="ruleForm.IsPortrait">
+            <el-radio-group v-model="ruleForm.IsPortrait" v-on:change="zhong">>
                 <el-radio :label=true>是</el-radio>
                 <el-radio :label=false>否</el-radio>
             </el-radio-group>
@@ -260,7 +260,7 @@
                         attribute: 'AcceptanceData14',
                         point: '打包上传',
                         fileList: [],
-                        must: false
+                        must: true
                     },
                     {
                         label: '其他过程文档设计报告、评审报告、项目计划、设计更改报告等',
@@ -288,7 +288,7 @@
                         attribute: 'AcceptanceSlip18',
                         point: '打包上传',
                         fileList: [],
-                        must: false
+                        must: true
                     }],
                 timeRange: [],
                 LongitudinalProjectConfig: {
@@ -343,6 +343,14 @@
             }
         },
         methods: {
+            heng(value) {
+                console.log(value)
+                this.uploadFileConfig[15].must = value
+            },
+            zhong(value) {
+                console.log(value)
+                this.uploadFileConfig[11].must = value
+            },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
             },
@@ -427,6 +435,7 @@
                         delete proj.ApplyManId
                         Object.assign(this.ruleForm, proj)
                         this.ruleForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
+                        if (proj.ProjectType == '产品类' || proj.ProjectType == '教育类') this.uploadFileConfig[14].must = true
                         proj.ProjectType == '研发类' && proj.ProjectSmallType == '纵向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
                     }
                 }
