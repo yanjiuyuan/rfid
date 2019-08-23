@@ -67,13 +67,17 @@
                 <el-table-column label="零件加工">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label">
                         <template slot-scope="scope">
-                            <el-input v-model="scope.row[con.param]" :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']"></el-input>
+                            <el-input v-if="con.label != '进度'" v-model="scope.row[con.param]" :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']"></el-input>
+                            <el-select v-else v-model="scope.row[con.param]" placeholder="请选择" :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']">
+                                <el-option v-for="s in states" :key="s" :label="s" :value="s">
+                                </el-option>
+                            </el-select>
                         </template>
                     </el-table-column>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]"> :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']"</el-input>
+                        <el-input v-model="scope.row[con.param]" :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']"></el-input>
                     </template>
                 </el-table-column>
                 <el-table-column label="组装">
@@ -85,7 +89,7 @@
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]" :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']"></el-input>
+                        <el-input v-model="scope.row[con.param]" :disabled="ruleIndex == 1 && userid != scope.row['NoteTakerId']" type="textarea"></el-input>
                     </template>
                 </el-table-column>
             </template>
@@ -104,14 +108,32 @@
                 </el-table-column>
             </template>
 
-            <!-- 2 没权限(设计人员)-->
-            <template>
+            <!-- 2 没权限(设计人员)--> @*placehoder="确认无误填写并保存" type="textarea"*@
+            <template v-if="ruleIndex != 2">
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43'" :prop="con.param" width="150" :label="con.label"></el-table-column>
             </template>
-            <template>
+            <template v-if="ruleIndex == 2">
 
+                @*<el-table-column prop="Tabulator" width="150" label="图纸审核员"></el-table-column>*@
+                @*<el-table-column prop="Remark3" width="180" label="备注">
+                    <template slot-scope="scope">
+                        <el-input v-model="scope.row['Remark3']"></el-input>
+                    </template>
+                </el-table-column>*@
             </template>
         </el-table>
+        <!--底部翻頁-->
+        <div style="text-align:right">
+            <el-pagination v-on:size-change="handleSizeChange"
+                           v-on:current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="pageSize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="totalRows">
+            </el-pagination>
+        </div>
+
         <template v-if="ruleIndex == 0">
             <el-upload class="upload-demo"
                        action="/drawingupload/UploadAndGetInfo"
@@ -246,6 +268,7 @@
                 tableConfig: tableConfig,
                 userid: DingData.userid,
                 excelList: [],
+                states: ['已完成', '暂停', '作废', '取消', '外协加工中'],
                 data: [],
                 tableData: [],
                 inputTable: [initTable],
@@ -258,28 +281,13 @@
             }
         },
         methods: {
-            //保存进度表
-            save() {
-                let param = {
-                    applyManId: DingData.userid,
-                    applyMan: DingData.nickName,
-                    CompanyId: 0,
-                    IsExcelUpload: false,
-                    processingProgresses: this.tableData
-                }
-                console.log(JSON.stringify(param))
-                this.PostData('ProcessingProgress/Modify', param, (res) => {
-                    this.$alert('修改成功', '提示');
-                    this.getTable()
-                })
-            },
             tableRowClassName({ row, rowIndex }) {
-                if (rowIndex === 1) {
-                    return 'warning-row';
-                } else if (rowIndex === 0) {
-                    return 'error-row';
+                switch (row.SpeedOfProgress) {
+                    case '已完成': return 'success-row'; break;
+                    case '作废': case '取消': return 'error-row'; break;
+                    default: return 'warning-row';
                 }
-                return '';
+                
             },
             //生产部 部长 选择 生产负责人
             changePeople(index,row) {
@@ -305,6 +313,20 @@
             },
             onSubmit(formName) {
  
+            },
+            //保存进度表
+            save() {
+                let param = {
+                    applyManId: DingData.userid,
+                    applyMan: DingData.nickName,
+                    CompanyId: 0,
+                    IsExcelUpload: false,
+                    processingProgresses: this.tableData
+                }
+                this.PostData('ProcessingProgress/Modify', param, (res) => {
+                    this.$alert('修改成功', '提示');
+                    //this.getTable()
+                })
             },
             //添加加工进度
             addGood(index, good) {
@@ -368,8 +390,6 @@
                         let p = tableConfig[c].param
                         this.inputTable[0][p] = res[p]
                     }
-
-
                     //this.inputTable[0] = res
 
                     this.setRuleData()
@@ -382,7 +402,9 @@
                     pageIndex: 1,
                     pageSize: 10000
                 }) , (res) => {
-                    this.tableData = res
+                    this.data = res
+                    this.totalRows = res.length
+                    this.getData()
                 })
                 this.GetData('ProcessingProgress/GetPower?applyManId=' + DingData.userid, (res) => {
                     this.ruleIndex = res[0]
