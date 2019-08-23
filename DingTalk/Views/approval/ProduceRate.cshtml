@@ -465,6 +465,13 @@
                         let p = tableConfig[c].param
                         this.inputTable[0][p] = res[p]
                     }
+                    //设置默认公司
+                    for (let c of this.companys) {
+                        if (c.value == this.companyId) {
+                            this.inputTable[0].CompanyId = c.value
+                            this.inputTable[0].CompanyName = c.label
+                        }
+                    }
                     //this.inputTable[0] = res
                     this.setRuleData()
                 })
