@@ -140,7 +140,7 @@
         [StringLength(200)]        public string Remark3 { get; set; }
     
         /// <summary>
-        /// 是否已读
+        /// 是否已读(确认收货)
         /// </summary>        public bool? IsAlreadyRead { get; set; }
 
         /// <summary>

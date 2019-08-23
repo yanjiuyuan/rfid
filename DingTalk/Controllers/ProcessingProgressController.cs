@@ -1,13 +1,18 @@
-﻿using DingTalk.EF;
+﻿using Common.ClassChange;
+using Common.Excel;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -167,11 +172,12 @@ namespace DingTalk.Controllers
         /// <param name="projectSmallType">小类</param>
         /// <param name="taskId">流水号</param>
         /// <param name="key">关键字(项目名、BOM、设计员、记录人)</param>
+        /// <param name="IsPrint">是否推送Excel</param>
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public NewErrorModel Read(string applyManId, int pageIndex, int pageSize, string projectType = "",
-            string projectSmallType = "", string taskId = "", string key = "")
+        public async Task<NewErrorModel> Read(string applyManId, int pageIndex, int pageSize, string projectType = "",
+            string projectSmallType = "", string taskId = "", string key = "", bool IsPrint = false)
         {
             try
             {
@@ -184,24 +190,60 @@ namespace DingTalk.Controllers
                    || t.NoteTakerId.Contains(applyManId)).ToList();
 
                     processingProgresses = processingProgresses.Where(t =>
-                   (taskId != "" ? t.TaskId == taskId : 1 == 1)).ToList() ;
+                   (taskId != "" ? t.TaskId == taskId : 1 == 1)).ToList();
                     processingProgresses = processingProgresses.Where(t =>
                    (key != "" ? (t.ProjectName.Contains(key) || (t.Bom.Contains(key) || (t.Designer.Contains(key) || (t.NoteTaker.Contains(key))))) : 1 == 1)).ToList();
 
-                     processingProgresses = processingProgresses.Where(t =>
-                  (projectType != "" ? t.ProjectType == projectType : 1 == 1)
-                  || (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                    processingProgresses = processingProgresses.Where(t =>
+                 (projectType != "" ? t.ProjectType == projectType : 1 == 1)
+                 || (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                     foreach (var item in processingProgresses)
                     {
                         NewErrorModel errorModel = GetPower(applyManId, item.TaskId);
                         item.Power = (List<int>)errorModel.data;
                     }
-                    return new NewErrorModel()
+                    if (IsPrint == false)
                     {
-                        count = processingProgresses.Count,
-                        data = processingProgresses,
-                        error = new Error(0, "读取成功！", "") { },
-                    };
+                        return new NewErrorModel()
+                        {
+                            count = processingProgresses.Count,
+                            data = processingProgresses,
+                            error = new Error(0, "读取成功！", "") { },
+                        };
+                    }
+                    else
+                    {
+                        DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(processingProgresses, new List<string>() {
+                          "Id","DesignerId","HeadOfDepartmentsId","NoteTakerId","TabulatorId","CreateTime","FinishTime","IsAlreadyRead","Power"
+                         });
+                        string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", "生产加工进度表模板"));
+                        string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                        string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + "生产加工进度表" + time + ".xlsx";
+                        File.Copy(path, newPath, true);
+                        if (ExcelHelperByNPOI.UpdateExcel(newPath, "研究院+华数", dtpurchaseTables, 1, 3))
+                        {
+                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                            //上盯盘
+                            var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + "生产加工进度表" + time + ".xlsx");
+                            //推送用户
+                            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                            fileSendModel.UserId = applyManId;
+                            var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                            //删除文件
+                            File.Delete(newPath);
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, result, "") { },
+                            };
+                        }
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "文件有误", "") { },
+                            };
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -233,7 +275,6 @@ namespace DingTalk.Controllers
                         //判断当前修改权限
                         NewErrorModel errorModel = GetPower(processingProgressModel.applyManId, item.TaskId);
                         List<int> vs = (List<int>)errorModel.data;
-
                         
                         if (vs.Contains(1) && vs.Contains(3)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
@@ -249,7 +290,7 @@ namespace DingTalk.Controllers
                             }
                         }
 
-                        if (vs.Count==1 && vs.Contains(1)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        if (vs.Count == 1 && vs.Contains(1)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                             if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态
@@ -284,7 +325,6 @@ namespace DingTalk.Controllers
                                     , item.TaskId, item.SpeedOfProgress, eappUrl);
                             }
                         }
-
                     }
                     context.SaveChanges();
                 }
@@ -337,9 +377,9 @@ namespace DingTalk.Controllers
                     processingProgress.Bom = projectInfo.ProjectName + "(流水号" + taskId + ")";
                     processingProgress.Designer = JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).Designer;
                     processingProgress.DesignerId = JsonConvert.DeserializeObject<DesignerModel>(tasks.counts).DesignerId;
-                    processingProgress.BomTime = tasksFinish.ApplyTime;
-                    processingProgress.TwoD = tasksFinish.ApplyTime;
-                    processingProgress.ThreeD = tasksFinish.ApplyTime;
+                    processingProgress.BomTime = DateTime.Parse(tasksFinish.ApplyTime).ToString("yyyy-MM-dd");
+                    processingProgress.TwoD = DateTime.Parse(tasksFinish.ApplyTime).ToString("yyyy-MM-dd");
+                    processingProgress.ThreeD = DateTime.Parse(tasksFinish.ApplyTime).ToString("yyyy-MM-dd");
                     processingProgress.NeedTime = purchase.NeedTime;
                     processingProgress.NeedCount = tasks.Remark;
                 }
