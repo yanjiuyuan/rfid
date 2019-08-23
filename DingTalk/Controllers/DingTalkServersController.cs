@@ -508,7 +508,7 @@ namespace DingTalk.Controllers
                     form = new form[] {
                         new form{ key=string.Format("{0}人：",keyword),value=applyMan},
                         new form{ key=string.Format("{0}时间：",keyword),value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
-                        new form{ key=string.Format("流水号：",keyword),value=bom},
+                        new form{ key=string.Format("流水号：",keyword),value=taskId},
                         new form{ key=string.Format("{0}BOM：",keyword),value=bom},
                         new form{ key=string.Format("进度状态："),value=speedOfProgress},
                     },
