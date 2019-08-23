@@ -192,61 +192,61 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
-                                if (projectInfos.Where(p => p.ProjectId == processingProgresse.ProjectId &&
-                              p.ProjectName == p.ProjectName && p.ProjectType == processingProgresse.ProjectType
-                              && p.ProjectSmallType == processingProgresse.ProjectSmallType).ToList().Count == 0)
+                                //华数不校对项目类别
+                                //  if (projectInfos.Where(p => p.ProjectId == processingProgresse.ProjectId &&
+                                //p.ProjectName == p.ProjectName && p.ProjectType == processingProgresse.ProjectType
+                                //&& p.ProjectSmallType == processingProgresse.ProjectSmallType).ToList().Count == 0)
+                                //  {
+                                //      return new NewErrorModel()
+                                //      {
+                                //          error = new Error(1, string.Format("保存失败,项目Id {0} 、 项目名 {1} 与系统中的大类、小类不吻合！", processingProgresse.ProjectId, processingProgresse.ProjectName), "") { },
+                                //      };
+                                //  }
+                                //  else
+                                //  {
+                                List<Models.DingModelsHs.Tasks> tasksDesigner = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Designer)).ToList();
+                                List<Models.DingModelsHs.Tasks> tasksNoteTaker = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.NoteTaker)).ToList();
+                                List<Models.DingModelsHs.Tasks> tasksHeadOfDepartments = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartments)).ToList();
+                                List<Models.DingModelsHs.Tasks> tasksTabulator = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Tabulator)).ToList();
+                                if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0 || tasksTabulator.Count == 0)
                                 {
-                                    return new NewErrorModel()
+                                    if (tasksTabulator.Count == 0)
                                     {
-                                        error = new Error(1, string.Format("保存失败,项目Id {0} 、 项目名 {1} 与系统中的大类、小类不吻合！", processingProgresse.ProjectId, processingProgresse.ProjectName), "") { },
-                                    };
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：制表人 {0} 的Id   ！", processingProgresse.Tabulator), "") { },
+                                        };
+                                    }
+                                    if (tasksDesigner.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：设计员 {0} 的Id   ！", processingProgresse.NoteTaker), "") { },
+                                        };
+                                    }
+                                    if (tasksNoteTaker.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：记录员 {0} 的Id   ！", processingProgresse.Designer), "") { },
+                                        };
+                                    }
+                                    if (tasksHeadOfDepartments.Count == 0)
+                                    {
+                                        return new NewErrorModel()
+                                        {
+                                            error = new Error(1, string.Format("保存失败,系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartments), "") { },
+                                        };
+                                    }
                                 }
                                 else
                                 {
-                                    List<Models.DingModelsHs.Tasks> tasksDesigner = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Designer)).ToList();
-                                    List<Models.DingModelsHs.Tasks> tasksNoteTaker = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.NoteTaker)).ToList();
-                                    List<Models.DingModelsHs.Tasks> tasksHeadOfDepartments = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.HeadOfDepartments)).ToList();
-                                    List<Models.DingModelsHs.Tasks> tasksTabulator = dDContextHs.Tasks.Where(t => t.ApplyMan.Contains(processingProgresse.Tabulator)).ToList();
-                                    if (tasksDesigner.Count == 0 || tasksNoteTaker.Count == 0 || tasksHeadOfDepartments.Count == 0 || tasksTabulator.Count == 0)
-                                    {
-                                        if (tasksTabulator.Count == 0)
-                                        {
-                                            return new NewErrorModel()
-                                            {
-                                                error = new Error(1, string.Format("保存失败,系统中找不到：制表人 {0} 的Id   ！", processingProgresse.Tabulator), "") { },
-                                            };
-                                        }
-                                        if (tasksDesigner.Count == 0)
-                                        {
-                                            return new NewErrorModel()
-                                            {
-                                                error = new Error(1, string.Format("保存失败,系统中找不到：设计员 {0} 的Id   ！", processingProgresse.NoteTaker), "") { },
-                                            };
-                                        }
-                                        if (tasksNoteTaker.Count == 0)
-                                        {
-                                            return new NewErrorModel()
-                                            {
-                                                error = new Error(1, string.Format("保存失败,系统中找不到：记录员 {0} 的Id   ！", processingProgresse.Designer), "") { },
-                                            };
-                                        }
-                                        if (tasksHeadOfDepartments.Count == 0)
-                                        {
-                                            return new NewErrorModel()
-                                            {
-                                                error = new Error(1, string.Format("保存失败,系统中找不到：部门负责人 {0} 的Id   ！", processingProgresse.HeadOfDepartments), "") { },
-                                            };
-                                        }
-                                    }
-                                    else
-                                    {
-                                        processingProgresse.TabulatorId = tasksTabulator[0].ApplyManId;
-                                        processingProgresse.DesignerId = tasksDesigner[0].ApplyManId;
-                                        processingProgresse.NoteTakerId = tasksNoteTaker[0].ApplyManId;
-                                        processingProgresse.HeadOfDepartmentsId = tasksHeadOfDepartments[0].ApplyManId;
-                                        processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
-                                        dDContext.ProcessingProgress.Add(processingProgresse);
-                                    }
+                                    processingProgresse.TabulatorId = tasksTabulator[0].ApplyManId;
+                                    processingProgresse.DesignerId = tasksDesigner[0].ApplyManId;
+                                    processingProgresse.NoteTakerId = tasksNoteTaker[0].ApplyManId;
+                                    processingProgresse.HeadOfDepartmentsId = tasksHeadOfDepartments[0].ApplyManId;
+                                    processingProgresse.CreateTime = DateTime.Now.ToString("yyyy-MM-dd");
+                                    dDContext.ProcessingProgress.Add(processingProgresse);
                                 }
                             }
                         }
@@ -406,7 +406,7 @@ namespace DingTalk.Controllers
                             {
                                 //推送制表人
                                 await dingTalkServersController.SendProcessingProgress(item.TabulatorId, 2, processingProgressModel.applyMan, item.Bom
-                                    , item.TaskId,item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
+                                    , item.TaskId, item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
                                 //推送设计人员
                                 await dingTalkServersController.SendProcessingProgress(item.DesignerId, 2, processingProgressModel.applyMan, item.Bom
                                     , item.TaskId, item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
@@ -484,7 +484,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("DefaultRead")]
-        public NewErrorModel DefaultRead(string taskId,int CompanyId=0)
+        public NewErrorModel DefaultRead(string taskId, int CompanyId = 0)
         {
             try
             {
@@ -580,7 +580,7 @@ namespace DingTalk.Controllers
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
-               
+
             }
             catch (Exception ex)
             {
