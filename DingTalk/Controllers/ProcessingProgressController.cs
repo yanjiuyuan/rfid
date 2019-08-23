@@ -298,12 +298,12 @@ namespace DingTalk.Controllers
         /// <param name="taskId">流水号</param>
         /// <param name="key">关键字(项目名、BOM、设计员、记录人)</param>
         /// <param name="IsPrint">是否推送Excel</param>
-        /// <param name="companyId">公司Id 0 研究院 1 华数</param>
+        /// <param name="companyId">公司Id 0 研究院 1 华数 （不传默认两家公司）</param>
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
         public async Task<NewErrorModel> Read(string applyManId, int pageIndex, int pageSize, string projectType = "",
-            string projectSmallType = "", string taskId = "", string key = "", bool IsPrint = false, int companyId = 0)
+            string projectSmallType = "", string taskId = "", string key = "", bool IsPrint = false, int companyId = 3)
         {
             try
             {
@@ -312,7 +312,10 @@ namespace DingTalk.Controllers
                     context.ProcessingProgress.Where(t => t.TabulatorId.Contains(applyManId) ||
                t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
                || t.NoteTakerId.Contains(applyManId)).ToList();
-                processingProgresses = processingProgresses.Where(p => p.CompanyId == companyId.ToString()).ToList();
+                if (companyId != 3)
+                {
+                    processingProgresses = processingProgresses.Where(p => p.CompanyId == companyId.ToString()).ToList();
+                }
                 processingProgresses = processingProgresses.Where(t =>
                (taskId != "" ? t.TaskId == taskId : 1 == 1)).ToList();
                 processingProgresses = processingProgresses.Where(t =>
