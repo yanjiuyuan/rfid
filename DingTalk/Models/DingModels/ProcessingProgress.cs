@@ -134,14 +134,9 @@
         /// </summary>
         [StringLength(200)]        public string NoteTakerId { get; set; }
 
-        /// <summary>
-        /// 备注(设计人员)
-        /// </summary>
-        [StringLength(200)]        public string Remark3 { get; set; }
+      
     
-        /// <summary>
-        /// 是否已读(确认收货)
-        /// </summary>        public bool? IsAlreadyRead { get; set; }
+      
 
         /// <summary>
         /// 部门负责人
@@ -156,16 +151,26 @@
         public string HeadOfDepartmentsId { get; set; }
 
         /// <summary>
-        /// 制表人(蔡靓弥)
+        /// 是否已读(确认收货)
+        /// </summary>        public bool? IsAlreadyRead { get; set; }
+
+        /// <summary>
+        /// 备注(设计人员)
         /// </summary>
-        [StringLength(200)]
-        public string Tabulator { get; set; }
+        [StringLength(200)]        public string Remark3 { get; set; }
 
         /// <summary>
         /// 制表人Id
         /// </summary>
         [StringLength(200)]
         public string TabulatorId { get; set; }
+
+
+        /// <summary>
+        /// 制表人(图纸审核人员)(蔡靓弥)
+        /// </summary>
+        [StringLength(200)]
+        public string Tabulator { get; set; }
 
         /// <summary>
         /// 创建时间

@@ -475,13 +475,16 @@ namespace DingTalk.Controllers
         /// <param name="applyMan"></param>
         /// <param name="bom"></param>
         /// <param name="taskId"></param>
+        /// <param name="companyName">公司名称</param>
         /// <param name="speedOfProgress"></param>
+        /// <param name="IsRead">确认状态</param>
         /// <param name="linkUrl"></param>
         /// <returns></returns>
         [Route("SendProcessingProgress")]
         [HttpPost]
         public async Task<object> SendProcessingProgress(string userId, int type,
-        string applyMan,string bom,string taskId,string speedOfProgress, string linkUrl = "eapp://page/start/index")
+        string applyMan,string bom,string taskId,string companyName,
+        string speedOfProgress,bool? IsRead, string linkUrl = "eapp://page/start/index")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
@@ -506,11 +509,13 @@ namespace DingTalk.Controllers
                 {
                     title = string.Format("生产加工进度{0}通知", keyword),
                     form = new form[] {
+                        new form{ key="公司名称：",value=companyName},
                         new form{ key=string.Format("{0}人：",keyword),value=applyMan},
                         new form{ key=string.Format("{0}时间：",keyword),value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
                         new form{ key=string.Format("流水号：",keyword),value=taskId},
                         new form{ key=string.Format("{0}BOM：",keyword),value=bom},
                         new form{ key=string.Format("进度状态："),value=speedOfProgress},
+                        new form{ key=string.Format("确认状态："),value=IsRead==true?"已确认":"未确认"},
                     },
                 }
             };
