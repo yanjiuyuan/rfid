@@ -312,7 +312,7 @@ namespace DingTalk.Controllers
                     context.ProcessingProgress.Where(t => t.TabulatorId.Contains(applyManId) ||
                t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
                || t.NoteTakerId.Contains(applyManId)).ToList();
-
+                processingProgresses = processingProgresses.Where(p => p.CompanyId == companyId.ToString()).ToList();
                 processingProgresses = processingProgresses.Where(t =>
                (taskId != "" ? t.TaskId == taskId : 1 == 1)).ToList();
                 processingProgresses = processingProgresses.Where(t =>
@@ -338,7 +338,7 @@ namespace DingTalk.Controllers
                 else
                 {
                     DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(processingProgresses, new List<string>() {
-                          "DesignerId","HeadOfDepartmentsId","NoteTakerId","TabulatorId","CreateTime","FinishTime","Power"
+                          "DesignerId","CompanyId","HeadOfDepartmentsId","NoteTakerId","TabulatorId","CreateTime","FinishTime","Power"
                          });
                     string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", "生产加工进度表模板"));
                     string time = DateTime.Now.ToString("yyyyMMddHHmmss");

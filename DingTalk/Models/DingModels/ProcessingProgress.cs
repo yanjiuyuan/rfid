@@ -1,4 +1,10 @@
 ﻿namespace DingTalk.Models.DingModels{    using System;    using System.Collections.Generic;    using System.ComponentModel.DataAnnotations;    using System.ComponentModel.DataAnnotations.Schema;    using System.Data.Entity.Spatial;    [Table("ProcessingProgress")]    public partial class ProcessingProgress    {        [Column(TypeName = "numeric")]        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]        public decimal Id { get; set; }
+
+        /// <summary>
+        /// 研究院 0 华数 1
+        /// </summary>
+        [StringLength(200)]        public string CompanyId { get; set; }
+
         /// <summary>
         /// 单位
         /// </summary>
