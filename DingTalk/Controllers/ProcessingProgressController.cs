@@ -176,6 +176,7 @@ namespace DingTalk.Controllers
                         //校对数据
                         if (!string.IsNullOrEmpty(processingProgresse.TaskId))
                         {
+                            processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
                             List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId).ToList();
                             if (ProcessingProgressList.Count > 0)
                             {
