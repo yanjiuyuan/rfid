@@ -18,13 +18,6 @@
             <el-table-column prop="CodeNo" type="index"></el-table-column>
             <!-- ruleIndex 用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人-->
             <!-- 0 生产加工进度发起人-->
-            <template v-if="ruleIndex != 0">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column label="资料接收时间">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </template>
             <template v-if="ruleIndex == 0">
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
@@ -44,20 +37,17 @@
                     </template>
                 </el-table-column>
             </template>
+            <template v-if="ruleIndex == 1 || ruleIndex == 2 || ruleIndex == 3">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column label="资料接收时间">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+            </template>
+
 
 
             <!-- 3.实际记录人-->
-            <template v-if="ruleIndex != 1 && ruleIndex != 3">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column label="零件加工">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column label="组装">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </template>
             <template v-if="ruleIndex == 1 || ruleIndex == 3">
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
@@ -93,9 +83,21 @@
                     </template>
                 </el-table-column>
             </template>
+            <template v-if="ruleIndex == 0 || ruleIndex == 2">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column label="零件加工">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column label="组装">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                </el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+            </template>
+
 
             <!-- 1 生产加工进度分配人-->
-            <template v-if="ruleIndex != 1">
+            <template v-if="ruleIndex == 0 || ruleIndex == 2 || ruleIndex == 3">
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't42'" :prop="con.param" width="150" :label="con.label"></el-table-column>
             </template>
             <template v-if="ruleIndex == 1">
@@ -109,17 +111,16 @@
             </template>
 
             <!-- 2 没权限(设计人员)--> @*placehoder="确认无误填写并保存" type="textarea"*@
-            <template v-if="ruleIndex != 2">
+            <template v-if="ruleIndex == 1 || ruleIndex == 0 || ruleIndex == 3">
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43'" :prop="con.param" width="150" :label="con.label"></el-table-column>
             </template>
             <template v-if="ruleIndex == 2">
-
-                @*<el-table-column prop="Tabulator" width="150" label="图纸审核员"></el-table-column>*@
-                @*<el-table-column prop="Remark3" width="180" label="备注">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row['Remark3']"></el-input>
+                        <el-input v-model="scope.row[con.param]" type="textarea" :disabled="(scope.row[con.param] != '' && scope.row[con.param] != ' ')"></el-input>
                     </template>
-                </el-table-column>*@
+                </el-table-column>
             </template>
         </el-table>
         <!--底部翻頁-->
