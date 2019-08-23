@@ -325,7 +325,7 @@ namespace DingTalk.Controllers
 
                 processingProgresses = processingProgresses.Where(t =>
              (projectType != "" ? t.ProjectType == projectType : 1 == 1)
-             || (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+             && (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 foreach (var item in processingProgresses)
                 {
                     NewErrorModel errorModel = GetPower(applyManId, item.TaskId);
