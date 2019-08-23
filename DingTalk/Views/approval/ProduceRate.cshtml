@@ -18,13 +18,13 @@
             <el-input v-model="ruleForm.key" style="width:300px;" placehoder="项目名、BOM、设计员、记录人"></el-input>
             <el-form-item label="项目类型" required="required">
                 <div class="block">
-                    <el-cascader v-model="ptypes"
+                    <el-cascader v-model="ruleForm.types"
                                  :options="PTypes"
-                                 :props="{ expandTrigger: 'hover' }"
-                                 v-on:change="handleChange"></el-cascader>
+                                 :props="{ expandTrigger: 'hover' }"></el-cascader>
                 </div>
             </el-form-item>
             <el-button type="primary" v-on:click="search">搜索</el-button>
+            <el-button type="primary" v-on:click="search(true)">打印</el-button>
         </template>
         <!--表格實體-->
         <h1>当前加工进度表</h1>
@@ -169,7 +169,7 @@
             <h1>添加一条进度 </h1>
             <span style="padding:3px;">流水号</span>
             <el-input v-model="taskid" style="width:200px;"></el-input>
-            <el-button type="primary" v-on:click="search">搜索</el-button>
+            <el-button type="primary" v-on:click="searchTask">搜索</el-button>
             <el-table :data="inputTable" stripe border
                       style="width: 100%">
                 <el-table-column label="操作">
@@ -287,6 +287,7 @@
                 tableConfig: tableConfig,
                 userid: DingData.userid,
                 excelList: [],
+                ptypes: [],
                 time: {},
                 states: ['加工中','已完成', '暂停', '作废', '取消', '外协加工中'],
                 data: [],
@@ -300,11 +301,32 @@
                     projectSmallType: '',
                     taskId: '',
                     key: '',
+                    types:[],
                     IsPrint: false
                 }
             }
         },
         methods: {
+            //搜索获取进度表
+            search(print) {
+                let param = {
+                    applyManId: DingData.userid,
+                    pageIndex: 1,
+                    pageSize: 10000,
+                }
+                if (this.ruleForm.key) param['key'] = this.ruleForm.key
+                if (this.ruleForm.taskId) param['taskId'] = this.ruleForm.taskId
+                if (this.ruleForm.types[0]) {
+                    param['projectType'] = this.ruleForm.types[0]
+                    param['projectSmallType'] = this.ruleForm.types[1]
+                } 
+                print ? param['IsPrint'] = true : param['IsPrint'] = false
+                this.GetData('ProcessingProgress/Read' + _formatQueryStr(param), (res) => {
+                    this.data = res
+                    this.totalRows = res.length
+                    this.getData()
+                })
+            },
             tableRowClassName({ row, rowIndex }) {
                 switch (row.SpeedOfProgress) {
                     case '已完成': return 'success-row'; break;
@@ -407,25 +429,18 @@
                     this.getTable()
                 }, (res) => { loading.close() })
             },
-            //处理项目类型选择
-            handleChange(value) {
-                console.log(value)
-                this.ptypes = value
-            },
-            search() {
+            searchTask() {
                 this.GetData('ProcessingProgress/DefaultRead?taskId=' + this.taskid, (res) => {
                     for (let r in res) {
                         if (res[r] == null) {
                             res[r] = ''
                         }
                     }
-
                     for (let c in tableConfig) {
                         let p = tableConfig[c].param
                         this.inputTable[0][p] = res[p]
                     }
                     //this.inputTable[0] = res
-
                     this.setRuleData()
                 })
             },
