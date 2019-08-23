@@ -13,9 +13,9 @@
         <!--搜索表格-->
         <template v-if="ruleIndex == 0 || ruleIndex == 1">
             <span style="padding:3px;">流水号</span>
-            <el-input v-model="ruleForm.taskid" style="width:200px;"></el-input>
+            <el-input v-model="ruleForm.taskId" style="width:200px;"></el-input>
             <span style="padding:3px;">关键字</span>
-            <el-input v-model="ruleForm.key" style="width:300px;" placehoder="项目名、BOM、设计员、记录人"></el-input>
+            <el-input v-model="ruleForm.key" style="width:300px;" placeholder="项目名、BOM、设计员、记录人"></el-input>
             <el-form-item label="项目类型" required="required">
                 <div class="block">
                     <el-cascader v-model="ruleForm.types"
@@ -23,7 +23,13 @@
                                  :props="{ expandTrigger: 'hover' }"></el-cascader>
                 </div>
             </el-form-item>
-            <el-button type="primary" v-on:click="search">搜索</el-button>
+            <br />
+            <span style="padding:3px;">公司</span>
+            <el-select v-model="companyId" placeholder="请选择">
+                <el-option v-for="c in companys" :key="c.value" :label="c.label" :value="c.value">
+                </el-option>
+            </el-select>
+            <el-button type="primary" v-on:click="search(false)">搜索</el-button>
             <el-button type="primary" v-on:click="search(true)">打印</el-button>
         </template>
         <!--表格實體-->
@@ -133,9 +139,13 @@
             </template>
             <template v-if="ruleIndex == 2">
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="150" :label="con.label">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]" type="textarea" :disabled="(scope.row[con.param] != '' && scope.row[con.param] != ' ') || scope.row['SpeedOfProgress'] != '已完成'"></el-input>
+                        <el-input v-model="scope.row[con.param]" type="textarea" :disabled="scope.row['IsAlreadyRead'] == '1'"></el-input>
+                        <el-radio-group v-model="scope.row['IsAlreadyRead']" :disabled="scope.row['IsAlreadyRead'] == '1'">
+                            <el-radio :label="0">未读</el-radio>
+                            <el-radio :label="1">已读</el-radio>
+                        </el-radio-group>
                     </template>
                 </el-table-column>
             </template>
@@ -169,7 +179,7 @@
             <h1>添加一条进度 </h1>
             <span style="padding:3px;">流水号</span>
             <el-input v-model="taskid" style="width:200px;"></el-input>
-            <el-button type="primary" v-on:click="searchTask">搜索</el-button>
+            <el-button type="primary" v-on:click="searchTask">搜索图纸数据</el-button>
             <el-table :data="inputTable" stripe border
                       style="width: 100%">
                 <el-table-column label="操作">
@@ -292,6 +302,7 @@
                 states: ['加工中','已完成', '暂停', '作废', '取消', '外协加工中'],
                 data: [],
                 companyId: 0,//公司Id 0 研究院 1 华数
+                companys: [{ value: 0, label: '研究院' }, { value: 1, label: '华数' }],
                 tableData: [],
                 inputTable: [initTable],
                 taskid: 0,
@@ -324,6 +335,14 @@
                 } 
                 print ? param['IsPrint'] = true : param['IsPrint'] = false
                 this.GetData('ProcessingProgress/Read' + _formatQueryStr(param), (res) => {
+                    if (!res) {
+                        this.$alert('已推送到钉钉~', '提示');
+                        return
+                    }
+                    if (!res.length) {
+                        this.$alert('没有数据~', '提示');
+                        return
+                    }
                     this.data = res
                     this.totalRows = res.length
                     this.getData()
@@ -366,7 +385,7 @@
             save() {
                 let changeTableData = []
                 for (let i = 0; i < tmpTableData.length; i++) {
-                    if (JSON.stringify(tmpTableData[i]) == JSON.stringify(this.tableData[i])) break
+                    if (JSON.stringify(tmpTableData[i]) == JSON.stringify(this.tableData[i])) continue
                     changeTableData.push(this.tableData[i])
                 }
                 let param = {
@@ -376,6 +395,7 @@
                     IsExcelUpload: false,
                     processingProgresses: changeTableData
                 }
+                console.log(JSON.stringify(param))
                 this.PostData('ProcessingProgress/Modify', param, (res) => {
                     this.$alert('修改成功', '提示');
                     //this.getTable()
@@ -432,7 +452,10 @@
                 }, (res) => { loading.close() })
             },
             searchTask() {
-                this.GetData('ProcessingProgress/DefaultRead?taskId=' + this.taskid, (res) => {
+                this.GetData('ProcessingProgress/DefaultRead' + _formatQueryStr({
+                    taskId: this.taskid,
+                    CompanyId: this.companyId
+                }), (res) => {
                     for (let r in res) {
                         if (res[r] == null) {
                             res[r] = ''
