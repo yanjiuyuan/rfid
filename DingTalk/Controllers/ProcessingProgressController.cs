@@ -176,6 +176,7 @@ namespace DingTalk.Controllers
                         //校对数据
                         if (!string.IsNullOrEmpty(processingProgresse.TaskId))
                         {
+                            processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
                             List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId).ToList();
                             if (ProcessingProgressList.Count > 0)
                             {
@@ -258,6 +259,7 @@ namespace DingTalk.Controllers
                         List<ProcessingProgress> ProcessingProgressList = new List<ProcessingProgress>();
                         foreach (var processingProgresse in processingProgressModel.processingProgresses)
                         {
+                            processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
                             Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
                             //推送钉钉消息给设计人员和部门负责人(胡工)
                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
@@ -325,7 +327,7 @@ namespace DingTalk.Controllers
 
                 processingProgresses = processingProgresses.Where(t =>
              (projectType != "" ? t.ProjectType == projectType : 1 == 1)
-             || (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+             && (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 foreach (var item in processingProgresses)
                 {
                     NewErrorModel errorModel = GetPower(applyManId, item.TaskId);
