@@ -414,6 +414,10 @@
     <Compile Include="HttpsClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Models\DingModelsHs\DDContextHs.cs" />
+    <Compile Include="Models\DingModelsHs\ProjectInfo.cs" />
+    <Compile Include="Models\DingModelsHs\Purchase.cs" />
+    <Compile Include="Models\DingModelsHs\Tasks.cs" />
     <Compile Include="Models\DingModels\ApplicationUnit.cs" />
     <Compile Include="Models\DingModels\DetailedList.cs" />
     <Compile Include="Models\DingModels\LongitudinalProject.cs" />
