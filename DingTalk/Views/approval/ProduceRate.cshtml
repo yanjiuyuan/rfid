@@ -291,6 +291,7 @@
                 time: {},
                 states: ['加工中','已完成', '暂停', '作废', '取消', '外协加工中'],
                 data: [],
+                companyId: 0,//公司Id 0 研究院 1 华数
                 tableData: [],
                 inputTable: [initTable],
                 taskid: 0,
@@ -312,6 +313,7 @@
                 let param = {
                     applyManId: DingData.userid,
                     pageIndex: 1,
+                    CompanyId: this.companyId,
                     pageSize: 10000,
                 }
                 if (this.ruleForm.key) param['key'] = this.ruleForm.key
@@ -385,7 +387,7 @@
                 let param = {
                     applyManId: DingData.userid,
                     applyMan: DingData.nickName,
-                    CompanyId: 0,
+                    CompanyId: this.companyId,
                     IsExcelUpload: false,
                     processingProgresses: [good]
                 }
@@ -413,7 +415,7 @@
                 let param = {
                     applyManId: DingData.userid,
                     applyMan: DingData.nickName,
-                    CompanyId: 0,
+                    CompanyId: this.companyId,
                     IsExcelUpload: true,
                     processingProgresses: tmpData
                 }
@@ -449,6 +451,7 @@
                 this.GetData('ProcessingProgress/Read' + _formatQueryStr({
                     applyManId: DingData.userid,
                     pageIndex: 1,
+                    CompanyId: this.companyId,
                     pageSize: 10000
                 }) , (res) => {
                     this.data = res
