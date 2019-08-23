@@ -259,6 +259,7 @@ namespace DingTalk.Controllers
                         List<ProcessingProgress> ProcessingProgressList = new List<ProcessingProgress>();
                         foreach (var processingProgresse in processingProgressModel.processingProgresses)
                         {
+                            processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
                             Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
                             //推送钉钉消息给设计人员和部门负责人(胡工)
                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
