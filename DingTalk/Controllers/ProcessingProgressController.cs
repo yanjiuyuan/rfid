@@ -38,7 +38,7 @@ namespace DingTalk.Controllers
                 if (processingProgressModel.CompanyId == 0)  //研究院
                 {
                     DDContext dDContext = new DDContext();
-                    string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}", processingProgressModel.processingProgresses[0].TaskId);
+                    string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}&companyId={1}", processingProgressModel.processingProgresses[0].TaskId, processingProgressModel.CompanyId);
                     if (dDContext.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == processingProgressModel.applyManId).ToList().Count == 0)
                     {
                         return new NewErrorModel()
@@ -165,7 +165,7 @@ namespace DingTalk.Controllers
                 {
                     DDContext dDContext = new DDContext();
                     DDContextHs dDContextHs = new DDContextHs();
-                    string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}", processingProgressModel.processingProgresses[0].TaskId);
+                    string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}&companyId={1}", processingProgressModel.processingProgresses[0].TaskId, processingProgressModel.CompanyId);
                     if (dDContext.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == processingProgressModel.applyManId).ToList().Count == 0)
                     {
                         return new NewErrorModel()
@@ -408,7 +408,7 @@ namespace DingTalk.Controllers
                     DingTalkServersController dingTalkServersController = new DingTalkServersController();
                     foreach (var item in processingProgressModel.processingProgresses)
                     {
-                        string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}", item.TaskId);
+                        string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}&", item.TaskId);
                         //判断当前修改权限
                         NewErrorModel errorModel = GetPower(processingProgressModel.applyManId, item.TaskId);
                         List<int> vs = (List<int>)errorModel.data;
