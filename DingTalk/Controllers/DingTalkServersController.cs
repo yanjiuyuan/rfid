@@ -139,13 +139,13 @@ namespace DingTalk.Controllers
         #region user curd
         [Route("getUserDetail")]
         [System.Web.Http.HttpPost]
-        public async Task<string> GetUserDetail()
+        public async Task<string> GetUserDetail(string userId)
         {
             //string dptId = "0935455445756597";
             //var departmentUserStr = await dtManager.GetDepartmentUserList(dptId);
             //var departmentUser = JsonConvert.DeserializeObject<DepartmentUserResponseModel>(departmentUserStr);
             //string userId = departmentUser.UserList.Last().UserId;
-            string userId = "manager325";
+            //string userId = "283763135732555063";
             var result = await dtManager.GetUserDetail(userId);
             return result;
         }
