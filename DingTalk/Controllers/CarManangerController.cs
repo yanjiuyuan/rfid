@@ -377,10 +377,20 @@ namespace DingTalk.Controllers
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     List<Car> cars = context.Car.ToList();
                     List<Tasks> tasksNew = FlowInfoServer.ReturnUnFinishedTaskId(IsPublic == true ? "13" : "14"); //公车任务流13
+                    List<TasksState> tasksStates = context.TasksState.ToList();
                     List<Tasks> tasks = new List<Tasks>();
+
+                    //foreach (var item in tasksNew)
+                    //{
+                    //    if (flowInfoServer.GetTasksState(item.TaskId.ToString()) == "已完成")
+                    //    {
+                    //        tasks.Add(item);
+                    //    }
+                    //}
+
                     foreach (var item in tasksNew)
                     {
-                        if (flowInfoServer.GetTasksState(item.TaskId.ToString()) == "已完成")
+                        if (tasksStates.Where(t => t.TaskId.ToString() == item.TaskId.ToString()).FirstOrDefault().State == "已完成")
                         {
                             tasks.Add(item);
                         }
