@@ -1479,6 +1479,28 @@ Vue.component('sam-approver-list', {
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
                 onSuccess: function (data) {
                     console.log(data)
+
+                    var url2 = '/DingTalkServers/getUserDetail?userId=' + data[0].emplId
+                    $.ajax({
+                        url: url2,
+                        type: 'POST',
+                        success: function (data2) {
+                            console.log(url2)
+                            data2 = JSON.parse(data2)
+
+                            for (let node of that.nodelist) {
+                                if (node.NodeId == nodeId) {
+                                    $("." + nodeId).remove()
+                                    data[0].name = data2.name
+                                    node.AddPeople = data
+                                    for (let d of data) {
+                                        $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 3) + '</span >')
+                                    }
+                                }
+                            }
+                        }
+                    })
+
                     for (let node of that.nodelist) {
                         if (node.NodeId == nodeId) {
                             $("." + nodeId).remove()

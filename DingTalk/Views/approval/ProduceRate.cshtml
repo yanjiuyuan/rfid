@@ -114,7 +114,7 @@
                     <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(1)>=0" v-model="scope.row['NoteTaker']" :disabled="true" style="width:60px;"></el-input>
                         <el-button v-if="scope.row.Power.indexOf(1)>=0" class="button-new-tag" size="small" v-on:click="changePeople(scope.$index, scope.row)" style="margin-left:0;">+ 选择</el-button>
-                        <p v-else>{{scope.row[con.param]}}</p>
+                        <p v-else>{{scope.row['NoteTaker']}}</p>
                     </template>
                 </el-table-column>
             </template>
