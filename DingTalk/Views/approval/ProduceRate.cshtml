@@ -11,7 +11,7 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
         <!--搜索表格-->
-        <template v-if="ruleIndex == 0 || ruleIndex == 1">
+        <template>
             <span style="padding:3px;">流水号</span>
             <el-input v-model="ruleForm.taskId" style="width:200px;"></el-input>
             <span style="padding:3px;">关键字</span>
@@ -20,7 +20,8 @@
                 <div class="block">
                     <el-cascader v-model="ruleForm.types"
                                  :options="PTypes"
-                                 :props="{ expandTrigger: 'hover' }"></el-cascader>
+                                 :props="{ expandTrigger: 'hover' }">
+                    </el-cascader>
                 </div>
             </el-form-item>
             <br />
@@ -40,112 +41,95 @@
             <el-table-column prop="CodeNo" type="index"></el-table-column>
             <!-- ruleIndex 用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人-->
             <!-- 0 生产加工进度发起人-->
-            <template v-if="ruleIndex == 0">
+            <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]"></el-input>
+                        <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" type="textarea"></el-input>
+                        <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="资料接收时间">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label">
                         <template slot-scope="scope">
-                            <el-input v-model="scope.row[con.param]"></el-input>
+                            <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]"></el-input>
+                            <p v-else>{{scope.row[con.param]}}</p>
                         </template>
                     </el-table-column>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label">
-                    <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]"></el-input>
+                    <template slot-scope="scope" v-if="ruleIndex == 0">
+                        <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]"></el-input>
+                        <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
             </template>
-            <template v-if="ruleIndex == 1 || ruleIndex == 2 || ruleIndex == 3">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column label="资料接收时间">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </template>
-
-
 
             <!-- 3.实际记录人-->
-            <template v-if="ruleIndex == 1 || ruleIndex == 3">
+            <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-date-picker v-model="scope.row[con.param]" value-format="yyyy-MM-dd" type="date" v-on:change="selectTime" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'">
+                        <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" value-format="yyyy-MM-dd" type="date" v-on:change="selectTime" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'">
                         </el-date-picker>
+                        <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="零件加工">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label">
                         <template slot-scope="scope">
-                            <el-input v-if="con.label != '进度'" v-model="scope.row[con.param]" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'"></el-input>
-                            <el-select v-else v-model="scope.row[con.param]" placeholder="请选择" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'">
+                            <el-input v-if="scope.row.Power.indexOf(3)>=0 && con.label != '进度'" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
+                            <el-select v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'" v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
                                 <el-option v-for="s in states" :key="s" :label="s" :value="s">
                                 </el-option>
                             </el-select>
+                            <p v-if="scope.row.Power.indexOf(3) < 0">{{scope.row[con.param]}}</p>
                         </template>
                     </el-table-column>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'"></el-input>
+                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
+                        <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="组装">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label">
                         <template slot-scope="scope">
-                            <el-input v-model="scope.row[con.param]" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'"></el-input>
+                            <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
+                            <p v-else>{{scope.row[con.param]}}</p>
                         </template>
                     </el-table-column>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'" type="textarea"></el-input>
+                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
+                        <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
             </template>
-            <template v-if="ruleIndex == 0 || ruleIndex == 2">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column label="零件加工">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                <el-table-column label="组装">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '组装'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-                </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </template>
-
 
             <!-- 1 生产加工进度分配人-->
-            <template v-if="ruleIndex == 0 || ruleIndex == 2 || ruleIndex == 3">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't42'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </template>
-            <template v-if="ruleIndex == 1">
+            <template>
                 <el-table-column prop="HeadOfDepartments" width="150" label="部门负责人"></el-table-column>
                 <el-table-column prop="NoteTaker" width="180" label="记录人">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row['NoteTaker']" :disabled="true" style="width:60px;"></el-input>
-                        <el-button class="button-new-tag" size="small" v-on:click="changePeople(scope.$index, scope.row)" style="margin-left:0;">+ 选择</el-button>
+                        <el-input v-if="scope.row.Power.indexOf(1)>=0" v-model="scope.row['NoteTaker']" :disabled="true" style="width:60px;"></el-input>
+                        <el-button v-if="scope.row.Power.indexOf(1)>=0" class="button-new-tag" size="small" v-on:click="changePeople(scope.$index, scope.row)" style="margin-left:0;">+ 选择</el-button>
+                        <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
             </template>
 
             <!-- 2 没权限(设计人员)--> @*placehoder="确认无误填写并保存" type="textarea"*@
-            <template v-if="ruleIndex == 1 || ruleIndex == 0 || ruleIndex == 3">
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43'" :prop="con.param" width="150" :label="con.label"></el-table-column>
-            </template>
-            <template v-if="ruleIndex == 2">
+            <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]" type="textarea" :disabled="scope.row['IsAlreadyRead'] == '1'"></el-input>
-                        <el-radio-group v-model="scope.row['IsAlreadyRead']" :disabled="scope.row['IsAlreadyRead'] == '1'">
+                        <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" :disabled="scope.row['IsAlreadyRead'] == '1'"></el-input>
+                        <el-radio-group v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row['IsAlreadyRead']" :disabled="scope.row['IsAlreadyRead'] == '1'">
                             <el-radio :label="0">未读</el-radio>
                             <el-radio :label="1">已读</el-radio>
                         </el-radio-group>
+                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
             </template>
@@ -207,26 +191,6 @@
             </el-table>
         </template>
 
-        @*<el-table :data="tableData" stripe border>
-            <el-table-column prop="CodeNo" type="index"></el-table-column>
-            <el-table-column label="操作">
-                <template slot-scope="scope">
-                    <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[key]" :class="{redborder:!scope.row[key]}"></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) <0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[key]"></el-input>
-                </template>
-            </el-table-column>
-        </el-table>*@
-        <!--上传表單-->
-
 
     </el-form>
 </el-main>
@@ -278,7 +242,7 @@
         Column31: { param: 'NoteTaker', label: '记录人', upLabel: 't42' },
 
         //4设计人编辑区~~~~~~~~~~~~~
-        //Column32: '设计员确认收货',
+        Column32: { param: 'DesignerId', label: '设计人Id' },
         Column33: { param: 'Remark3', label: '备注', upLabel: 't43' },
         Column34: { param: 'Tabulator', label: '图纸审核员', upLabel: 't43'}
     }
@@ -299,13 +263,17 @@
                 excelList: [],
                 ptypes: [],
                 time: {},
-                states: ['加工中','已完成', '暂停', '作废', '取消', '外协加工中'],
+                states: ['加工中', '已完成', '暂停', '作废', '取消', '外协加工中'],
+                greenStates: ['已完成'],
+                redStates: ['作废', '取消'],
+                yellowStates: ['加工中', '外协加工中', '暂停'],
+                disabledStates: ['已完成','作废', '取消'],
                 data: [],
                 companyId: 0,//公司Id 0 研究院 1 华数
                 companys: [{ value: 0, label: '研究院' }, { value: 1, label: '华数' }],
                 tableData: [],
                 inputTable: [initTable],
-                taskid: 0,
+                taskid: '',
                 ruleIndex: 2,//用户权限(返回 0 生产加工进度发起人    1 生产加工进度分配人    2 没权限(设计人员)    3.实际记录人
                 ruleForm: {
                     name: DingData.nickName,
@@ -369,7 +337,7 @@
                         console.log(data)
                         //不能再次分配自己权限
                         if (data[0].emplId == DingData.userid) {
-                            this.$alert('不能再次分配自己权限', '提示');
+                            that.$alert('不能再次分配自己权限', '提示');
                             return
                         }
                         row.NoteTaker = data[0].name
@@ -472,7 +440,7 @@
                             this.inputTable[0].CompanyName = c.label
                         }
                     }
-                    //this.inputTable[0] = res
+                    //this.inputTable[0] = res  Designer
                     this.setRuleData()
                 })
             },
