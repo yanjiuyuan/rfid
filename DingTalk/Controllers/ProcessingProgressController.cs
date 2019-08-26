@@ -623,20 +623,24 @@ namespace DingTalk.Controllers
                     List<int> vs = new List<int>();
                     if (!string.IsNullOrEmpty(taskId))
                     {
-                        if (context.Roles.Where(r => r.RoleName == "生产加工进度发起人" && r.UserId == applyManId).ToList().Count > 0)
+                        ProcessingProgress processingProgress = context.ProcessingProgress.Where(p => (p.DesignerId.Contains(applyManId) || p.HeadOfDepartmentsId.Contains(applyManId) ||
+                       p.NoteTakerId.Contains(applyManId) || p.TabulatorId.Contains(applyManId)) && p.TaskId == taskId).FirstOrDefault();
+                        
+                        if (applyManId == processingProgress.DesignerId)
+                        {
+                            vs.Add(2);
+                        }
+                        if (applyManId == processingProgress.NoteTakerId) //记录人
+                        {
+                            vs.Add(3);
+                        }
+                        if (applyManId == processingProgress.TabulatorId) //制表人
                         {
                             vs.Add(0);
                         }
-                        else
+                        if (applyManId == processingProgress.HeadOfDepartmentsId) //分配人
                         {
-                            if (context.Roles.Where(r => r.RoleName == "生产加工进度分配人" && r.UserId == applyManId).ToList().Count > 0)
-                            {
-                                vs.Add(1);
-                            }
-                            else
-                            {
-                                vs.Add(2);
-                            }
+                            vs.Add(1);
                         }
                     }
                     else
@@ -698,7 +702,7 @@ namespace DingTalk.Controllers
         public string taskId { get; set; }
         public List<int> vs { get; set; }
     }
-  
+
 
     public class ProcessingProgressModel
     {
