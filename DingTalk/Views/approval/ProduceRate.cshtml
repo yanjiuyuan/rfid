@@ -34,7 +34,7 @@
             <el-button type="primary" v-on:click="search(true)">打印</el-button>
         </template>
         <!--表格實體-->
-        <h1>当前加工进度表</h1>
+        <h1 style="font-size:20px;">当前加工进度表<span>(背景色:绿-{{greenStates.join(',')}} ; 红-{{redStates.join(',')}} ; 黄-{{yellowStates.join(',')}})</span></h1>
         <el-button type="primary" v-on:click="save">更新进度表</el-button>
         <el-table :data="tableData" :row-class-name="tableRowClassName"
                   style="width: 100%">
@@ -57,7 +57,7 @@
                     </el-table-column>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label">
-                    <template slot-scope="scope" v-if="ruleIndex == 0">
+                    <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]"></el-input>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
@@ -68,7 +68,7 @@
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" value-format="yyyy-MM-dd" type="date" v-on:change="selectTime" :disabled="(ruleIndex == 1 && userid != scope.row['NoteTakerId']) || scope.row['SpeedOfProgress'] == '已完成' ||scope.row['SpeedOfProgress'] == '作废' ||scope.row['SpeedOfProgress'] == '取消'">
+                        <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" value-format="yyyy-MM-dd" type="date" v-on:change="selectTime" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
                         </el-date-picker>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
@@ -274,7 +274,7 @@
                 tableData: [],
                 inputTable: [initTable],
                 taskid: '',
-                ruleIndex: 2,//用户权限(返回 0 生产加工进度发起人    1 生产加工进度分配人    2 没权限(设计人员)    3.实际记录人
+                ruleIndex: -1,//用户权限(返回 0 生产加工进度发起人    1 生产加工进度分配人    2 没权限(设计人员)    3.实际记录人
                 ruleForm: {
                     name: DingData.nickName,
                     projectType: '',
@@ -456,9 +456,6 @@
                     this.totalRows = res.length
                     this.getData()
                 })
-                this.GetData('ProcessingProgress/GetPower?applyManId=' + DingData.userid, (res) => {
-                    this.ruleIndex = res[0]
-                })
             },
             getData() {
                 var start = this.pageSize * (this.currentPage - 1)
@@ -472,6 +469,7 @@
                 $.ajax({
                     url: url,
                     success: function (data) {
+                        console.log(url)
                         console.log(data)
                         that.inputTable[0].HeadOfDepartmentsId = data[0].emplId
                         that.inputTable[0].HeadOfDepartments = data[0].name
@@ -479,6 +477,15 @@
                         that.inputTable[0].NoteTaker = data[0].name
                         that.inputTable[0]['Tabulator'] = DingData.nickName
                         that.inputTable[0]['TabulatorId'] = DingData.userid
+                    }
+                })
+                var url2 = '/Role/GetRoleInfo?RoleName=生产加工进度发起人'
+                $.ajax({
+                    url: url2,
+                    success: function (data) {
+                        console.log(url2)
+                        console.log(data)//ruleIndex
+                        if (DingData.userid == data[0].emplId) that.ruleIndex = 0
                     }
                 })
             }
