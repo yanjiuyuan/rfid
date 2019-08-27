@@ -96,7 +96,20 @@
                 DingData.userid = 'manager325'
                 DingData.nickName = '黄浩炜'
             }
-            
+
+            var url2 = '/DingTalkServers/getUserDetail?userId=' + DingData.userid
+            $.ajax({
+                url: url2,
+                type: 'POST',
+                success: function (data2) {
+                    console.log(url2)
+                    data2 = JSON.parse(data2)
+                    console.log(data2)
+                    DingData.nickName = data2.name
+                    DingData.roles = data2.roles
+                }
+            })
+
             console.log('开始获取授权')
             console.log(DingData)
 
