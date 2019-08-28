@@ -57,7 +57,7 @@ namespace DingTalk.Controllers
                             if (!string.IsNullOrEmpty(processingProgresse.TaskId))
                             {
                                 processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
-                                List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId).ToList();
+                                List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId && p.CompanyId== processingProgressModel.CompanyId.ToString()).ToList();
                                 if (ProcessingProgressList.Count > 0)
                                 {
                                     return new NewErrorModel()
@@ -138,8 +138,17 @@ namespace DingTalk.Controllers
                     if (!processingProgressModel.IsExcelUpload)  //操作界面添加
                     {
                         List<ProcessingProgress> ProcessingProgressList = new List<ProcessingProgress>();
+
                         foreach (var processingProgresse in processingProgressModel.processingProgresses)
                         {
+                            List<ProcessingProgress> ProcessingProgressListNew = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId && p.CompanyId == processingProgressModel.CompanyId.ToString()).ToList();
+                            if (ProcessingProgressListNew.Count > 0)
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, string.Format("保存失败,系统中已存在流水号 {0} 的数据", processingProgresse.TaskId), "") { },
+                                };
+                            }
                             processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
                             Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
                             //推送钉钉消息给设计人员和部门负责人(胡工)
@@ -266,6 +275,14 @@ namespace DingTalk.Controllers
                         List<ProcessingProgress> ProcessingProgressList = new List<ProcessingProgress>();
                         foreach (var processingProgresse in processingProgressModel.processingProgresses)
                         {
+                            List<ProcessingProgress> ProcessingProgressListNew = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId && p.CompanyId == processingProgressModel.CompanyId.ToString()).ToList();
+                            if (ProcessingProgressListNew.Count > 0)
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, string.Format("保存失败,系统中已存在流水号 {0} 的数据", processingProgresse.TaskId), "") { },
+                                };
+                            }
                             processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
                             Roles roles = dDContext.Roles.Where(r => r.RoleName == "生产加工进度分配人").FirstOrDefault();
                             //推送钉钉消息给设计人员和部门负责人(胡工)
@@ -334,7 +351,7 @@ namespace DingTalk.Controllers
 
                 processingProgresses = processingProgresses.Where(t =>
              (projectType != "" ? t.ProjectType == projectType : 1 == 1)
-             && (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+             && (projectSmallType != "" ? t.ProjectSmallType == projectSmallType : 1 == 1)).OrderBy(t => t.SpeedOfProgress).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 foreach (var item in processingProgresses)
                 {
                     NewErrorModel errorModel = GetPower(applyManId, item.TaskId);
