@@ -77,7 +77,7 @@
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.Power.indexOf(3)>=0 && con.label != '进度'" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
-                            <el-select v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'" v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                            <el-select v-on:change="changeStates(scope.row[con.param],scope.row)" v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'" v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
                                 <el-option v-for="s in states" :key="s" :label="s" :value="s">
                                 </el-option>
                             </el-select>
@@ -125,7 +125,7 @@
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" :disabled="scope.row['IsAlreadyRead'] == '1'"></el-input>
-                        <el-radio-group v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row['IsAlreadyRead']" :disabled="scope.row['IsAlreadyRead'] == '1'">
+                        <el-radio-group v-on:change="changeRead" v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row['IsAlreadyRead']" :disabled="scope.row['IsAlreadyRead'] == '1'">
                             <el-radio :label="0">未读</el-radio>
                             <el-radio :label="1">已读</el-radio>
                         </el-radio-group>
@@ -269,7 +269,7 @@
                 yellowStates: ['加工中', '外协加工中', '暂停'],
                 disabledStates: ['已完成','作废', '取消'],
                 data: [],
-                companyId: 0,//公司Id 0 研究院 1 华数
+                companyId: null,//公司Id 0 研究院 1 华数
                 companys: [{ value: 0, label: '研究院' }, { value: 1, label: '华数' }],
                 tableData: [],
                 inputTable: [initTable],
@@ -349,11 +349,37 @@
             onSubmit(formName) {
  
             },
+            //设计人点击确认
+            changeRead(value) {
+                if(value) this.save()
+            },
+            //记录人切换状态
+            changeStates(value,row) {
+                console.log(value)
+                console.log(row)
+                if (this.disabledStates.indexOf(value) >= 0) {
+                    this.$confirm('选择该状态后是否保存，保存后不能再度修改, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.save()
+                    }).catch(() => {
+                        row.SpeedOfProgress = '加工中'
+                    });
+                    return
+                }
+                this.save()
+            },
             //保存进度表
             save() {
                 let changeTableData = []
                 for (let i = 0; i < tmpTableData.length; i++) {
                     if (JSON.stringify(tmpTableData[i]) == JSON.stringify(this.tableData[i])) continue
+                    if (!this.tableData[i].SpeedOfProgress) {
+                        this.$alert('修改部分状态不能为空', '提示');
+                        return
+                    }
                     changeTableData.push(this.tableData[i])
                 }
                 let param = {
