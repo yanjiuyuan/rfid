@@ -218,7 +218,7 @@
         },
         computed: {
             UseKilometres: function () {
-                return this.tableForm.EndKilometres - this.tableForm.StartKilometres
+                return parseInt(this.tableForm.EndKilometres - 0) - parseInt(this.tableForm.StartKilometres - 0)
             }
         },
         created: function () {
