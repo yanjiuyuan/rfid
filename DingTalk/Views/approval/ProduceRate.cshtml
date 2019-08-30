@@ -161,6 +161,11 @@
 
             <hr />
             <h1>添加一条进度 </h1>
+            <span style="padding:3px;">公司</span>
+            <el-select v-model="companyId" placeholder="请选择">
+                <el-option v-for="c in companys" :key="c.value" :label="c.label" :value="c.value">
+                </el-option>
+            </el-select>
             <span style="padding:3px;">流水号</span>
             <el-input v-model="taskid" style="width:200px;"></el-input>
             <el-button type="primary" v-on:click="searchTask">搜索图纸数据</el-button>
