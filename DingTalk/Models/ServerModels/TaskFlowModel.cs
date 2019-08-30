@@ -23,5 +23,7 @@ namespace DingTalk.Models
         public string State { get; set; }
         public bool? IsBack { get; set; }
         public bool? IsSupportMobile { get; set; }
+
+        public bool? IsRead { get; set; }
     }
 }

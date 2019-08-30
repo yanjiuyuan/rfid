@@ -1014,7 +1014,6 @@ namespace DingTalk.Controllers
                 {
                     Tasks task = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.ApplyManId == UserId
                      && t.IsSend == true).OrderByDescending(u => u.Id).First();
-
                     task.State = 1;
                     task.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     context.Entry<Tasks>(task).State = EntityState.Modified;
@@ -1263,7 +1262,7 @@ namespace DingTalk.Controllers
                     ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
-                TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key);
+                TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
                 return new NewErrorModel()
                 {
                     count = count,
@@ -1317,11 +1316,12 @@ namespace DingTalk.Controllers
         /// <param name="ApplyManId"></param>
         /// <param name="IsMobile"></param>
         /// <param name="Key"></param>
+        /// <param name="Index"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("Quary")]
         public List<TaskFlowModel> Quary(DDContext context, List<int?> ListTasks,
-            string ApplyManId, bool IsMobile, string Key)
+            string ApplyManId, bool IsMobile, string Key, int Index)
         {
             FlowInfoServer flowInfoServer = new FlowInfoServer();
             List<object> listQuary = new List<object>();
@@ -1378,7 +1378,9 @@ namespace DingTalk.Controllers
                                 State = ts.State,
                                 IsBack = t.IsBacked,
                                 FlowName = f.FlowName,
-                                IsSupportMobile = f.IsSupportMobile
+                                IsSupportMobile = f.IsSupportMobile,
+                                //当前审批状态
+                                IsRead = Index == 3 ? (ListTask.Where(t => t.ApplyManId == ApplyManId && t.TaskId == TaskId && t.IsSend == true).FirstOrDefault().State == 1 ? true : false) : false,
                             };
 
                 if (query.Count() > 0)
@@ -2046,10 +2048,10 @@ namespace DingTalk.Controllers
                 List<NodeInfo> flows = context.NodeInfo.Where(f => f.FlowId.ToString() == flowId).ToList();
                 return new NewErrorModel()
                 {
-                    data= flows,
+                    data = flows,
                     error = new Error(0, "读取成功！", "") { },
                 };
-                
+
             }
             catch (Exception ex)
             {
