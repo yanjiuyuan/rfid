@@ -16,13 +16,12 @@ namespace DingTalk.Bussiness.FlowInfo
         public object GetFlowInfo()
         {
             DDContext context = new DDContext();
-
-
             var Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1);
             var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
             var Quary = from a in Flows
                         join b in FlowSort
-                        on (int)a.SORT_ID equals (int)b.SORT_ID
+                        on (int)a.SORT_ID equals (int)b.Id
+                        orderby a.SORT_ID orderby b.Sort_ID
                         select new
                         {
                             sortId = a.SORT_ID,

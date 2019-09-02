@@ -39,6 +39,9 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(200)]
         public string ApproveUrl { get; set; }
+
+        public int OrderBY { get; set; }
+
         
     }
 }
