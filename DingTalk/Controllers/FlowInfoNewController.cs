@@ -1038,7 +1038,7 @@ namespace DingTalk.Controllers
         /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("LoadFlowInfo")]
+        [Route("LoadFlowSort")]
         public NewErrorModel LoadFlowSort(string id)
         {
             try
@@ -1053,7 +1053,6 @@ namespace DingTalk.Controllers
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
-
                 return new NewErrorModel()
                 {
                     error = new Error(1, "id不能为空！", "") { },
