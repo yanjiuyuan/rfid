@@ -21,9 +21,9 @@
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
             <template slot="title">
-                <span style="font-size:20px;">{{m.SORT_NAME}}</span>
+                <span style="font-size:20px;">{{m}}</span>
             </template>
-            <div v-for="l in list" v-if="l.sortId == m.SORT_ID && l.url" class="approval-box" v-on:click="toApprove(l.url,l.flowId)" style="cursor:pointer;">
+            <div v-for="l in list" v-if="l.sortName == m && l.url" class="approval-box" v-on:click="toApprove(l.url,l.flowId)" style="cursor:pointer;">
                 <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
                 <p>{{l.flowName}}</p>
             </div>
@@ -228,11 +228,16 @@
         methods: {
             getMenu: function () {
                 this.GetData('FlowInfoNew/LoadFlowSort?id=123', (res) => {
-                    this.menu = res
-                    this.GetData('FlowInfoNew/LoadFlowInfo?id=123', (res) => {
-                        this.list = _mergeObjectArr(res, imgConfig, 'flowId')
-                        this.filterMenuList()
-                    })
+                    console.log('res`··················’')
+                    console.log(res)
+                    let set = new Set()
+                    for (let r of res) {
+                        set.add(r.sortName)
+                    }
+                    this.menu = Array.from(set)
+
+                    this.list = _mergeObjectArr(res, imgConfig, 'flowId')
+                    this.filterMenuList()
                 })
             },
             filterMenuList() {

@@ -70,7 +70,7 @@
                            :key="item.ProjectId"
                            :label="item.ProjectName"
                            :value="item.ProjectId">
-                    <span style="float: left">{{ item.ProjectName }}  -编号: {{item.ProjectId}}</span>
+                    <span style="float: left">{{item.ProjectId}}-{{ item.ProjectName }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
