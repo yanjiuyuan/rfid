@@ -107,7 +107,7 @@
 
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            @*<el-button type="primary" v-on:click="saveTempData">临时保存</el-button>*@
+            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -388,11 +388,20 @@
                 ReApprovalTempData.valid = false
                 this.tableData = ReApprovalTempData.data
             },
+            //显示临时保存数据
+            saveTempData() {
+                this.saveData(this.tableData)
+                this.elementAlert('提示信息', '保存成功')
+            },
+            loadTempData() {
+                if (this.loadData()) this.tableData = this.loadData()
+            },
         },
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
             this.getMaterielCode()
+            this.loadTempData()
             this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
         }

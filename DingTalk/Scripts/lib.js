@@ -719,6 +719,19 @@ var mixin = {
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
+        //显示临时保存数据 TempData
+        saveData(data) {
+            var Days = 7;
+            var exp = new Date();
+            exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+            document.cookie = FlowId + "=" + escape(JSON.stringify(data)) + ";expires=" + exp.toGMTString();
+        },
+        loadData() {
+            var arr, reg = new RegExp("(^| )" + FlowId + "=([^;]*)(;|$)");
+            if ((arr = document.cookie.match(reg)) && unescape(arr[2])) {
+                return JSON.parse(unescape(arr[2]))
+            }
+        },
         //重新发起审批
         reApproval() {
             this.disablePage = true
