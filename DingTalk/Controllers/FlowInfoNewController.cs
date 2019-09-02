@@ -1039,7 +1039,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("LoadFlowInfo")]
-        public NewErrorModel LoadFlowInfo(string id)
+        public NewErrorModel LoadFlowSort(string id)
         {
             try
             {
