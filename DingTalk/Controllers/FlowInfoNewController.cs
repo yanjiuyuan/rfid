@@ -1069,6 +1069,41 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
+        /// 流程界面分类信息读取接口
+        /// </summary>
+        /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
+        /// <returns></returns>
+        //[HttpGet]
+        //[Route("LoadFlowSort")]
+        //public NewErrorModel LoadFlowSort(string id)
+        //{
+        //    try
+        //    {
+        //        if (!string.IsNullOrEmpty(id))
+        //        {
+        //            FlowInfoServer flowInfoServer = new FlowInfoServer();
+        //            return new NewErrorModel()
+        //            {
+        //                data = flowInfoServer.GetFlowSort(),
+        //                error = new Error(0, "读取成功！", "") { },
+        //            };
+        //        }
+
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(1, "id不能为空！", "") { },
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(2, ex.Message, "") { },
+        //        };
+        //    }
+        //}
+
+        /// <summary>
         /// 流程节点信息获取接口
         /// </summary>
         /// <param name="FlowId">流程Id</param>
@@ -1123,40 +1158,7 @@ namespace DingTalk.Controllers
             }
         }
 
-        /// <summary>
-        /// 流程界面分类信息读取接口
-        /// </summary>
-        /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
-        /// <returns></returns>
-        //[HttpGet]
-        //[Route("LoadFlowSort")]
-        //public NewErrorModel LoadFlowSort(string id)
-        //{
-        //    try
-        //    {
-        //        if (!string.IsNullOrEmpty(id))
-        //        {
-        //            FlowInfoServer flowInfoServer = new FlowInfoServer();
-        //            return new NewErrorModel()
-        //            {
-        //                data = flowInfoServer.GetFlowSort(),
-        //                error = new Error(0, "读取成功！", "") { },
-        //            };
-        //        }
-
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(1, "id不能为空！", "") { },
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(2, ex.Message, "") { },
-        //        };
-        //    }
-        //}
+       
         #endregion
 
         #region 左侧审批菜单栏状态读取

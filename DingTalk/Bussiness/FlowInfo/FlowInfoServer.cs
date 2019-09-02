@@ -16,22 +16,15 @@ namespace DingTalk.Bussiness.FlowInfo
         public object GetFlowInfo()
         {
             DDContext context = new DDContext();
-            var Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1);
-            var FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL");
-            var Quary = from a in Flows
-                        join b in FlowSort
-                        on (int)a.SORT_ID equals (int)b.Id
-                        orderby a.SORT_ID orderby b.Sort_ID
-                        select new
-                        {
-                            sortId = a.SORT_ID,
-                            sortName = b.SORT_NAME,
-                            flowId = a.FlowId,
-                            flowName = a.FlowName,
-                            flowCreateTime = b.CreateTime
-                        };
-            return Quary;
+            List<FlowSort> FlowSortNew = new List<FlowSort>();
+            List<Flows> Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1).ToList();
+            List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL").ToList();
 
+            foreach (var flowSort in FlowSort)
+            {
+                flowSort.flows=Flows.Where(f=>f.SORT_ID.ToString()== flowSort.Sort_ID.ToString()).ToList();
+            }
+            return FlowSort;
         }
 
         /// <summary>
