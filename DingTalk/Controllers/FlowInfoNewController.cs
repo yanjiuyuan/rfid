@@ -44,7 +44,6 @@ namespace DingTalk.Controllers
                 int TaskId = flowInfoServer.FindMaxTaskId();
                 int? FlowId = taskList[0].FlowId;
                 Flows flows = flowInfoServer.GetFlow(FlowId.ToString());
-                Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
                 #region 新版
                 using (DDContext context = new DDContext())
                 {
@@ -65,8 +64,8 @@ namespace DingTalk.Controllers
                             {
                                 tasks.State = 0; tasks.IsEnable = 1;
                                 await SendOaMsgNew(tasks.FlowId, tasks.ApplyManId.ToString(), tasks.TaskId.ToString(),
-                                    taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
-                                    taskNew.NodeId.ToString(),
+                                    taskList[0].ApplyMan, taskList[0].Remark, context, flows.ApproveUrl,
+                                    taskList[0].NodeId.ToString(),
                                     true, false);
                             }
                             else
