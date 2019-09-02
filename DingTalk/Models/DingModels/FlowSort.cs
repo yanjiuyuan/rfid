@@ -34,5 +34,8 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(200)]
         public string Sort_ID { get; set; }
+
+        [NotMapped]
+        public List<Flows> flows { get; set; }
     }
 }
