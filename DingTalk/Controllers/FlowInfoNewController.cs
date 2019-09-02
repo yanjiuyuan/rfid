@@ -44,6 +44,7 @@ namespace DingTalk.Controllers
                 int TaskId = flowInfoServer.FindMaxTaskId();
                 int? FlowId = taskList[0].FlowId;
                 Flows flows = flowInfoServer.GetFlow(FlowId.ToString());
+                Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
                 #region 新版
                 using (DDContext context = new DDContext())
                 {
@@ -60,9 +61,19 @@ namespace DingTalk.Controllers
                         tasks.TaskId = TaskId;
                         if (tasks.IsSend == true)
                         {
-                            tasks.State = 0; tasks.IsEnable = 1;
-                            //抄送推送
-                            SentCommonMsg(tasks.ApplyManId.ToString(), string.Format("您有一条抄送的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", TaskId), taskList[0].ApplyMan, taskList[0].Remark, null);
+                            if (tasks.NodeId == 1)
+                            {
+                                tasks.State = 0; tasks.IsEnable = 1;
+                                await SendOaMsgNew(tasks.FlowId, tasks.ApplyManId.ToString(), tasks.TaskId.ToString(),
+                                    taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
+                                    taskNew.NodeId.ToString(),
+                                    true, false);
+                            }
+                            else
+                            {
+                                tasks.State = 0; tasks.IsEnable = 0;
+                            }
+
                         }
                         else
                         {
@@ -399,11 +410,6 @@ namespace DingTalk.Controllers
                             context.Entry<TasksState>(tasksState).State = EntityState.Modified;
                             context.SaveChanges();
 
-                            //推送发起人
-                            //SentCommonMsg(taskNew.ApplyManId,
-                            //string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", tasks.TaskId),
-                            //taskNew.ApplyMan, taskNew.Remark, null);
-
                             await SendOaMsgNew(taskNew.FlowId, taskNew.ApplyManId.ToString(), tasks.TaskId.ToString(),
                                        taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
                                        taskNew.NodeId.ToString(),
@@ -444,16 +450,11 @@ namespace DingTalk.Controllers
 
                                 if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(), tasks.NodeId.ToString()).Count == 0)
                                 {
-                                    //推送OA消息(寻人)
-                                    //SentCommonMsg(dic["PeopleId"].ToString(),
-                                    //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                    //taskNew.ApplyMan, taskNew.Remark, null);
-
                                     await SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(),
                                         taskNew.ApplyMan, taskNew.Remark, context, flows.ApproveUrl,
                                         taskNew.NodeId.ToString(),
                                         false, false);
-                                    Thread.Sleep(200);
+                                    Thread.Sleep(100);
                                 }
                             }
                             else
