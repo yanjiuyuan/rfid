@@ -44,7 +44,7 @@ namespace DingTalk.Controllers
                 int TaskId = flowInfoServer.FindMaxTaskId();
                 int? FlowId = taskList[0].FlowId;
                 Flows flows = flowInfoServer.GetFlow(FlowId.ToString());
-                Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
+                Tasks taskNew = flowInfoServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
                 #region 新版
                 using (DDContext context = new DDContext())
                 {
