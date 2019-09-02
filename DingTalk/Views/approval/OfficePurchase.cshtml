@@ -74,6 +74,7 @@
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
+            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -210,6 +211,14 @@
                     }
                 })
             },
+            //显示临时保存数据
+            saveTempData() {
+                this.saveData(this.dataList)
+                this.elementAlert('提示信息', '保存成功')
+            },
+            loadTempData() {
+                if (this.loadData()) this.dataList = this.loadData()
+            },
             compute() {
                 this.totalPrice = 0
                 for (let l of this.dataList) {
@@ -230,6 +239,7 @@
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
+            this.loadTempData()
             loadHtml("mainPage", "partPage")
 
         }

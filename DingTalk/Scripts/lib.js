@@ -797,6 +797,7 @@ var mixin = {
                     delete proj.ApplyManId
                     Object.assign(this.ruleForm, proj)
                     project = proj
+                    this.ruleForm.Title = proj.ProjectId + ' - ' + proj.ProjectName
                 }
             }
             //this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
