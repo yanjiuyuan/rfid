@@ -3,6 +3,7 @@ using DingTalk.Bussiness.FlowInfo;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using DingTalk.Models.ServerModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -1066,6 +1067,56 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 流程分类批量修改
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("LoadFlowModify")]
+        public NewErrorModel LoadFlowModify(FlowSortModel flowSortModel)
+        {
+            try
+            {
+                using (DDContext context=new DDContext ())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    else
+                    {
+                        foreach (var item in flowSortModel.FlowSortList)
+                        {
+                            context.Entry<FlowSort>(item).State = EntityState.Modified;
+                            if (item.flows.Count > 0)
+                            {
+                                foreach (var flows in item.flows)
+                                {
+                                    context.Entry<Flows>(flows).State = EntityState.Modified;
+                                }
+                            }
+                        }
+                        context.SaveChanges();
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "修改成功！", "") { },
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
 
 
         /// <summary>
