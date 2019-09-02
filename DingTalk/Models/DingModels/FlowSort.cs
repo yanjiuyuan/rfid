@@ -12,7 +12,7 @@ namespace DingTalk.Models.DingModels
         [Key]
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public decimal SORT_ID { get; set; }
+        public decimal Id { get; set; }
 
         [StringLength(300)]
         public string SORT_NAME { get; set; }
@@ -29,5 +29,10 @@ namespace DingTalk.Models.DingModels
         public int? State { get; set; }
 
         public int? IsEnable { get; set; }
+        
+        public int OrderBY { get; set; }
+
+        [StringLength(200)]
+        public string Sort_ID { get; set; }
     }
 }

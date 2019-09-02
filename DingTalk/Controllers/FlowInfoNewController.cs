@@ -56,7 +56,6 @@ namespace DingTalk.Controllers
                             State = "未完成"
                         });
                         context.SaveChanges();
-
                         tasks.TaskId = TaskId;
                         if (tasks.IsSend == true)
                         {
@@ -308,9 +307,7 @@ namespace DingTalk.Controllers
                 //获取申请人提交表单信息
                 FlowInfoServer fServer = new FlowInfoServer();
                 Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
-
                 Flows flows = fServer.GetFlow(taskNew.FlowId.ToString());
-
                 if (taskList.Count > 1)  //如果有选人
                 {
                     if (taskList[0].Id == 0)
@@ -320,7 +317,6 @@ namespace DingTalk.Controllers
                             error = new Error(1, "流程有误请联系管理员！", "") { },
                         };
                     }
-
                     using (DDContext contexts = new DDContext())
                     {
                         foreach (var task in taskList)
@@ -330,7 +326,7 @@ namespace DingTalk.Controllers
                                 if (task.IsSend == true)
                                 {
                                     await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
-                                     task.ToString(), taskNew.ApplyMan,
+                                     task.TaskId.ToString(), taskNew.ApplyMan,
                                      task.Remark, contexts, flows.ApproveUrl,
                                      task.NodeId.ToString(),
                                      false, true);
@@ -600,7 +596,6 @@ namespace DingTalk.Controllers
                         }
                     }
                 }
-
                 return new NewErrorModel()
                 {
                     data = tasks.TaskId.ToString(),
@@ -1134,35 +1129,35 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("LoadFlowSort")]
-        public NewErrorModel LoadFlowSort(string id)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(id))
-                {
-                    FlowInfoServer flowInfoServer = new FlowInfoServer();
-                    return new NewErrorModel()
-                    {
-                        data = flowInfoServer.GetFlowSort(),
-                        error = new Error(0, "读取成功！", "") { },
-                    };
-                }
+        //[HttpGet]
+        //[Route("LoadFlowSort")]
+        //public NewErrorModel LoadFlowSort(string id)
+        //{
+        //    try
+        //    {
+        //        if (!string.IsNullOrEmpty(id))
+        //        {
+        //            FlowInfoServer flowInfoServer = new FlowInfoServer();
+        //            return new NewErrorModel()
+        //            {
+        //                data = flowInfoServer.GetFlowSort(),
+        //                error = new Error(0, "读取成功！", "") { },
+        //            };
+        //        }
 
-                return new NewErrorModel()
-                {
-                    error = new Error(1, "id不能为空！", "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(2, ex.Message, "") { },
-                };
-            }
-        }
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(1, "id不能为空！", "") { },
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(2, ex.Message, "") { },
+        //        };
+        //    }
+        //}
         #endregion
 
         #region 左侧审批菜单栏状态读取
