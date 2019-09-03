@@ -6,13 +6,9 @@ using System.Web;
 
 namespace DingTalk.Models.ServerModels
 {
-    public class FlowSortModel
+    public class FlowsModel
     {
-        /// <summary>
-        /// 当前操作人Id
-        /// </summary>
         public string applyManId { get; set; }
-
-        public List<FlowSort> FlowSortList { get; set; }
+        public List<Flows> flowsList { get; set; }
     }
 }
