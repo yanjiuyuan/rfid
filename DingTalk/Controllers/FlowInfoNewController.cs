@@ -1167,6 +1167,44 @@ namespace DingTalk.Controllers
             }
         }
 
+        /// <summary>
+        /// 流程分类批量删除
+        /// </summary>
+        /// <param name="flowSortModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowSortDelete")]
+        public NewErrorModel FlowSortDelete(FlowSortModel flowSortModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    context.FlowSort.RemoveRange(flowSortModel.FlowSortList);
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "删除成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+
 
         /// <summary>
         /// 流程批量添加
@@ -1223,6 +1261,84 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 流程批量删除
+        /// </summary>
+        /// <param name="flowsModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowDelete")]
+        public NewErrorModel FlowDelete(FlowsModel flowsModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowsModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    context.Flows.RemoveRange(flowsModel.flowsList);
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "删除成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 流程批量修改
+        /// </summary>
+        /// <param name="flowsModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowModify")]
+        public NewErrorModel FlowModify(FlowsModel flowsModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowsModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    foreach (var item in flowsModel.flowsList)
+                    {
+                        context.Entry<Flows>(item).State = EntityState.Modified;
+                    }
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "修改成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
 
 
 
