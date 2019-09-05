@@ -82,22 +82,6 @@
                 if (!this.searchForm.keyword) return
                 this.getData2(this.searchForm.keyword)
             },
-            //获取审批列表
-            //getApproveList(keyword) {
-            //    let param = {
-            //        Index: Index,
-            //        ApplyManId: DingData.userid
-            //    }
-                
-            //    if (keyword) param['Key'] = keyword
-            //    let url = 'FlowInfoNew/GetFlowStateDetail' + _formatQueryStr(param)
-            //    this.GetData(url, res => {
-            //        this.showLoading = false
-            //        this.data = res
-            //        this.getData()
-            //        this.totalRows = res.length
-            //    })
-            //},
             getData2(keyword) {
                 let param = {
                     Index: Index,

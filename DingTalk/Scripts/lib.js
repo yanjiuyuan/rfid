@@ -471,12 +471,14 @@ var mixin = {
         
     },
     methods: {
-        doWithErrcode(error) {
+        doWithErrcode(error, errorFunc) {
             if (!error) {
                 return 1
             }
             if (error && error.errorCode != 0) {
-                this.elementAlert('报错信息',error.errorMessage)
+                this.elementAlert('报错信息', error.errorMessage)
+                if (errorFunc) errorFunc()
+                console.log(errorFunc)
                 return 1
             }
             return 0
@@ -503,7 +505,7 @@ var mixin = {
                 }
             })
         },
-        PostData(url, param, succe) {
+        PostData(url, param, succe, errorFunc) {
             var that = this
             $.ajax({
                 url: url,
@@ -514,12 +516,13 @@ var mixin = {
                     console.log(url)
                     console.log(param)
                     console.log(res)
-                    if (that.doWithErrcode(res.error)) {
+                    if (that.doWithErrcode(res.error, errorFunc)) {
                         return
                     }
                     succe(res.data)
                 },
                 error: function (err) {
+                    if (errorFunc) errorFunc()
                     console.error(url)
                     console.error(err)
                 }
@@ -1749,3 +1752,7 @@ Vue.component('sam-addapprover', {
 })
 
 
+
+//流程配置相关
+let editFlow = {}
+let editSort = {}

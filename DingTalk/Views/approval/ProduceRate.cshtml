@@ -25,7 +25,7 @@
                 </div>
             </el-form-item>
             <br />
-            <span style="padding:3px;">公司</span>
+            <span style="padding:3px;">单位</span>
             <el-select v-model="companyId" placeholder="请选择">
                 <el-option v-for="c in companys" :key="c.value" :label="c.label" :value="c.value">
                 </el-option>
@@ -66,9 +66,10 @@
 
             <!-- 3.实际记录人-->
             <template>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="150" :label="con.label">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="160" :label="con.label">
                     <template slot-scope="scope">
-                        <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" value-format="yyyy-MM-dd" type="date" v-on:change="selectTime" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                        <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" value-format="yyyy-MM-dd" clear-icon="el-icon-date" prefix-icon="a"
+                                        type="date" v-on:change="selectTime" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
                         </el-date-picker>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
@@ -76,12 +77,15 @@
                 <el-table-column label="零件加工">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '零件加工'" :prop="con.param" width="150" :label="con.label">
                         <template slot-scope="scope">
-                            <el-input v-if="scope.row.Power.indexOf(3)>=0 && con.label != '进度'" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
-                            <el-select v-on:change="changeStates(scope.row[con.param],scope.row)" v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'" v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
-                                <el-option v-for="s in states" :key="s" :label="s" :value="s">
-                                </el-option>
-                            </el-select>
-                            <p v-if="scope.row.Power.indexOf(3) < 0">{{scope.row[con.param]}}</p>
+                            <template>
+                                <el-input v-if="scope.row.Power.indexOf(3)>=0 && con.label != '进度'" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
+                                <el-select v-on:change="changeStates(scope.row[con.param],scope.row)" v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'" v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                                    <el-option v-for="s in states" :key="s" :label="s" :value="s">
+                                    </el-option>
+                                </el-select>
+                                <p v-if="scope.row.Power.indexOf(3) < 0">{{scope.row[con.param]}}</p>
+                            </template>
+                            
                         </template>
                     </el-table-column>
                 </el-table-column>
@@ -161,7 +165,7 @@
 
             <hr />
             <h1>添加一条进度 </h1>
-            <span style="padding:3px;">公司</span>
+            <span style="padding:3px;">单位</span>
             <el-select v-model="companyId" placeholder="请选择">
                 <el-option v-for="c in companys" :key="c.value" :label="c.label" :value="c.value">
                 </el-option>
@@ -356,7 +360,9 @@
             },
             //设计人点击确认
             changeRead(value) {
-                if(value) this.save()
+                if (value == '1') {
+                    this.save()
+                }
             },
             //记录人切换状态
             changeStates(value,row) {
@@ -382,7 +388,8 @@
                 for (let i = 0; i < tmpTableData.length; i++) {
                     if (JSON.stringify(tmpTableData[i]) == JSON.stringify(this.tableData[i])) continue
                     if (!this.tableData[i].SpeedOfProgress) {
-                        this.$alert('修改部分状态不能为空', '提示');
+                        this.$alert('修改部分状态不能为空-' + this.tableData[i].SpeedOfProgress, '提示');
+                        this.tableData[i].IsAlreadyRead = '0'
                         return
                     }
                     changeTableData.push(this.tableData[i])
@@ -410,11 +417,16 @@
                     IsExcelUpload: false,
                     processingProgresses: [good]
                 }
+                if (!good.TaskId) {
+                    this.$alert('流水号必填', '提示');
+                    return
+                }
                 this.PostData('ProcessingProgress/Save', param, (res) => {
                     this.$alert('保存成功', '提示');
                     this.getTable()
                 })
             },
+            
             //上传EXCEL进度表，并保存数据
             handleSuccess(response, file, fileList) {
                 //this.tableData = []
@@ -449,6 +461,41 @@
                     this.$alert('保存成功', '提示');
                     this.getTable()
                 }, (res) => { loading.close() })
+            },
+            PostData(url, param, succe, errorFunc) {
+                var that = this
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(param),
+                    success: function (res) {
+                        console.log(url)
+                        console.log(param)
+                        console.log(res)
+                        if (that.doWithErrcode(res.error, errorFunc)) {
+                            return
+                        }
+                        succe(res.data)
+                    },
+                    error: function (err) {
+                        if (errorFunc) errorFunc()
+                        console.error(url)
+                        console.error(err)
+                    }
+                })
+            },
+            doWithErrcode(error, errorFunc) {
+                if (!error) {
+                    return 1
+                }
+                if (error && error.errorCode != 0) {
+                    this.elementAlert('报错信息', error.errorMessage)
+                    if (errorFunc) errorFunc()
+                    console.log(errorFunc)
+                    return 1
+                }
+                return 0
             },
             searchTask() {
                 this.GetData('ProcessingProgress/DefaultRead' + _formatQueryStr({

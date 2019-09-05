@@ -396,7 +396,7 @@ canvas {
     
 }
 /*表格缩小*/
-.el-table .cell input {
+.el-table .cell input[validateevent*="true"] {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
