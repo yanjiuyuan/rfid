@@ -499,6 +499,7 @@
     <Compile Include="Models\ServerModels\FileModel.cs" />
     <Compile Include="Models\ServerModels\FileMsgModel.cs" />
     <Compile Include="Models\ServerModels\FileSendModel.cs" />
+    <Compile Include="Models\ServerModels\FlowsModel.cs" />
     <Compile Include="Models\ServerModels\FlowSortModel.cs" />
     <Compile Include="Models\ServerModels\ImageMsgModel.cs" />
     <Compile Include="Models\KisLocalModels\KisLocalContext.cs" />

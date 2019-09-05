@@ -1079,7 +1079,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (DDContext context=new DDContext ())
+                using (DDContext context = new DDContext())
                 {
                     if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
                     {
@@ -1117,6 +1117,228 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+
+        /// <summary>
+        /// 流程分类批量添加
+        /// </summary>
+        /// <param name="flowSortModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowSortAdd")]
+        public NewErrorModel FlowSortAdd(FlowSortModel flowSortModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    List<FlowSort> flowSort = context.FlowSort.ToList();
+                    foreach (var item in flowSortModel.FlowSortList)
+                    {
+                        if (flowSort.Where(f => f.Sort_ID.ToString().Contains(item.Sort_ID)).ToList().Count > 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, string.Format("Sort_ID 已存在 {0}！", item.Sort_ID.ToString()), "") { },
+                            };
+                        }
+                    }
+                    context.FlowSort.AddRange(flowSortModel.FlowSortList);
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "添加成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 流程分类批量删除
+        /// </summary>
+        /// <param name="flowSortModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowSortDelete")]
+        public NewErrorModel FlowSortDelete(FlowSortModel flowSortModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    context.FlowSort.RemoveRange(flowSortModel.FlowSortList);
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "删除成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+
+
+        /// <summary>
+        /// 流程批量添加
+        /// </summary>
+        /// <param name="flowsModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowAdd")]
+        public NewErrorModel FlowAdd(FlowsModel flowsModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowsModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    List<FlowSort> flowSortList = context.FlowSort.ToList();
+                    List<Flows> flowsListNew = context.Flows.ToList();
+                    foreach (var item in flowsModel.flowsList)
+                    {
+                        if (flowSortList.Where(f => f.Sort_ID.ToString() == item.SORT_ID.ToString()).ToList().Count == 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, string.Format("不存在流程类别{0}！", item.SORT_ID.ToString()), "") { },
+                            };
+                        }
+                        if (flowsListNew.Where(f => f.FlowId.ToString().Contains(item.FlowId.ToString())).ToList().Count > 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, string.Format("流程 FlowId {0} 已存在！", item.FlowId.ToString()), "") { },
+                            };
+                        }
+                        context.Flows.Add(item);
+                    }
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "添加成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 流程批量删除
+        /// </summary>
+        /// <param name="flowsModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowDelete")]
+        public NewErrorModel FlowDelete(FlowsModel flowsModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowsModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    context.Flows.RemoveRange(flowsModel.flowsList);
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "删除成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 流程批量修改
+        /// </summary>
+        /// <param name="flowsModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("FlowModify")]
+        public NewErrorModel FlowModify(FlowsModel flowsModel)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowsModel.applyManId).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "没有权限处理！", "") { },
+                        };
+                    }
+                    foreach (var item in flowsModel.flowsList)
+                    {
+                        context.Entry<Flows>(item).State = EntityState.Modified;
+                    }
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "修改成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
 
 
 
@@ -1210,7 +1432,7 @@ namespace DingTalk.Controllers
             }
         }
 
-       
+
         #endregion
 
         #region 左侧审批菜单栏状态读取
