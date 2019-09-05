@@ -169,7 +169,7 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
-        /// 项目采购清单、借用清单、维修清单、受理知识产权清单  流程数据读取
+        /// 项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单  流程数据读取
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
@@ -288,7 +288,7 @@ namespace DingTalk.Controllers
                     SavePath(projectInfo.FilePath + "9合作协议", projectClosureModel.projectClosure.CooperationAgreement9);
                     SavePath(projectInfo.FilePath + "10产品（样机、成品）图片、影像", projectClosureModel.projectClosure.Product10);
                     SavePath(projectInfo.FilePath + "11阶段性整理的问题的分析、解决方案及计划表", projectClosureModel.projectClosure.Solution11);
-                    //SavePath(projectInfo.FilePath + "12项目采购清单", projectClosureModel.projectClosure);
+                    //SavePath(projectInfo.FilePath + "12项目采购清单、借用清单、领料清单、入库清单", projectClosureModel.projectClosure);
                     //SavePath(projectInfo.FilePath + "13受理知识产权清单及申请资料", projectClosureModel.projectClosure);
                     SavePath(projectInfo.FilePath + "14纵向项目申请、中期检查、验收资料", projectClosureModel.projectClosure.AcceptanceData14);
                     SavePath(projectInfo.FilePath + "15其他过程文档", projectClosureModel.projectClosure.ProcessDocumentation15);
@@ -304,7 +304,7 @@ namespace DingTalk.Controllers
                         {
                             Tasks taskP = dDContext.Tasks.Where(t => t.TaskId.ToString() == item.OldTaskId && t.NodeId == 0).FirstOrDefault();
                             PrintAndSendPurcahse(taskP, System.Web.HttpContext.Current.Server.MapPath
-                           (projectInfo.FilePath + string.Format("12项目采购清单//项目采购清单流水号{0}.zip", item.OldTaskId)));
+                           (projectInfo.FilePath + string.Format("12项目采购清单、借用清单、领料清单、入库清单//零部件采购单流水号{0}.zip", item.OldTaskId)));
                         }
                     }
 
@@ -504,7 +504,7 @@ namespace DingTalk.Controllers
                     });
                     printPDFModels.Add(new PrintPDFModel()
                     {
-                        Name = "项目采购清单、借用清单、维修清单",
+                        Name = "项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单",
                         Count = context.DetailedList.Where(t => t.TaskId == TaskId && t.Type.Contains("零部件采购")).ToList().Count.ToString()
                     });
                     printPDFModels.Add(new PrintPDFModel()
@@ -976,7 +976,7 @@ namespace DingTalk.Controllers
         public ProjectClosure projectClosure { get; set; }
 
         /// <summary>
-        /// 项目采购清单、借用清单、维修清单、受理知识产权清单
+        /// 项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单
         /// </summary>
         public List<DetailedList> detailedLists { get; set; }
 

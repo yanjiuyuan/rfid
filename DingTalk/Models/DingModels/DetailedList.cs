@@ -20,7 +20,7 @@
         public string TaskId { get; set; }
 
         /// <summary>
-        /// 类型(传 项目采购清单、借用清单、维修清单、受理知识产权清单 四种参数)
+        /// 类型(传 项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单 四种参数)
         /// </summary>
         [StringLength(500)]
         public string Type { get; set; }

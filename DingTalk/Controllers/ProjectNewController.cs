@@ -64,10 +64,11 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="path">相对路径</param>
         /// <param name="userId">用户Id</param>
+        /// <param name="keyword">关键字查询</param>
         /// <returns>返回文件名数组</returns>
         [Route("GetFileMsg")]
         [HttpGet]
-        public NewErrorModel GetFileMsg(string path, string userId)
+        public NewErrorModel GetFileMsg(string path, string userId,string keyword="")
         {
             try
             {
@@ -95,12 +96,27 @@ namespace DingTalk.Controllers
                             Int32.TryParse(FileName.Substring(0, 1), out i);
                         }
                     }
-                    FileModelsList.Add(new FileModels()
+                    if (string.IsNullOrEmpty(keyword))
                     {
-                        order=i,
-                        path = FileName,
-                        count = fileCount,
-                    });
+                        FileModelsList.Add(new FileModels()
+                        {
+                            order = i,
+                            path = FileName,
+                            count = fileCount,
+                        });
+                    }
+                    else
+                    {
+                        if (FileName.Contains(keyword))
+                        {
+                            FileModelsList.Add(new FileModels()
+                            {
+                                order = i,
+                                path = FileName,
+                                count = fileCount,
+                            });
+                        }
+                    }
                 }
 
                 using (DDContext context = new DDContext())
@@ -197,7 +213,7 @@ namespace DingTalk.Controllers
                 string pathOb = System.Web.HttpContext.Current.Server.MapPath(path);
                 string[] ChildFileName = {  "立项书或建议书", "评审PPT", "需求规格说明书、产品总体设计书",
                 "机械设计图纸","电气图纸","BOM表","软件源代码","使用说明书、操作手册、技术方案、规格说明书",
-                "合作协议","产品（样机、成品）图片、影像","阶段性整理的问题的分析、解决方案及计划表","项目采购清单",
+                "合作协议","产品（样机、成品）图片、影像","阶段性整理的问题的分析、解决方案及计划表","项目采购清单、借用清单、领料清单、入库清单",
                 "受理知识产权清单及申请资料","纵向项目申请、中期检查、验收资料","其他过程文档",
                 "项目终止情况报告","装箱单","客户验收单","转化、应用单位情况表","项目经费使用情况表"};
                 FileHelper.CreateDirectory(pathOb);

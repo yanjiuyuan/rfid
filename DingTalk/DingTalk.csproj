@@ -521,6 +521,7 @@
     <Compile Include="Models\OfficeModels\OfficeModel.cs" />
     <Compile Include="Models\OfficeModels\t_ICItem.cs" />
     <Compile Include="Models\ServerModels\PrintAndSendModel.cs" />
+    <Compile Include="Models\ServerModels\PrintModel.cs" />
     <Compile Include="Models\ServerModels\RequestBaseModel.cs" />
     <Compile Include="Models\ServerModels\ResponseBaseModel.cs" />
     <Compile Include="Models\ServerModels\SendOAModel.cs" />
