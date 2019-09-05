@@ -3,29 +3,45 @@
 }
 
 <!--右侧实体内容-->
+<style>
+    .redBorder {
+        width: 60px;
+        height: 60px;
+        border: 0.1px solid red;
+        position: absolute;
+    }
+</style>
 <el-main id="partPage" style="position:relative;">
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        流程编辑-{{nodeInfo.NodeName}}
+        流程编辑
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="流程名称" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+        <el-form-item label="流程名称" prop="FlowName">
+            <el-input v-model="ruleForm.FlowName"></el-input>
         </el-form-item>
-        <el-form-item label="流程类别">
-            <el-input v-model="ruleForm.sort"></el-input>
+        <el-form-item label="页面路径" prop="PcUrl">
+            <el-input v-model="ruleForm.PcUrl" ></el-input>
         </el-form-item>
-        <el-form-item label="创建人">
-            <el-input v-model="ruleForm.createMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
+        <el-form-item label="图标选择">
+            <div>
+                <span class="redBorder"
+                      v-bind:style="{ marginLeft: x + 'px',marginTop: y + 'px'}"></span>
+                <img src="~/Content/images/icon900-540.png" />
+            </div>
+            <div>
+                <el-button v-on:click="up" type="primary" plain> ↑ </el-button>
+                <el-button v-on:click="down" type="primary" plain> ↓ </el-button>
+                <el-button v-on:click="left" type="primary" plain> ← </el-button>
+                <el-button v-on:click="right" type="primary" plain> → </el-button>
+                <span style="margin-left:20px;">x:</span><el-input v-model="x" style="width:100px;"></el-input>
+                <span>y:</span><el-input v-model="y" style="width:100px;"></el-input>
+            </div>
         </el-form-item>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -36,23 +52,75 @@
         mixins: [mixin],
         data: function () {
             return {
-                ruleForm: {
-                    name: '',
-                    sort: '',
-                    createMan: DingData.nickName,
-                    remark: ''
+                x: 54,
+                y: 46,
+                ruleForm: editFlow,
+                rules: {
+                    FlowName: { required: true, message: '流程名称不能为空', trigger: 'blur' },
+                    PcUrl: { required: true, message: '页面路径不能为空', trigger: 'blur' },
                 },
-                preApprover: false
             }
         },
         methods: {
             onSubmit(formName) {
-                
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.ruleForm['position'] = '-' + parseInt(this.x) + 'px -' + parseInt(this.y) + 'px'
+                        editSort.flows = [this.ruleForm]
+                        let param = {
+                            applyManId: DingData.userid,
+                            FlowSortList: [editSort]
+                        }
+                        this.PostData('FlowInfoNew/LoadFlowModify', param, (res) => {
+                            this.$alert('修改成功', '提示');
+                        })
+                    }
+                })
             },
+            up() {
+                if (this.y - 90 < 0) return
+                this.y = parseInt(this.y)
+                this.y -= 90
+            },
+            down() {
+                this.y = parseInt(this.y)
+                this.y += 90
+            },
+            left() {
+                if (this.x - 90 < 0) return
+                this.x = parseInt(this.x)
+                this.x -= 90
+            },
+            right() {
+                this.x = parseInt(this.x)
+                this.x += 90
+            },
+            selectSort(id) {
+                for (let sort of this.editSorts) {
+                    if (id = sort.Id) {
+                        delete sort.flows
+                        this.editSort = sort
+                    }
+                }
+            },
+            getPosition() {
+                let position = editFlow.Position
+                if (!position) return
+                position = position.split(' ')
+                let a = 0
+                for (let p of position) {
+                    p = p.substring(1, p.length).substring(0, p.length - 3)
+                    if (a) {
+                        this.y = p
+                        return
+                    }
+                    a++
+                    this.x = p
+                }
+            }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
+            this.getPosition()
             loadHtml("mainPage", "partPage")
         }
     })

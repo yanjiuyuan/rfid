@@ -84,7 +84,7 @@
         type: 'GET',
         cache: false,
         success: function (data) {
-            DingData = data
+            DingData = _cloneObj(data)
             //0代表研究院
             if (DingData.CompanyId == 0) {
                  setInterval(function () {
@@ -96,19 +96,7 @@
             //    DingData.userid = 'manager325'
             //    DingData.nickName = '黄浩炜'
             //}
-
-            var url2 = '/DingTalkServers/getUserDetail?userId=' + DingData.userid
-            $.ajax({
-                url: url2,
-                type: 'POST',
-                success: function (data2) {
-                    console.log(url2)
-                    data2 = JSON.parse(data2)
-                    console.log(data2)
-                    DingData.nickName = data2.name
-                    DingData.roles = data2.roles
-                }
-            })
+            
 
             console.log('开始获取授权')
             console.log(DingData)
@@ -158,10 +146,19 @@
                 DingData.userid = result.emplId
                 DingData.isManager = result.isManager
                 DingData.nickName = result.nickName
-                console.log('免登成功')
                 console.log("你好，" + DingData.nickName)
-                var endTime = new Date()
-                console.log('免登成功 ' + endTime.getSeconds())
+                //获取真实姓名
+                var url2 = '/DingTalkServers/getUserDetail?userId=' + DingData.userid
+                $.ajax({
+                    url: url2,
+                    type: 'POST',
+                    success: function (data2) {
+                        data2 = JSON.parse(data2)
+                        DingData.nickName = data2.name
+                        DingData.roles = data2.roles
+                    }
+                })
+
                 let param = {}
                 $.ajax({
                     url: '/DingTalkServers/departmentQuaryByUserId?userId=' + result.emplId,
@@ -171,8 +168,6 @@
                     contentType: "application/json; charset=utf-8",
                     success: function (data) {
                         if (typeof (data) == 'string') data = JSON.parse(data)
-                        console.log('获取部门')
-                        console.log(data)
                         DingData.departName = data.name
                     },
                     error: function (err) {
