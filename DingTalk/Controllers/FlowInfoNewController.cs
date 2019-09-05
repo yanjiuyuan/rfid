@@ -1104,7 +1104,7 @@ namespace DingTalk.Controllers
                         context.SaveChanges();
                         return new NewErrorModel()
                         {
-                            error = new Error(1, "修改成功！", "") { },
+                            error = new Error(0, "修改成功！", "") { },
                         };
                     }
                 }
