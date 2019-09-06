@@ -626,6 +626,7 @@
     <Content Include="Scripts\anyLine.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\canvas.js" />
+    <Content Include="Scripts\drag.js" />
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element-ui.common.js" />
     <Content Include="Scripts\element.js" />
@@ -877,6 +878,7 @@
     <Content Include="Views\approval\ProjectClosure.cshtml" />
     <Content Include="Views\Main\Approval_projectClosure.cshtml" />
     <Content Include="Views\approval\ProduceRate.cshtml" />
+    <Content Include="Views\Register\addFlow.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
