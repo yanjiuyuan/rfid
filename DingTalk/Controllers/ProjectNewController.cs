@@ -354,15 +354,16 @@ namespace DingTalk.Controllers
                     ProjectInfoList = context.ProjectInfo.ToList();
                     ProjectInfoList = ProjectInfoList.Where(p => key == "" ? 1 == 1 : ((p.ProjectName.Contains(key) || p.ProjectId.Contains(key) || p.DeptName.Contains(key) || p.ResponsibleMan.Contains(key)))).ToList();
 
-                    ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) < DateTime.Parse(p.StartTime)) &&
-                    startTime == "" ? 1 == 1 : (DateTime.Parse(endTime) > DateTime.Parse(p.EndTime))).ToList();
+                    ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
+                    endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
 
-                    ProjectInfoList = ProjectInfoList.Where(p => projectState == "" ? 1 == 1 : p.ProjectState == projectState
-                    && projectType == "" ? 1 == 1 : p.ProjectState == projectType
-                    && projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType).ToList();
+                    ProjectInfoList = ProjectInfoList.Where(p => (projectState == "" ? 1 == 1 : p.ProjectState == projectState)
+                    && (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
+                    && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
                 }
                 return new NewErrorModel()
                 {
+                    count= ProjectInfoList.Count,
                     data = ProjectInfoList,
                     error = new Error(0, "查询成功！", "") { },
                 };
