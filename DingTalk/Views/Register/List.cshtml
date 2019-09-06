@@ -5,15 +5,27 @@
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
-            <template slot="title">
-                <span style="font-size:20px;">{{m.SORT_NAME}}</span>
-            </template>
-            <div v-for="l in m.flows" v-if="l.PcUrl" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
-                <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
-                <p>{{l.FlowName}}</p>
-            </div>
-        </el-collapse-item>
+
+        <draggable v-model="menu" v-on:end="dragMenuEnd">
+            <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
+                <template slot="title">
+                    <span style="font-size:20px;">{{m.SORT_NAME}}</span>
+                </template>
+
+                <draggable v-model="m.flows" v-on:end="dragFlowEnd">
+                    <div v-for="l in m.flows" v-if="l.PcUrl" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
+                        <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
+                        <p>{{l.FlowName}}</p>
+                    </div>
+                    <div class="approval-box" v-on:click="ToAddFlow(m)" style="cursor:pointer;">
+                        <div class="approval-box-img" :style="{backgroundPosition:'-594px -226px'}"></div>
+                        <p>添加</p>
+                    </div>
+                </draggable>
+
+            </el-collapse-item>
+        </draggable>
+
     </el-collapse>
 </el-main>
 
@@ -38,12 +50,55 @@
             }
         },
         methods: {
+            dragMenuEnd: function (evt) {
+                let param = _cloneArr(this.menu)
+                
+                for (let i = 0; i < param.length; i++) {
+                    delete param[i].flows
+                    console.log(i)
+                    param[i].OrderBY = i + 1
+                }
+                param = {
+                    applyManId: DingData.userid,
+                    FlowSortList: param
+                }
+                console.log(JSON.stringify(param))
+                this.PostData('FlowInfoNew/LoadFlowModify', param, (res) => { })
+            },
+            dragFlowEnd: function (evt) {
+                let flows = []
+                let sort = null
+                for (let s of this.menu) {
+                    for (let f of s.flows) {
+                        //OrderBY 重新排序
+                        if (f.FlowName == evt.clone.innerText.replace(' ', '')) {
+                            sort = s
+                        }
+                        if (sort) {
+                            for (let i = 0; i < sort.flows.length; i++) {
+                                sort.flows[i].OrderBY = i + 1
+                            }
+                            flows = sort.flows
+                            break
+                        }
+                    }
+                }
+                console.log(flows)
+                this.PostData('FlowInfoNew/FlowModify', {
+                    applyManId: DingData.userid,
+                    flowsList: flows
+                }, (res) => { })
+            },
             getMenu: function () {
                 this.GetData('FlowInfoNew/LoadFlowSort?id=123', (res) => {
-                    this.menu = res
+                    res = JSON.stringify(res).replace(/null/g, '""')
+                    this.menu = JSON.parse(res)
                 })
             },
-            
+            ToAddFlow: function (sort) {
+                editSort = sort
+                loadPage('/Register/AddFlow') 
+            },
             toApprove: function (sort, flow) {
                 editFlow = flow
                 editSort = sort
@@ -58,5 +113,20 @@
             loadHtml("mainPage", "partPage")
         }
     })
+
+    function _cloneArr(arr) {
+        var newArr = []
+        for (var a = 0; a < arr.length; a++) {
+            if (typeof (arr[a]) == 'object') {
+                if (arr[a].length>=0)
+                    newArr.push($.extend(true, [], arr[a]))
+                else
+                    newArr.push($.extend(true, {}, arr[a]))
+            }
+            else newArr.push(arr[a])
+        }
+        return newArr
+    }
+
 
 </script>
