@@ -363,7 +363,7 @@ namespace DingTalk.Controllers
                 }
                 return new NewErrorModel()
                 {
-                    count= ProjectInfoList.Count,
+                    count = ProjectInfoList.Count,
                     data = ProjectInfoList,
                     error = new Error(0, "查询成功！", "") { },
                 };
@@ -378,7 +378,36 @@ namespace DingTalk.Controllers
 
         }
 
+        /// <summary>
+        /// 推送项目提醒
+        /// </summary>
+        /// <param name="projectId">项目Id</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SendMsg")]
+        public async Task<NewErrorModel> SendMsg(string projectId)
+        {
+            try
+            {
+                DDContext context = new DDContext();
+                DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault();
+                await dingTalkServersController.SendProjectMsg(projectInfo.ResponsibleManId,
+                    string.Format("亲，您的{0}项目即将在{1}到期，请尽快完成项目并申请结题。", projectInfo.ProjectName, projectInfo.EndTime), "eapp://page/project/projectDetail");
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "通知成功！", "") { },
+                };
 
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
 
         /// <summary>
         /// 导出所有项目数据Excel

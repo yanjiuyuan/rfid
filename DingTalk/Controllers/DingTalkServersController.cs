@@ -542,7 +542,58 @@ namespace DingTalk.Controllers
             return result;
         }
 
+      
+        /// <summary>
+        /// 项目消息推送通知
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="msg"></param>
+        /// <param name="linkUrl"></param>
+        /// <returns></returns>
+        [Route("SendProjectMsg")]
+        [HttpPost]
+        public async Task<object> SendProjectMsg(string userId,string msg, string linkUrl = "eapp://page/start/index")
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            HttpsClient _client = new HttpsClient();
+            oa oa = new oa()
+            {
+                message_url = linkUrl,
+                head = new head
+                {
+                    bgcolor = "FFBBBBBB",
+                    text = "头部标题111222"
+                },
+                body = new body
+                {
+                    title = "项目验收通知",
+                    form = new form[] {
+                        new form{ key="消息：",value=msg},
+                    },
+                }
+            };
+            NewOATestModel newOATestModel = new NewOATestModel()
+            {
+                msgtype = "oa",
+                oa = oa
+            };
 
+            DingTalk.Models.SendOAModel sendOAModel = new SendOAModel()
+            {
+                //E应用agent_id
+                agent_id = long.Parse(DTConfig.AppAgentId),
+                userid_list = userId,
+                to_all_user = false,
+                //dept_id_list = null,
+                msg = newOATestModel
+            };
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            _client.QueryString.Add("access_token", access_token);
+            var url = _addressConfig.GetWorkMsgUrl;
+            var result = await _client.UploadModel(url, sendOAModel);
+            return result;
+        }
 
 
 
