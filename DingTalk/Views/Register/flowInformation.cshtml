@@ -13,7 +13,7 @@
 </style>
 <el-main id="partPage" style="position:relative;">
     <!--标题-->
-    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+    <div class="head-fixed" onclick="loadPage('/Register/List')">
         <i class="el-icon-arrow-left"></i>
         流程编辑
     </div>
@@ -22,9 +22,32 @@
         <el-form-item label="流程名称" prop="FlowName">
             <el-input v-model="ruleForm.FlowName"></el-input>
         </el-form-item>
-        <el-form-item label="页面路径" prop="PcUrl">
-            <el-input v-model="ruleForm.PcUrl" ></el-input>
+        <el-form-item label="流程Id" prop="FlowId">
+            <el-input v-model="ruleForm.FlowId"></el-input>
         </el-form-item>
+        <el-form-item label="PC页面路径" prop="PcUrl">
+            <el-input v-model="ruleForm.PcUrl"></el-input>
+        </el-form-item>
+        <el-form-item label="是否启用" prop="IsEnable">
+            <el-radio-group v-model="ruleForm.IsEnable">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否支持移动端" prop="IsSupportMobile">
+            <el-radio-group v-model="ruleForm.IsSupportMobile">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <template v-if="ruleForm.IsSupportMobile">
+            <el-form-item label="移动端通知路径" prop="ApproveUrl">
+                <el-input v-model="ruleForm.ApproveUrl"></el-input>
+            </el-form-item>
+            <el-form-item label="移动端页面路径" prop="PhoneUrl">
+                <el-input v-model="ruleForm.PhoneUrl"></el-input>
+            </el-form-item>
+        </template>
         <el-form-item label="图标选择">
             <div>
                 <span class="redBorder"
@@ -41,7 +64,7 @@
             </div>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">修改</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -56,8 +79,11 @@
                 y: 46,
                 ruleForm: editFlow,
                 rules: {
-                    FlowName: { required: true, message: '流程名称不能为空', trigger: 'blur' },
-                    PcUrl: { required: true, message: '页面路径不能为空', trigger: 'blur' },
+                    ApproveUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    FlowId: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    FlowName: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    PhoneUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    PcUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                 },
             }
         },

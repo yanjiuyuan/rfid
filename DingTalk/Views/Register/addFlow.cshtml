@@ -1,7 +1,154 @@
-﻿
-@{
-    ViewBag.Title = "addFlow";
+﻿@{
+    Layout = null;
 }
 
-<h2>addFlow</h2>
+<!--右侧实体内容-->
+<style>
+    .redBorder {
+        width: 60px;
+        height: 60px;
+        border: 0.1px solid red;
+        position: absolute;
+    }
+</style>
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Register/List')">
+        <i class="el-icon-arrow-left"></i>
+        添加流程
+    </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="流程Id" prop="FlowId">
+            <el-input v-model="ruleForm.FlowId"></el-input>
+        </el-form-item>
+        <el-form-item label="流程名称" prop="FlowName">
+            <el-input v-model="ruleForm.FlowName"></el-input>
+        </el-form-item>
+        <el-form-item label="创建人">
+            <el-input v-model="ruleForm.CreateMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="是否启用" prop="IsEnable">
+            <el-radio-group v-model="ruleForm.IsEnable">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="PC页面路径" prop="PcUrl">
+            <el-input v-model="ruleForm.PcUrl"></el-input>
+        </el-form-item>
+        <el-form-item label="是否支持移动端" prop="IsSupportMobile">
+            <el-radio-group v-model="ruleForm.IsSupportMobile">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <template v-if="ruleForm.IsSupportMobile">
+            <el-form-item label="移动端通知路径" prop="ApproveUrl">
+                <el-input v-model="ruleForm.ApproveUrl"></el-input>
+            </el-form-item>
+            <el-form-item label="移动端页面路径" prop="PhoneUrl">
+                <el-input v-model="ruleForm.PhoneUrl"></el-input>
+            </el-form-item>
+        </template>
+
+        <el-form-item label="图标选择">
+            <div>
+                <span class="redBorder"
+                      v-bind:style="{ marginLeft: x + 'px',marginTop: y + 'px'}"></span>
+                <img src="~/Content/images/icon900-540.png" />
+            </div>
+            <div>
+                <el-button v-on:click="up" type="primary" plain> ↑ </el-button>
+                <el-button v-on:click="down" type="primary" plain> ↓ </el-button>
+                <el-button v-on:click="left" type="primary" plain> ← </el-button>
+                <el-button v-on:click="right" type="primary" plain> → </el-button>
+                <span style="margin-left:20px;">x:</span><el-input v-model="x" style="width:100px;"></el-input>
+                <span>y:</span><el-input v-model="y" style="width:100px;"></el-input>
+            </div>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">添加流程</el-button>
+        </el-form-item>
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                x: 54,
+                y: 46,
+                ruleForm: {
+                    FlowId: '',
+                    FlowName: '',
+                    CreateMan: DingData.nickName,
+                    CreateManId: DingData.userid,
+                    IsEnable: 1,
+                    SORT_ID: editSort.Sort_ID,
+                    IsSupportMobile: true,
+                    ApproveUrl: '',
+                    OrderBY: 998,
+                    PcUrl: '',
+                    PhoneUrl: '',
+                    //备用属性
+                    ApplyTime: _timeToString(new Date()),
+                    //ApplyMan : '',
+                    //State: 1,
+                },
+                rules: {
+                    ApproveUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    FlowId: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    FlowName: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    PhoneUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    PcUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
+                },
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.ruleForm['position'] = '-' + parseInt(this.x) + 'px -' + parseInt(this.y) + 'px'
+                        let param = {
+                            applyManId: DingData.userid,
+                            flowsList: [this.ruleForm]
+                        }
+                        console.log(param)
+                        this.PostData('FlowInfoNew/FlowAdd', param, (res) => {
+                            this.$alert('添加成功', '提示');
+                        })
+                    }
+                })
+            },
+            up() {
+                if (this.y - 90 < 0) return
+                this.y = parseInt(this.y)
+                this.y -= 90
+            },
+            down() {
+                this.y = parseInt(this.y)
+                this.y += 90
+            },
+            left() {
+                if (this.x - 90 < 0) return
+                this.x = parseInt(this.x)
+                this.x -= 90
+            },
+            right() {
+                this.x = parseInt(this.x)
+                this.x += 90
+            },
+            
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+</script>
+
+
 

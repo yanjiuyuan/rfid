@@ -9,13 +9,13 @@
         <draggable v-model="menu" v-on:end="dragMenuEnd">
             <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
                 <template slot="title">
-                    <span style="font-size:20px;">{{m.SORT_NAME}}</span>
+                    <span style="font-size:20px;">{{m.SORT_NAME}}({{m.Sort_ID}})</span>
                 </template>
 
                 <draggable v-model="m.flows" v-on:end="dragFlowEnd">
                     <div v-for="l in m.flows" v-if="l.PcUrl" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
                         <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
-                        <p>{{l.FlowName}}</p>
+                        <p>{{l.FlowName}}({{l.FlowId}})</p>
                     </div>
                     <div class="approval-box" v-on:click="ToAddFlow(m)" style="cursor:pointer;">
                         <div class="approval-box-img" :style="{backgroundPosition:'-594px -226px'}"></div>
@@ -27,6 +27,25 @@
         </draggable>
 
     </el-collapse>
+
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="类别Id" prop="Sort_ID">
+            <el-input v-model="ruleForm.Sort_ID"></el-input>
+        </el-form-item>
+        <el-form-item label="流程类名" prop="SORT_NAME">
+            <el-input v-model="ruleForm.SORT_NAME"></el-input>
+        </el-form-item>
+        <el-form-item label="是否启用" prop="IsEnable">
+            <el-radio-group v-model="ruleForm.IsEnable">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">添加类别</el-button>
+        </el-form-item>
+    </el-form>
 </el-main>
 
 <script>
@@ -40,16 +59,37 @@
         data: function () {
             return {
                 activeNames: [2, 7],
-                count: 2,
                 name: '',
                 id: '',
                 menu: [],
-                list: [],
-                userList: userList,
-                userName: DingData.nickName
+                ruleForm: {
+                    Sort_ID: '',
+                    SORT_NAME: '',
+                    CreateTime: _timeToString(new Date()),
+                    IsEnable: 1,
+                },
+                rules: {
+                    Sort_ID: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    SORT_NAME: { required: true, message: '该项不能为空', trigger: 'blur' },
+                },
             }
         },
         methods: {
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let param = {
+                            applyManId: DingData.userid,
+                            FlowSortList: [this.ruleForm]
+                        }
+                        console.log(param)
+                        this.PostData('FlowInfoNew/FlowSortAdd', param, (res) => {
+                            this.$alert('添加成功', '提示');
+                            this.getMenu()
+                        })
+                    }
+                })
+            },
             dragMenuEnd: function (evt) {
                 let param = _cloneArr(this.menu)
                 
@@ -90,7 +130,7 @@
                 }, (res) => { })
             },
             getMenu: function () {
-                this.GetData('FlowInfoNew/LoadFlowSort?id=123', (res) => {
+                this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&id=123', (res) => {
                     res = JSON.stringify(res).replace(/null/g, '""')
                     this.menu = JSON.parse(res)
                 })
