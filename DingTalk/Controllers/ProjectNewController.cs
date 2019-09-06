@@ -68,7 +68,7 @@ namespace DingTalk.Controllers
         /// <returns>返回文件名数组</returns>
         [Route("GetFileMsg")]
         [HttpGet]
-        public NewErrorModel GetFileMsg(string path, string userId,string keyword="")
+        public NewErrorModel GetFileMsg(string path, string userId, string keyword = "")
         {
             try
             {
@@ -89,7 +89,7 @@ namespace DingTalk.Controllers
                     string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
                     string FileName = Path.GetFileName(RelativePath);
                     //RePathList.Add(FileName);
-                    if (FileName.Length>2)
+                    if (FileName.Length > 2)
                     {
                         if (!Int32.TryParse(FileName.Substring(0, 2), out i))
                         {
@@ -328,6 +328,54 @@ namespace DingTalk.Controllers
                     error = new Error(2, ex.Message, "") { },
                 };
             }
+        }
+
+
+        /// <summary>
+        /// 项目信息关键字查询
+        /// </summary>
+        /// <param name="key">关键字(项目名、项目编号、部门、负责人)</param>
+        /// <param name="startTime">开始时间</param>
+        /// <param name="endTime">结束时间</param>
+        /// <param name="projectState">项目状态</param>
+        /// <param name="projectType">大类</param>
+        /// <param name="projectSmallType">小类</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("QuaryProjectInfo")]
+        public NewErrorModel QuaryProjectInfo(string key = "", string startTime = "", string endTime = "", string projectState = "",
+            string projectType = "", string projectSmallType = "")
+        {
+            try
+            {
+                List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
+                using (DDContext context = new DDContext())
+                {
+                    ProjectInfoList = context.ProjectInfo.ToList();
+                    ProjectInfoList = ProjectInfoList.Where(p => key == "" ? 1 == 1 : ((p.ProjectName.Contains(key) || p.ProjectId.Contains(key) || p.DeptName.Contains(key) || p.ResponsibleMan.Contains(key)))).ToList();
+
+                    ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
+                    endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
+
+                    ProjectInfoList = ProjectInfoList.Where(p => (projectState == "" ? 1 == 1 : p.ProjectState == projectState)
+                    && (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
+                    && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
+                }
+                return new NewErrorModel()
+                {
+                    count= ProjectInfoList.Count,
+                    data = ProjectInfoList,
+                    error = new Error(0, "查询成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+
         }
 
 
