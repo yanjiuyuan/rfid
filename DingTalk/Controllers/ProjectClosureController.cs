@@ -190,7 +190,7 @@ namespace DingTalk.Controllers
                     string FlowName = flows.FlowName.ToString();
                     List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId(FlowId).Where(t => t.ProjectId == projectId).ToList();
                     List<Tasks> tasksListQuery = tasksList.Where(t => t.FlowId.ToString() == FlowId && t.NodeId == 0).ToList();
-                    CreateProject createProject = context.CreateProject.Where(c => c.ProjectId == projectId).FirstOrDefault();
+                    ProjectInfo createProject = context.ProjectInfo.Where(c => c.ProjectId == projectId).FirstOrDefault();
                     if (createProject != null)
                     {
                         foreach (var item in tasksListQuery)
