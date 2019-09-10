@@ -181,9 +181,7 @@ namespace DingTalk.Controllers
             {
                 DDContext context = new DDContext();
                 List<FlowModel> FlowModelList = new List<FlowModel>();
-                List<Flows> flowsList = context.Flows.Where(t => t.FlowName.Contains("采购") || t.FlowName.Contains("借入") ||
-                t.FlowName.Contains("维修") || t.FlowName.Contains("知识产权"))
-                    .ToList();
+                List<Flows> flowsList = context.Flows.Where(t => t.FlowName.Contains("采购") || t.FlowName.Contains("借入") || t.FlowName.Contains("知识产权") || t.FlowName.Contains("入库") || t.FlowName.Contains("领料")).ToList();
                 foreach (var flows in flowsList)
                 {
                     string FlowId = flows.FlowId.ToString();
