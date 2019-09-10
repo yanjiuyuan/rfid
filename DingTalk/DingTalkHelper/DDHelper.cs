@@ -10,9 +10,17 @@ namespace DingTalk.DingTalkHelper
     
     public static class DDHelper
     {
-        public static string GetAccessToken(string corpId, string corpSecret)
+        public static string GetAccessToken(string corpId, string corpSecret,string type)
         {
-            string url = string.Format("https://oapi.dingtalk.com/gettoken?corpid={0}&corpsecret={1}", corpId, corpSecret);
+            string url = "";
+            if (type == "1") //新应用
+            {
+                url = string.Format("https://oapi.dingtalk.com/gettoken?appkey={0}&appsecret={1}", corpId, corpSecret);
+            }
+            else
+            {
+                url = string.Format("https://oapi.dingtalk.com/gettoken?corpid={0}&corpsecret={1}", corpId, corpSecret);
+            }
             try
             {
                 string response = HttpRequestHelper.Get(url);

@@ -1047,7 +1047,6 @@ namespace DingTalk.Controllers
                 if (!string.IsNullOrEmpty(id))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
-
                     return new NewErrorModel()
                     {
                         data = flowInfoServer.GetFlowInfo(),
@@ -1093,7 +1092,7 @@ namespace DingTalk.Controllers
                         foreach (var item in flowSortModel.FlowSortList)
                         {
                             context.Entry<FlowSort>(item).State = EntityState.Modified;
-                            if (item.flows.Count > 0)
+                            if (item.flows != null)
                             {
                                 foreach (var flows in item.flows)
                                 {
@@ -1178,18 +1177,22 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (DDContext context = new DDContext())
+                DDContext context = new DDContext();
+
+                if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
                 {
-                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
+                    return new NewErrorModel()
                     {
-                        return new NewErrorModel()
-                        {
-                            error = new Error(1, "没有权限处理！", "") { },
-                        };
-                    }
-                    context.FlowSort.RemoveRange(flowSortModel.FlowSortList);
-                    context.SaveChanges();
+                        error = new Error(1, "没有权限处理！", "") { },
+                    };
                 }
+                foreach (var item in flowSortModel.FlowSortList)
+                {
+                    context.Entry<FlowSort>(item).State = EntityState.Deleted;
+                }
+                //context.FlowSort.RemoveRange(flowSortModel.FlowSortList);
+                context.SaveChanges();
+
                 return new NewErrorModel()
                 {
                     error = new Error(0, "删除成功！", "") { },
@@ -1282,7 +1285,10 @@ namespace DingTalk.Controllers
                             error = new Error(1, "没有权限处理！", "") { },
                         };
                     }
-                    context.Flows.RemoveRange(flowsModel.flowsList);
+                    foreach (var item in flowsModel.flowsList)
+                    {
+                        context.Entry<Flows>(item).State = EntityState.Deleted;
+                    }
                     context.SaveChanges();
                 }
                 return new NewErrorModel()
