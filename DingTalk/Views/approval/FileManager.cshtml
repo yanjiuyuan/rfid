@@ -19,6 +19,12 @@
             </el-breadcrumb-item>
             <el-breadcrumb-item>{{pathList[pathList.length - 1]}}</el-breadcrumb-item>
         </el-breadcrumb>
+        <div v-if="pathList.length == 5">
+            <span style="color:red">*</span>
+            <span style="padding:3px;">关键字</span>
+            <el-input v-model="searchKey" style="width:200px;"></el-input>
+            <el-button type="primary" v-on:click="search">搜索</el-button>
+        </div>
         <br />
         <div>
             <span style="font-size:1.2rem;">文件夹列表</span>
@@ -148,12 +154,13 @@
                 ifExtend: false,
                 downloadUrl: '',
                 uploadUrl: '',
+                searchKey:'',
                 Path: ''
             }
         },
         methods: {
             //获取文件数据
-            getFileData: function (pathList) {
+            getFileData: function (pathList, keyword) {
                 if (!pathList) {
                     pathList = this.pathList
                 }
@@ -167,6 +174,7 @@
                     this.uploadUrl = this.uploadUrl + '\\' + pathList[i]
                 }
                 url = url + '&userId=' + DingData.userid
+                if (keyword) url = url + '&keyword=' + keyword
                 this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
                 this.GetData(url, (data) => {
 
@@ -225,6 +233,13 @@
                 console.warn(err)
                 console.warn(file)
                 console.warn(fileList)
+            },
+            search() {
+                if (!this.searchKey) {
+                    this.getFileData()
+                    return
+                }
+                this.getFileData(this.pathList, this.searchKey)
             },
             //打开某文件夹相关操作
             openFolder: function (folderName) {

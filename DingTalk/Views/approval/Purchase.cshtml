@@ -224,12 +224,16 @@
         methods: {
             onSubmit(formName) {
                 var that = this
+                if (!this.purchaseList.length) {
+                    tthis.$message.error('采购列表不能为空')
+                    return
+                }
                 for (let p of this.purchaseList) {
                     if (!p.UrgentDate || !p.Unit || !p.Count || !p.Purpose) {
                         this.elementAlert('提示信息', '表单未填写完整')
                         return
                     }
-                }
+                }//purchaseList
                 var ProjectName
                 for (let p of that.projectList) {
                     if (p.ProjectId == that.ruleForm.ProjectId) {

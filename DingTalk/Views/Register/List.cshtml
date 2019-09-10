@@ -22,7 +22,7 @@
                 </template>
 
                 <draggable v-model="m.flows" v-on:end="dragFlowEnd">
-                    <div v-for="l in m.flows" v-if="l.PcUrl" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
+                    <div v-for="l in m.flows" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
                         <i class="el-icon-circle-close" v-on:mouseenter="switchFlow(l)" v-on:click="deleteFlow"></i>
                         <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
                         <p>{{l.FlowName}}({{l.FlowId}})</p>

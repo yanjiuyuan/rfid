@@ -102,7 +102,7 @@
             </el-collapse-item>
             <el-collapse-item :name="2" :key="2" v-if="DetailedList1.length">
                 <template slot="title">
-                    <span style="font-size:20px;">项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单</span>
+                    <span style="font-size:20px;">项目采购清单、借用清单、领料清单、入库清单</span>
                 </template>
                 <el-table :data="DetailedList1" stripe border>
                     <el-table-column type="index"></el-table-column>
@@ -646,18 +646,26 @@
                             Mark: '备注'
                         }
                         break;
-                    case '维修申请':
-                        url = 'Maintain/Read';
+                    case '领料申请':
+                        url = 'Pick/Read';
                         this.DetailedList1_detailConfig = {
-                            CodeNo: '物料编码',
-                            Name: '物料名称',
-                            Standard: '规格型号',
-                            Unit: '单位',
-                            Count: '数量',
-                            Price: '单价(预计)',
-                            MaintainContent: '维修内容',
-                            NeedTime: '需用时间',
-                            Mark: '备注'
+                            fNumber: '物料编码',
+                            fName: '物料名称',
+                            fQty: '实收数量',
+                            unitName: '单位',
+                            fModel: '型号规格',
+                            fFullName: '供应商'
+                        }
+                        break;
+                    case '入库申请':
+                        url = 'Godown/Read';
+                        this.DetailedList1_detailConfig = {
+                            fNumber: '物料编码',
+                            fName: '物料名称',
+                            fQty: '实收数量',
+                            unitName: '单位',
+                            fModel: '型号规格',
+                            fFullName: '供应商'
                         }
                         break;
                 }
