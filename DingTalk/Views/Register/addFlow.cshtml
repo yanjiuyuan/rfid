@@ -15,24 +15,27 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Register/List')">
         <i class="el-icon-arrow-left"></i>
-        流程编辑
+        添加流程
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="流程名称" prop="FlowName">
-            <el-input v-model="ruleForm.FlowName"></el-input>
-        </el-form-item>
         <el-form-item label="流程Id" prop="FlowId">
             <el-input v-model="ruleForm.FlowId"></el-input>
         </el-form-item>
-        <el-form-item label="PC页面路径" prop="PcUrl">
-            <el-input v-model="ruleForm.PcUrl"></el-input>
+        <el-form-item label="流程名称" prop="FlowName">
+            <el-input v-model="ruleForm.FlowName"></el-input>
+        </el-form-item>
+        <el-form-item label="创建人">
+            <el-input v-model="ruleForm.CreateMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="是否启用" prop="IsEnable">
             <el-radio-group v-model="ruleForm.IsEnable">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
             </el-radio-group>
+        </el-form-item>
+        <el-form-item label="PC页面路径" prop="PcUrl">
+            <el-input v-model="ruleForm.PcUrl"></el-input>
         </el-form-item>
         <el-form-item label="是否支持移动端" prop="IsSupportMobile">
             <el-radio-group v-model="ruleForm.IsSupportMobile">
@@ -48,6 +51,7 @@
                 <el-input v-model="ruleForm.PhoneUrl"></el-input>
             </el-form-item>
         </template>
+
         <el-form-item label="图标选择">
             <div>
                 <span class="redBorder"
@@ -64,7 +68,7 @@
             </div>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">修改</el-button>
+            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">添加流程</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -77,7 +81,23 @@
             return {
                 x: 54,
                 y: 46,
-                ruleForm: editFlow,
+                ruleForm: {
+                    FlowId: '',
+                    FlowName: '',
+                    CreateMan: DingData.nickName,
+                    CreateManId: DingData.userid,
+                    IsEnable: 1,
+                    SORT_ID: editSort.Sort_ID,
+                    IsSupportMobile: true,
+                    ApproveUrl: '',
+                    OrderBY: 998,
+                    PcUrl: '',
+                    PhoneUrl: '',
+                    //备用属性
+                    ApplyTime: _timeToString(new Date()),
+                    //ApplyMan : '',
+                    //State: 1,
+                },
                 rules: {
                     ApproveUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                     FlowId: { required: true, message: '该项不能为空', trigger: 'blur' },
@@ -92,18 +112,17 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.ruleForm['position'] = '-' + parseInt(this.x) + 'px -' + parseInt(this.y) + 'px'
-                        editSort.flows = [this.ruleForm]
                         let param = {
                             applyManId: DingData.userid,
-                            FlowSortList: [editSort]
+                            flowsList: [this.ruleForm]
                         }
-                        this.PostData('FlowInfoNew/LoadFlowModify', param, (res) => {
-                            this.$alert('修改成功', '提示');
+                        console.log(param)
+                        this.PostData('FlowInfoNew/FlowAdd', param, (res) => {
+                            this.$alert('添加成功', '提示');
                         })
                     }
                 })
             },
-
             up() {
                 if (this.y - 90 < 0) return
                 this.y = parseInt(this.y)
@@ -122,32 +141,9 @@
                 this.x = parseInt(this.x)
                 this.x += 90
             },
-            selectSort(id) {
-                for (let sort of this.editSorts) {
-                    if (id = sort.Id) {
-                        delete sort.flows
-                        this.editSort = sort
-                    }
-                }
-            },
-            getPosition() {
-                let position = editFlow.Position
-                if (!position) return
-                position = position.split(' ')
-                let a = 0
-                for (let p of position) {
-                    p = p.substring(1, p.length).substring(0, p.length - 3)
-                    if (a) {
-                        this.y = p
-                        return
-                    }
-                    a++
-                    this.x = p
-                }
-            }
+            
         },
         created: function () {
-            this.getPosition()
             loadHtml("mainPage", "partPage")
         }
     })

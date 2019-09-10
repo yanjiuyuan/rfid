@@ -1047,7 +1047,6 @@ namespace DingTalk.Controllers
                 if (!string.IsNullOrEmpty(id))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
-
                     return new NewErrorModel()
                     {
                         data = flowInfoServer.GetFlowInfo(),
@@ -1104,7 +1103,7 @@ namespace DingTalk.Controllers
                         context.SaveChanges();
                         return new NewErrorModel()
                         {
-                            error = new Error(1, "修改成功！", "") { },
+                            error = new Error(0, "修改成功！", "") { },
                         };
                     }
                 }
@@ -1798,7 +1797,9 @@ namespace DingTalk.Controllers
                                         Remark = "",
                                         IsSend = "",
                                         IsNeedChose = n.IsNeedChose,
-                                        ChoseNodeId = n.ChoseNodeId
+                                        ChoseNodeId = n.ChoseNodeId,
+                                        IsMandatory=n.IsMandatory,
+                                        IsSelectMore=n.IsSelectMore
                                     };
                         return new NewErrorModel()
                         {
@@ -1831,7 +1832,9 @@ namespace DingTalk.Controllers
                                         ApplyTime = tt == null ? "" : tt.ApplyTime,
                                         Remark = tt == null ? "" : tt.Remark,
                                         IsSend = tt == null ? n.IsSend : tt.IsSend,
-                                        ApplyManId = tt == null ? "" : tt.ApplyManId
+                                        ApplyManId = tt == null ? "" : tt.ApplyManId,
+                                        IsMandatory = n.IsMandatory,
+                                        IsSelectMore = n.IsSelectMore
                                     };
                         Quary = Quary.OrderBy(q => q.NodeId).ThenByDescending(h => h.ApplyTime);
                         return new NewErrorModel()

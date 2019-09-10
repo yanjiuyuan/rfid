@@ -643,9 +643,8 @@ namespace DingTalk.Controllers
         /// <param name="key">关键字</param>
         /// <param name="startTime">开始时间</param>
         /// <param name="endTime">结束时间</param>
-        /// <param name="ProjectState">项目状态</param>
+        /// <param name="projectState">项目状态</param>
         /// <returns></returns>
-        /// 测试数据 /Project/QuaryProjectInfo?key=高级项目&startTime=2018-05-17&endTime=2018-05-24&ProjectState=在研_123
         [HttpGet]
         public string QuaryProjectInfo(string key, string startTime, string endTime, string projectState)
         {

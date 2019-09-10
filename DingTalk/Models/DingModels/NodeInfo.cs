@@ -46,5 +46,17 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(100)]
         public string ChoseNodeId { get; set; }
+
+        /// <summary>
+        /// 控件是否可以选多个人(格式0,1,0,1)
+        /// </summary>
+        [StringLength(200)]
+        public string IsSelectMore { get; set; }
+
+        /// <summary>
+        /// 是否必选(格式0,1,0,1)
+        /// </summary>
+        [StringLength(200)]
+        public string IsMandatory { get; set; }
     }
 }

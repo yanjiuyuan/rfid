@@ -22,5 +22,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult addFlow()
+        {
+            return View();
+        }
     }
 }

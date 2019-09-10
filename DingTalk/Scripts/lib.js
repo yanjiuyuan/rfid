@@ -93,7 +93,10 @@ function _cloneArr(arr) {
     var newArr = []
     for (var a = 0; a < arr.length; a++) {
         if (typeof (arr[a]) == 'object') {
-            newArr.push($.extend(true, {}, arr[a]))
+            if (arr[a].length >= 0)
+                newArr.push($.extend(true, [], arr[a]))
+            else
+                newArr.push($.extend(true, {}, arr[a]))
         }
         else newArr.push(arr[a])
     }
@@ -519,7 +522,8 @@ var mixin = {
                     if (that.doWithErrcode(res.error, errorFunc)) {
                         return
                     }
-                    succe(res.data)
+                    res.data = JSON.stringify(res.data).replace(/null/g, '""')
+                    succe(JSON.parse(res.data))
                 },
                 error: function (err) {
                     if (errorFunc) errorFunc()
