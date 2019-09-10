@@ -15,7 +15,6 @@ namespace DingTalkServer
     {
         DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
         public DingTalkConfig DTConfig { get; set; } = new DingTalkConfig();
-        private string _tokenUrl;
 
         HttpsClient _client;
         public DingTalkManager()
@@ -26,8 +25,17 @@ namespace DingTalkServer
 
         public async Task<string> GetAccessToken()
         {
-            _client.QueryString.Add("corpid", DTConfig.CorpId);
-            _client.QueryString.Add("corpsecret", DTConfig.CorpSecret);
+            if (DTConfig.type == "1")
+            {
+                //新应用免登新参数
+                _client.QueryString.Add("appkey", DTConfig.PcAppKey);
+                _client.QueryString.Add("appsecret", DTConfig.PcAppSecret);
+            }
+            else
+            {
+                _client.QueryString.Add("corpid", DTConfig.CorpId);
+                _client.QueryString.Add("corpsecret", DTConfig.CorpSecret);
+            }
             var url = _addressConfig.GetAccessTokenUrl;
             var result = await _client.Get(url);
             try

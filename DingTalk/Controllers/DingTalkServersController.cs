@@ -87,9 +87,7 @@ namespace DingTalk.Controllers
             var results = await dtManager.SingleDepartment(Int32.Parse(ListDepartmentId[0]));
             return results;
         }
-
-        //"{\"errmsg\":\"ok\",\"department\":[[56943182,1]],\"errcode\":0}"
-
+        
         [Route("departmentListQuaryByDeptId")]
         public async Task<string> departmentListQuaryByDeptId()
         {

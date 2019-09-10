@@ -31,7 +31,14 @@ namespace DingTalk.DingTalkHelper
         /// <returns></returns>
         public string GetAccessToken()
         {
-            return DDHelper.GetAccessToken(CorpId, CorpSecret);
+            if (dtConfig.type == "1")//测试环境(新应用)
+            {
+                return DDHelper.GetAccessToken(dtConfig.PcAppKey, dtConfig.PcAppSecret, dtConfig.type);
+            }
+            else
+            {
+                return DDHelper.GetAccessToken(CorpId, CorpSecret, dtConfig.type);
+            }
         }
 
         public string GetJsApiTicket(string accessToken)

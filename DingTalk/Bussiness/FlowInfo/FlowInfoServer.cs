@@ -18,7 +18,7 @@ namespace DingTalk.Bussiness.FlowInfo
             DDContext context = new DDContext();
             List<FlowSort> FlowSortNew = new List<FlowSort>();
             List<Flows> Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(f => f.OrderBY).ToList();
-            List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 && u.DEPT_ID == "ALL").OrderBy(u => u.OrderBY).ToList();
+            List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 ).OrderBy(u => u.OrderBY).ToList();
 
             foreach (var flowSort in FlowSort)
             {
