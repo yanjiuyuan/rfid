@@ -57,7 +57,7 @@ namespace DingTalk.Controllers
                             if (!string.IsNullOrEmpty(processingProgresse.TaskId))
                             {
                                 processingProgresse.CompanyId = processingProgressModel.CompanyId.ToString();
-                                List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId && p.CompanyId== processingProgressModel.CompanyId.ToString()).ToList();
+                                List<ProcessingProgress> ProcessingProgressList = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId && p.CompanyId == processingProgressModel.CompanyId.ToString()).ToList();
                                 if (ProcessingProgressList.Count > 0)
                                 {
                                     return new NewErrorModel()
@@ -313,7 +313,7 @@ namespace DingTalk.Controllers
                 };
             }
         }
-        
+
 
         /// <summary>
         /// 生产加工进度表批量读取
@@ -425,7 +425,7 @@ namespace DingTalk.Controllers
                     DingTalkServersController dingTalkServersController = new DingTalkServersController();
                     foreach (var item in processingProgressModel.processingProgresses)
                     {
-                        string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}&companyId={1}", item.TaskId,item.CompanyId);
+                        string eappUrl = string.Format("eapp://page/start/productionMonitoring/productionMonitoring?taskid={0}&companyId={1}", item.TaskId, item.CompanyId);
                         //判断当前修改权限
                         NewErrorModel errorModel = GetPower(processingProgressModel.applyManId, item.TaskId);
                         List<int> vs = (List<int>)errorModel.data;
@@ -524,6 +524,15 @@ namespace DingTalk.Controllers
                     ProcessingProgress processingProgress = new ProcessingProgress();
                     using (DDContext context = new DDContext())
                     {
+                        //判断流程是否存在
+                        List<Models.DingModels.Tasks> tasksListNew = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.FlowId.ToString() == "6").ToList();
+                        if (tasksListNew.Count == 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "流水号不存在！", "") { },
+                            };
+                        }
                         //判断流程是否已结束
                         List<Models.DingModels.Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).ToList();
                         if (tasksList.Count > 0)
@@ -570,6 +579,16 @@ namespace DingTalk.Controllers
                     ProcessingProgress processingProgress = new ProcessingProgress();
                     using (DDContextHs context = new DDContextHs())
                     {
+
+                        //判断流程是否存在
+                        List<Models.DingModelsHs.Tasks> tasksListNew = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.FlowId.ToString() == "6").ToList();
+                        if (tasksListNew.Count == 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "流水号不存在！", "") { },
+                            };
+                        }
                         //判断流程是否已结束
                         List<Models.DingModelsHs.Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).ToList();
                         if (tasksList.Count > 0)
@@ -641,7 +660,7 @@ namespace DingTalk.Controllers
                     {
                         ProcessingProgress processingProgress = context.ProcessingProgress.Where(p => (p.DesignerId.Contains(applyManId) || p.HeadOfDepartmentsId.Contains(applyManId) ||
                        p.NoteTakerId.Contains(applyManId) || p.TabulatorId.Contains(applyManId)) && p.TaskId == taskId).FirstOrDefault();
-                        
+
                         if (applyManId == processingProgress.DesignerId)
                         {
                             vs.Add(2);

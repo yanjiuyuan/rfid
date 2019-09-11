@@ -124,8 +124,8 @@ namespace DingTalk.Controllers
         {
             try
             {
-                string TaskId = printAndSendModel.taskId;
-                string UserId = printAndSendModel.applyManId;
+                string TaskId = printAndSendModel.TaskId;
+                string UserId = printAndSendModel.UserId;
                 PDFHelper pdfHelper = new PDFHelper();
                 using (DDContext context = new DDContext())
                 {

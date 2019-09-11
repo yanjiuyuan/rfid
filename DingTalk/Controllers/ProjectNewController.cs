@@ -231,20 +231,23 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
-        /// 项目测试数据
+        /// 批量生成项目文件
         /// </summary>
-        /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("GetTestProject")]
+        [Route("CreatepProjectFiles")]
 
-        public NewErrorModel GetTestProject(string Id)
+        public NewErrorModel CreatepProjectFiles()
         {
             DDContext dDContext = new DDContext();
-            ProjectInfo projectInfo = dDContext.ProjectInfo.Find(Int32.Parse(Id));
+            List<ProjectInfo> projectInfoList = dDContext.ProjectInfo.ToList();
+            foreach (var item in projectInfoList)
+            {
+                AddProjectFile(item.FilePath);
+            }
             return new NewErrorModel()
             {
-                data = projectInfo,
+                error = new Error(0, "创建成功！", "") { },
             };
         }
 
@@ -357,8 +360,8 @@ namespace DingTalk.Controllers
 
                     ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
                     endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
-                    
-                   
+
+
                     ProjectInfoList = ProjectInfoList.Where(p => (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
                     && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
 
@@ -368,24 +371,26 @@ namespace DingTalk.Controllers
                         {
                             foreach (var pitem in ProjectInfoList)
                             {
-                                if (pitem.ProjectState==item)
+                                if (pitem.ProjectState == item)
                                 {
                                     ProjectInfoListQuery.Add(pitem);
                                 }
                             }
                         }
+
                         return new NewErrorModel()
                         {
                             count = ProjectInfoListQuery.Count,
-                            data = ProjectInfoListQuery,
+                            data = ProjectInfoListQuery.OrderByDescending(t => t.ProjectId.Substring(0, 4)).ThenByDescending(t => t.ProjectId.Substring(t.ProjectId.Length - 3, 3)),
                             error = new Error(0, "查询成功！", "") { },
                         };
                     }
+                    
                 }
                 return new NewErrorModel()
                 {
                     count = ProjectInfoList.Count,
-                    data = ProjectInfoList,
+                    data = ProjectInfoList.OrderByDescending(t => t.ProjectId.Substring(0, 4)).ThenByDescending(t => t.ProjectId.Substring(t.ProjectId.Length - 3, 3)),
                     error = new Error(0, "查询成功！", "") { },
                 };
             }
