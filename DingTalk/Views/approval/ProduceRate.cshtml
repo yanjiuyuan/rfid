@@ -38,18 +38,18 @@
         <el-button type="primary" v-on:click="save">更新进度表</el-button>
         <el-table :data="tableData" :row-class-name="tableRowClassName"
                   style="width: 100%">
-            <el-table-column prop="CodeNo" type="index"></el-table-column>
+            @*<el-table-column prop="CodeNo" type="index"></el-table-column>*@
             <!-- ruleIndex 用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人-->
             <!-- 0 生产加工进度发起人-->
             <template>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :fixed="con.fixed" :prop="con.param" :width="con.width" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" type="textarea" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
+                        <el-input v-if="scope.row.Power.indexOf(0)>=0 && con.label != '流水号'" v-model="scope.row[con.param]" type="textarea" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="资料接收时间">
-                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="150" :label="con.label">
+                    <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="120" :label="con.label">
                         <template slot-scope="scope">
                             <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
                             <p v-else>{{scope.row[con.param]}}</p>
@@ -129,10 +129,8 @@
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" :disabled="scope.row['IsAlreadyRead'] == '1'"></el-input>
-                        <el-radio-group v-on:change="changeRead" v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row['IsAlreadyRead']" :disabled="scope.row['IsAlreadyRead'] == '1'">
-                            <el-radio :label="0">未读</el-radio>
-                            <el-radio :label="1">已读</el-radio>
-                        </el-radio-group>
+                        <el-button v-on:click="changeRead(scope.$index,scope.row)" v-if="scope.row.Power.indexOf(2)>=0 &&scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                        <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
                         <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
@@ -208,16 +206,16 @@
     let a = 'DesignerId,设计员Id  HeadOfDepartmentsId,部门负责人Id   NoteTakerId,记录人Id ,TabulatorId,制表人Id  Tabulator,制表人'
     let tableConfig = {
         //1制表人编辑区~~~~~~~~~~~
-        Column1: { param: 'CompanyName', label: '单位', upLabel: 't1' },
-        Column2: { param: 'ProjectType', label: '大类别', upLabel: 't1' },
-        Column3: { param: 'ProjectSmallType', label: '小类别', upLabel: 't1'},
-        Column4: { param: 'Remark1', label: '备注', upLabel: 't1' },
-        Column5: { param: 'ProjectId', label: '项目编码', upLabel: 't1'},
-        Column6: { param: 'ProjectName', label: '项目名称', upLabel: 't1'},
-        Column7: { param: 'TaskId', label: '流水号', upLabel: 't1'},
-        Column8: { param: 'Bom', label: 'bom', upLabel: 't1'},
-        Column9: { param: 'AccountKeeping', label: '走账', upLabel: 't1'},
-        Column10: { param: 'Designer', label: '设计员', upLabel: 't1' },
+        Column1: { param: 'CompanyName', label: '单位', upLabel: 't1',width: 120 },
+        Column2: { param: 'ProjectType', label: '大类别', upLabel: 't1', width: 120 },
+        Column3: { param: 'ProjectSmallType', label: '小类别', upLabel: 't1', width: 100},
+        Column4: { param: 'Remark1', label: '备注', upLabel: 't1', width: 150},
+        Column5: { param: 'ProjectId', label: '项目编码', upLabel: 't1', width: 200},
+        Column6: { param: 'ProjectName', label: '项目名称', upLabel: 't1', width: 200},
+        Column7: { param: 'TaskId', label: '流水号', upLabel: 't1', width: 60, fixed:'left'},
+        Column8: { param: 'Bom', label: 'bom', upLabel: 't1', width: 200, fixed: 'left'},
+        Column9: { param: 'AccountKeeping', label: '走账', upLabel: 't1', width: 120},
+        Column10: { param: 'Designer', label: '设计员', upLabel: 't1', width: 120},
         //资料接收时间
         Column11: { param: 'BomTime', label: 'BOM', upLabel: '资料接收时间' },
         Column12: { param: 'TwoD', label: '2D', upLabel: '资料接收时间' },
@@ -359,10 +357,9 @@
  
             },
             //设计人点击确认
-            changeRead(value) {
-                if (value == '1') {
-                    this.save()
-                }
+            changeRead(index, row) {
+                this.tableData[index].IsAlreadyRead = '1'
+                this.save()
             },
             //记录人切换状态
             changeStates(value,row) {
