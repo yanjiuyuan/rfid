@@ -71,7 +71,7 @@ namespace DingTalk.Controllers
 
                     return new NewErrorModel()
                     {
-                        data= Quary,
+                        data = Quary,
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
@@ -189,7 +189,7 @@ namespace DingTalk.Controllers
                                 };
                     return new NewErrorModel()
                     {
-                        data= Quary,
+                        data = Quary,
                         error = new Error(0, "获取成功！", "") { },
                     };
                 }
@@ -222,17 +222,15 @@ namespace DingTalk.Controllers
                     //获取表单信息
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
-                    //判断流程是否已结束
-                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
-                    if (tasksList.Count > 0)
-                    {
 
+                    TasksState tasksState = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault();
+                    if (tasksState.State != "已完成")
+                    {
                         return new NewErrorModel()
                         {
-                            error = new Error(1, "流程尚未结束！", "") { },
+                            error = new Error(1, string.Format("流程{0}！", tasksState.State), "") { },
                         };
                     }
-
                     CarTable ct = context.CarTable.Where(u => u.TaskId == TaskId).FirstOrDefault();
                     if (printAndSendModel.IsPublic)
                     {
@@ -306,7 +304,7 @@ namespace DingTalk.Controllers
 
                     return new NewErrorModel()
                     {
-                        data= result,
+                        data = result,
                         error = new Error(0, "打印盖章成功！", "") { },
                     };
                 }
