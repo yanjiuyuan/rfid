@@ -579,7 +579,6 @@ namespace DingTalk.Controllers
                     ProcessingProgress processingProgress = new ProcessingProgress();
                     using (DDContextHs context = new DDContextHs())
                     {
-
                         //判断流程是否存在
                         List<Models.DingModelsHs.Tasks> tasksListNew = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.FlowId.ToString() == "6").ToList();
                         if (tasksListNew.Count == 0)
