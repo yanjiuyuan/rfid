@@ -31,12 +31,15 @@
                 </el-select>
             </el-form-item>
             @*<el-form-item label="公司名称" required="required">
-                    <el-select v-model="ruleForm.CompanyName" style="width:300px;">
-                        <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-                    </el-select>
-                </el-form-item>*@
+                <el-select v-model="ruleForm.CompanyName" style="width:300px;">
+                    <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
+                </el-select>
+            </el-form-item>*@
             <el-form-item label="合作单位">
                 <el-input v-model="ruleForm.Customer"></el-input>
+            </el-form-item>
+            <el-form-item label="商务对接人">
+                <el-input v-model="ruleForm.BusinessDocker"></el-input>
             </el-form-item>
             <el-form-item label="项目类型" required="required">
                 <div class="block">
@@ -108,7 +111,8 @@
                         }
                         var param = {
                             "ProjectName": this.ruleForm.inputProjectName,
-                            "CreateTime": _getTime(),
+                            "CreateTime": _getTime(), 
+                            "CompanyName": CompanyNames[0],
                             "IsEnable": true,
                             "ProjectState": this.ruleForm.ProjectState,
                             "IsFinish": false,
@@ -122,36 +126,20 @@
                             "ResponsibleManId": this.ResponsibleMan[0].emplId,
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
-                            "CompanyName": this.ruleForm.CompanyName,
                             "ProjectType": this.ptypes[0],
                             "ProjectSmallType": this.ptypes[1],
+                            "BusinessDocker": this.ruleForm.BusinessDocker,
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName
                         }
                         console.log(param)
-                        $.ajax({
-                            url: "/Project/AddProject",
-                            type: "POST",
-                            dataType: "json",
-                            data: JSON.stringify(param),
-                            success: function (data) {
-                                console.log("添加项目")
-                                console.log(data)
-                                if (data.errorCode == 0) {
-                                    that.$alert(data.errorMessage, '提示信息', {
-                                        confirmButtonText: '确定',
-                                        callback: action => {
-                                            loadPage('/main/Approval')
-                                        }
-                                    });
+                        this.PostData('/ProjectNew/AddProject', [param], (res) => {
+                            that.$alert('添加成功', '提示信息', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    loadPage('/main/Approval')
                                 }
-                                that.$alert(data.errorMessage, '提示信息', {
-                                    confirmButtonText: '确定'
-                                })
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                console.log(XMLHttpRequest.status);
-                            }
+                            });
                         })
                     }
                     else {
@@ -165,10 +153,6 @@
                 console.log(value)
                 this.ptypes = value
             },
-        },
-        handleChange(value) {
-            console.log(value)
-            this.ptypes = value
         },
         created: function () {
             loadHtml("mainPage", "partPage")
