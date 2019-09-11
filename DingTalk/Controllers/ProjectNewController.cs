@@ -349,6 +349,7 @@ namespace DingTalk.Controllers
             try
             {
                 List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
+                List<ProjectInfo> ProjectInfoListQuery = new List<ProjectInfo>();
                 using (DDContext context = new DDContext())
                 {
                     ProjectInfoList = context.ProjectInfo.ToList();
@@ -356,10 +357,30 @@ namespace DingTalk.Controllers
 
                     ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
                     endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
-
-                    ProjectInfoList = ProjectInfoList.Where(p => (projectState == "" ? 1 == 1 : p.ProjectState == projectState)
-                    && (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
+                    
+                   
+                    ProjectInfoList = ProjectInfoList.Where(p => (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
                     && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
+
+                    if (projectState != "")
+                    {
+                        foreach (var item in projectState.Split('_'))
+                        {
+                            foreach (var pitem in ProjectInfoList)
+                            {
+                                if (pitem.ProjectState==item)
+                                {
+                                    ProjectInfoListQuery.Add(pitem);
+                                }
+                            }
+                        }
+                        return new NewErrorModel()
+                        {
+                            count = ProjectInfoListQuery.Count,
+                            data = ProjectInfoListQuery,
+                            error = new Error(0, "查询成功！", "") { },
+                        };
+                    }
                 }
                 return new NewErrorModel()
                 {
