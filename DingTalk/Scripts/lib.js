@@ -326,7 +326,20 @@ var pickerOptions = {
         }
     }]
 }
-
+        
+var checkProjectId = (rule, value, callback) => {
+    if (!value) {
+        return callback(new Error('项目编号不能为空'));
+    }
+    setTimeout(() => {
+        let reg1 = /^[0-9]{4}\w+\w+[0-9]{3}$/
+        if (!reg1.test(value)) {
+            callback(new Error('请输入数字值'));
+        } else {
+            callback();
+        }
+    }, 500);
+};
 var mixin = {
     data: {
         user: {},
@@ -395,7 +408,7 @@ var mixin = {
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
             inputProjectId: [
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, validator: checkProjectId, trigger: 'blur' }
             ],
             inputProjectName: [
                 { required: true, message: '内容不能为空！', trigger: 'change' }

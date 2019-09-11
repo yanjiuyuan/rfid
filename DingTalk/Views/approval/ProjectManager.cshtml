@@ -123,8 +123,11 @@
                         <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="公司名称" required="required">
+                <el-form-item label="合作单位" required="required">
                     <el-input v-model="ruleForm.CompanyName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="商务对接人">
+                    <el-input v-model="ruleForm.BusinessDocker"></el-input>
                 </el-form-item>
                 <el-form-item label="项目大类" required="required">
                     <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
@@ -185,7 +188,8 @@
                     ProjectType: '',
                     StartTime: '',
                     EndTime: '',
-                    CompanyName: ''
+                    CompanyName: '',
+                    BusinessDocker: ''
                 },
                 status: ["在研", "已完成", "终止"],
                 ptypes: [null, null],
@@ -200,8 +204,11 @@
             getProject() {
                 var that = this
                 var param = {
-                    key: this.formInline.key,
+                    //key: this.formInline.key,
                     projectState: this.formInline.projectState.join('_')
+                }
+                if (this.formInline.key) {
+                    param.key = this.formInline.key
                 }
                 if (this.formInline.time) {
                     param['startTime'] = this.formInline.time[0]

@@ -166,7 +166,7 @@
                 });
             },
             printTable() {
-                this.PostData('TechnicalSupport/PrintAndSend', {
+                this.PostData('IntellectualProperty/Print', {
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
