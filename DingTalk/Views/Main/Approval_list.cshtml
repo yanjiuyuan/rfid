@@ -6,7 +6,8 @@
 <div id="partPage">
     <!--列表搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.keyword" placehoder="流水号、标题、申请人、流程类型" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <el-input v-model="searchForm.keyword" placeholder="流水号、标题、申请人" style="width:300px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--表格實體-->
@@ -79,7 +80,7 @@
         methods: {
             //搜索列表
             searchCode() {
-                if (!this.searchForm.keyword) return
+                //if (!this.searchForm.keyword) return
                 this.getData2(this.searchForm.keyword)
             },
             getData2(keyword) {

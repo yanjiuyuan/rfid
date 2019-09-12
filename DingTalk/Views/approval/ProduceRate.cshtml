@@ -44,22 +44,28 @@
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :fixed="con.fixed" :prop="con.param" :width="con.width" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(0)>=0 && con.label != '流水号'" v-model="scope.row[con.param]" type="textarea" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
-                        <p v-else>{{scope.row[con.param]}}</p>
+                        @*<el-input v-if="scope.row.Power.indexOf(0)>=0 && con.label != '流水号'" v-model="scope.row[con.param]" type="textarea" :maxlength="30" :show-word-limit="true"
+                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                        </el-input>*@
+                        <p @*v-else*@>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="资料接收时间">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="120" :label="con.label">
                         <template slot-scope="scope">
-                            <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
-                            <p v-else>{{scope.row[con.param]}}</p>
+                            @*<el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" 
+                                      :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                            </el-input>*@
+                            <p @*v-else*@>{{scope.row[con.param]}}</p>
                         </template>
                     </el-table-column>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
-                        <p v-else>{{scope.row[con.param]}}</p>
+                        @*<el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]"
+                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                        </el-input>*@
+                        <p @*v-else*@>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
             </template>
@@ -79,7 +85,8 @@
                         <template slot-scope="scope">
                             <template>
                                 <el-input v-if="scope.row.Power.indexOf(3)>=0 && con.label != '进度'" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>
-                                <el-select v-on:change="changeStates(scope.row[con.param],scope.row)" v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'" v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                                <el-select v-on:change="changeStates(scope.row[con.param],scope.row)" v-if="scope.row.Power.indexOf(3)>=0 && con.label == '进度'"
+                                           v-model="scope.row[con.param]" placeholder="请选择" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
                                     <el-option v-for="s in states" :key="s" :label="s" :value="s">
                                     </el-option>
                                 </el-select>
@@ -91,7 +98,8 @@
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
+                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :maxlength="30"  show-word-limit
+                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
@@ -105,7 +113,8 @@
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't41'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
+                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :maxlength="30" show-word-limit
+                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
@@ -123,13 +132,16 @@
                 </el-table-column>
             </template>
 
-            <!-- 2 没权限(设计人员)--> @*placehoder="确认无误填写并保存" type="textarea"*@
+            <!-- 2 没权限(设计人员)--> @*placeholder="确认无误填写并保存" type="textarea"*@
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" :disabled="scope.row['IsAlreadyRead'] == '1'"></el-input>
-                        <el-button v-on:click="changeRead(scope.$index,scope.row)" v-if="scope.row.Power.indexOf(2)>=0 &&scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                        <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" :maxlength="30" type="textarea" show-word-limit
+                                  :disabled="scope.row['IsAlreadyRead'] == '1' ||  disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                        </el-input>
+                        <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"
+                                   v-if="scope.row.Power.indexOf(2)>=0 &&scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
                         <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
                         <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>
                     </template>
