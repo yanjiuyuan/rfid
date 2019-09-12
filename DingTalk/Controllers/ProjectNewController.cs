@@ -446,7 +446,7 @@ namespace DingTalk.Controllers
             {
                 return new NewErrorModel()
                 {
-                    error = new Error(1, ex.Message, "") { },
+                    error = new Error(0, ex.Message, "") { },
                 };
             }
         }
