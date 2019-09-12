@@ -229,6 +229,24 @@ namespace DingTalk.Controllers
             }
         }
 
+        
+        /// <summary>
+        /// 项目数据单条信息读取
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetSingleProjectInfo")]
+        public NewErrorModel GetSingleProjectInfo(string projectId)
+        {
+            DDContext dDContext = new DDContext();
+
+            return new NewErrorModel()
+            {
+                data = dDContext.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault(),
+                error = new Error(1,"读取成功！" , "") { },
+            };
+        }
 
         /// <summary>
         /// 批量生成项目文件
@@ -377,7 +395,6 @@ namespace DingTalk.Controllers
                                 }
                             }
                         }
-
                         return new NewErrorModel()
                         {
                             count = ProjectInfoListQuery.Count,
@@ -401,7 +418,6 @@ namespace DingTalk.Controllers
                     error = new Error(1, ex.Message, "") { },
                 };
             }
-
         }
 
         /// <summary>
@@ -419,7 +435,7 @@ namespace DingTalk.Controllers
                 DingTalkServersController dingTalkServersController = new DingTalkServersController();
                 ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault();
                 await dingTalkServersController.SendProjectMsg(projectInfo.ResponsibleManId,
-                    string.Format("亲，您的{0}项目即将在{1}到期，请尽快完成项目并申请结题。", projectInfo.ProjectName, projectInfo.EndTime), "eapp://page/project/projectDetail");
+                    string.Format("亲，您的{0}项目即将在{1}到期，请尽快完成项目并申请结题。", projectInfo.ProjectName, projectInfo.EndTime), string.Format("eapp://page/approveDetail/projectDetail/projectDetail?projectId={0}", projectInfo.ProjectId));
                 return new NewErrorModel()
                 {
                     error = new Error(0, "通知成功！", "") { },

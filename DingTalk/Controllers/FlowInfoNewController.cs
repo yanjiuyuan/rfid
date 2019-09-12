@@ -1541,7 +1541,7 @@ namespace DingTalk.Controllers
                 TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
                 return new NewErrorModel()
                 {
-                    count = TaskFlowModelList.Count,
+                    count = count,
                     data = TaskFlowModelList,
                     error = new Error(0, "读取成功！", "") { },
                 };
