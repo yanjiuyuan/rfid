@@ -246,9 +246,7 @@ namespace DingTalk.Controllers
                 data = dDContext.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault(),
                 error = new Error(1,"读取成功！" , "") { },
             };
-           
         }
-
 
         /// <summary>
         /// 批量生成项目文件
