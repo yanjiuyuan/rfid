@@ -25,7 +25,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
-
+        public ActionResult Approval_purchase()
+        {
+            return View();
+        }
         public ActionResult Approval_list()
         {
             return View();
@@ -67,6 +70,10 @@ namespace WebZhongZhi.Controllers
             return View();
         }
         public ActionResult Approval_meterieCode()
+        {
+            return View();
+        }
+        public ActionResult Approval_officeSupplies()
         {
             return View();
         }

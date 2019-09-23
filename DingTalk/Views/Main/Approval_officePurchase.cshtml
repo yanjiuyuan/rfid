@@ -30,16 +30,6 @@
                         <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
                     </template>
                 </el-table-column>
-                @*<el-table-column prop="applyMan" label="申请人"></el-table-column>*@
-                @*<el-table-column prop="dept" label="部门"></el-table-column>*@
-                @*<el-table-column prop="Mark" label="备注"></el-table-column>*@
-                @*<el-table-column prop="Price" label="实际单价" v-if="NodeId == 2">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.Price"
-                          :class="{ redborder:scope.row.Price == '' || scope.row.Price == null}"></el-input>
-            </template>
-        </el-table-column>
-        <el-table-column prop="Price" label="实际单价" v-if="NodeId > 2"></el-table-column>*@
             </el-table>
         </el-collapse-item>
     </el-collapse>
@@ -62,7 +52,7 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
-        <template v-if="index!=0">
+        <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
             </el-form-item>

@@ -72,7 +72,7 @@
             <el-input v-model="carName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="意见">
-            <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
+            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
 
         <hr />
@@ -88,7 +88,7 @@
                 <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
             </el-form-item>
         </template>
-        <el-form-item label="操作" v-if="index==1 || index==2">
+        <el-form-item label="操作" v-if="state=='已完成'">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
         <template v-if="index==2 && state=='未完成'">
@@ -196,6 +196,7 @@
                     }
                 )
             },
+            
             getUseCarTable() {
                 var that = this
                 this._getData("/CarTable/TableQuary", function (data2) {
@@ -209,7 +210,7 @@
                     }
                     that._getData('/CarMananger/QuaryByTime', function (data) {
                         for (let d of data) {
-                            if (d.Id == that.ruleForm.CarId) {
+                            if (d.Id == that.tableForm.CarId) {
                                 that.carName = d.Name + ' - ' + d.CarNumber
                                 that.tableForm['Name'] = d.Name
                             }
@@ -220,7 +221,6 @@
             }
         },
         created: function () {
-            this.getUseCarTable()
             if (NodeId == '3' || NodeId == '4') this.reInput = true
             loadHtml("mainPage", "partPage")
         },
@@ -236,8 +236,10 @@
             }
         }
     })
-    getFormData(demo)
-
+    getFormData(demo, demo.getUseCarTable)
+    function getFormData_done(res) {
+        demo.getUseCarTable()
+    }
 </script>
 
 

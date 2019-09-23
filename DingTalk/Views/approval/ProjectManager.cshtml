@@ -13,14 +13,13 @@
     <el-form :inline="true" :model="formInline" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
-            <el-input v-model="formInline.key" style="width:200px;"
-                      placeholder="项目名、项目编号、部门、负责人"></el-input>
+            <sam-input :value.sync="formInline.key" style="width:200px;" placeholder="项目名、项目编号、部门、负责人"></sam-input>
         </el-form-item>
         <!--高级检索-时间-->
         <template v-if="superSearch">
             <el-form-item label="开始日期">
                 <el-date-picker v-model="formInline.time"
-                                type="daterange"
+                                type="daterange" :editable="false"
                                 :picker-options="pickerOptions"
                                 value-format="yyyy-MM-dd"
                                 range-separator="至"

@@ -51,36 +51,34 @@
         <el-table-column prop="Name" label="物料名称"></el-table-column>
         <el-table-column prop="Supplier" label="供应商" width="250">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Supplier" prop="Unit" :class="{ redborder:scope.row.Supplier ==''}">
-                </el-input>
+                <sam-input :value.sync="scope.row.Supplier" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Unit" label="单位">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Unit" prop="Unit" :class="{ redborder:scope.row.Unit ==''}">
-                </el-input>
+                <sam-input :value.sync="scope.row.Unit" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Count" label="数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Count" prop="Count" :class="{ redborder:scope.row.Count ==''}"></el-input>
+                <sam-input :value.sync="scope.row.Count" type="number" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Purpose" label="用途">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Purpose" :class="{ redborder:scope.row.Purpose ==''}"></el-input>
+                <sam-input :value.sync="scope.row.Purpose" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column label="开始日期" width="140">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.StartTime" :class="{ redborder:scope.row.StartTime ==''}"
+                <el-date-picker v-model="scope.row.StartTime" :class="{ redborder:scope.row.StartTime ==''}" :editable="false"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </template>
         </el-table-column>
         <el-table-column label="结束日期" width="140">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.EndTime" :class="{ redborder:scope.row.EndTime ==''}"
+                <el-date-picker v-model="scope.row.EndTime" :class="{ redborder:scope.row.EndTime ==''}" :editable="false"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </template>
@@ -94,7 +92,7 @@
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
         <el-table-column prop="Mark" label="备注">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Mark"></el-input>
+                <sam-input :value.sync="scope.row.Mark"></sam-input>
             </template>
         </el-table-column>
     </el-table>

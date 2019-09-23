@@ -31,14 +31,14 @@
         <el-form-item label="外出时间" prop="BeginTime">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
-                            v-on:change="selectTime"
+                            v-on:change="selectTime" :editable="false"
                             range-separator="至"
                             start-placeholder="开始时间"
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="时长/小时" prop="durHours">
-            <el-input v-model="ruleForm.durHours" style="width:200px;"></el-input>
+        <el-form-item label="时长/小时" prop="Duration">
+            <el-input v-model="ruleForm.Duration" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="上传相关文件">
             <el-upload class="upload-demo"
@@ -92,7 +92,7 @@
                 date: _getDate(),
                 dialogFormVisible: false,
                 ruleForm: {
-                    durHours: "",
+                    Duration: "",
                     EvectionMan: '',
                     EvectionManId: '',
                     BeginTime: "",
@@ -106,11 +106,21 @@
                     Place: "",
                 },
                 rules: {
-                    Content: { required: true, message: '外出事由不能为空', trigger: 'blur' },
-                    Place: { required: true, message: '外出地点不能为空', trigger: 'blur' },
-                    startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
-                    BeginTime: { required: true, message: '外出时间不能为空', trigger: 'blur' },
-                    durHours: { required: true, message: '外出时长不能为空', trigger: 'blur' },
+                    Content: [{ required: true, message: '外出事由不能为空', trigger: 'blur' },
+                    { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                    ],
+                    Place: [{ required: true, message: '外出地点不能为空', trigger: 'blur' },
+                    { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                    ],
+                    startAddress: [{ required: true, message: '始发地点不能为空', trigger: 'blur' },
+                    { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                    ],
+                    BeginTime: [{ required: true, message: '外出时间不能为空', trigger: 'blur' },
+                    { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                    ],
+                    Duration: [{ required: true, message: '外出时长不能为空', trigger: 'blur' },
+                    { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                    ],
                 },
                 dayPickerOptions: {
                     shortcuts: [
@@ -171,12 +181,12 @@
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
-                this.ruleForm.durHours = _computeDurTime(value[0], value[1], 'h')
+                this.ruleForm.Duration = _computeDurTime(value[0], value[1], 'h')
                 this.ruleForm.BeginTime = _timeToString(value[0])
                 this.ruleForm.EndTime = _timeToString(value[1])
                 console.log(this.ruleForm.BeginTime)
                 console.log(this.ruleForm.EndTime)
-                console.error(this.ruleForm.durHours)
+                console.error(this.ruleForm.Duration)
             },
             // 添加同行人
             addPeerNumber() {

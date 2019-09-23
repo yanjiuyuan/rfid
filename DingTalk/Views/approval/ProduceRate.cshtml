@@ -13,10 +13,11 @@
         <!--搜索表格-->
         <template>
             <span style="padding:3px;">流水号</span>
+            <sam-input :value.sync="ruleForm.taskId" style="width:200px;" placeholder="流水号"></sam-input>
             <el-input v-model="ruleForm.taskId" style="width:200px;"></el-input>
             <span style="padding:3px;">关键字</span>
-            <el-input v-model="ruleForm.key" style="width:300px;" placeholder="项目名、BOM、设计员、记录人"></el-input>
-            <el-form-item label="项目类型" required="required">
+            <sam-input :value.sync="ruleForm.key" style="width:200px;" placeholder="项目名、BOM、设计员、记录人"></sam-input>
+            <el-form-item label="项目类型">
                 <div class="block">
                     <el-cascader v-model="ruleForm.types"
                                  :options="PTypes"
@@ -44,18 +45,26 @@
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :fixed="con.fixed" :prop="con.param" :width="con.width" :label="con.label">
                     <template slot-scope="scope">
-                        @*<el-input v-if="scope.row.Power.indexOf(0)>=0 && con.label != '流水号'" v-model="scope.row[con.param]" type="textarea" :maxlength="30" :show-word-limit="true"
+                        <el-input v-if="scope.row.Power.indexOf(0)>=0 && disabledEdit.indexOf(con.param) < 0" v-model="scope.row[con.param]" type="textarea" :maxlength="30" :show-word-limit="true"
                                   :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
-                        </el-input>*@
-                        <p @*v-else*@>{{scope.row[con.param]}}</p>
+                        </el-input>
+                        <p v-else>{{scope.row[con.param]}}</p>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="Designer" width="180" label="设计人">
+                    <template slot-scope="scope">
+                        <el-input v-if="scope.row.Power.indexOf(0)>=0 && disabledStates.indexOf(scope.row['SpeedOfProgress']) < 0" v-model="scope.row['Designer']" :disabled="true" style="width:60px;"></el-input>
+                        <el-button v-if="scope.row.Power.indexOf(0)>=0 && disabledStates.indexOf(scope.row['SpeedOfProgress']) < 0"
+                                   class="button-new-tag" size="small" v-on:click="changeDesigner(scope.$index, scope.row)" style="margin-left:0;">选择
+                        </el-button>
+                        <p v-else>{{scope.row['Designer']}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="资料接收时间">
                     <el-table-column v-for="con in tableConfig" v-if="con.upLabel == '资料接收时间'" :prop="con.param" width="120" :label="con.label">
                         <template slot-scope="scope">
                             @*<el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]" 
-                                      :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
-                            </el-input>*@
+                                      :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>*@
                             <p @*v-else*@>{{scope.row[con.param]}}</p>
                         </template>
                     </el-table-column>
@@ -63,8 +72,7 @@
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
                         @*<el-input v-if="scope.row.Power.indexOf(0)>=0" v-model="scope.row[con.param]"
-                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
-                        </el-input>*@
+                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"></el-input>*@
                         <p @*v-else*@>{{scope.row[con.param]}}</p>
                     </template>
                 </el-table-column>
@@ -75,7 +83,7 @@
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't22'" :prop="con.param" width="160" :label="con.label">
                     <template slot-scope="scope">
                         <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" value-format="yyyy-MM-dd" clear-icon="el-icon-date" prefix-icon="a"
-                                        type="date" v-on:change="selectTime" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                                        type="date" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" :editable="false">
                         </el-date-picker>
                         <p v-else>{{scope.row[con.param]}}</p>
                     </template>
@@ -96,11 +104,12 @@
                         </template>
                     </el-table-column>
                 </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't3'" :prop="con.param" width="150" :label="con.label">
+                <el-table-column prop="ActualCompletionTime" width="150" label="实际加工完成时间">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row[con.param]" :maxlength="30"  show-word-limit
-                                  :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" type="textarea"></el-input>
-                        <p v-else>{{scope.row[con.param]}}</p>
+                        <el-date-picker v-if="scope.row.Power.indexOf(3)>=0" v-model="scope.row['ActualCompletionTime']" value-format="yyyy-MM-dd" clear-icon="el-icon-date" prefix-icon="a"
+                                        type="date" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0" :editable="false">
+                        </el-date-picker>
+                        <p v-else>{{scope.row['ActualCompletionTime']}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="组装">
@@ -126,7 +135,7 @@
                 <el-table-column prop="NoteTaker" width="180" label="记录人">
                     <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(1)>=0 && disabledStates.indexOf(scope.row['SpeedOfProgress']) < 0" v-model="scope.row['NoteTaker']" :disabled="true" style="width:60px;"></el-input>
-                        <el-button v-if="scope.row.Power.indexOf(1)>=0 && disabledStates.indexOf(scope.row['SpeedOfProgress']) < 0" class="button-new-tag" size="small" v-on:click="changePeople(scope.$index, scope.row)" style="margin-left:0;">+ 选择</el-button>
+                        <el-button v-if="scope.row.Power.indexOf(1)>=0 && disabledStates.indexOf(scope.row['SpeedOfProgress']) < 0" class="button-new-tag" size="small" v-on:click="changePeople(scope.$index, scope.row)" style="margin-left:0;">选择</el-button>
                         <p v-else>{{scope.row['NoteTaker']}}</p>
                     </template>
                 </el-table-column>
@@ -137,7 +146,7 @@
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" :maxlength="30" type="textarea" show-word-limit
+                        <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" show-word-limit
                                   :disabled="scope.row['IsAlreadyRead'] == '1' ||  disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
                         </el-input>
                         <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"
@@ -169,7 +178,7 @@
                        :limit="1"
                        :file-list="excelList">
                 <el-button size="small" type="primary">上传excel</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+                <div slot="tip" class="el-upload__tip">批量上传进度表,只能上传excel文件，且不超过500kb</div>
             </el-upload>
             <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
 
@@ -192,7 +201,7 @@
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row[con.param]"></el-input>
+                        <el-input :disabled="disabledEdit.indexOf(con.param) >= 0" v-model="scope.row[con.param]"></el-input>
                     </template>
                 </el-table-column>
                 <el-table-column label="资料接收时间">
@@ -202,7 +211,7 @@
                         </template>
                     </el-table-column>
                 </el-table-column>
-                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't2' && (con.label == '需求时间' || con.label == '需求建议')" :prop="con.param" width="150" :label="con.label">
+                <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't21' && (con.label == '需求时间' || con.label == '需求建议')" :prop="con.param" width="150" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-model="scope.row[con.param]"></el-input>
                     </template>
@@ -227,7 +236,7 @@
         Column7: { param: 'TaskId', label: '流水号', upLabel: 't1', width: 60, fixed:'left'},
         Column8: { param: 'Bom', label: 'bom', upLabel: 't1', width: 200, fixed: 'left'},
         Column9: { param: 'AccountKeeping', label: '走账', upLabel: 't1', width: 120},
-        Column10: { param: 'Designer', label: '设计员', upLabel: 't1', width: 120},
+        Column10: { param: 'Designer', label: '设计员', upLabel: 't12', width: 120},
         //资料接收时间
         Column11: { param: 'BomTime', label: 'BOM', upLabel: '资料接收时间' },
         Column12: { param: 'TwoD', label: '2D', upLabel: '资料接收时间' },
@@ -239,7 +248,7 @@
         //2记录人编辑区~~~~~~~~~~~~~
         Column16: { param: 'ScheduledDate', label: '预计开工时间', upLabel: 't22' },
         Column17: { param: 'CompletionTime', label: '预计完成时间', upLabel: 't22' },
-        Column18: { param: 'BeginTime', label: '开始时间', upLabel: 't22' },
+        Column18: { param: 'BeginTime', label: '实际开始时间', upLabel: 't22' },
         //零件加工
         Column19: { param: 'HomemadeNumberZZ', label: '自制数（件）', upLabel: '零件加工' },
         Column20: { param: 'ProcessingTimeZZ', label: '加工时间（天）', upLabel: '零件加工' },
@@ -261,7 +270,7 @@
         Column31: { param: 'NoteTaker', label: '记录人', upLabel: 't42' },
 
         //4设计人编辑区~~~~~~~~~~~~~
-        Column32: { param: 'DesignerId', label: '设计人Id' },
+        //Column32: { param: 'DesignerId', label: '设计人Id' },
         Column33: { param: 'Remark3', label: '备注', upLabel: 't43' },
         Column34: { param: 'Tabulator', label: '图纸审核员', upLabel: 't43'}
     }
@@ -286,9 +295,10 @@
                 greenStates: ['已完成'],
                 redStates: ['作废', '取消'],
                 yellowStates: ['加工中', '外协加工中', '暂停'],
-                disabledStates: ['已完成','作废', '取消'],
+                disabledStates: ['已完成', '作废', '取消'],
+                disabledEdit: ['CompanyName', 'TaskId'],
                 data: [],
-                companyId: null,//公司Id 0 研究院 1 华数
+                companyId: 0,//公司Id 0 研究院 1 华数
                 companys: [{ value: 0, label: '研究院' }, { value: 1, label: '华数' }],
                 tableData: [],
                 inputTable: [initTable],
@@ -361,6 +371,22 @@
                         }
                         row.NoteTaker = data[0].name
                         row.NoteTakerId = data[0].emplId
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            //进度发起人 选择 设计人
+            changeDesigner(index, row) {
+                console.log(row)
+                console.log(index)
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    multiple: false, //是否多选： true多选 false单选； 默认true
+                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                    corpId: DingData.CorpId, //企业id
+                    onSuccess: function (data) {
+                        row.Designer = data[0].name
+                        row.DesignerId = data[0].emplId
                     },
                     onFail: function (err) { }
                 });

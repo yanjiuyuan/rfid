@@ -10,7 +10,8 @@
         维修申请-{{nodeInfo.NodeName}}
     </div>
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <sam-input :value.sync="searchForm.name" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -45,7 +46,6 @@
         <el-table-column prop="CodeNo" type="index"></el-table-column>
         <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-                @*<el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>*@
                 <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -53,30 +53,27 @@
         <el-table-column prop="Name" label="物料名称"></el-table-column>
         <el-table-column prop="Unit" label="单位">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Unit" prop="Unit" :class="{ redborder:scope.row.Unit ==''}">
-                </el-input>
+                <sam-input :value.sync="scope.row.Unit" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Price">
-                </el-input>
+                <sam-input :value.sync="scope.row.Price" type="number"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Count" label="数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Count" prop="Count" :class="{ redborder:scope.row.Count ==''}"></el-input>
+                <sam-input :value.sync="scope.row.Count" type="number" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="MaintainContent" label="维修内容" width="300">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.MaintainContent" :class="{ redborder:scope.row.MaintainContent ==''}">
-                </el-input>
+                <sam-input :value.sync="scope.row.MaintainContent" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column label="需用日期" width="140">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.NeedTime" :class="{ redborder:scope.row.NeedTime ==''}"
+                <el-date-picker v-model="scope.row.NeedTime" :class="{ redborder:scope.row.NeedTime ==''}" :editable="false"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </template>
@@ -85,7 +82,7 @@
 
         <el-table-column prop="Mark" label="备注">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Mark"></el-input>
+                <sam-input :value.sync="scope.row.Mark"></sam-input>
             </template>
         </el-table-column>
 
@@ -99,17 +96,6 @@
         <el-form-item label="申请人" prop="name">
             <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
-        @*<el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
-                <el-option v-for="item in projectList"
-                           :key="item.ProjectId"
-                           :label="item.ProjectId + '-' + item.ProjectName"
-                           :value="item.ProjectId">
-                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
-                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
-                </el-option>
-            </el-select>
-        </el-form-item>*@
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>

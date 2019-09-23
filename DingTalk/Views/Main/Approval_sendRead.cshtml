@@ -27,7 +27,7 @@
         <el-form-item label="收文时间">
             <el-date-picker v-model="tableForm.ReceivingTime" :disabled="true"
                             value-format="yyyy-MM-dd"
-                            type="date"
+                            type="date" :editable="false"
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>

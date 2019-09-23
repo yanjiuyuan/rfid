@@ -33,12 +33,6 @@
         <el-table :data="tableData" stripe border>
             <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
             </el-table-column>
-            <el-table-column label="是否删除" width="150" v-if="FlowId == 1 && NodeId >= 3">
-                <template slot-scope="scope">
-                    <el-button size="mini" v-if="NodeId == 3" :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
-                    <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
-                </template>
-            </el-table-column>
         </el-table>
         <!--底部翻頁-->
         <div style="text-align:right">
@@ -112,7 +106,6 @@
         <el-form-item label="操作">
             <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         </el-form-item>
-        <el-button type="primary" v-on:click="stampAndGet2" v-if="FlowId == '8'">打印表单</el-button>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
@@ -155,11 +148,6 @@
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==3 && FlowId==8">
-            <el-form-item>
-                <el-button type="primary" v-on:click="printExcel" :disabled="disablePage">导出BOM</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -320,19 +308,6 @@
         }]
     if (FlowId != '6' && FlowId != '23') dataArr = []
     switch (FlowId) {
-        case '1':
-            items = {
-                CodeNo: '物料编码',
-                Name: '物料名称',
-                Standard: '规格型号',
-                Unit: '单位',
-                Count: '数量',
-                ExpectPrice: '预计单价',
-                Purpose: '用途',
-                Mark: '备注'
-            }
-            bomUrl = "/OfficeSupplies/ReadTable?TaskId=" + TaskId
-            break;
         case '6':
             items = {
                 DrawingNo: '代号',
@@ -363,51 +338,7 @@
             }
             bomUrl = "/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId
             break;
-        case '8':
-            items = {
-                CodeNo: '物料编码',
-                Name: '物料名称',
-                Standard: '规格型号',
-                Unit: '单位',
-                Count: '数量',
-                Price: '单价(预计)',
-                Purpose: '用途',
-                UrgentDate: '需用日期',
-                Mark: '备注'
-            }
-            bomUrl = "/Purchase/ReadPurchaseTable?TaskId=" + TaskId
-            break;
-        case '12':
-            items = {
-                BigCode: '物料大类编码',
-                SmallCode: '物料小类编码',
-                Name: '物料名称',
-                Unit: '单位',
-                Standard: '型号规格',
-                SurfaceTreatment: '表面处理',
-                PerformanceLevel: '性能等级',
-                StandardNumber: '标准号',
-                Features: '典型特征',
-                purpose: '用途',
-                Remark: '备注'
-            }
-            bomUrl = "/ItemCodeAdd/GetTable?TaskId=" + TaskId
-            break;
-        case '18':
-            items = {
-                CodeNo: '物料编码',
-                Name: '物料名称',
-                Standard: '规格型号',
-                Unit: '单位',
-                Count: '数量',
-                ExpectPrice: '单价(预计)',
-                Price: '单价(实际)',
-                Purpose: '用途',
-                Dept: '部门',
-                Mark: '备注'
-            }
-            bomUrl = "/OfficeSuppliesPurchase/ReadTable?TaskId=" + TaskId
-            break;
+       
     }
     var demo = new Vue({
         el: "#partPage",
@@ -443,31 +374,14 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                var that = this
-                if (FlowId == '1') {
-                    let url = '/OfficeSupplies/ModifyTable'
-                    console.log(this.data)
-                    //return
-                    that._postData(url, function (data) {
-                        that.aggreSubmit({
-                            "Id": that.ruleForm.Id,
-                            "Remark": that.ruleForm.mark,
-                            "Title": that.ruleForm.Title,
-                            "ProjectId": that.ruleForm.ProjectId
-                        }, {
-                                "ProjectId": that.ruleForm.ProjectId
-                            })
-                    }, that.data)
-                } else {
-                    this.aggreSubmit({
-                        "Id": this.ruleForm.Id,
-                        "Remark": this.ruleForm.mark,
-                        "Title": this.ruleForm.Title,
+                this.aggreSubmit({
+                    "Id": this.ruleForm.Id,
+                    "Remark": this.ruleForm.mark,
+                    "Title": this.ruleForm.Title,
+                    "ProjectId": this.ruleForm.ProjectId
+                }, {
                         "ProjectId": this.ruleForm.ProjectId
-                    }, {
-                            "ProjectId": this.ruleForm.ProjectId
-                        })
-                }
+                    })
             },
             
             //图纸盖章并获取文件
@@ -503,36 +417,6 @@
                     }
                 })
             },
-            stampAndGet2() {
-                var paramObj = {
-                    UserId: DingData.userid,
-                    TaskId: TaskId
-                }
-                var that = this
-                $.ajax({
-                    url: "/Purchase/PrintAndSend",
-                    type: "POST",
-                    data: paramObj,
-                    dataType: "json",
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log("/Purchase/PrintAndSend1")
-                        console.log(paramObj)
-                        console.log(data)
-                        var alertStr = ''
-                        data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
-                        that.$alert(alertStr, '消息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-
-                            }
-                        });
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
-            },
             downloadAllPdf() {
                 this.GetData('NewsAndCases/GetAllPDF' + _formatQueryStr({ taskId: TaskId, applyManId: DingData.userid }), (res) => {
                     this.$alert('获取成功', '提示信息', {
@@ -553,23 +437,6 @@
                 }, {
                         taskId: TaskId,
                         applyManId: DingData.userid
-                    })
-            },
-
-            //采购抄送打印excel
-            printExcel() {
-                var that = this
-                let url = '/api/PurchaseManage'
-                that._getData(url, function (data) {
-                    that.$alert('恭喜提交成功', '提示信息', {
-                        confirmButtonText: '确定',
-                        callback: action => {
-                            
-                        }
-                    })
-                }, {
-                        taskId: TaskId,
-                        UserId: DingData.userid
                     })
             },
 
@@ -611,10 +478,7 @@
                 })
             },
 
-            //设置BOM表单状态
-            setState(index, row) {
-                row.IsDelete = !row.IsDelete
-            },
+            
 
 
 

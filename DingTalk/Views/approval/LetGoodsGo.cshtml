@@ -46,7 +46,7 @@
         </el-form-item>
         <el-form-item label="放行日期" prop="Date">
             <el-date-picker v-model="ruleForm.Date"
-                            type="date"
+                            type="date" :editable="false"
                             value-format="yyyy-MM-dd"
                             @*v-on:change="selectTime"*@
                             placeholder="选择日期">
@@ -108,13 +108,13 @@
                     Title: "物资放行条"
                 },
                 rules: {
-                    Company: { required: true, message: '单位名称不能为空', trigger: 'blur' },
-                    Tel: { required: true, message: '联系方式不能为空', trigger: 'blur' },
-                    Name: { required: true, message: '物品名称不能为空', trigger: 'blur' },
-                    Count: { required: true, message: '数量不能为空', trigger: 'blur' },
-                    Unit: { required: true, message: '单位不能为空', trigger: 'blur' },
-                    Cause: { required: true, message: '放行事由不能为空', trigger: 'blur' },
-                    Date: { required: true, message: '放行日期不能为空', trigger: 'blur' }
+                    Company: commonInput,
+                    Tel: commonInput,
+                    Name: commonInput,
+                    Count: commonInput,
+                    Unit: commonInput,
+                    Cause: commonInput,
+                    Date: commonInput,
                 }
             }
         },

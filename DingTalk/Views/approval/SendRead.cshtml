@@ -28,7 +28,7 @@
         <el-form-item label="收文时间" prop="ReceivingTime">
             <el-date-picker v-model="ruleForm.ReceivingTime"
                             value-format="yyyy-MM-dd"
-                            type="date"
+                            type="date" :editable="false"
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>

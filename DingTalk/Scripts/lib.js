@@ -340,6 +340,7 @@ var checkProjectId = (rule, value, callback) => {
         }
     }, 500);
 };
+let commonInput = [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }]
 var mixin = {
     data: {
         user: {},
@@ -387,91 +388,118 @@ var mixin = {
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
             Title: [
-                { required: true, message: '标题内容不能为空！', trigger: 'change' }
+                { required: true, message: '标题内容不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Type: [
                 { required: true, message: '类别不能为空！', trigger: 'change' }
             ],
             Name: [
-                { required: true, message: '名称不能为空！', trigger: 'change' }
+                { required: true, message: '名称不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             CarNumber: [
-                { required: true, message: '车牌号不能为空！', trigger: 'change' }
+                { required: true, message: '车牌号不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             UnitPricePerKilometre: [
-                { required: true, message: '每公里单价不能为空！', trigger: 'change' }
+                { required: true, message: '每公里单价不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Abstract: [
-                { required: true, message: '内容简介不能为空！', trigger: 'change' }
+                { required: true, message: '内容简介不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             ProjectName: [
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, message: '内容不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             inputProjectId: [
-                { required: true, validator: checkProjectId, trigger: 'blur' }
+                { required: true, validator: checkProjectId, trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             inputProjectName: [
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, message: '内容不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Price: [
                 { required: true, message: '价格不能为空！', trigger: 'change' },
-                { type: 'number', message: '必须为数字值' }
+                { type: 'number', message: '必须为数字值' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Unit: [
-                { required: true, message: '单位不能为空！', trigger: 'change' }
+                { required: true, message: '单位不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Count: [
                 { required: true, message: '数量不能为空！', trigger: 'change' },
-                { type: 'number', message: '必须为数字值' }
+                { type: 'number', message: '必须为数字值' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             time: [
-                { required: true, message: '时长不能为空！', trigger: 'change' }
+                { required: true, message: '时长不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             DateTime: [
-                { required: true, message: '日期不能为空！', trigger: 'change' }
+                { required: true, message: '日期不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             StartTime: [
-                { required: true, message: '开始时间不能为空！', trigger: 'change' }
+                { required: true, message: '开始时间不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             EndTimeTime: [
-                { required: true, message: '结束时间不能为空！', trigger: 'change' }
+                { required: true, message: '结束时间不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             UseTime: [
-                { required: true, message: '时长不能为空！', trigger: 'change' }
+                { required: true, message: '时长不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             OverTimeContent: [
-                { required: true, message: '不能为空！', trigger: 'change' }
+                { required: true, message: '不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             EffectiveTime: [
-                { required: true, message: '有效时间不能为空！', trigger: 'change' }
+                { required: true, message: '有效时间不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Purpose: [
-                { required: true, message: '用途不能为空！', trigger: 'change' }
+                { required: true, message: '用途不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             //文件阅办单表单
             MainContent: [
-                { required: true, message: '文件标题不能为空！', trigger: 'blur' }
+                { required: true, message: '文件标题不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             ReceivingUnit: [
-                { required: true, message: '来文单位不能为空！', trigger: 'blur' }
+                { required: true, message: '来文单位不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             ReceivingTime: [
-                { required: true, message: '时间不能为空！', trigger: 'blur' }
+                { required: true, message: '时间不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             MainIdea: [
-                { required: true, message: '主要内容不能为空！', trigger: 'blur' }
+                { required: true, message: '主要内容不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Suggestion: [
-                { required: true, message: '拟办意见不能为空！', trigger: 'blur' }
+                { required: true, message: '拟办意见不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Leadership: [
-                { required: true, message: '领导阅示不能为空！', trigger: 'blur' }
+                { required: true, message: '领导阅示不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Review: [
-                { required: true, message: '部门阅办情况不能为空！', trigger: 'blur' }
+                { required: true, message: '部门阅办情况不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             HandleImplementation: [
-                { required: true, message: '办理落实情况不能为空！', trigger: 'blur' }
+                { required: true, message: '办理落实情况不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
         },
         pickerOptions: pickerOptions,
@@ -482,9 +510,6 @@ var mixin = {
         pageSize: 5,
         dingList: [],
         PTypes: PTypes
-    },
-    created:function() {
-        
     },
     methods: {
         doWithErrcode(error, errorFunc) {
@@ -522,15 +547,16 @@ var mixin = {
             })
         },
         PostData(url, param, succe, errorFunc) {
+            param = JSON.stringify(param).replace(/null/g, '""')
             var that = this
             $.ajax({
                 url: url,
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
+                data: param,
                 success: function (res) {
                     console.log(url)
-                    console.log(param)
+                    console.log(JSON.parse(param))
                     console.log(res)
                     if (that.doWithErrcode(res.error, errorFunc)) {
                         return
@@ -578,7 +604,7 @@ var mixin = {
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
                             if (node.AddPeople.length == 0) {
-                                this.$alert('您尚未选择审批人', '提交错误', {
+                                this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                                     confirmButtonText: '确定',
                                     callback: action => {
 
@@ -636,6 +662,8 @@ var mixin = {
                 "FlowId": FlowId,
                 "IsSend": "false",
                 "State": "1",
+                "Id": this.ruleForm.Id,
+                "Remark": this.ruleForm.mark
             })
             for (let p in param) {
                 paramArr[0][p] = param[p]
@@ -644,7 +672,7 @@ var mixin = {
                 if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
                     if (node.AddPeople.length == 0) {
-                        this.$alert('您尚未选择审批人', '提交错误', {
+                        this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                             confirmButtonText: '确定',
                             callback: action => {
 
@@ -683,7 +711,7 @@ var mixin = {
             console.log(JSON.stringify(paramArr))
             //return
             this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
-                this.$alert('审批成功', '操作成功', {
+                this.$alert('审批成功', '提示信息', {
                     confirmButtonText: '确定',
                     callback: action => {
                         loadPage('/main/Approval_list')
@@ -728,7 +756,7 @@ var mixin = {
                 param[o] = option[o]
             }
             this.PostData("/FlowInfoNew/FlowBack", param, (res) => {
-                this.$alert('操作成功', '提示', {
+                this.$alert('审批已退回', '提示信息', {
                     confirmButtonText: '确定',
                     callback: action => {
                         loadPage('/main/Approval_list')
@@ -761,16 +789,21 @@ var mixin = {
             }
             ReApprovalTempData = {
                 valid: true,
-                data: this.data,
                 dataArr: this.dataArr,
                 imageList: this.imageList,
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
-                ruleForm: Object.assign(this.tableForm, this.ruleForm)
+                ruleForm: Object.assign(this.ruleForm, this.tableForm)
             }
+            if (this.data) {
+                ReApprovalTempData['dataArr'] = this.data
+            } else if (this.tableData) {
+                ReApprovalTempData['dataArr'] = this.tableData
+            }
+
             //if(items) ReApprovalTempData['items'] = items
             for (let img of imgConfig) {
-                if (img.flowId == FlowId) {
+                if (img.FlowId == FlowId) {
                     loadPage(img.url)
                 }
             }
@@ -780,7 +813,7 @@ var mixin = {
             if (!ReApprovalTempData.valid) return
             this.ruleForm = ReApprovalTempData.ruleForm
             ReApprovalTempData.valid = false
-            this.purchaseList = ReApprovalTempData.data
+            this.purchaseList = ReApprovalTempData.dataArr
         },
         //翻頁相關事件
         //获取全部方法
@@ -853,8 +886,6 @@ var mixin = {
 
         //获取审批/抄送 相关人员列表
         getNodeInfo() {
-            console.log('老铁，666666666666666')
-            console.warn('老铁，666666666666666')
             var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             this.GetData(url, (res) => {
                 this.isBack = res[0].IsBack
@@ -1101,11 +1132,15 @@ var mixin = {
         },
         //文件上传处理方法
         BeforeFileUpload(file) {
+            if (!file.type) {
+                this.$message({ type: 'error', message: `文件类型不正确，请重新选择！` });
+                return
+            }
             file.name = 'helloWorld'
             isPdf = false
-            const isLt2M = file.size / 1024 / 1024 < 10
+            const isLt2M = file.size / 1024 / 1024 < 30
             if (!isLt2M) {
-                this.$message.error('上传文件大小不能超过 10MB!')
+                this.$message.error('文件大小不允许超过30M，请重新选择!')
                 return false
             }
             return true
@@ -1118,7 +1153,7 @@ var mixin = {
                 return false
             }
             if (!isLt2M) {
-                this.$message.error('上传文件大小不能超过 4MB!')
+                this.$message.error('文件大小不允许超过4M，请重新选择!')
                 return false
             }
             return true
@@ -1252,7 +1287,6 @@ var mixin = {
                 }
             })
         },
-
 
         //选时间操作
         selectTime(value) {
@@ -1405,6 +1439,34 @@ function PostData(url, param, succe, error) {
         }
     })
 }
+
+//表单限制输入，返回对象函数
+function lengthLimit(min, max) {
+    return {
+        min: min, max: max, message: '长度在 ' + min + ' 到 ' + max + ' 个字符', trigger: 'blur'
+    }
+}
+
+Vue.component('sam-input', {
+    props: ['value', 'required', 'type', 'min', 'max', 'callBack'],
+    template: `<el-input show-word-limit  :type="type||'input'"
+                        :minlength = min||0 :maxlength = max||30 v-on:blur="onBlur"
+                        :class="{ redborder:(value =='' && required)}">
+                   </el-input>`,
+    data: function () {
+        return {
+
+        }
+    },
+    methods: {
+        onBlur(e) {
+            let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
+            this.$emit('update:value', value)
+        }
+    },
+})
+
+
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
@@ -1656,7 +1718,7 @@ Vue.component('ding', {
                     <el-form-item label="钉时间" :label-width="formLabelWidth">
                       <div class="block">
                         <span class="demonstration">默认</span>
-                        <el-date-picker
+                        <el-date-picker :editable="false"
                           v-model="form.alertDate"
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm"

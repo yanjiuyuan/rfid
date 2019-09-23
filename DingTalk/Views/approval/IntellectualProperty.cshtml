@@ -24,11 +24,6 @@
                 <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        @*<el-form-item label="申报单位" prop="Company">
-            <el-select v-model="ruleForm.Company" style="width:400px;">
-                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>*@
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
@@ -96,11 +91,11 @@
                     ProjectId: ""
                 },
                 rules: {
-                    Company: { required: true, message: '申报单位不能为空', trigger: 'blur' },
-                    Name: { required: true, message: '申请名称不能为空', trigger: 'blur' },
-                    Type: { required: true, message: '申请类别不能为空', trigger: 'blur' },
-                    Inventor: { required: true, message: '申请发明人不能为空', trigger: 'blur' },
-                    ProjectId: { required: true, message: '项目不能为空', trigger: 'blur' }
+                    Company: [{ required: true, message: '申报单位不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    Name: [{ required: true, message: '申请名称不能为空', trigger: 'blur' },{ min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    Type: [{ required: true, message: '申请类别不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    Inventor: [{ required: true, message: '申请发明人不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    ProjectId: [{ required: true, message: '项目不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
                 }
             }
         },

@@ -35,12 +35,8 @@
             <el-input v-model="tableForm.Duration" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
-        <el-form-item v-if="imageList.length > 0" label="相关图片">
-            <el-upload action=""
-                       list-type="picture-card"
-                       :on-preview="handlePictureCardPreview2"
-                       :file-list="imageList">
-            </el-upload>
+        <el-form-item v-if="imageList.length > 0" label="外出照片">
+            <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList"/>
         </el-form-item>
 
         <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
@@ -65,7 +61,7 @@
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item label="操作" v-if="index==0">
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
+            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="disablePage">退回</el-button>
         </el-form-item>
         <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
             <el-form-item>
@@ -78,7 +74,7 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
-        <el-form-item label="操作" v-if="index!=0">
+        <el-form-item label="操作" v-if="state=='已完成'">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
     </el-form>
@@ -131,7 +127,7 @@
             printPdf() {
                 var that = this
                 this._postData("/Evection/GetPrintPDF", function (result) {
-                    that.elementAlert('alert', result.errmsg)
+                    this.$message({ type: 'success', message: `文件获取成功，请查收` });
                 },
                     {
                         UserId: DingData.userid,
@@ -143,6 +139,10 @@
         },
         
         created: function () {
+            if (NodeId == 2) {
+                this.elementAlert('提示', '该步骤需要拍照上传，请到移动端审批。')
+                this.disablePage = true
+            }
             this.getTable()
             this.GetDingList(TaskId)
             loadHtml("mainPage", "partPage")

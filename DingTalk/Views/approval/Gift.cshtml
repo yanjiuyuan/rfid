@@ -67,7 +67,8 @@
 
     <!--礼品添加-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.key" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <sam-input :value.sync="searchForm.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchGifts">搜索</el-button>
     </div>
     <!--搜索结果礼品列表表格實體-->
@@ -81,19 +82,6 @@
             </template>
         </el-table-column>
     </el-table>
-    @*<div>
-            <span style="color:red">*</span><span style="padding:3px;">礼品名称</span>
-            <el-select v-model="giftName" filterable placeholder="请选择">
-                <el-option v-for="item in giftList"
-                           :key="item"
-                           :label="item"
-                           :value="item">
-                </el-option>
-            </el-select>
-            <el-input v-model="count" style="width:200px;"></el-input>
-            <el-button type="primary" v-on:click="addGood">添加</el-button>
-        </div>*@
-
     <hr />
     <h3>已选礼品</h3>
     <!--采购列表表格實體-->
