@@ -50,9 +50,8 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("departmentListQuaryByUserId")]
-        public async Task<string> DepartmentListQuary()
+        public async Task<string> DepartmentListQuary(string userId)
         {
-            string userId = "manager325";
             var result = await dtManager.GetDepartmentByUserId(userId);
             return result;
         }
@@ -88,12 +87,12 @@ namespace DingTalk.Controllers
             return results;
         }
         
-        [Route("departmentListQuaryByDeptId")]
-        public async Task<string> departmentListQuaryByDeptId()
-        {
-            var allDptStr = await dtManager.GetDepartmentList();
-            return allDptStr;
-        }
+        //[Route("departmentListQuaryByDeptId")]
+        //public async Task<string> departmentListQuaryByDeptId()
+        //{
+        //    var allDptStr = await dtManager.GetDepartmentList();
+        //    return allDptStr;
+        //}
 
         [Route("addDepartment")]
         public async Task<string> DepartmentAdd()
@@ -109,12 +108,18 @@ namespace DingTalk.Controllers
             var result = await new DingTalkManager().AddDepartment(dpt);
             return result;
         }
-        [Route("SingleDepartment")]
-        public async Task<string> SingleDepartment()
+
+        /// <summary>
+        /// 根据部门Id获取部门详情
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("singleDepartment")]
+        public async Task<string> singleDepartment(int Id)
         {
             var allDptStr = await dtManager.GetDepartmentList();
             var allDpt = JsonConvert.DeserializeObject<DepartmentResponseModel>(allDptStr);
-            var result = await dtManager.SingleDepartment(allDpt.Department.LastOrDefault().Id);
+            var result = await dtManager.SingleDepartment(Id);
             return result;
         }
         private string GetRandomNum()
@@ -135,15 +140,16 @@ namespace DingTalk.Controllers
         #endregion
 
         #region user curd
+
+        /// <summary>
+        /// 根据用户Id获取用户详情
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Route("getUserDetail")]
         [System.Web.Http.HttpPost]
         public async Task<string> GetUserDetail(string userId)
         {
-            //string dptId = "0935455445756597";
-            //var departmentUserStr = await dtManager.GetDepartmentUserList(dptId);
-            //var departmentUser = JsonConvert.DeserializeObject<DepartmentUserResponseModel>(departmentUserStr);
-            //string userId = departmentUser.UserList.Last().UserId;
-            //string userId = "283763135732555063";
             var result = await dtManager.GetUserDetail(userId);
             return result;
         }

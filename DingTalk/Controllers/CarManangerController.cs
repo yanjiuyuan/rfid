@@ -414,7 +414,7 @@ namespace DingTalk.Controllers
                                         UseKilometres = ct.UseKilometres,
                                         UnitPricePerKilometre = c.UnitPricePerKilometre,
                                         FactKilometre = ct.FactKilometre,
-                                        AllPrice = float.Parse(ct.FactKilometre) * c.UnitPricePerKilometre,
+                                        AllPrice = float.Parse(ct.FactKilometre) * float.Parse(c.UnitPricePerKilometre.ToString()),
                                         //Remark = t.Remark
                                     };
                         var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);

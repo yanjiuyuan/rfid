@@ -473,7 +473,7 @@ namespace DingTalk.Controllers
                     else
                     {
                         //检测路径查询权限
-                        int k = GetIndexOfString(RePath, "\\", 6);
+                        int k = GetIndexOfString(RePath, "\\", 7);
                         string CheckPath = RePath.Substring(0, k - 1);
                         bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
                         if (IsComPower)
@@ -724,8 +724,6 @@ namespace DingTalk.Controllers
                             return JsonConvert.SerializeObject(pro);
                         }
                     }
-
-
                 }
             }
             catch (Exception ex)
@@ -736,7 +734,6 @@ namespace DingTalk.Controllers
                     errorMessage = ex.Message
                 });
             }
-
         }
 
         /// <summary>
