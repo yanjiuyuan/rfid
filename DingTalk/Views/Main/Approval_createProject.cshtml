@@ -89,7 +89,7 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
-        <template v-if="index!=0">
+        <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
             </el-form-item>

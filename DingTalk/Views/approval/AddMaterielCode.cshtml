@@ -39,12 +39,14 @@
 
             <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row[key]" :class="{redborder:!scope.row[key]}"></el-input>
+                    <sam-input :value.sync="scope.row[key]" :required="true"></sam-input>
+                    @*<el-input v-model="scope.row[key]" :class="{redborder:!scope.row[key]}"></el-input>*@
                 </template>
             </el-table-column>
             <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) <0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row[key]"></el-input>
+                    <sam-input :value.sync="scope.row[key]"></sam-input>
+                    @*<el-input v-model="scope.row[key]"></el-input>*@
                 </template>
             </el-table-column>
 

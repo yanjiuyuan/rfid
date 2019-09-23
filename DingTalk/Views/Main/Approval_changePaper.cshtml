@@ -73,7 +73,7 @@
                 </div>
             </el-card>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="state=='已完成'">
             <el-button type="primary" v-on:click="print" :disabled="disablePage">打印</el-button>
         </el-form-item>
         <!--添加审批人-->

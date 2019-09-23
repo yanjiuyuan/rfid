@@ -11,11 +11,11 @@
     </div>
     <!--物料搜索-->
     <div>
-        @*<span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
-        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>*@
-        <span style="color:red">*</span><span style="padding:3px;">采购单编号搜索</span><el-input v-model="searchForm.no" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">采购单编号搜索</span>
+        <sam-input :value.sync="searchForm.no" style="width:200px;" placeholder="请输入采购单编号"></sam-input>
         <el-button type="primary" v-on:click="searchNo">搜索</el-button>
-        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span>
+        <sam-input :value.sync="searchForm.name" style="width:200px;" placeholder="请输入关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -25,8 +25,6 @@
         <el-table-column prop="fQty" label="实收数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
-        @*<el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">

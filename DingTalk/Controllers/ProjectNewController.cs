@@ -244,7 +244,7 @@ namespace DingTalk.Controllers
             return new NewErrorModel()
             {
                 data = dDContext.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault(),
-                error = new Error(1,"读取成功！" , "") { },
+                error = new Error(0,"读取成功！" , "") { },
             };
         }
 

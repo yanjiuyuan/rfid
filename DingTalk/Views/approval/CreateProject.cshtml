@@ -48,7 +48,7 @@
             <el-form-item label="项目周期" required="required">
                 <el-date-picker v-model="ruleForm.Time"
                                 type="daterange"
-                                :picker-options="pickerOptions"
+                                :picker-options="pickerOptions" :editable="false"
                                 range-separator="至"
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期">

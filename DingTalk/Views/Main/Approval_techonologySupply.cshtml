@@ -64,7 +64,7 @@
             </el-form-item>
             <el-form-item v-if="NodeId==1" label="测试项目周期" required="required">
                 <el-date-picker v-model="tableForm.StartTime"
-                                type="daterange"
+                                type="daterange" :editable="false"
                                 :picker-options="pickerOptions"
                                 range-separator="至"
                                 start-placeholder="开始日期"
@@ -138,7 +138,7 @@
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
             </el-form-item>
         </template>
-        <template v-if="index!=0">
+        <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
             </el-form-item>

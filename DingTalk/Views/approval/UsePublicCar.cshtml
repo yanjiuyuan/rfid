@@ -46,7 +46,7 @@
                             v-on:change="selectTime"
                             @*:picker-options="dayPickerOptions"*@
                             range-separator="至"
-                            start-placeholder="开始时间"
+                            start-placeholder="开始时间" :editable="false"
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
@@ -117,7 +117,6 @@
         <br />
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="!checked">提交</el-button>
-            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -151,13 +150,13 @@
                     OccupyCarId: ""
                 },
                 rules: {
-                    DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
-                    PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
-                    MainContent: { required: true, message: '用车事由不能为空', trigger: 'blur' },
-                    PlantTravelWay: { required: true, message: '计划路线不能为空', trigger: 'blur' },
-                    startAddress: { required: true, message: '始发地点不能为空', trigger: 'blur' },
-                    StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },
-                    EndTime: { required: true, message: '返回时间不能为空', trigger: 'blur' }
+                    DrivingMan: commonInput,
+                    PeerNumber: commonInput,
+                    MainContent: commonInput,
+                    PlantTravelWay: commonInput,
+                    startAddress: commonInput,
+                    StartTime: commonInput,
+                    EndTime: commonInput
                 },
                 dayPickerOptions: {
                     shortcuts: [

@@ -122,8 +122,16 @@
                         index: Index,
                         state: row.State
                     }
+                    if (row.FlowId == 1) {
+                        loadPage('/Main/approval_officeSupplies' + _formatQueryStr(param))
+                        return
+                    }
                     if (row.FlowId == 7) {
                         loadPage('/Main/approval_detail2' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 8) {
+                        loadPage('/Main/approval_purchase' + _formatQueryStr(param))
                         return
                     }
                     if (row.FlowId == 12) {

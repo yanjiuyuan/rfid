@@ -37,7 +37,7 @@
         <el-form-item label="协作时间" prop="PlanBeginTime">
             <el-date-picker v-model="timeRange"
                             type="daterange"
-                            v-on:change="selectTime"
+                            v-on:change="selectTime" :editable="false"
                             range-separator="至"
                             start-placeholder="开始时间"
                             end-placeholder="结束时间">

@@ -14,13 +14,12 @@
     <el-form :inline="true" :model="searchParam" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
-            <el-input v-model="searchParam.key" style="width:200px;"
-                      placeholder="申请人、申请部门、物料名称"></el-input>
+            <sam-input :value.sync="searchForm.key" style="width:200px;" placeholder="申请人、申请部门、物料名称"></sam-input>
         </el-form-item>
         <el-form-item label="领料时间" required="required">
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
-                            v-on:change="selectTime"
+                            v-on:change="selectTime" :editable="false"
                             @*:picker-options="dayPickerOptions"*@
                             range-separator="至"
                             start-placeholder="开始时间"

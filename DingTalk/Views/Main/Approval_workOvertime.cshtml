@@ -22,7 +22,7 @@
         <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
                 <el-date-picker v-model="tableForm.DateTime" :disabled="true"
-                                type="date"
+                                type="date" :editable="false"
                                 value-format="yyyy-MM-dd"
                                 placeholder="选择日期"
                                 align="right">

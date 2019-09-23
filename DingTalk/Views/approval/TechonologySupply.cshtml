@@ -45,7 +45,7 @@
         </el-form-item>
         <el-form-item label="要求完成时间" prop="TimeRequired">
             <el-date-picker v-model="ruleForm.TimeRequired"
-                            type="date"
+                            type="date" :editable="false"
                             value-format="yyyy-MM-dd"
                             @*v-on:change="selectTime"*@
                             placeholder="选择日期">
@@ -109,12 +109,12 @@
                     Title: "技术支持申请"
                 },
                 rules: {
-                    ProjectType: { required: true, message: '项目大类不能为空', trigger: 'blur' },
-                    ResponsibleMan: { required: true, message: '项目负责人不能为空', trigger: 'blur' },
-                    Customer: { required: true, message: '客户名称不能为空', trigger: 'blur' },
-                    TimeRequired: { required: true, message: '要求完成时间不能为空', trigger: 'blur' },
-                    ProjectOverview: { required: true, message: '项目整体概况不能为空', trigger: 'blur' },
-                    MainPoints: { required: true, message: '技术支持要点不能为空', trigger: 'blur' }
+                    ProjectType: commonInput,
+                    ResponsibleMan: commonInput,
+                    Customer: commonInput,
+                    TimeRequired: commonInput,
+                    ProjectOverview: commonInput,
+                    MainPoints: commonInput
                 }
             }
         },

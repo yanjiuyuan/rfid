@@ -74,14 +74,12 @@
         </el-form-item>*@
 
         <!--图片展示-->
-        <el-form-item v-if="imageList.length > 0" label="相关图片">
-            <el-upload action=""
-                       list-type="picture-card"
-                       :on-preview="handlePictureCardPreview2"
-                       :file-list="imageList">
-            </el-upload>
+        <el-form-item v-if="imageList.length > 0" label="起始公里數照片">
+            <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
         </el-form-item>
-
+        <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
+            <img :src="preUrl" />
+        </div>
         <hr />
 
         <!--添加审批人-->
@@ -90,7 +88,7 @@
             <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
             <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
         </el-form-item>
-        <el-form-item label="操作" v-if="index!=0">
+        <el-form-item label="操作" v-if="state=='已完成'">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
         <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
@@ -222,6 +220,10 @@
             }
         },
         created: function () {
+            if (NodeId == 3) {
+                this.elementAlert('提示', '该步骤需要拍照上传，请到移动端审批。')
+                this.disablePage = true
+            }
             this.getUseCarTable()
             if (NodeId == '3' || NodeId == '4' || NodeId == '5' || NodeId == '6') this.reInput = true
             loadHtml("mainPage", "partPage")

@@ -1,5 +1,10 @@
 ﻿
 /*通用*/
+.imgList {
+    width: 200px;
+    height: 200px;
+    margin-right: 5px;
+}
 .redFont{color:red;}
 .greenFont { color: green;}
 .redBg{background-color:red;}

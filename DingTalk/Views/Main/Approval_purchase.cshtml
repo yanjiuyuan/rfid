@@ -5,7 +5,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        维修申请审批-{{nodeInfo.NodeName}}
+        零部件申请审批-{{nodeInfo.NodeName}}
     </div>
 
     <!--表格實體-->
@@ -26,15 +26,15 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="预计总价">
+            <el-input v-model="totalPrice" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="标题" v-if="ruleForm.Title">
             <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
-        @*<el-form-item label="项目名称" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>*@
         <el-form-item label="备注">
             <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
         </el-form-item>
@@ -79,6 +79,7 @@
         Id = UrlObj.id
         Index = UrlObj.index
     }
+
     var items = {
         CodeNo: '物料编码',
         Name: '物料名称',
@@ -86,8 +87,8 @@
         Unit: '单位',
         Count: '数量',
         Price: '单价(预计)',
-        MaintainContent: '维修内容',
-        NeedTime: '需用时间',
+        Purpose: '用途',
+        UrgentDate: '需用日期',
         Mark: '备注'
     }
     var demo = new Vue({
@@ -102,6 +103,7 @@
                 FlowId: FlowId,
                 Index: Index,
                 NodeId: NodeId,
+                totalPrice: 0,
                 tableData: [],
                 totalRows: 0,
                 nodeInfo: {},
@@ -115,6 +117,15 @@
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
+                if (NodeId == 3) {
+                    this.PostData('/OfficeSupplies/ModifyTable', this.data, (res) => {
+                        this.aggreSubmit({
+                            "Id": this.ruleForm.Id,
+                            "Remark": this.ruleForm.mark
+                        })
+
+                    })
+                }
                 this.aggreSubmit({
                     "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.mark
@@ -123,20 +134,27 @@
             //获取bom表信息
             getBomInfo() {
                 var that = this
-                this.GetData("/Maintain/Read?TaskId=" + TaskId, (data) => {
+                this.GetData("/PurchaseNew/ReadPurchaseTable?TaskId=" + TaskId, (data) => {
                     that.data = data
+                    for (let p of data) {
+                        this.totalPrice = this.totalPrice + p.Price * p.Count
+                    }
                     that.getData()
                     that.totalRows = that.data.length
                 })
             },
+            //设置BOM表单状态
+            setState(index, row) {
+                row.IsDelete = !row.IsDelete
+            },
             printTable() {
-                this.PostData('Maintain/PrintPDF',{
+                this.PostData('PurchaseNew/PrintAndSend',{
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息','获取成功，请在工作通知中查收') })
             },
             printBom() {
-                this.PostData('Borrow/PrintExcel', {
+                this.PostData('PurchaseNew/PrintExcel', {
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })

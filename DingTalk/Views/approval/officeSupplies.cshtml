@@ -1,6 +1,30 @@
 ﻿@{
     Layout = null;
 }
+<script>
+    // :minlength="{{min||0}}" :maxlength="{{max||12}}" :type="{{type||'input'}}"
+    Vue.component('sam-input', {
+        props: ['value', 'required', 'type', 'min', 'max', 'callBack', 'placeholder'],
+        template: `<el-input show-word-limit  :type="type||'input'" :placeholder="placeholder||''"
+                        :minlength = min||0 :maxlength = max||30 v-on:blur="onBlur"
+                        :class="{ redborder:(value =='' && required)}">
+                   </el-input>`,
+        data: function () {
+            return {
+                
+            }
+        },
+        methods: {
+            onBlur(e) {
+                let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
+                if (this.required && value == '') {
+                    this.$message({ type: 'error', message: `请输入正确值` });
+                }
+                this.$emit('update:value', value)
+            }
+        },
+    })
+</script>
 
 <!--右侧实体内容-->
 <el-main id="partPage" style="position:relative;">
@@ -11,7 +35,8 @@
     </div>
     <!--物料搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <sam-input :value.sync="searchForm.name" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -23,8 +48,8 @@
         <el-table-column prop="fNote" label="预计单价"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+                <p v-if="noList.indexOf(scope.row.fNumber) >= 0">已选择</p>
+                <el-button v-else size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -47,43 +72,24 @@
         <el-table-column prop="Name" label="物料名称"></el-table-column>
         <el-table-column prop="Standard" label="规格型号"></el-table-column>
         <el-table-column prop="Unit" label="单位"></el-table-column>
-        @*<el-table-column prop="Unit" label="单位">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.Unit" :class="{ redborder:scope.row.Unit ==''}">
-                </el-input>
-            </template>
-        </el-table-column>*@
-        <el-table-column prop="ExpectPrice" label="预计单价" width="100">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.ExpectPrice" :disabled="true">
-                </el-input>
-            </template>
-        </el-table-column>
+        <el-table-column prop="ExpectPrice" label="预计单价" width="100"></el-table-column>
         <el-table-column prop="Count" label="数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Count" prop="Count" :class="{ redborder:scope.row.Count ==''}"></el-input>
+                <sam-input :value.sync="scope.row.Count" type="number" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Purpose" label="用途">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Purpose"></el-input>
+                <sam-input :value.sync="scope.row.Purpose"></sam-input>
             </template>
         </el-table-column>
-        @*<el-table-column prop="UrgentDate" label="需用日期" width="140">
-            <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.UrgentDate" :class="{ redborder:scope.row.UrgentDate ==''}" class="repadding"
-                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus">
-                </el-date-picker>
-            </template>
-        </el-table-column>*@
         <el-table-column prop="Mark" label="备注">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.Mark"></el-input>
+                <sam-input :value.sync="scope.row.Mark"></sam-input>
             </template>
         </el-table-column>
         <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-                @*<el-button size="mini" v-on:click="showEditGood(scope.$index, scope.row)">编辑</el-button>*@
                 <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -123,6 +129,7 @@
                 data: [],
                 tableData: [],
                 purchaseList: [],
+                noList:[],
                 projectList: [],
                 good: {
                     ExpectPrice: '',
@@ -152,16 +159,15 @@
         methods: {
             onSubmit(formName) {
                 if (!this.purchaseList.length) {
-                    this.elementAlert('提交失败', '没有选择办公用品')
+                    this.elementAlert('提交失败', '请选择办公用品！')
                     return
                 }
                 for (let p of this.purchaseList) {
                     if (p.Count == '') {
-                        this.elementAlert('提交失败', '已选物品信息没填全')
+                        this.elementAlert('提交失败', '请填写已选用品信息！')
                         return
                     }
                 }
-
                 var that = this
                 let url = '/OfficeSupplies/SaveTable'
                 let callBack = function (taskId) {
@@ -173,7 +179,7 @@
                     }
                     console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
-                        that.$alert('恭喜提交成功', '提示信息', {
+                        that.$alert('恭喜提交审批成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
                                 goHome()
@@ -189,14 +195,18 @@
             
             //搜索物料列表
             searchCode(formName) {
-                if (!this.searchForm.name) return
+                this.searchForm.name = this.searchForm.name.replace(/\s/g,'')
+                if (!this.searchForm.name) {
+                    //success / info / warning / error
+                    this.$message({type: 'error',message: `输入错误` });
+                    return
+                }
                 var url = jinDomarn + 'OfficeSupply/GetOfficeInfo?Key=' + this.searchForm.name
                 this._getData(url, (res) => {
                     this.data = res.data
                     this.totalRows = res.length
                     this.getData()
                 })
-               
             },
             //添加申请物料
             addGood(index, good) {
@@ -216,10 +226,12 @@
                     UrgentDate: '',
                     Mark: ''
                 })
+                this.noList.push(good.fNumber)
             },
             //删除申请物料
             deleteGood(index, good) {
                 this.purchaseList.splice(index, 1)
+                this.noList.splice(index, 1)
             },
             //编辑审批物料
             showEditGood(index, good) {
@@ -248,7 +260,7 @@
             //显示临时保存数据
             saveTempData() {
                 setLocalObj('officeSupplies', this.purchaseList)
-                this.elementAlert('提示信息','保存成功')
+                this.elementAlert('提示信息','临时保存成功，支持下次继续')
             },
             loadTempData() {
                 var data = getLocalObj('officeSupplies')
@@ -262,7 +274,7 @@
             totalPrice: function () {
                 var totalPrice = 0
                 for (let p of this.purchaseList) {
-                    totalPrice = totalPrice + p.ExpectPrice * p.Count
+                    totalPrice = parseFloat(totalPrice + p.ExpectPrice * p.Count).toFixed(2)
                 }
                 return totalPrice
             }
@@ -278,7 +290,14 @@
            
         }
     })
-
+    document.onkeydown = function (e) { // 回车提交表单
+        // 兼容FF和IE和Opera
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            demo.searchCode()
+        }
+    }
 </script>
 
 
