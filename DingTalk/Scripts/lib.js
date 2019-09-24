@@ -1577,7 +1577,7 @@ Vue.component('sam-approver-list', {
                             </template>
 
                            <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
-                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName,node.NodeName)">+ 选人</el-button>
+                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.IsSelectMore)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
@@ -1627,10 +1627,10 @@ Vue.component('sam-approver-list', {
 
         },
         //选人控件添加
-        addMember(nodeId, nodename) {
+        addMember(nodeId, must) {
             var that = this
             DingTalkPC.biz.contact.choose({
-                multiple: !that.single, //是否多选： true多选 false单选； 默认true
+                multiple: must?true:false, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
