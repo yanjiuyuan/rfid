@@ -26,4 +26,10 @@ namespace DingTalk.Models
 
         public bool? IsRead { get; set; }
     }
+
+    public class TaskFlowModelList
+    {
+        public int count { get; set; }
+        public List<TaskFlowModel> taskFlowModels { get; set; }
+    }
 }

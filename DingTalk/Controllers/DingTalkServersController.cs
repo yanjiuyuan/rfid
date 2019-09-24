@@ -812,7 +812,7 @@ namespace DingTalk.Controllers
         public NewErrorModel GetCompanyInfo()
         {
             return new NewErrorModel()
-            {
+            { 
                 data = new CompanyModel() {
                     Id= DTConfig.type,
                     Url= DTConfig.Url
