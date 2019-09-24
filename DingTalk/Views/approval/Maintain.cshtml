@@ -195,14 +195,6 @@
                     Mark: ''
                 })
             },
-            //显示临时保存数据
-            saveTempData() {
-                this.saveData(this.purchaseList)
-                this.elementAlert('提示信息', '保存成功')
-            },
-            loadTempData() {
-                if (this.loadData()) this.purchaseList = this.loadData()
-            },
             //删除申请物料
             deleteGood(index, good) {
                 this.purchaseList.splice(index, 1)

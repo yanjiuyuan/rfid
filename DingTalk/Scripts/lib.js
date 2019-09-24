@@ -27,6 +27,11 @@ let status = ["在研", "已完成", "终止"]
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
+function getConfig() {
+    GetData('DingTalkServers/GetCompanyInfo', (res) => {
+        serverUrl = res.Url
+    })
+}
 //原型方法
 Array.prototype.removeByValue = function (val) {
     for (var i = 0; i < this.length; i++) {
@@ -767,7 +772,35 @@ var mixin = {
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
-        //显示临时保存数据 TempData
+        //显示临时保存数据
+        saveTempData() {
+            let data = {}
+            data['tableData'] = this.tableData || []
+            data['data'] = this.data || []
+            data['ruleForm'] = this.ruleForm || {}
+            data['tableForm'] = this.tableForm || {}
+            data['purchaseList'] = this.purchaseList || []
+            data['imageList'] = this.imageList || []
+            data['fileList'] = this.fileList || []
+            data['pdfList'] = this.pdfList || []
+            this.saveData(data)
+            this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
+        },
+        loadTempData() {
+            let data = this.loadData()
+            if (data) {
+                this['tableData'] = data.tableData
+                this['data'] = data.data
+                this['ruleForm'] = data.ruleForm
+                this['tableForm'] = data.tableForm
+                this['purchaseList'] = data.purchaseList
+                this['imageList'] = data.imageList
+                this['fileList'] = data.fileList
+                this['pdfList'] = data.pdfList
+                this.$message({ type: 'success', message: `获取临时保存数据成功，需要再次保存请点击保存按钮` });
+                this.saveData(null)
+            }
+        },
         saveData(data) {
             var Days = 7;
             var exp = new Date();
@@ -787,6 +820,7 @@ var mixin = {
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
+            if (!this.tableForm) this.tableForm = {}
             ReApprovalTempData = {
                 valid: true,
                 dataArr: this.dataArr,
@@ -795,6 +829,10 @@ var mixin = {
                 pdfList: tmpPdfList,
                 ruleForm: Object.assign(this.ruleForm, this.tableForm)
             }
+            data['data'] = this.data || []
+            data['data'] = this.data || []
+            data['data'] = this.data || []
+            data['data'] = this.data || []
             if (this.data) {
                 ReApprovalTempData['dataArr'] = this.data
             } else if (this.tableData) {

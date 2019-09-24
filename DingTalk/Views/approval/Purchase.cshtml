@@ -246,18 +246,6 @@
                 this.purchaseList[this.good.index] = tmpGood
                 let tmpArr = _cloneArr(this.purchaseList)
                 this.purchaseList = tmpArr
-                console.log('done eidt')
-                console.log(tmpGood)
-                console.log(this.good.index)
-                console.log(this.purchaseList)
-            },
-            //显示临时保存数据
-            saveTempData() {
-                this.saveData(this.tableData)
-                this.elementAlert('提示信息', '保存成功')
-            },
-            loadTempData() {
-                if (this.loadData()) this.tableData = this.loadData()
             },
         },
         computed: {
@@ -277,7 +265,6 @@
             this.loadTempData()
             this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
-            
         }
     })
 

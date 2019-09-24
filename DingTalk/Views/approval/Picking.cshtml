@@ -224,14 +224,6 @@
                 ReApprovalTempData.valid = false
                 this.purchaseList = ReApprovalTempData.data
             },
-            //显示临时保存数据
-            saveTempData() {
-                this.saveData(this.purchaseList)
-                this.elementAlert('提示信息', '保存成功')
-            },
-            loadTempData() {
-                if (this.loadData()) this.purchaseList = this.loadData()
-            },
         },
         created: function () {
             //FlowId = 6

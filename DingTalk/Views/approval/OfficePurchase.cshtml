@@ -25,7 +25,7 @@
     <!--物料列表表格實體-->
     <p style="font-size:24px;">总价预计  <span style="color:red;font-size:24px;">{{totalPrice}}</span>元</p>
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(d,i) in dataList" :name="i+1" :key="i">
+        <el-collapse-item v-for="(d,i) in data" :name="i+1" :key="i">
             <template slot="title">
                 <span style="font-size:20px;">部门名称:{{d.name}},请购总价预计</span>
                 <span style="color:red;">{{d.tmpTotalPrice}}</span>元
@@ -85,13 +85,12 @@
         data: function () {
             return {
                 data: [],
-                dataList: [],
                 tableData: [],
                 searchDate:[],
                 preApprove: false,
                 nodeList: [],
                 nodeInfo: {},
-                totalPrice: 0,
+                //totalPrice: 0,
                 searchForm: {
                     name: '',
                 },
@@ -113,7 +112,7 @@
             onSubmit(formName) {
                 var that = this
                 let valid = false
-                for (let d of that.dataList) {
+                for (let d of that.data) {
                     for (let v of d.value) {
                         if(d.value.length>0) valid = true
                         if (v.Price == '') {
@@ -130,7 +129,7 @@
                 let callBack = function (taskId) {
                     console.log(taskId)
                     var param = []
-                    for (let d of that.dataList) {
+                    for (let d of that.data) {
                         for (let v of d.value) {
                             v.TaskId = taskId
                             param.push(v)
@@ -154,10 +153,10 @@
             //删除不需要的物品
             deleteItem(index, row) {
                 console.log(row)
-                console.log(demo.dataList)
-                for (let d of demo.dataList) {
+                console.log(demo.data)
+                for (let d of demo.data) {
                     if (row.dept == d.name) {
-                        this.totalPrice = (this.totalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
+                        //this.totalPrice = (this.totalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
                         d.tmpTotalPrice = (d.tmpTotalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
                         d.value.splice(index, 1)
                     }
@@ -175,7 +174,7 @@
                     success: function (data) {
                         console.log(url)
                         console.log(data)
-                        that.dataList = []
+                        that.data = []
                         var deptStr = ''
                         for (let d of data) {
                             if (d.dept && deptStr.indexOf(d.dept) < 0) {
@@ -184,52 +183,58 @@
                         }
                         deptStr = deptStr.substring(0, deptStr.length - 1)
                         deptList = deptStr.split(',')
-                        that.totalPrice = 0
+                        //that.totalPrice = 0
                         for (let d of deptList) {
-                            that.dataList.push({
+                            that.data.push({
                                 name: d,
                                 value: [],
                                 tmpTotalPrice: 0
                             })
                         }
                         for (let d of data) {
-                            for (let l of that.dataList) {
+                            for (let l of that.data) {
                                 if (d.dept == l.name) {
                                     d.Price = d.ExpectPrice
                                     l.value.push(d)
                                     l.tmpTotalPrice += (d.Price * d.Count)
-                                    that.totalPrice += (d.Price * d.Count)
+                                    //that.totalPrice += (d.Price * d.Count)
                                     break
                                 }
                             }
                         }
-                        that.totalPrice = that.totalPrice.toFixed(2)
+                        //that.totalPrice = that.totalPrice.toFixed(2)
                         that.totalRows = data.length
                     }
                 })
             },
-            //显示临时保存数据
-            saveTempData() {
-                this.saveData(this.dataList)
-                this.elementAlert('提示信息', '保存成功')
-            },
-            loadTempData() {
-                if (this.loadData()) this.dataList = this.loadData()
-            },
             compute() {
-                this.totalPrice = 0
-                for (let l of this.dataList) {
+                //this.totalPrice = 0
+                for (let l of this.data) {
                     l.tmpTotalPrice = 0
                 }
-                for (let l of this.dataList) {
+                for (let l of this.data) {
                     for (let v of l.value) {
                         if (!v.Price) continue
                         let price = parseFloat(v.Price).toFixed(2)
                         if (!price) price == 0
                         l.tmpTotalPrice += price * v.Count
-                        this.totalPrice += price * v.Count
+                        //this.totalPrice += price * v.Count
                     }
                 }
+            }
+        },
+        computed: {
+            totalPrice(){
+                let tmpPrice = 0
+                for (let l of this.data) {
+                    for (let v of l.value) {
+                        if (!v.Price) continue
+                        let price = parseFloat(v.Price).toFixed(2)
+                        if (!price) price == 0
+                        tmpPrice += price * v.Count
+                    }
+                } 
+                return tmpPrice
             }
         },
         created: function () {

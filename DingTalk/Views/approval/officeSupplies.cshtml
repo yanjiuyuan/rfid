@@ -250,19 +250,6 @@
                 console.log(this.good.index)
                 console.log(this.purchaseList)
             },
-      
-            //显示临时保存数据
-            saveTempData() {
-                setLocalObj('officeSupplies', this.purchaseList)
-                this.elementAlert('提示信息','临时保存成功，支持下次继续')
-            },
-            loadTempData() {
-                var data = getLocalObj('officeSupplies')
-                console.log('load officeSupplies')
-                console.log(data)
-                if (data && data.length && data.length > 0) this.purchaseList = data
-                localStorage.removeItem('officeSupplies')
-            }
         },
         computed: {
             totalPrice: function () {

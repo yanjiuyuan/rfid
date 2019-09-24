@@ -76,6 +76,7 @@
             </sam-approver-list>
             <el-form-item>
                 <el-button type="primary" v-on:click="addProject('ruleForm')" :disabeld="disablePage">提交</el-button>
+                <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
             </el-form-item>
         </template>
     </el-form>
@@ -182,6 +183,8 @@
         created: function () {
             this.getNodeInfo()
             this.getApproInfo()
+            this.loadTempData()
+            this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
         }
     })
