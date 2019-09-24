@@ -8,6 +8,7 @@ using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -799,6 +800,30 @@ namespace DingTalk.Controllers
 
         #endregion
 
+        #region 获取当前公司
+
+        /// <summary>
+        /// 获取当前公司数据数据  （Id  0 为真实环境 1 为测试环境环境  2 为开发环境）
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetCompanyInfo")]
+
+        public NewErrorModel GetCompanyInfo()
+        {
+            return new NewErrorModel()
+            {
+                data = new CompanyModel() {
+                    Id= DTConfig.type,
+                    Url= DTConfig.Url
+                },
+                error = new Error(0, "读取成功！", "") { },
+            };
+        }
+      
+
+        #endregion
+
         #region 本人审批意见修改
 
         /// <summary>
@@ -834,5 +859,17 @@ namespace DingTalk.Controllers
         }
 
         #endregion
+    }
+
+    public class CompanyModel
+    {
+        /// <summary>
+        /// 公司Id  （0 为真实环境 1 为测试环境环境  2 为开发环境）
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
+        /// 服务端路径
+        /// </summary>
+        public string Url { get; set; }
     }
 }
