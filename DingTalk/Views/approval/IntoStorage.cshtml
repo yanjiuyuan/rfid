@@ -249,18 +249,6 @@
                 ReApprovalTempData.valid = false
                 this.purchaseList = ReApprovalTempData.data
             },
-            //显示临时保存数据
-            saveTempData() {
-                setLocalObj('officeSupplies', this.purchaseList)
-                this.elementAlert('提示信息','保存成功')
-            },
-            loadTempData() {
-                var data = getLocalObj('officeSupplies')
-                console.log('load officeSupplies')
-                console.log(data)
-                if (data && data.length && data.length > 0) this.purchaseList = data
-                localStorage.removeItem('officeSupplies')
-            }
         },
         created: function () {
             //FlowId = 6

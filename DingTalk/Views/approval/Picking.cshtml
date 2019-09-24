@@ -13,7 +13,7 @@
     <div>
         <span style="color:red">*</span><span style="padding:3px;">采购流程流水号添加</span>
         <sam-input :value.sync="searchForm.taskid" style="width:200px;" placeholder="请输入流水号"></sam-input>
-        <el-button type="primary" v-on:click="searchAndAdd2">添加</el-button>
+        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>
     </div>
     <div style="margin-top:10px;">
         <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span>
@@ -24,14 +24,15 @@
     <el-table :data="tableData" stripe border>
         <el-table-column prop="fNumber" label="物料编码"></el-table-column>
         <el-table-column prop="fName" label="物料名称"></el-table-column>
-        <el-table-column prop="fQty" label="库存数量"></el-table-column>
+        <el-table-column prop="total" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+                <el-button v-if="scope.row.total && noList.indexOf(scope.row.fNumber) < 0" size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+                <p v-if="noList.indexOf(scope.row.fNumber) >= 0">已选择</p>
+                <span v-if="!scope.row.total" style="color:red;">库存为空</span>
             </template>
         </el-table-column>
     </el-table>
@@ -54,11 +55,10 @@
         <el-table-column prop="fName" label="物料名称"></el-table-column>
         <el-table-column prop="fQty" label="领料数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.fQty" prop="Count" value="1" type="number"
-                          :class="{ redborder:scope.row.fQty =='' || scope.row.fQty > scope.row.left}"></el-input>
+                <sam-input :value.sync="scope.row.fQty" type="number" :required="true" :max="scope.row.total" min="0"></sam-input>
             </template>
         </el-table-column>
-        <el-table-column prop="fQty" label="库存数量"></el-table-column>
+        <el-table-column prop="total" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
@@ -112,6 +112,7 @@
                 data: [],
                 tableData: [],
                 purchaseList: [],
+                noList: [],
                 nodeList: [],
                 projectList: [],
                 nodeInfo: {},
@@ -175,6 +176,9 @@
                 if (!this.searchForm.name) return
                 var url = jinDomarn + 'Pick/ReadPickInfoSingle?keyWord=' + this.searchForm.name
                 this.GetData(url, (data) => {
+                    for (let d of data) {
+                        d['total'] = d.fQty
+                    }
                     this.data = data
                     this.totalRows = data.length
                     this.getData()
@@ -182,25 +186,9 @@
             },
             searchAndAdd() {
                 var that = this
-                if (!this.searchForm.business) return
-                var url = jinDomarn + '/Pick/ReadPickingInfo?UnitName=' + that.searchForm.business
-                this.GetData(url, function (data) {
-                    for (let d of data) {
-                        let ifBreak = false
-                        for (let p of that.purchaseList) {
-                            if (d.fNumber == p.fNumber) ifBreak = true
-                        }
-                        if (ifBreak) break
-                        that.purchaseList.push(d)
-                    }
-                })
-            },
-            searchAndAdd2() {
-                var that = this
                 if (!this.searchForm.taskid) return
                 var url = 'Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: this.searchForm.taskid })
                 this.GetData(url, function (data) {
-                    console.log('23333333')
                     console.log(data)
                     for (let d of data) {
                         let ifBreak = false
@@ -208,7 +196,10 @@
                             if (d.fNumber == p.fNumber) ifBreak = true
                         }
                         if (ifBreak) break
+                        d['total'] = d.fQty
+                        d.fQty = 0
                         that.purchaseList.push(d)
+                        that.noList.push(d.fNumber)
                     }
                 })
             },
@@ -216,13 +207,15 @@
             addGood(index, good) {
                 for (let p of this.purchaseList) {
                     if (p.fNumber == good.fNumber) return
-                    good.fQty = 0
                 }
+                good.fQty = 0
                 this.purchaseList.push(good)
+                this.noList.push(good.fNumber)
             },
             //删除申请物料
             deleteGood(index) {
                 this.purchaseList.splice(index, 1)
+                this.noList.splice(index, 1)
             },
             //加载重新发起审批传递的数据
             loadReApprovalData() {
@@ -230,14 +223,6 @@
                 this.ruleForm.Title = ReApprovalTempData.Title
                 ReApprovalTempData.valid = false
                 this.purchaseList = ReApprovalTempData.data
-            },
-            //显示临时保存数据
-            saveTempData() {
-                this.saveData(this.purchaseList)
-                this.elementAlert('提示信息', '保存成功')
-            },
-            loadTempData() {
-                if (this.loadData()) this.purchaseList = this.loadData()
             },
         },
         created: function () {
