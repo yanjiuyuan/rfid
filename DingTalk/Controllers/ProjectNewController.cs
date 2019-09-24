@@ -58,7 +58,6 @@ namespace DingTalk.Controllers
             }
         }
 
-
         /// <summary>
         /// 获取目录下的文件夹信息
         /// </summary>
@@ -134,8 +133,9 @@ namespace DingTalk.Controllers
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
+
                     int AppearCount = SubstringCount(path, "\\");
-                    if (AppearCount < 5)
+                    if (AppearCount < 6)
                     {
                         return new NewErrorModel()
                         {
@@ -144,19 +144,19 @@ namespace DingTalk.Controllers
                         };
                     }
                     string CheckPath = path;
-                    if (AppearCount > 5)
-                    {
-                        int k = GetIndexOfString(path, "\\", 6);
-                        path = path.Substring(0, k - 1);
-                    }
+
+                    //if (AppearCount > 6)
+                    //{
+                    //    int k = GetIndexOfString(path, "\\", 6);
+                    //    path = path.Substring(0, k - 1);
+                    //}
                     //项目负责人
                     bool IsProjectLeader = context.ProjectInfo.Where(p => p.ResponsibleManId == userId && p.FilePath == path).ToList().Count() > 0 ? true : false;
                     //小组成员
                     bool IsGroupMember = context.ProjectInfo.Where(p => p.TeamMembersId.Contains(userId) && p.FilePath == path).ToList().Count() > 0 ? true : false;
 
-                    if (AppearCount == 5)  //项目路径层级
+                    if (AppearCount == 7)  //项目路径层级
                     {
-
                         if (IsProjectLeader || IsGroupMember)
                         {
                             return new NewErrorModel()
@@ -229,7 +229,7 @@ namespace DingTalk.Controllers
             }
         }
 
-        
+
         /// <summary>
         /// 项目数据单条信息读取
         /// </summary>
@@ -244,7 +244,7 @@ namespace DingTalk.Controllers
             return new NewErrorModel()
             {
                 data = dDContext.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault(),
-                error = new Error(0,"读取成功！" , "") { },
+                error = new Error(1,"读取成功！" , "") { },
             };
         }
 
@@ -352,73 +352,8 @@ namespace DingTalk.Controllers
         }
 
 
-        /// <summary>
-        /// 项目信息关键字查询
-        /// </summary>
-        /// <param name="key">关键字(项目名、项目编号、部门、负责人)</param>
-        /// <param name="startTime">开始时间</param>
-        /// <param name="endTime">结束时间</param>
-        /// <param name="projectState">项目状态</param>
-        /// <param name="projectType">大类</param>
-        /// <param name="projectSmallType">小类</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("QuaryProjectInfo")]
-        public NewErrorModel QuaryProjectInfo(string key = "", string startTime = "", string endTime = "", string projectState = "",
-            string projectType = "", string projectSmallType = "")
-        {
-            try
-            {
-                List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
-                List<ProjectInfo> ProjectInfoListQuery = new List<ProjectInfo>();
-                using (DDContext context = new DDContext())
-                {
-                    ProjectInfoList = context.ProjectInfo.ToList();
-                    ProjectInfoList = ProjectInfoList.Where(p => key == "" ? 1 == 1 : ((p.ProjectName.Contains(key) || p.ProjectId.Contains(key) || p.DeptName.Contains(key) || p.ResponsibleMan.Contains(key)))).ToList();
-
-                    ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
-                    endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
 
 
-                    ProjectInfoList = ProjectInfoList.Where(p => (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
-                    && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
-
-                    if (projectState != "")
-                    {
-                        foreach (var item in projectState.Split('_'))
-                        {
-                            foreach (var pitem in ProjectInfoList)
-                            {
-                                if (pitem.ProjectState == item)
-                                {
-                                    ProjectInfoListQuery.Add(pitem);
-                                }
-                            }
-                        }
-                        return new NewErrorModel()
-                        {
-                            count = ProjectInfoListQuery.Count,
-                            data = ProjectInfoListQuery.OrderByDescending(t => t.ProjectId.Substring(0, 4)).ThenByDescending(t => t.ProjectId.Substring(t.ProjectId.Length - 3, 3)),
-                            error = new Error(0, "查询成功！", "") { },
-                        };
-                    }
-                    
-                }
-                return new NewErrorModel()
-                {
-                    count = ProjectInfoList.Count,
-                    data = ProjectInfoList.OrderByDescending(t => t.ProjectId.Substring(0, 4)).ThenByDescending(t => t.ProjectId.Substring(t.ProjectId.Length - 3, 3)),
-                    error = new Error(0, "查询成功！", "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
-            }
-        }
 
         /// <summary>
         /// 推送项目提醒
@@ -450,7 +385,8 @@ namespace DingTalk.Controllers
                 };
             }
         }
-        
+
+
         /// <summary>
         /// 导出所有项目数据Excel
         /// </summary>
@@ -557,6 +493,223 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 项目信息关键字查询
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="projectState"></param>
+        /// <param name="projectType"></param>
+        /// <param name="projectSmallType"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("QuaryProjectInfo")]
+        public NewErrorModel QuaryProjectInfo(string key, string startTime = "", string endTime = "", string projectState = "",
+            string projectType = "", string projectSmallType = "")
+        {
+            try
+            {
+                List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
+                List<ProjectInfo> ProjectInfoListQuery = new List<ProjectInfo>();
+                using (DDContext context = new DDContext())
+                {
+                    ProjectInfoList = context.ProjectInfo.ToList();
+                    ProjectInfoList = ProjectInfoList.Where(p => string.IsNullOrEmpty(key) ? 1 == 1 : ((p.ProjectName.Contains(key) || p.ProjectId.Contains(key) || p.DeptName.Contains(key) || p.ResponsibleMan.Contains(key)))).ToList();
+
+                    ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
+                    endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
+
+
+                    ProjectInfoList = ProjectInfoList.Where(p => (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
+                    && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
+
+                    if (projectState != "")
+                    {
+                        foreach (var item in projectState.Split('_'))
+                        {
+                            foreach (var pitem in ProjectInfoList)
+                            {
+                                if (pitem.ProjectState == item)
+                                {
+                                    ProjectInfoListQuery.Add(pitem);
+                                }
+                            }
+                        }
+                        return new NewErrorModel()
+                        {
+                            count = ProjectInfoListQuery.Count,
+                            data = ProjectInfoListQuery.OrderByDescending(t => t.ProjectId.Substring(0, 4)).ThenByDescending(t => t.ProjectId.Substring(t.ProjectId.Length - 3, 3)),
+                            error = new Error(0, "查询成功！", "") { },
+                        };
+                    }
+
+                }
+                return new NewErrorModel()
+                {
+                    count = ProjectInfoList.Count,
+                    data = ProjectInfoList.OrderByDescending(t => t.ProjectId.Substring(0, 4)).ThenByDescending(t => t.ProjectId.Substring(t.ProjectId.Length - 3, 3)),
+                    error = new Error(0, "查询成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// 项目文件修改
+        /// </summary>
+        /// <param name="path">当前路径</param>
+        /// <param name="MovePath">修改文件名时的新路径</param>
+        /// <param name="ApplyMan">用户名</param>
+        /// <param name="ApplyManId">用户Id</param>
+        /// <param name="ChangeType">修改类型( 0:新建  1:删除  2:修改(需要多传一个MovePath参数))</param>
+        /// <param name="MediaId">盯盘唯一Id</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ChangeFile")]
+        public NewErrorModel ChangeFile(string path, string MovePath, string ApplyMan, string ApplyManId, int ChangeType, string MediaId)
+        {
+            try
+            {
+                //判断是否是文件
+                bool IsFile = Path.GetFileName(path).Contains(".");
+                using (DDContext context = new DDContext())
+                {
+                    FileInfos fileInfos = new FileInfos()
+                    {
+                        ApplyMan = ApplyMan,
+                        ApplyManId = ApplyManId,
+                        FilePath = path,
+                        LastModifyTime = DateTime.Now.ToString("yyyy-MM-dd HH:hh:ss"),
+                        LastModifyState = ChangeType.ToString()
+                    };
+                    //判断权限
+                    bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "项目管理员").ToList().Count() >= 1) ? true : false;
+                    string RePath = path;
+                    path = System.Web.Hosting.HostingEnvironment.MapPath(path);
+                    if (IsSuperPower)
+                    {
+                        switch (ChangeType)
+                        {
+                            case 0:
+                                if (IsFile)
+                                {
+                                    System.IO.File.Create(path);
+                                }
+                                else
+                                {
+                                    Directory.CreateDirectory(path);
+                                }
+                                context.FileInfos.Add(fileInfos);
+                                context.SaveChanges();
+                                break;
+                            case 1:
+                                if (IsFile)
+                                {
+                                    System.IO.File.Delete(path);
+                                }
+                                else
+                                {
+                                    Directory.Delete(path);
+                                }
+                                var f = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
+                                context.FileInfos.Remove(f);
+                                context.SaveChanges();
+                                break;
+                            case 2:
+                                Directory.Move(path, System.Web.Hosting.HostingEnvironment.MapPath(MovePath));
+                                var fs = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
+                                context.FileInfos.Remove(fs);
+                                context.SaveChanges();
+                                context.FileInfos.Add(fileInfos);
+                                context.SaveChanges();
+                                break;
+                        }
+
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, "操作成功", "") { },
+                        };
+                    }
+                    else
+                    {
+                        //检测路径查询权限
+                        int k = GetIndexOfString(RePath, "\\", 7);
+                        string CheckPath = RePath.Substring(0, k - 1);
+                        bool IsComPower = (context.ProjectInfo.Where(p => p.ResponsibleManId == ApplyManId && p.FilePath == CheckPath).ToList().Count() >= 1) ? true : false;
+                        if (IsComPower)
+                        {
+                            switch (ChangeType)
+                            {
+                                case 0:
+                                    if (IsFile)
+                                    {
+                                        System.IO.File.Create(path);
+                                    }
+                                    else
+                                    {
+                                        Directory.CreateDirectory(path);
+                                    }
+                                    context.FileInfos.Add(fileInfos);
+                                    context.SaveChanges();
+                                    break;
+                                case 1:
+                                    if (IsFile)
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    else
+                                    {
+                                        Directory.Delete(path);
+                                    }
+                                    var f = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
+                                    context.FileInfos.Remove(f);
+                                    context.SaveChanges();
+                                    break;
+                                case 2:
+                                    Directory.Move(path, System.Web.Hosting.HostingEnvironment.MapPath(MovePath));
+                                    var fs = context.FileInfos.Where(u => u.FilePath == RePath).FirstOrDefault();
+                                    context.FileInfos.Remove(fs);
+                                    context.SaveChanges();
+                                    context.FileInfos.Add(fileInfos);
+                                    context.SaveChanges();
+                                    break;
+                            }
+
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "操作成功", "") { },
+                            };
+                        }
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "用户没有权限进行操作", "") { },
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+
+
 
         /// <summary>
         /// 计算字符串中子串出现的次数
