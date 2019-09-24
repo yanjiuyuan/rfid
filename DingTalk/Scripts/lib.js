@@ -1448,9 +1448,9 @@ function lengthLimit(min, max) {
 }
 
 Vue.component('sam-input', {
-    props: ['value', 'required', 'type', 'min', 'max', 'callBack'],
+    props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack','max','min'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'"
-                        :minlength = min||0 :maxlength = max||30 v-on:blur="onBlur"
+                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur"
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {
@@ -1461,6 +1461,10 @@ Vue.component('sam-input', {
     methods: {
         onBlur(e) {
             let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
+            if (this.type == 'number') {
+                if (value > this.max) value = this.max
+                if (value < this.min) value = this.min
+            }
             this.$emit('update:value', value)
         }
     },

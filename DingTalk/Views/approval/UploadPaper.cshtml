@@ -303,6 +303,19 @@
                     }
                 });
             },
+            //下拉框选择项目
+            selectProject(id) {
+                console.log(id)
+                for (var proj of this.projectList) {
+                    if (proj.ProjectId == id) {
+                        delete proj.ApplyMan
+                        delete proj.ApplyManId
+                        delete proj.ProjectType
+                        Object.assign(this.ruleForm, proj)
+                        this.ruleForm.Title = proj.ProjectId + ' - ' + proj.ProjectName
+                    }
+                }
+            },
             //添加图纸审计人员
             addPeerNumber() {
                 var that = this
