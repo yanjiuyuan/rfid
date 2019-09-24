@@ -159,11 +159,7 @@
                         })
                     }, param)
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    FileUrl: this.ruleForm.FileUrl,
-                    MediaId: this.ruleForm.MediaId,
-                    OldFileUrl: this.ruleForm.OldFileUrl }, callBack)
+                this.approvalSubmit(callBack)
             },
             addPlace(formName) {
                 this.$refs[formName].validate((valid) => {

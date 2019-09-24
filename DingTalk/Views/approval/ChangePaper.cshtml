@@ -217,7 +217,7 @@
                         "MediaIdPDF": this.mediaPdfList.join(',')
                     }
                 }
-                this.approvalSubmit('ruleForm', this.ruleForm, (taskId) => {
+                let callBack = function (taskId) {
                     for (let item of changeParam.DrawingChangeList) {
                         item['TaskId'] = taskId
                     }
@@ -230,7 +230,8 @@
                             }
                         })
                     })
-                })
+                }
+                this.approvalSubmit(callBack)
             },
             
             search() {

@@ -125,13 +125,7 @@
                 }
                 this.nodeList[4].AddPeople = this.nodeList[2].AddPeople
                 this.nodeList[6].AddPeople = [...this.nodeList[1].AddPeople, ...this.nodeList[2].AddPeople]
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark,
-                    FileUrl: this.ruleForm.FileUrl,
-                    MediaId: this.ruleForm.MediaId,
-                    OldFileUrl: this.ruleForm.OldFileUrl
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             //选时间操作
             selectTime(value) {

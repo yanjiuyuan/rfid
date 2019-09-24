@@ -577,10 +577,11 @@ var mixin = {
             })
         },
         //提交审批
-        approvalSubmit(formName, param, callBack, param2 = {}) {
+        approvalSubmit(callBack) {
             if (!DingData.userid) return
             var that = this
-            this.$refs[formName].validate((valid) => {
+            this.fileListToUrl()
+            this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
                     that.disablePage = true
                     var paramArr = []
@@ -588,11 +589,20 @@ var mixin = {
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
                         "Dept": DingData.departName,
-                        "Title": that.ruleForm.Title,
-                        "ProjectName": that.ruleForm.ProjectName,
-                        "ProjectId": that.ruleForm.ProjectId,
-                        "ProjectName": that.ruleForm.ProjectName,
-                        "ProjectType": that.ruleForm.ProjectType,
+                        "Title": that.ruleForm.Title || '',
+                        "ProjectName": that.ruleForm.ProjectName || '',
+                        "ProjectId": that.ruleForm.ProjectId || '',
+                        "ProjectType": that.ruleForm.ProjectType || '',
+                        "Remark": that.ruleForm.Remark || '',
+                        "ImageUrl": that.ruleForm.ImageUrl || '',
+                        "OldImageUrl": that.ruleForm.OldImageUrl || '',
+                        "FileUrl": that.ruleForm.FileUrl || '',
+                        "MediaId": that.ruleForm.MediaId || '',
+                        "OldFileUrl": that.ruleForm.OldFileUrl || '',
+                        "FilePDFUrl": that.ruleForm.FilePDFUrl || '',
+                        "MediaIdPDF": that.ruleForm.MediaIdPDF || '',
+                        "OldFilePDFUrl": that.ruleForm.OldFilePDFUrl || '',
+                        "counts ": that.ruleForm.counts  || '',
                         "NodeId": "0",
                         "ApplyTime": _getTime(),
                         "IsEnable": "1",
@@ -651,12 +661,26 @@ var mixin = {
             });
         },
         //同意审批
-        aggreSubmit(param, param2 = {}) {
+        aggreSubmit(param = {}, param2 = {}) {
             if (!DingData.userid) return
             this.disablePage = true
             var paramArr = []
             var that = this
+            this.fileListToUrl()
             paramArr.push({
+                "Id": this.ruleForm.Id,
+                "Remark": this.ruleForm.Mark,
+                "ImageUrl": this.ruleForm.ImageUrl || '',
+                "OldImageUrl": this.ruleForm.OldImageUrl || '',
+                "FileUrl ": this.ruleForm.FileUrl || '',
+                "MediaId  ": this.ruleForm.MediaId  || '',
+                "OldFileUrl": this.ruleForm.OldFileUrl || '',
+                "FilePDFUrl ": this.ruleForm.FilePDFUrl || '',
+                "MediaIdPDF  ": this.ruleForm.MediaIdPDF  || '',
+                "OldFilePDFUrl ": this.ruleForm.OldFilePDFUrl || '',
+                "ProjectId": this.ruleForm.ProjectId || '',
+                "ProjectName": this.ruleForm.ProjectName || '',
+                "counts ": this.ruleForm.counts  || '',
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
@@ -667,8 +691,7 @@ var mixin = {
                 "FlowId": FlowId,
                 "IsSend": "false",
                 "State": "1",
-                "Id": this.ruleForm.Id,
-                "Remark": this.ruleForm.mark
+
             })
             for (let p in param) {
                 paramArr[0][p] = param[p]
@@ -829,10 +852,6 @@ var mixin = {
                 pdfList: tmpPdfList,
                 ruleForm: Object.assign(this.ruleForm, this.tableForm)
             }
-            data['data'] = this.data || []
-            data['data'] = this.data || []
-            data['data'] = this.data || []
-            data['data'] = this.data || []
             if (this.data) {
                 ReApprovalTempData['dataArr'] = this.data
             } else if (this.tableData) {
@@ -1512,7 +1531,7 @@ Vue.component('sam-input', {
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
-    props: ['nodedata', 'nodelist', 'single', 'specialRoles', 'specialRoleNames'],
+    props: ['nodedata', 'nodelist', 'specialRoles', 'specialRoleNames'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
@@ -1558,7 +1577,7 @@ Vue.component('sam-approver-list', {
                             </template>
 
                            <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
-                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName)">+ 选人</el-button>
+                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName,node.NodeName)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option

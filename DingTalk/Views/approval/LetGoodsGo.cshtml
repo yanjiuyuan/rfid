@@ -139,12 +139,7 @@
                         })
                     })
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark,
-                    "ImageUrl": this.ruleForm.ImageUrl,
-                    "OldImageUrl": this.ruleForm.OldImageUrl
-                }, callBack)
+                this.approvalSubmit(callBack)
             }
         },
         created: function () {
