@@ -14,7 +14,7 @@
     <el-form :inline="true" :model="searchParam" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
-            <sam-input :value.sync="searchForm.key" style="width:200px;" placeholder="申请人、申请部门、物料名称"></sam-input>
+            <sam-input :value.sync="searchParam.key" style="width:200px;" placeholder="申请人、申请部门、物料名称"></sam-input>
         </el-form-item>
         <el-form-item label="领料时间" required="required">
             <el-date-picker v-model="timeRange"

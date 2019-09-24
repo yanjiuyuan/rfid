@@ -813,7 +813,7 @@ var mixin = {
             if (!ReApprovalTempData.valid) return
             this.ruleForm = ReApprovalTempData.ruleForm
             ReApprovalTempData.valid = false
-            this.purchaseList = ReApprovalTempData.dataArr
+            this['purchaseList'] = ReApprovalTempData.dataArr
         },
         //翻頁相關事件
         //获取全部方法
@@ -1449,7 +1449,7 @@ function lengthLimit(min, max) {
 
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'min', 'max', 'callBack'],
-    template: `<el-input show-word-limit  :type="type||'input'"
+    template: `<el-input :value=value show-word-limit  :type="type||'input'"
                         :minlength = min||0 :maxlength = max||30 v-on:blur="onBlur"
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,

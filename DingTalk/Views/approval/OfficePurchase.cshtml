@@ -61,8 +61,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -97,7 +97,7 @@
                 },
                 activeNames: [1, 2, 3, 4, 5, 6],
                 ruleForm: {
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     remark: '',
                     ProjectName: '',
                     Title: '办公用品采购',
@@ -112,17 +112,19 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-                if (that.data.length == 0) {
-                    this.elementAlert('提示信息', '没有采购数据')
-                    return
-                }
+                let valid = false
                 for (let d of that.dataList) {
                     for (let v of d.value) {
+                        if(d.value.length>0) valid = true
                         if (v.Price == '') {
                             this.elementAlert('提示信息', '有单价未填')
                             return
                         }
                     }
+                }
+                if (!valid) {
+                    this.elementAlert('提示信息', '没有采购数据')
+                    return
                 }
                 let url = '/OfficeSuppliesPurchase/SaveTable'
                 let callBack = function (taskId) {
@@ -173,7 +175,6 @@
                     success: function (data) {
                         console.log(url)
                         console.log(data)
-                        that.data = data
                         that.dataList = []
                         var deptStr = ''
                         for (let d of data) {
@@ -204,7 +205,6 @@
                         }
                         that.totalPrice = that.totalPrice.toFixed(2)
                         that.totalRows = data.length
-                        that.getData()
                     }
                 })
             },

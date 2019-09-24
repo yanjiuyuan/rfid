@@ -16,7 +16,8 @@
         <el-button type="primary" v-on:click="searchAndAdd2">添加</el-button>
     </div>
     <div style="margin-top:10px;">
-        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span>
+        <sam-input :value.sync="searchForm.name" style="width:200px;" placeholder="请输入关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -73,8 +74,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
@@ -121,7 +122,7 @@
                 },
                 addPeopleNodes: [1],
                 ruleForm: {
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     remark: '',
                     ProjectName: '',
                     Title: '领料申请',

@@ -5,7 +5,7 @@
     // :minlength="{{min||0}}" :maxlength="{{max||12}}" :type="{{type||'input'}}"
     Vue.component('sam-input', {
         props: ['value', 'required', 'type', 'min', 'max', 'callBack', 'placeholder'],
-        template: `<el-input show-word-limit  :type="type||'input'" :placeholder="placeholder||''"
+        template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder="placeholder||''"
                         :minlength = min||0 :maxlength = max||30 v-on:blur="onBlur"
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
@@ -103,8 +103,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -144,7 +144,7 @@
                     name: '',
                 },
                 ruleForm: {
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     remark: '',
                     ProjectName: '',
                     Title: '办公用品申请',
@@ -250,13 +250,7 @@
                 console.log(this.good.index)
                 console.log(this.purchaseList)
             },
-            //加载重新发起审批传递的数据
-            loadReApprovalData() {
-                if (!ReApprovalTempData.valid) return
-                this.ruleForm.Title = ReApprovalTempData.Title
-                ReApprovalTempData.valid = false
-                this.purchaseList = ReApprovalTempData.data
-            },
+      
             //显示临时保存数据
             saveTempData() {
                 setLocalObj('officeSupplies', this.purchaseList)
