@@ -93,5 +93,18 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string PhoneUrl { get; set; }
+
+        /// <summary>
+        /// 选人控件单选或者多选(单选 0 多选 1)
+        /// </summary>
+        [StringLength(200)]
+        public string IsSelectMore { get; set; }
+
+        /// <summary>
+        /// 是否必选 (0 不必选 1 必选)
+        /// </summary>
+        [StringLength(200)]
+        public string IsMandatory { get; set; }
+        
     }
 }

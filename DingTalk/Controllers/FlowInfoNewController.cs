@@ -1798,8 +1798,8 @@ namespace DingTalk.Controllers
                                         IsSend = "",
                                         IsNeedChose = n.IsNeedChose,
                                         ChoseNodeId = n.ChoseNodeId,
-                                        IsMandatory=n.IsMandatory,
-                                        IsSelectMore=n.IsSelectMore
+                                        IsMandatory = n.IsMandatory,
+                                        IsSelectMore = n.IsSelectMore
                                     };
                         return new NewErrorModel()
                         {
