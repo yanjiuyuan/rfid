@@ -68,7 +68,7 @@
                 <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
             </el-form-item>
         </template>
-        <template v-if="index==2 && state=='未完成'">
+         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
@@ -133,6 +133,10 @@
         methods: {
             //提交审批
             onSubmit(formName) {
+                if (NodeId == 3 && this.imageList.length == 0) {
+                    this.$message({ type: 'error', message: `请先上传图片` });
+                    return
+                }
                 this.disablePage = true
                 this.aggreSubmit({
                     "Id": this.ruleForm.Id,

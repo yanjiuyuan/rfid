@@ -72,8 +72,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
@@ -118,7 +118,7 @@
                 },
                 addPeopleNodes: [2],
                 ruleForm: {
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     remark: '',
                     ProjectName: '',
                     Title: '入库申请',

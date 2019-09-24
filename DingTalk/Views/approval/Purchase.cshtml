@@ -105,8 +105,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="建议" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
@@ -144,7 +144,7 @@
                 addPeopleNodes: [1],
                 ruleForm: {
                     key: '',
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     remark: '',
                     ProjectName: '',
                     Title: '零部件采购申请',
@@ -155,26 +155,6 @@
                 },
                 preApprover: false
             }
-        },
-        mounted: function () {
-            var that = this
-            let form = this.ruleForm
-            $(".el-input__inner").bind("blur", function (e) {
-                for (let a in form) {
-                    if ($.type(form[a]) == 'string') {
-                        form[a] = form[a].replace(/(^\s*)|(\s*$)/g, '')
-                        if (form[a].length >= 50) {
-                            that.$message({ type: 'error', message: `输入错误,最多只允许输入50个字符。` });
-                            console.log(form[a])
-                            form[a] = form[a].substring(0, 50)
-                        }
-                    }
-                }
-                if (!that.purchaseList) return
-                for (let p of that.purchaseList) {
-                    
-                }
-            });
         },
         methods: {
             onSubmit(formName) {
@@ -216,26 +196,19 @@
                     this.$message({ type: 'error', message: `請输入关键字` });
                     return
                 }
-                //this.$refs[formName].validate((valid) => {
-                //    if (valid) {
                 var url = '/Purchase/GetICItem?Key=' + that.ruleForm.key
-                    $.ajax({
-                        url: url,
-                        success: function (data) {
-                            console.log(url)
-                            console.log("搜索物料列表ok")
-                            data = JSON.parse(data)
-                            console.log(data)
-                            that.data = data
-                            that.totalRows = data.length
-                            that.getData()
-                        }
-                    })
-                //    } else {
-                //        console.log('搜索物料列表')
-                //        return false;
-                //    }
-                //});
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        console.log(url)
+                        console.log("搜索物料列表ok")
+                        data = JSON.parse(data)
+                        console.log(data)
+                        that.data = data
+                        that.totalRows = data.length
+                        that.getData()
+                    }
+                })
             },
             //添加申请物料
             addGood(index, good) {

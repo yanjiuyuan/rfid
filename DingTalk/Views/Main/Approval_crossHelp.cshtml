@@ -38,10 +38,14 @@
         </el-form-item>
         <template v-if="NodeId >= 4">
             <el-form-item label="实际开始时间" prop="FactBeginTime">
-                <el-input v-model="tableForm.FactBeginTime" style="width:200px;" :disabled="noEdit"></el-input>
+                <el-date-picker v-model="tableForm.FactBeginTime" :editable="false" :disabled="noEdit" v-on:change="selectTime"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
             </el-form-item>
             <el-form-item label="实际结束时间" prop="FactEndTime">
-                <el-input v-model="tableForm.FactEndTime" style="width:200px;" :disabled="noEdit"></el-input>
+                <el-date-picker v-model="tableForm.FactEndTime" :editable="false" :disabled="noEdit" v-on:change="selectTime"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
             </el-form-item>
             <el-form-item label="实际天数" prop="FactDays">
                 <el-input v-model="tableForm.FactDays" style="width:200px;" :disabled="noEdit"></el-input>
@@ -82,7 +86,7 @@
                 <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
             </el-form-item>
         </template>
-        <template v-if="index==2 && state=='未完成'">
+         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
             <el-form-item>
                 <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
@@ -152,6 +156,15 @@
                     }
                 })
             },
+            //选时间操作
+            selectTime() {
+                let date1 = this.tableForm.FactBeginTime.split('-')
+                date1 = new Date(date1[0], date1[1], date1[2])
+                let date2 = this.tableForm.FactEndTime.split('-')
+                date2 = new Date(date2[0], date2[1], date2[2])
+                let days = (date2 - date1) / (3600 * 24 * 1000) + 1
+                this.tableForm.FactDays = days - parseInt(days / 7) * 2
+            },
             //选择实际协作人
             addPeerNumber() {
                 var that = this
@@ -177,7 +190,6 @@
                         that.nodeList[i].AddPeople = addPeoples
                         for (let app of addPeoples) {
                             $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + app.name.substring(0, 3) + '</span >')
-
                         }
                         that.tableForm.FactCooperateMan = names.join(',')
                         that.tableForm.FactCooperateManId = ids.join(',')
@@ -187,7 +199,7 @@
             },
             getHelpTable() {
                 this.GetData('Cooperate/Read?taskid=' + TaskId, (res) => {
-                    if (NodeId == 1) {
+                    if (NodeId == 1 || NodeId == 2) {
                         res['FactBeginTime'] = res.PlanBeginTime
                         res['FactEndTime'] = res.PlanEndTime
                         res['FactDays'] = res.PlanDays

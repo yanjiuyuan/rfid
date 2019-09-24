@@ -66,8 +66,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="图纸设计人员">
             <el-input v-model="ruleForm.tpName" style="width:500px;" :disabled="true"></el-input>
@@ -192,7 +192,7 @@
                 dialogVisible: false,
                 //表单参数
                 ruleForm: {
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     Dept: DingData.departName,
                     tpName: DingData.nickName,
                     counts: JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid}),

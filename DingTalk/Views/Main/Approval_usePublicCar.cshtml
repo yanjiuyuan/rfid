@@ -91,7 +91,7 @@
         <el-form-item label="操作" v-if="state=='已完成'">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
-        <template v-if="index==2 && state=='未完成'">
+         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
             <el-form-item>
                 <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>

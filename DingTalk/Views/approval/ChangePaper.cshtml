@@ -84,8 +84,8 @@
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="ApplyMan">
+            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目名称" prop="ProjectName">
             <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
@@ -179,7 +179,7 @@
                         items: {}
                     }],
                 ruleForm: {
-                    name: DingData.nickName,
+                    ApplyMan: DingData.nickName,
                     Dept: DingData.departName,
                     remark: '',
                     FileUrl: '',
