@@ -28,7 +28,7 @@
         </el-form-item>
         <el-form-item>
             <el-button type="primary" v-on:click="searchData">搜索</el-button>
-            <el-button v-on:click="printData" type="primary">打印表单</el-button>
+            <el-button v-if="tableData.length>0" v-on:click="printData" type="primary">打印表单</el-button>
         </el-form-item>
     </el-form>
     <!--表格實體-->

@@ -1,30 +1,6 @@
 ﻿@{
     Layout = null;
 }
-<script>
-    // :minlength="{{min||0}}" :maxlength="{{max||12}}" :type="{{type||'input'}}"
-    Vue.component('sam-input', {
-        props: ['value', 'required', 'type', 'min', 'max', 'callBack', 'placeholder'],
-        template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder="placeholder||''"
-                        :minlength = min||0 :maxlength = max||30 v-on:blur="onBlur"
-                        :class="{ redborder:(value =='' && required)}">
-                   </el-input>`,
-        data: function () {
-            return {
-                
-            }
-        },
-        methods: {
-            onBlur(e) {
-                let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
-                if (this.required && value == '') {
-                    this.$message({ type: 'error', message: `请输入正确值` });
-                }
-                this.$emit('update:value', value)
-            }
-        },
-    })
-</script>
 
 <!--右侧实体内容-->
 <el-main id="partPage" style="position:relative;">
@@ -106,6 +82,11 @@
         <el-form-item label="申请人" prop="ApplyMan">
             <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="申请部门">
+            <el-select v-model="ruleForm.Dept">
+                <el-option v-for="DingData.dept" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
@@ -114,7 +95,6 @@
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
             <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-            @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
         </el-form-item>
     </el-form>
 </el-main>
@@ -159,12 +139,12 @@
         methods: {
             onSubmit(formName) {
                 if (!this.purchaseList.length) {
-                    this.elementAlert('提交失败', '请选择办公用品！')
+                    this.$message({ type: 'error', message: `请选择办公用品！` });
                     return
                 }
                 for (let p of this.purchaseList) {
                     if (p.Count == '') {
-                        this.elementAlert('提交失败', '请填写已选用品信息！')
+                        this.$message({ type: 'error', message: `请填写已选用品信息！` });
                         return
                     }
                 }
@@ -225,28 +205,6 @@
                 })
                 this.noList.push(good.fNumber)
             },
-            //删除申请物料
-            deleteGood(index, good) {
-                this.purchaseList.splice(index, 1)
-                this.noList.splice(index, 1)
-            },
-            //编辑审批物料
-            showEditGood(index, good) {
-                this.dialogFormVisible = true
-                this.good = $.extend({}, good)
-                this.good.index = index
-            },
-            editGood() {
-                this.dialogFormVisible = false
-                let tmpGood = $.extend({}, this.good)
-                if (tmpGood.UrgentDate) tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
-                this.purchaseList[this.good.index] = tmpGood
-                let tmpArr = _cloneArr(this.purchaseList)
-                this.purchaseList = tmpArr
-                console.log('done eidt')
-                console.log(this.good.index)
-                console.log(this.purchaseList)
-            },
         },
         computed: {
             totalPrice: function () {
@@ -258,14 +216,7 @@
             }
         },
         created: function () {
-            //FlowId = 6
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
-           
+            this.init()
         }
     })
     document.onkeydown = function (e) { // 回车提交表单

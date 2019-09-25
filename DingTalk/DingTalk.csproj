@@ -882,6 +882,7 @@
     <Content Include="Views\Register\addFlow.cshtml" />
     <Content Include="Views\Main\Approval_officeSupplies.cshtml" />
     <Content Include="Views\Main\Approval_purchase.cshtml" />
+    <Content Include="Views\Shared\startForm.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

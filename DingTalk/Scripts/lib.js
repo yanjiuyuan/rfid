@@ -363,6 +363,7 @@ var mixin = {
                 members: []
             }
         ],
+        DingData: {},
         nodeList: [],
         nodeInfo: {},
         NodeIds: [],
@@ -373,7 +374,6 @@ var mixin = {
         excelList: [],
         mediaList: [],
         specialRoleNames: [],
-        ruleForm: {},
         preApprove: true,
         isBack: false,
         projectList: [],
@@ -576,6 +576,31 @@ var mixin = {
                 }
             })
         },
+        //初始化方法
+        initStartFun() {
+            this.DingData = DingData
+            this.data = []
+            this.tableData = []
+            this.nodeList = []
+            this.nodeInfo = {}
+            this.pdfList = []
+            this.excelList = []
+            this.fileList = []
+            this.imageList = []
+            this.mediaList = []
+            this.mediaPdfList = []
+            this.ruleForm = {
+
+            }
+
+            this.initParam()
+            this.getNodeInfo()
+            this.getProjects()
+            this.getApproInfo()
+            this.loadTempData()
+            this.loadReApprovalData()
+            loadHtml("mainPage", "partPage")
+        },
         //提交审批
         approvalSubmit(callBack) {
             if (!DingData.userid) return
@@ -588,7 +613,7 @@ var mixin = {
                     var applyObj = {
                         "ApplyMan": DingData.nickName,
                         "ApplyManId": DingData.userid,
-                        "Dept": DingData.departName,
+                        "Dept": that.ruleForm.Dept || '',
                         "Title": that.ruleForm.Title || '',
                         "ProjectName": that.ruleForm.ProjectName || '',
                         "ProjectId": that.ruleForm.ProjectId || '',
@@ -616,10 +641,12 @@ var mixin = {
                     paramArr.push(applyObj)
                     for (let node of that.nodeList) {
                         let mustList = node.IsSelectMore.split(',')
-                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
+                        let choseList = that.nodeInfo.ChoseNodeId.split(',')
+                        if ((that.nodeInfo.IsNeedChose && choseList && choseList.indexOf(node.NodeId) >= 0)
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
-                            if (node.AddPeople.length == 0) {
+                            if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
+                                (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))){
                                 this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                                     confirmButtonText: '确定',
                                     callback: action => {
@@ -685,7 +712,7 @@ var mixin = {
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
-                "Dept": DingData.departName,
+                "Dept": this.ruleForm.Dept || '',
                 "NodeId": NodeId,
                 "ApplyTime": _getTime(),
                 "IsEnable": "1",
@@ -698,9 +725,12 @@ var mixin = {
                 paramArr[0][p] = param[p]
             }
             for (let node of this.nodeList) {
-                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
+                let mustList = node.IsSelectMore.split(',')
+                let choseList = that.nodeInfo.ChoseNodeId.split(',')
+                if ((that.nodeInfo.IsNeedChose && choseList && that.choseList.indexOf(node.NodeId) >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
-                    if (node.AddPeople.length == 0) {
+                    if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
+                        (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))) {
                         this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -1120,7 +1150,28 @@ var mixin = {
                 }
             })
         },
-
+        //删除申请物料
+        deleteGood(index, good) {
+            this.purchaseList.splice(index, 1)
+            this.noList.splice(index, 1)
+        },
+        //编辑审批物料
+        showEditGood(index, good) {
+            this.dialogFormVisible = true
+            this.good = $.extend({}, good)
+            this.good.index = index
+        },
+        editGood() {
+            this.dialogFormVisible = false
+            let tmpGood = $.extend({}, this.good)
+            if (tmpGood.UrgentDate) tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
+            this.purchaseList[this.good.index] = tmpGood
+            let tmpArr = _cloneArr(this.purchaseList)
+            this.purchaseList = tmpArr
+            console.log('done eidt')
+            console.log(this.good.index)
+            console.log(this.purchaseList)
+        },
 
 
 
@@ -1189,10 +1240,14 @@ var mixin = {
             })
         },
         //文件上传处理方法
+        HandleFileExceed() {
+            this.$message({ type: 'error', message: `超出文件个数限制！` });
+            return false
+        },
         BeforeFileUpload(file) {
             if (!file.type) {
-                this.$message({ type: 'error', message: `文件类型不正确，请重新选择！` });
-                return
+                this.$message({ type: 'error', message: `不支持文件类型，请重新选择！` });
+                return false
             }
             file.name = 'helloWorld'
             isPdf = false
@@ -1630,9 +1685,10 @@ Vue.component('sam-approver-list', {
         //选人控件添加
         addMember(nodeId, selectMoreList) {
             selectMoreList = selectMoreList.split(',')
+            let choseList = that.nodeInfo.ChoseNodeId.split(',')
             var that = this
             DingTalkPC.biz.contact.choose({
-                multiple: selectMoreList[nodeId] == '1'?true:false, //是否多选： true多选 false单选； 默认true
+                multiple: selectMoreList[choseList.indexOf(nodeId)] == '1'?true:false, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
