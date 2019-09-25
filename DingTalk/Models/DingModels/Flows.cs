@@ -106,6 +106,5 @@ namespace DingTalk.Models.DingModels
         [StringLength(200)]
         public string IsMandatory { get; set; }
         
-
     }
 }
