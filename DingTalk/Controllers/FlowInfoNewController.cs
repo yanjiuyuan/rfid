@@ -671,7 +671,6 @@ namespace DingTalk.Controllers
                                             ApplyMan = a.ApplyMan,
                                             IsSend = a.IsSend
                                         };
-
                         return new NewErrorModel()
                         {
                             data = QuaryList,
