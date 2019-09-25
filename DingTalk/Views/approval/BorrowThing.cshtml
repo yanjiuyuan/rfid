@@ -182,12 +182,7 @@
                 let callBack = function (taskId) {
                     that.bindAll(taskId)
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark,
-                    ProjectName: ProjectName,
-                    ProjectId: this.ruleForm.ProjectId
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             bindAll(taskId) {
                 var paramArr = []

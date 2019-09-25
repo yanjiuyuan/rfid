@@ -92,7 +92,6 @@
                 var that = this
                 let url = '/Receiving/save'
                 var param = _cloneObj(this.ruleForm)
-                this.fileListToUrl()
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
@@ -106,12 +105,7 @@
                         })
                     }, param)
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    FileUrl: that.ruleForm.FileUrl,
-                    OldFileUrl: that.ruleForm.OldFileUrl,
-                    MediaId: that.mediaList.join(','),
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
            
 

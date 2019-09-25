@@ -160,12 +160,7 @@
                         loadPage('/main/Approval')
                     })
                 }
-                this.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark,
-                    ProjectName: this.ruleForm.ProjectName,
-                    ProjectId: this.ruleForm.ProjectId
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             //搜索物料列表
             searchCode() {

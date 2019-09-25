@@ -191,19 +191,7 @@
                         return
                     }
                 }
-                //this.PostData('ItemCodeAdd/CheckItemCode', this.tableData, (res) => {
-                //    this.data = res
-                //    for (let i = 0; i < res.length; i++) {
-                //        if (!res[i].IsQualified) {
-                //            this.elementAlert('提示信息', '第 ' + (i+1) + '行物料编码大类小类输入有误')
-                //            return
-                //        }
-                //    }
-                    this.approvalSubmit(formName, {
-                        Title: this.ruleForm.Title,
-                        Remark: this.ruleForm.remark
-                    }, this.bindAll)
-                //})
+                this.approvalSubmit(this.bindAll)
             },
             bindAll(taskId) {
                 var that = this

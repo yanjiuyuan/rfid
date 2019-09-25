@@ -146,12 +146,6 @@
                         return
                     }
                 }
-                var ProjectName
-                for (let p of this.projectList) {
-                    if (p.ProjectId == this.ruleForm.ProjectId) {
-                        ProjectName = p.ProjectName
-                    }
-                }
                 var that = this
                 let callBack = function (taskId) {
                     for (let p of that.purchaseList) {
@@ -162,14 +156,7 @@
                         loadPage('/main/Approval')
                     })
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark,
-                    ProjectName: ProjectName,
-                    ProjectId: this.ruleForm.ProjectId
-                }, callBack, {
-                        ProjectId: this.ruleForm.ProjectId
-                    })
+                this.approvalSubmit(callBack)
             },
             //搜索物料列表
             searchCode() {

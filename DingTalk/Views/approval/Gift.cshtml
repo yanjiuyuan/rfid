@@ -201,10 +201,7 @@
                         })
                     }, param)
                 }
-                that.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {

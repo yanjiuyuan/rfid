@@ -156,29 +156,9 @@
                 var that = this
                 let url = '/CarTable/TableModify'
                 var param = _cloneObj(this.tableForm)
-                let agreeParam = {
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark,
-                    "ImageUrl": this.ruleForm.ImageUrl,
-                    "OldImageUrl": this.ruleForm.OldImageUrl
-                }
                 param.UseKilometres = this.UseKilometres
-                //if (NodeId == '3') {
-                //    if (!this.ruleForm.ImageUrl) {
-                //        this.elementAlert('alert', '未上传图片')
-                //        return
-                //    }
-                //    else {
-                //        agreeParam = {
-                //            "Id": this.ruleForm.Id,
-                //            "Remark": this.ruleForm.Mark,
-                //            "ImageUrl": this.ruleForm.ImageUrl,
-                //            "OldImageUrl": this.ruleForm.OldImageUrl
-                //        }
-                //    }
-                //}
                 this._postData(url, function () {
-                    that.aggreSubmit(agreeParam)
+                    that.aggreSubmit()
                 },param)
 
             },
