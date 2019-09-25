@@ -84,6 +84,13 @@
                 this.getData2(this.searchForm.keyword)
             },
             getData2(keyword) {
+                keyword = this.searchForm.keyword
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 let param = {
                     Index: Index,
                     ApplyManId: DingData.userid,
@@ -96,6 +103,7 @@
                     this.showLoading = false
                     this.tableData = res
                     this.totalRows = count
+                    loading.close()
                 })
             },
             //表单操作

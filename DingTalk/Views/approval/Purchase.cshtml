@@ -22,8 +22,8 @@
         <el-table-column prop="FNote" label="预计单价"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+                <p v-if="noList.indexOf(scope.row.fNumber) >= 0">已选择</p>
+                <el-button v-else size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -112,11 +112,10 @@
             <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :nodedata="nodeInfo" :nodelist="nodeList" :single="true"></sam-approver-list>
+        <sam-approver-list :nodedata="nodeInfo" :nodelist="nodeList"></sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
             <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-            @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
         </el-form-item>
     </el-form>
 </el-main>
@@ -131,13 +130,13 @@
                 data: [],
                 tableData: [],
                 purchaseList: [],
+                noList: [],
                 projectList: [],
                 good: {
                     Price: '',
                     Unit: '',
                     Count: ''
                 },
-                preApprove: false,
                 nodeList: [],
                 nodeInfo: {},
                 dialogFormVisible: false,
@@ -153,7 +152,6 @@
                     inputProjectId: '',
                     Time: ''
                 },
-                preApprover: false
             }
         },
         methods: {
@@ -225,24 +223,7 @@
                     UrgentDate: '',
                     Mark: ''
                 })
-            },
-            //删除申请物料
-            deleteGood(index, good) {
-                this.purchaseList.splice(index, 1)
-            },
-            //编辑审批物料
-            showEditGood(index, good) {
-                this.dialogFormVisible = true
-                this.good = $.extend({}, good)
-                this.good.index = index
-            },
-            editGood() {
-                this.dialogFormVisible = false
-                let tmpGood = $.extend({}, this.good)
-                if (tmpGood.UrgentDate) tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
-                this.purchaseList[this.good.index] = tmpGood
-                let tmpArr = _cloneArr(this.purchaseList)
-                this.purchaseList = tmpArr
+                this.noList.push(good.fNumber)
             },
         },
         computed: {
@@ -255,13 +236,7 @@
             }
         },
         created: function () {
-            //FlowId = 6
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.init()
         }
     })
 

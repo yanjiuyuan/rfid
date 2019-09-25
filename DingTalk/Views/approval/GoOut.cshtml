@@ -14,7 +14,7 @@
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
         <el-form-item label="申请人">
-            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="ruleForm.applyMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="同行人">
             <el-input v-model="ruleForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
@@ -47,7 +47,7 @@
                        action="/drawingupload/Upload"
                        :on-remove="HandleFileRemove"
                        :before-upload="BeforeFileUpload"
-                       :on-success="HandleFileSuccess"
+                       :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -84,7 +84,6 @@
         mixins: [mixin],
         data: function () {
             return {
-                applyMan: DingData.nickName,
                 nodeList: [],
                 nodeInfo: {},
                 timeRange: [],
@@ -93,6 +92,7 @@
                 date: _getDate(),
                 dialogFormVisible: false,
                 ruleForm: {
+                    applyMan: DingData.nickName,
                     Duration: "",
                     EvectionMan: '',
                     EvectionManId: '',

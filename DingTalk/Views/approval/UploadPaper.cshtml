@@ -116,7 +116,7 @@
                        :on-remove="handleFileRemove"
                        :before-remove="isPdfFile = false"
                        :before-upload="beforeFileUpload"
-                       :on-success="HandleFileSuccess"
+                       :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">上传excelBom表、3D文件 --><em>点击上传</em></div>
