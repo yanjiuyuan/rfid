@@ -362,7 +362,7 @@ namespace DingTalk.Controllers
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页容量</param>
         /// <param name="applyManId">调用接口人Id</param>
-        /// <param name="key">关键字(姓名、车辆信息、部门信息)</param>
+        /// <param name="key">关键字(姓名、车辆信息、部门信息、流水号)</param>
         /// <param name="IsSend">是否推送用户(默认否)</param>
         /// <param name="IsPublic">是否是公车(默认是)</param>
         /// <returns></returns>
@@ -403,9 +403,10 @@ namespace DingTalk.Controllers
                                     join t in tasks on ct.TaskId equals t.TaskId.ToString()
                                     join c in cars on ct.CarId equals c.Id.ToString()
                                     where t.NodeId.ToString() == "0" && ct.StartTime > startTime && ct.EndTime < endTime && ct.IsPublicCar == IsPublic
-                                    && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || c.Name.Contains(key)) : t.ApplyMan != null)
+                                    && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || t.TaskId.ToString() == key || c.Name.Contains(key)) : t.ApplyMan != null)
                                     select new
                                     {
+                                        TaskId = t.TaskId,
                                         Dept = t.Dept,
                                         ApplyMan = t.ApplyMan,
                                         UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),

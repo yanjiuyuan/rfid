@@ -671,6 +671,7 @@ namespace DingTalk.Controllers
                                             ApplyMan = a.ApplyMan,
                                             IsSend = a.IsSend
                                         };
+
                         return new NewErrorModel()
                         {
                             data = QuaryList,
@@ -1344,44 +1345,6 @@ namespace DingTalk.Controllers
             }
         }
 
-
-
-
-        /// <summary>
-        /// 流程界面分类信息读取接口
-        /// </summary>
-        /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
-        /// <returns></returns>
-        //[HttpGet]
-        //[Route("LoadFlowSort")]
-        //public NewErrorModel LoadFlowSort(string id)
-        //{
-        //    try
-        //    {
-        //        if (!string.IsNullOrEmpty(id))
-        //        {
-        //            FlowInfoServer flowInfoServer = new FlowInfoServer();
-        //            return new NewErrorModel()
-        //            {
-        //                data = flowInfoServer.GetFlowSort(),
-        //                error = new Error(0, "读取成功！", "") { },
-        //            };
-        //        }
-
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(1, "id不能为空！", "") { },
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(2, ex.Message, "") { },
-        //        };
-        //    }
-        //}
-
         /// <summary>
         /// 流程节点信息获取接口
         /// </summary>
@@ -1397,8 +1360,6 @@ namespace DingTalk.Controllers
                 if (FlowId != null)
                 {
                     DDContext context = new DDContext();
-
-
                     if (string.IsNullOrEmpty(NodeId))
                     {
                         var NodeInfo = context.NodeInfo.Where(u => u.FlowId == FlowId);
@@ -1538,6 +1499,16 @@ namespace DingTalk.Controllers
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
+
+                if (!string.IsNullOrEmpty(Key))
+                {
+                    TaskFlowModelList = TaskFlowModelList.Where(t => t.TaskId.ToString() == Key ||
+                      t.Title.Contains(Key) || t.ApplyMan.Contains(Key) || t.FlowName.Contains(Key)).ToList();
+                    count = TaskFlowModelList.Count();
+                    TaskFlowModelList = TaskFlowModelList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+
                 return new NewErrorModel()
                 {
                     count = count,
@@ -1635,11 +1606,11 @@ namespace DingTalk.Controllers
                             on t.TaskId.ToString() equals ts.TaskId
                             where t.NodeId == 0 && t.TaskId == TaskId
                             && (IsMobile == true ? f.IsSupportMobile == true : 1 == 1)
-                            && ((Key != "" ? f.FlowName.Contains(Key) : 1 == 1) ||
-                                (Key != "" ? t.TaskId.ToString().Contains(Key) : 1 == 1) ||
-                                 (Key != "" ? t.Title.ToString().Contains(Key) : 1 == 1) ||
-                                (Key != "" ? t.ApplyMan.Contains(Key) : 1 == 1)
-                            )
+                            //&& ((Key != "" ? f.FlowName.Contains(Key) : 1 == 1) ||
+                            //    (Key != "" ? t.TaskId.ToString().Contains(Key) : 1 == 1) ||
+                            //     (Key != "" ? t.Title.ToString().Contains(Key) : 1 == 1) ||
+                            //    (Key != "" ? t.ApplyMan.Contains(Key) : 1 == 1)
+                            //)
                             select new
                             {
                                 Id = t.Id + 1,
