@@ -6,18 +6,12 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        物资放行申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
         <el-form-item label="单位名称" prop="Company">
-            <el-select v-model="ruleForm.Company" style="width:400px;">
+            <el-select v-model="tableForm.Company" style="width:400px;">
                 <el-option v-for="item in CompanyNames"
                            :key="item"
                            :label="item"
@@ -25,33 +19,35 @@
                 </el-option>
             </el-select>
         </el-form-item>
-
         <el-form-item label="车牌号">
-            <el-input v-model="ruleForm.CarNo" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.CarNo" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="Tel">
-            <el-input v-model="ruleForm.Tel" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.Tel" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="物品名称" prop="Name">
-            <el-input v-model="ruleForm.Name" style="width:300px;"></el-input>
+            <el-input v-model="tableForm.Name" style="width:300px;"></el-input>
         </el-form-item>
         <el-form-item label="数量" prop="Count">
-            <el-input v-model="ruleForm.Count" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.Count" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="单位" prop="Unit">
-            <el-input v-model="ruleForm.Unit" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.Unit" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="放行理由" prop="Cause">
-            <el-input v-model="ruleForm.Cause" type="textarea" style="width:500px;"></el-input>
+            <el-input v-model="tableForm.Cause" type="textarea" style="width:500px;"></el-input>
         </el-form-item>
         <el-form-item label="放行日期" prop="Date">
-            <el-date-picker v-model="ruleForm.Date"
+            <el-date-picker v-model="tableForm.Date"
                             type="date" :editable="false"
                             value-format="yyyy-MM-dd"
                             @*v-on:change="selectTime"*@
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+
         <el-form-item label="上传图片" required="required">
             <el-upload action="/drawingupload/Upload"
                        list-type="picture-card"
@@ -67,15 +63,7 @@
             </el-dialog>
         </el-form-item>
         <hr />
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
@@ -85,17 +73,13 @@
         mixins: [mixin],
         data: function () {
             return {
-                applyMan: DingData.nickName,
                 CompanyNames: CompanyNames,
-                nodeList: [],
-                nodeInfo: {},
-                imageList: [],
                 date: _getDate(),
                 addPeopleNodes: [1], //额外添加审批人节点数组
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
-                ruleForm: {
+                tableForm: {
                     CarNo: "",
                     Company: '泉州华中科技大学智能制造研究院',
                     Tel: "",
@@ -104,9 +88,7 @@
                     Unit: "",
                     Cause: "",
                     Date: "",
-                    ImageUrl: '',
                     OldImageUrl: '',
-                    Title: "物资放行条"
                 },
                 rules: {
                     Company: commonInput,
@@ -129,8 +111,8 @@
                     return
                 }
                 let callBack = (taskId) => {
-                    this.ruleForm['TaskId'] = taskId
-                    this.PostData('MaterialRelease/Save', this.ruleForm, () => {
+                    this.tableForm['TaskId'] = taskId
+                    this.PostData('MaterialRelease/Save', this.tableForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -143,11 +125,7 @@
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         },
     })
 </script>

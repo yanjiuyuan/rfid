@@ -7,11 +7,11 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        零部件采购申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <div>
         <span style="color:red">*</span><span style="padding:3px;">关键字</span>
-        <sam-input :value.sync="ruleForm.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        <sam-input :value.sync="key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -102,21 +102,7 @@
                 </el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="ApplyMan">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodedata="nodeInfo" :nodelist="nodeList"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
@@ -127,31 +113,13 @@
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                tableData: [],
-                purchaseList: [],
-                noList: [],
-                projectList: [],
                 good: {
                     Price: '',
                     Unit: '',
                     Count: ''
                 },
-                nodeList: [],
-                nodeInfo: {},
-                dialogFormVisible: false,
                 addPeopleNodes: [1],
-                ruleForm: {
-                    key: '',
-                    ApplyMan: DingData.nickName,
-                    remark: '',
-                    ProjectName: '',
-                    Title: '零部件采购申请',
-                    ProjectId: null,
-                    inputProjectName: '',
-                    inputProjectId: '',
-                    Time: ''
-                },
+                key: '',
             }
         },
         methods: {
@@ -187,7 +155,7 @@
             //搜索物料列表
             searchCode(formName) {
                 var that = this
-                if (!this.ruleForm.key) {
+                if (!this.key) {
                     this.$message({ type: 'error', message: `請输入关键字` });
                     return
                 }
@@ -236,7 +204,7 @@
             }
         },
         created: function () {
-            this.init()
+            this.initStart()
         }
     })
 

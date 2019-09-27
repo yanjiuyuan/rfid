@@ -8,7 +8,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        审批处理-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <template v-if="FlowId == '6'" v-for="(d,index) in dataArr">
         <h2 style="text-align:center;">{{d.Sorts}}件列表</h2>
@@ -50,15 +50,7 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" v-if="ruleForm.Title">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <template v-if="FlowId == 6">
             <el-form-item label="图纸用途">
                 <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
@@ -116,40 +108,7 @@
             </el-card>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-
-
-        <!--添加抄送人-->
-        @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-        </sam-addapprover>*@
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.mark"></el-input>
-            </el-form-item>
-            <el-form-item v-for="p in specialRoles" :key="p.name" :label="p.label" prop="mark" v-if="nodeInfo.NodeName == p.name">
-                <el-form-item>
-                    <el-alert v-for="(i,index) in p.intrudations" :key="index" type="warning" :show-icon="index == 0" :closable="false" style="line-height:12px;"
-                              :title="i">
-                    </el-alert>
-                </el-form-item>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <span> - </span>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
     </el-form>
 
     <!--显示PDF-->
@@ -256,30 +215,13 @@
 
 </el-main>
 <script>
-    var pdfUrl = ''
-    var pdfName = ''
-    var pdfMediaId = ''
-    var taskId = 0
-
     var stampRole = {}//圖紙審批 可打印并 下載的角色信息
 </script>
 
 <script>
     serverUrl = 'http://17e245o364.imwork.net:49415/'
-    var state = ''
-    var pdfUrl = ''
-    var Index = ''
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        Index = UrlObj.index
-    }
     $("#mask").hide()
     var items = {}
-    var FilePDFUrl = ''
     var bomUrl = ''
     var dataArr = [
         {
@@ -345,25 +287,8 @@
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                imageList: [],
-                fileList: [],
-                pdfList: [],
-                tableForm: {},
-                data: [],
                 items: items,
-                FlowId: FlowId,
-                NodeId: NodeId,
-                tableData: [],
-                totalRows: 0,
-                nodeInfo: {},
-                nodeList: [],
-                ruleForm: {},
-                state: state,
-                tick: 50,
                 dataArr: dataArr,
-                index: Index,
                 frameUrl: '',
                 ifShowStamppBtn: false,
                 ifShowStamppBtn2: true,
@@ -372,16 +297,8 @@
         },
         methods: {
             //提交审批
-            onSubmit(formName) {
-                this.disablePage = true
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark,
-                    "Title": this.ruleForm.Title,
-                    "ProjectId": this.ruleForm.ProjectId
-                }, {
-                        "ProjectId": this.ruleForm.ProjectId
-                    })
+            onSubmit() {
+                this.aggreSubmit()
             },
             
             //图纸盖章并获取文件
@@ -477,9 +394,6 @@
                     }
                 })
             },
-
-            
-
 
 
             //圖紙審批bom表格翻页
@@ -587,28 +501,18 @@
 
         },
         created: function () {
-            //获取下一个节点的审批人id
-            if (state == '未完成') this.GetDingList(TaskId)
-            //if (FlowId == '8') {
-            //    this.showStamp("采购管理员")
-            //}
             if (FlowId == '6') {
                 this.showStamp("图纸管理员")
             }
-            //if (FlowId == '8' && (Index == "3" || Index == "2")) {
-            //    this.ifShowStamppBtn2 = true
-            //}
-            this.getBomInfo()
+            this.initEnd(() => { this.getBomInfo() })
             if (Index == '0')
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)
             }
             PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
-            loadHtml("mainPage", "partPage")
         }
     })
-    getFormData(demo)
     function getFormData_done(res) {
         if (FlowId == '6') {
             demo.ruleForm['tpName'] = JSON.parse(res.counts).Designer

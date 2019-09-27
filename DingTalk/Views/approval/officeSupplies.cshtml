@@ -7,12 +7,12 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        办公用品申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
     <div>
         <span style="color:red">*</span><span style="padding:3px;">关键字</span>
-        <sam-input :value.sync="searchForm.name" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        <sam-input :value.sync="searchForm.name" :required="true" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -76,64 +76,24 @@
         <el-form-item label="预计总价">
             <el-input v-model="totalPrice" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="ApplyMan">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请部门">
-            <el-select v-model="ruleForm.Dept">
-                <el-option v-for="DingData.dept" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
 <script>
-    NodeId = '0'
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                tableData: [],
-                purchaseList: [],
-                noList:[],
-                projectList: [],
                 good: {
                     ExpectPrice: '',
                     Unit: '',
                     Count: ''
                 },
-                preApprove: false,
-                nodeList: [],
-                nodeInfo: {},
-                dialogFormVisible: false,
                 searchForm: {
                     name: '',
-                },
-                ruleForm: {
-                    ApplyMan: DingData.nickName,
-                    remark: '',
-                    ProjectName: '',
-                    Title: '办公用品申请',
-                    ProjectId: null,
-                    inputProjectName: '',
-                    inputProjectId: '',
-                    Time: ''
-                },
-                preApprover: false
+                }
             }
         },
         methods: {
@@ -167,9 +127,8 @@
                         })
                     }, param)
                 }
-                that.approvalSubmit(callBack)
+                this.approvalSubmit(callBack)
             },
-            
             //搜索物料列表
             searchCode(formName) {
                 this.searchForm.name = this.searchForm.name.replace(/\s/g,'')
@@ -216,7 +175,7 @@
             }
         },
         created: function () {
-            this.init()
+            this.initStart()
         }
     })
     document.onkeydown = function (e) { // 回车提交表单

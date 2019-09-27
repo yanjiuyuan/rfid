@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        办公用品采购-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--搜索-->
     <div style="margin-bottom:10px;">
@@ -57,55 +57,22 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="ApplyMan">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
 <script>
-    NodeId = '0'
     var deptList = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                tableData: [],
                 searchDate:[],
-                preApprove: false,
-                nodeList: [],
-                nodeInfo: {},
-                //totalPrice: 0,
                 searchForm: {
                     name: '',
                 },
                 activeNames: [1, 2, 3, 4, 5, 6],
-                ruleForm: {
-                    ApplyMan: DingData.nickName,
-                    remark: '',
-                    ProjectName: '',
-                    Title: '办公用品采购',
-                    ProjectId: null,
-                    inputProjectName: '',
-                    inputProjectId: '',
-                    Time: ''
-                },
-                preApprover: false
             }
         },
         methods: {
@@ -235,11 +202,7 @@
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadTempData()
-            loadHtml("mainPage", "partPage")
+            @RenderPage("~/Views/Shared/startForm.cshtml")
 
         }
     })

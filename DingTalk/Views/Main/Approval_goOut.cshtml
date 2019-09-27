@@ -6,13 +6,11 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        外出申请审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="同行人">
             <el-input v-model="tableForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
             <el-input v-model="tableForm.EvectionManId" style="display:none;"></el-input>
@@ -36,7 +34,7 @@
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="外出照片">
-            <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList"/>
+            <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
         </el-form-item>
 
         <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
@@ -58,22 +56,7 @@
         <hr />
 
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="disablePage">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item label="操作" v-if="state=='已完成'">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
@@ -81,43 +64,16 @@
 </el-main>
 
 <script>
-    var imageList = []
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                carList: [],
-                imageList: imageList,
-                index: Index,
-                NodeId: NodeId,
-                NodeId: parseInt(NodeId),
-                nodeList: [],
-                state: State,
-                nodeInfo: {},
-                tableForm: {
-
-                },
-                dialogVisible: false,
-               
             }
         },
         methods: {
             onSubmit() {
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark,
-                    "ImageUrl": this.ruleForm.ImageUrl,
-                    "OldImageUrl": this.ruleForm.OldImageUrl
-                })
+                this.aggreSubmit()
             },
             getTable() {
                 this.GetData('/Evection/Read' + _formatQueryStr({ TaskId: TaskId }), (res)=> {
@@ -125,7 +81,6 @@
                 })
             },
             printPdf() {
-                var that = this
                 this._postData("/Evection/GetPrintPDF", function (result) {
                     this.$message({ type: 'success', message: `文件获取成功，请查收` });
                 },
@@ -143,12 +98,9 @@
                 this.elementAlert('提示', '该步骤需要拍照上传，请到移动端审批。')
                 this.disablePage = true
             }
-            this.getTable()
-            this.GetDingList(TaskId)
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getTable() })
         }
     })
-    getFormData(demo)
 </script>
 
 

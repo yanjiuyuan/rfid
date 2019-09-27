@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        领料申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
     <div>
@@ -71,12 +71,6 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="ApplyMan">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
@@ -87,19 +81,8 @@
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
-            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-                <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-            @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
@@ -109,29 +92,12 @@
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                tableData: [],
-                purchaseList: [],
-                noList: [],
-                nodeList: [],
-                projectList: [],
-                nodeInfo: {},
                 searchForm: {
                     business: '',
                     name: '',
                     taskid: ''
                 },
                 addPeopleNodes: [1],
-                ruleForm: {
-                    ApplyMan: DingData.nickName,
-                    remark: '',
-                    ProjectName: '',
-                    Title: '领料申请',
-                    ProjectId: null,
-                    inputProjectName: '',
-                    inputProjectId: '',
-                    Time: ''
-                }
             }
         },
         methods: {
@@ -199,27 +165,9 @@
                 this.purchaseList.push(good)
                 this.noList.push(good.fNumber)
             },
-            //删除申请物料
-            deleteGood(index) {
-                this.purchaseList.splice(index, 1)
-                this.noList.splice(index, 1)
-            },
-            //加载重新发起审批传递的数据
-            loadReApprovalData() {
-                if (!ReApprovalTempData.valid) return
-                this.ruleForm.Title = ReApprovalTempData.Title
-                ReApprovalTempData.valid = false
-                this.purchaseList = ReApprovalTempData.data
-            },
         },
         created: function () {
-            //FlowId = 6
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 

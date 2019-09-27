@@ -3,5 +3,24 @@
     Layout = null;
 }
 
-<h2>startForm</h2>
+<el-form-item label="标题" prop="Title">
+    <sam-input :value.sync="ruleForm.Title" :required="true" :maxlength="60"></sam-input>
+</el-form-item>
+<el-form-item label="申请人" prop="ApplyMan">
+    <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
+</el-form-item>
+<el-form-item label="申请部门">
+    <el-select v-model="ruleForm.Dept">
+        <el-option v-for="d in DingData.dept" :label="d" :value="d" key="d"></el-option>
+    </el-select>
+</el-form-item>
+<el-form-item label="备注" prop="remark">
+    <sam-input :value.sync="ruleForm.remark"></sam-input>
+</el-form-item>
+<!--添加审批人-->
+<sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo"></sam-approver-list>
+<el-form-item>
+    <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
+    <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
+</el-form-item>
 
