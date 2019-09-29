@@ -68,13 +68,11 @@
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
-            <el-upload action=""
-                       list-type="picture-card"
-                       :on-preview="handlePictureCardPreview"
-                       :file-list="imageList"
-                       :disabled="true">
-            </el-upload>
+            <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
         </el-form-item>
+        <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
+            <img :src="preUrl" />
+        </div>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
             <el-button type="primary" v-on:click="downloadAllPdf">下载所有图纸</el-button>
@@ -93,11 +91,8 @@
                     <span v-if="index == 2 && FlowId == '6'">{{f.state == '1'? '通过' : '不通过'}}</span>
                 </div>
             </el-card>
-            <el-button type="primary" v-on:click="stampAndGet">打印表单</el-button>
         </el-form-item>
-        <el-form-item label="操作">
-            <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
-        </el-form-item>
+
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="相关文件">
             <el-card class="box-card">
@@ -109,6 +104,10 @@
         </el-form-item>
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
+        <el-form-item label="操作">
+            <el-button type="primary" v-on:click="stampAndGet">打印表单</el-button>
+            <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
+        </el-form-item>
     </el-form>
 
     <!--显示PDF-->
@@ -407,10 +406,6 @@
                 this.tableData = this.dataArr[index].data.slice(start, start + this.pageSize)
 
                 this.dataArr[index].tableData = _cloneArr(this.tableData)
-            },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
             },
             //文件点击操作
             clickFile(fileUrl, name, mediaId) {

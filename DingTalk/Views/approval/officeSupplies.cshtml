@@ -140,17 +140,15 @@
                 var url = jinDomarn + 'OfficeSupply/GetOfficeInfo?Key=' + this.searchForm.name
                 this._getData(url, (res) => {
                     this.data = res.data
-                    this.totalRows = res.length
+                    this.totalRows = res.data.length
                     this.getData()
                 })
             },
             //添加申请物料
             addGood(index, good) {
                 for (let p of this.purchaseList) {
-                    if (p.CodeNo == good.FNumber) return
+                    if (p.CodeNo == good.fNumber) return
                 }
-                //if (!checkRate(good.FNote)) good.FNote = 0
-                console.log(good.FNote)
                 this.purchaseList.push({
                     CodeNo: good.fNumber,
                     Name: good.fName,
@@ -170,6 +168,9 @@
                 var totalPrice = 0
                 for (let p of this.purchaseList) {
                     totalPrice = parseFloat(totalPrice + p.ExpectPrice * p.Count).toFixed(2)
+                    console.log(p.ExpectPrice)
+                    console.log(p.Count)
+                    console.log(p.ExpectPrice * p.Count)
                 }
                 return totalPrice
             }

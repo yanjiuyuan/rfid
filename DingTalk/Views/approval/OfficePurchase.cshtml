@@ -76,7 +76,7 @@
             }
         },
         methods: {
-            onSubmit(formName) {
+            onSubmit() {
                 var that = this
                 let valid = false
                 for (let d of that.data) {
@@ -120,7 +120,6 @@
                 console.log(demo.data)
                 for (let d of demo.data) {
                     if (row.dept == d.name) {
-                        //this.totalPrice = (this.totalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
                         d.tmpTotalPrice = (d.tmpTotalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
                         d.value.splice(index, 1)
                     }
@@ -130,8 +129,6 @@
             searchCode(formName) {
                 var that = this
                 if (!this.searchDate[0]) return
-                //this.$refs[formName].validate((valid) => {
-                //    if (valid) {
                 var url = '/OfficeSuppliesPurchase/GetTable?startTime=' + that.searchDate[0] + '&endTime=' + that.searchDate[1] + ' 23:59:59'
                 $.ajax({
                     url: url,
@@ -147,7 +144,6 @@
                         }
                         deptStr = deptStr.substring(0, deptStr.length - 1)
                         deptList = deptStr.split(',')
-                        //that.totalPrice = 0
                         for (let d of deptList) {
                             that.data.push({
                                 name: d,
@@ -161,18 +157,15 @@
                                     d.Price = d.ExpectPrice
                                     l.value.push(d)
                                     l.tmpTotalPrice += (d.Price * d.Count)
-                                    //that.totalPrice += (d.Price * d.Count)
                                     break
                                 }
                             }
                         }
-                        //that.totalPrice = that.totalPrice.toFixed(2)
                         that.totalRows = data.length
                     }
                 })
             },
             compute() {
-                //this.totalPrice = 0
                 for (let l of this.data) {
                     l.tmpTotalPrice = 0
                 }
@@ -182,7 +175,6 @@
                         let price = parseFloat(v.Price).toFixed(2)
                         if (!price) price == 0
                         l.tmpTotalPrice += price * v.Count
-                        //this.totalPrice += price * v.Count
                     }
                 }
             }
@@ -202,8 +194,7 @@
             }
         },
         created: function () {
-            @RenderPage("~/Views/Shared/startForm.cshtml")
-
+            this.initStart()
         }
     })
 

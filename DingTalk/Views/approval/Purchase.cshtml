@@ -22,7 +22,7 @@
         <el-table-column prop="FNote" label="预计单价"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <p v-if="noList.indexOf(scope.row.fNumber) >= 0">已选择</p>
+                <p v-if="noList.indexOf(scope.row.FNumber) >= 0">已选择</p>
                 <el-button v-else size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
             </template>
         </el-table-column>
@@ -153,13 +153,13 @@
                 this.approvalSubmit(callBack)
             },
             //搜索物料列表
-            searchCode(formName) {
+            searchCode() {
                 var that = this
                 if (!this.key) {
                     this.$message({ type: 'error', message: `請输入关键字` });
                     return
                 }
-                var url = '/Purchase/GetICItem?Key=' + that.ruleForm.key
+                var url = '/Purchase/GetICItem?Key=' + that.key
                 $.ajax({
                     url: url,
                     success: function (data) {
@@ -178,7 +178,6 @@
                 for (let p of this.purchaseList) {
                     if (p.CodeNo == good.FNumber) return
                 }
-                if (!checkRate(good.FNote)) good.FNote = 0
                 console.log(good.FNote)
                 this.purchaseList.push({
                     CodeNo: good.FNumber,
@@ -191,14 +190,14 @@
                     UrgentDate: '',
                     Mark: ''
                 })
-                this.noList.push(good.fNumber)
+                this.noList.push(good.FNumber)
             },
         },
         computed: {
             totalPrice: function () {
                 var totalPrice = 0
                 for (let p of this.purchaseList) {
-                    totalPrice = totalPrice + p.Price * p.Count
+                    totalPrice = parseFloat(totalPrice + p.Price * p.Count).toFixed(2)
                 }
                 return totalPrice
             }

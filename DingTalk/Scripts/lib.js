@@ -367,6 +367,7 @@ var mixin = {
         ruleForm: {
             Title: ''
         },
+        tableForm:{},
         DingData: {},
         nodeList: [],
         nodeInfo: {},
@@ -529,7 +530,10 @@ var mixin = {
         dingList: [],
         PTypes: PTypes,
         project: {},
+        purchaseList:[],
+        noList:[],
 
+        date: _getDate(),
         //审批页面参数
         FlowId: '',
         FlowName: '',
@@ -551,12 +555,22 @@ var mixin = {
             }
             return 0
         },
-        GetData(url, succe) {
+        GetData(url, succe, showLoading = false) {
+            const loading = null
+            if (showLoading) {
+                loading = this.$loading({
+                    lock: true,
+                    text: '数据获取中，请耐心等待~',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+            }
             var that = this
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function (res) {
+                    if (showLoading) { loading.close() }
                     if (typeof (res) == 'string') res = JSON.parse(res)
                     if (url.indexOf('GetFlowStateCounts') <= 0) {
                         console.log(url)
@@ -565,17 +579,27 @@ var mixin = {
                     if (that.doWithErrcode(res.error)) {
                         return
                     }
-                    res.count ?succe(res.data, res.count):succe(res.data)
+                    res.count ? succe(res.data, res.count) : succe(res.data)
                 },
                 error: function (err) {
                     that.disablePage = false
+                    if (showLoading) { loading.close() }
                     console.error(url)
                     console.error(err)
                 }
             })
         },
-        PostData(url, param, succe, errorFunc) {
+        PostData(url, param, succe, errorFunc, showLoading= false) {
             param = JSON.stringify(param).replace(/null/g, '""')
+            const loading = null
+            if (showLoading) {
+                loading = this.$loading({
+                    lock: true,
+                    text: '数据获取中，请耐心等待~',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+            }
             var that = this
             $.ajax({
                 url: url,
@@ -583,6 +607,7 @@ var mixin = {
                 contentType: "application/json; charset=utf-8",
                 data: param,
                 success: function (res) {
+                    if (showLoading) { loading.close() }
                     console.log(url)
                     console.log(JSON.parse(param))
                     console.log(res)
@@ -593,6 +618,7 @@ var mixin = {
                     succe(JSON.parse(res.data))
                 },
                 error: function (err) {
+                    if (showLoading) { loading.close() }
                     that.disablePage = false
                     if (errorFunc) errorFunc()
                     console.error(url)
@@ -615,6 +641,7 @@ var mixin = {
             this.mediaPdfList = []
             this.FlowName = FlowName
             this.purchaseList = []
+            this.noList = []
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
@@ -681,6 +708,7 @@ var mixin = {
             this.mediaPdfList = []
             this.FlowName = FlowName
             this.purchaseList = []
+            this.noList = []
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
@@ -723,10 +751,12 @@ var mixin = {
                 if (valid) {
                     that.disablePage = true
                     var paramArr = [that.ruleForm]
-                    let mustList = that.nodeInfo.IsMandatory.split(',')
-                    let choseList = that.nodeInfo.ChoseNodeId.split(',')
+                    let mustList = []
+                    let choseList = []
+                    if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',')
+                    if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
                     for (let node of that.nodeList) {
-                        if ((choseList && choseList.indexOf(node.NodeId + '') >= 0)
+                        if ((choseList.indexOf(node.NodeId + '') >= 0)
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
                             if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
@@ -802,10 +832,12 @@ var mixin = {
                 "State": "1",
 
             })
-            let mustList = that.nodeInfo.IsMandatory.split(',')
-            let choseList = that.nodeInfo.ChoseNodeId.split(',')
+            let mustList = []
+            let choseList = []
+            if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',') 
+            if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
             for (let node of this.nodeList) {
-                if ((choseList && that.choseList.indexOf(node.NodeId + '') >= 0)
+                if ((that.choseList.indexOf(node.NodeId + '') >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
                     if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
                         (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))) {
@@ -1379,6 +1411,12 @@ var mixin = {
             return false
         },
         BeforeFileUpload(file) {
+            for (let p of this.fileList) {
+                if (file.name == p.name) {
+                    this.$message.error('已存在相同文件名文件!')
+                    return false
+                }
+            }
             if (!file.type) {
                 this.$message({ type: 'error', message: `不支持文件类型，请重新选择！` });
                 return false
@@ -1393,6 +1431,12 @@ var mixin = {
             return true
         },
         beforeExcelUpload(file) {
+            for (let p of this.excelList) {
+                if (file.name == p.name) {
+                    this.$message.error('已存在相同文件名文件!')
+                    return false
+                }
+            }
             const isExcel = (file.name.substr(-3) == 'xls' || file.name.substr(-4) == 'xlsx')
             const isLt2M = file.size / 1024 / 1024 < 4
             if (!isExcel) {
@@ -1412,7 +1456,7 @@ var mixin = {
             var that = this
             const loading = this.$loading({
                 lock: true,
-                text: 'Loading',
+                text: '数据获取中，请耐心等待~',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
             });
@@ -1481,6 +1525,12 @@ var mixin = {
         beforePdfFileUpload(file) {
             console.log('before pdf')
             console.log(file)
+            for (let p of this.pdfList) {
+                if (file.name == p.name) {
+                    this.$message.error('已存在相同文件名文件!')
+                    return false
+                }
+            }
             if (file.name.indexOf(' ') >= 0) {
                 this.$alert('文件名不能带空格', '上传失败', {
                     confirmButtonText: '确定',
@@ -1507,7 +1557,7 @@ var mixin = {
             var that = this
             const loading = this.$loading({
                 lock: true,
-                text: 'Loading',
+                text: '数据获取中，请耐心等待~',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
             });

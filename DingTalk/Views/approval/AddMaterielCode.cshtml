@@ -47,8 +47,8 @@
                    multiple
                    :limit="1"
                    :file-list="excelList">
-            <el-button size="small" type="primary">上传excel</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            <el-button size="small" type="primary">批量导入文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过4M</div>
         </el-upload>
         <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
         <hr />

@@ -18,9 +18,10 @@
         <!--底部翻頁-->
         <div style="text-align:right">
             <el-pagination v-on:current-change="handleBomPageChange($event,index)"
+                           v-on:size-change="handleSizeChange"
                            :current-page="d.currentPage"
-                           :page-sizes="[5]"
-                           :page-size="5"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="pageSize"
                            layout="total, sizes, prev, pager, next, jumper"
                            :total="d.totalRows">
             </el-pagination>
@@ -30,19 +31,19 @@
         <el-upload class="upload-demo"
                    action="/drawingupload/UploadAndGetInfo"
                    :on-success="handleSuccess"
-                   @*:before-remove="beforeRemove"*@
                    :before-upload="beforeExcelUpload"
                    multiple
                    :limit="1"
                    :on-exceed="handleExceed"
                    :file-list="excelList">
             <el-button size="small" type="primary" v-on:click="bomIndex = index">上传{{d.Sorts}}件</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过4M</div>
         </el-upload>
         @*</el-form-item>*@
     </template>
     <div style="margin:10px;">
-        <span>上传所需excel模板 - > </span><el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+        <span style="color:red;">上传所需excel模板 - > </span><el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+        <p>提示：为了确保信息的准确性，请下载导入模板，并在最新模板上进行修改</p>
     </div>
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
@@ -88,7 +89,7 @@
                        drag
                        :file-list="pdfList"
                        action="/drawingupload/Upload"
-                       :on-remove="handleFileRemove"
+                       :on-remove="HandlePdfFileRemove"
                        :before-upload="beforePdfFileUpload"
                        :on-success="handlePdfFileSuccess"
                        multiple>
@@ -103,8 +104,8 @@
                        drag
                        :file-list="fileList"
                        action="/drawingupload/Upload"
-                       :on-remove="handleFileRemove"
-                       :before-upload="beforeFileUpload"
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
                        :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
                        multiple>
                 <i class="el-icon-upload"></i>
@@ -162,7 +163,7 @@
             //提交审批
             onSubmit(formName) {
                 this.ruleForm.counts = JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid })
-                this.approvalSubmit(callBack)
+                this.approvalSubmit()
             },
             //添加图纸审计人员
             addPeerNumber() {
@@ -193,6 +194,61 @@
                         FileName: '123.pdf',
                         FilePath:'~/UploadFile/PDF/123.PDF'
                     })
+            },
+            handleSuccess(response, file, fileList) {
+                console.log(response)
+                var tableData = response[0].Value
+                this.currentPage = 1
+                let BomId = ''
+                if (!(tableData && tableData.length > 0)) return
+                this.data = []
+                let count = 0
+                for (let i = 0; i < tableData.length; i++) {
+                    let data = tableData[i]
+                    if (i == 0) {
+                        this.items = {}
+                        for (let c in data) {
+                            if (c.substring(0, 6) == 'Column') {
+                                this.items[c] = data[c]
+                                this.dataArr[this.bomIndex].items[c] = data[c]
+                            }
+                            else if (c.length > 10) {
+                                BomId = c
+                            }
+                        }
+                    } else {
+                        if (data['Column1'] && data['Column1'] != "") {
+                            this.dataArr[this.bomIndex].data.push(data)
+                            this.data.push(data)
+                            count++ 
+                            upBom.push({
+                                BomId: BomId,
+                                DrawingNo: data.Column1,
+                                Name: data.Column2,
+                                Count: data.Column3,
+                                MaterialScience: data.Column4,
+                                Unit: data.Column5,
+                                SingleWeight: data.Column6,
+                                AllWeight: data.Column7,
+                                NeedTime: data.Column8,
+                                Mark: data.Column9,
+                                Sorts: this.dataArr[this.bomIndex].Sorts
+                            })
+                        } 
+                    }
+                }
+                if (!count)
+                {
+                    this.$message({ type: 'error', message: `请上传正确格式文件` });
+                    return
+                }
+                //this.totalRows = this.data.length
+                this.dataArr[this.bomIndex].totalRows = this.dataArr[this.bomIndex].data.length
+                this.getData()
+                this.dataArr[this.bomIndex].tableData = this.tableData
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             //bom表格翻页
             handleBomPageChange(page, index) {

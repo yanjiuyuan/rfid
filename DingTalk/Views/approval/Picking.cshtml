@@ -143,6 +143,10 @@
                 var url = 'Pick/ReadDefault' + _formatQueryStr({ ApplyManId: DingData.userid, TaskId: this.searchForm.taskid })
                 this.GetData(url, function (data) {
                     console.log(data)
+                    if (!data.length) {
+                        this.$message({ type: 'error', message: `暂无数据'` });
+                        return
+                    }
                     for (let d of data) {
                         let ifBreak = false
                         for (let p of that.purchaseList) {
