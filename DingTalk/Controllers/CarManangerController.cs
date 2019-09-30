@@ -4,6 +4,7 @@ using DingTalk.Bussiness.FlowInfo;
 using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using DingTalk.Models.ServerModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -167,7 +168,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Quary")]
         [HttpGet]
-        public object Quary(string key)
+        public NewErrorModel Quary(string key)
         {
             try
             {
@@ -176,23 +177,30 @@ namespace DingTalk.Controllers
                     if (string.IsNullOrEmpty(key))
                     {
                         var Quary = context.Car.ToList();
-                        return Quary;
+                        return new NewErrorModel()
+                        {
+                            data = Quary,
+                            error = new Error(0, "读取成功！", "") { },
+                        };
                     }
                     else
                     {
                         var Quary = context.Car.Where(c => c.Name.Contains(key) ||
                           c.CarNumber.Contains(key) || c.Color.Contains(key)
                           || c.Type.Contains(key)).ToList();
-                        return Quary;
+                        return new NewErrorModel()
+                        {
+                            data = Quary,
+                            error = new Error(0, "读取成功！", "") { },
+                        };
                     }
                 }
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
+                return new NewErrorModel()
                 {
-                    errorCode = 1,
-                    errorMessage = ex.Message
+                    error = new Error(1, ex.Message, "") { },
                 };
             }
         }
@@ -204,49 +212,12 @@ namespace DingTalk.Controllers
         /// <param name="endTime">结束时间(2018-08-27 00:00:00)</param>
         [Route("QuaryByTime")]
         [HttpGet]
-        public object QuaryByTime(string startTime, string endTime)
+        public NewErrorModel QuaryByTime(string startTime, string endTime)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    //List<Car> cars = context.Car.ToList();
-                    //foreach (Car car in cars)
-                    //{
-                    //    if (!string.IsNullOrEmpty(car.UseTimes))
-                    //    {
-                    //        string[] UseTimesList = car.UseTimes.Split(',');
-                    //        if (UseTimesList.Length > 0)
-                    //        {
-                    //            int i = 0;
-                    //            List<string> UseManResult = new List<string>();
-                    //            List<string> UseTimeResult = new List<string>();
-                    //            string UseManSave = car.UseMan;
-                    //            string UseTimeSave = car.UseTimes;
-                    //            foreach (var UseTimes in UseTimesList)
-                    //            {
-                    //                i++;
-                    //                if (UseTimes.Split('~').Length > 0)
-                    //                {
-                    //                    string startT = UseTimes.Split('~')[0];
-                    //                    string endT = UseTimes.Split('~')[1];
-                    //                    //判断时间段是否出现重叠
-                    //                    if (!(DateTime.Parse(startTime) > DateTime.Parse(endT) ||
-                    //                       DateTime.Parse(endTime) < DateTime.Parse(startT)))
-                    //                    {
-                    //                        car.IsOccupyCar = true;
-                    //                        UseManResult.Add(UseManSave.Split(',')[i - 1]);
-                    //                        UseTimeResult.Add(UseTimeSave.Split(',')[i - 1]);
-                    //                    }
-                    //                }
-                    //            }
-                    //            car.UseTimes = string.Join(",", UseTimeResult);
-                    //            car.UseMan = string.Join(",", UseManResult);
-                    //        }
-                    //    }
-                    //}
-                    //return cars;
-
                     List<Car> cars = context.Car.ToList();
                     List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
                     List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
@@ -279,16 +250,37 @@ namespace DingTalk.Controllers
                         }
                     }
 
-                    return carsQuery;
+                    Dictionary<string, List<Car>> keyValuePairs = new Dictionary<string, List<Car>>();
 
+                    foreach (var item in carsQuery)
+                    {
+                        if (!keyValuePairs.Keys.Contains(item.Name))
+                        {
+                            keyValuePairs.Add(item.Name, new List<Car>() {
+                             item
+                          });
+                        }
+                        else
+                        {
+                            List<Car> carsNew = new List<Car>();
+                            carsNew = keyValuePairs[item.Name];
+                            carsNew.Add(item);
+                            keyValuePairs[item.Name] = carsNew;
+                        }
+                    }
+                    //2019 09 29 end
+                    return new NewErrorModel()
+                    {
+                        data = keyValuePairs,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
                 }
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
+                return new NewErrorModel()
                 {
-                    errorCode = 1,
-                    errorMessage = ex.Message
+                    error = new Error(1, ex.Message, "") { },
                 };
             }
         }

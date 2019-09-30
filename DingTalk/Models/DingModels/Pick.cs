@@ -53,7 +53,7 @@
         public string fPrice { get; set; }
 
         /// <summary>
-        /// 金额
+        /// 库存数量
         /// </summary>
         [StringLength(300)]
         public string fAmount { get; set; }

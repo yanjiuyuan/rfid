@@ -58,5 +58,26 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string IsMandatory { get; set; }
+
+        /// <summary>
+        /// 选人控件类型(0 钉钉选人控件 1 角色选人控件)
+        /// </summary>
+        [StringLength(50)]
+        public string ChoseType { get; set; }
+
+        /// <summary>
+        /// 角色选人配置的角色信息(超级管理员,图书管理员)
+        /// </summary>
+        [StringLength(500)]
+        public string RoleNames { get; set; }
+
+        /// <summary>
+        /// 选人角色列表
+        /// </summary>
+        [NotMapped]
+        public Dictionary<string, List<Roles>> RolesList { get; set; }
+        //public List<List<Roles>> Roles { get; set; }
+
+
     }
 }
