@@ -7,7 +7,7 @@
 <el-main id="partPage" style="position:relative;margin-left:1%;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        图纸审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <template v-for="(d,index) in dataArr">
         <!--表格實體-->
@@ -18,9 +18,10 @@
         <!--底部翻頁-->
         <div style="text-align:right">
             <el-pagination v-on:current-change="handleBomPageChange($event,index)"
+                           v-on:size-change="handleSizeChange"
                            :current-page="d.currentPage"
-                           :page-sizes="[5]"
-                           :page-size="5"
+                           :page-sizes="[1, 3, 5, 10]"
+                           :page-size="pageSize"
                            layout="total, sizes, prev, pager, next, jumper"
                            :total="d.totalRows">
             </el-pagination>
@@ -30,19 +31,19 @@
         <el-upload class="upload-demo"
                    action="/drawingupload/UploadAndGetInfo"
                    :on-success="handleSuccess"
-                   @*:before-remove="beforeRemove"*@
                    :before-upload="beforeExcelUpload"
                    multiple
                    :limit="1"
                    :on-exceed="handleExceed"
                    :file-list="excelList">
             <el-button size="small" type="primary" v-on:click="bomIndex = index">上传{{d.Sorts}}件</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过4M</div>
         </el-upload>
         @*</el-form-item>*@
     </template>
     <div style="margin:10px;">
-        <span>上传所需excel模板 - > </span><el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+        <span style="color:red;">上传所需excel模板 - > </span><el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
+        <p>提示：为了确保信息的准确性，请下载导入模板，并在最新模板上进行修改</p>
     </div>
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
@@ -58,25 +59,16 @@
                 </el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="图纸用途" required="required">
+        <el-form-item label="图纸用途" required="required" prop="ProjectType">
             <el-select v-model="ruleForm.ProjectType">
                 <el-option v-for="s of ProjectTypes" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="ApplyMan">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="图纸设计人员">
+        <el-form-item label="图纸设计人员" prop="tpName">
             <el-input v-model="ruleForm.tpName" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-
+        
         <el-form-item label="上传图片">
             <el-upload action="/drawingupload/Upload"
                        list-type="picture-card"
@@ -92,15 +84,14 @@
             </el-dialog>
         </el-form-item>
 
-        <el-form-item label="上传PDF图纸" required="required">
+        <el-form-item label="上传PDF图纸" required="required"  prop="FilePDFUrl">
             <el-upload class="upload-demo"
                        drag
                        :file-list="pdfList"
                        action="/drawingupload/Upload"
-                       :on-remove="handleFileRemove"
-                       :before-remove="isPdfFile = true"
+                       :on-remove="HandlePdfFileRemove"
                        :before-upload="beforePdfFileUpload"
-                       :on-success="handlePdfFileCardSuccess"
+                       :on-success="handlePdfFileSuccess"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -108,14 +99,13 @@
             </el-upload>
         </el-form-item>
 
-        <el-form-item label="上传其他附件" required="required">
+        <el-form-item label="上传其他附件" required="required" prop="FileUrl">
             <el-upload class="upload-demo"
                        drag
                        :file-list="fileList"
                        action="/drawingupload/Upload"
-                       :on-remove="handleFileRemove"
-                       :before-remove="isPdfFile = false"
-                       :before-upload="beforeFileUpload"
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
                        :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
                        multiple>
                 <i class="el-icon-upload"></i>
@@ -123,38 +113,19 @@
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
-
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true" :special-roles="specialRoles" :special-role-names="specialRoleNames">
-        </sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
 <script>
     var mediaId = '@@lAvPBY0V47H4Ai_OIqLuUc5MMPmu'
     var upBom = []
-    var isPdf = false
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                isPdfFile: false,
                 mediaId: mediaId,
-                pdfList: [],
-                excelList: [],
-                fileList: [],
-                imageList: [],
-                mediaList: [],
-                mediaPdfList: [],
-                data: [],
-                items: [],
                 tableData: [],
                 bomIndex: 0,
                 dataArr: [
@@ -182,138 +153,17 @@
                         totalRows: 0,
                         items: {}
                     }],
-                nodeInfo: {},
-                nodeList: [],
-                projectList: [],
                 ProjectTypes: ['电气采购', '机械加工', '机械采购', '其他'],
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
-                //表单参数
-                ruleForm: {
-                    ApplyMan: DingData.nickName,
-                    Dept: DingData.departName,
-                    tpName: DingData.nickName,
-                    counts: JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid}),
-                    remark: '',
-                    ImageUrl: '',
-                    OldImageUrl: '',
-                    FileUrl: '',
-                    OldFilePDFUrl: '',
-                    FilePDFUrl: '',
-                    OldFileUrl: '',
-                    MediaId: '',
-                    MediaIdPDF: '',
-                    inputProjectId: '',
-                    Title: '',
-                    ProjectId: null,
-                    ProjectType: '机械加工',
-                    Time: ''
-                }
             }
         },
         methods: {
             //提交审批
             onSubmit(formName) {
-                var that = this
-                this.fileListToUrl()
-                this.$refs[formName].validate((valid) => {
-                    if (valid && this.data.length > 0) {
-                        that.disablePage = true
-                        var paramArr = []
-                        var stateArr = []
-                        for (var i = 0; i < that.pdfList.length; i++) {
-                            stateArr.push(0)
-                        }
-                        if (!that.ruleForm.FilePDFUrl || !that.ruleForm.FileUrl) {
-                            this.$alert('图纸或文件未上传', '提交错误', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-
-                                }
-                            });
-                            that.disablePage = false
-                            return 
-                        }
-                        paramArr.push({
-                            "ApplyMan": DingData.nickName,
-                            "ApplyManId": DingData.userid,
-                            "NodeId": "0",
-                            "ApplyTime": _getTime(),
-                            "IsEnable": "1",
-                            "FlowId": FlowId + '',
-                            "Remark": that.ruleForm.remark,
-                            "IsSend": false,
-                            "State": "1",
-                            "ImageUrl": that.ruleForm.ImageUrl,
-                            "OldImageUrl": that.ruleForm.OldImageUrl,
-                            "FilePDFUrl": that.ruleForm.FilePDFUrl,
-                            "OldFilePDFUrl": that.ruleForm.OldFilePDFUrl,
-                            "FileUrl": that.ruleForm.FileUrl,
-                            "OldFileUrl": that.ruleForm.OldFileUrl,
-                            "MediaId": that.mediaList.join(','),
-                            "MediaIdPDF": that.mediaPdfList.join(','),
-                            "Title": that.ruleForm.Title,
-                            "counts": that.ruleForm.counts,
-                            "ProjectName": that.ruleForm.ProjectName,
-                            "ProjectType": that.ruleForm.ProjectType,
-                            "ProjectId": that.ruleForm.ProjectId,
-                            "PdfState": stateArr.join(',')
-                        }) 
-                        for (let node of that.nodeList) {
-                            if (this.specialRoleNames.indexOf(node.NodeName)>=0) {
-                                console.log(node)
-                                console.log(node.AddPeople)
-                                if (!that.preApprove && node.AddPeople.length == 0) {
-                                    this.$alert('您尚未选择审批人', '提交错误', {
-                                        confirmButtonText: '确定',
-                                        callback: action => {
-                                            
-                                        }
-                                    });
-                                    that.disablePage = false
-                                    return 
-                                }
-                                for (let a of node.AddPeople) {
-                                    paramArr.push({
-                                        "ApplyMan": a.name,
-                                        "ApplyManId": a.emplId,
-                                        "IsEnable": 1,
-                                        "FlowId": FlowId + '',
-                                        "NodeId": node.NodeId + '',
-                                        "IsSend": false,
-                                        "State": 0,
-                                        "ProjectId": that.ruleForm.ProjectId,
-                                        "OldFileUrl": null,
-                                        "IsBack": null
-                                    })
-                                }
-                            }
-                        }
-                        that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
-                            this.bindData(res)
-                        })
-                    } else {
-                        that.$alert('表单数据不全或有误', '提交错误', {
-                            confirmButtonText: '确定'
-                        });
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
-            },
-            //下拉框选择项目
-            selectProject(id) {
-                console.log(id)
-                for (var proj of this.projectList) {
-                    if (proj.ProjectId == id) {
-                        delete proj.ApplyMan
-                        delete proj.ApplyManId
-                        delete proj.ProjectType
-                        Object.assign(this.ruleForm, proj)
-                        this.ruleForm.Title = proj.ProjectId + ' - ' + proj.ProjectName
-                    }
-                }
+                this.ruleForm.counts = JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid })
+                this.approvalSubmit()
             },
             //添加图纸审计人员
             addPeerNumber() {
@@ -344,6 +194,61 @@
                         FileName: '123.pdf',
                         FilePath:'~/UploadFile/PDF/123.PDF'
                     })
+            },
+            handleSuccess(response, file, fileList) {
+                console.log(response)
+                var tableData = response[0].Value
+                this.currentPage = 1
+                let BomId = ''
+                if (!(tableData && tableData.length > 0)) return
+                this.data = []
+                let count = 0
+                for (let i = 0; i < tableData.length; i++) {
+                    let data = tableData[i]
+                    if (i == 0) {
+                        this.items = {}
+                        for (let c in data) {
+                            if (c.substring(0, 6) == 'Column') {
+                                this.items[c] = data[c]
+                                this.dataArr[this.bomIndex].items[c] = data[c]
+                            }
+                            else if (c.length > 10) {
+                                BomId = c
+                            }
+                        }
+                    } else {
+                        if (data['Column1'] && data['Column1'] != "") {
+                            this.dataArr[this.bomIndex].data.push(data)
+                            this.data.push(data)
+                            count++ 
+                            upBom.push({
+                                BomId: BomId,
+                                DrawingNo: data.Column1,
+                                Name: data.Column2,
+                                Count: data.Column3,
+                                MaterialScience: data.Column4,
+                                Unit: data.Column5,
+                                SingleWeight: data.Column6,
+                                AllWeight: data.Column7,
+                                NeedTime: data.Column8,
+                                Mark: data.Column9,
+                                Sorts: this.dataArr[this.bomIndex].Sorts
+                            })
+                        } 
+                    }
+                }
+                if (!count)
+                {
+                    this.$message({ type: 'error', message: `请上传正确格式文件` });
+                    return
+                }
+                //this.totalRows = this.data.length
+                this.dataArr[this.bomIndex].totalRows = this.dataArr[this.bomIndex].data.length
+                this.getData()
+                this.dataArr[this.bomIndex].tableData = this.tableData
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             //bom表格翻页
             handleBomPageChange(page, index) {
@@ -377,178 +282,6 @@
                     }
                 })
             },
-            //上传文件方法
-            handleSuccess(response, file, fileList) {
-                console.log(response)
-                var tableData = response[0].Value
-                this.currentPage = 1
-                let BomId = ''
-                if (!(tableData && tableData.length > 0)) return
-                this.data = []
-                for (let i = 0; i < tableData.length; i++) {
-                    let data = tableData[i]
-                    if (i == 0) {
-                        this.items = {}
-                        for (let c in data) {
-                            if (c.substring(0, 6) == 'Column') {
-                                this.items[c] = data[c]
-                                this.dataArr[this.bomIndex].items[c] = data[c]
-                            }
-                            else if (c.length > 10) {
-                                BomId = c
-                            }
-                        }
-                    } else {
-                        if (data['Column1'] && data['Column1'] != "") {
-                            this.dataArr[this.bomIndex].data.push(data)
-                            this.data.push(data) 
-                            upBom.push({
-                                BomId: BomId,
-                                DrawingNo: data.Column1,
-                                Name: data.Column2,
-                                Count: data.Column3,
-                                MaterialScience: data.Column4,
-                                Unit: data.Column5,
-                                SingleWeight: data.Column6,
-                                AllWeight: data.Column7,
-                                NeedTime: data.Column8,
-                                Mark: data.Column9,
-                                Sorts: this.dataArr[this.bomIndex].Sorts
-                            })
-                        }
-                    }
-                }
-                console.log(tableData)
-                //this.totalRows = this.data.length
-                this.dataArr[this.bomIndex].totalRows = this.dataArr[this.bomIndex].data.length
-                this.getData()
-                this.dataArr[this.bomIndex].tableData = this.tableData
-            },
-            handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-            },
-            beforeRemove(file, fileList) {
-                return this.$confirm(`确定移除 ${file.name}？`);
-            },
-            
-            handleFileRemove(file, fileList) {
-                this.isPdfFile ? this.pdfList = _cloneArr(fileList) : this.fileList = _cloneArr(fileList)
-            },
-
-            handlePdfFileCardSuccess(response, file, fileList) {
-                var that = this
-                const loading = this.$loading({
-                    lock: true,
-                    text: 'Loading',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
-                });
-                var paramObj = {
-                    "": file.response.Content
-                }
-                $.ajax({
-                    url: '/DingTalkServers/UploadMedia/',
-                    type: 'POST',
-                    data: paramObj,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('上传文件到钉盘')
-                        console.log('/api/dt/uploadMedia/')
-                        console.log(paramObj)
-                        if (data.media_id) {
-                            console.log(data.media_id)
-                            that.mediaPdfList.push(data.media_id)
-                        } else {
-                            console.log('无media_di')
-                        }
-                        that.pdfList = _cloneArr(fileList)
-                        loading.close()
-                    }
-                })
-            },
-            
-            //PDF上传处理方法
-            beforePdfFileUpload(file) {
-                console.log('before pdf')
-                console.log(file)
-                for (let f of this.fileList) {
-                    if (f.name == file.name) {
-                        this.$alert('不能上传相同名称文件', '上传失败', {
-                            confirmButtonText: '确定',
-                        });
-                        return false
-                    }
-                }
-                for (let f of this.pdfList) {
-                    if (f.name == file.name) {
-                        this.$alert('不能上传相同名称文件', '上传失败', {
-                            confirmButtonText: '确定',
-                        });
-                        return false
-                    }
-                }
-                if (file.name.indexOf(' ') >= 0) {
-                    this.$alert('文件名不能带空格', '上传失败', {
-                        confirmButtonText: '确定',
-                    });
-                    return false
-                }
-                file.name = 'helloWorld'
-                isPdf = true
-                const isPdfType = file.type === 'application/pdf'
-                const isLt2M = file.size / 1024 / 1024 < 10
-                if (!isPdfType) {
-                    this.$message.error('上传图片只能是 PDF 格式!')
-                    return false
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传文件大小不能超过 10MB!')
-                    return false
-                }
-                this.isPdfFile = true
-                return true
-            },
-            
-            beforeFileUpload(file) {
-                console.log('before file')
-                console.log(file)
-                for (let f of this.fileList) {
-                    if (f.name == file.name) {
-                        this.$alert('不能上传相同名称文件', '上传失败', {
-                            confirmButtonText: '确定',
-                        });
-                        return false
-                    }
-                }
-                for (let f of this.pdfList) {
-                    if (f.name == file.name) {
-                        this.$alert('不能上传相同名称文件', '上传失败', {
-                            confirmButtonText: '确定',
-                        });
-                        return false
-                    }
-                }
-                if (file.name.indexOf(' ') >= 0) {
-                    this.$alert('文件名不能带空格', '上传失败', {
-                        confirmButtonText: '确定',
-                    });
-                    return false
-                }
-                file.name = 'helloWorld'
-                isPdf = false
-                const isLt2M = file.size / 1024 / 1024 < 10
-                if (!isLt2M) {
-                    this.$message.error('上传文件大小不能超过 10MB!')
-                    return false
-                }
-                this.isPdfFile = false
-                return true
-            },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
-            },
-            
             //加载重新发起审批传递的数据
             loadReApprovalData() {
                 if (!ReApprovalTempData.valid) return
@@ -586,18 +319,11 @@
             
         },
         created: function () {
-            //FlowId = 8
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadReApprovalData()
-            this.loadTempData()
-            this.loadReApprovalData()
             for (let s of this.specialRoles) {
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)
             }
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 

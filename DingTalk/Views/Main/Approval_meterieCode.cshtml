@@ -7,7 +7,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        审批处理-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
     <!--表格實體-->
@@ -66,15 +66,7 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" v-if="ruleForm.Title">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="添加到" v-if="Index == '0' && NodeId == 2">
             <el-radio v-model="codeType" label="1">零部件</el-radio>
             <el-radio v-model="codeType" label="2">办公用品</el-radio>
@@ -98,38 +90,7 @@
             </el-card>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.mark"></el-input>
-            </el-form-item>
-            <el-form-item v-for="p in specialRoles" :key="p.name" :label="p.label" prop="mark" v-if="nodeInfo.NodeName == p.name">
-                <el-form-item>
-                    <el-alert v-for="(i,index) in p.intrudations" :key="index" type="warning" :show-icon="index == 0" :closable="false" style="line-height:12px;"
-                              :title="i">
-                    </el-alert>
-                </el-form-item>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-    </el-form>
-
-
+        @RenderPage("~/Views/Shared/endButton.cshtml")
 </el-main>
 <script>
     var taskId = 0
@@ -137,20 +98,7 @@
 </script>
 
 <script>
-
-    var state = ''
-    var Index = ''
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        Index = UrlObj.index
-    }
     $("#mask").hide()
-    var imageList = []
-    var fileList = []
     var dataArr = []
     var items = {
         //BigCodeName: '大类名称',
@@ -170,25 +118,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                imageList: imageList,
-                fileList: fileList,
-                data: [],
-                items: items,
-                FlowId: FlowId,
-                Index: Index,
-                NodeId: NodeId,
-                tableData: [],
-                totalRows: 0,
-                nodeInfo: {},
-                nodeList: [],
-                ruleForm: {},
-                state: state,
-                tick: 50,
                 dataArr: dataArr,
-                index: Index,
-                frameUrl: '',
                 codeType: '1',
                 ifShowStamppBtn: false,
                 ifShowStamppBtn2: false,
@@ -224,39 +154,15 @@
                         }
                         console.log(paramArr)
                         that._postData(url2, function () {
-                            that.aggreSubmit({
-                                "Id": that.ruleForm.Id,
-                                "Remark": that.ruleForm.mark
-                            })
+                            that.aggreSubmit()
                         }, paramArr
                         )
                     }, param)
                 }
                 else {
-                    that.aggreSubmit({
-                        "Id": that.ruleForm.Id,
-                        "Remark": that.ruleForm.mark
-                    })
+                    that.aggreSubmit()
                 }
                 
-            },
-            //重新发起审批
-            reApproval() {
-                this.disablePage = true
-                ReApprovalTempData = {
-                    valid: true,
-                    data: this.data,
-                    dataArr: this.dataArr,
-                    ProjectId: this.ruleForm.ProjectId,
-                    imageList: this.imageList,
-                    fileList: this.fileList,
-                    items: items
-                }
-                for (let img of imgConfig) {
-                    if (img.flowId == FlowId) {
-                        loadPage(img.url)
-                    }
-                }
             },
 
             //获取bom表信息
@@ -295,11 +201,6 @@
                     }
                 })
             },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
-            },
-
             //獲取角色信息
             showStamp(roleName) {
                 var that = this
@@ -321,12 +222,9 @@
 
         },
         created: function () {
-            this.GetDingList(TaskId)
-            this.getBomInfo()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
-    getFormData(demo)
 </script>
 
 

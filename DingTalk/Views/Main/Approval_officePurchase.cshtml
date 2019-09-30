@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="goHome()">
         <i class="el-icon-arrow-left"></i>
-        办公用品采购审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <p style="font-size:24px;">总价预计 <span style="color:red;font-size:24px;">{{totalPrice}}</span>元</p>
     <el-collapse v-model="activeNames">
@@ -35,23 +35,8 @@
     </el-collapse>
 
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.Mark" style="width:400px;"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
@@ -61,34 +46,17 @@
 </el-main>
 
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                dataList: [],
-                NodeId: NodeId,
-                state: State,
                 activeNames: [1, 2, 3, 4, 5, 6],
-                index: Index,
-                nodeList: [],
-                nodeInfo: {},
                 totalPrice:0,
-                ruleForm: {
-                    Mark: ''
-                }
             }
         },
         methods: {
-            onSubmit(formName) {
+            onSubmit() {
                 console.log('submit!')
                 var that = this
                 if (NodeId == '2') {
@@ -101,17 +69,11 @@
                     }
                     console.log(JSON.stringify(param))
                     that._postData(url, function (data) {
-                        that.aggreSubmit({
-                            "Id": that.ruleForm.Id,
-                            "Remark": that.ruleForm.Mark
-                        })
+                        that.aggreSubmit()
                     }, param)
                 }
                 else {
-                    this.aggreSubmit({
-                        "Id": this.ruleForm.Id,
-                        "Remark": this.ruleForm.Mark
-                    })
+                    this.aggreSubmit()
                 }
             },
             //打印表单
@@ -165,11 +127,9 @@
             }
         },
         created: function () {
-            this.getBomInfo()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
-    getFormData(demo)
 
 </script>
 

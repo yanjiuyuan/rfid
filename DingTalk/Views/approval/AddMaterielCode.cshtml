@@ -7,21 +7,12 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        {{ruleForm.Title}}-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
 
-        <el-form-item label="申请人" prop="ApplyMan">
-            <el-input v-model="ruleForm.ApplyMan" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title" style="width:600px;"></el-input>
-        </el-form-item>
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark" style="width:600px;"></el-input>
-        </el-form-item>
         <el-form-item lable="编码类型">
-            <el-radio-group v-model="ruleForm.codeType" v-on:change="changeCodeType">
+            <el-radio-group v-model="codeType" v-on:change="changeCodeType">
                 <el-radio label="1">零部件</el-radio>
                 <el-radio label="2">办公用品</el-radio>
             </el-radio-group>
@@ -40,21 +31,13 @@
             <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <sam-input :value.sync="scope.row[key]" :required="true"></sam-input>
-                    @*<el-input v-model="scope.row[key]" :class="{redborder:!scope.row[key]}"></el-input>*@
                 </template>
             </el-table-column>
             <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) <0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <sam-input :value.sync="scope.row[key]"></sam-input>
-                    @*<el-input v-model="scope.row[key]"></el-input>*@
                 </template>
             </el-table-column>
-
-            @*<el-table-column v-for="(value,key) in allConfig" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row[key]"></el-input>
-                </template>
-            </el-table-column>*@
         </el-table>
         <!--上传表單-->
         <el-upload class="upload-demo"
@@ -64,15 +47,14 @@
                    multiple
                    :limit="1"
                    :file-list="excelList">
-            <el-button size="small" type="primary">上传excel</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            <el-button size="small" type="primary">批量导入文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过4M</div>
         </el-upload>
         <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
         <hr />
         <!--物料明细-->
-        <template v-for="(good,index) in ruleForm.goods">
-            <el-form-item label="物料大类" :rules="{ required: true, message: '物料大类不能为空', trigger: 'blur'}"
-                          :prop="'goods.' + index + '.BigCode'">
+        <template v-for="(good,index) in goods">
+            <el-form-item label="物料大类" required="required">
                 <el-select v-model="good.BigCode" :data="index" filterable placeholder="请选择" v-on:change="changeBigCode(good)">
                     <el-option v-for="item in bigCodes"
                                :key="item.materialCodeNumber"
@@ -81,8 +63,7 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="物料小类" :rules="{ required: true, message: '物料小类不能为空', trigger: 'blur'}"
-                          :prop="'goods.' + index + '.SmallCode'">
+            <el-form-item label="物料小类" required="required">
                 <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode(good)">
                     <el-option v-for="item in good.smallMaterialCodes"
                                :key="item.materialCodeNumber"
@@ -91,26 +72,18 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) >=0 && meterielConfig[gk]"
-                          :label="meterielConfig[gk]" :rules="{ required: true, message: meterielConfig[gk]+'不能为空', trigger: 'blur'}"
-                          :prop="'goods.' + index + '.' + gk">
-                <el-input v-model="good[gk]"></el-input>
+            <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) >= 0 && meterielConfig[gk]"
+                          :label="meterielConfig[gk]">
+                <sam-input :value.sync="good[gk]" :required="true"></sam-input>
             </el-form-item>
             <el-form-item v-for="(g,gk) in good" :key="gk" v-if="needInput.indexOf(gk) <0 && meterielConfig[gk]"
                           :label="meterielConfig[gk]">
-                <el-input v-model="good[gk]"></el-input>
+                <sam-input :value.sync="good[gk]"></sam-input>
             </el-form-item>
         </template>
-        @*<p class="hint">如需添加申请项，请点击“添加明细”</p>*@
         <el-button v-on:click="addGoods" type="primary" plain> + 添加编码</el-button>
         <hr />
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
@@ -153,8 +126,6 @@
         data: function () {
             return {
                 mediaId: '@@lAvPDeC2t8bqmM3OExReeM5jC3b9',
-                nodeList: [],
-                nodeInfo: {},
                 excelList: [],
                 allConfig: allConfig,
                 lengthConfig: lengthConfig,
@@ -165,18 +136,12 @@
                     materialCodeNumber: 1,
                     materialName:''
                 }],
-                ruleForm: {
-                    codeType: '1',
-                    ApplyMan: DingData.nickName,
-                    remark: '',
-                    Title: '物料编码申请',
-                    goods: [_cloneObj(meteriel)]
-                }
+                codeType: '1',
+                goods: [_cloneObj(meteriel)],
             }
         },
         methods: {
             onSubmit(formName) {
-                console.error(this.tableData)
                 if (this.tableData.length == 0) {
                     this.addGoods()
                     if (this.tableData.length == 0) {
@@ -208,7 +173,6 @@
                     dataType: "json",
                     data: JSON.stringify(paramArr),
                     success: function (data) {
-                        console.log(data)
                         var alertStr = '物料编码审批提交成功'
                         if (data.errorCode != 0) alertStr = data.errorMessage
                         that.doneSubmit(alertStr)
@@ -236,20 +200,14 @@
             },
             //添加编码
             addGoods() {
-                if (!this.ruleForm.goods[0].BigCode || !this.ruleForm.goods[0].BigCode || !this.ruleForm.goods[0].Name || !this.ruleForm.goods[0].Standard) {
+                if (!this.goods[0].BigCode || !this.goods[0].BigCode || !this.goods[0].Name || !this.goods[0].Standard) {
                     this.elementAlert('提示信息', '表单未填写完整')
                     return
                 }
-                this.tableData.push(_cloneObj(this.ruleForm.goods[0]))
+                this.tableData.push(_cloneObj(this.goods[0]))
                 //原方法
                 return
-                this.ruleForm.goods.push(_cloneObj(meteriel))
-            },
-            editGood(index, row) {
-
-            },
-            deleteGood(index) {
-                this.tableData.splice(index, 1)
+                this.goods.push(_cloneObj(meteriel))
             },
 
             //切换编码类型
@@ -257,15 +215,15 @@
                 console.log(e)
                 this.tableData = []
                 this.getMaterielCode()
-                this.ruleForm.goods = []
-                this.ruleForm.goods.push(_cloneObj(meteriel))
+                this.goods = []
+                this.goods.push(_cloneObj(meteriel))
             },
             //获取物料编码
             getMaterielCode() {
                 var that = this
                 let url = ''
-                this.ruleForm.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
-                if (this.ruleForm.codeType == '2') {
+                this.codeType == '2' ? url = jinDomarn + 'OfficeSupply/ReadType' : url = '/ItemCodeAdd/GetAllMaterialCode'
+                if (this.codeType == '2') {
                     that.bigCodes = [
                         {
                             "materialCodeNumber": "60",
@@ -368,24 +326,14 @@
                         }
                     }
                 }
-                let a = this.ruleForm.goods[0].Remark
-                this.ruleForm.goods[0].Remark = Math.random() + ''
-                this.ruleForm.goods[0].Remark = a
-            },
-            //加载重新发起审批传递的数据
-            loadReApprovalData() {
-                if (!ReApprovalTempData.valid) return
-                ReApprovalTempData.valid = false
-                this.tableData = ReApprovalTempData.data
+                let a = this.goods[0].Remark
+                this.goods[0].Remark = Math.random() + ''
+                this.goods[0].Remark = a
             },
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
             this.getMaterielCode()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 

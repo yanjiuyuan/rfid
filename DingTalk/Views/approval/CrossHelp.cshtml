@@ -6,32 +6,23 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        跨部门协作申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="dept" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
         <el-form-item label="协作部门" prop="CooperateDept">
-            <el-select v-model="ruleForm.CooperateDept" style="width:300px;">
+            <el-select v-model="tableForm.CooperateDept" style="width:300px;">
                 <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="协作人" prop="CooperateMan">
-            <el-input v-model="ruleForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
 
         <el-form-item label="协作内容" prop="CooperateContent">
-            <el-input v-model="ruleForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
+            <el-input v-model="tableForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
         </el-form-item>
 
         <el-form-item label="协作时间" prop="PlanBeginTime">
@@ -44,8 +35,11 @@
             </el-date-picker>
         </el-form-item>
         <el-form-item label="计划天数" prop="PlanDays">
-            <el-input v-model="ruleForm.PlanDays" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.PlanDays" style="width:200px;"></el-input>
         </el-form-item>
+    </el-form>
+
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="上传相关文件">
             <el-upload class="upload-demo"
                        drag
@@ -60,16 +54,7 @@
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
-        <hr />
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
@@ -79,18 +64,11 @@
         mixins: [mixin],
         data: function () {
             return {
-                applyMan: DingData.nickName,
-                dept: DingData.departName,
-                nodeList: [],
-                nodeInfo: {},
                 timeRange: [],
                 useTimeList: [],
-                date: _getDate(),
-                activeNames: [],
                 DeptNames: DeptNames,
                 addPeopleNodes: [4, 6], //额外添加审批人节点数组
-                ruleForm: {
-                    remark: '',
+                tableForm: {
                     CooperateDept: "",
                     CooperateMan: "",
                     CooperateManId: "",
@@ -98,7 +76,6 @@
                     PlanEndTime: "",
                     CooperateContent: "",
                     PlanDays: "",
-                    Title: "跨部门协作申请"
                 },
                 rules: {
                     CooperateDept: { required: true, message: '协作部门不能为空', trigger: 'blur' },
@@ -111,30 +88,39 @@
         },
         methods: {
             onSubmit(formName) {
-                this.fileListToUrl()
-                let callBack = (taskId) => {
-                    this.ruleForm['TaskId'] = taskId
-                    this.PostData('Cooperate/Save', this.ruleForm, () => {
-                        this.$alert('恭喜提交成功', '提示信息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                goHome()
-                            }
+                this.$refs['tableForm'].validate((valid) => {
+                    if (!valid) {
+                        this.fileListToUrl()
+                        let callBack = (taskId) => {
+                            this.tableForm['TaskId'] = taskId
+                            this.PostData('Cooperate/Save', this.tableForm, () => {
+                                this.$alert('恭喜提交成功', '提示信息', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        goHome()
+                                    }
+                                })
+                            })
+                        }
+                        this.nodeList[4].AddPeople = this.nodeList[2].AddPeople
+                        this.nodeList[6].AddPeople = [...this.nodeList[1].AddPeople, ...this.nodeList[2].AddPeople]
+                        this.approvalSubmit(callBack)
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
                         })
-                    })
-                }
-                this.nodeList[4].AddPeople = this.nodeList[2].AddPeople
-                this.nodeList[6].AddPeople = [...this.nodeList[1].AddPeople, ...this.nodeList[2].AddPeople]
-                this.approvalSubmit(callBack)
+                    }
+                })
             },
             //选时间操作
             selectTime(value) {
                 console.log(value)
                 if (!value[0]) return
                 let days = (value[1] - value[0])/(3600*24*1000) + 1
-                this.ruleForm.PlanBeginTime = _timeToString(value[0]).substring(0,10)
-                this.ruleForm.PlanEndTime = _timeToString(value[1]).substring(0, 10)
-                this.ruleForm.PlanDays = days - parseInt(days/7) * 2
+                this.tableForm.PlanBeginTime = _timeToString(value[0]).substring(0,10)
+                this.tableForm.PlanEndTime = _timeToString(value[1]).substring(0, 10)
+                this.tableForm.PlanDays = days - parseInt(days/7) * 2
             },
             //添加协作人
             addPeerNumber() {
@@ -151,19 +137,15 @@
                             names.push(d.name)
                             ids.push(d.emplId)
                         } 
-                        that.ruleForm.CooperateMan = names.join(',')
-                        that.ruleForm.CooperateManId = ids.join(',')
+                        that.selectTime.CooperateMan = names.join(',')
+                        that.selectTime.CooperateManId = ids.join(',')
                     },
                     onFail: function (err) { }
                 });
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         },
 
     })

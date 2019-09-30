@@ -83,6 +83,10 @@
         methods: {
             //领料数据相关
             searchData: function () {
+                if (!this.searchParam.startTime) {
+                    this.$message({ type: 'error', message: `请填写时间！` });
+                    return
+                }
                 var that = this
                 let param = _cloneObj(this.searchParam)
                 let handle = function (data) {
@@ -90,14 +94,13 @@
                     that.data = data
                     that.getData()
                 }
-                console.log(_formatQueryStr(param))
                 this.GetData("/Pick/Query" + _formatQueryStr(param), handle)
             },
             printData: function () {
                 let param = _cloneObj(this.searchParam)
                 param.IsSend = true
                 this.GetData("/Pick/Query" + _formatQueryStr(param), (res) => {
-                    this.$alert('提示', '已推送到钉钉', {
+                    this.$alert('提示', '已文件推送到钉钉，请查收', {
                         confirmButtonText: '确定'
                     });
                 })
@@ -105,7 +108,11 @@
             },
             //选操作
             selectTime(value) {
-                if (!value[0]) return
+                if (!value || !value[0]) {
+                    this.searchParam.startTime = ''
+                    this.searchParam.endTime = ''
+                    return
+                }
                 this.searchParam.startTime = _timeToString(value[0])
                 this.searchParam.endTime = _timeToString(value[1])
             },

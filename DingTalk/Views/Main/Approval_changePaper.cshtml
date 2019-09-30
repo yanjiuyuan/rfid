@@ -5,7 +5,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        审批处理-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <template v-for="(d,index) in dataArr">
         <h2 style="text-align:center;">{{d.Sorts}}件列表</h2>
@@ -33,18 +33,10 @@
     </template>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" v-if="ruleForm.Title">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
             <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
             <el-button type="primary" v-on:click="downloadAllPdf">下载所有图纸</el-button>
@@ -93,7 +85,7 @@
                 <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
             </el-form-item>
         </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
+        <template v-if="index==2 && state=='未完成' && NodeId == '1'">
             <el-form-item>
                 <ding :dinglist="dingList"></ding>
                 <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
@@ -270,46 +262,22 @@
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                imageList: [],
-                fileList: [],
-                pdfList: [],
-                data: [],
                 items: items,
-                FlowId: FlowId,
-                tableData: [],
-                totalRows: 0,
-                nodeInfo: {},
-                nodeList: [],
-                ruleForm: {},
-                state: state,
-                tick: 50,
-                dataArr: dataArr,
-                index: Index,
                 frameUrl: '',
                 frameShow: false
             }
         },
         methods: {
             //提交审批
-            onSubmit(formName) {
+            onSubmit() {
                 this.disablePage = true
                 if (NodeId == 5) {
                     this.PostData('DrawingChange/ChangeBom', DrawingChangeList, (res) => {
-                        this.aggreSubmit({
-                            "Id": this.ruleForm.Id,
-                            "Remark": this.ruleForm.mark,
-                            "Title": this.ruleForm.Title,
-                            "ProjectId": this.ruleForm.ProjectId
-                        })
+                        this.aggreSubmit()
                     })
                     return
                 }
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark
-                })
+                this.aggreSubmit()
             },
             print() {
                 FilePDFUrl = FilePDFUrl.replace(/\\/g, '\\\\')
@@ -427,12 +395,10 @@
         created: function () {
             //获取下一个节点的审批人id
             if (state == '未完成') this.GetDingList(TaskId)
-            this.getBomInfo()
+            this.initEnd(() => { this.getBomInfo() })
             PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
-            loadHtml("mainPage", "partPage")
         }
     })
-    getFormData(demo)
 
 </script>
 

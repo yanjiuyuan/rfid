@@ -23,7 +23,7 @@
             <template slot="title">
                 <span style="font-size:20px;">{{m.SORT_NAME}}</span>
             </template>
-            <div v-for="l in m.flows" v-if="l.url" class="approval-box" v-on:click="toApprove(l.url,l.FlowId)" style="cursor:pointer;">
+            <div v-for="l in m.flows" v-if="l.url" class="approval-box" v-on:click="toApprove(l.url,l)" style="cursor:pointer;">
                 <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
                 <p>{{l.FlowName}}</p>
             </div>
@@ -215,7 +215,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [3,7],
+                activeNames: [1,2,3,7],
                 count: 2,
                 name: '',
                 id: '',
@@ -316,8 +316,9 @@
                     onFail: function (err) { }
                 });
             },
-            toApprove: function (url, id) {
-                FlowId = id
+            toApprove: function (url, param) {
+                FlowId = param.FlowId
+                FlowName = param.FlowName
                 loadPage(url)
             },
             loadPage: function (url) {

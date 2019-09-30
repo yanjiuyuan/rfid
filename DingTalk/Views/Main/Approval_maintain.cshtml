@@ -5,7 +5,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        维修申请审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
     <!--表格實體-->
@@ -26,40 +26,8 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" v-if="ruleForm.Title">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        @*<el-form-item label="项目名称" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>*@
-        <el-form-item label="备注">
-            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.mark"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
@@ -71,14 +39,6 @@
 
 </el-main>
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        Index = UrlObj.index
-    }
     var items = {
         CodeNo: '物料编码',
         Name: '物料名称',
@@ -95,30 +55,14 @@
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                data: [],
                 items: items,
-                FlowId: FlowId,
-                Index: Index,
-                NodeId: NodeId,
-                tableData: [],
-                totalRows: 0,
-                nodeInfo: {},
-                nodeList: [],
-                ruleForm: {},
-                state: State,
-                index: Index,
             }
         },
         methods: {
             //提交审批
             onSubmit(formName) {
                 this.disablePage = true
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark
-                })
+                this.aggreSubmit()
             },
             //获取bom表信息
             getBomInfo() {
@@ -143,9 +87,7 @@
             }
         },
         created: function () {
-            this.getBomInfo()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
-    getFormData(demo)
 </script>

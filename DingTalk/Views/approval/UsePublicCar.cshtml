@@ -6,34 +6,23 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        公车申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
         <el-form-item label="驾驶员" prop="DrivingMan">
-            <el-input v-model="ruleForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="同行人">
-            <el-input v-model="ruleForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
-
         <el-form-item label="用车事由" prop="MainContent">
-            <el-input v-model="ruleForm.MainContent" style="width:550px;"></el-input>
+            <el-input v-model="tableForm.MainContent" style="width:550px;"></el-input>
         </el-form-item>
-
-        <hr />
-
         <el-form-item label="计划行车路线" prop="PlantTravelWay">
-            <el-input v-model="ruleForm.PlantTravelWay" style="width:550px;"></el-input>
+            <el-input v-model="tableForm.PlantTravelWay" style="width:550px;"></el-input>
         </el-form-item>
 
         @*<el-form-item label="起始公里数" prop="StartKilometres">
@@ -50,11 +39,8 @@
                             end-placeholder="返回时间">
             </el-date-picker>
         </el-form-item>
-
-        
-
-        <hr />
-
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
@@ -68,7 +54,7 @@
                 <div>
                     <h2 style="text-align:center;">车辆安全使用协议</h2>
                     <p>甲方: 泉州华中科技大学智能制造研究院（泉州华数机器人有限公司）</p>
-                    <p>乙方: {{applyMan}}</p>
+                    <p>乙方: {{DingData.nickName}}</p>
                     <p>为加强公务用车使用管理，严格控制车辆费用，明确车辆使用责任，确保行车安全，方便工作的开展，提高工作效率，经甲、乙双方协商，特订立本协议书</p>
                     <p></p>
                     <h3>一、本协议适用范围</h3>
@@ -115,10 +101,7 @@
             </el-collapse-item>
         </el-collapse>
         <br />
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="!checked">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 </el-main>
 
@@ -128,16 +111,12 @@
         mixins: [mixin],
         data: function () {
             return {
-                applyMan: DingData.nickName,
                 carList: [],
-                nodeList: [],
-                nodeInfo: {},
                 timeRange: [],
                 useTimeList: [],
-                date: _getDate(),
                 checked: false,
                 activeNames: [],
-                ruleForm: {
+                tableForm: {
                     CarId: "",
                     DrivingMan: "",
                     PeerNumber: "",
@@ -145,7 +124,6 @@
                     EndTime: "",
                     MainContent: "",
                     PlantTravelWay: "",
-                    Title: "公车申请",
                     IsPublicCar: true,
                     IsChooseOccupyCar: true,
                     OccupyCarId: ""
@@ -180,13 +158,17 @@
         methods: {
             onSubmit(formName) {
                 console.log('submit!');
+                if (!this.checked) {
+                    this.$message({ type: 'error', message: `必须先同意用车协议才可申请'` });
+                    return
+                }
                 if (this.nodeList[1].AddPeople[0].emplId == "0907095238746571") {
                     this.$alert('用车无需季老师审批,如是部长级请选本人', '提示信息')
                     return
                 }
                 var that = this
                 let url = '/CarTable/TableSave'
-                var param = _cloneObj(this.ruleForm)
+                var param = _cloneObj(this.tableForm)
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId
@@ -210,8 +192,8 @@
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
-                this.ruleForm.StartTime = _timeToString(value[0])
-                this.ruleForm.EndTime = _timeToString(value[1])
+                this.tableForm.StartTime = _timeToString(value[0])
+                this.tableForm.EndTime = _timeToString(value[1])
             },
             //添加用车人
             addDrivingMan() {
@@ -223,7 +205,7 @@
                     max: 10,
                     onSuccess: function (data) {
                         console.log(data)
-                        that.ruleForm.DrivingMan = data[0].name
+                        that.tableForm.DrivingMan = data[0].name
                     },
                     onFail: function (err) { }
                 });
@@ -239,22 +221,16 @@
                         console.log(data)
                         let names = []
                         for (let d of data) names.push(d.name)
-                        that.ruleForm.PeerNumber = names.join(',')
+                        that.tableForm.PeerNumber = names.join(',')
                     },
                     onFail: function (err) { }
                 });
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         },
-        
     })
-
 
 </script>
 

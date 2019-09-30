@@ -6,26 +6,16 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        加班申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="加班人员" prop="name">
-            <el-input v-model="ruleForm.name" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
         <el-form-item label="加班事由" prop="OverTimeContent">
-            <el-input v-model="ruleForm.OverTimeContent" style="width:90%;"></el-input>
+            <el-input v-model="tableForm.OverTimeContent" style="width:90%;"></el-input>
         </el-form-item>
-
-        <hr />
-
         <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
-                <el-date-picker v-model="ruleForm.DateTime"
+                <el-date-picker v-model="tableForm.DateTime"
                                 type="date"
                                 value-format="yyyy-MM-dd"
                                 placeholder="选择日期" :editable="false"
@@ -33,31 +23,31 @@
                 </el-date-picker>
             </div>
         </el-form-item>
-
-
         <el-form-item label="加班时间" prop="StartTime">
             <el-time-select placeholder="起始时间"
-                            v-model="ruleForm.StartTime"
+                            v-model="tableForm.StartTime"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
                               end: '23:00',
-                              maxTime: ruleForm.EndTimeTime
+                              maxTime: tableForm.EndTimeTime
                             }">
             </el-time-select>
             <el-time-select placeholder="结束时间"
-                            v-model="ruleForm.EndTimeTime"
+                            v-model="tableForm.EndTimeTime"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
                               end: '23:30',
-                              minTime: ruleForm.StartTime
+                              minTime: tableForm.StartTime
                             }">
         </el-form-item>
         <el-form-item label="加班时长(小时)">
             <el-input v-model="UseTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         <!--添加审批人-->
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
@@ -75,12 +65,9 @@
         mixins: [mixin],
         data: function () {
             return {
-                nodeList: [],
-                nodeInfo: {},
-                ruleForm: {
+                tableForm: {
                     TaskId: '',
                     StartTime: '',
-                    Title: "加班申请",
                     ApplyMan: DingData.nickName,
                     OverTimeContent: '',
                     EndTimeTime: '',
@@ -93,7 +80,7 @@
             onSubmit(formName) {
                 var that = this
                 let url = '/OverTimeTable/OverTimeTableSave'
-                var param = _cloneObj(this.ruleForm)
+                var param = _cloneObj(this.tableForm)
                 param.UseTime = this.UseTime
                 let callBack = function (taskId) {
                     console.log(taskId)
@@ -112,16 +99,12 @@
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         },
         computed: {
             UseTime: function () {
-                let StartTime = this.ruleForm.StartTime
-                let EndTimeTime = this.ruleForm.EndTimeTime
+                let StartTime = this.tableForm.StartTime
+                let EndTimeTime = this.tableForm.EndTimeTime
                 let startHour = parseInt(StartTime.split(':')[0])
                 let startMinut = parseInt(StartTime.split(':')[1])
                 let endHour = parseInt(EndTimeTime.split(':')[0])

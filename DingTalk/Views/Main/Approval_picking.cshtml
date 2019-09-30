@@ -5,7 +5,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/Approval_list')">
         <i class="el-icon-arrow-left"></i>
-        领料审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
     <!--表格實體-->
@@ -26,18 +26,7 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="项目名">
-            <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="上传图片" v-if="NodeId >= 3" required="required">
             <el-upload action="/drawingupload/Upload"
                        list-type="picture-card"
@@ -53,27 +42,7 @@
             </el-dialog>
         </el-form-item>
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.mark"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
@@ -85,22 +54,12 @@
 
 </el-main>
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = parseInt(UrlObj.nodeid)
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        Index = UrlObj.index
-    }
     var items = {
         fNumber: '物料编码',
         fName: '物料名称',
         fQty: '实收数量',
         unitName: '单位',
         fModel: '型号规格',
-        //fPrice: '单价',
-        //fAmount: '金额',
         fFullName: '供应商'
     }
     var demo = new Vue({
@@ -108,24 +67,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                data: [],
-                items: items,
-                FlowId: FlowId,
-                Index: Index,
-                NodeId: NodeId,
-                tableData: [],
                 totalRows: 0,
-                nodeInfo: {},
-                nodeList: [],
-                ruleForm: {},
-                state: State,
-                index: Index,
-                ifShowStamppBtn: false,
-                ifShowStamppBtn2: false,
-                //图片上传参数
-                imageList: [],
                 dialogImageUrl: '',
                 dialogVisible: false,
             }
@@ -137,27 +79,7 @@
                     this.$message({ type: 'error', message: `请先上传图片` });
                     return
                 }
-                this.disablePage = true
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark,
-                    "ImageUrl": this.ruleForm.ImageUrl,
-                    "OldImageUrl": this.ruleForm.OldImageUrl
-                })
-            },
-            //重新发起审批
-            reApproval() {
-                this.disablePage = true
-                ReApprovalTempData = {
-                    valid: true,
-                    data: this.data,
-                    items: items
-                }
-                for (let img of imgConfig) {
-                    if (img.flowId == FlowId) {
-                        loadPage(img.url)
-                    }
-                }
+                this.aggreSubmit()
             },
             //获取bom表信息
             getBomInfo() {
@@ -168,13 +90,6 @@
                     that.totalRows = that.data.length
                 })
             },
-            //获取审批表单信息
-            //getFormData() {
-            //    var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-            //    this.GetData(url, (data) => {
-            //        this.ruleForm = data
-            //    })
-            //},
             printTable() {
                 this.PostData('Pick/PrintPDF', {
                     UserId: DingData.userid,
@@ -189,9 +104,7 @@
             }
         },
         created: function () {
-            this.getBomInfo()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
-    getFormData(demo)
 </script>

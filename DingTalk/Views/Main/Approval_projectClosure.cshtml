@@ -6,24 +6,12 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        结题申请审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
 
-
-        <el-form-item label="项目名称">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="项目类型">
             <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -145,7 +133,7 @@
                 <el-form-item label="申报类别">
                     <el-input v-model="DetailedList2_detail.ActualType" :disabled="true"></el-input>
                 </el-form-item>
-   
+
             </el-collapse-item>
             <el-collapse-item :name="4" :key="4" v-if="((tableForm.IsTransverse && NodeId > 3) || index == 2) && ApplicationUnit.length">
                 <template slot="title">
@@ -166,7 +154,7 @@
                     <el-table-column type="index"></el-table-column>
                     <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                         <template slot-scope="scope">
-                            <el-input type="textarea" v-model="scope.row[key]" v-on:change = "computeCount(scope.$index,scope.row)"></el-input>
+                            <el-input type="textarea" v-model="scope.row[key]" v-on:change="computeCount(scope.$index,scope.row)"></el-input>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -179,30 +167,7 @@
             </el-collapse-item>
         </el-collapse>
 
-            
-
-        <hr />
-        <el-form-item label="意见">
-            <el-input type="textarea" v-model="ruleForm.Mark" style="width:550px;"></el-input>
-        </el-form-item>
-
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printPdf" :disabled="disablePage">打印表单</el-button>
@@ -212,28 +177,12 @@
 </el-main>
 
 <script>
-    var imageList = []
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                index: Index,
-                FlowId: FlowId,
-                NodeId: NodeId,
-                state: State,
-                nodeList: [],
-                nodeInfo: {},
                 activeNames: [],
-
                 uploadFileConfig: [
                     {
                         label: '立项书或建议书',
@@ -470,10 +419,6 @@
                         TaskId: TaskId
                     }
                 ],
-
-                tableForm: {
-
-                },
             }
         },
         methods: {
@@ -531,10 +476,6 @@
 
             },
             onSubmit() {
-                let aggreParam = {
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark
-                }
                 if (NodeId == 2 || NodeId == 8) {
                     if (NodeId == 2) {
                         for (let fund of this.ProjectFundingList) {
@@ -556,11 +497,11 @@
                     }
                     console.log(JSON.stringify(param))
                     this.PostData('ProjectClosure/Modify', param, (res) => {
-                        this.aggreSubmit(aggreParam)
+                        this.aggreSubmit()
                     })
                 }
                 else {
-                    this.aggreSubmit(aggreParam)
+                    this.aggreSubmit()
                 }
             },
             computeCount(index, row) {
@@ -708,11 +649,9 @@
         },
 
         created: function () {
-            this.getTable()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getTable() })
         }
     })
-    getFormData(demo)
 </script>
 
 

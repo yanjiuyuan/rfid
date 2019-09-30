@@ -6,27 +6,22 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        外出申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.applyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
         <el-form-item label="同行人">
-            <el-input v-model="ruleForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="外出地点" prop="Place">
-            <el-input type="textarea" v-model="ruleForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
+            <el-input type="textarea" v-model="tableForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
             <el-button type="primary" v-on:click="dialogFormVisible = true">添加地点</el-button>
             <el-button type="danger" v-on:click="removePlace">删除地点</el-button>
         </el-form-item>
         <el-form-item label="外出事由" prop="Content">
-            <el-input v-model="ruleForm.Content" style="width:550px;"></el-input>
+            <el-input v-model="tableForm.Content" style="width:550px;"></el-input>
         </el-form-item>
         <el-form-item label="外出时间" prop="BeginTime">
             <el-date-picker v-model="timeRange"
@@ -38,8 +33,10 @@
             </el-date-picker>
         </el-form-item>
         <el-form-item label="时长/小时" prop="Duration">
-            <el-input v-model="ruleForm.Duration" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.Duration" style="width:200px;"></el-input>
         </el-form-item>
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="上传相关文件">
             <el-upload class="upload-demo"
                        drag
@@ -56,16 +53,12 @@
         </el-form-item>
         <hr />
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 
     <el-dialog title="添加外出地点" :visible.sync="dialogFormVisible">
         <el-form :model="form" :rules="rules" ref="form">
-            <el-form-item label="外出地点" prop="Place" >
+            <el-form-item label="外出地点" prop="Place">
                 <el-input v-model="form.Place" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
@@ -84,15 +77,10 @@
         mixins: [mixin],
         data: function () {
             return {
-                nodeList: [],
-                nodeInfo: {},
                 timeRange: [],
                 placeArr: [],
                 placeStr: '',
-                date: _getDate(),
-                dialogFormVisible: false,
-                ruleForm: {
-                    applyMan: DingData.nickName,
+                tableForm: {
                     Duration: "",
                     EvectionMan: '',
                     EvectionManId: '',
@@ -101,7 +89,6 @@
                     Content: "",
                     Place: "",
                     LocationPlace: '',
-                    Title: "外出申请"
                 },
                 form: {
                     Place: "",
@@ -145,7 +132,7 @@
             onSubmit(formName) {
                 var that = this
                 let url = '/Evection/Save'
-                var param = _cloneObj(this.ruleForm)
+                var param = _cloneObj(this.tableForm)
                 this.fileListToUrl()
                 console.log(param)
                 let callBack = function (taskId) {
@@ -165,7 +152,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.placeArr.push(this.form.Place)
-                        this.ruleForm.Place = this.placeArr.join(',')
+                        this.tableForm.Place = this.placeArr.join(',')
                         this.dialogFormVisible = false
                         this.form.Place = ''
                     }
@@ -173,17 +160,14 @@
             },
             removePlace() {
                 this.placeArr.pop()
-                this.ruleForm.Place = this.placeArr.join(',')
+                this.tableForm.Place = this.placeArr.join(',')
             },
             //选时间操作
             selectTime(value) {
                 if (!value[0]) return
-                this.ruleForm.Duration = _computeDurTime(value[0], value[1], 'h')
-                this.ruleForm.BeginTime = _timeToString(value[0])
-                this.ruleForm.EndTime = _timeToString(value[1])
-                console.log(this.ruleForm.BeginTime)
-                console.log(this.ruleForm.EndTime)
-                console.error(this.ruleForm.Duration)
+                this.tableForm.Duration = _computeDurTime(value[0], value[1], 'h')
+                this.tableForm.BeginTime = _timeToString(value[0])
+                this.tableForm.EndTime = _timeToString(value[1])
             },
             // 添加同行人
             addPeerNumber() {
@@ -199,19 +183,15 @@
                         names.push(d.name)
                         numbers.push(d.emplId)
                     }
-                    that.ruleForm.EvectionMan = names.join(',')
-                    that.ruleForm.EvectionManId = numbers.join(',')
+                    that.tableForm.EvectionMan = names.join(',')
+                    that.tableForm.EvectionManId = numbers.join(',')
                 },
                 onFail: function (err) { }
             });
         }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 </script>
