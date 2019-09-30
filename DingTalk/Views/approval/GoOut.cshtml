@@ -11,6 +11,7 @@
 
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="同行人">
             <el-input v-model="tableForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
@@ -53,7 +54,7 @@
         </el-form-item>
         <hr />
         <!--添加审批人-->
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 
     <el-dialog title="添加外出地点" :visible.sync="dialogFormVisible">

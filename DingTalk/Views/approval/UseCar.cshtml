@@ -10,6 +10,7 @@
     </div>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="驾驶员" prop="DrivingMan">
             <el-input v-model="tableForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
@@ -84,7 +85,7 @@
             </el-collapse-item>
         </el-collapse>
         <br />
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

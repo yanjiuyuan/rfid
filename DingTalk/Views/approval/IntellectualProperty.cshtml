@@ -10,6 +10,8 @@
     </div>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+
         <el-form-item label="申请名称" prop="Name">
             <el-input v-model="tableForm.Name" style="width:550px;"></el-input>
         </el-form-item>
@@ -36,7 +38,7 @@
     </el-form>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

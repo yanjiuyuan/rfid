@@ -63,9 +63,6 @@
         <el-form-item label="套数" v-if="FlowId == 23">
             <el-input v-model="ruleForm.counts" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="备注">
-            <el-input v-model="ruleForm.Remark" :disabled="true"></el-input>
-        </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
             <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
@@ -104,8 +101,8 @@
         </el-form-item>
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
-        <el-form-item label="操作">
-            <el-button type="primary" v-on:click="stampAndGet">打印表单</el-button>
+        <el-form-item label="操作" v-if="FlowId == '6'">
+            <el-button v-if="State == '已完成'" type="primary" v-on:click="stampAndGet">打印表单</el-button>
             <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         </el-form-item>
     </el-form>
@@ -214,6 +211,7 @@
 
 </el-main>
 <script>
+    var fileList = []
     var stampRole = {}//圖紙審批 可打印并 下載的角色信息
 </script>
 
@@ -221,7 +219,6 @@
     serverUrl = 'http://17e245o364.imwork.net:49415/'
     $("#mask").hide()
     var items = {}
-    var bomUrl = ''
     var dataArr = [
         {
             data: [],
@@ -247,39 +244,17 @@
             totalRows: 0,
             items: {}
         }]
-    if (FlowId != '6' && FlowId != '23') dataArr = []
-    switch (FlowId) {
-        case '6':
-            items = {
-                DrawingNo: '代号',
-                Name: '名称',
-                Count: '数量',
-                MaterialScience: '材料',
-                Unit: '单位',
-                Sorts: '类别',
-                SingleWeight: '单重',
-                AllWeight: '总重',
-                NeedTime: '需用日期',
-                Mark: '备注'
-            }
-            bomUrl = "/DrawingUpload/GetPurchase?TaskId=" + TaskId
-            break;
-        case '23':
-            items = {
-                DrawingNo: '代号',
-                Name: '名称',
-                Count: '数量',
-                MaterialScience: '材料',
-                Unit: '单位',
-                Sorts: '类别',
-                SingleWeight: '单重',
-                AllWeight: '总重',
-                //NeedTime: '需用日期',
-                //Mark: '备注'
-            }
-            bomUrl = "/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId
-            break;
-       
+    items = {
+        DrawingNo: '代号',
+        Name: '名称',
+        Count: '数量',
+        MaterialScience: '材料',
+        Unit: '单位',
+        Sorts: '类别',
+        SingleWeight: '单重',
+        AllWeight: '总重',
+        NeedTime: '需用日期',
+        Mark: '备注'
     }
     var demo = new Vue({
         el: "#partPage",
@@ -288,9 +263,8 @@
             return {
                 items: items,
                 dataArr: dataArr,
+                imageList: [],
                 frameUrl: '',
-                ifShowStamppBtn: false,
-                ifShowStamppBtn2: true,
                 frameShow: false
             }
         },
@@ -309,14 +283,14 @@
                     OldPath: FilePDFUrl
                 }
                 var that = this
+                let url = "/DrawingUpload/PrintAndSend"
+                //if (FlowId == '23') url = "/PurchaseOrder/QuaryByTaskId?TaskId="
                 $.ajax({
-                    url: "/DrawingUpload/PrintAndSend",
+                    url: url,
                     type: "POST",
                     data: paramObj,
                     dataType: "json",
                     success: function (data) {
-                        //data = JSON.parse(data)
-                        console.log("/DrawingUpload/PrintAndSend1")
                         console.log(paramObj)
                         console.log(data)
                         var alertStr = ''
@@ -359,12 +333,13 @@
             //获取bom表信息
             getBomInfo() {
                 var that = this
+                let url = "/DrawingUpload/GetPurchase?TaskId=" + TaskId
+                if (FlowId == '23') url = "/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId
                 $.ajax({
-                    url: bomUrl,
+                    url: url,
                     type: "GET",
                     success: function (data) {
-                        console.log("获取bom表信息ok")
-                        console.log(bomUrl)
+                        console.log("/DrawingUpload/GetPurchase?TaskId=" + TaskId)
                         if (typeof (data) == 'string') data = JSON.parse(data)
                         that.data = data
                         if (FlowId == 23 || FlowId == 1) that.data = data.data
@@ -440,23 +415,6 @@
                 })
             },
 
-            //獲取角色信息
-            showStamp(roleName) {
-                var that = this
-                var url = "/Role/GetRoleInfo?RoleName=" + roleName
-                $.ajax({
-                    url: url,
-                    success: function (data) {
-                        console.log("獲取角色信息")
-                        console.log(url)
-                        console.log(data)
-                        for (let d of data) {
-                            that.ifShowStamppBtn = true
-                            if (FlowId == '8') that.ifShowStamppBtn2 = true
-                        }
-                    }
-                })
-            },
             //显示PDF画板
             showPdf(url) {
                 var that = this
@@ -496,9 +454,6 @@
 
         },
         created: function () {
-            if (FlowId == '6') {
-                this.showStamp("图纸管理员")
-            }
             this.initEnd(() => { this.getBomInfo() })
             if (Index == '0')
             for (let s of this.specialRoles) {

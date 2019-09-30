@@ -10,6 +10,7 @@
     </div>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="单位名称" prop="Company">
             <el-select v-model="tableForm.Company" style="width:400px;">
                 <el-option v-for="item in CompanyNames"
@@ -63,7 +64,7 @@
             </el-dialog>
         </el-form-item>
         <hr />
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

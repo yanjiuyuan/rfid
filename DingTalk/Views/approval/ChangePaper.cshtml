@@ -46,6 +46,15 @@
             </template>
         </el-table-column>
     </el-table>
+    <div style="text-align:right">
+        <el-pagination v-on:current-change="handlePageChange($event,index)"
+                       :current-page="page"
+                       :page-sizes="[5]"
+                       :page-size="5"
+                       layout="total, prev, pager, next, jumper"
+                       :total="total">
+        </el-pagination>
+    </div>
     <hr />
     <h3>待新增图纸Bom列表</h3>
     <template v-for="(d,index) in dataArr">
@@ -60,7 +69,7 @@
                            :current-page="d.currentPage"
                            :page-sizes="[5]"
                            :page-size="5"
-                           layout="total, sizes, prev, pager, next, jumper"
+                           layout="total, prev, pager, next, jumper"
                            :total="d.totalRows">
             </el-pagination>
         </div>
@@ -81,6 +90,7 @@
     <hr />
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="项目名称" prop="ProjectName">
             <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
@@ -112,7 +122,7 @@
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 
@@ -123,10 +133,13 @@
         mixins: [mixin],
         data: function () {
             return {
+                partData: [],
                 allData: [],
                 fileList: [],
                 bomIndex: 0,
                 //表单参数
+                page: 1,
+                total: 0,
                 ProjectId: '',
                 ProjectName: '',
                 ProjectTypes: ['电气采购', '机械加工', '机械采购', '其他'],
@@ -167,7 +180,11 @@
                         deleteItem.push(item)
                     }
                 })
-                if (!(upBom.length || deleteItem.length)) this.$alert('表单未填写完整', '提交错误')
+                if (!(upBom.length || deleteItem.length)) {
+                    this.$message({ type: 'error', message: `表单未填写完整` });
+                    return
+                }
+
                 this.fileListToUrl()
                 let changeParam = {
                     DrawingChangeList: [...deleteItem, ...upBom],
@@ -211,16 +228,15 @@
             deleteDevice(index, row) {
                 row['ChangeType'] == 2 ? this.allData[index]['ChangeType'] = 0 : this.allData[index]['ChangeType'] = 2
             },
-            selectProject(id) {
-                for (var project of this.projectList) {
-                    if (project.ProjectId == id) {
-                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-                        this.ruleForm.ProjectName = project.ProjectName 
-                        this.ruleForm.ProjectId = project.ProjectId
-                    }
-                }
-            },
             //图纸审批相关方法、、、、、、、、、、、、、、、、、、、、
+            handlePageChange(page, index) {
+                console.log(page)
+                console.log(index)
+                this.page = page
+                this.getData()
+                var start = 5 * (this.page - 1)
+                this.partData = this.allData.slice(start, start + 5)
+            },
             //bom表格翻页
             handleBomPageChange(page, index) {
                 console.log(page)

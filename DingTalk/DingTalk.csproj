@@ -885,6 +885,7 @@
     <Content Include="Views\Shared\startForm.cshtml" />
     <Content Include="Views\Shared\endForm.cshtml" />
     <Content Include="Views\Shared\endButton.cshtml" />
+    <Content Include="Views\Shared\startButton.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -11,6 +11,7 @@
 
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="协作部门" prop="CooperateDept">
             <el-select v-model="tableForm.CooperateDept" style="width:300px;">
                 <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
@@ -54,7 +55,7 @@
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

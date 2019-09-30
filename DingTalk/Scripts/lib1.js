@@ -17,7 +17,7 @@ var fileList = []
 var pdfList = []
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 //let serverUrl = 'http://17e245o364.imwork.net:49415/'
-let serverUrl = 'http://47.96.172.122:8093/'
+let serverUrl = window.location.host +'/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目', '测试项目']
 let PTypes = [
     { label: '研发类', value: '研发类', children: [{ value: '自研', label: '自研' }, { value: '横向', label: '横向' }, { value: '纵向', label: '纵向' }, { value: '测试', label: '测试' }] },
@@ -28,11 +28,6 @@ let status = ["在研", "已完成", "终止"]
 let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
-function getConfig() {
-    GetData('DingTalkServers/GetCompanyInfo', (res) => {
-        serverUrl = res.Url
-    })
-}
 //原型方法
 Array.prototype.removeByValue = function (val) {
     for (var i = 0; i < this.length; i++) {
@@ -237,71 +232,9 @@ function checkRate(input) {
     }
 }
 
-//获取审批表单信息
-function getFormData(demo) {
-    var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-    GetData(url, (res) => {
-        imageList = []
-        fileList = []
-        pdfList = []
-        handleUrlData(res, demo)
-        taskId = res.TaskId
-        allData = res
-        demo.ruleForm = res
-        demo.getNodeInfo()
-        demo.GetDingList(taskId)
-        demo.getApproInfo()
-        getFormData_done(res)
-    },demo)
-}
+
 function getFormData_done(res) {
 
-}
-function handleUrlData(data,demo) {
-    imageList = []
-    fileList = []
-    pdfList = []
-    if (data.ImageUrl && data.ImageUrl.length > 5) {
-        var tempList = data.ImageUrl.split(',')
-        for (let img of tempList) {
-            imageList.push({
-                name: 'hello.jpg',
-                url: document.location + (img.substring(2)).replace(/\\/g, "/")
-            })
-        }
-        demo.imageList = imageList
-    }
-    if (data.FileUrl && data.FileUrl.length > 5) {
-        FileUrl = data.FileUrl
-        var urlList = data.FileUrl.split(',')
-        var oldUrlList = data.OldFileUrl.split(',')
-        var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
-        for (var i = 0; i < urlList.length; i++) {
-            fileList.push({
-                name: oldUrlList[i],
-                path: urlList[i].replace(/\\/g, "/"),
-                url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                mediaId: MediaIdList[i]
-            })
-        }
-        demo.fileList = fileList
-    }
-    if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
-        FilePDFUrl = data.FilePDFUrl
-        var urlList = data.FilePDFUrl.split(',')
-        var oldUrlList = data.OldFilePDFUrl.split(',')
-        var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
-        var stateList = data.PdfState ? data.PdfState.split(',') : []
-        for (var i = 0; i < urlList.length; i++) {
-            pdfList.push({
-                name: oldUrlList[i],
-                url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                mediaId: MediaIdList[i],
-                state: stateList[i]
-            })
-        }
-        demo.pdfList = pdfList
-    }
 }
 
 //时间选择器插件参数
@@ -376,9 +309,11 @@ var mixin = {
         tableData: [],
         fileList: [],
         pdfList: [],
+        imageList: [],
         excelList: [],
         mediaList: [],
         specialRoleNames: [],
+        specialRole: [],
         preApprove: true,
         isBack: false,
         projectList: [],
@@ -642,6 +577,7 @@ var mixin = {
             this.FlowName = FlowName
             this.purchaseList = []
             this.noList = []
+            this.pageSize = 5
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
@@ -659,12 +595,13 @@ var mixin = {
                 ProjectId: '',
                 ProjectType: '',
                 counts: '',
+                tpName: '',
                 NodeId: '0',
                 ApplyTime: _getTime(),
                 IsEnable: '1',
                 FlowId: FlowId + '',
                 IsSend: false,
-                State: '1',
+                State: '1', 
                 Title: FlowName,
             }
 
@@ -709,6 +646,7 @@ var mixin = {
             this.FlowName = FlowName
             this.purchaseList = []
             this.noList = []
+            this.pageSize = 5
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
@@ -726,6 +664,7 @@ var mixin = {
                 ProjectId: '',
                 ProjectType: '',
                 counts: '',
+                tpName: '',
                 NodeId: '0',
                 ApplyTime: _getTime(),
                 IsEnable: '1',
@@ -743,7 +682,7 @@ var mixin = {
             loadHtml("mainPage", "partPage")
         },
         //提交审批
-        approvalSubmit(callBack) {
+        approvalSubmit(callBack = function () { }) {
             if (!DingData.userid) return
             var that = this
             this.fileListToUrl()
@@ -761,7 +700,7 @@ var mixin = {
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
                             if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
                                 (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))){
-                                this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
+                                that.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                                     confirmButtonText: '确定',
                                     callback: action => {
 
@@ -819,7 +758,9 @@ var mixin = {
                 "OldFilePDFUrl ": this.ruleForm.OldFilePDFUrl || '',
                 "ProjectId": this.ruleForm.ProjectId || '',
                 "ProjectName": this.ruleForm.ProjectName || '',
-                "counts ": this.ruleForm.counts  || '',
+                "ProjectType": this.ruleForm.ProjectType || '',
+                "counts ": this.ruleForm.counts || '',
+                "tpName ": this.ruleForm.tpName || '',
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
@@ -837,7 +778,7 @@ var mixin = {
             if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',') 
             if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
             for (let node of this.nodeList) {
-                if ((that.choseList.indexOf(node.NodeId + '') >= 0)
+                if ((choseList.indexOf(node.NodeId + '') >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
                     if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
                         (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))) {
@@ -1043,7 +984,7 @@ var mixin = {
                 if (proj.ProjectId == id) {
                     this.ruleForm.ProjectId = proj.ProjectId
                     this.ruleForm.ProjectName = proj.ProjectName
-                    this.ruleForm.ProjectType = proj.ProjectType
+                    if(FlowId != 6)this.ruleForm.ProjectType = proj.ProjectType
                     this.project = proj
                     this.ruleForm.Title = proj.ProjectId + ' - ' + proj.ProjectName
                 }
@@ -1086,9 +1027,8 @@ var mixin = {
                 imageList = []
                 fileList = []
                 pdfList = []
-                handleUrlData(res)
+                this.handleUrlData(res)
                 taskId = res.TaskId
-                allData = res
                 this.ruleForm = res
                 getFormData_done(res)
             })
@@ -1128,12 +1068,13 @@ var mixin = {
                 var oldUrlList = data.OldFilePDFUrl.split(',')
                 var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
                 var stateList = data.PdfState ? data.PdfState.split(',') : []
+                
                 for (var i = 0; i < urlList.length; i++) {
                     pdfList.push({
                         name: oldUrlList[i],
                         url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
                         mediaId: MediaIdList[i],
-                        state: stateList[i]
+                        state: stateList[i] || '1'
                     })
                 }
                 this.pdfList = pdfList
@@ -1489,12 +1430,10 @@ var mixin = {
             location.href = serverUrl + 'ProjectNew/DownLoad?path=' + path
         },
         fileListToUrl() {
-            this.ruleForm.FilePDFUrl = ''
-            this.ruleForm.OldFilePDFUrl = ''
-            this.ruleForm.FileUrl = ''
-            this.ruleForm.OldFileUrl = ''
-            this.ruleForm.MediaId = ''
-            if (this.pdfList) {
+            if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
+                this.ruleForm.FilePDFUrl = ''
+                this.ruleForm.OldFilePDFUrl = ''
+                this.ruleForm.MediaIdPDF = ''
                 for (var i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
                     this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
@@ -1505,7 +1444,10 @@ var mixin = {
                     this.ruleForm.MediaIdPDF += ','
                 }
             }
-            if (this.fileList) {
+            if (this.fileList[0] && this.fileList[0].response && this.fileList[0].response.Content) {
+                this.ruleForm.FileUrl = ''
+                this.ruleForm.OldFileUrl = ''
+                this.ruleForm.MediaId = ''
                 for (var i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name

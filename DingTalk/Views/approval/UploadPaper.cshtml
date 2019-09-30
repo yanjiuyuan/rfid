@@ -48,6 +48,7 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
@@ -68,7 +69,7 @@
             <el-input v-model="ruleForm.tpName" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
-        
+
         <el-form-item label="上传图片">
             <el-upload action="/drawingupload/Upload"
                        list-type="picture-card"
@@ -84,7 +85,7 @@
             </el-dialog>
         </el-form-item>
 
-        <el-form-item label="上传PDF图纸" required="required"  prop="FilePDFUrl">
+        <el-form-item label="上传PDF图纸" required="required" prop="FilePDFUrl">
             <el-upload class="upload-demo"
                        drag
                        :file-list="pdfList"
@@ -113,7 +114,7 @@
                 <div class="el-upload__tip" slot="tip">不超过30M</div>
             </el-upload>
         </el-form-item>
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 
@@ -126,7 +127,12 @@
         data: function () {
             return {
                 mediaId: mediaId,
+
                 tableData: [],
+                specialRole: [],
+                specialRoleNames: [],
+                imageList: [],
+
                 bomIndex: 0,
                 dataArr: [
                     {
@@ -163,7 +169,7 @@
             //提交审批
             onSubmit(formName) {
                 this.ruleForm.counts = JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid })
-                this.approvalSubmit()
+                this.approvalSubmit(this.bindData)
             },
             //添加图纸审计人员
             addPeerNumber() {

@@ -10,6 +10,7 @@
     </div>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="驾驶员" prop="DrivingMan">
             <el-input v-model="tableForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>
@@ -42,7 +43,6 @@
     </el-form>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
             <el-checkbox v-model="checked">本人同意<b v-on:click="showMore" style="color:#88B6FF;"><< 研究院车辆安全使用协议 >></b></el-checkbox>
         </el-form-item>
@@ -101,7 +101,7 @@
             </el-collapse-item>
         </el-collapse>
         <br />
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

@@ -28,6 +28,7 @@
         </el-form-item>
     </el-form>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="上传文件" required="required">
             <el-upload class="upload-demo"
                        drag
@@ -43,7 +44,7 @@
             </el-upload>
         </el-form-item>
         <hr />
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
 </el-main>
 
 <script>

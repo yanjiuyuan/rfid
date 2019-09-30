@@ -10,7 +10,7 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
-
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item lable="编码类型">
             <el-radio-group v-model="codeType" v-on:change="changeCodeType">
                 <el-radio label="1">零部件</el-radio>
@@ -83,7 +83,7 @@
         </template>
         <el-button v-on:click="addGoods" type="primary" plain> + 添加编码</el-button>
         <hr />
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

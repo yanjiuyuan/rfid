@@ -11,7 +11,7 @@
     </div>
     <div>
         <span>关键字查询</span>
-        <el-input v-model="keyWord" placeholder="(项目名称、标题、申请人、流水号)" style="width:300px;"></el-input>
+        <sam-input :value.sync="keyWord" :required="true" style="width:300px;" placeholder="(项目名称、标题、申请人、流水号)"></sam-input>
         <el-button v-on:click="search">搜索</el-button>
     </div>
     <!--表格實體-->
@@ -53,6 +53,7 @@
     <hr />
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
@@ -67,9 +68,6 @@
 
         <el-form-item label="套数">
             <el-input v-model="ruleForm.counts"></el-input>
-        </el-form-item>
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
@@ -90,7 +88,7 @@
                 </div>
             </el-card>
         </el-form-item>
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
     <!--显示PDF-->
     <div @*v-show="frameShow"*@>
@@ -207,7 +205,7 @@
             //提交审批
             onSubmit(formName) {
                 var that = this
-                this.approvalSubmit('ruleForm', this.ruleForm, function (taskId) {
+                this.approvalSubmit(function (taskId) {
                     that.bindData(taskId)
                 })
             },
@@ -221,7 +219,7 @@
             chooseProject(index, row) {
                 console.log(row)
                 this.data = row.PurchaseList
-                handleUrlData(row,this)
+                this.handleUrlData(row,this)
                 this.ruleForm.FileUrl = row.FileUrl
                 this.ruleForm.Title = row.Title
                 this.ruleForm.ProjectId = row.ProjectId

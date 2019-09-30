@@ -10,6 +10,7 @@
     </div>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="加班事由" prop="OverTimeContent">
             <el-input v-model="tableForm.OverTimeContent" style="width:90%;"></el-input>
         </el-form-item>
@@ -49,13 +50,7 @@
     </el-form>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

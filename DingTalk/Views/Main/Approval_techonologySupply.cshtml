@@ -47,15 +47,9 @@
             <el-input v-model="tableForm.MainPoints" style="width:550px;" type="textarea" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="状态">
-            <el-input v-model="tableForm.ProjectState " style="width:100px;" :disabled="true"></el-input>
-        </el-form-item>
         @*<el-form-item label="所属公司">
             <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>*@
-        <el-form-item label="项目类型">
-            <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
         <hr />
         <template v-if="NodeId >= 1">
             <el-form-item label="项目组成员" prop="TeamMembers">
@@ -122,59 +116,24 @@
         </el-form-item>
         <hr />
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="false">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
+        @RenderPage("~/Views/Shared/endButton.cshtml")
+        <template>
             <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-         <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="state=='已完成'">
-            <el-form-item>
-                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
+                <el-button type="primary" v-on:click="printTable" v-if="State == '已完成'" :disabled="disablePage">打印表单</el-button>
             </el-form-item>
         </template>
     </el-form>
 </el-main>
 
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
                 //钉一下需要的参数
-                flowid: UrlObj.flowid,
-                userid: DingData.userid,
-                DingData: DingData,
-                index: Index,
-                state: state,
-                NodeId: NodeId,
                 showSome: true,
-                nodeList: [],
-                nodeInfo: {},//nodeInfo.NodeName
                 noEdit: true,
-                ruleForm: {},
-                addPeopleNodes: [], //额外添加审批人节点数组
-                tableForm: {
-                },
                 rules: {
                     TeamMembers: { required: true, message: '项目组成员不能为空', trigger: 'blur' },
                     StartTime: { required: true, message: '测试项目周期不能为空', trigger: 'blur' },
@@ -289,22 +248,12 @@
                     this.tableForm = res
                 })
             },
-            //显示内容特殊处理
-            getNodeInfo_done(nodeList) {
-                //for (let node of nodeList) {
-                //    if (node.NodeName == '抄送小组成员' && node.ApplyMan.indexOf(DingData.nickName) >= 0) {
-                //        this.showSome = false
-                //    }
-                //}
-            },
         },
         created: function () {
-            this.getHelpTable()
+            this.initEnd(() => { this.getHelpTable() })
             if (NodeId == 1) this.noEdit = false
-            loadHtml("mainPage", "partPage")
         }
     })
-    getFormData(demo)
 
 </script>
 

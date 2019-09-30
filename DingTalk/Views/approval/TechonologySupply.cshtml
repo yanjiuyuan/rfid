@@ -10,9 +10,9 @@
     </div>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="技术支持部门" prop="DeptName">
-            <el-checkbox-group v-model="tableForm.DeptName"
-                               :min="1">
+            <el-checkbox-group v-model="tableForm.DeptName">
                 <el-checkbox v-for="s in depts" :label="s"></el-checkbox>
             </el-checkbox-group>
         </el-form-item>
@@ -53,7 +53,7 @@
         </el-form-item>
     </el-form>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 

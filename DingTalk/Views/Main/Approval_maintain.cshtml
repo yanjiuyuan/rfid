@@ -28,9 +28,9 @@
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
         @RenderPage("~/Views/Shared/endButton.cshtml")
-        <template v-if="state=='已完成'">
+        <template>
             <el-form-item>
-                <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
+                <el-button type="primary" v-on:click="printTable"  v-if="state=='已完成'":disabled="disablePage">打印表单</el-button>
                 <el-button type="primary" v-on:click="printBom" :disabled="disablePage">导出Bom表</el-button>
             </el-form-item>
         </template>
