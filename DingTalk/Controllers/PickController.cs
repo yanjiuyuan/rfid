@@ -119,19 +119,61 @@ namespace DingTalk.Controllers
                 //   keyValuePairs);
 
 
-                HttpWebResponse httpWebResponse = CreateGetHttpResponse("http://wuliao5222.55555.io:35705/api/Pick/GetAll", 5000, null, null);
+                //HttpWebResponse httpWebResponse = CreateGetHttpResponse("http://wuliao5222.55555.io:35705/api/Pick/GetAll", 5000, null, null);
+                //StreamReader reader = new StreamReader(httpWebResponse.GetResponseStream(), Encoding.UTF8);
+                //string content = reader.ReadToEnd();
+                //NewErrorModel newErrorModel = new NewErrorModel()
+                //{
+                //    data = new List<GodownModel>() { },
+                //};
+                //newErrorModel = JsonConvert.DeserializeObject<NewErrorModel>(content);
 
-                StreamReader reader = new StreamReader(httpWebResponse.GetResponseStream(), Encoding.UTF8);
-                string content = reader.ReadToEnd();
-                NewErrorModel newErrorModel = new NewErrorModel()
-                {
-                    data = new List<GodownModel>() { },
-                };
-                newErrorModel = JsonConvert.DeserializeObject<NewErrorModel>(content);
+                //using (DDContext context = new DDContext())
+                //{
+                //    List<GodownModel> goDowns = JsonConvert.DeserializeObject<List<GodownModel>>(newErrorModel.data.ToString()); ;
+                //    Flows flows = context.Flows.Where(f => f.FlowName.Contains("零部件")).First();
+                //    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId(flows.FlowId.ToString());
+                //    List<Tasks> taskQuery = tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 1).ToList();
+                //    List<PurchaseTable> PurchaseTables = new List<PurchaseTable>();
+                //    foreach (var task in taskQuery)
+                //    {
+                //        PurchaseTables.AddRange(context.PurchaseTable.Where(g => g.TaskId == task.TaskId.ToString()));
+                //    }
+                //    List<GodownModel> GodownModelList = new List<GodownModel>();
+                //    foreach (var goDown in goDowns)
+                //    {
+                //        foreach (var PurchaseTable in PurchaseTables)
+                //        {
+                //            if (goDown.fNumber == PurchaseTable.CodeNo)
+                //            {
+                //                GodownModelList.Add(goDown);
+                //            }
+                //        }
+                //    }
+
+                //    return new NewErrorModel()
+                //    {
+                //        count = GodownModelList.Count,
+                //        data = GodownModelList,
+                //        error = new Error(0, "读取成功！", "") { },
+                //    };
+                //}
+
+
 
                 using (DDContext context = new DDContext())
                 {
+                    HttpWebResponse httpWebResponse = CreateGetHttpResponse("http://wuliao5222.55555.io:35705/api/Pick/ReadPickInfoSingle", 5000, null, null);
+                    StreamReader reader = new StreamReader(httpWebResponse.GetResponseStream(), Encoding.UTF8);
+                    string content = reader.ReadToEnd();
+                    NewErrorModel newErrorModel = new NewErrorModel()
+                    {
+                        data = new List<GodownModel>() { },
+                    };
+                    newErrorModel = JsonConvert.DeserializeObject<NewErrorModel>(content);
                     List<GodownModel> goDowns = JsonConvert.DeserializeObject<List<GodownModel>>(newErrorModel.data.ToString()); ;
+
+
                     Flows flows = context.Flows.Where(f => f.FlowName.Contains("零部件")).First();
                     List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId(flows.FlowId.ToString());
                     List<Tasks> taskQuery = tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 1).ToList();
@@ -152,12 +194,21 @@ namespace DingTalk.Controllers
                         }
                     }
 
+                    if (GodownModelList.Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "查询的物料暂无库存！", "") { },
+                        };
+                    }
+
                     return new NewErrorModel()
                     {
                         count = GodownModelList.Count,
                         data = GodownModelList,
                         error = new Error(0, "读取成功！", "") { },
                     };
+
                 }
             }
             catch (Exception ex)
@@ -328,6 +379,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     List<Pick> purchaseTables = context.Pick.Where(p => p.TaskId == printAndSendModel.TaskId).ToList();
+
                     DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(purchaseTables);
 
                     string path = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet/领料导出模板.xlsx");
@@ -588,6 +640,13 @@ namespace DingTalk.Controllers
                                     error = new Error(0, "查询成功", "") { },
                                 };
                             }
+                        }
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "您无权访问该模块数据，请联系管理员！", "") { },
+                            };
                         }
                     }
                     return null;

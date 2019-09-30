@@ -1444,6 +1444,36 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 获取流程状态(单条)
+        /// </summary>
+        /// <param name="TaskId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetFlowStateSingle")]
+        public NewErrorModel GetFlowStateSingle(string TaskId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    return new NewErrorModel()
+                    {
+                        data = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault(),
+                        error = new Error(0, "获取流程状态成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
         /// 左侧审批状态详细数据读取
         /// </summary>
         /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
@@ -1466,6 +1496,14 @@ namespace DingTalk.Controllers
                 DDContext context = new DDContext();
 
                 int count = 0;
+                int ipageIndex = 0, ipageSize = 0;
+                if (!string.IsNullOrEmpty(Key))
+                {
+                    ipageIndex = pageIndex; ipageSize = pageSize;
+                    pageIndex = 1; pageSize = 99;
+                }
+
+
                 if (Index == 0)
                 {
                     count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
@@ -1500,14 +1538,18 @@ namespace DingTalk.Controllers
                 }
                 TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
 
+                //if (!string.IsNullOrEmpty(Key))
+                //{
+                //    TaskFlowModelList = TaskFlowModelList.Where(t => t.TaskId.ToString() == Key ||
+                //      t.Title.Contains(Key) || t.ApplyMan.Contains(Key) || t.FlowName.Contains(Key)).ToList();
+                //    count = TaskFlowModelList.Count();
+                //    TaskFlowModelList = TaskFlowModelList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                //}
+
                 if (!string.IsNullOrEmpty(Key))
                 {
-                    TaskFlowModelList = TaskFlowModelList.Where(t => t.TaskId.ToString() == Key ||
-                      t.Title.Contains(Key) || t.ApplyMan.Contains(Key) || t.FlowName.Contains(Key)).ToList();
-                    count = TaskFlowModelList.Count();
-                    TaskFlowModelList = TaskFlowModelList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                    TaskFlowModelList = TaskFlowModelList.Skip((ipageIndex - 1) * ipageSize).Take(ipageSize).ToList();
                 }
-
 
                 return new NewErrorModel()
                 {
@@ -1515,35 +1557,6 @@ namespace DingTalk.Controllers
                     data = TaskFlowModelList,
                     error = new Error(0, "读取成功！", "") { },
                 };
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(2, ex.Message, "") { },
-                };
-            }
-        }
-
-        /// <summary>
-        /// 获取流程状态(单条)
-        /// </summary>
-        /// <param name="TaskId"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("GetFlowStateSingle")]
-        public NewErrorModel GetFlowStateSingle(string TaskId)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    return new NewErrorModel()
-                    {
-                        data = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault(),
-                        error = new Error(0, "获取流程状态成功！", "") { },
-                    };
-                }
             }
             catch (Exception ex)
             {
@@ -1606,11 +1619,11 @@ namespace DingTalk.Controllers
                             on t.TaskId.ToString() equals ts.TaskId
                             where t.NodeId == 0 && t.TaskId == TaskId
                             && (IsMobile == true ? f.IsSupportMobile == true : 1 == 1)
-                            //&& ((Key != "" ? f.FlowName.Contains(Key) : 1 == 1) ||
-                            //    (Key != "" ? t.TaskId.ToString().Contains(Key) : 1 == 1) ||
-                            //     (Key != "" ? t.Title.ToString().Contains(Key) : 1 == 1) ||
-                            //    (Key != "" ? t.ApplyMan.Contains(Key) : 1 == 1)
-                            //)
+                            && ((Key != "" ? f.FlowName.Contains(Key) : 1 == 1) ||
+                                (Key != "" ? t.TaskId.ToString().Contains(Key) : 1 == 1) ||
+                                 (Key != "" ? t.Title.ToString().Contains(Key) : 1 == 1) ||
+                                (Key != "" ? t.ApplyMan.Contains(Key) : 1 == 1)
+                            )
                             select new
                             {
                                 Id = t.Id + 1,
@@ -1740,12 +1753,12 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 审批意见数据读取
         /// </summary>
-        /// <param name="TaskId">流水号</param>
         /// <param name="FlowId">流程Id</param>
+        /// <param name="TaskId">流水号</param>
         /// <returns></returns>
         [HttpGet]
         [Route("GetSign")]
-        public NewErrorModel GetSign(string TaskId, string FlowId)
+        public NewErrorModel GetSign(string FlowId,string TaskId="")
         {
             try
             {
@@ -1769,7 +1782,10 @@ namespace DingTalk.Controllers
                                         IsNeedChose = n.IsNeedChose,
                                         ChoseNodeId = n.ChoseNodeId,
                                         IsMandatory = n.IsMandatory,
-                                        IsSelectMore = n.IsSelectMore
+                                        IsSelectMore = n.IsSelectMore,
+                                        n.ChoseType,
+                                        n.RoleNames,
+                                        RolesList = n.ChoseType == "1" ? GetRolesList(n.RoleNames) : n.RolesList
                                     };
                         return new NewErrorModel()
                         {
@@ -1822,6 +1838,26 @@ namespace DingTalk.Controllers
                     error = new Error(2, ex.Message, "") { },
                 };
             }
+        }
+
+        /// <summary>
+        /// 批量获取角色信息
+        /// </summary>
+        /// <param name="rolenames"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetRolesList")]
+        public Dictionary<string, List<Roles>> GetRolesList(string rolenames)
+        {
+            Dictionary<string, List<Roles>> keyValuePairs = new Dictionary<string, List<Roles>>();
+            DDContext context = new DDContext();
+            string[] roles = rolenames.Split(',');
+            foreach (var item in roles)
+            {
+                List<Roles> rolesListNew = context.Roles.Where(r => r.RoleName == item).ToList();
+                keyValuePairs.Add(item, rolesListNew);
+            }
+            return keyValuePairs;
         }
 
         #endregion
