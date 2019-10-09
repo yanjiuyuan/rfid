@@ -55,6 +55,7 @@ function logout() {
 function loadPage(url) {
     TaskId = 0
     NodeId = 0
+
     var param = url.split('?')[1]
     if (param) {
         var paramArr = param.split('&')
@@ -582,7 +583,7 @@ var mixin = {
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
-                Dept: DingData.dept[0],
+                //Dept: DingData.dept[0],
                 remark: '',
                 ImageUrl: '',
                 OldImageUrl: '',
@@ -605,7 +606,7 @@ var mixin = {
                 State: '1', 
                 Title: FlowName,
             }
-
+            if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
@@ -652,7 +653,7 @@ var mixin = {
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
-                Dept: DingData.dept[0],
+                //Dept: DingData.dept[0],
                 remark: '',
                 ImageUrl: '',
                 OldImageUrl: '',
@@ -675,7 +676,7 @@ var mixin = {
                 State: '1',
                 Title: FlowName,
             }
-
+            if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeInfo()
             this.GetDingList(TaskId)
             this.getApproInfo()

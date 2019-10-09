@@ -208,7 +208,7 @@
             },
             //获取数据
             getMenu: function () {
-                this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&id=123', (res) => {
+                this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=' + DingData.userid, (res) => {
                     res = JSON.stringify(res).replace(/null/g, '""')
                     this.menu = JSON.parse(res)
                 })
