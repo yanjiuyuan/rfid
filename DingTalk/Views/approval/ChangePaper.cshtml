@@ -183,8 +183,11 @@
                 if (!(upBom.length || deleteItem.length)) {
                     this.$message({ type: 'error', message: `表单未填写完整` });
                     return
+                }//pdfList
+                if (this.pdfList.length <=0) {
+                    this.$message({ type: 'error', message: `请上传图纸` });
+                    return
                 }
-
                 this.fileListToUrl()
                 let changeParam = {
                     DrawingChangeList: [...deleteItem, ...upBom],

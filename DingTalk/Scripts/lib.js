@@ -273,7 +273,7 @@ var checkProjectId = (rule, value, callback) => {
     setTimeout(() => {
         let reg1 = /^[0-9]{4}\w+\w+[0-9]{3}$/
         if (!reg1.test(value)) {
-            callback(new Error('请输入数字值'));
+            callback(new Error('请输入正确格式，例如：1234**567'));
         } else {
             callback();
         }
@@ -458,6 +458,7 @@ var mixin = {
         },
         pickerOptions: pickerOptions,
         CompanyNames: CompanyNames,
+        DeptNames: DeptNames,
         dialogFormVisible:false,
         currentPage: 1,
         totalRows: 0,
@@ -562,7 +563,7 @@ var mixin = {
             })
         },
         //初始化方法
-        initStart() {
+        initStart(callBack = function (){}) {
             this.DingData = DingData
             this.data = []
             this.tableData = []
@@ -610,9 +611,10 @@ var mixin = {
             this.getApproInfo()
             this.loadTempData()
             this.loadReApprovalData()
+            callBack()
             loadHtml("mainPage", "partPage")
         },
-        initEnd(callBack) {
+        initEnd(callBack = function (){}) {
             if (UrlObj.flowid) {
                 FlowId = UrlObj.flowid
                 FlowName = UrlObj.flowName
@@ -1483,7 +1485,7 @@ var mixin = {
             const isPdfType = file.type === 'application/pdf'
             const isLt2M = file.size / 1024 / 1024 < 10
             if (!isPdfType) {
-                this.$message.error('上传图片只能是 PDF 格式!')
+                this.$message.error('上传文件只能是 PDF 格式!')
                 return false
             }
             if (!isLt2M) {

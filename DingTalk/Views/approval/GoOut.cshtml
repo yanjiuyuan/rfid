@@ -8,13 +8,17 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+    </el-form>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="同行人">
-            <el-input v-model="tableForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                    :disable-transitions="false" v-on:close="handleClose(tag)">
+                {{tag.name}}
+            </el-tag>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 添加</el-button>
         </el-form-item>
         <el-form-item label="外出地点" prop="Place">
             <el-input type="textarea" v-model="tableForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
@@ -60,7 +64,7 @@
     <el-dialog title="添加外出地点" :visible.sync="dialogFormVisible">
         <el-form :model="form" :rules="rules" ref="form">
             <el-form-item label="外出地点" prop="Place">
-                <el-input v-model="form.Place" autocomplete="off"></el-input>
+                <sam-input :value.sync="form.Place" :required="true"></sam-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -81,6 +85,7 @@
                 timeRange: [],
                 placeArr: [],
                 placeStr: '',
+                groupPeople: [],
                 tableForm: {
                     Duration: "",
                     EvectionMan: '',
@@ -174,22 +179,31 @@
             addPeerNumber() {
                 var that = this
                 DingTalkPC.biz.contact.choose({
-                users: [],
-                corpId: DingData.CorpId,
-                max: 10,
-                onSuccess: function (data) {
-                    let names = []
-                    let numbers = []
-                    for (let d of data) {
-                        names.push(d.name)
-                        numbers.push(d.emplId)
+                    users: [],
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        that.groupPeople = that.groupPeople.concat(data)
+                        let names = []
+                        let numbers = []
+                        for (let d of that.groupPeople) {
+                            names.push(d.name)
+                            numbers.push(d.emplId)
+                        }
+                        that.tableForm.EvectionMan = names.join(',')
+                        that.tableForm.EvectionManId = numbers.join(',')
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            handleClose(tag) {
+                for (let i = 0; i < this.groupPeople.length; i++) {
+                    if (this.groupPeople[i].emplId == tag.emplId) {
+                        this.groupPeople.splice(i, 1)
+                        break
                     }
-                    that.tableForm.EvectionMan = names.join(',')
-                    that.tableForm.EvectionManId = numbers.join(',')
-                },
-                onFail: function (err) { }
-            });
-        }
+                }
+            },
         },
         created: function () {
             this.initStart()

@@ -58,7 +58,7 @@
                 <el-button size="small" type="primary">批量导入</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
             </el-upload>
-            <span v-if="superSearch" v-on:click="superSearch = !superSearch" class="clickable-text">关闭高级搜索</span>
+            <span v-if="superSearch" v-on:click="superSearch = !superSearch" class="clickable-text">隐藏高级搜索</span>
             <span v-else v-on:click="superSearch = !superSearch" class="clickable-text">高级搜索</span>
         </el-form-item>
     </el-form>
@@ -115,7 +115,9 @@
                     <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="承担部门">
-                    <el-input v-model="ruleForm.DeptName"></el-input>
+                    <el-select v-model="tableForm.DeptName" style="width:300px;">
+                        <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="状态" required="required">
                     <el-select v-model="ruleForm.ProjectState">
@@ -139,13 +141,17 @@
                     <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
                 </el-form-item>
                 <el-form-item label="项目组成员" required="required">
-                    <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+                    <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                            :disable-transitions="false" v-on:close="handleClose(tag)">
+                        {{tag.name}}
+                    </el-tag>
+                    @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>*@
+                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
                 </el-form-item>
-                <el-form-item label="开始时间" required="required">
+                <el-form-item label="开始时间" required="required" prop="StartTime">
                     <el-input v-model="ruleForm.StartTime"></el-input>
                 </el-form-item>
-                <el-form-item label="结束时间" required="required">
+                <el-form-item label="结束时间" required="required" prop="EndTime">
                     <el-input v-model="ruleForm.EndTime"></el-input>
                 </el-form-item>
                 <hr />
@@ -165,7 +171,7 @@
 <script>
     var Index = 0
     var id = ''
-    var VUE = new Vue({
+    var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
@@ -177,7 +183,7 @@
                 formInline: {
                     key: '',
                     time: '',
-                    projectState: ["在研", "已完成", "终止"]
+                    projectState: ["在研", "已完成", "终止", "暂停"]
                 },
                 ruleForm: {
                     ProjectName: '',
@@ -190,10 +196,10 @@
                     CompanyName: '',
                     BusinessDocker: ''
                 },
-                status: ["在研", "已完成", "终止"],
+                status: ["在研", "已完成", "终止", "暂停"],
                 ptypes: [null, null],
                 ResponsibleMan: [{ name: '', emplId: '' }],
-                groupPeople: [{ name: '', emplId: '' }],
+                groupPeople: [],
                 dialogFormVisible: false,
                 isIndeterminate: true
             }
@@ -203,12 +209,12 @@
             getProject() {
                 var that = this
                 var param = {
-                    //key: this.formInline.key,
+                    key: this.formInline.key,
                     projectState: this.formInline.projectState.join('_')
                 }
-                if (this.formInline.key) {
-                    param.key = this.formInline.key
-                }
+                //if (this.formInline.key) {
+                //    param.key = this.formInline.key
+                //}
                 if (this.formInline.time) {
                     param['startTime'] = this.formInline.time[0]
                     param['endTime'] = this.formInline.time[1]
@@ -217,7 +223,7 @@
                     param['projectType'] = this.ptypes[0]
                     param['projectSmallType'] = this.ptypes[1]
                 }
-                url = "/ProjectNew/QuaryProjectInfo" + _formatQueryStr(param)
+                url = "ProjectNew/QuaryProjectInfo" + _formatQueryStr(param)
                 this.GetData(url, (data) => {
                     for (let d of data) {
                         var date = new Date()
@@ -233,6 +239,29 @@
                     that.totalRows = data.length
                     that.getData()
                 })
+            },
+            handleClose(tag) {
+                for (let i = 0; i < this.groupPeople.length;i++) {
+                    if (this.groupPeople[i].emplId == tag.emplId) {
+                        this.groupPeople.splice(i, 1)
+                        break
+                    }
+                }
+                
+            },
+            addGroup() {
+                var that = this
+                console.log('addGroup')
+                DingTalkPC.biz.contact.choose({
+                    multiple: true, //是否多选： true多选 false单选； 默认true
+                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                    corpId: DingData.CorpId, //企业id
+                    onSuccess: function (data) {
+                        console.log(data)
+                        that.groupPeople = that.groupPeople.concat(data)
+                    },
+                    onFail: function (err) { }
+                });
             },
             printout() {
                 this.GetData('ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
@@ -280,7 +309,9 @@
             editProject(formName) {
                 var that = this
                 this.$refs[formName].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name ) {
+                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name) {
+                        console.log(valid)
+                        return
                         that.disablePage = true
                         let names = []
                         let ids = []
@@ -339,7 +370,8 @@
                 let groupPeople = []
                 let members = row.TeamMembers.split(',')
                 let membersId = row.TeamMembersId.split(',')
-                for (var i = 0; i <= members.length; i++) {
+                for (var i = 0; i < members.length; i++) {
+                    if (membersId[i])
                     groupPeople.push({ name: members[i], emplId: membersId[i] })
                 }
                 id = row.Id

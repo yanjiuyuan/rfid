@@ -227,12 +227,12 @@
         },
         methods: {
             getMenu: function () {
-                this.GetData('FlowInfoNew/LoadFlowSort?id=123', (res) => {
+                this.GetData('FlowInfoNew/LoadFlowSort?userid=' + DingData.userid, (res) => {
                     for (let r of res) {
                         _mergeObjectArr(r.flows, imgConfig, 'FlowId')
                     }
                     this.menu = res
-                    this.filterMenuList()
+                    //this.filterMenuList()
                 })
             },
             filterMenuList() {

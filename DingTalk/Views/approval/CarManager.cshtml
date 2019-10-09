@@ -119,13 +119,10 @@
                 <el-form-item>
                     <el-button v-if="isAdd" type="primary" v-on:click="addCar('ruleForm')" :disabled="disableAdd">添加</el-button>
                     <el-button v-else type="primary" v-on:click="editCar('ruleForm')" :disabled="disableAdd">保存</el-button>
+                    <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
                 </el-form-item>
             </template>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
-            @*<el-button type="primary" v-on:click="dialogFormVisible = false">完 成</el-button>*@
-        </div>
     </el-dialog>
 </div>
 
@@ -198,17 +195,14 @@
             //获取车辆数据getCar
             getCar() {
                 var that = this
-                let url = "/CarMananger/Quary"
-                let param = {
-                    key: this.formInline.key
-                }
+                let url = "/CarMananger/Quary?key=" + this.formInline.key
                 let handle = function (data) {
                     that.totalRows = data.length
                     for (let d of data) { d.State += ''}
                     that.data = data
                     that.getData()
                 }
-                this._getData(url,handle,param)
+                this.GetData(url,handle)
             },
             //添加车辆数据
             addCar(formName) {

@@ -8,10 +8,12 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+    </el-form>
+
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        @RenderPage("~/Views/Shared/startForm.cshtml")
-
         <el-form-item label="申请名称" prop="Name">
             <el-input v-model="tableForm.Name" style="width:550px;"></el-input>
         </el-form-item>
@@ -21,7 +23,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="tableForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+            <el-select v-model="tableForm.ProjectNo" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -37,7 +39,6 @@
         </el-form-item>
     </el-form>
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
         @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
@@ -86,6 +87,7 @@
         },
         methods: {
             onSubmit(formName) {
+                this.tableForm['Project'] = this.ruleForm.ProjectName
                 //根据类型添加审批人
                 this.tableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 let callBack = (taskId) => {

@@ -104,13 +104,16 @@
             onSubmit(formName) {
                 console.log('submit!')
                 var that = this
-                let url = '/CarTable/TableModify'
-                var param = _cloneObj(this.tableForm)
-                param.UseKilometres = this.UseKilometres
-                this._postData(url, function () {
-                    that.aggreSubmit()
-                },param)
-
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid) {
+                        let url = '/CarTable/TableModify'
+                        var param = _cloneObj(that.tableForm)
+                        param.UseKilometres = that.UseKilometres
+                        that._postData(url, function () {
+                            that.aggreSubmit()
+                        }, param)
+                    }
+                })
             },
             printPdf() {
                 var that = this

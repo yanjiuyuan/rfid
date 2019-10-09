@@ -32,7 +32,7 @@
                 <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()" v-if="!noEdit">+ 选人</el-button>
             </el-form-item>
             <el-form-item label="申报名称" prop="ActualName">
-                <el-input v-model="tableForm.ActualName" style="width:400px;" :disabled="noEdit"></el-input>
+                <el-input v-model="tableForm.ActualName" style="width:400px;" :disabled="noEdit || State == '已完成'"></el-input>
             </el-form-item>
 
             <template v-if="NodeId==5">
@@ -42,10 +42,10 @@
                     </el-select>
                 </el-form-item>*@
                 <el-form-item label="申报单位" prop="Company">
-                    <el-input v-model="tableForm.Company" style="width:400px;"></el-input>
+                    <el-input v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'"></el-input>
                 </el-form-item>
                 <el-form-item label="申报类别" prop="ActualType">
-                    <el-select v-model="tableForm.ActualType" style="width:300px;">
+                    <el-select v-model="tableForm.ActualType" style="width:300px;" :disabled="State == '已完成'">
                         <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
                     </el-select>
                 </el-form-item>
@@ -125,9 +125,9 @@
             getTable() {
                 this.GetData('IntellectualProperty/Read?taskid=' + TaskId, (res) => {
                     this.tableForm = res
-                    this.tableForm['ActualName'] = res.Name
-                    this.tableForm['ActualType'] = res.Type
-                    this.tableForm['Company'] = '泉州华中科技大学智能制造研究院'
+                    if (!this.tableForm['ActualName']) this.tableForm['ActualName'] = res.Name
+                    if (!this.tableForm['ActualType']) this.tableForm['ActualType'] = res.Type
+                    if (!this.tableForm['Company']) this.tableForm['Company'] = '泉州华中科技大学智能制造研究院'
                 })
             }
         },
