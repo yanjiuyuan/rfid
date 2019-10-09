@@ -80,7 +80,6 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// 项目立项文件路径
         /// </summary>
-        [StringLength(500)]
         public string ProjectFileUrl { get; set; }
 
         /// <summary>

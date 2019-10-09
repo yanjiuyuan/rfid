@@ -37,7 +37,6 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<CreateProject> eFHelper = new EFHelper<CreateProject>();
-
                 eFHelper.Add(createProject);
                 return new NewErrorModel()
                 {
