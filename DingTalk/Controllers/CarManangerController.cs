@@ -259,11 +259,14 @@ namespace DingTalk.Controllers
                             if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
                             {
                                 Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
-                                car.IsOccupyCar = true;
-                                car.OccupyCarId = ct.Id.ToString();
-                                car.UseMan = ct.DrivingMan;
-                                car.UseTimes = ct.StartTime + "---" + ct.EndTime;
-                                carsQuery.Add(car);
+                                if (car != null)
+                                {
+                                    car.IsOccupyCar = true;
+                                    car.OccupyCarId = ct.Id.ToString();
+                                    car.UseMan = ct.DrivingMan;
+                                    car.UseTimes = ct.StartTime + "---" + ct.EndTime;
+                                    carsQuery.Add(car);
+                                }
                             }
                         }
                     }

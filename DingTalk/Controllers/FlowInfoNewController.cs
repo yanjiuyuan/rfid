@@ -1036,26 +1036,26 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 流程界面信息读取接口
         /// </summary>
-        /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
+        /// <param name="userId">用户Id，用于判断权限(预留，暂时不做)</param>
         /// <returns></returns>
         [HttpGet]
         [Route("LoadFlowSort")]
-        public NewErrorModel LoadFlowSort(string id)
+        public NewErrorModel LoadFlowSort(string userId = "")
         {
             try
             {
-                if (!string.IsNullOrEmpty(id))
+                if (!string.IsNullOrEmpty(userId))
                 {
                     FlowInfoServer flowInfoServer = new FlowInfoServer();
                     return new NewErrorModel()
                     {
-                        data = flowInfoServer.GetFlowInfo(),
+                        data = flowInfoServer.GetFlowInfo(userId),
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
                 return new NewErrorModel()
                 {
-                    error = new Error(1, "id不能为空！", "") { },
+                    error = new Error(1, "userId不能为空！", "") { },
                 };
             }
             catch (Exception ex)
@@ -1791,8 +1791,8 @@ namespace DingTalk.Controllers
                                         IsSend = "",
                                         IsNeedChose = n.IsNeedChose,
                                         ChoseNodeId = n.ChoseNodeId,
-                                        IsMandatory=n.IsMandatory,
-                                        IsSelectMore=n.IsSelectMore
+                                        IsMandatory = n.IsMandatory,
+                                        IsSelectMore = n.IsSelectMore
                                     };
                         return new NewErrorModel()
                         {
@@ -2332,6 +2332,88 @@ namespace DingTalk.Controllers
                 {
                     error = new Error(1, ex.Message, "") { },
                 };
+            }
+        }
+
+        #endregion
+
+        #region 人员管理
+
+        /// <summary>
+        /// 搜索人员信息
+        /// </summary>
+        /// <param name="applyManId"></param>
+        /// <returns></returns>
+        [Route("GetNodeInfoInfoByApplyManId")]
+        public NewErrorModel GetNodeInfoInfoByApplyManId(string applyManId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    List<Flows> flows = context.Flows.ToList();
+                    List<NodeInfo> nodeInfos = context.NodeInfo.ToList();
+                    Dictionary<string, List<NodeInfo>> keyValuePairs = new Dictionary<string, List<NodeInfo>>();
+                    List<string> vs = new List<string>();
+                    foreach (var item in nodeInfos)
+                    {
+                        if (!string.IsNullOrEmpty(item.PeopleId))
+                        {
+                            if (item.PeopleId.Contains(applyManId))
+                            {
+                                Flows flow = flows.Where(f => f.FlowId.ToString() == item.FlowId).FirstOrDefault();
+                                if (!keyValuePairs.ContainsKey(flow.FlowName))
+                                {
+                                    keyValuePairs.Add(flow.FlowName, nodeInfos.Where(n => n.FlowId == item.FlowId).ToList());
+                                }
+                            }
+                        }
+                    }
+                    return new NewErrorModel()
+                    {
+                        data = keyValuePairs,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 批量更新流程节点信息
+        /// </summary>
+        /// <param name="nodeInfos"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("ChangeNodeInfo")]
+        public NewErrorModel ChangeNodeInfo(List<NodeInfo> nodeInfos)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    foreach (var item in nodeInfos)
+                    {
+                        context.Entry<NodeInfo>(item).State = EntityState.Modified;
+                    }
+                    context.SaveChanges();
+
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "修改成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 

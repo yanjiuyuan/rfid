@@ -41,10 +41,17 @@ namespace DingTalk.Models.DingModels
         [StringLength(300)]
         public string ApplyTime { get; set; }
 
-
-        [StringLength(300)]
+        /// <summary>
+        /// 拥有权限的用户名
+        /// </summary>
+        [StringLength(500)]
         public string ApplyMan { get; set; }
-        
+        /// <summary>
+        /// 拥有权限的用户Id
+        /// </summary>
+        [StringLength(500)]
+        public string ApplyManId { get; set; }
+
         /// <summary>
         /// 流程状态
         /// </summary>
