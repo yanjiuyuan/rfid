@@ -3,9 +3,6 @@
     Layout = null;
 }
 
-<el-form-item label="备注" prop="remark">
-    <sam-input :value.sync="ruleForm.remark"></sam-input>
-</el-form-item>
 <!--添加审批人-->
 <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :specialRoleNames="specialRoleNames" :specialRole="specialRole"></sam-approver-list>
 <el-form-item>

@@ -31,7 +31,9 @@
             <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 5" size="small" type="primary">新建文件夹</el-button>
         </div>
         <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f.path)" style="cursor:pointer;position:relative;">
-            <img v-on:click="openFolder(f.path)" src="~/Content/images/folder.png" />
+            <el-tooltip effect="light" :content="f.path" placement="bottom-start">
+                <img v-on:click="openFolder(f.path)" src="~/Content/images/folder.png" />
+            </el-tooltip>
             <p v-if="f.count>0" style="position:absolute;top:40px;right:20px;" class="el-badge__content">{{f.count}}</p>
             <p>{{f.path | substring}}</p>
         </div>
@@ -97,12 +99,13 @@
                        :action="uploadUrl"
                        @*:on-remove="handleFileRemove"*@
                        :on-error="errUpload"
-                       :before-upload="beforeFileUpload"
+                       :before-upload="BeforeFileUpload"
                        :on-success="handleFileCardSuccess"
+                       :limit="5"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">不超过200M</div>
+                <div class="el-upload__tip" slot="tip">不超过200M,最多同时上传5个文件</div>
             </el-upload>
         </template>
     </div>
@@ -161,6 +164,7 @@
         methods: {
             //获取文件数据
             getFileData: function (pathList, keyword) {
+                this.fileList = []
                 if (!pathList) {
                     pathList = this.pathList
                 }
@@ -189,32 +193,38 @@
                     that.data = fileArr
                     that.totalRows = fileArr.length
                     that.getData()
+
+                    that.getProject(folderArr[0].path)
+
                     that.clockFolder = false
                 })
               
             },
             //获取项目数据getProject
             getProject(filename) {
+                console.log('hover~~~')
                 if (this.pathList.length != 4)
                     return
+                var that = this
                 var param = {
                     key: this.pathList.join('\\') + '\\' + filename
                 }
                 this.Path = param.key
-                url = "/ProjectNew/QuaryProjectInfo" + _formatQueryStr(param)
-                this.GetData(url, (res) => {
-                    this.projectInfo = res
+                url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("获取项目列表数据 QuaryProjectInfo")
+                        console.log(url)
+                        console.log(data)
+                        that.projectInfo = data
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
                 })
-            },
-            beforeFileUpload: function (file) {
-                file.name = 'helloWorld'
-                isPdf = false
-                const isLt2M = file.size / 1024 / 1024 < 200
-                if (!isLt2M) {
-                    this.$message.error('上传图片大小不能超过 200MB!')
-                    return false
-                }
-                return true
             },
             errUpload: function (err, file, fileList) {
                 console.warn(err)
@@ -274,17 +284,44 @@
             },
             //删除文件
             deleteFile: function (index, row) {
-                var url = "/ProjectNew/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
-                for (let p of this.pathList) {
-                    url = url + '\\' + p
-                }
-                url = url + '\\' + row.path
-                this.GetData(url, (res) => {
-                    this.getFileData()
-                })
+                var that = this
+
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
+                    for (let p of that.pathList) {
+                        url = url + '\\' + p
+                    }
+                    url = url + '\\' + row.path
+                    $.ajax({
+                        url: url,
+                        success: function (data) {
+                            data = JSON.parse(data)
+                            console.log(url)
+                            console.log(data)
+                            that.getFileData()
+                            that.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                        },
+                        error: function (err) {
+                            console.error(err)
+                        }
+                    })
+                }).catch(() => {
+                    that.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+               
             },
             //上传文件
-            handleFileCardSuccess(response, file, fileList) {
+            HandleFileSuccess(response, file, fileList) {
                 console.log('上传文件返回结果')
                 console.log(this.uploadUrl)
                 console.log(file)
@@ -301,14 +338,25 @@
             createFolder: function () {
                 this.$refs['formInline'].validate((valid) => {
                     if (valid) {
-                        var url = "/ProjectNew/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
+                        var that = this
+                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
                         for (let p of this.pathList) {
                             url = url + '\\' + p
                         }
                         url = url + '\\' + this.formInline.name
-                        this.GetData(url, (res) => {
-                            this.getFileData()
-                            this.dialogFormVisible = false
+                        $.ajax({
+                            url: url,
+                            success: function (data) {
+                                data = JSON.parse(data)
+                                console.log('/新建文件夹')
+                                console.log(url)
+                                console.log(data)
+                                that.getFileData()
+                                that.dialogFormVisible = false
+                            },
+                            error: function (err) {
+                                console.error(err)
+                            }
                         })
                     }
                 })

@@ -6,7 +6,7 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        文件阅办单审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form id="formImg" :model="tableForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="标题">
@@ -88,31 +88,13 @@
 </el-main>
 
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                fileList: [],
-                mediaList: [],
-                index: Index,
-                NodeId: NodeId,
-                nodeList: [],
-                nodeInfo: {},
-                state: state,
                 ReviewList: [],
                 HandleImplementationList: [],
-                tableForm: {
-
-                }
             }
         },
         methods: {
@@ -181,12 +163,9 @@
             }
         },
         created: function () {
-            //获取下一个节点的审批人id
-            this.getTable()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getTable() })
         }
     })
-    getFormData(demo)
 
 </script>
 

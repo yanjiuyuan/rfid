@@ -10,21 +10,20 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--创建项目表单-->
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
-             enctype="multipart/form-data">
-
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        <el-form-item label="项目名称" prop="inputProjectName">
-            <el-input v-model="tableForm.inputProjectName"></el-input>
+        <el-form-item label="项目名称" prop="ProjectName">
+            <el-input v-model="tableForm.ProjectName"></el-input>
         </el-form-item>
         <el-form-item label="承担部门">
             <el-select v-model="tableForm.DeptName" style="width:300px;">
                 <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="合作单位（填写）" prop="Customer">
+        <el-form-item label="合作单位" prop="Customer">
             <el-input v-model="tableForm.Customer" placeholder="没有填'无'"></el-input>
         </el-form-item>
         <el-form-item label="项目类型" required="required">
@@ -54,7 +53,6 @@
     </el-form>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        @RenderPage("~/Views/Shared/startForm.cshtml")
             <el-form-item label="项目立项书和项目答辩PPT，测试项目上传方案" required="required">
                 <el-upload class="upload-demo"
                            drag
@@ -90,7 +88,7 @@
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
                     CompanyName: '泉州华中科技大学智能制造研究院',
-                    inputProjectName: '',
+                    ProjectName: '',
                     inputProjectId: '',
                     DeptName: '',
                     Customer: '',
@@ -127,7 +125,7 @@
                             "TeamMembersId": ids.join(','),
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName,
-                            "ProjectName": this.tableForm.inputProjectName,
+                            "ProjectName": this.tableForm.ProjectName,
                             "ProjectId": this.tableForm.inputProjectId,
                             "CompanyName": this.tableForm.CompanyName,
                             "Customer": this.tableForm.Customer,
@@ -164,7 +162,10 @@
             }
         },
         created: function () {
-            this.initStart()
+            this.initStart(() => {
+                this.ptypes[0] = this.tableForm.ProjectType
+                this.ptypes[1] = this.tableForm.ProjectSmallType
+            })
         }
     })
 

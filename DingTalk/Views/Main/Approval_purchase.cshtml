@@ -71,15 +71,6 @@
 
 </el-main>
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        Index = UrlObj.index
-    }
-
     var items = {
         CodeNo: '物料编码',
         Name: '物料名称',
@@ -96,21 +87,8 @@
         mixins: [mixin],
         data: function () {
             return {
-                preApprove: false,
-                preCopy: false,
-                data: [],
                 items: items,
-                FlowId: FlowId,
-                Index: Index,
-                NodeId: NodeId,
                 totalPrice: 0,
-                tableData: [],
-                totalRows: 0,
-                nodeInfo: {},
-                nodeList: [],
-                ruleForm: {},
-                state: State,
-                index: Index,
             }
         },
         methods: {
@@ -161,9 +139,7 @@
             }
         },
         created: function () {
-            this.getBomInfo()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
-    getFormData(demo)
 </script>

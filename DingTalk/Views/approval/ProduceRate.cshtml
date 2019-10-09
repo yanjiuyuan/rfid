@@ -233,7 +233,7 @@
         Column4: { param: 'Remark1', label: '备注', upLabel: 't1', width: 150},
         Column5: { param: 'ProjectId', label: '项目编码', upLabel: 't1', width: 200},
         Column6: { param: 'ProjectName', label: '项目名称', upLabel: 't1', width: 200},
-        Column7: { param: 'TaskId', label: '流水号', upLabel: 't1', width: 60, fixed:'left'},
+        Column7: { param: 'TaskId', label: '流水号', upLabel: 't1', width: 100, fixed:'left'},
         Column8: { param: 'Bom', label: 'bom', upLabel: 't1', width: 200, fixed: 'left'},
         Column9: { param: 'AccountKeeping', label: '走账', upLabel: 't1', width: 120},
         Column10: { param: 'Designer', label: '设计员', upLabel: 't12', width: 120},
@@ -296,7 +296,7 @@
                 redStates: ['作废', '取消'],
                 yellowStates: ['加工中', '外协加工中', '暂停'],
                 disabledStates: ['已完成', '作废', '取消'],
-                disabledEdit: ['CompanyName', 'TaskId'],
+                disabledEdit: ['CompanyName'],
                 data: [],
                 companyId: 0,//公司Id 0 研究院 1 华数
                 companys: [{ value: 0, label: '研究院' }, { value: 1, label: '华数' }],
