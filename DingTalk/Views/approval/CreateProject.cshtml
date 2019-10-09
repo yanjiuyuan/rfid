@@ -7,53 +7,54 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        立项申请
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--创建项目表单-->
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+
+    </el-form>
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        <el-form-item label="项目名称" prop="inputProjectName">
+            <el-input v-model="tableForm.inputProjectName"></el-input>
+        </el-form-item>
+        <el-form-item label="承担部门">
+            <el-select v-model="tableForm.DeptName" style="width:300px;">
+                <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="合作单位（填写）" prop="Customer">
+            <el-input v-model="tableForm.Customer" placeholder="没有填'无'"></el-input>
+        </el-form-item>
+        <el-form-item label="项目类型" required="required">
+            <div class="block">
+                <el-cascader v-model="ptypes"
+                             :options="PTypes"
+                             :props="{ expandTrigger: 'hover' }"
+                             v-on:change="handleChange"></el-cascader>
+            </div>
+        </el-form-item>
+        <el-form-item label="项目负责人">
+            <el-input v-model="tableForm.ApplyMan" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="项目组成员" required="required">
+            <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+        </el-form-item>
+        <el-form-item label="项目周期" required="required">
+            <el-date-picker v-model="tableForm.Time"
+                            type="daterange"
+                            :picker-options="pickerOptions" :editable="false"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期">
+            </el-date-picker>
+        </el-form-item>
+    </el-form>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        <template>
-            <el-form-item label="标题" prop="Title">
-                <el-input v-model="ruleForm.Title"></el-input>
-            </el-form-item>
-            <el-form-item label="申请人">
-                <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="项目名称" prop="inputProjectName">
-                <el-input v-model="ruleForm.inputProjectName"></el-input>
-            </el-form-item>
-            <el-form-item label="承担部门">
-                <el-select v-model="ruleForm.DeptName" style="width:300px;">
-                    <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="合作单位（填写）" prop="Customer">
-                <el-input v-model="ruleForm.Customer" placeholder="没有填'无'"></el-input>
-            </el-form-item>
-            <el-form-item label="项目类型" required="required">
-                <div class="block">
-                    <el-cascader v-model="ptypes"
-                                 :options="PTypes"
-                                 :props="{ expandTrigger: 'hover' }"
-                                 v-on:change="handleChange"></el-cascader>
-                </div>
-            </el-form-item>
-            <el-form-item label="项目负责人">
-                <el-input v-model="ruleForm.ApplyMan" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="项目组成员" required="required">
-                <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-                <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
-            </el-form-item>
-            <el-form-item label="项目周期" required="required">
-                <el-date-picker v-model="ruleForm.Time"
-                                type="daterange"
-                                :picker-options="pickerOptions"
-                                range-separator="至"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期">
-                </el-date-picker>
-            </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
             <el-form-item label="项目立项书和项目答辩PPT，测试项目上传方案" required="required">
                 <el-upload class="upload-demo"
                            drag
@@ -61,24 +62,15 @@
                            action="/drawingupload/Upload"
                            :on-remove="HandleFileRemove"
                            :before-upload="BeforeFileUpload"
-                           :on-success="HandleFileSuccess"
+                           :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
                            multiple>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">不超过30M</div>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="备注" prop="remark">
-                <el-input v-model="ruleForm.remark"></el-input>
-            </el-form-item>
-            <!--添加审批人-->
-            <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true">
-            </sam-approver-list>
-            <el-form-item>
-                <el-button type="primary" v-on:click="addProject('ruleForm')" :disabeld="disablePage">提交</el-button>
-            </el-form-item>
-        </template>
-    </el-form>
+            @RenderPage("~/Views/Shared/startButton.cshtml")
+        </el-form>
 </div>
 
 <script>
@@ -94,16 +86,14 @@
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,
-                ruleForm: {
-                    Title: '立项申请',
-                    CompanyName: '泉州华中科技大学智能制造研究院',
+                tableForm: {
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
+                    CompanyName: '泉州华中科技大学智能制造研究院',
                     inputProjectName: '',
                     inputProjectId: '',
                     DeptName: '',
                     Customer: '',
-                    //ProjectState: '',
                     ProjectName: '',
                     ProjectId: null,
                     Time: ''
@@ -112,11 +102,11 @@
         },
         methods: {
             //添加项目
-            addProject(formName) {
+            onSubmit() {
                 var that = this
                 this.fileListToUrl()
-                this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.groupPeople[0].name && this.ruleForm.Time[0] && this.ruleForm.FileUrl) {
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid && this.groupPeople[0].name && this.tableForm.Time[0] && this.ruleForm.FileUrl) {
                         that.disablePage = true
                         let names = []
                         let ids = []
@@ -131,17 +121,17 @@
                             "IsFinish": false,
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
-                            "StartTime": this.ruleForm.Time[0] ? _dateToString(this.ruleForm.Time[0]) : '',
-                            "EndTime": this.ruleForm.Time[1] ? _dateToString(this.ruleForm.Time[1]) : '',
+                            "StartTime": this.tableForm.Time[0] ? _dateToString(this.tableForm.Time[0]) : '',
+                            "EndTime": this.tableForm.Time[1] ? _dateToString(this.tableForm.Time[1]) : '',
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName,
-                            "ProjectName": this.ruleForm.inputProjectName,
-                            "ProjectId": this.ruleForm.inputProjectId,
-                            "CompanyName": this.ruleForm.CompanyName,
-                            "Customer": this.ruleForm.Customer,
-                            "DeptName": this.ruleForm.DeptName,
+                            "ProjectName": this.tableForm.inputProjectName,
+                            "ProjectId": this.tableForm.inputProjectId,
+                            "CompanyName": this.tableForm.CompanyName,
+                            "Customer": this.tableForm.Customer,
+                            "DeptName": this.tableForm.DeptName,
                             "ProjectType": this.ptypes[0],
                             "ProjectSmallType": this.ptypes[1],
                             "ResponsibleMan": this.ruleForm.ApplyMan,
@@ -159,13 +149,7 @@
                                 })
                             })
                         }
-                        that.approvalSubmit(formName, {
-                            Title: that.ruleForm.Title,
-                            Remark: that.ruleForm.remark,
-                            FileUrl: that.ruleForm.FileUrl,
-                            MediaId: that.ruleForm.MediaId,
-                            OldFileUrl: that.ruleForm.OldFileUrl,
-                        }, callBack)
+                        that.approvalSubmit(callBack)
                     }
                     else {
                         that.$alert('表单信息不全或有误', '提示信息', {
@@ -180,9 +164,7 @@
             }
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 

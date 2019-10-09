@@ -1,7 +1,15 @@
 ﻿@{
     Layout = null;
 }
-
+<style>
+    .el-icon-circle-close {
+        position: absolute;
+        margin-left: 20px;
+        font-size: 20px;
+        color: #f56c6c;
+        z-index:998;
+    }
+</style>
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <el-collapse v-model="activeNames">
@@ -10,10 +18,12 @@
             <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
                 <template slot="title">
                     <span style="font-size:20px;">{{m.SORT_NAME}}({{m.Sort_ID}})</span>
+                    <i v-on:mouseenter="switchSort(m)" v-on:click="deleteSort" style="margin-left:0;" class="el-icon-circle-close"></i>
                 </template>
 
                 <draggable v-model="m.flows" v-on:end="dragFlowEnd">
-                    <div v-for="l in m.flows" v-if="l.PcUrl" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
+                    <div v-for="l in m.flows" class="approval-box" v-on:click="toApprove(m,l)" style="cursor:pointer;">
+                        <i class="el-icon-circle-close" v-on:mouseenter="switchFlow(l)" v-on:click="deleteFlow"></i>
                         <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
                         <p>{{l.FlowName}}({{l.FlowId}})</p>
                     </div>
@@ -53,6 +63,8 @@
     var y = -46
     var xTap = -90
     var yTap = -90
+    let Flow = {}
+    let Sort = {}
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -67,11 +79,14 @@
                     SORT_NAME: '',
                     CreateTime: _timeToString(new Date()),
                     IsEnable: 1,
+                    OrderBY: 998,
+                    State: 1,
                 },
                 rules: {
                     Sort_ID: { required: true, message: '该项不能为空', trigger: 'blur' },
                     SORT_NAME: { required: true, message: '该项不能为空', trigger: 'blur' },
                 },
+                test: null
             }
         },
         methods: {
@@ -90,6 +105,66 @@
                     }
                 })
             },
+            //删除流程,类别
+            switchFlow(flow) {
+                Flow = flow
+            },
+            switchSort(sort) {
+                Sort = sort
+            },
+            deleteFlow(e) {
+                window.event ? window.event.cancelBubble = true : e.stopPropagation();
+                this.$confirm('此操作将永久删除该流程, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let param = {
+                        applyManId: DingData.userid,
+                        flowsList: [Flow]
+                    }
+                    this.PostData('FlowInfoNew/FlowDelete', param , (res) => {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.getMenu()
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            deleteSort(e) {
+                window.event ? window.event.cancelBubble = true : e.stopPropagation();
+                this.$confirm('此操作将永久删除该类别, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let param = _cloneObj(Sort)
+                    delete param.flows
+                    param = {
+                        applyManId: DingData.userid,
+                        flowSortList: [param]
+                    }
+                    this.PostData('FlowInfoNew/FlowSortDelete', param , (res) => {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.getMenu()
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            //拖动事件
             dragMenuEnd: function (evt) {
                 let param = _cloneArr(this.menu)
                 
@@ -107,11 +182,13 @@
             },
             dragFlowEnd: function (evt) {
                 let flows = []
+                this.test = evt
+                console.log(evt)
                 let sort = null
                 for (let s of this.menu) {
                     for (let f of s.flows) {
                         //OrderBY 重新排序
-                        if (f.FlowName == evt.clone.innerText.replace(' ', '')) {
+                        if (f.FlowName == evt.clone.innerText.replace(/\s/g, '').split('(')[0]) {
                             sort = s
                         }
                         if (sort) {
@@ -129,12 +206,14 @@
                     flowsList: flows
                 }, (res) => { })
             },
+            //获取数据
             getMenu: function () {
                 this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&id=123', (res) => {
                     res = JSON.stringify(res).replace(/null/g, '""')
                     this.menu = JSON.parse(res)
                 })
             },
+            //跳转页面
             ToAddFlow: function (sort) {
                 editSort = sort
                 loadPage('/Register/AddFlow') 

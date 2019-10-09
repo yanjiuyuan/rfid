@@ -430,6 +430,7 @@
     <Compile Include="Models\ServerModels\AddUserRequestModel.cs" />
     <Compile Include="Models\ServerModels\AttendanceRequestModel.cs" />
     <Compile Include="Models\ServerModels\BatchDeleteUserModel.cs" />
+    <Compile Include="Models\ServerModels\CarModel.cs" />
     <Compile Include="Models\ServerModels\ChangeRemark.cs" />
     <Compile Include="Models\ServerModels\CommomModel.cs" />
     <Compile Include="Models\ServerModels\Department.cs" />
@@ -530,6 +531,7 @@
     <Compile Include="Models\ServerModels\TextMsgModel.cs" />
     <Compile Include="Models\ServerModels\UploadMediaRequestModel.cs" />
     <Compile Include="Models\ServerModels\UploadMediaType.cs" />
+    <Compile Include="Models\ServerModels\UserDetail.cs" />
     <Compile Include="Models\ServerModels\VoiceMsgModel.cs" />
     <Compile Include="Models\ServerModels\WorkTimeAndPur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -879,6 +881,12 @@
     <Content Include="Views\Main\Approval_projectClosure.cshtml" />
     <Content Include="Views\approval\ProduceRate.cshtml" />
     <Content Include="Views\Register\addFlow.cshtml" />
+    <Content Include="Views\Main\Approval_officeSupplies.cshtml" />
+    <Content Include="Views\Main\Approval_purchase.cshtml" />
+    <Content Include="Views\Shared\startForm.cshtml" />
+    <Content Include="Views\Shared\endForm.cshtml" />
+    <Content Include="Views\Shared\endButton.cshtml" />
+    <Content Include="Views\Shared\startButton.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -7,8 +7,8 @@ namespace DingTalk.Models.ServerModels
 {
     public class PrintModelCom
     {
-        public string taskId { get; set; }
+        public string TaskId { get; set; }
 
-        public string applyManId { get; set; }
+        public string UserId { get; set; }
     }
 }

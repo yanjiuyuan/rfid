@@ -7,9 +7,16 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
+
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
+        </el-table-column>
+        <el-table-column label="是否删除" width="150" v-if="NodeId >= 3">
+            <template slot-scope="scope">
+                <el-button size="mini" v-if="index == 0 && NodeId == 3" :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
+                <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
+            </template>
         </el-table-column>
     </el-table>
     <!--底部翻頁-->
@@ -25,28 +32,24 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
+        <el-form-item label="预计总价">
+            <el-input v-model="totalPrice" :disabled="true"></el-input>
+        </el-form-item>
         @RenderPage("~/Views/Shared/endForm.cshtml")
         @RenderPage("~/Views/Shared/endButton.cshtml")
-        <template>
-            <el-form-item>
-                <el-button type="primary" v-if="state=='已完成'" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
-                <el-button type="primary" v-on:click="printBom" :disabled="disablePage">导出Bom表</el-button>
-            </el-form-item>
-        </template>
     </el-form>
+
+
 </el-main>
 <script>
     var items = {
-        Supplier: '供应商',
         CodeNo: '物料编码',
         Name: '物料名称',
         Standard: '规格型号',
         Unit: '单位',
         Count: '数量',
-        Price: '单价(预计)',
+        ExpectPrice: '预计单价',
         Purpose: '用途',
-        StartTime: '开始日期',
-        EndTime: '结束日期',
         Mark: '备注'
     }
     var demo = new Vue({
@@ -54,39 +57,40 @@
         mixins: [mixin],
         data: function () {
             return {
-                items: items,
+                totalPrice: 0,
             }
         },
         methods: {
             //提交审批
             onSubmit() {
+                this.disablePage = true
+                if (NodeId == 3) {
+                    this.PostData('/OfficeSupplies/ModifyTable', this.data, (res) => {
+                        this.aggreSubmit()
+                    })
+                }
                 this.aggreSubmit()
             },
             //获取bom表信息
             getBomInfo() {
                 var that = this
-                this.GetData("/Borrow/Read?TaskId=" + TaskId, (data) => {
+                this.GetData("/OfficeSupplies/ReadTable?TaskId=" + TaskId, (data) => {
                     that.data = data
+
+                    for (let p of data) {
+                        this.totalPrice = this.totalPrice + p.ExpectPrice * p.Count
+                    }
                     that.getData()
                     that.totalRows = that.data.length
                 })
             },
-            printTable() {
-                this.PostData('Borrow/PrintPDF',{
-                    UserId: DingData.userid,
-                    TaskId: TaskId
-                }, () => { this.elementAlert('提示信息','获取成功，请在工作通知中查收') })
+            //设置BOM表单状态
+            setState(index, row) {
+                row.IsDelete = !row.IsDelete
             },
-            printBom() {
-                this.PostData('Borrow/PrintExcel', {
-                    UserId: DingData.userid,
-                    TaskId: TaskId
-                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
-            }
         },
         created: function () {
-            //this.initEnd()
-            this.initEnd(()=> { this.getBomInfo() })
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
 </script>

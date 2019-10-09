@@ -6,31 +6,22 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        知识产权申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
 
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="applyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="申请名称" prop="Name">
-            <el-input v-model="ruleForm.Name" style="width:550px;"></el-input>
+            <el-input v-model="tableForm.Name" style="width:550px;"></el-input>
         </el-form-item>
         <el-form-item label="申请类别" prop="Type">
-            <el-select v-model="ruleForm.Type" style="width:300px;">
+            <el-select v-model="tableForm.Type" style="width:300px;">
                 <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        @*<el-form-item label="申报单位" prop="Company">
-            <el-select v-model="ruleForm.Company" style="width:400px;">
-                <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>*@
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+            <el-select v-model="tableForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -41,19 +32,13 @@
             </el-select>
         </el-form-item>
         <el-form-item label="申请发明人" prop="Inventor">
-            <el-input v-model="ruleForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
+            <el-input v-model="tableForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
-        <hr />
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 
@@ -63,11 +48,8 @@
         mixins: [mixin],
         data: function () {
             return {
-                applyMan: DingData.nickName,
                 status: status,
                 CompanyNames: CompanyNames,
-                nodeList: [],
-                nodeInfo: {},
                 date: _getDate(),
                 addPeopleNodes: [2,5], //额外添加审批人节点数组
                 //阿法迪id
@@ -87,30 +69,28 @@
                     emplId: '15545554432996107'
                 }],
 
-                ruleForm: {
-                    Title: "知识产权申请",
+                tableForm: {
                     Company: "",
                     Name: '',
                     Type: "",
                     Inventor: "",
-                    ProjectId: ""
                 },
                 rules: {
-                    Company: { required: true, message: '申报单位不能为空', trigger: 'blur' },
-                    Name: { required: true, message: '申请名称不能为空', trigger: 'blur' },
-                    Type: { required: true, message: '申请类别不能为空', trigger: 'blur' },
-                    Inventor: { required: true, message: '申请发明人不能为空', trigger: 'blur' },
-                    ProjectId: { required: true, message: '项目不能为空', trigger: 'blur' }
+                    Company: [{ required: true, message: '申报单位不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    Name: [{ required: true, message: '申请名称不能为空', trigger: 'blur' },{ min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    Type: [{ required: true, message: '申请类别不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    Inventor: [{ required: true, message: '申请发明人不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
+                    ProjectId: [{ required: true, message: '项目不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
                 }
             }
         },
         methods: {
             onSubmit(formName) {
                 //根据类型添加审批人
-                this.ruleForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
+                this.tableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 let callBack = (taskId) => {
-                    this.ruleForm['TaskId'] = taskId
-                    this.PostData('IntellectualProperty/Save', this.ruleForm, () => {
+                    this.tableForm['TaskId'] = taskId
+                    this.PostData('IntellectualProperty/Save', this.tableForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -119,10 +99,7 @@
                         })
                     })
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             //添加负责人
             addPeerNumber() {
@@ -139,20 +116,17 @@
                             names.push(d.name)
                             ids.push(d.emplId)
                         }
-                        that.ruleForm.Inventor = names.join(',')
-                        that.ruleForm.InventorId = ids.join(',')
-                        that.ruleForm.ActualInventor = names.join(',')
-                        that.ruleForm.ActualInventorId = ids.join(',')
+                        that.tableForm.Inventor = names.join(',')
+                        that.tableForm.InventorId = ids.join(',')
+                        that.tableForm.ActualInventor = names.join(',')
+                        that.tableForm.ActualInventorId = ids.join(',')
                     },
                     onFail: function (err) { }
                 });
             },
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.getProjects()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         },
 
     })

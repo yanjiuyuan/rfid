@@ -6,19 +6,11 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        跨部门协作审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
 
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="协作部门">
             <el-input v-model="tableForm.CooperateDept" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -38,10 +30,14 @@
         </el-form-item>
         <template v-if="NodeId >= 4">
             <el-form-item label="实际开始时间" prop="FactBeginTime">
-                <el-input v-model="tableForm.FactBeginTime" style="width:200px;" :disabled="noEdit"></el-input>
+                <el-date-picker v-model="tableForm.FactBeginTime" :editable="false" :disabled="noEdit" v-on:change="selectTime"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
             </el-form-item>
             <el-form-item label="实际结束时间" prop="FactEndTime">
-                <el-input v-model="tableForm.FactEndTime" style="width:200px;" :disabled="noEdit"></el-input>
+                <el-date-picker v-model="tableForm.FactEndTime" :editable="false" :disabled="noEdit" v-on:change="selectTime"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
             </el-form-item>
             <el-form-item label="实际天数" prop="FactDays">
                 <el-input v-model="tableForm.FactDays" style="width:200px;" :disabled="noEdit"></el-input>
@@ -72,48 +68,17 @@
         </el-form-item>
         <hr />
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="false">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item>
-                <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
     </el-form>
 </el-main>
 
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
                 //钉一下需要的参数
-                flowid: UrlObj.flowid,
-                userid: DingData.userid,
-                DingData: DingData,
-                index: Index,
-                state: state,
-                NodeId: NodeId,
-                nodeList: [],
-                nodeInfo: {},
                 noEdit: true,
                 tableForm: {
                 },
@@ -127,7 +92,7 @@
             }
         },
         methods: {
-            onSubmit(formName) {
+            onSubmit() {
                 if (this.NodeId == 4) {
                     let names = this.tableForm.FactCooperateMan.split(',')
                     let ids = this.tableForm.FactCooperateManId.split(',')
@@ -141,16 +106,22 @@
                         })
                     }
                 } 
-                this.$refs[formName].validate((valid) => {
+                this.$refs['tableForm'].validate((valid) => {
                     if (valid) {
                         this.PostData('Cooperate/Modify', this.tableForm, (res) => {
-                            this.aggreSubmit({
-                                "Id": this.ruleForm.Id,
-                                "Remark": this.tableForm.Mark
-                            })
+                            this.aggreSubmit()
                         })
                     }
                 })
+            },
+            //选时间操作
+            selectTime() {
+                let date1 = this.tableForm.FactBeginTime.split('-')
+                date1 = new Date(date1[0], date1[1], date1[2])
+                let date2 = this.tableForm.FactEndTime.split('-')
+                date2 = new Date(date2[0], date2[1], date2[2])
+                let days = (date2 - date1) / (3600 * 24 * 1000) + 1
+                this.tableForm.FactDays = days - parseInt(days / 7) * 2
             },
             //选择实际协作人
             addPeerNumber() {
@@ -177,7 +148,6 @@
                         that.nodeList[i].AddPeople = addPeoples
                         for (let app of addPeoples) {
                             $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + app.name.substring(0, 3) + '</span >')
-
                         }
                         that.tableForm.FactCooperateMan = names.join(',')
                         that.tableForm.FactCooperateManId = ids.join(',')
@@ -187,7 +157,7 @@
             },
             getHelpTable() {
                 this.GetData('Cooperate/Read?taskid=' + TaskId, (res) => {
-                    if (NodeId == 1) {
+                    if (NodeId == 1 || NodeId == 2) {
                         res['FactBeginTime'] = res.PlanBeginTime
                         res['FactEndTime'] = res.PlanEndTime
                         res['FactDays'] = res.PlanDays
@@ -200,12 +170,10 @@
             }
         },
         created: function () {
-            this.getHelpTable()
             if (NodeId == 4) this.noEdit = false
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getHelpTable() })
         }
     })
-    getFormData(demo)
 
 </script>
 

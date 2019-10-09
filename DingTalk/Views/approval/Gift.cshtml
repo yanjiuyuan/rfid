@@ -7,7 +7,7 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        礼品招待领用申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--礼品管理-->
     <template v-if="isRole">
@@ -67,7 +67,8 @@
 
     <!--礼品添加-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.key" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <sam-input :value.sync="searchForm.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchGifts">搜索</el-button>
     </div>
     <!--搜索结果礼品列表表格實體-->
@@ -81,19 +82,6 @@
             </template>
         </el-table-column>
     </el-table>
-    @*<div>
-            <span style="color:red">*</span><span style="padding:3px;">礼品名称</span>
-            <el-select v-model="giftName" filterable placeholder="请选择">
-                <el-option v-for="item in giftList"
-                           :key="item"
-                           :label="item"
-                           :value="item">
-                </el-option>
-            </el-select>
-            <el-input v-model="count" style="width:200px;"></el-input>
-            <el-button type="primary" v-on:click="addGood">添加</el-button>
-        </div>*@
-
     <hr />
     <h3>已选礼品</h3>
     <!--采购列表表格實體-->
@@ -113,20 +101,8 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="用途及使用说明" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 
@@ -153,38 +129,20 @@
                 giftList: giftList,
                 giftName: [0],
                 count: 0,
-                data: [],
-                tableData: [],
-                purchaseList: [],
-                projectList: [],
                 good: {
                     ExpectPrice: '',
                     Unit: '',
                     Count: ''
                 },
-                preApprove: false,
-                nodeList: [],
-                nodeInfo: {},
-                dialogFormVisible: false,
                 searchForm: {
                     key: '',
                 },
-
                 isRole: false,//是否为特定角色
                 excelConfig: excelConfig,
                 excelList: [],
                 excelData: [],
                 allData: [],
                 editForm: {},
-                dialogFormVisible: false,
-                ruleForm: {
-                    name: DingData.nickName,
-                    remark: '',
-                    Title: '礼品招待领用申请',
-                    ProjectId: null,
-                    Time: ''
-                },
-                preApprover: false
             }
         },
         methods: {
@@ -212,10 +170,7 @@
                         })
                     }, param)
                 }
-                that.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {
@@ -276,20 +231,12 @@
                     GiftCount: 1
                 })
             },
-            //删除已选礼品
-            deleteGood(index, good) {
-                this.purchaseList.splice(index, 1)
-            },
             
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
             this.judgeRole('礼品管理员')
             this.getAllGifts()
-
-            loadHtml("mainPage", "partPage")
-
+            this.initStart()
         }
     })
 

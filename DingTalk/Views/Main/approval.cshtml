@@ -23,7 +23,7 @@
             <template slot="title">
                 <span style="font-size:20px;">{{m.SORT_NAME}}</span>
             </template>
-            <div v-for="l in m.flows" v-if="l.url" class="approval-box" v-on:click="toApprove(l.url,l.FlowId)" style="cursor:pointer;">
+            <div v-for="l in m.flows" v-if="l.url" class="approval-box" v-on:click="toApprove(l.url,l)" style="cursor:pointer;">
                 <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
                 <p>{{l.FlowName}}</p>
             </div>
@@ -215,7 +215,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [2,7],
+                activeNames: [1,2,3,7],
                 count: 2,
                 name: '',
                 id: '',
@@ -296,26 +296,29 @@
                         DingData.userid = data[0].emplId
                         DingData.nickName = data[0].name
 
-
-                        var url2 = '/DingTalkServers/getUserDetail?userId=' + data[0].emplId
                         $.ajax({
-                            url: url2,
+                            url: '/DingTalkServers/getUserDetail?userId=' + DingData.userid,
+                            dataType: 'json',
                             type: 'POST',
+                            data: {},
+                            contentType: "application/json; charset=utf-8",
                             success: function (data) {
-                                console.log(url2)
-                                console.log(JSON.parse(data))
-                                data = JSON.parse(data)
+                                if (typeof (data) == 'string') data = JSON.parse(data)
                                 DingData.nickName = data.name
-                                DingData.roles = data.roles
+                                DingData.department = data.department
+                                DingData.dept = data.dept
+                            },
+                            error: function (err) {
+                                console.error(err)
                             }
                         })
-
                     },
                     onFail: function (err) { }
                 });
             },
-            toApprove: function (url, id) {
-                FlowId = id
+            toApprove: function (url, param) {
+                FlowId = param.FlowId
+                FlowName = param.FlowName
                 loadPage(url)
             },
             loadPage: function (url) {

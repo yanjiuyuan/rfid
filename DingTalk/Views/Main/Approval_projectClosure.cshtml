@@ -6,24 +6,12 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        结题申请审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
 
-
-        <el-form-item label="项目名称">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="项目类型">
             <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -102,7 +90,7 @@
             </el-collapse-item>
             <el-collapse-item :name="2" :key="2" v-if="DetailedList1.length">
                 <template slot="title">
-                    <span style="font-size:20px;">项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单</span>
+                    <span style="font-size:20px;">项目采购清单、借用清单、领料清单、入库清单</span>
                 </template>
                 <el-table :data="DetailedList1" stripe border>
                     <el-table-column type="index"></el-table-column>
@@ -133,7 +121,7 @@
                             <el-button size="mini" type="primary" v-on:click="showDetailedList2(scope.$index, scope.row)">详情</el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
+                    <el-table-column v-for="(value,key) in DetailedList2_detailConfig" :prop="key" :label="value" :key="key">
                     </el-table-column>
                 </el-table>
                 <el-form-item label="申报名称">
@@ -145,7 +133,7 @@
                 <el-form-item label="申报类别">
                     <el-input v-model="DetailedList2_detail.ActualType" :disabled="true"></el-input>
                 </el-form-item>
-   
+
             </el-collapse-item>
             <el-collapse-item :name="4" :key="4" v-if="((tableForm.IsTransverse && NodeId > 3) || index == 2) && ApplicationUnit.length">
                 <template slot="title">
@@ -166,7 +154,7 @@
                     <el-table-column type="index"></el-table-column>
                     <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                         <template slot-scope="scope">
-                            <el-input type="textarea" v-model="scope.row[key]" v-on:change = "computeCount(scope.$index,scope.row)"></el-input>
+                            <el-input type="textarea" v-model="scope.row[key]" v-on:change="computeCount(scope.$index,scope.row)"></el-input>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -179,31 +167,8 @@
             </el-collapse-item>
         </el-collapse>
 
-            
-
-        <hr />
-        <el-form-item label="意见">
-            <el-input type="textarea" v-model="ruleForm.Mark" style="width:550px;"></el-input>
-        </el-form-item>
-
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index!=0">
+        @RenderPage("~/Views/Shared/endButton.cshtml")
+        <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printPdf" :disabled="disablePage">打印表单</el-button>
             </el-form-item>
@@ -212,28 +177,12 @@
 </el-main>
 
 <script>
-    var imageList = []
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                index: Index,
-                FlowId: FlowId,
-                NodeId: NodeId,
-                state: State,
-                nodeList: [],
-                nodeInfo: {},
                 activeNames: [],
-
                 uploadFileConfig: [
                     {
                         label: '立项书或建议书',
@@ -374,9 +323,9 @@
                 table1: {},
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
-                DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单)
+                DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、领料清单、入库清单、借用清单、受理知识产权清单)
                 DetailedList1: [], DetailedList1_detail: [], DetailedList1_detailConfig: {}, dt1Index: 0,
-                DetailedList2: [], DetailedList2_detail: {},
+                DetailedList2: [], DetailedList2_detail: {}, DetailedList2_detailConfig: {ApplyMan: '申请人',ApplyTime: '申请时间',OldTaskId: '流水号'},
                 ProjectFundingList: [],//项目经费使用情况
                 defaultProjectFundingList: [
                     {
@@ -470,16 +419,10 @@
                         TaskId: TaskId
                     }
                 ],
-
-                tableForm: {
-
-                },
             }
         },
         methods: {
             getNodeInfo() {
-                console.log('老铁，666666666666666')
-                console.warn('老铁，666666666666666')
                 var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
                 this.GetData(url, (res) => {
                     this.isBack = res[0].IsBack
@@ -533,10 +476,6 @@
 
             },
             onSubmit() {
-                let aggreParam = {
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark
-                }
                 if (NodeId == 2 || NodeId == 8) {
                     if (NodeId == 2) {
                         for (let fund of this.ProjectFundingList) {
@@ -558,11 +497,11 @@
                     }
                     console.log(JSON.stringify(param))
                     this.PostData('ProjectClosure/Modify', param, (res) => {
-                        this.aggreSubmit(aggreParam)
+                        this.aggreSubmit()
                     })
                 }
                 else {
-                    this.aggreSubmit(aggreParam)
+                    this.aggreSubmit()
                 }
             },
             computeCount(index, row) {
@@ -646,18 +585,26 @@
                             Mark: '备注'
                         }
                         break;
-                    case '维修申请':
-                        url = 'Maintain/Read';
+                    case '领料申请':
+                        url = 'Pick/Read';
                         this.DetailedList1_detailConfig = {
-                            CodeNo: '物料编码',
-                            Name: '物料名称',
-                            Standard: '规格型号',
-                            Unit: '单位',
-                            Count: '数量',
-                            Price: '单价(预计)',
-                            MaintainContent: '维修内容',
-                            NeedTime: '需用时间',
-                            Mark: '备注'
+                            fNumber: '物料编码',
+                            fName: '物料名称',
+                            fQty: '实收数量',
+                            unitName: '单位',
+                            fModel: '型号规格',
+                            fFullName: '供应商'
+                        }
+                        break;
+                    case '入库申请':
+                        url = 'Godown/Read';
+                        this.DetailedList1_detailConfig = {
+                            fNumber: '物料编码',
+                            fName: '物料名称',
+                            fQty: '实收数量',
+                            unitName: '单位',
+                            fModel: '型号规格',
+                            fFullName: '供应商'
                         }
                         break;
                 }
@@ -702,11 +649,9 @@
         },
 
         created: function () {
-            this.getTable()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getTable() })
         }
     })
-    getFormData(demo)
 </script>
 
 

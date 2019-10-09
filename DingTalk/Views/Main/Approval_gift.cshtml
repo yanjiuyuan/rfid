@@ -6,18 +6,11 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="goHome()">
         <i class="el-icon-arrow-left"></i>
-        礼品招待领用审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
     <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-        <el-form-item label="标题" v-if="ruleForm.Title">
-            <el-input v-model="ruleForm.Title" :disabled="true" style="width:500px;"></el-input>
-        </el-form-item>
-        <br />
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" :disabled="true" style="width:500px;"></el-input>
-        </el-form-item>
-        <br />
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="用途及使用说明">
             <el-input v-model="ruleForm.Remark" :disabled="true" style="width:500px;"></el-input>
         </el-form-item>
@@ -30,27 +23,7 @@
             </el-table>
         </div>
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item label="操作">
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item v-if="index!=0">
             <el-button type="primary" v-on:click="printPdf">打印</el-button>
         </el-form-item>
@@ -58,34 +31,15 @@
 </el-main>
 
 <script>
-    var state = ''
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                NodeId: NodeId,
-                index: Index,
-                nodeList: [],
-                nodeInfo: {},
-                state: state,
-                ruleForm: {
-                    Mark: ''
-                }
             }
         },
         methods: {
-            onSubmit(formName) {
-                console.log('submit!')
+            onSubmit() {
                 if (NodeId == 2) {
                     this.PostData('Gift/StockReduce', this.data, (res) => {
                         this.aggreSubmit({
@@ -95,10 +49,7 @@
                     })
                     return
                 }
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark
-                })
+                this.aggreSubmit()
             },
             printPdf() {
                 var that = this
@@ -124,11 +75,9 @@
             }
         },
         created: function () {
-            this.getBomInfo()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getBomInfo() })
         }
     })
-    getFormData(demo)
 
 </script>
 

@@ -9,17 +9,6 @@
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
 
-        @*<el-upload class="upload-demo"
-                   action="https://jsonplaceholder.typicode.com/posts/"
-                   :before-remove="beforeRemove"
-                   multiple
-                   :limit="3"
-                   :on-exceed="handleExceed"
-                   :file-list="fileList">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-        </el-upload>*@
-
         <el-form-item label="标题" prop="Title">
             <el-input v-model="ruleForm.Title"></el-input>
         </el-form-item>
@@ -58,7 +47,7 @@
             <el-input v-model="ruleForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目开发周期" prop="ActualCycleStart">
-            <el-date-picker v-model="timeRange"
+            <el-date-picker v-model="timeRange" :editable="false"
                             type="daterange"
                             v-on:change="selectActualTime"
                             range-separator="至"
@@ -164,6 +153,7 @@
         <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
+            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -422,10 +412,7 @@
                         })
                     })
                 }
-                this.approvalSubmit(formName, {
-                    Title: this.ruleForm.Title,
-                    Remark: this.ruleForm.remark
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             selectProject(id) {
                 console.log(id)
@@ -584,6 +571,8 @@
             this.getNodeInfo()
             this.getApproInfo()
             this.getProjects()
+            this.loadTempData()
+            this.loadReApprovalData()
             loadHtml("mainPage", "partPage")
         },
 

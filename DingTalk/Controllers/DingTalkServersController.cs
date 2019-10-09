@@ -3,11 +3,13 @@ using DingTalk.Bussiness.FlowInfo;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using DingTalk.Models.MobileModels;
+using DingTalk.Models.ServerModels;
 using DingTalkServer;
 using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -50,9 +52,8 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("departmentListQuaryByUserId")]
-        public async Task<string> DepartmentListQuary()
+        public async Task<string> DepartmentListQuary(string userId)
         {
-            string userId = "manager325";
             var result = await dtManager.GetDepartmentByUserId(userId);
             return result;
         }
@@ -63,10 +64,6 @@ namespace DingTalk.Controllers
         [Route("departmentQuaryByUserId")]
         public async Task<string> departmentQuaryByUserId(string userId)
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                userId = "083452125733424957";
-            }
             var result = await dtManager.GetDepartmentByUserId(userId);
             DepartmentListModel departmentListModel = JsonConvert.DeserializeObject<DepartmentListModel>(result);
             List<List<string>> ListString = departmentListModel.department;
@@ -88,14 +85,12 @@ namespace DingTalk.Controllers
             return results;
         }
 
-        //"{\"errmsg\":\"ok\",\"department\":[[56943182,1]],\"errcode\":0}"
-
-        [Route("departmentListQuaryByDeptId")]
-        public async Task<string> departmentListQuaryByDeptId()
-        {
-            var allDptStr = await dtManager.GetDepartmentList();
-            return allDptStr;
-        }
+        //[Route("departmentListQuaryByDeptId")]
+        //public async Task<string> departmentListQuaryByDeptId()
+        //{
+        //    var allDptStr = await dtManager.GetDepartmentList();
+        //    return allDptStr;
+        //}
 
         [Route("addDepartment")]
         public async Task<string> DepartmentAdd()
@@ -111,12 +106,19 @@ namespace DingTalk.Controllers
             var result = await new DingTalkManager().AddDepartment(dpt);
             return result;
         }
-        [Route("SingleDepartment")]
-        public async Task<string> SingleDepartment()
+
+        /// <summary>
+        /// 根据部门Id获取部门详情
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("singleDepartment")]
+        public async Task<string> singleDepartment(int Id)
         {
-            var allDptStr = await dtManager.GetDepartmentList();
-            var allDpt = JsonConvert.DeserializeObject<DepartmentResponseModel>(allDptStr);
-            var result = await dtManager.SingleDepartment(allDpt.Department.LastOrDefault().Id);
+            //var allDptStr = await dtManager.GetDepartmentList();
+            //var allDpt = JsonConvert.DeserializeObject<DepartmentResponseModel>(allDptStr);
+            DingTalkManager dingTalkManager = new DingTalkManager();
+            var result = await dingTalkManager.SingleDepartment(Id);
             return result;
         }
         private string GetRandomNum()
@@ -137,17 +139,27 @@ namespace DingTalk.Controllers
         #endregion
 
         #region user curd
+
+        /// <summary>
+        /// 根据用户Id获取用户详情
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Route("getUserDetail")]
         [System.Web.Http.HttpPost]
-        public async Task<string> GetUserDetail(string userId)
+        public async Task<UserDetail> GetUserDetail(string userId)
         {
-            //string dptId = "0935455445756597";
-            //var departmentUserStr = await dtManager.GetDepartmentUserList(dptId);
-            //var departmentUser = JsonConvert.DeserializeObject<DepartmentUserResponseModel>(departmentUserStr);
-            //string userId = departmentUser.UserList.Last().UserId;
-            //string userId = "283763135732555063";
             var result = await dtManager.GetUserDetail(userId);
-            return result;
+            UserDetail userDetail = JsonConvert.DeserializeObject<UserDetail>(result);
+            List<string> deptNameList = new List<string>();
+            foreach (var item in userDetail.department)
+            {
+                string res = await singleDepartment(int.Parse(item));
+                Models.ServerModels.DeptModel deptModel = JsonConvert.DeserializeObject<Models.ServerModels.DeptModel>(res);
+                deptNameList.Add(deptModel.name);
+            }
+            userDetail.dept = deptNameList;
+            return userDetail;
         }
         [Route("getDepartmentUserList")]
         [System.Web.Http.HttpPost]
@@ -265,7 +277,7 @@ namespace DingTalk.Controllers
 
         [Route("sendTextMessage")]
         [HttpPost]
-        public async Task<string> SendTextMessage(string msg,string userId)
+        public async Task<string> SendTextMessage(string msg, string userId)
         {
             var msgModel = new TextMsgModel()
             {
@@ -398,7 +410,7 @@ namespace DingTalk.Controllers
             var url = _addressConfig.GetWorkMsgUrl;
             var result = await _client.UploadModel(url, sendWorkModel);
             return result;
-            
+
         }
 
         /// <summary>
@@ -483,8 +495,8 @@ namespace DingTalk.Controllers
         [Route("SendProcessingProgress")]
         [HttpPost]
         public async Task<object> SendProcessingProgress(string userId, int type,
-        string applyMan,string bom,string taskId,string companyName,
-        string speedOfProgress,bool? IsRead, string linkUrl = "eapp://page/start/index")
+        string applyMan, string bom, string taskId, string companyName,
+        string speedOfProgress, bool? IsRead, string linkUrl = "eapp://page/start/index")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
@@ -496,7 +508,7 @@ namespace DingTalk.Controllers
                 case 2: keyword = "修改"; break;
                 case 3: keyword = "分配"; break;
             };
-          
+
             oa oa = new oa()
             {
                 message_url = linkUrl,
@@ -542,7 +554,7 @@ namespace DingTalk.Controllers
             return result;
         }
 
-      
+
         /// <summary>
         /// 项目消息推送通知
         /// </summary>
@@ -552,7 +564,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("SendProjectMsg")]
         [HttpPost]
-        public async Task<object> SendProjectMsg(string userId,string msg, string linkUrl = "eapp://page/start/index")
+        public async Task<object> SendProjectMsg(string userId, string msg, string linkUrl = "eapp://page/start/index")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
@@ -778,7 +790,7 @@ namespace DingTalk.Controllers
                         Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.IsSend != true && t.State == 0).OrderBy(s => s.NodeId).FirstOrDefault();
                         return new NewErrorModel()
                         {
-                            data= tasks,
+                            data = tasks,
                             error = new Error(0, "流程被退回！", "") { },
                         };
                     }
@@ -792,6 +804,31 @@ namespace DingTalk.Controllers
                 };
             }
         }
+
+        #endregion
+
+        #region 获取当前公司
+
+        /// <summary>
+        /// 获取当前公司数据数据  （Id  0 为真实环境 1 为测试环境环境  2 为开发环境）
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetCompanyInfo")]
+
+        public NewErrorModel GetCompanyInfo()
+        {
+            return new NewErrorModel()
+            {
+                data = new CompanyModel()
+                {
+                    Id = DTConfig.type,
+                    Url = DTConfig.Url
+                },
+                error = new Error(0, "读取成功！", "") { },
+            };
+        }
+
 
         #endregion
 
@@ -830,5 +867,17 @@ namespace DingTalk.Controllers
         }
 
         #endregion
+    }
+
+    public class CompanyModel
+    {
+        /// <summary>
+        /// 公司Id  （0 为真实环境 1 为测试环境环境  2 为开发环境）
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
+        /// 服务端路径
+        /// </summary>
+        public string Url { get; set; }
     }
 }

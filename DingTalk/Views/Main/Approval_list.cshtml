@@ -6,7 +6,8 @@
 <div id="partPage">
     <!--列表搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span><el-input v-model="searchForm.keyword" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <el-input v-model="searchForm.keyword" placeholder="流水号、标题、申请人" style="width:300px;"></el-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--表格實體-->
@@ -79,10 +80,17 @@
         methods: {
             //搜索列表
             searchCode() {
-                if (!this.searchForm.keyword) return
+                //if (!this.searchForm.keyword) return
                 this.getData2(this.searchForm.keyword)
             },
             getData2(keyword) {
+                keyword = this.searchForm.keyword
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 let param = {
                     Index: Index,
                     ApplyManId: DingData.userid,
@@ -95,6 +103,7 @@
                     this.showLoading = false
                     this.tableData = res
                     this.totalRows = count
+                    loading.close()
                 })
             },
             //表单操作
@@ -116,13 +125,22 @@
                     let param = {
                         taskid: row.TaskId,
                         flowid: row.FlowId,
+                        flowName: row.FlowName,
                         nodeid: row.NodeId,
                         id: row.Id,
                         index: Index,
                         state: row.State
                     }
+                    if (row.FlowId == 1) {
+                        loadPage('/Main/approval_officeSupplies' + _formatQueryStr(param))
+                        return
+                    }
                     if (row.FlowId == 7) {
                         loadPage('/Main/approval_detail2' + _formatQueryStr(param))
+                        return
+                    }
+                    if (row.FlowId == 8) {
+                        loadPage('/Main/approval_purchase' + _formatQueryStr(param))
                         return
                     }
                     if (row.FlowId == 12) {

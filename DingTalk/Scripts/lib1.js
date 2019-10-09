@@ -1,5 +1,6 @@
 ﻿//实例总参数
-var FlowId = 0 //当前审批类别ID
+var FlowId = 0 //当前审批流程ID
+var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
 var TaskId = 0 //审批任务ID
 var state = ''//流程状态
@@ -16,7 +17,7 @@ var fileList = []
 var pdfList = []
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 //let serverUrl = 'http://17e245o364.imwork.net:49415/'
-let serverUrl = 'http://47.96.172.122:8093/'
+let serverUrl = window.location.host +'/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目', '测试项目']
 let PTypes = [
     { label: '研发类', value: '研发类', children: [{ value: '自研', label: '自研' }, { value: '横向', label: '横向' }, { value: '纵向', label: '纵向' }, { value: '测试', label: '测试' }] },
@@ -231,71 +232,9 @@ function checkRate(input) {
     }
 }
 
-//获取审批表单信息
-function getFormData(demo) {
-    var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
-    GetData(url, (res) => {
-        imageList = []
-        fileList = []
-        pdfList = []
-        handleUrlData(res, demo)
-        taskId = res.TaskId
-        allData = res
-        demo.ruleForm = res
-        demo.getNodeInfo()
-        demo.GetDingList(taskId)
-        demo.getApproInfo()
-        getFormData_done(res)
-    },demo)
-}
+
 function getFormData_done(res) {
 
-}
-function handleUrlData(data,demo) {
-    imageList = []
-    fileList = []
-    pdfList = []
-    if (data.ImageUrl && data.ImageUrl.length > 5) {
-        var tempList = data.ImageUrl.split(',')
-        for (let img of tempList) {
-            imageList.push({
-                name: 'hello.jpg',
-                url: document.location + (img.substring(2)).replace(/\\/g, "/")
-            })
-        }
-        demo.imageList = imageList
-    }
-    if (data.FileUrl && data.FileUrl.length > 5) {
-        FileUrl = data.FileUrl
-        var urlList = data.FileUrl.split(',')
-        var oldUrlList = data.OldFileUrl.split(',')
-        var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
-        for (var i = 0; i < urlList.length; i++) {
-            fileList.push({
-                name: oldUrlList[i],
-                path: urlList[i].replace(/\\/g, "/"),
-                url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                mediaId: MediaIdList[i]
-            })
-        }
-        demo.fileList = fileList
-    }
-    if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
-        FilePDFUrl = data.FilePDFUrl
-        var urlList = data.FilePDFUrl.split(',')
-        var oldUrlList = data.OldFilePDFUrl.split(',')
-        var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
-        var stateList = data.PdfState ? data.PdfState.split(',') : []
-        for (var i = 0; i < urlList.length; i++) {
-            pdfList.push({
-                name: oldUrlList[i],
-                url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
-                mediaId: MediaIdList[i],
-                state: stateList[i]
-            })
-        }
-        demo.pdfList = pdfList
-    }
 }
 
 //时间选择器插件参数
@@ -326,7 +265,21 @@ var pickerOptions = {
         }
     }]
 }
-
+        
+var checkProjectId = (rule, value, callback) => {
+    if (!value) {
+        return callback(new Error('项目编号不能为空'));
+    }
+    setTimeout(() => {
+        let reg1 = /^[0-9]{4}\w+\w+[0-9]{3}$/
+        if (!reg1.test(value)) {
+            callback(new Error('请输入数字值'));
+        } else {
+            callback();
+        }
+    }, 500);
+};
+let commonInput = [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }]
 var mixin = {
     data: {
         user: {},
@@ -344,6 +297,11 @@ var mixin = {
                 members: []
             }
         ],
+        ruleForm: {
+            Title: ''
+        },
+        tableForm:{},
+        DingData: {},
         nodeList: [],
         nodeInfo: {},
         NodeIds: [],
@@ -351,10 +309,11 @@ var mixin = {
         tableData: [],
         fileList: [],
         pdfList: [],
+        imageList: [],
         excelList: [],
         mediaList: [],
         specialRoleNames: [],
-        ruleForm: {},
+        specialRole: [],
         preApprove: true,
         isBack: false,
         projectList: [],
@@ -374,104 +333,149 @@ var mixin = {
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
             Title: [
-                { required: true, message: '标题内容不能为空！', trigger: 'change' }
+                { required: true, message: '标题内容不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+            ],
+            ImageUrl: [
+                { required: true, message: '图片不能为空！', trigger: 'change' }
+            ],
+            FilePDFUrl: [
+                { required: true, message: 'PDF文件不能为空！', trigger: 'change' }
+            ],
+            FileUrl: [
+                { required: true, message: '文件不能为空！', trigger: 'change' }
             ],
             Type: [
                 { required: true, message: '类别不能为空！', trigger: 'change' }
             ],
             Name: [
-                { required: true, message: '名称不能为空！', trigger: 'change' }
+                { required: true, message: '名称不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             CarNumber: [
-                { required: true, message: '车牌号不能为空！', trigger: 'change' }
+                { required: true, message: '车牌号不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             UnitPricePerKilometre: [
-                { required: true, message: '每公里单价不能为空！', trigger: 'change' }
+                { required: true, message: '每公里单价不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Abstract: [
-                { required: true, message: '内容简介不能为空！', trigger: 'change' }
+                { required: true, message: '内容简介不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             ProjectName: [
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, message: '内容不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             inputProjectId: [
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, validator: checkProjectId, trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             inputProjectName: [
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, message: '内容不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Price: [
                 { required: true, message: '价格不能为空！', trigger: 'change' },
-                { type: 'number', message: '必须为数字值' }
+                { type: 'number', message: '必须为数字值' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Unit: [
-                { required: true, message: '单位不能为空！', trigger: 'change' }
+                { required: true, message: '单位不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Count: [
                 { required: true, message: '数量不能为空！', trigger: 'change' },
-                { type: 'number', message: '必须为数字值' }
+                { type: 'number', message: '必须为数字值' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             time: [
-                { required: true, message: '时长不能为空！', trigger: 'change' }
+                { required: true, message: '时长不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             DateTime: [
-                { required: true, message: '日期不能为空！', trigger: 'change' }
+                { required: true, message: '日期不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             StartTime: [
-                { required: true, message: '开始时间不能为空！', trigger: 'change' }
+                { required: true, message: '开始时间不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             EndTimeTime: [
-                { required: true, message: '结束时间不能为空！', trigger: 'change' }
+                { required: true, message: '结束时间不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             UseTime: [
-                { required: true, message: '时长不能为空！', trigger: 'change' }
+                { required: true, message: '时长不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             OverTimeContent: [
-                { required: true, message: '不能为空！', trigger: 'change' }
+                { required: true, message: '不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             EffectiveTime: [
-                { required: true, message: '有效时间不能为空！', trigger: 'change' }
+                { required: true, message: '有效时间不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Purpose: [
-                { required: true, message: '用途不能为空！', trigger: 'change' }
+                { required: true, message: '用途不能为空！', trigger: 'change' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             //文件阅办单表单
             MainContent: [
-                { required: true, message: '文件标题不能为空！', trigger: 'blur' }
+                { required: true, message: '文件标题不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             ReceivingUnit: [
-                { required: true, message: '来文单位不能为空！', trigger: 'blur' }
+                { required: true, message: '来文单位不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             ReceivingTime: [
-                { required: true, message: '时间不能为空！', trigger: 'blur' }
+                { required: true, message: '时间不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             MainIdea: [
-                { required: true, message: '主要内容不能为空！', trigger: 'blur' }
+                { required: true, message: '主要内容不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Suggestion: [
-                { required: true, message: '拟办意见不能为空！', trigger: 'blur' }
+                { required: true, message: '拟办意见不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             Leadership: [
-                { required: true, message: '领导阅示不能为空！', trigger: 'blur' }
+                { required: true, message: '领导阅示不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Review: [
-                { required: true, message: '部门阅办情况不能为空！', trigger: 'blur' }
+                { required: true, message: '部门阅办情况不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             HandleImplementation: [
-                { required: true, message: '办理落实情况不能为空！', trigger: 'blur' }
+                { required: true, message: '办理落实情况不能为空！', trigger: 'blur' },
+                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
         },
         pickerOptions: pickerOptions,
         CompanyNames: CompanyNames,
-        showAddProject: false,
+        dialogFormVisible:false,
         currentPage: 1,
         totalRows: 0,
         pageSize: 5,
         dingList: [],
-        PTypes: PTypes
-    },
-    created:function() {
-        
+        PTypes: PTypes,
+        project: {},
+        purchaseList:[],
+        noList:[],
+
+        date: _getDate(),
+        //审批页面参数
+        FlowId: '',
+        FlowName: '',
+        NodeId: '',
+        TaskId: '',
+        State: '',
+        Index: '',
     },
     methods: {
         doWithErrcode(error, errorFunc) {
@@ -486,12 +490,22 @@ var mixin = {
             }
             return 0
         },
-        GetData(url, succe) {
+        GetData(url, succe, showLoading = false) {
+            const loading = null
+            if (showLoading) {
+                loading = this.$loading({
+                    lock: true,
+                    text: '数据获取中，请耐心等待~',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+            }
             var that = this
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function (res) {
+                    if (showLoading) { loading.close() }
                     if (typeof (res) == 'string') res = JSON.parse(res)
                     if (url.indexOf('GetFlowStateCounts') <= 0) {
                         console.log(url)
@@ -500,24 +514,37 @@ var mixin = {
                     if (that.doWithErrcode(res.error)) {
                         return
                     }
-                    res.count ?succe(res.data, res.count):succe(res.data)
+                    res.count ? succe(res.data, res.count) : succe(res.data)
                 },
                 error: function (err) {
+                    that.disablePage = false
+                    if (showLoading) { loading.close() }
                     console.error(url)
                     console.error(err)
                 }
             })
         },
-        PostData(url, param, succe, errorFunc) {
+        PostData(url, param, succe, errorFunc, showLoading= false) {
+            param = JSON.stringify(param).replace(/null/g, '""')
+            const loading = null
+            if (showLoading) {
+                loading = this.$loading({
+                    lock: true,
+                    text: '数据获取中，请耐心等待~',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+            }
             var that = this
             $.ajax({
                 url: url,
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
+                data: param,
                 success: function (res) {
+                    if (showLoading) { loading.close() }
                     console.log(url)
-                    console.log(param)
+                    console.log(JSON.parse(param))
                     console.log(res)
                     if (that.doWithErrcode(res.error, errorFunc)) {
                         return
@@ -526,46 +553,154 @@ var mixin = {
                     succe(JSON.parse(res.data))
                 },
                 error: function (err) {
+                    if (showLoading) { loading.close() }
+                    that.disablePage = false
                     if (errorFunc) errorFunc()
                     console.error(url)
                     console.error(err)
                 }
             })
         },
+        //初始化方法
+        initStart() {
+            this.DingData = DingData
+            this.data = []
+            this.tableData = []
+            this.nodeList = []
+            this.nodeInfo = {}
+            this.pdfList = []
+            this.excelList = []
+            this.fileList = []
+            this.imageList = []
+            this.mediaList = []
+            this.mediaPdfList = []
+            this.FlowName = FlowName
+            this.purchaseList = []
+            this.noList = []
+            this.pageSize = 5
+            this.ruleForm = {
+                ApplyMan: DingData.nickName,
+                ApplyManId: DingData.userid,
+                Dept: DingData.dept[0],
+                remark: '',
+                ImageUrl: '',
+                OldImageUrl: '',
+                FileUrl: '',
+                OldFilePDFUrl: '',
+                FilePDFUrl: '',
+                OldFileUrl: '',
+                MediaId: '',
+                MediaIdPDF: '',
+                ProjectName: '',
+                ProjectId: '',
+                ProjectType: '',
+                counts: '',
+                tpName: '',
+                NodeId: '0',
+                ApplyTime: _getTime(),
+                IsEnable: '1',
+                FlowId: FlowId + '',
+                IsSend: false,
+                State: '1', 
+                Title: FlowName,
+            }
+
+            this.getNodeInfo()
+            this.getProjects()
+            this.getApproInfo()
+            this.loadTempData()
+            this.loadReApprovalData()
+            loadHtml("mainPage", "partPage")
+        },
+        initEnd(callBack) {
+            if (UrlObj.flowid) {
+                FlowId = UrlObj.flowid
+                FlowName = UrlObj.flowName
+                NodeId = UrlObj.nodeid
+                TaskId = UrlObj.taskid
+                State = UrlObj.state
+                Id = UrlObj.id
+                Index = UrlObj.Index
+            }
+            this.FlowId = FlowId
+            this.FlowName = FlowName
+            this.NodeId = NodeId
+            this.TaskId = TaskId
+            this.state = State
+            this.State = State
+            this['Id'] = Id
+            this.index = Index
+            this.Index = State
+               
+            this.DingData = DingData
+            this.data = []
+            this.tableData = []
+            this.nodeList = []
+            this.nodeInfo = {}
+            this.pdfList = []
+            this.excelList = []
+            this.fileList = []
+            this.imageList = []
+            this.mediaList = []
+            this.mediaPdfList = []
+            this.FlowName = FlowName
+            this.purchaseList = []
+            this.noList = []
+            this.pageSize = 5
+            this.ruleForm = {
+                ApplyMan: DingData.nickName,
+                ApplyManId: DingData.userid,
+                Dept: DingData.dept[0],
+                remark: '',
+                ImageUrl: '',
+                OldImageUrl: '',
+                FileUrl: '',
+                OldFilePDFUrl: '',
+                FilePDFUrl: '',
+                OldFileUrl: '',
+                MediaId: '',
+                MediaIdPDF: '',
+                ProjectName: '',
+                ProjectId: '',
+                ProjectType: '',
+                counts: '',
+                tpName: '',
+                NodeId: '0',
+                ApplyTime: _getTime(),
+                IsEnable: '1',
+                FlowId: FlowId + '',
+                IsSend: false,
+                State: '1',
+                Title: FlowName,
+            }
+
+            this.getNodeInfo()
+            this.GetDingList(TaskId)
+            this.getApproInfo()
+            this.getFormData()
+            callBack()
+            loadHtml("mainPage", "partPage")
+        },
         //提交审批
-        approvalSubmit(formName, param, callBack, param2 = {}) {
+        approvalSubmit(callBack = function () { }) {
             if (!DingData.userid) return
             var that = this
-            this.$refs[formName].validate((valid) => {
+            this.fileListToUrl()
+            this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
                     that.disablePage = true
-                    var paramArr = []
-                    var applyObj = {
-                        "ApplyMan": DingData.nickName,
-                        "ApplyManId": DingData.userid,
-                        "Dept": DingData.departName,
-                        "Title": that.ruleForm.Title,
-                        "ProjectName": that.ruleForm.ProjectName,
-                        "ProjectId": that.ruleForm.ProjectId,
-                        "ProjectName": that.ruleForm.ProjectName,
-                        "ProjectType": that.ruleForm.ProjectType,
-                        "NodeId": "0",
-                        "ApplyTime": _getTime(),
-                        "IsEnable": "1",
-                        "FlowId": FlowId + '',
-                        "IsSend": false,
-                        "State": "1",
-                    }
-                    for (let p in param) {
-                        applyObj[p] = param[p]
-                    }
-                    paramArr.push(applyObj)
+                    var paramArr = [that.ruleForm]
+                    let mustList = []
+                    let choseList = []
+                    if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',')
+                    if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
                     for (let node of that.nodeList) {
-                        if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
+                        if ((choseList.indexOf(node.NodeId + '') >= 0)
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
-                            if (node.AddPeople.length == 0) {
-                                this.$alert('您尚未选择审批人', '提交错误', {
+                            if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
+                                (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))){
+                                that.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                                     confirmButtonText: '确定',
                                     callback: action => {
 
@@ -586,14 +721,11 @@ var mixin = {
                                     "OldFileUrl": null,
                                     "IsBack": null
                                 }
-                                for (let p2 in param2) {
-                                    tmpParam[p2] = param2[p2]
-                                }
                                 paramArr.push(tmpParam)
                             }
                         }
                     }
-                    console.log(paramArr)
+                    console.log(JSON.stringify(paramArr))
                     that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
                         callBack(res)
                     })
@@ -607,31 +739,50 @@ var mixin = {
             });
         },
         //同意审批
-        aggreSubmit(param, param2 = {}) {
+        aggreSubmit() {
             if (!DingData.userid) return
             this.disablePage = true
             var paramArr = []
             var that = this
+            this.fileListToUrl()
             paramArr.push({
+                "Id": this.ruleForm.Id,
+                "Remark": this.ruleForm.Mark,
+                "ImageUrl": this.ruleForm.ImageUrl || '',
+                "OldImageUrl": this.ruleForm.OldImageUrl || '',
+                "FileUrl ": this.ruleForm.FileUrl || '',
+                "MediaId  ": this.ruleForm.MediaId  || '',
+                "OldFileUrl": this.ruleForm.OldFileUrl || '',
+                "FilePDFUrl ": this.ruleForm.FilePDFUrl || '',
+                "MediaIdPDF  ": this.ruleForm.MediaIdPDF  || '',
+                "OldFilePDFUrl ": this.ruleForm.OldFilePDFUrl || '',
+                "ProjectId": this.ruleForm.ProjectId || '',
+                "ProjectName": this.ruleForm.ProjectName || '',
+                "ProjectType": this.ruleForm.ProjectType || '',
+                "counts ": this.ruleForm.counts || '',
+                "tpName ": this.ruleForm.tpName || '',
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
-                "Dept": DingData.departName,
+                "Dept": this.ruleForm.Dept || '',
                 "NodeId": NodeId,
                 "ApplyTime": _getTime(),
                 "IsEnable": "1",
                 "FlowId": FlowId,
                 "IsSend": "false",
                 "State": "1",
+
             })
-            for (let p in param) {
-                paramArr[0][p] = param[p]
-            }
+            let mustList = []
+            let choseList = []
+            if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',') 
+            if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
             for (let node of this.nodeList) {
-                if ((that.nodeInfo.IsNeedChose && that.nodeInfo.ChoseNodeId && that.nodeInfo.ChoseNodeId.indexOf(node.NodeId) >= 0)
+                if ((choseList.indexOf(node.NodeId + '') >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
-                    if (node.AddPeople.length == 0) {
-                        this.$alert('您尚未选择审批人', '提交错误', {
+                    if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
+                        (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))) {
+                        this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                             confirmButtonText: '确定',
                             callback: action => {
 
@@ -659,10 +810,6 @@ var mixin = {
                             "OldFileUrl": null,
                             "IsBack": null
                         }
-                        //if (this.FlowId == 31) tmpParam.IsPost = true
-                        for (let p2 in param2) {
-                            tmpParam[p2] = param2[p2]
-                        }
                         paramArr.push(tmpParam)
                     }
                 }
@@ -670,7 +817,7 @@ var mixin = {
             console.log(JSON.stringify(paramArr))
             //return
             this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
-                this.$alert('审批成功', '操作成功', {
+                this.$alert('审批成功', '提示信息', {
                     confirmButtonText: '确定',
                     callback: action => {
                         loadPage('/main/Approval_list')
@@ -715,7 +862,7 @@ var mixin = {
                 param[o] = option[o]
             }
             this.PostData("/FlowInfoNew/FlowBack", param, (res) => {
-                this.$alert('操作成功', '提示', {
+                this.$alert('审批已退回', '提示信息', {
                     confirmButtonText: '确定',
                     callback: action => {
                         loadPage('/main/Approval_list')
@@ -726,7 +873,36 @@ var mixin = {
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
-        //显示临时保存数据 TempData
+        
+        //显示临时保存数据
+        saveTempData() {
+            let data = {}
+            data['tableData'] = this.tableData || []
+            data['data'] = this.data || []
+            data['ruleForm'] = this.ruleForm || {}
+            data['tableForm'] = this.tableForm || {}
+            data['purchaseList'] = this.purchaseList || []
+            data['imageList'] = this.imageList || []
+            data['fileList'] = this.fileList || []
+            data['pdfList'] = this.pdfList || []
+            this.saveData(data)
+            this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
+        },
+        loadTempData() {
+            let data = this.loadData()
+            if (data) {
+                this['tableData'] = data.tableData
+                this['data'] = data.data
+                this['ruleForm'] = data.ruleForm
+                this['tableForm'] = data.tableForm
+                this['purchaseList'] = data.purchaseList
+                this['imageList'] = data.imageList
+                this['fileList'] = data.fileList
+                this['pdfList'] = data.pdfList
+                this.$message({ type: 'success', message: `获取临时保存数据成功，需要再次保存请点击保存按钮` });
+                this.saveData(null)
+            }
+        },
         saveData(data) {
             var Days = 7;
             var exp = new Date();
@@ -746,18 +922,24 @@ var mixin = {
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
+            if (!this.tableForm) this.tableForm = {}
             ReApprovalTempData = {
                 valid: true,
-                data: this.data,
                 dataArr: this.dataArr,
                 imageList: this.imageList,
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
-                ruleForm: Object.assign(this.tableForm, this.ruleForm)
+                ruleForm: this.ruleForm,
+            }
+            ReApprovalTempData['tableForm'] = this.tableForm || {}
+            if (this.data) {
+                ReApprovalTempData['dataArr'] = this.data
+            }else if (this.tableData) {
+                ReApprovalTempData['dataArr'] = this.tableData
             }
             //if(items) ReApprovalTempData['items'] = items
             for (let img of imgConfig) {
-                if (img.flowId == FlowId) {
+                if (img.FlowId == FlowId) {
                     loadPage(img.url)
                 }
             }
@@ -766,8 +948,9 @@ var mixin = {
         loadReApprovalData() {
             if (!ReApprovalTempData.valid) return
             this.ruleForm = ReApprovalTempData.ruleForm
+            this.tableForm = ReApprovalTempData.tableForm
             ReApprovalTempData.valid = false
-            this.purchaseList = ReApprovalTempData.data
+            this['purchaseList'] = ReApprovalTempData.dataArr
         },
         //翻頁相關事件
         //获取全部方法
@@ -797,27 +980,27 @@ var mixin = {
         //下拉框选择项目
         selectProject(id) {
             console.log(id)
-            let project = {}
             for (var proj of this.projectList) {
                 if (proj.ProjectId == id) {
-                    delete proj.ApplyMan
-                    delete proj.ApplyManId
-                    Object.assign(this.ruleForm, proj)
-                    project = proj
+                    this.ruleForm.ProjectId = proj.ProjectId
+                    this.ruleForm.ProjectName = proj.ProjectName
+                    if(FlowId != 6)this.ruleForm.ProjectType = proj.ProjectType
+                    this.project = proj
                     this.ruleForm.Title = proj.ProjectId + ' - ' + proj.ProjectName
                 }
-            }
-            //this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-            for (let i = 0; i < this.nodeList.length; i++) {
-                if (this.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
-                    this.nodeList[i].AddPeople = [{
-                        name: project.ResponsibleMan,
-                        emplId: project.ResponsibleManId
-                    }]
-                    $("." + i).remove()
-                    $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + project.ResponsibleMan.substring(0, 3) + '</span >')
+
+                for (let i = 0; i < this.nodeList.length; i++) {
+                    if (this.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
+                        this.nodeList[i].AddPeople = [{
+                            name: proj.ResponsibleMan,
+                            emplId: proj.ResponsibleManId
+                        }]
+                        $("." + i).remove()
+                        $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + proj.ResponsibleMan.substring(0, 3) + '</span >')
+                    }
                 }
             }
+            
         },
         //获取特殊角色详细信息
         getSpecialRoleInfo: function (roleName) {
@@ -837,11 +1020,68 @@ var mixin = {
                 }
             })
         },
-
+        //获取审批页面基本信息
+        getFormData() {
+            var url = "/FlowInfoNew/GetApproveInfo?TaskId=" + TaskId + "&ApplyManId=" + DingData.userid
+            this.GetData(url, (res) => {
+                imageList = []
+                fileList = []
+                pdfList = []
+                this.handleUrlData(res)
+                taskId = res.TaskId
+                this.ruleForm = res
+                getFormData_done(res)
+            })
+        },
+        handleUrlData(data) {
+            imageList = []
+            fileList = []
+            pdfList = []
+            if (data.ImageUrl && data.ImageUrl.length > 5) {
+                var tempList = data.ImageUrl.split(',')
+                for (let img of tempList) {
+                    imageList.push({
+                        name: 'hello.jpg',
+                        url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                    })
+                }
+                this.imageList = imageList
+            }
+            if (data.FileUrl && data.FileUrl.length > 5) {
+                FileUrl = data.FileUrl
+                var urlList = data.FileUrl.split(',')
+                var oldUrlList = data.OldFileUrl.split(',')
+                var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
+                for (var i = 0; i < urlList.length; i++) {
+                    fileList.push({
+                        name: oldUrlList[i],
+                        path: urlList[i].replace(/\\/g, "/"),
+                        url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                        mediaId: MediaIdList[i]
+                    })
+                }
+                this.fileList = fileList
+            }
+            if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
+                FilePDFUrl = data.FilePDFUrl
+                var urlList = data.FilePDFUrl.split(',')
+                var oldUrlList = data.OldFilePDFUrl.split(',')
+                var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
+                var stateList = data.PdfState ? data.PdfState.split(',') : []
+                
+                for (var i = 0; i < urlList.length; i++) {
+                    pdfList.push({
+                        name: oldUrlList[i],
+                        url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
+                        mediaId: MediaIdList[i],
+                        state: stateList[i] || '1'
+                    })
+                }
+                this.pdfList = pdfList
+            }
+        },
         //获取审批/抄送 相关人员列表
         getNodeInfo() {
-            console.log('老铁，666666666666666')
-            console.warn('老铁，666666666666666')
             var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             this.GetData(url, (res) => {
                 this.isBack = res[0].IsBack
@@ -920,7 +1160,6 @@ var mixin = {
             this.GetData(url, (res) => {
                 this.nodeInfo = res[0]
                 NodeId = res[0].NodeId
-                this.preApprove = !res[0].IsNeedChose
             })
             this.loadReApprovalData()
         },
@@ -1018,7 +1257,28 @@ var mixin = {
                 }
             })
         },
-
+        //删除申请物料
+        deleteGood(index, good) {
+            this.purchaseList.splice(index, 1)
+            if (this.noList) { this.noList.splice(index, 1) }
+        },
+        //编辑审批物料
+        showEditGood(index, good) {
+            this.dialogFormVisible = true
+            this.good = $.extend({}, good)
+            this.good.index = index
+        },
+        editGood() {
+            this.dialogFormVisible = false
+            let tmpGood = $.extend({}, this.good)
+            if (tmpGood.UrgentDate) tmpGood.UrgentDate = _dateToString(tmpGood.UrgentDate)
+            this.purchaseList[this.good.index] = tmpGood
+            let tmpArr = _cloneArr(this.purchaseList)
+            this.purchaseList = tmpArr
+            console.log('done eidt')
+            console.log(this.good.index)
+            console.log(this.purchaseList)
+        },
 
 
 
@@ -1087,17 +1347,37 @@ var mixin = {
             })
         },
         //文件上传处理方法
+        HandleFileExceed() {
+            this.$message({ type: 'error', message: `超出文件个数限制！` });
+            return false
+        },
         BeforeFileUpload(file) {
+            for (let p of this.fileList) {
+                if (file.name == p.name) {
+                    this.$message.error('已存在相同文件名文件!')
+                    return false
+                }
+            }
+            if (!file.type) {
+                this.$message({ type: 'error', message: `不支持文件类型，请重新选择！` });
+                return false
+            }
             file.name = 'helloWorld'
             isPdf = false
-            const isLt2M = file.size / 1024 / 1024 < 10
+            const isLt2M = file.size / 1024 / 1024 < 30
             if (!isLt2M) {
-                this.$message.error('上传文件大小不能超过 10MB!')
+                this.$message.error('文件大小不允许超过30M，请重新选择!')
                 return false
             }
             return true
         },
         beforeExcelUpload(file) {
+            for (let p of this.excelList) {
+                if (file.name == p.name) {
+                    this.$message.error('已存在相同文件名文件!')
+                    return false
+                }
+            }
             const isExcel = (file.name.substr(-3) == 'xls' || file.name.substr(-4) == 'xlsx')
             const isLt2M = file.size / 1024 / 1024 < 4
             if (!isExcel) {
@@ -1105,7 +1385,7 @@ var mixin = {
                 return false
             }
             if (!isLt2M) {
-                this.$message.error('上传文件大小不能超过 4MB!')
+                this.$message.error('文件大小不允许超过4M，请重新选择!')
                 return false
             }
             return true
@@ -1117,7 +1397,7 @@ var mixin = {
             var that = this
             const loading = this.$loading({
                 lock: true,
-                text: 'Loading',
+                text: '数据获取中，请耐心等待~',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
             });
@@ -1150,12 +1430,10 @@ var mixin = {
             location.href = serverUrl + 'ProjectNew/DownLoad?path=' + path
         },
         fileListToUrl() {
-            this.ruleForm.FilePDFUrl = ''
-            this.ruleForm.OldFilePDFUrl = ''
-            this.ruleForm.FileUrl = ''
-            this.ruleForm.OldFileUrl = ''
-            this.ruleForm.MediaId = ''
-            if (this.pdfList) {
+            if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
+                this.ruleForm.FilePDFUrl = ''
+                this.ruleForm.OldFilePDFUrl = ''
+                this.ruleForm.MediaIdPDF = ''
                 for (var i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
                     this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
@@ -1166,7 +1444,10 @@ var mixin = {
                     this.ruleForm.MediaIdPDF += ','
                 }
             }
-            if (this.fileList) {
+            if (this.fileList[0] && this.fileList[0].response && this.fileList[0].response.Content) {
+                this.ruleForm.FileUrl = ''
+                this.ruleForm.OldFileUrl = ''
+                this.ruleForm.MediaId = ''
                 for (var i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name
@@ -1186,6 +1467,12 @@ var mixin = {
         beforePdfFileUpload(file) {
             console.log('before pdf')
             console.log(file)
+            for (let p of this.pdfList) {
+                if (file.name == p.name) {
+                    this.$message.error('已存在相同文件名文件!')
+                    return false
+                }
+            }
             if (file.name.indexOf(' ') >= 0) {
                 this.$alert('文件名不能带空格', '上传失败', {
                     confirmButtonText: '确定',
@@ -1212,7 +1499,7 @@ var mixin = {
             var that = this
             const loading = this.$loading({
                 lock: true,
-                text: 'Loading',
+                text: '数据获取中，请耐心等待~',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
             });
@@ -1239,7 +1526,6 @@ var mixin = {
                 }
             })
         },
-
 
         //选时间操作
         selectTime(value) {
@@ -1393,9 +1679,41 @@ function PostData(url, param, succe, error) {
     })
 }
 
+//表单限制输入，返回对象函数
+function lengthLimit(min, max) {
+    return {
+        min: min, max: max, message: '长度在 ' + min + ' 到 ' + max + ' 个字符', trigger: 'blur'
+    }
+}
+
+Vue.component('sam-input', {
+    props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min','placeholder'],
+    template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
+                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur"
+                        :class="{ redborder:(value =='' && required)}">
+                   </el-input>`,
+    data: function () {
+        return {
+
+        }
+    },
+    methods: {
+        onBlur(e) {
+            let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
+            if (this.type == 'number') {
+                if (value > this.max) value = this.max
+                if (value < this.min) value = this.min
+            }
+            this.$emit('update:value', value)
+        }
+    },
+})
+
+
+
 //钉钉审批组件
 Vue.component('sam-approver-list', {
-    props: ['nodedata', 'nodelist', 'single', 'specialRoles', 'specialRoleNames'],
+    props: ['nodedata', 'nodelist', 'specialRoles', 'specialRoleNames'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
@@ -1440,8 +1758,8 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
-                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.NodeName)">+ 选人</el-button>
+                           <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
+                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.IsSelectMore)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
@@ -1483,7 +1801,7 @@ Vue.component('sam-approver-list', {
             NodeId: 0,
             member1: '',
             member2: '',
-            inputVisible: false
+            inputVisible: false,
         }
     },
     methods: {
@@ -1491,24 +1809,26 @@ Vue.component('sam-approver-list', {
 
         },
         //选人控件添加
-        addMember(nodeId, nodename) {
+        addMember(nodeId) {
+            let selectMoreList = this.nodedata.IsSelectMore.split(',')
+            let choseList = this.nodedata.ChoseNodeId.split(',')
             var that = this
             DingTalkPC.biz.contact.choose({
-                multiple: !that.single, //是否多选： true多选 false单选； 默认true
+                multiple: selectMoreList[choseList.indexOf(nodeId)] == '1'?true:false, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
                 onSuccess: function (data) {
                     console.log(data)
-
                     var url2 = '/DingTalkServers/getUserDetail?userId=' + data[0].emplId
                     $.ajax({
                         url: url2,
+                        dataType: 'json',
                         type: 'POST',
+                        data: {},
+                        contentType: "application/json; charset=utf-8",
                         success: function (data2) {
-                            console.log(url2)
-                            data2 = JSON.parse(data2)
-
+                            if (typeof (data2) == 'string') data2 = JSON.parse(data2)
                             for (let node of that.nodelist) {
                                 if (node.NodeId == nodeId) {
                                     $("." + nodeId).remove()
@@ -1519,6 +1839,9 @@ Vue.component('sam-approver-list', {
                                     }
                                 }
                             }
+                        },
+                        error: function (err) {
+                            console.error(err)
                         }
                     })
 
@@ -1643,7 +1966,7 @@ Vue.component('ding', {
                     <el-form-item label="钉时间" :label-width="formLabelWidth">
                       <div class="block">
                         <span class="demonstration">默认</span>
-                        <el-date-picker
+                        <el-date-picker :editable="false"
                           v-model="form.alertDate"
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm"

@@ -7,13 +7,13 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        办公用品采购-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--搜索-->
     <div style="margin-bottom:10px;">
         <span style="color:red">*</span><span style="padding:3px;">日期</span>
         <el-date-picker v-model="searchDate"
-                        type="daterange"
+                        type="daterange" :editable="false"
                         :picker-options="pickerOptions"
                         value-format="yyyy-MM-dd"
                         range-separator="至"
@@ -25,7 +25,7 @@
     <!--物料列表表格實體-->
     <p style="font-size:24px;">总价预计  <span style="color:red;font-size:24px;">{{totalPrice}}</span>元</p>
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(d,i) in dataList" :name="i+1" :key="i">
+        <el-collapse-item v-for="(d,i) in data" :name="i+1" :key="i">
             <template slot="title">
                 <span style="font-size:20px;">部门名称:{{d.name}},请购总价预计</span>
                 <span style="color:red;">{{d.tmpTotalPrice}}</span>元
@@ -35,18 +35,15 @@
                 <el-table-column prop="Name" label="物料名称"></el-table-column>
                 <el-table-column prop="Standard" label="规格型号"></el-table-column>
                 <el-table-column prop="Unit" label="单位"></el-table-column>
-                @*<el-table-column prop="Price" label="实际单价"></el-table-column>*@
                 <el-table-column prop="Count" label="数量"></el-table-column>
-                @*<el-table-column prop="applyMan" label="申请人"></el-table-column>*@
-                @*<el-table-column prop="dept" label="部门"></el-table-column>*@
                 <el-table-column prop="Price" label="预计单价">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row.Price" v-on:change="compute" :class="{ redborder:scope.row.Price ==''}"></el-input>
+                        <el-input v-model="scope.row.Price" v-on:change="compute" type="number" :class="{ redborder:scope.row.Price ==''}"></el-input>
                     </template>
                 </el-table-column>
                 <el-table-column prop="Purpose" label="用途">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row.Purpose"></el-input>
+                        <sam-input :value.sync="scope.row.Purpose"></sam-input>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作">
@@ -60,78 +57,47 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 
 <script>
-    NodeId = '0'
     var deptList = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                dataList: [],
-                tableData: [],
                 searchDate:[],
-                preApprove: false,
-                nodeList: [],
-                nodeInfo: {},
-                totalPrice: 0,
                 searchForm: {
                     name: '',
                 },
                 activeNames: [1, 2, 3, 4, 5, 6],
-                ruleForm: {
-                    name: DingData.nickName,
-                    remark: '',
-                    ProjectName: '',
-                    Title: '办公用品采购',
-                    ProjectId: null,
-                    inputProjectName: '',
-                    inputProjectId: '',
-                    Time: ''
-                },
-                preApprover: false
             }
         },
         methods: {
-            onSubmit(formName) {
+            onSubmit() {
                 var that = this
-                if (that.data.length == 0) {
-                    this.elementAlert('提示信息', '没有采购数据')
-                    return
-                }
-                for (let d of that.dataList) {
+                let valid = false
+                for (let d of that.data) {
                     for (let v of d.value) {
+                        if(d.value.length>0) valid = true
                         if (v.Price == '') {
                             this.elementAlert('提示信息', '有单价未填')
                             return
                         }
                     }
                 }
+                if (!valid) {
+                    this.elementAlert('提示信息', '没有采购数据')
+                    return
+                }
                 let url = '/OfficeSuppliesPurchase/SaveTable'
                 let callBack = function (taskId) {
                     console.log(taskId)
                     var param = []
-                    for (let d of that.dataList) {
+                    for (let d of that.data) {
                         for (let v of d.value) {
                             v.TaskId = taskId
                             param.push(v)
@@ -147,19 +113,15 @@
                         })
                     }, param)
                 }
-                that.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark
-                }, callBack)
+                that.approvalSubmit(callBack)
             },
             //删除不需要的物品
             deleteItem(index, row) {
                 console.log(row)
-                console.log(demo.dataList)
-                for (let d of demo.dataList) {
+                console.log(demo.data)
+                for (let d of demo.data) {
                     if (row.dept == d.name) {
-                        this.totalPrice -= parseFloat(row.Price * row.Count).toFixed(2)
-                        d.tmpTotalPrice -= parseFloat(row.Price * row.Count).toFixed(2)
+                        d.tmpTotalPrice = (d.tmpTotalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
                         d.value.splice(index, 1)
                     }
                 }
@@ -168,16 +130,13 @@
             searchCode(formName) {
                 var that = this
                 if (!this.searchDate[0]) return
-                //this.$refs[formName].validate((valid) => {
-                //    if (valid) {
                 var url = '/OfficeSuppliesPurchase/GetTable?startTime=' + that.searchDate[0] + '&endTime=' + that.searchDate[1] + ' 23:59:59'
                 $.ajax({
                     url: url,
                     success: function (data) {
                         console.log(url)
                         console.log(data)
-                        that.data = data
-                        that.dataList = []
+                        that.data = []
                         var deptStr = ''
                         for (let d of data) {
                             if (d.dept && deptStr.indexOf(d.dept) < 0) {
@@ -186,62 +145,57 @@
                         }
                         deptStr = deptStr.substring(0, deptStr.length - 1)
                         deptList = deptStr.split(',')
-                        that.totalPrice = 0
                         for (let d of deptList) {
-                            that.dataList.push({
+                            that.data.push({
                                 name: d,
                                 value: [],
                                 tmpTotalPrice: 0
                             })
                         }
                         for (let d of data) {
-                            for (let l of that.dataList) {
+                            for (let l of that.data) {
                                 if (d.dept == l.name) {
                                     d.Price = d.ExpectPrice
                                     l.value.push(d)
                                     l.tmpTotalPrice += (d.Price * d.Count)
-                                    that.totalPrice += (d.Price * d.Count)
                                     break
                                 }
                             }
                         }
-                        that.totalPrice = that.totalPrice.toFixed(2)
                         that.totalRows = data.length
-                        that.getData()
                     }
                 })
             },
-            //显示临时保存数据
-            saveTempData() {
-                this.saveData(this.dataList)
-                this.elementAlert('提示信息', '保存成功')
-            },
-            loadTempData() {
-                if (this.loadData()) this.dataList = this.loadData()
-            },
             compute() {
-                this.totalPrice = 0
-                for (let l of this.dataList) {
+                for (let l of this.data) {
                     l.tmpTotalPrice = 0
                 }
-                for (let l of this.dataList) {
+                for (let l of this.data) {
                     for (let v of l.value) {
                         if (!v.Price) continue
                         let price = parseFloat(v.Price).toFixed(2)
                         if (!price) price == 0
                         l.tmpTotalPrice += price * v.Count
-                        this.totalPrice += price * v.Count
                     }
                 }
             }
         },
+        computed: {
+            totalPrice(){
+                let tmpPrice = 0
+                for (let l of this.data) {
+                    for (let v of l.value) {
+                        if (!v.Price) continue
+                        let price = parseFloat(v.Price).toFixed(2)
+                        if (!price) price == 0
+                        tmpPrice += price * v.Count
+                    }
+                } 
+                return tmpPrice
+            }
+        },
         created: function () {
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadTempData()
-            loadHtml("mainPage", "partPage")
-
+            this.initStart()
         }
     })
 

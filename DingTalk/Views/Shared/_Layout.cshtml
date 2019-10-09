@@ -23,7 +23,7 @@
     <script src="~/Scripts/drag.js"></script>
     <script src="~/Scripts/element.js"></script>
     @*<script src="~/Scripts/element-ui.common.js"></script>*@
-    <script src="~/Scripts/lib.js"></script>
+    <script src="~/Scripts/lib1.js"></script>
 
     <script src="~/JqueryUI/jquery-ui.min.js"></script>
     <script src="~/Scripts/anyLine.js"></script>
@@ -50,8 +50,8 @@
 
     <div id="app">
         @*<el-header>
-                @RenderPage("~/Views/Shared/Head_login.cshtml")
-            </el-header>*@
+            @RenderPage("~/Views/Shared/Head_login.cshtml")
+        </el-header>*@
         <el-container>
             <el-main>
                 @RenderBody()
@@ -88,10 +88,10 @@
                  }, 3000)
             }
             //2代表阿法迪
-            //if (DingData.CompanyId == 2) {
-            //    DingData.userid = 'manager325'
-            //    DingData.nickName = '黄浩炜'
-            //}
+            if (DingData.CompanyId == 2) {
+                DingData.userid = 'manager325'
+                DingData.nickName = '黄浩炜'
+            }
             
 
             console.log('开始获取授权')
@@ -122,6 +122,7 @@
     })
     //DingTalkPC.ready回调函数
     DingTalkPC.ready(function () {
+        var that = this
         //PC版获取免登授权码
         DingTalkPC.runtime.permission.requestAuthCode({
             corpId: DingData.CorpId, //企业id
@@ -144,27 +145,17 @@
                 DingData.nickName = result.nickName
                 console.log("你好，" + DingData.nickName)
                 //获取真实姓名
-                var url2 = '/DingTalkServers/getUserDetail?userId=' + DingData.userid
                 $.ajax({
-                    url: url2,
-                    type: 'POST',
-                    success: function (data2) {
-                        data2 = JSON.parse(data2)
-                        DingData.nickName = data2.name
-                        DingData.roles = data2.roles
-                    }
-                })
-
-                let param = {}
-                $.ajax({
-                    url: '/DingTalkServers/departmentQuaryByUserId?userId=' + result.emplId,
+                    url: '/DingTalkServers/getUserDetail?userId=' + DingData.userid,
                     dataType: 'json',
                     type: 'POST',
-                    data: param,
+                    data: {},
                     contentType: "application/json; charset=utf-8",
                     success: function (data) {
                         if (typeof (data) == 'string') data = JSON.parse(data)
-                        DingData.departName = data.name
+                        DingData.nickName = data.name
+                        DingData.department = data.department
+                        DingData.dept = data.dept
                     },
                     error: function (err) {
                         console.error(err)

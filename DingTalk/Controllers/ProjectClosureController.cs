@@ -181,16 +181,14 @@ namespace DingTalk.Controllers
             {
                 DDContext context = new DDContext();
                 List<FlowModel> FlowModelList = new List<FlowModel>();
-                List<Flows> flowsList = context.Flows.Where(t => t.FlowName.Contains("采购") || t.FlowName.Contains("借入") ||
-                t.FlowName.Contains("维修") || t.FlowName.Contains("知识产权"))
-                    .ToList();
+                List<Flows> flowsList = context.Flows.Where(t => t.FlowName.Contains("采购") || t.FlowName.Contains("借入") || t.FlowName.Contains("知识产权") || t.FlowName.Contains("入库") || t.FlowName.Contains("领料")).ToList();
                 foreach (var flows in flowsList)
                 {
                     string FlowId = flows.FlowId.ToString();
                     string FlowName = flows.FlowName.ToString();
                     List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId(FlowId).Where(t => t.ProjectId == projectId).ToList();
                     List<Tasks> tasksListQuery = tasksList.Where(t => t.FlowId.ToString() == FlowId && t.NodeId == 0).ToList();
-                    CreateProject createProject = context.CreateProject.Where(c => c.ProjectId == projectId).FirstOrDefault();
+                    ProjectInfo createProject = context.ProjectInfo.Where(c => c.ProjectId == projectId).FirstOrDefault();
                     if (createProject != null)
                     {
                         foreach (var item in tasksListQuery)

@@ -6,17 +6,10 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        立项申请审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
-
-        <el-form-item label="申请人">
-            <el-input v-model="tableForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-            <el-input v-model="tableForm.ApplyManId" style="display:none;"></el-input>
-            <el-input v-model="tableForm.CreateMan" style="display:none;"></el-input>
-            <el-input v-model="tableForm.CreateManId" style="display:none;"></el-input>
-        </el-form-item>
-
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="项目名称">
             <el-input v-model="tableForm.ProjectName" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
@@ -73,23 +66,8 @@
         <hr />
 
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabeld="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index!=0">
+        @RenderPage("~/Views/Shared/endButton.cshtml")
+        <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
             </el-form-item>
@@ -98,43 +76,19 @@
 </el-main>
 
 <script>
-    var imageList = []
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        State = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                carList: [],
-                index: Index,
-                FlowId: FlowId,
-                NodeId: NodeId,
-                state: State,
-                nodeList: [],
-                nodeInfo: {},
                 tableForm: {
 
                 },
-                dialogVisible: false,
-               
             }
         },
         methods: {
             onSubmit() {
                 var that = this
-                let aggreParam = {
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.Mark,
-                    //"FileUrl": this.ruleForm.FileUrl,
-                    //"OldFileUrl": this.ruleForm.OldFileUrl
-                }
                 if (NodeId == 3 || NodeId == 2) {
                     if (NodeId == 3 && !this.tableForm.ProjectId) {
                         this.$alert('项目编号不能为空', '提示信息', {
@@ -142,22 +96,21 @@
                         })
                         return
                     }
-                    //if (NodeId == 1) this.nodeList[5].AddPeople = this.copyMans
                     this.PostData('CreateProject/Modify', this.tableForm, (res) => {
                         if (NodeId != 3) {
-                            that.aggreSubmit(aggreParam)
+                            that.aggreSubmit()
                             return
                         }
                         this.tableForm['CooperativeUnit'] = this.tableForm.Customer
-                        this.tableForm.ApplyMan = this.nodeInfo.NodePeople
-                        this.tableForm.ApplyManId = this.nodeInfo.PeopleId
+                        this.tableForm['ApplyMan'] = this.nodeInfo.NodePeople
+                        this.tableForm['ApplyManId'] = this.nodeInfo.PeopleId
                         this.PostData('ProjectNew/AddProject', [this.tableForm], (res) => {
-                            this.aggreSubmit(aggreParam)
+                            this.aggreSubmit()
                         })
                     })
                 }
                 else {
-                    this.aggreSubmit(aggreParam)
+                    this.aggreSubmit()
                 }
             },
             printTable() {
@@ -176,11 +129,9 @@
         },
  
         created: function () {
-            this.getTable()
-            loadHtml("mainPage", "partPage")
+            this.initEnd(() => { this.getTable() })
         }
     })
-    getFormData(demo)
 </script>
 
 

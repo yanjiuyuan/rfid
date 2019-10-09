@@ -7,15 +7,15 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        入库申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--物料搜索-->
     <div>
-        @*<span style="color:red">*</span><span style="padding:3px;">供应商添加</span><el-input v-model="searchForm.business" style="width:200px;"></el-input>
-        <el-button type="primary" v-on:click="searchAndAdd">添加</el-button>*@
-        <span style="color:red">*</span><span style="padding:3px;">采购单编号搜索</span><el-input v-model="searchForm.no" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">采购单编号搜索</span>
+        <sam-input :value.sync="searchForm.no" style="width:200px;" :required="true" placeholder="请输入采购单编号"></sam-input>
         <el-button type="primary" v-on:click="searchNo">搜索</el-button>
-        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span><el-input v-model="searchForm.name" style="width:200px;"></el-input>
+        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span>
+        <sam-input :value.sync="searchForm.name" style="width:200px;" :required="true" placeholder="请输入关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -25,8 +25,6 @@
         <el-table-column prop="fQty" label="实收数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        @*<el-table-column prop="fPrice" label="单价"></el-table-column>*@
-        @*<el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
@@ -59,8 +57,6 @@
         </el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
-        @*<el-table-column prop="fPrice" label="单价"></el-table-column>
-        <el-table-column prop="fAmount" label="金额"></el-table-column>*@
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
         <el-table-column label="操作" width="80">
             <template slot-scope="scope">
@@ -71,12 +67,7 @@
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
@@ -89,16 +80,8 @@
             </el-select>@*备品备件采购项目 - 猛龙总冠军*@
             <el-button v-if="ruleForm.ProjectName == '备品备件采购项目'" class="button-new-tag" size="small" v-on:click="chooseMan()">+ 选人</el-button>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-            @*<el-button v-on:click="resetForm('ruleForm')">重置</el-button>*@
-        </el-form-item>
+
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
 
@@ -108,27 +91,12 @@
         mixins: [mixin],
         data: function () {
             return {
-                data: [],
-                tableData: [],
-                purchaseList: [],
-                nodeList: [],
-                nodeInfo: {},
                 searchForm: {
                     business: '', 
                     no:'',
                     name: '',
                 },
                 addPeopleNodes: [2],
-                ruleForm: {
-                    name: DingData.nickName,
-                    remark: '',
-                    ProjectName: '',
-                    Title: '入库申请',
-                    ProjectId: null,
-                    inputProjectName: '',
-                    inputProjectId: '',
-                    Time: ''
-                }
             }
         },
         methods: {
@@ -147,11 +115,6 @@
                     }
                     arr.push(p.fFullName)
                 }
-                var set = new Set(arr)
-                //if (set.size != 1) {
-                //    this.elementAlert('提交失败', '物料为空或供应商不唯一')
-                //    return
-                //}
                 var that = this
                 let callBack = function (taskId) {
                     for (let p of that.purchaseList) {
@@ -162,12 +125,7 @@
                         loadPage('/main/Approval')
                     })
                 }
-                this.approvalSubmit(formName, {
-                    Title: that.ruleForm.Title,
-                    Remark: that.ruleForm.remark,
-                    ProjectName: this.ruleForm.ProjectName,
-                    ProjectId: this.ruleForm.ProjectId
-                }, callBack)
+                this.approvalSubmit(callBack)
             },
             //搜索物料列表
             searchCode() {
@@ -186,28 +144,6 @@
                 var url = jinDomarn + 'Godown/GetGodownInfoByFBillNo?FBillNo=' + that.searchForm.no
                 this.GetData(url, function (data) {
                     for (let d of data) {
-                        let ifBreak = false
-                        for (let p of that.purchaseList) {
-                            if (d.fNumber == p.fNumber) ifBreak = true
-                        }
-                        if (ifBreak) break
-                        d['have'] = d.fQty
-                        that.purchaseList.push(d)
-                    }
-                })
-            },
-            searchAndAdd() {
-                var that = this
-                if (!this.searchForm.business) return
-                var url = jinDomarn + 'Godown/ReadGodownInfo?UnitName=' + that.searchForm.business
-                this.GetData(url, function (data) {
-                    for (let d of data) {
-                        let ifBreak = false
-                        for (let p of that.purchaseList) {
-                            if (d.fNumber == p.fNumber) ifBreak = true
-                        }
-                        if (ifBreak) break
-                        d['have'] = d.fQty
                         that.purchaseList.push(d)
                     }
                 })
@@ -240,38 +176,9 @@
                 good['have'] = good.fQty
                 this.purchaseList.push(good)
             },
-            //删除申请物料
-            deleteGood(index) {
-                this.purchaseList.splice(index, 1)
-            },
-            //加载重新发起审批传递的数据
-            loadReApprovalData() {
-                if (!ReApprovalTempData.valid) return
-                this.ruleForm.Title = ReApprovalTempData.Title
-                ReApprovalTempData.valid = false
-                this.purchaseList = ReApprovalTempData.data
-            },
-            //显示临时保存数据
-            saveTempData() {
-                setLocalObj('officeSupplies', this.purchaseList)
-                this.elementAlert('提示信息','保存成功')
-            },
-            loadTempData() {
-                var data = getLocalObj('officeSupplies')
-                console.log('load officeSupplies')
-                console.log(data)
-                if (data && data.length && data.length > 0) this.purchaseList = data
-                localStorage.removeItem('officeSupplies')
-            }
         },
         created: function () {
-            //FlowId = 6
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 

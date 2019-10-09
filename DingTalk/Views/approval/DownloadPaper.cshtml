@@ -114,20 +114,13 @@
                                                 :name="['startTime','endTime']"
                                                 type="daterange"
                                                 align="right"
-                                                unlink-panels
+                                                unlink-panels :editable="false"
                                                 range-separator="至"
                                                 start-placeholder="开始日期"
                                                 end-placeholder="结束日期"
                                                 :picker-options="pickerOptions">
                                 </el-date-picker>
                             </el-form-item>
-
-                            @*<el-form-item label="开始时间">
-                                <el-input name="startTime" style="width:100px;"></el-input>
-                            </el-form-item>
-                            <el-form-item label="结束时间">
-                                <el-input name="endTime" style="width:100px;"></el-input>
-                            </el-form-item>*@
                             <el-form-item>
                                 <el-button v-on:click="addWork(scope.row,scope.row.DrawingNo,index)">添加工作</el-button>
                             </el-form-item>
@@ -136,9 +129,6 @@
                 </el-collapse>
                 <!--添加工序-->
                 <el-form :inline="true">
-                    @*<el-form-item label="工序名称" prop="ProcedureName">
-                        <el-input :id="scope.row.DrawingNo"></el-input>
-                    </el-form-item>*@
                     <el-form-item label="工序名称">
                         <el-select :id="scope.row.DrawingNo" v-model="flowValue" placeholder="请选择">
                             <el-option v-for="e in flowList"

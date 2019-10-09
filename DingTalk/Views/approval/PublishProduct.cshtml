@@ -46,7 +46,7 @@
                            action="/drawingupload/Upload"
                            :on-remove="HandleFileRemove"
                            :before-upload="beforeFileUpload"
-                           :on-success="HandleFileSuccess"
+                           :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
                            multiple>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>

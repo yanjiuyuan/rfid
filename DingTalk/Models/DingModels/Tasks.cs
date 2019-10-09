@@ -136,5 +136,6 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string ProjectType { get; set; }
+        
     }
 }

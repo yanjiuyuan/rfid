@@ -6,16 +6,11 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        知识产权申请审批-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
 
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="申请名称">
             <el-input v-model="tableForm.Name" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
@@ -65,28 +60,8 @@
             </template>
         </template>
 
-        <el-form-item label="意见">
-            <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
-        </el-form-item>
-        <hr />
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item label="操作" v-if="index==0">
-            <el-button type="primary" v-on:click="onSubmit('tableForm')" :disabled="disablePage">同意</el-button>
-            <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()" :disabled="false">退回</el-button>
-        </el-form-item>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成'">
-            <el-form-item>
-                <Ding2 :dinglist="dingList" :userid="userid" :flowid="flowid"></Ding2>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index!=0">
+        @RenderPage("~/Views/Shared/endButton.cshtml")
+        <template v-if="state=='已完成'">
             <el-form-item>
                 <el-button type="primary" v-on:click="printTable" :disabled="disablePage">打印表单</el-button>
             </el-form-item>
@@ -95,33 +70,13 @@
 </el-main>
 
 <script>
-    if (UrlObj.flowid) {
-        FlowId = UrlObj.flowid
-        NodeId = UrlObj.nodeid
-        TaskId = UrlObj.taskid
-        state = UrlObj.state
-        Id = UrlObj.id
-        var Index = UrlObj.index
-    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                //钉一下需要的参数
-                flowid: UrlObj.flowid,
-                userid: DingData.userid,
-                DingData: DingData,
-                index: Index,
-                state: state,
-                NodeId: NodeId,
-                nodeList: [],
-                nodeInfo: {},
                 noEdit: true,
-                ruleForm: {},
                 addPeopleNodes: [], //额外添加审批人节点数组
-                tableForm: {
-                },
                 rules: {
                     ActualInventor: { required: true, message: '发明人或设计人不能为空', trigger: 'blur' },
                     ActualName: { required: true, message: '申报名称不能为空', trigger: 'blur' },
@@ -131,15 +86,11 @@
             }
         },
         methods: {
-            onSubmit(formName) {
-                this.$refs[formName].validate((valid) => {
+            onSubmit() {
+                this.$refs['tableForm'].validate((valid) => {
                     if (valid) {
-                        let param = {
-                            "Id": this.ruleForm.Id,
-                            "Remark": this.tableForm.Mark
-                        }
                         this.PostData('IntellectualProperty/Modify', this.tableForm, (res) => {
-                            this.aggreSubmit(param)
+                            this.aggreSubmit()
                         })
                     }
                 })
@@ -166,7 +117,7 @@
                 });
             },
             printTable() {
-                this.PostData('TechnicalSupport/PrintAndSend', {
+                this.PostData('IntellectualProperty/Print', {
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
@@ -181,12 +132,10 @@
             }
         },
         created: function () {
-            this.getTable()
+            this.initEnd(() => { this.getTable() })
             if (NodeId == 5) this.noEdit = false
-            loadHtml("mainPage", "partPage")
         }
     })
-    getFormData(demo)
 
 </script>
 

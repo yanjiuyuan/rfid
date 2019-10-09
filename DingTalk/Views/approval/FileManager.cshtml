@@ -19,6 +19,12 @@
             </el-breadcrumb-item>
             <el-breadcrumb-item>{{pathList[pathList.length - 1]}}</el-breadcrumb-item>
         </el-breadcrumb>
+        <div v-if="pathList.length == 5">
+            <span style="color:red">*</span>
+            <span style="padding:3px;">关键字</span>
+            <sam-input :value.sync="searchKey" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+            <el-button type="primary" v-on:click="search">搜索</el-button>
+        </div>
         <br />
         <div>
             <span style="font-size:1.2rem;">文件夹列表</span>
@@ -50,6 +56,11 @@
                 <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
                 <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
                 <el-table-column prop="ProjectState" label="状态"></el-table-column>
+                <el-table-column label="操作" width="150">
+                    <template slot-scope="scope">
+                        <el-button size="mini" v-on:click="openDetailFolder(scope.row.FilePath)">详情</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </div>
         <!--底部文件扩展功能-->
@@ -142,12 +153,14 @@
                 },
                 ifExtend: false,
                 downloadUrl: '',
-                uploadUrl: ''
+                uploadUrl: '',
+                searchKey:'',
+                Path: ''
             }
         },
         methods: {
             //获取文件数据
-            getFileData: function (pathList) {
+            getFileData: function (pathList, keyword) {
                 if (!pathList) {
                     pathList = this.pathList
                 }
@@ -160,7 +173,8 @@
                     url = url + '\\' + pathList[i]
                     this.uploadUrl = this.uploadUrl + '\\' + pathList[i]
                 }
-                url = url + '&userId=' + DingData.userid
+                url = url + '\\&userId=' + DingData.userid
+                if (keyword) url = url + '&keyword=' + keyword
                 this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
                 this.GetData(url, (data) => {
 
@@ -181,27 +195,15 @@
             },
             //获取项目数据getProject
             getProject(filename) {
-                console.log('hover~~~')
                 if (this.pathList.length != 4)
                     return
-                var that = this
                 var param = {
                     key: this.pathList.join('\\') + '\\' + filename
                 }
-                url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("获取项目列表数据 QuaryProjectInfo")
-                        console.log(url)
-                        console.log(data)
-                        that.projectInfo = data
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
+                this.Path = param.key
+                url = "/ProjectNew/QuaryProjectInfo" + _formatQueryStr(param)
+                this.GetData(url, (res) => {
+                    this.projectInfo = res
                 })
             },
             beforeFileUpload: function (file) {
@@ -219,6 +221,13 @@
                 console.warn(file)
                 console.warn(fileList)
             },
+            search() {
+                if (!this.searchKey) {
+                    this.getFileData()
+                    return
+                }
+                this.getFileData(this.pathList, this.searchKey)
+            },
             //打开某文件夹相关操作
             openFolder: function (folderName) {
                 //改变路径，加载新的文件夹、表单数据、切换相关变量
@@ -226,6 +235,11 @@
                 let pathList = _cloneArr(this.pathList)
                 pathList.push(folderName)
                 //this.pathList.push(folderName)
+                this.getFileData(pathList)
+            },
+            openDetailFolder: function (path) {
+                let pathList = path.substring(1, path.length - 1).split('\\')
+                console.log(pathList)
                 this.getFileData(pathList)
             },
             //点击路径跳转
@@ -260,24 +274,13 @@
             },
             //删除文件
             deleteFile: function (index, row) {
-                var that = this
-                var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
+                var url = "/ProjectNew/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=1&Path="
                 for (let p of this.pathList) {
                     url = url + '\\' + p
                 }
                 url = url + '\\' + row.path
-                $.ajax({
-                    url: url,
-                    success: function (data) {
-                        data = JSON.parse(data)
-                        console.log('/删除文件')
-                        console.log(url)
-                        console.log(data)
-                        that.getFileData()
-                    },
-                    error: function (err) {
-                        console.error(err)
-                    }
+                this.GetData(url, (res) => {
+                    this.getFileData()
                 })
             },
             //上传文件
@@ -298,25 +301,14 @@
             createFolder: function () {
                 this.$refs['formInline'].validate((valid) => {
                     if (valid) {
-                        var that = this
-                        var url = "/Project/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
+                        var url = "/ProjectNew/ChangeFile?&ApplyManId=" + DingData.userid + "&ApplyMan=" + DingData.nickName + "&ChangeType=0&Path="
                         for (let p of this.pathList) {
                             url = url + '\\' + p
                         }
                         url = url + '\\' + this.formInline.name
-                        $.ajax({
-                            url: url,
-                            success: function (data) {
-                                data = JSON.parse(data)
-                                console.log('/新建文件夹')
-                                console.log(url)
-                                console.log(data)
-                                that.getFileData()
-                                that.dialogFormVisible = false
-                            },
-                            error: function (err) {
-                                console.error(err)
-                            }
+                        this.GetData(url, (res) => {
+                            this.getFileData()
+                            this.dialogFormVisible = false
                         })
                     }
                 })

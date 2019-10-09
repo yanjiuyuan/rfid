@@ -1092,7 +1092,7 @@ namespace DingTalk.Controllers
                         foreach (var item in flowSortModel.FlowSortList)
                         {
                             context.Entry<FlowSort>(item).State = EntityState.Modified;
-                            if (item.flows.Count > 0)
+                            if (item.flows != null)
                             {
                                 foreach (var flows in item.flows)
                                 {
@@ -1177,18 +1177,22 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (DDContext context = new DDContext())
+                DDContext context = new DDContext();
+
+                if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
                 {
-                    if (context.Roles.Where(r => r.RoleName == "超级管理员" && r.UserId == flowSortModel.applyManId).ToList().Count == 0)
+                    return new NewErrorModel()
                     {
-                        return new NewErrorModel()
-                        {
-                            error = new Error(1, "没有权限处理！", "") { },
-                        };
-                    }
-                    context.FlowSort.RemoveRange(flowSortModel.FlowSortList);
-                    context.SaveChanges();
+                        error = new Error(1, "没有权限处理！", "") { },
+                    };
                 }
+                foreach (var item in flowSortModel.FlowSortList)
+                {
+                    context.Entry<FlowSort>(item).State = EntityState.Deleted;
+                }
+                //context.FlowSort.RemoveRange(flowSortModel.FlowSortList);
+                context.SaveChanges();
+
                 return new NewErrorModel()
                 {
                     error = new Error(0, "删除成功！", "") { },
@@ -1281,7 +1285,10 @@ namespace DingTalk.Controllers
                             error = new Error(1, "没有权限处理！", "") { },
                         };
                     }
-                    context.Flows.RemoveRange(flowsModel.flowsList);
+                    foreach (var item in flowsModel.flowsList)
+                    {
+                        context.Entry<Flows>(item).State = EntityState.Deleted;
+                    }
                     context.SaveChanges();
                 }
                 return new NewErrorModel()
@@ -1338,44 +1345,6 @@ namespace DingTalk.Controllers
             }
         }
 
-
-
-
-        /// <summary>
-        /// 流程界面分类信息读取接口
-        /// </summary>
-        /// <param name="id">用户Id，用于判断权限(预留，暂时不做)</param>
-        /// <returns></returns>
-        //[HttpGet]
-        //[Route("LoadFlowSort")]
-        //public NewErrorModel LoadFlowSort(string id)
-        //{
-        //    try
-        //    {
-        //        if (!string.IsNullOrEmpty(id))
-        //        {
-        //            FlowInfoServer flowInfoServer = new FlowInfoServer();
-        //            return new NewErrorModel()
-        //            {
-        //                data = flowInfoServer.GetFlowSort(),
-        //                error = new Error(0, "读取成功！", "") { },
-        //            };
-        //        }
-
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(1, "id不能为空！", "") { },
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(2, ex.Message, "") { },
-        //        };
-        //    }
-        //}
-
         /// <summary>
         /// 流程节点信息获取接口
         /// </summary>
@@ -1391,8 +1360,6 @@ namespace DingTalk.Controllers
                 if (FlowId != null)
                 {
                     DDContext context = new DDContext();
-
-
                     if (string.IsNullOrEmpty(NodeId))
                     {
                         var NodeInfo = context.NodeInfo.Where(u => u.FlowId == FlowId);
@@ -1477,6 +1444,36 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 获取流程状态(单条)
+        /// </summary>
+        /// <param name="TaskId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetFlowStateSingle")]
+        public NewErrorModel GetFlowStateSingle(string TaskId)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    return new NewErrorModel()
+                    {
+                        data = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault(),
+                        error = new Error(0, "获取流程状态成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(2, ex.Message, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
         /// 左侧审批状态详细数据读取
         /// </summary>
         /// <param name="Index">(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)</param>
@@ -1499,6 +1496,14 @@ namespace DingTalk.Controllers
                 DDContext context = new DDContext();
 
                 int count = 0;
+                int ipageIndex = 0, ipageSize = 0;
+                if (!string.IsNullOrEmpty(Key))
+                {
+                    ipageIndex = pageIndex; ipageSize = pageSize;
+                    pageIndex = 1; pageSize = 99;
+                }
+
+
                 if (Index == 0)
                 {
                     count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
@@ -1532,41 +1537,26 @@ namespace DingTalk.Controllers
                         .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
+
+                //if (!string.IsNullOrEmpty(Key))
+                //{
+                //    TaskFlowModelList = TaskFlowModelList.Where(t => t.TaskId.ToString() == Key ||
+                //      t.Title.Contains(Key) || t.ApplyMan.Contains(Key) || t.FlowName.Contains(Key)).ToList();
+                //    count = TaskFlowModelList.Count();
+                //    TaskFlowModelList = TaskFlowModelList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                //}
+
+                if (!string.IsNullOrEmpty(Key))
+                {
+                    TaskFlowModelList = TaskFlowModelList.Skip((ipageIndex - 1) * ipageSize).Take(ipageSize).ToList();
+                }
+
                 return new NewErrorModel()
                 {
                     count = count,
                     data = TaskFlowModelList,
                     error = new Error(0, "读取成功！", "") { },
                 };
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(2, ex.Message, "") { },
-                };
-            }
-        }
-
-        /// <summary>
-        /// 获取流程状态(单条)
-        /// </summary>
-        /// <param name="TaskId"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("GetFlowStateSingle")]
-        public NewErrorModel GetFlowStateSingle(string TaskId)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    return new NewErrorModel()
-                    {
-                        data = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault(),
-                        error = new Error(0, "获取流程状态成功！", "") { },
-                    };
-                }
             }
             catch (Exception ex)
             {
@@ -1763,12 +1753,12 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 审批意见数据读取
         /// </summary>
-        /// <param name="TaskId">流水号</param>
         /// <param name="FlowId">流程Id</param>
+        /// <param name="TaskId">流水号</param>
         /// <returns></returns>
         [HttpGet]
         [Route("GetSign")]
-        public NewErrorModel GetSign(string TaskId, string FlowId)
+        public NewErrorModel GetSign(string FlowId,string TaskId="")
         {
             try
             {
@@ -1792,7 +1782,10 @@ namespace DingTalk.Controllers
                                         IsNeedChose = n.IsNeedChose,
                                         ChoseNodeId = n.ChoseNodeId,
                                         IsMandatory = n.IsMandatory,
-                                        IsSelectMore = n.IsSelectMore
+                                        IsSelectMore = n.IsSelectMore,
+                                        n.ChoseType,
+                                        n.RoleNames,
+                                        RolesList = n.ChoseType == "1" ? GetRolesList(n.RoleNames) : n.RolesList
                                     };
                         return new NewErrorModel()
                         {
@@ -1845,6 +1838,26 @@ namespace DingTalk.Controllers
                     error = new Error(2, ex.Message, "") { },
                 };
             }
+        }
+
+        /// <summary>
+        /// 批量获取角色信息
+        /// </summary>
+        /// <param name="rolenames"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetRolesList")]
+        public Dictionary<string, List<Roles>> GetRolesList(string rolenames)
+        {
+            Dictionary<string, List<Roles>> keyValuePairs = new Dictionary<string, List<Roles>>();
+            DDContext context = new DDContext();
+            string[] roles = rolenames.Split(',');
+            foreach (var item in roles)
+            {
+                List<Roles> rolesListNew = context.Roles.Where(r => r.RoleName == item).ToList();
+                keyValuePairs.Add(item, rolesListNew);
+            }
+            return keyValuePairs;
         }
 
         #endregion

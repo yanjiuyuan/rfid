@@ -7,11 +7,11 @@
 <el-main id="partPage" style="position:relative;margin-left:1%;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        图纸下单-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <div>
         <span>关键字查询</span>
-        <el-input v-model="keyWord" placeholder="(项目名称、标题、申请人、流水号)" style="width:300px;"></el-input>
+        <sam-input :value.sync="keyWord" :required="true" style="width:300px;" placeholder="(项目名称、标题、申请人、流水号)"></sam-input>
         <el-button v-on:click="search">搜索</el-button>
     </div>
     <!--表格實體-->
@@ -50,20 +50,10 @@
         <el-table-column prop="Unit" label="单位">
         </el-table-column>
     </el-table>
-    <!--底部翻頁-->
-    @*<div style="text-align:right">
-            <el-pagination v-on:current-change="handleBomPageChange($event,index)"
-                            :current-page="d.currentPage"
-                            :page-sizes="[5]"
-                            :page-size="5"
-                            layout="total, sizes, prev, pager, next, jumper"
-                            :total="d.totalRows">
-            </el-pagination>
-        </div>*@
-
     <hr />
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="项目名称" prop="ProjectId">
             <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
@@ -74,23 +64,11 @@
                     <span style="float: right; color: #8492a6; font-size: 13px"></span>
                 </el-option>
             </el-select>
-            @*<el-button class="button-new-tag" size="small" v-on:click="showAddProject = true">+ 添加项目</el-button>
-            <el-button v-show="showAddProject" class="button-new-tag" size="small" v-on:click="showAddProject = false">隐藏</el-button>*@
         </el-form-item>
 
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人" prop="name">
-            <el-input v-model="ruleForm.name" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="套数">
             <el-input v-model="ruleForm.counts"></el-input>
         </el-form-item>
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark"></el-input>
-        </el-form-item>
-
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
             <el-card class="box-card">
@@ -110,13 +88,7 @@
                 </div>
             </el-card>
         </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :single="true">
-        </sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button v-on:click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
     <!--显示PDF-->
     <div @*v-show="frameShow"*@>
@@ -225,40 +197,15 @@
         mixins: [mixin],
         data: function () {
             return {
-                nodeInfo: {},
-                nodeList: [],
                 allData: [],
-                data: [],
-                projectList: [],
                 keyWord: '',
-                imageList: [],
-                fileList: [],
-                pdfList: [],
-                //表单参数
-                ruleForm: {
-                    name: DingData.nickName,
-                    remark: '',
-                    counts: 1,
-                    ImageUrl: '',
-                    OldImageUrl: '',
-                    FileUrl: '',
-                    OldFilePDFUrl: '',
-                    FilePDFUrl: '',
-                    OldFileUrl: '',
-                    MediaId: '',
-                    MediaIdPDF: '',
-                    inputProjectId: '',
-                    Title: '',
-                    ProjectId: null,
-                    Time: ''
-                }
             }
         },
         methods: {
             //提交审批
             onSubmit(formName) {
                 var that = this
-                this.approvalSubmit('ruleForm', this.ruleForm, function (taskId) {
+                this.approvalSubmit(function (taskId) {
                     that.bindData(taskId)
                 })
             },
@@ -272,7 +219,7 @@
             chooseProject(index, row) {
                 console.log(row)
                 this.data = row.PurchaseList
-                handleUrlData(row,this)
+                this.handleUrlData(row,this)
                 this.ruleForm.FileUrl = row.FileUrl
                 this.ruleForm.Title = row.Title
                 this.ruleForm.ProjectId = row.ProjectId
@@ -300,9 +247,6 @@
                     d.TaskId = taskId
                 }
                 this._postData("/PurchaseOrder/Save", function (data) {
-                    console.log("审批绑定BOM表数据ok")
-                    console.log(JSON.stringify(that.data))
-                    console.log(data)
                     that.doneSubmit()
                 }, that.data)
             },
@@ -329,9 +273,6 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                //$(".ui-dialog").show()
-
-                //initui()
                 initUI()
 
                 PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
@@ -356,12 +297,8 @@
 
         },
         created: function () {
-            //FlowId = 8
-            this.getNodeInfo()
-            this.getProjects()
-            this.getApproInfo()
             PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         }
     })
 

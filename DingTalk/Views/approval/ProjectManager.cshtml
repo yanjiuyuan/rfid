@@ -13,14 +13,13 @@
     <el-form :inline="true" :model="formInline" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
-            <el-input v-model="formInline.key" style="width:200px;"
-                      placeholder="请输入搜索关键字"></el-input>
+            <sam-input :value.sync="formInline.key" style="width:200px;" placeholder="项目名、项目编号、部门、负责人"></sam-input>
         </el-form-item>
         <!--高级检索-时间-->
         <template v-if="superSearch">
             <el-form-item label="开始日期">
                 <el-date-picker v-model="formInline.time"
-                                type="daterange"
+                                type="daterange" :editable="false"
                                 :picker-options="pickerOptions"
                                 value-format="yyyy-MM-dd"
                                 range-separator="至"
@@ -34,6 +33,14 @@
                 <el-checkbox-group v-model="formInline.projectState" :min="1">
                     <el-checkbox v-for="t in status" :label="t" :key="t">{{t}}</el-checkbox>
                 </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="项目类型">
+                <div class="block">
+                    <el-cascader v-model="ptypes"
+                                 :options="PTypes"
+                                 :props="{ expandTrigger: 'hover' }"
+                                 v-on:change="handleChange"></el-cascader>
+                </div>
             </el-form-item>
         </template>
 
@@ -115,8 +122,11 @@
                         <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="公司名称" required="required">
+                <el-form-item label="合作单位" required="required">
                     <el-input v-model="ruleForm.CompanyName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="商务对接人">
+                    <el-input v-model="ruleForm.BusinessDocker"></el-input>
                 </el-form-item>
                 <el-form-item label="项目大类" required="required">
                     <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
@@ -177,9 +187,11 @@
                     ProjectType: '',
                     StartTime: '',
                     EndTime: '',
-                    CompanyName: ''
+                    CompanyName: '',
+                    BusinessDocker: ''
                 },
                 status: ["在研", "已完成", "终止"],
+                ptypes: [null, null],
                 ResponsibleMan: [{ name: '', emplId: '' }],
                 groupPeople: [{ name: '', emplId: '' }],
                 dialogFormVisible: false,
@@ -190,47 +202,36 @@
             //获取项目数据getProject
             getProject() {
                 var that = this
+                var param = {
+                    //key: this.formInline.key,
+                    projectState: this.formInline.projectState.join('_')
+                }
+                if (this.formInline.key) {
+                    param.key = this.formInline.key
+                }
                 if (this.formInline.time) {
-                    var param = {
-                        key: this.formInline.key,
-                        startTime: this.formInline.time[0],
-                        endTime: this.formInline.time[1],
-                        projectState: this.formInline.projectState.join('_')
-                    }
+                    param['startTime'] = this.formInline.time[0]
+                    param['endTime'] = this.formInline.time[1]
                 }
-                else {
-                    var param = {
-                        key: this.formInline.key,
-                        projectState: this.formInline.projectState.join('_')
-                    }
+                if (this.ptypes[0]) {
+                    param['projectType'] = this.ptypes[0]
+                    param['projectSmallType'] = this.ptypes[1]
                 }
-                url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("获取项目列表数据 QuaryProjectInfo")
-                        console.log(url)
-                        console.log(data)
+                url = "/ProjectNew/QuaryProjectInfo" + _formatQueryStr(param)
+                this.GetData(url, (data) => {
+                    for (let d of data) {
                         var date = new Date()
                         var dateStr = _dateToString(date)
-                        console.log(dateStr)
-                        for (let d of data) {
-                            d["type"] = d.ProjectType + '-' + d.ProjectSmallType
-                            d["showProjectState"] = d.ProjectState
-                            if (d.ProjectState == '在研' && dateStr > d.EndTime) {
-                                //d.ProjectState += '-已延期'
-                                d.showProjectState += '-已延期'
-                            }
+                        d["type"] = d.ProjectType + '-' + d.ProjectSmallType
+                        d["showProjectState"] = d.ProjectState
+                        if (d.ProjectState == '在研' && dateStr > d.EndTime) {
+                            //d.ProjectState += '-已延期'
+                            d.showProjectState += '-已延期'
                         }
-                        that.data = data
-                        that.totalRows = data.length
-                        that.getData()
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
                     }
+                    that.data = data
+                    that.totalRows = data.length
+                    that.getData()
                 })
             },
             printout() {
@@ -327,6 +328,10 @@
                 })
             },
             //打开编辑表单
+            handleChange(value) {
+                console.log(value)
+                this.ptypes = value
+            },
             handleEdit(index, row) {
                 console.log(index)
                 console.log(row)
