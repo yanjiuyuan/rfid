@@ -13,17 +13,48 @@ namespace DingTalk.Bussiness.FlowInfo
         /// 流程大类及小类读取
         /// </summary>
         /// <returns></returns>
-        public object GetFlowInfo()
+        public object GetFlowInfo(string userId)
         {
             DDContext context = new DDContext();
-            List<FlowSort> FlowSortNew = new List<FlowSort>();
             List<Flows> Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(f => f.OrderBY).ToList();
-            List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1 ).OrderBy(u => u.OrderBY).ToList();
+            List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(u => u.OrderBY).ToList();
 
             foreach (var flowSort in FlowSort)
             {
                 flowSort.flows = Flows.Where(f => f.SORT_ID.ToString() == flowSort.Sort_ID.ToString()).ToList();
             }
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                foreach (var item in FlowSort)
+                {
+                    if (item.ApplyManId != null && item.ApplyManId != "")
+                    {
+                        if (!item.ApplyManId.Contains(userId))
+                        {
+                            item.IsEnable = 0;
+                            //FlowSort.Remove(item);
+                        }
+                    }
+                    foreach (var flow in item.flows)
+                    {
+                        if (flow.ApplyManId != null && flow.ApplyManId != "")
+                        {
+                            if (!flow.ApplyManId.Contains(userId))
+                            {
+                                flow.IsEnable = 0;
+                            }
+                        }
+                    }
+                }
+
+                FlowSort = FlowSort.Where(f => f.IsEnable == 1).ToList();
+                foreach (var item in FlowSort)
+                {
+                    item.flows = item.flows.Where(f => f.IsEnable == 1).ToList();
+                }
+            }
+
             return FlowSort;
         }
 
