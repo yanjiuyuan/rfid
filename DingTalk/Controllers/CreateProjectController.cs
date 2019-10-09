@@ -25,6 +25,7 @@ namespace DingTalk.Controllers
     [RoutePrefix("CreateProject")]
     public class CreateProjectController : ApiController
     {
+
         /// <summary>
         /// 立项表单保存
         /// </summary>
@@ -37,7 +38,6 @@ namespace DingTalk.Controllers
             try
             {
                 EFHelper<CreateProject> eFHelper = new EFHelper<CreateProject>();
-
                 eFHelper.Add(createProject);
                 return new NewErrorModel()
                 {
