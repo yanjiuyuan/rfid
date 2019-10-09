@@ -100,6 +100,6 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string PhoneUrl { get; set; }
-        
+
     }
 }

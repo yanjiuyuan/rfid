@@ -256,6 +256,10 @@ namespace Common.PDF
             PdfStamper pdfStamper = null;
             try
             {
+                if (!File.Exists(inputfilepath))
+                {
+                    return inputfilepath + "不存在！";
+                }
 
                 pdfReader = new PdfReader(inputfilepath);
 
@@ -293,7 +297,8 @@ namespace Common.PDF
                     waterMarkContent = pdfStamper.GetOverContent(i);//内容上层加水印
                     waterMarkContent.AddImage(image);
                 }
-
+                pdfStamper.Close();
+                pdfReader.Close();
                 return outputfilepath;
             }
             catch (Exception ex)
@@ -302,12 +307,10 @@ namespace Common.PDF
             }
             finally
             {
-
-                if (pdfStamper != null)
-                    pdfStamper.Close();
-
-                if (pdfReader != null)
-                    pdfReader.Close();
+                //if (pdfStamper != null)
+                //    pdfStamper.Close();
+                //if (pdfReader != null)
+                //    pdfReader.Close();
             }
         }
         #endregion
