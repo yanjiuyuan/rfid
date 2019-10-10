@@ -169,9 +169,9 @@ namespace DingTalk.Controllers
                                     Thread.Sleep(200);
 
                                     //特殊处理(暂时)
-                                    if (tasks.FlowId.ToString() == "6")
+                                    if (tasks.FlowId.ToString() == "6" ||   tasks.FlowId.ToString() == "33" )
                                     {
-                                        NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == "6" && n.NodeId.ToString() == "2").FirstOrDefault();
+                                        NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == tasks.FlowId.ToString() && n.NodeId.ToString() == "2").FirstOrDefault();
                                         Tasks taskCurrent = new Tasks()
                                         {
                                             TaskId = tasks.TaskId,
@@ -182,7 +182,7 @@ namespace DingTalk.Controllers
                                             IsSend = false,
                                             NodeId = 2,
                                             IsEnable = 1,
-                                            FlowId = 6
+                                            FlowId = tasks.FlowId
                                         };
                                         context.Tasks.Add(taskCurrent);
                                         context.SaveChanges();
@@ -200,35 +200,35 @@ namespace DingTalk.Controllers
                                     }
 
                                     //特殊处理(暂时)
-                                    if (tasks.FlowId.ToString() == "33")
-                                    {
-                                        NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == "33" && n.NodeId.ToString() == "2").FirstOrDefault();
-                                        Tasks taskCurrent = new Tasks()
-                                        {
-                                            TaskId = tasks.TaskId,
-                                            ApplyMan = nodeInfoCurrent.NodePeople,
-                                            ApplyManId = nodeInfoCurrent.PeopleId,
-                                            IsPost = false,
-                                            State = 0,
-                                            IsSend = false,
-                                            NodeId = 2,
-                                            IsEnable = 1,
-                                            FlowId = 6
-                                        };
-                                        context.Tasks.Add(taskCurrent);
-                                        context.SaveChanges();
-                                        await SendOaMsgNew(tasks.FlowId, taskCurrent.ApplyManId,
-                                            TaskId.ToString(), tasksApplyMan.ApplyMan,
-                                            tasksApplyMan.Remark, context, flows.ApproveUrl,
-                                             nextNodeInfo.NodeId.ToString());
-                                        Thread.Sleep(200);
+                                    //if (tasks.FlowId.ToString() == "33")
+                                    //{
+                                    //    NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == "33" && n.NodeId.ToString() == "2").FirstOrDefault();
+                                    //    Tasks taskCurrent = new Tasks()
+                                    //    {
+                                    //        TaskId = tasks.TaskId,
+                                    //        ApplyMan = nodeInfoCurrent.NodePeople,
+                                    //        ApplyManId = nodeInfoCurrent.PeopleId,
+                                    //        IsPost = false,
+                                    //        State = 0,
+                                    //        IsSend = false,
+                                    //        NodeId = 2,
+                                    //        IsEnable = 1,
+                                    //        FlowId = 6
+                                    //    };
+                                    //    context.Tasks.Add(taskCurrent);
+                                    //    context.SaveChanges();
+                                    //    await SendOaMsgNew(tasks.FlowId, taskCurrent.ApplyManId,
+                                    //        TaskId.ToString(), tasksApplyMan.ApplyMan,
+                                    //        tasksApplyMan.Remark, context, flows.ApproveUrl,
+                                    //         nextNodeInfo.NodeId.ToString());
+                                    //    Thread.Sleep(200);
 
-                                        return new NewErrorModel()
-                                        {
-                                            data = TaskId.ToString(),
-                                            error = new Error(0, "流程创建成功！", "") { },
-                                        };
-                                    }
+                                    //    return new NewErrorModel()
+                                    //    {
+                                    //        data = TaskId.ToString(),
+                                    //        error = new Error(0, "流程创建成功！", "") { },
+                                    //    };
+                                    //}
                                 }
                             }
                         }
@@ -240,7 +240,7 @@ namespace DingTalk.Controllers
                             {
                                 //与上一级处理人重复
                                 if (tasksChoosed.ApplyManId == PreApplyManId && iSendCount == 0
-                                    && tasksChoosed.FlowId.ToString() != "26" && tasksChoosed.FlowId.ToString() != "27")  //临时处理
+                                    && tasksChoosed.FlowId.ToString() != "26" && tasksChoosed.FlowId.ToString() != "27" && tasksChoosed.FlowId.ToString() != "31")  //临时处理
                                 {
                                     tasksChoosed.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     tasksChoosed.State = 1; //修改审批状态
