@@ -468,7 +468,9 @@ var mixin = {
         PTypes: PTypes,
         project: {},
         purchaseList:[],
-        noList:[],
+        noList: [],
+
+        groupPeople:[],
 
         date: _getDate(),
         //审批页面参数
@@ -1239,6 +1241,28 @@ var mixin = {
                 onSuccess: function (data) {
                     that.groupPeople = data
                     console.log(data)
+                },
+                onFail: function (err) { }
+            });
+        },
+        //编辑添加人，删除人
+        handleClose(tag) {
+            for (let i = 0; i < this.groupPeople.length; i++) {
+                if (this.groupPeople[i].emplId == tag.emplId) {
+                    this.groupPeople.splice(i, 1)
+                    break
+                }
+            }
+        },
+        addGroup() {
+            var that = this
+            DingTalkPC.biz.contact.choose({
+                multiple: true, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                onSuccess: function (data) {
+                    console.log(data)
+                    that.groupPeople = that.groupPeople.concat(data)
                 },
                 onFail: function (err) { }
             });

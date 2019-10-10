@@ -157,13 +157,10 @@
                 <hr />
                 <el-form-item>
                     <el-button type="primary" v-on:click="editProject('ruleForm')">编辑</el-button>
+                    <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
                 </el-form-item>
             </template>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
-            @*<el-button type="primary" v-on:click="dialogFormVisible = false">完 成</el-button>*@
-        </div>
     </el-dialog>
 </div>
 
