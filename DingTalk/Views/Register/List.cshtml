@@ -7,7 +7,15 @@
         margin-left: 20px;
         font-size: 20px;
         color: #f56c6c;
-        z-index:998;
+        z-index: 998;
+    }
+
+    .el-icon-setting {
+        position: absolute;
+        margin-left: 20px;
+        font-size: 20px;
+        color: gray;
+        z-index: 1998;
     }
 </style>
 <!--右侧实体内容-->
@@ -18,7 +26,8 @@
             <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
                 <template slot="title">
                     <span style="font-size:20px;">{{m.SORT_NAME}}({{m.Sort_ID}})</span>
-                    <i v-on:mouseenter="switchSort(m)" v-on:click="deleteSort" style="margin-left:0;" class="el-icon-circle-close"></i>
+                    <i v-on:mouseenter="switchSort(m)" v-on:click="deleteSort" style="margin-left:18px;" class="el-icon-circle-close"></i>
+                    <i v-on:mouseenter="switchSort(m)" v-on:click="editSort(m)" style="margin-left:0;" class="el-icon-setting"></i>
                 </template>
 
                 <draggable v-model="m.flows" v-on:end="dragFlowEnd">
@@ -56,6 +65,38 @@
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">添加类别</el-button>
         </el-form-item>
     </el-form>
+
+    <el-dialog title="编辑类别" :visible.sync="dialogFormVisible">
+        <el-form :model="tableForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                 enctype="multipart/form-data" :inline="true">
+            <template>
+                <el-form-item label="类别Id" prop="Sort_ID">
+                    <el-input v-model="tableForm.Sort_ID"></el-input>
+                </el-form-item>
+                <el-form-item label="类别名称" prop="SORT_NAME">
+                    <el-input v-model="tableForm.SORT_NAME"></el-input>
+                </el-form-item>
+                <el-form-item label="是否启用">
+                    <el-radio-group v-model="tableForm.IsEnable">
+                        <el-radio :label="1">是</el-radio>
+                        <el-radio :label="0">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="权限成员(默认全部)" required="required">
+                    <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                            :disable-transitions="false" v-on:close="handleClose(tag)">
+                        {{tag.name}}
+                    </el-tag>
+                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+                </el-form-item>
+                <hr />
+                <el-form-item>
+                    <el-button type="primary" v-on:click="onEditSubmit('ruleForm')">编辑</el-button>
+                    <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+                </el-form-item>
+            </template>
+        </el-form>
+    </el-dialog>
 </el-main>
 
 <script>
@@ -82,6 +123,7 @@
                     OrderBY: 998,
                     State: 1,
                 },
+                groupPeople: [],
                 rules: {
                     Sort_ID: { required: true, message: '该项不能为空', trigger: 'blur' },
                     SORT_NAME: { required: true, message: '该项不能为空', trigger: 'blur' },
@@ -105,6 +147,27 @@
                     }
                 })
             },
+            onEditSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let ids = []
+                        let names = []
+                        for (let g of this.groupPeople) {
+                            ids.push(g.emplId)
+                            names.push(name)
+                        }
+                        this.tableForm.ApplyMan = names.join(',')
+                        this.tableForm.ApplyManId = ids.join(',')
+                        console.log(this.tableForm)
+                        this.PostData('FlowInfoNew/LoadFlowModify', this.tableForm, (res) => {
+                            this.$alert('编辑成功', '提示');
+                            this.dialogFormVisible = false
+                            this.getMenu()
+                        })
+                    }
+                })
+            },
+            
             //删除流程,类别
             switchFlow(flow) {
                 Flow = flow
@@ -123,7 +186,7 @@
                         applyManId: DingData.userid,
                         flowsList: [Flow]
                     }
-                    this.PostData('FlowInfoNew/FlowDelete', param , (res) => {
+                    this.PostData('FlowInfoNew/FlowDelete', param, (res) => {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
@@ -150,7 +213,7 @@
                         applyManId: DingData.userid,
                         flowSortList: [param]
                     }
-                    this.PostData('FlowInfoNew/FlowSortDelete', param , (res) => {
+                    this.PostData('FlowInfoNew/FlowSortDelete', param, (res) => {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
@@ -164,10 +227,24 @@
                     });
                 });
             },
+            editSort(sort) {
+                this.groupPeople = []
+                let ids = sort.ApplyManId.split(',')
+                let names = sort.ApplyMan.split(',')
+                if (sort.ApplyManId == '') {
+                    ids = []
+                    names = []
+                }
+                for (let i = 0; i < ids.length; i++) {
+                    this.groupPeople.push({ emplId: ids[i], name: names[i] })
+                }
+                this.tableForm = sort
+                this.dialogFormVisible = true
+            },
             //拖动事件
             dragMenuEnd: function (evt) {
                 let param = _cloneArr(this.menu)
-                
+
                 for (let i = 0; i < param.length; i++) {
                     delete param[i].flows
                     console.log(i)
@@ -216,12 +293,12 @@
             //跳转页面
             ToAddFlow: function (sort) {
                 editSort = sort
-                loadPage('/Register/AddFlow') 
+                loadPage('/Register/AddFlow')
             },
             toApprove: function (sort, flow) {
                 editFlow = flow
                 editSort = sort
-                loadPage('/Register/flowInformation') 
+                loadPage('/Register/flowInformation')
             },
             loadPage: function (url) {
                 $("#tempPage").load(url)
@@ -237,7 +314,7 @@
         var newArr = []
         for (var a = 0; a < arr.length; a++) {
             if (typeof (arr[a]) == 'object') {
-                if (arr[a].length>=0)
+                if (arr[a].length >= 0)
                     newArr.push($.extend(true, [], arr[a]))
                 else
                     newArr.push($.extend(true, {}, arr[a]))

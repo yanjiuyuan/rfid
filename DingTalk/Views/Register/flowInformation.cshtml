@@ -40,6 +40,13 @@
                 <el-radio :label="false">否</el-radio>
             </el-radio-group>
         </el-form-item>
+        <el-form-item label="权限成员(默认全部)" required="required">
+            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                    :disable-transitions="false" v-on:close="handleClose(tag)">
+                {{tag.name}}
+            </el-tag>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+        </el-form-item>
         <template v-if="ruleForm.IsSupportMobile">
             <el-form-item label="移动端通知路径" prop="ApproveUrl">
                 <el-input v-model="ruleForm.ApproveUrl"></el-input>
@@ -70,6 +77,16 @@
 </el-main>
 
 <script>
+    let groupPeople = []
+    let ids = editFlow.ApplyManId.split(',')
+    let names = editFlow.ApplyMan.split(',')
+    if (editFlow.ApplyManId == '') {
+        ids = []
+        names = []
+    }
+    for (let i = 0; i < ids.length; i++) {
+        groupPeople.push({ emplId: ids[i], name: names[i] })
+    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -78,6 +95,7 @@
                 x: 54,
                 y: 46,
                 ruleForm: editFlow,
+                groupPeople: groupPeople,
                 rules: {
                     ApproveUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                     FlowId: { required: true, message: '该项不能为空', trigger: 'blur' },
