@@ -694,7 +694,6 @@ namespace DingTalk.Controllers
             return await dtManager.UploadFile(uploadFileModel);
         }
 
-
         /// <summary>
         /// 盯盘文件上传(用于项目文件管理，直接绑定路径)
         /// </summary>
