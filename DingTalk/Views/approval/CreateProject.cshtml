@@ -38,8 +38,13 @@
             <el-input v-model="tableForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目组成员" required="required">
-            <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                    :disable-transitions="false" v-on:close="handleClose(tag)">
+                {{tag.name}}
+            </el-tag>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+            @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>*@
         </el-form-item>
         <el-form-item label="项目周期" required="required">
             <el-date-picker v-model="tableForm.Time"
@@ -64,7 +69,7 @@
                            multiple>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">不超过30M</div>
+                    <div class="el-upload__tip" slot="tip">单个文件不超过9M</div>
                 </el-upload>
             </el-form-item>
             @RenderPage("~/Views/Shared/startButton.cshtml")
@@ -80,7 +85,7 @@
             return {
                 status: ['在研', '已完成', '终止'],
                 ResponsibleMan: [{ name: '', emplId: '' }],
-                groupPeople: [{ name: '', emplId: '' }],
+                groupPeople: [],
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,

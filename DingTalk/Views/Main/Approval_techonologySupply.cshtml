@@ -8,14 +8,12 @@
         <i class="el-icon-arrow-left"></i>
         技术支持审批-{{nodeInfo.NodeName}}
     </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/endForm.cshtml")
+    </el-form>
     <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
 
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item label="技术支持部门">
             <el-input v-model="tableForm.DeptName" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
@@ -48,8 +46,8 @@
         </el-form-item>
 
         @*<el-form-item label="所属公司">
-            <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
-        </el-form-item>*@
+                <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
+            </el-form-item>*@
         <hr />
         <template v-if="NodeId >= 1">
             <el-form-item label="项目组成员" prop="TeamMembers">
@@ -91,7 +89,7 @@
                                multiple>
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <div class="el-upload__tip" slot="tip">不超过30M</div>
+                        <div class="el-upload__tip" slot="tip">单个文件不超过9M</div>
                     </el-upload>
                 </el-form-item>
             </template>
@@ -110,12 +108,10 @@
                 <el-input v-model="tableForm.ProjectNo" style="width:200px;" :disabled="NodeId > 4"></el-input>
             </el-form-item>
         </template>
-
-        <el-form-item label="意见">
-            <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
-        </el-form-item>
         <hr />
-        <!--添加审批人-->
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <template>
             <el-form-item>
@@ -145,7 +141,7 @@
         },
         methods: {
             onSubmit(formName) {
-                this.$refs[formName].validate((valid) => {
+                this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
                         let param = {
                             "Id": this.ruleForm.Id,
@@ -207,6 +203,13 @@
                             this.aggreSubmit(param)
                         })
                     }
+                    //else {
+                    //    that.$alert('表单数据不全或有误', '提交错误', {
+                    //        confirmButtonText: '确定'
+                    //    });
+                    //    console.log('error submit!!');
+                    //    return false;
+                    //}
                 })
             },
             //选择项目组成员

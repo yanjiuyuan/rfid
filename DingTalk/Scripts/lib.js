@@ -585,7 +585,7 @@ var mixin = {
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
-                //Dept: DingData.dept[0],
+                Dept: DingData.dept[0],
                 remark: '',
                 ImageUrl: '',
                 OldImageUrl: '',
@@ -601,7 +601,7 @@ var mixin = {
                 counts: '',
                 tpName: '',
                 NodeId: '0',
-                ApplyTime: _getTime(),
+                //ApplyTime: _getTime(),
                 IsEnable: '1',
                 FlowId: FlowId + '',
                 IsSend: false,
@@ -655,7 +655,7 @@ var mixin = {
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
-                //Dept: DingData.dept[0],
+                Dept: DingData.dept[0],
                 remark: '',
                 ImageUrl: '',
                 OldImageUrl: '',
@@ -671,7 +671,7 @@ var mixin = {
                 counts: '',
                 tpName: '',
                 NodeId: '0',
-                ApplyTime: _getTime(),
+                //ApplyTime: _getTime(),
                 IsEnable: '1',
                 FlowId: FlowId + '',
                 IsSend: false,
@@ -694,6 +694,9 @@ var mixin = {
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
                     that.disablePage = true
+                    for (let r in that.ruleForm) {
+                        if (that.ruleForm[r] == '') delete r
+                    }
                     var paramArr = [that.ruleForm]
                     let mustList = []
                     let choseList = []
@@ -778,6 +781,9 @@ var mixin = {
                 "State": "1",
 
             })
+            for (let r in paramArr[0]) {
+                if (paramArr[0][r] == '') delete r
+            }
             let mustList = []
             let choseList = []
             if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',') 
@@ -801,7 +807,7 @@ var mixin = {
                             "ApplyMan": a.name,
                             "ApplyManId": a.emplId,
                             "TaskId": TaskId,
-                            "ApplyTime": null,
+                            //"ApplyTime": null,
                             "IsEnable": 1,
                             "FlowId": FlowId,
                             "NodeId": node.NodeId,
@@ -856,7 +862,7 @@ var mixin = {
                 "ApplyManId": DingData.userid,
                 "Dept": DingData.departName,
                 "NodeId": NodeId,
-                "ApplyTime": _getTime(),
+                //"ApplyTime": _getTime(),
                 "IsEnable": "1",
                 "FlowId": FlowId,
                 "IsSend": "false",
@@ -1262,7 +1268,14 @@ var mixin = {
                 corpId: DingData.CorpId, //企业id
                 onSuccess: function (data) {
                     console.log(data)
-                    that.groupPeople = that.groupPeople.concat(data)
+                    for (let d of data) {
+                        let isAdd = true
+                        for (let g of that.groupPeople) {
+                            if (d.emplId == g.emplId) isAdd = false
+                        }
+                        if (isAdd) that.groupPeople.push(d)
+                    }
+                    //that.groupPeople = that.groupPeople.concat(data)
                 },
                 onFail: function (err) { }
             });
@@ -1316,13 +1329,13 @@ var mixin = {
             file.name = 'helloWorld'
             const isJPG = file.type === 'image/jpeg'
             const isPNG = file.type === 'image/png'
-            const isLt2M = file.size / 1024 / 1024 < 2
+            const isLt2M = file.size / 1024 / 1024 < 10
             if (!(isJPG || isPNG)) {
                 this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
                 return false
             }
             if (!isLt2M) {
-                this.$message.error('上传图片大小不能超过 2MB!')
+                this.$message.error('上传图片大小不能超过 10MB!')
                 return false
             }
             return true
@@ -1391,9 +1404,9 @@ var mixin = {
             }
             file.name = 'helloWorld'
             isPdf = false
-            const isLt2M = file.size / 1024 / 1024 < 30
+            const isLt2M = file.size / 1024 / 1024 < 9
             if (!isLt2M) {
-                this.$message.error('文件大小不允许超过30M，请重新选择!')
+                this.$message.error('文件大小不允许超过9M，请重新选择!')
                 return false
             }
             return true
@@ -1441,10 +1454,12 @@ var mixin = {
                     if (data.media_id) {
                         console.log(data.media_id)
                         that.mediaList.push(data.media_id)
-                        fileList[fileList.length - 1]['mediaid'] = data.media_id
                         //that.ruleForm
                     } else {
                         console.log('无media_di')
+                    }
+                    for (let i = 0; i < that.mediaList.length; i++) {
+                        fileList[i]['mediaid'] = that.mediaList[i]
                     }
                     that.fileList = _cloneArr(fileList)
                     loading.close()
@@ -1508,13 +1523,13 @@ var mixin = {
             }
             file.name = 'helloWorld'
             const isPdfType = file.type === 'application/pdf'
-            const isLt2M = file.size / 1024 / 1024 < 10
+            const isLt2M = file.size / 1024 / 1024 < 9
             if (!isPdfType) {
                 this.$message.error('上传文件只能是 PDF 格式!')
                 return false
             }
             if (!isLt2M) {
-                this.$message.error('上传文件大小不能超过 10MB!')
+                this.$message.error('上传文件大小不能超过 9MB!')
                 return false
             }
             return true

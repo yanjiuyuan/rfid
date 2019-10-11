@@ -40,7 +40,7 @@
                 <el-radio :label="false">否</el-radio>
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="权限成员(默认全部)" required="required">
+        <el-form-item label="权限成员(默认全部)">
             <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
                     :disable-transitions="false" v-on:close="handleClose(tag)">
                 {{tag.name}}
@@ -110,6 +110,14 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.ruleForm['position'] = '-' + parseInt(this.x) + 'px -' + parseInt(this.y) + 'px'
+                        let names = []
+                        let ids = []
+                        for (let g of this.groupPeople) {
+                            names.push(g.name)
+                            ids.push(g.emplId)
+                        }
+                        this.ruleForm['ApplyMan'] = names.join(',')
+                        this.ruleForm['ApplyManId'] = ids.join(',')
                         editSort.flows = [this.ruleForm]
                         let param = {
                             applyManId: DingData.userid,
