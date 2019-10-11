@@ -169,7 +169,7 @@ namespace DingTalk.Controllers
                     //获取表单信息
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
-                    string ProjectId = tasks.ProjectId;
+                    
                     //判断流程是否已结束
                     List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
                     if (tasksList.Count > 0)
@@ -181,7 +181,7 @@ namespace DingTalk.Controllers
                     }
 
                     TechnicalSupport technicalSupport = context.TechnicalSupport.Where(u => u.TaskId == TaskId).First();
-
+                    string ProjectId = technicalSupport.ProjectNo;
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {

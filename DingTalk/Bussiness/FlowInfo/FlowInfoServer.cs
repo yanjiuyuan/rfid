@@ -24,7 +24,10 @@ namespace DingTalk.Bussiness.FlowInfo
                 flowSort.flows = Flows.Where(f => f.SORT_ID.ToString() == flowSort.Sort_ID.ToString()).ToList();
             }
 
-            if (!string.IsNullOrEmpty(userId))
+            //判断超管权限
+            bool IsSupperLeader = context.Roles.Where(r => r.UserId == userId).ToList().Count > 0 ? true : false;
+
+            if (!string.IsNullOrEmpty(userId) && !IsSupperLeader)
             {
                 foreach (var item in FlowSort)
                 {
