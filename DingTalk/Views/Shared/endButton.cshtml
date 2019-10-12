@@ -7,10 +7,10 @@
 <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
 <template v-if="index==0">
     <el-form-item label="审批意见" prop="mark">
-        <el-input v-model="ruleForm.mark"></el-input>
+        <sam-input :value.sync="ruleForm.mark" style="width:550px;"></sam-input>
     </el-form-item>
     <el-form-item>
-        <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
+        <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
         <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
     </el-form-item>
 </template>

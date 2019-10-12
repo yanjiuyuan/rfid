@@ -4,9 +4,22 @@
 }
 
 <!--添加审批人-->
+<el-form-item label="备注" prop="remark">
+    <sam-input :value.sync="ruleForm.remark"></sam-input>
+</el-form-item>
+
 <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :specialRoleNames="specialRoleNames" :specialRole="specialRole"></sam-approver-list>
 <el-form-item>
     <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
     <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
 </el-form-item>
 
+
+
+<!--
+
+    //success / info / warning / error
+    //this.$message({ type: 'error', message: `输入错误` });
+    //this.$message({ type: 'success', message: `成功` });
+    //this.$message({ type: 'warning', message: `` });
+-->

@@ -8,9 +8,12 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/endForm.cshtml")
+    </el-form>
     <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
 
-        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="同行人">
             <el-input v-model="tableForm.EvectionMan" style="width:500px;" :disabled="true"></el-input>
             <el-input v-model="tableForm.EvectionManId" style="display:none;"></el-input>
@@ -54,7 +57,9 @@
             <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
         <hr />
-
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item label="操作" v-if="state=='已完成'">

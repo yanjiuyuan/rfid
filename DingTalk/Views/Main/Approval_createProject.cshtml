@@ -13,8 +13,11 @@
         <el-form-item label="项目名称">
             <el-input v-model="tableForm.ProjectName" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="项目状态">
+            <el-input v-model="tableForm.ProjectState" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="项目编号" v-if="NodeId >= 3" prop="ProjectId">
-            <el-input v-if="NodeId==3" v-model="tableForm.ProjectId" style="width:550px;"></el-input>
+            <sam-input v-if="NodeId==3" :value.sync="ruleForm.ProjectId" style="width:550px;"></sam-input>
             <el-input v-else v-model="tableForm.ProjectId" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="合作单位">
@@ -59,9 +62,6 @@
                     <el-button size="mini" type="primary" v-on:click="downloadServerFile(f.path)">下载</el-button>
                 </div>
             </el-card>
-        </el-form-item>
-        <el-form-item label="意见">
-            <el-input v-model="ruleForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
         <hr />
 

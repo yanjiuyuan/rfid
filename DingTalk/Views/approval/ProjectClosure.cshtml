@@ -5,19 +5,10 @@
 <el-main id="partPage" style="position:relative;">
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        项目结题申请-{{nodeInfo.NodeName}}
+        {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <el-form :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
-
-        <el-form-item label="标题" prop="Title">
-            <el-input v-model="ruleForm.Title"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请部门">
-            <el-input v-model="ruleForm.Dept" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
+        @RenderPage("~/Views/Shared/startForm.cshtml")
 
 
         <el-form-item label="项目名称" prop="ProjectId">
@@ -93,15 +84,16 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-form-item v-for="(value,key) in ApplicationUnitConfig" :label="value" :key="key">
-                <el-input v-model="table1[key]"></el-input>
+            <el-form-item v-for="(value,key) in ApplicationUnitConfig" :label="value" :key="key" required="required">
+                <sam-input :value.sync="table1[key]" :required="true"></sam-input>
             </el-form-item>
             <el-button v-on:click="addApplicationUnit" type="primary" plain> + 添加</el-button>
         </template>
 
 
         <el-form-item label="是否有申报纵向项目">
-            <el-radio-group v-model="ruleForm.IsPortrait" v-on:change="zhong">>
+            <el-radio-group v-model="ruleForm.IsPortrait" v-on:change="zhong">
+                >
                 <el-radio :label=true>是</el-radio>
                 <el-radio :label=false>否</el-radio>
             </el-radio-group>
@@ -120,7 +112,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-form-item v-for="(value,key) in LongitudinalProjectConfig" :label="value" :key="key">
+            <el-form-item v-for="(value,key) in LongitudinalProjectConfig" :label="value" :key="key" required="required">
                 <el-input v-model="table1[key]"></el-input>
             </el-form-item>
             <el-button v-on:click="addLongitudinalProject" type="primary" plain> + 添加</el-button>
@@ -145,16 +137,8 @@
             <hr />
         </template>
 
+        @RenderPage("~/Views/Shared/startButton.cshtml")
 
-        <el-form-item label="建议" prop="remark">
-            <el-input v-model="ruleForm.remark" type="textarea" autosize style="width:500px;"></el-input>
-        </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-        <el-form-item>
-            <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交</el-button>
-            <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>
-        </el-form-item>
     </el-form>
 </el-main>
 
@@ -165,8 +149,6 @@
         mixins: [mixin],
         data: function () {
             return {
-                nodeList: [],
-                nodeInfo: {},
                 uploadFileConfig: [
                     {
                         label: '立项书或建议书',
@@ -293,14 +275,6 @@
                     Post: '职务',
                     Tel: '联系方式'
                 },
-                fileList: [{
-                    name: 'food.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                },
-                {
-                    name: 'food2.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }],
                 DetailedListConfig: {
                     Type: '类型',
                     ApplyMan : '申请人',
@@ -321,7 +295,6 @@
                     ProjectName: '',
                     IsTransverse: true,
                     IsPortrait: true,
- 
                 },
                 rules: {
                     ActualCycleStart: { required: true, message: '项目开发周期不能为空', trigger: 'blur' },
@@ -361,13 +334,31 @@
                 this.LongitudinalProject.splice(index, 1)
             },
             addLongitudinalProject() {
+                for (let p in this.LongitudinalProjectConfig) {
+                    if (!this.table1[p]) {
+                        this.$message.error('请输入有效值!')
+                        return
+                    }
+                }
                 this.LongitudinalProject.push(_cloneObj(this.table1))
+                for (let p in this.LongitudinalProjectConfig) {
+                    this.table1[p] = ''
+                }
             },
             deleteApplicationUnit(index) {
                 this.ApplicationUnit.splice(index, 1)
             },
             addApplicationUnit() {
+                for (let p in this.ApplicationUnitConfig) {
+                    if (!this.table1[p]) {
+                        this.$message.error('请输入有效值!')
+                        return
+                    }
+                }
                 this.ApplicationUnit.push(_cloneObj(this.table1))
+                for (let p in this.ApplicationUnitConfig) {
+                    this.table1[p] = ''
+                }
             },
             onSubmit(formName) {
                 for (let con of this.uploadFileConfig) {
@@ -505,9 +496,9 @@
                 attribute = attr
             },
             beforeUpload(file) {
-                const isLt2M = file.size / 1024 / 1024 < 10
+                const isLt2M = file.size / 1024 / 1024 < 9
                 if (!isLt2M) {
-                    this.$message.error('上传文件大小不能超过 10MB!')
+                    this.$message.error('上传文件大小不能超过 9MB!')
                     return false
                 }
                 return true
@@ -568,12 +559,7 @@
             },
         },
         created: function () {
-            this.getNodeInfo()
-            this.getApproInfo()
-            this.getProjects()
-            this.loadTempData()
-            this.loadReApprovalData()
-            loadHtml("mainPage", "partPage")
+            this.initStart()
         },
 
     })

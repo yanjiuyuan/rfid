@@ -8,9 +8,12 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/endForm.cshtml")
+    </el-form>
     <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
 
-        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="协作部门">
             <el-input v-model="tableForm.CooperateDept" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -43,8 +46,8 @@
                 <el-input v-model="tableForm.FactDays" style="width:200px;" :disabled="noEdit"></el-input>
             </el-form-item>
             @*<el-form-item label="实际协作人" prop="FactCooperateMan">
-                <el-input v-model="tableForm.FactCooperateMan" style="width:550px;" :disabled="noEdit"></el-input>
-            </el-form-item>*@
+                    <el-input v-model="tableForm.FactCooperateMan" style="width:550px;" :disabled="noEdit"></el-input>
+                </el-form-item>*@
             <el-form-item label="实际协作人" prop="FactCooperateMan">
                 <el-input v-model="tableForm.FactCooperateMan" style="width:500px;" :disabled="true"></el-input>
                 <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()" v-if="!noEdit">+ 选人</el-button>
@@ -67,7 +70,9 @@
             <el-input v-model="tableForm.Mark" style="width:550px;"></el-input>
         </el-form-item>
         <hr />
-        <!--添加审批人-->
+    </el-form>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endButton.cshtml")
     </el-form>
 </el-main>

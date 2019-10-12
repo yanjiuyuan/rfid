@@ -10,7 +10,7 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--创建项目表单-->
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
@@ -38,16 +38,22 @@
             <el-input v-model="tableForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目组成员" required="required">
-            <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                    :disable-transitions="false" v-on:close="handleClose(tag)">
+                {{tag.name}}
+            </el-tag>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+            @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>*@
         </el-form-item>
-        <el-form-item label="项目周期" required="required">
-            <el-date-picker v-model="tableForm.Time"
-                            type="daterange"
-                            :picker-options="pickerOptions" :editable="false"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期">
+        <el-form-item label="开始日期" required="required">
+            <el-date-picker v-model="tableForm.StartTime" :class="{ redborder:tableForm.StartTime ==''}" :editable="false" style="width:140px;"
+                            type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+            </el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束日期" required="required">
+            <el-date-picker v-model="tableForm.EndTime" :class="{ redborder:tableForm.EndTime ==''}" :editable="false" style="width:140px;"
+                            type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
             </el-date-picker>
         </el-form-item>
     </el-form>
@@ -64,7 +70,7 @@
                            multiple>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">不超过30M</div>
+                    <div class="el-upload__tip" slot="tip">单个文件不超过9M</div>
                 </el-upload>
             </el-form-item>
             @RenderPage("~/Views/Shared/startButton.cshtml")
@@ -79,8 +85,7 @@
         data: function () {
             return {
                 status: ['在研', '已完成', '终止'],
-                ResponsibleMan: [{ name: '', emplId: '' }],
-                groupPeople: [{ name: '', emplId: '' }],
+                groupPeople: [],
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,
@@ -94,7 +99,8 @@
                     Customer: '',
                     ProjectName: '',
                     ProjectId: null,
-                    Time: ''
+                    StartTime: '',
+                    EndTime: ''
                 }
             }
         },
@@ -104,7 +110,8 @@
                 var that = this
                 this.fileListToUrl()
                 this.$refs['tableForm'].validate((valid) => {
-                    if (valid && this.groupPeople[0].name && this.tableForm.Time[0] && this.ruleForm.FileUrl) {
+                    if (valid && this.groupPeople[0] && this.tableForm.StartTime && this.tableForm.EndTime && this.ruleForm.FileUrl) {
+                        console.log('1')
                         that.disablePage = true
                         let names = []
                         let ids = []
@@ -119,8 +126,8 @@
                             "IsFinish": false,
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
-                            "StartTime": this.tableForm.Time[0] ? _dateToString(this.tableForm.Time[0]) : '',
-                            "EndTime": this.tableForm.Time[1] ? _dateToString(this.tableForm.Time[1]) : '',
+                            "StartTime": this.tableForm.StartTime,
+                            "EndTime": this.tableForm.EndTime,
                             "TeamMembers": names.join(','),
                             "TeamMembersId": ids.join(','),
                             "CreateManId": DingData.userid,
@@ -163,8 +170,20 @@
         },
         created: function () {
             this.initStart(() => {
+                //重新发起、临时保存数据处理
                 this.ptypes[0] = this.tableForm.ProjectType
                 this.ptypes[1] = this.tableForm.ProjectSmallType
+                if (this.tableForm.TeamMembersId) {
+                    let names = this.tableForm.TeamMembers.split(',')
+                    let ids = this.tableForm.TeamMembersId.split(',')
+                    for (let i = 0; i < ids.length; i++) {
+                        this.groupPeople.push({
+                            emplId: ids[i],
+                            name: names[i]
+                        })
+                    }
+                }
+                
             })
         }
     })

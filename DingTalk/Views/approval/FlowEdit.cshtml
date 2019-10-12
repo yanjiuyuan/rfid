@@ -1,0 +1,116 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        流程管理
+    </div>
+    <!--检索项目表单-->
+    <div>
+        <el-input v-model="name" style="width:200px;" :disabled="true"></el-input>
+        <el-button class="button-new-tag" size="small" v-on:click="choosePeople()">+ 选人</el-button>
+        <el-button size="small" v-on:click="save">修改</el-button>
+    </div>
+   
+    <el-collapse v-model="activeNames">
+        <el-collapse-item v-for="(value,key,i) in flows" :name="i+1" :key="i">
+            <template slot="title">
+                <span style="font-size:20px;">{{key}}</span>
+            </template>
+            <el-form class="demo-ruleForm">
+                <sam-approver-edit :nodeList="value" :dingdata="{nickName:name,userid:id}"></sam-approver-edit>
+            </el-form>
+        </el-collapse-item>
+    </el-collapse>
+    @**@
+</div>
+
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                name: '',
+                id: '',
+                DingData: DingData,
+                activeNames: [1, 2, 3],
+                flows: {},
+            }
+        },
+        methods: {
+            //保存
+            save() {
+                let param = []
+                for (let f in this.flows) {
+                    for (let n of this.flows[f]) {
+                        if (n.AddPeople && n.AddPeople.length > 0) {
+                            console.log(n.PeopleId)
+                            console.log(this.id)
+                            let index = n.PeopleId.findIndex(item => item == this.id)
+                            console.log('index = ' + index)
+                            n.PeopleId.splice(index, 1)
+                            n.NodePeople.splice(index, 1)
+                            for (let a of n.AddPeople) {
+                                n.PeopleId.push(a.emplId)
+                                n.NodePeople.push(a.name)
+                            }
+                            n.PeopleId = n.PeopleId.join(',')
+                            n.NodePeople = n.NodePeople.join(',')
+                            param.push(n)
+                        }
+                    }
+                }
+                console.log(param)
+                this.PostData('FlowInfoNew/ChangeNodeInfo', param, (res) => {
+                    this.$message({ type: 'success', message: `修改成功` });
+                    this.getFlows()
+                })
+            },
+            //切换人
+            choosePeople(){
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                    corpId: DingData.CorpId, //企业id
+                    onSuccess: function (data) {
+                        console.log(data)
+                        that.name = data[0].name
+                        that.id = data[0].emplId
+                        that.getFlows()
+                    },
+                    onFail: function (err) { }
+                });
+            },
+            getFlows() {
+                this.GetData('FlowInfoNew/GetNodeInfoInfoByApplyManId?applyManId=' + this.id, (res) => {
+                    if (res.length == 0) {
+                        this.$message({ type: 'info', message: `该用户无配置节点信息` });
+                        return
+                    }
+                    for (let r in res) {
+                        for (let node of res[r]) {
+                            node['AddPeople'] = []
+                            //抄送人分组
+                            if (node.NodePeople && node.NodePeople.length > 0) {//
+                                node.NodePeople = node.NodePeople.split(',')
+                                node.PeopleId = node.PeopleId.split(',')
+                            }
+                        }
+                    }
+                    this.flows = res
+                })
+            }
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+</script>
