@@ -4,8 +4,8 @@
 }
 
 <!--添加审批人-->
-<el-form-item label="备注" prop="remark">
-    <sam-input :value.sync="ruleForm.remark"></sam-input>
+<el-form-item label="意见" prop="remark">
+    <sam-input :value.sync="ruleForm.remark" style="width:600px;" :maxlength="80"></sam-input>
 </el-form-item>
 
 <sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :specialRoleNames="specialRoleNames" :specialRole="specialRole"></sam-approver-list>

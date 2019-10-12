@@ -16,7 +16,7 @@
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="项目名称" prop="ProjectName">
-            <el-input v-model="tableForm.ProjectName"></el-input>
+            <sam-input :value.sync="tableForm.ProjectName" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="承担部门">
             <el-select v-model="tableForm.DeptName" style="width:300px;">
@@ -24,7 +24,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="合作单位" prop="Customer">
-            <el-input v-model="tableForm.Customer" placeholder="没有填'无'"></el-input>
+            <sam-input :value.sync="tableForm.Customer" placeholder="没有填'无'"></sam-input>
         </el-form-item>
         <el-form-item label="项目类型" required="required">
             <div class="block">
@@ -44,7 +44,7 @@
             </el-tag>
             <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
             @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>*@
+                <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>*@
         </el-form-item>
         <el-form-item label="开始日期" required="required">
             <el-date-picker v-model="tableForm.StartTime" :class="{ redborder:tableForm.StartTime ==''}" :editable="false" style="width:140px;"
@@ -59,22 +59,22 @@
     </el-form>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-            <el-form-item label="项目立项书和项目答辩PPT，测试项目上传方案" required="required">
-                <el-upload class="upload-demo"
-                           drag
-                           :file-list="fileList"
-                           action="/drawingupload/Upload"
-                           :on-remove="HandleFileRemove"
-                           :before-upload="BeforeFileUpload"
-                           :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
-                           multiple>
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">单个文件不超过9M</div>
-                </el-upload>
-            </el-form-item>
-            @RenderPage("~/Views/Shared/startButton.cshtml")
-        </el-form>
+        <el-form-item label="项目立项书和项目答辩PPT，测试项目上传方案" required="required">
+            <el-upload class="upload-demo"
+                       drag
+                       :file-list="fileList"
+                       action="/drawingupload/Upload"
+                       :on-remove="HandleFileRemove"
+                       :before-upload="BeforeFileUpload"
+                       :on-success="HandleFileSuccess" :on-exceed="HandleFileExceed"
+                       multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">单个文件不超过9M</div>
+            </el-upload>
+        </el-form-item>
+        @RenderPage("~/Views/Shared/startButton.cshtml")
+    </el-form>
 </div>
 
 <script>
@@ -84,6 +84,9 @@
         mixins: [mixin],
         data: function () {
             return {
+                isTrue: true,
+                text: '',
+                textarea: '',
                 status: ['在研', '已完成', '终止'],
                 groupPeople: [],
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],

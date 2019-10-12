@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~4')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~2')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -26,7 +26,7 @@ let PTypes = [
     { label: '教育类', value: '教育类', children: [{ value: '教育', label: '教育' }, { value: '测试', label: '测试' }] }
 ]
 let status = ["在研", "已完成", "终止"]
-let DeptNames = ['', '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
+let DeptNames = [ '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
 //原型方法
@@ -567,7 +567,8 @@ var mixin = {
             })
         },
         //初始化方法
-        initStart(callBack = function (){}) {
+        initStart(callBack = function () { }) {
+            Index = '-1'
             this.DingData = DingData
             this.data = []
             this.tableData = []
@@ -610,11 +611,11 @@ var mixin = {
                 Title: FlowName,
             }
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
+            this.loadTempData()
+            this.loadReApprovalData()
             this.getNodeInfo()
             this.getProjects()
             this.getApproInfo()
-            this.loadTempData()
-            this.loadReApprovalData()
             callBack()
             loadHtml("mainPage", "partPage")
         },
@@ -636,7 +637,7 @@ var mixin = {
             this.State = State
             this['Id'] = Id
             this.index = Index
-            this.Index = State
+            this.Index = Index
                
             this.DingData = DingData
             this.data = []
@@ -707,11 +708,7 @@ var mixin = {
                         if ((choseList.indexOf(node.NodeId + '') >= 0)
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
-                            console.log('233')
-                            console.log(node.NodeId)
-                            console.log(choseList)
-                            console.log(mustList)
-                            if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
+                            if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId + '')] == '1') ||
                                 (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))){
                                 that.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                                     confirmButtonText: '确定',
@@ -739,7 +736,6 @@ var mixin = {
                         }
                     }
                     console.log(JSON.stringify(paramArr))
-                    return
                     that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
                         callBack(res)
                     })
@@ -797,7 +793,7 @@ var mixin = {
             for (let node of this.nodeList) {
                 if ((choseList.indexOf(node.NodeId + '') >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
-                    if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
+                    if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId + '')] == '1') ||
                         (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))) {
                         this.$alert(' 审批人不允许为空，请输入！', '提交失败', {
                             confirmButtonText: '确定',
@@ -1136,7 +1132,6 @@ var mixin = {
                         }]
                     }
                 }
-                this.getNodeInfo_done(this.nodeList)
                 //设置当前角色正确节点
                 if (this.index && this.index != '0' && this.index != '2') {
                     for (let i = this.nodeList.length - 1; i >= 0; i--) {
@@ -1153,6 +1148,7 @@ var mixin = {
                         }
                     }
                 }
+                this.getNodeInfo_done(this.nodeList)
             })
             
         },
@@ -1740,9 +1736,9 @@ function lengthLimit(min, max) {
 }
 
 Vue.component('sam-input', {
-    props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min','placeholder'],
+    props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
-                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur" :disabled='Index == 2'
+                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur" :disabled='Index == 2 || disabled'
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {
