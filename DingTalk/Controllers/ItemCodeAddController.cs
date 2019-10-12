@@ -196,7 +196,7 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 同步MySql数据
+        /// 同步物料编码数据数据
         /// </summary>
         /// <returns></returns>
         [Route("SynchroMySqldata")]
@@ -223,7 +223,10 @@ namespace DingTalk.Controllers
                             materiaType = dr["materiaType"].ToString(),
                         });
                     }
-                    context.BulkInsert(MaterialCodeList);
+                    
+                    context.MaterialCode.RemoveRange(context.MaterialCode.ToList());
+                    context.MaterialCode.AddRange(MaterialCodeList);
+                    context.SaveChanges();
                 };
                 stopwatch.Stop();
                 return new NewErrorModel()

@@ -97,7 +97,6 @@ namespace DingTalk.Controllers
         {
             try
             {
-
                 EFHelper<TechnicalSupport> eFHelper = new EFHelper<TechnicalSupport>();
                 eFHelper.Modify(technicalSupport);
                 technicalSupport.IsCreateProject = false;
@@ -114,25 +113,20 @@ namespace DingTalk.Controllers
                         projectInfo.StartTime = technicalSupport.StartTime;
                         projectInfo.EndTime = technicalSupport.EndTime;
                         projectInfo.CompanyName = technicalSupport.CompanyName;
-
                         //建立项目文件夹及其子文件
                         string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}",
                             projectInfo.CompanyName, technicalSupport.ProjectType, technicalSupport.ProjectName);
                         projectInfo.FilePath = path;
                         projectInfo.ResponsibleMan = technicalSupport.ResponsibleMan;
                         projectInfo.ResponsibleManId = technicalSupport.ResponsibleManId;
-
                         projectInfo.TeamMembers = technicalSupport.TeamMembers;
                         projectInfo.TeamMembersId = technicalSupport.TeamMembersId;
-
                         context.ProjectInfo.Add(projectInfo);
                         context.SaveChanges();
                         path = System.Web.Hosting.HostingEnvironment.MapPath(path);
                         FileHelper.CreateDirectory(path);
                     }
                 }
-
-
                 return new NewErrorModel()
                 {
                     data = "",
@@ -169,7 +163,7 @@ namespace DingTalk.Controllers
                     //获取表单信息
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
-                    
+
                     //判断流程是否已结束
                     List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
                     if (tasksList.Count > 0)
@@ -209,20 +203,20 @@ namespace DingTalk.Controllers
                     keyValuePairs.Add("项目编号", technicalSupport.ProjectNo);
                     keyValuePairs.Add("项目组成员", technicalSupport.TeamMembers);
                     keyValuePairs.Add("测试项目技术支持部门", technicalSupport.DeptName);
-                    keyValuePairs.Add("其他工程师", technicalSupport.OtherEngineers==""?"无" : technicalSupport.OtherEngineers);
+                    keyValuePairs.Add("其他工程师", technicalSupport.OtherEngineers == "" ? "无" : technicalSupport.OtherEngineers);
                     keyValuePairs.Add("客户名称", technicalSupport.Customer);
                     keyValuePairs.Add("紧急程度", technicalSupport.EmergencyLevel);
                     keyValuePairs.Add("要求完成时间", technicalSupport.TimeRequired);
                     keyValuePairs.Add("所属公司", technicalSupport.CompanyName);
-                    keyValuePairs.Add("测试项目周期", technicalSupport.StartTime+"-"+ technicalSupport.EndTime);
-                  
+                    keyValuePairs.Add("测试项目周期", technicalSupport.StartTime + "-" + technicalSupport.EndTime);
+
 
 
                     Dictionary<string, string> keyValuePairsDb = new Dictionary<string, string>();
                     keyValuePairs.Add("客户项目整体概况", technicalSupport.ProjectOverview);
                     keyValuePairs.Add("技术支持内容要点", technicalSupport.MainPoints);
                     keyValuePairs.Add("处理方案", technicalSupport.TechnicalProposal);
-                   
+
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
                     ProjectName, ProjectNo, "2", 300, 650, null, null, null, dtApproveView, keyValuePairs, keyValuePairsDb);

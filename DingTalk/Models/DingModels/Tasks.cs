@@ -136,6 +136,32 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [StringLength(200)]
         public string ProjectType { get; set; }
-        
+
+        [NotMapped]
+        public string FlowState { get; set; }
+
+        /// <summary>
+        /// 抄送时是否已读
+        /// </summary>
+        [NotMapped]
+        public bool IsRead { get; set; }
+
+        /// <summary>
+        /// 是否支持手机端
+        /// </summary>
+        [NotMapped]
+        public bool? IsSupportMobile { get; set; }
+
+        /// <summary>
+        /// 流程名
+        /// </summary>
+        [NotMapped]
+        public string FlowName { get; set; }
+
+        /// <summary>
+        /// 最近一次处理时间
+        /// </summary>
+        [NotMapped]
+        public string CurrentTime { get; set; }
     }
 }
