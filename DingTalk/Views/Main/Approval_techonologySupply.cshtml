@@ -75,7 +75,7 @@
                 <el-input v-model="tableForm.TechnicalProposal" style="width:550px;" type="textarea" :disabled="noEdit"></el-input>
             </el-form-item>
             <el-form-item label="测试项目名称" prop="ProjectName">
-                <el-input v-model="tableForm.ProjectName" :disabled="noEdit"></el-input>
+                <sam-input :value.sync="tableForm.ProjectName" :required="true" :disabled="noEdit"></sam-input>
             </el-form-item>
             <template v-if="NodeId==1">
                 <el-form-item label="方案文件" required>
@@ -188,7 +188,7 @@
                                 "ResponsibleManId": this.tableForm.ResponsibleManId,
                                 "ProjectFileUrl": this.ruleForm.FileUrl
                             }
-                            console.log(param2)
+                            console.log(JSON.stringify(param2))
                             this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                                 this.PostData('ProjectNew/AddProject', [param2], (res) => {
                                     //return
@@ -197,7 +197,7 @@
                             })
                             return
                         }
-                        console.log(param)
+                        console.log(JSON.stringify(param))
                         //return
                         this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                             this.aggreSubmit(param)

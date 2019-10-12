@@ -1,4 +1,5 @@
 ﻿//实例总参数
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~4')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -17,7 +18,7 @@ var fileList = []
 var pdfList = []
 let jinDomarn = 'http://wuliao5222.55555.io:35705/api/'
 //let serverUrl = 'http://17e245o364.imwork.net:49415/'
-let serverUrl = window.location.host +'/'
+let serverUrl = 'http://' + window.location.host +'/'
 let ProjectTypes = ['自研项目', '纵向项目', '横向项目', '测试项目']
 let PTypes = [
     { label: '研发类', value: '研发类', children: [{ value: '自研', label: '自研' }, { value: '横向', label: '横向' }, { value: '纵向', label: '纵向' }, { value: '测试', label: '测试' }] },
@@ -706,6 +707,10 @@ var mixin = {
                         if ((choseList.indexOf(node.NodeId + '') >= 0)
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
+                            console.log('233')
+                            console.log(node.NodeId)
+                            console.log(choseList)
+                            console.log(mustList)
                             if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId)] == '1') ||
                                 (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))){
                                 that.$alert(' 审批人不允许为空，请输入！', '提交失败', {
@@ -714,7 +719,7 @@ var mixin = {
 
                                     }
                                 });
-                                that.disablePage = false
+                                //that.disablePage = false
                                 return
                             }
                             for (let a of node.AddPeople) {
@@ -734,6 +739,7 @@ var mixin = {
                         }
                     }
                     console.log(JSON.stringify(paramArr))
+                    return
                     that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
                         callBack(res)
                     })
@@ -934,6 +940,7 @@ var mixin = {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
             if (!this.tableForm) this.tableForm = {}
+            this.ruleForm.IsBacked = false
             ReApprovalTempData = {
                 valid: true,
                 dataArr: this.dataArr,
@@ -960,6 +967,10 @@ var mixin = {
             if (!ReApprovalTempData.valid) return
             this.ruleForm = ReApprovalTempData.ruleForm
             this.tableForm = ReApprovalTempData.tableForm
+            this.dataArr = ReApprovalTempData.dataArr
+            this.imageList = ReApprovalTempData.imageList
+            this.fileList = ReApprovalTempData.fileList
+            this.pdfList = ReApprovalTempData.pdfList
             ReApprovalTempData.valid = false
             this['purchaseList'] = ReApprovalTempData.dataArr
         },
@@ -1731,12 +1742,12 @@ function lengthLimit(min, max) {
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min','placeholder'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
-                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur"
+                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur" :disabled='Index == 2'
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {
         return {
-
+            Index: Index
         }
     },
     methods: {
@@ -1877,7 +1888,7 @@ Vue.component('sam-approver-list', {
                                     data[0].name = data2.name
                                     node.AddPeople = data
                                     for (let d of data) {
-                                        $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 3) + '</span >')
+                                        $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 4) + '</span >')
                                     }
                                 }
                             }
@@ -2120,7 +2131,144 @@ Vue.component('sam-addapprover', {
     }
 })
 
+//钉钉审批编辑组件
+Vue.component('sam-approver-edit', {
+    props: ['nodedata', 'nodelist', 'specialRoles', 'specialRoleNames', 'dingdata'],
+    template: `<div>
+                    <el-form-item label="审批人" style="margin-bottom:0px;">
+                        <h5></h5>
+                    </el-form-item>
+                    <el-form-item>
+                        <template v-for="(node,index) in nodelist">
+                            <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
+                                {{node.NodeName}}
+                            </el-tag>
 
+                            <template v-for="(p,a) in node.NodePeople">
+                                <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
+                                <el-tag :key="a"
+                                        :closable="false"
+                                        onclick="" v-if="node.NodePeople"
+                                        :disable-transitions="false"
+                                        :class="{'el-tag--danger':dingdata.nickName == p}"
+                                        style="text-align:center;"
+                                        >
+                                    {{p}}
+                                </el-tag>
+                                
+                                <span v-if="a < node.NodePeople.length-1">,</span>
+                            </template>
+                            
+                            <template v-for="(ap,a) in node.AddPeople">
+                                <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
+                                <el-tag :key="a" 
+                                        :closable="false"
+                                        v-on:close="deletePeople(ap.emplId)"
+                                        v-if="node.AddPeople.length>0"
+                                        :disable-transitions="false"
+                                        style="text-align:center;"
+                                        >
+                                    {{ap.name}}
+                                </el-tag>
+                            </template>
+
+                           <template v-if="node.NodePeople && node.NodePeople.indexOf(dingdata.nickName)>=0">
+                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId)">+ 选人</el-button>
+                            </template>
+
+                            <div v-if="index<nodelist.length-1" style="line-height:1px;">
+                                <i class="el-icon-arrow-down approve-arrow"  type="primary"></i>
+                                </br>
+                            </div>
+                        </template>
+
+                    </el-form-item></div>`,
+    data: function () {
+        return {
+            inputValue: '',
+            NodeId: 0,
+            member1: '',
+            member2: '',
+            inputVisible: false,
+        }
+    },
+    methods: {
+        addNode() {
+
+        },
+        //选人控件添加
+        addMember(nodeId) {
+            var that = this
+            DingTalkPC.biz.contact.choose({
+                multiple: false, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
+                onSuccess: function (data) {
+                    console.log(data)
+                    var url2 = '/DingTalkServers/getUserDetail?userId=' + data[0].emplId
+                    $.ajax({
+                        url: url2,
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {},
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data2) {
+                            if (typeof (data2) == 'string') data2 = JSON.parse(data2)
+                            for (let node of that.nodelist) {
+                                if (node.NodeId == nodeId) {
+                                    $("." + nodeId).remove()
+                                    data[0].name = data2.name
+                                    node.AddPeople = data
+                                    //for (let d of data) {
+                                    //    $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 4) + '</span >')
+                                    //}
+                                }
+                            }
+                        },
+                        error: function (err) {
+                            console.error(err)
+                        }
+                    })
+                },
+                onFail: function (err) { }
+            });
+        },
+        //下拉框选人添加
+        selectSpecialMember(userInfo, nodeId) {
+            console.log(userInfo)
+            userInfo = JSON.parse(userInfo)
+            console.log(userInfo)
+            console.log(nodeId)
+            for (let node of this.nodelist) {
+                if (node.NodeId != nodeId)
+                    continue
+                node.AddPeople = [userInfo]
+            }
+        },
+
+        deletePeople(emplId) {
+            for (let node of this.nodelist) {
+                for (let a of node.AddPeople) {
+                    if (a.emplId == emplId) {
+                        node.AddPeople.splice(node.AddPeople.indexOf(a), 1);
+                    }
+                }
+            }
+        },
+        handleClose(emplId) {
+            for (let node of this.nodelist)
+                for (var i = 0; i < node.AddPeople.length; i++) {
+                    if (node.AddPeople[i].emplId == emplId)
+                        node.AddPeople.splice(i, 1)
+                }
+        },
+
+    },
+    computed: {
+
+    }
+})
 
 //流程配置相关
 let editFlow = {}

@@ -14,7 +14,7 @@
              enctype="multipart/form-data">
         <template>
             <el-form-item label="项目名称" prop="inputProjectName">
-                <el-input v-model="ruleForm.inputProjectName"></el-input>
+                <sam-input :value.sync="ruleForm.inputProjectNamet" :required="true"></sam-input>
             </el-form-item>
             <el-form-item label="项目编号" prop="inputProjectId">
                 <el-input v-model="ruleForm.inputProjectId"></el-input>
@@ -74,14 +74,14 @@
 </div>
 <script>
     var Index = 0
-    var VUE = new Vue({
+    var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
                 status: ['在研', '已完成', '终止', '暂停'],
                 ResponsibleMan: [{ name: '', emplId: '' }],
-                groupPeople: [{ name: '', emplId: '' }],
+                groupPeople: [],
                 ProjectTypes: ProjectTypes,
                 DeptNames: DeptNames,
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
