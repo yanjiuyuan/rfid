@@ -8,6 +8,7 @@
     @Scripts.Render("~/bundles/modernizr")
 
     <link rel="stylesheet" href="~/Content/element.css" />
+    @*<link rel="stylesheet" href="//unpkg.com/element-ui@2.8.2/lib/theme-chalk/index.css" />*@
     <link rel="stylesheet" href="~/Content/display.css" />
     <link rel="stylesheet" href="~/Content/site.css" />
     <script src="~/Scripts/jquery-1.11.0.js"></script>
@@ -22,8 +23,9 @@
     <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/drag.js"></script>
     <script src="~/Scripts/element.js"></script>
-    @*<script src="~/Scripts/element-ui.common.js"></script>*@
-    <script src="~/Scripts/lib.js"></script>
+    @*<script src="https://unpkg.com/element-ui/lib/index.js"></script>*@
+    @*<script src="~/Scripts/element-ui.js"></script>*@
+    <script src="~/Scripts/lib2.js"></script>
 
     <script src="~/JqueryUI/jquery-ui.min.js"></script>
     <script src="~/Scripts/anyLine.js"></script>
@@ -87,13 +89,14 @@
                     goError();
                  }, 3000)
             }
+            setTimeout(function () {
+                if (DingData.CompanyId == 2 && !DingData.userid) {
+                    DingData.userid = 'manager325'
+                    DingData.nickName = '黄浩炜'
+                    DingData.dept = ['阿法迪', '研究院']
+                }
+            }, 2000)
             //2代表阿法迪
-            if (DingData.CompanyId == 2) {
-                DingData.userid = 'manager325'
-                DingData.nickName = '黄浩炜'
-                DingData.dept = ['阿法迪','研究院']
-            }
-            
 
             console.log('开始获取授权')
             console.log(DingData)
