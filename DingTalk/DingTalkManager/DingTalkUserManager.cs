@@ -35,7 +35,6 @@ namespace DingTalkServer
             var url = _addressConfig.GetDepartmentUserDetailListUrl;
             var result =  _client.Get(url);
             return result;
-
         }
 
         public  Task<string> CreateUser(AddUserRequestModel user)

@@ -47,6 +47,19 @@ namespace DingTalk.Controllers
             var result = await dtManager.GetDepartmentList();
             return result;
         }
+
+        /// <summary>
+        /// 获取部门下所有用户信息
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
+        [Route("GetDeptUserListByDeptId")]
+        public async Task<string> GetDeptUserListByDeptId(int deptId)
+        {
+            var result = await dtManager.GetDeptUserListByDeptId(deptId);
+            return result;
+        }
+
         /// <summary>
         /// 根据用户Id获取所有关联部门Id
         /// </summary>

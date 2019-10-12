@@ -244,7 +244,7 @@ namespace DingTalk.Controllers
             return new NewErrorModel()
             {
                 data = dDContext.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault(),
-                error = new Error(1,"读取成功！" , "") { },
+                error = new Error(1, "读取成功！", "") { },
             };
         }
 
@@ -290,6 +290,13 @@ namespace DingTalk.Controllers
                     {
                         foreach (var projectInfo in projectInfos)
                         {
+                            if (projectInfo.ProjectName.Contains(" "))
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, "项目名不能包含空格！", "") { },
+                                };
+                            }
                             if (string.IsNullOrEmpty(projectInfo.CompanyName) || string.IsNullOrEmpty(projectInfo.ProjectType)
                                 || string.IsNullOrEmpty(projectInfo.ProjectSmallType) || string.IsNullOrEmpty(projectInfo.ProjectName) || string.IsNullOrEmpty(projectInfo.ProjectId))
                             {
@@ -309,7 +316,6 @@ namespace DingTalk.Controllers
                             }
                             else
                             {
-
                                 //建立项目文件夹及其子文件
                                 string path = string.Format("\\UploadFile\\ProjectFile\\{0}\\{1}\\{2}\\{3}\\",
                                     projectInfo.CompanyName, projectInfo.ProjectType, projectInfo.ProjectSmallType, projectInfo.ProjectName);
@@ -516,8 +522,15 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     ProjectInfoList = context.ProjectInfo.ToList();
-                    ProjectInfoList = ProjectInfoList.Where(p => string.IsNullOrEmpty(key) ? 1 == 1 : ((p.ProjectName.Contains(key) || p.ProjectId.Contains(key) || p.DeptName.Contains(key) || p.ResponsibleMan.Contains(key)))).ToList();
-
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        ProjectInfoList = ProjectInfoList.Where(p =>
+                         (!string.IsNullOrEmpty(p.ProjectId) ? p.ProjectId.Contains(key) : false) ||
+                         (!string.IsNullOrEmpty(p.DeptName) ? p.DeptName.Contains(key) : false) ||
+                         (!string.IsNullOrEmpty(p.ResponsibleMan) ? p.ResponsibleMan.Contains(key) : false) ||
+                          (!string.IsNullOrEmpty(p.TeamMembers) ? p.TeamMembers.Contains(key) : false)
+                        ).ToList();
+                    }
                     ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
                     endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
 

@@ -169,7 +169,7 @@ namespace DingTalk.Controllers
                                     Thread.Sleep(200);
 
                                     //特殊处理(暂时)
-                                    if (tasks.FlowId.ToString() == "6" ||   tasks.FlowId.ToString() == "33" )
+                                    if (tasks.FlowId.ToString() == "6" || tasks.FlowId.ToString() == "33")
                                     {
                                         NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == tasks.FlowId.ToString() && n.NodeId.ToString() == "2").FirstOrDefault();
                                         Tasks taskCurrent = new Tasks()
@@ -1472,7 +1472,6 @@ namespace DingTalk.Controllers
             }
         }
 
-
         /// <summary>
         /// 左侧审批状态详细数据读取
         /// </summary>
@@ -1491,72 +1490,129 @@ namespace DingTalk.Controllers
         {
             try
             {
-                List<int?> ListTasks = new List<int?>();
-                List<TaskFlowModel> TaskFlowModelList = new List<TaskFlowModel>();
-                DDContext context = new DDContext();
+                using (DDContext context = new DDContext())
+                {
+                    List<Tasks> tasksAll = context.Tasks.SqlQuery("select * from tasks where taskid in " +
+                    "(select TaskId from tasks where ApplyManId = @applyManId)", new SqlParameter("@applyManId", ApplyManId)).ToList();
+                    List<Flows> flows = context.Flows.ToList();
+                    List<Tasks> tasks = tasksAll.Where(t => t.ApplyManId == ApplyManId).ToList();
+                    List<TasksState> tasksStates = context.TasksState.ToList();
 
-                int count = 0;
-                int ipageIndex = 0, ipageSize = 0;
-                if (!string.IsNullOrEmpty(Key))
-                {
-                    ipageIndex = pageIndex; ipageSize = pageSize;
-                    pageIndex = 1; pageSize = 99;
-                }
+                    //流程分类
+                    tasks = TasksSort(Index, tasks);
+                    foreach (var item in tasks)
+                    {
+                        item.FlowState = tasksStates.Where(ts => ts.TaskId == item.TaskId.ToString()).FirstOrDefault().State;
+                        List<Tasks> taskQuery = tasksAll.Where(t => t.TaskId == item.TaskId).ToList();
 
-
-                if (Index == 0)
-                {
-                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
-                    .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count();
-                    //待审批的
-                    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
-                    .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                        Tasks tasksPost = taskQuery.Where(t => t.NodeId == 0).FirstOrDefault();
+                        if (tasksPost != null)
+                        {
+                            item.Title = tasksPost.Title;
+                            item.ApplyMan = tasksPost.ApplyMan;
+                            item.ApplyTime = tasksPost.ApplyTime;
+                        }
+                        Tasks tasksCurrentSub = taskQuery.Where(t => t.State == 1 && t.IsEnable == 1 && t.IsSend != true).LastOrDefault();
+                        if (tasksCurrentSub != null)
+                        {
+                            item.CurrentTime = tasksCurrentSub.ApplyTime;
+                        }
+                        Tasks tasksNowSub = taskQuery.Where(t => t.State == 0 && t.IsEnable == 1 && t.ApplyManId == ApplyManId).FirstOrDefault();
+                        if (tasksNowSub != null)
+                        {
+                            item.Id = tasksNowSub.Id;
+                            item.NodeId = tasksNowSub.NodeId;
+                        }
+                        Flows flow = flows.Where(f => f.FlowId.ToString() == item.FlowId.ToString()).FirstOrDefault();
+                        if (flow != null)
+                        {
+                            item.IsSupportMobile = flow.IsSupportMobile;
+                            item.FlowName = flow.FlowName;
+                        }
+                        if (Index == 3)
+                        {
+                            item.IsRead = item.State == 1 ? true : false;
+                        }
+                    }
+                    //关键字查询
+                    if (!string.IsNullOrEmpty(Key))
+                    {
+                        List<Tasks> tasksQuery = new List<Tasks>();
+                        foreach (var t in tasks)
+                        {
+                            if (!string.IsNullOrEmpty(t.TaskId.ToString()))
+                            {
+                                if (t.TaskId.ToString() == Key
+                                    || (!string.IsNullOrEmpty(t.ApplyMan) ? t.ApplyMan.Contains(Key) : false)
+                                    || (!string.IsNullOrEmpty(t.Title) ? t.Title.Contains(Key) : false)
+                                    || (!string.IsNullOrEmpty(t.FlowName) ? t.FlowName.Contains(Key) : false))
+                                {
+                                    tasksQuery.Add(t);
+                                }
+                            }
+                        }
+                        tasks = tasksQuery;
+                    }
+                    int count = tasks.Count;
+                    return new NewErrorModel()
+                    {
+                        count = tasks.Count,
+                        data = tasks.OrderByDescending(t => t.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList(),
+                        error = new Error(0, "读取成功！", "") { },
+                    };
                 }
-                if (Index == 1)
-                {
-                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
-                    //我已审批
-                    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-                }
-                if (Index == 2)
-                {
-                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
-                    //我发起的
-                    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-                }
-                if (Index == 3)
-                {
-                    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
-                    //抄送我的
-                    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
-                        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-                }
-                TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
-
-                //if (!string.IsNullOrEmpty(Key))
+                //List<int?> ListTasks = new List<int?>();
+                //List<TaskFlowModel> TaskFlowModelList = new List<TaskFlowModel>();
+                //DDContext context = new DDContext();
+                //int count =0 ;
+                //if (Index == 0)
                 //{
-                //    TaskFlowModelList = TaskFlowModelList.Where(t => t.TaskId.ToString() == Key ||
-                //      t.Title.Contains(Key) || t.ApplyMan.Contains(Key) || t.FlowName.Contains(Key)).ToList();
-                //    count = TaskFlowModelList.Count();
-                //    TaskFlowModelList = TaskFlowModelList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                //    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
+                //    .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count();
+                //    //待审批的
+                //    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost != true && u.ApplyTime == null)
+                //    .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 //}
+                //if (Index == 1)
+                //{
+                //    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
+                //        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
+                //    //我已审批
+                //    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 1 && u.IsPost != true && u.ApplyTime != null)
+                //        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                //}
+                //if (Index == 2)
+                //{
+                //    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
+                //        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
+                //    //我发起的
+                //    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true && u.ApplyTime != null)
+                //        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                //}
+                //if (Index == 3)
+                //{
+                //    count = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
+                //        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).ToList().Count;
+                //    //抄送我的
+                //    ListTasks = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.IsPost != true)
+                //        .OrderByDescending(u => u.TaskId).Select(u => u.TaskId).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                //}
+                //TaskFlowModelList = Quary(context, ListTasks, ApplyManId, IsSupportMobile, Key, Index);
 
-                if (!string.IsNullOrEmpty(Key))
-                {
-                    TaskFlowModelList = TaskFlowModelList.Skip((ipageIndex - 1) * ipageSize).Take(ipageSize).ToList();
-                }
+                ////if (!string.IsNullOrEmpty(Key))
+                ////{
+                ////    TaskFlowModelList = TaskFlowModelList.Where(t => t.TaskId.ToString() == Key ||
+                ////      t.Title.Contains(Key) || t.ApplyMan.Contains(Key) || t.FlowName.Contains(Key)).ToList();
+                ////    count = TaskFlowModelList.Count();
+                ////    TaskFlowModelList = TaskFlowModelList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                ////}
 
-                return new NewErrorModel()
-                {
-                    count = count,
-                    data = TaskFlowModelList,
-                    error = new Error(0, "读取成功！", "") { },
-                };
+                //return new NewErrorModel()
+                //{
+                //    count = count,
+                //    data = TaskFlowModelList,
+                //    error = new Error(0, "读取成功！", "") { },
+                //};
             }
             catch (Exception ex)
             {
@@ -1565,6 +1621,41 @@ namespace DingTalk.Controllers
                     error = new Error(2, ex.Message, "") { },
                 };
             }
+        }
+
+        /// <summary>
+        ///  流程分类(后端用)
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("TasksSort")]
+        public List<Tasks> TasksSort(int index, List<Tasks> tasks)
+        {
+            switch (index)
+            {
+                //待我审批
+                case 0:
+                    tasks = tasks.Where(t => t.State == 0 && t.IsEnable == 1
+                    && t.IsPost == false && t.IsSend != true).ToList();
+                    break;
+                //我已审批
+                case 1:
+                    tasks = tasks.Where(t => t.State == 1 && t.IsEnable == 1
+                    && t.IsPost == false && t.IsSend != true).ToList();
+                    break;
+                //我发起的
+                case 2:
+                    tasks = tasks.Where(t => t.IsPost == true).ToList();
+                    break;
+                //抄送我的
+                case 3:
+                    tasks = tasks.Where(t => t.IsEnable == 1
+                    && t.IsSend == true).ToList();
+                    break;
+            }
+            return tasks;
         }
 
         /// <summary>
@@ -1758,7 +1849,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetSign")]
-        public NewErrorModel GetSign(string FlowId,string TaskId="")
+        public NewErrorModel GetSign(string FlowId, string TaskId = "")
         {
             try
             {
