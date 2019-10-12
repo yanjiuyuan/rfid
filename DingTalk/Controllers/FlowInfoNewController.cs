@@ -326,16 +326,25 @@ namespace DingTalk.Controllers
                             {
                                 if (task.IsSend == true)
                                 {
-                                    await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
-                                     task.TaskId.ToString(), taskNew.ApplyMan,
-                                     task.Remark, contexts, flows.ApproveUrl,
-                                     task.NodeId.ToString(),
-                                     false, true);
-                                    Thread.Sleep(100);
+                                    if (taskList.IndexOf(task) == 1)
+                                    {
+                                        await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
+                                    task.TaskId.ToString(), taskNew.ApplyMan,
+                                    task.Remark, contexts, flows.ApproveUrl,
+                                    task.NodeId.ToString(),
+                                    false, true);
+                                        Thread.Sleep(100);
+                                        task.IsEnable = 1;
+                                        task.State = 0;
+                                        task.ApplyTime = null;
+                                    }
+                                    else
+                                    {
+                                        task.IsEnable = 0;
+                                        task.State = 0;
+                                        task.ApplyTime = null;
+                                    }
 
-                                    task.IsEnable = 1;
-                                    task.State = 0;
-                                    task.ApplyTime = null;
                                 }
                                 else
                                 {
