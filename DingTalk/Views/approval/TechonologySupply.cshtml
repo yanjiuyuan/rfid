@@ -14,7 +14,7 @@
 
     <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        <el-form-item label="技术支持部门" prop="DeptName">
+        <el-form-item label="技术支持部门">
             <el-checkbox-group v-model="tableForm.DeptName">
                 <el-checkbox v-for="s in DeptNames" :label="s"></el-checkbox>
             </el-checkbox-group>
@@ -178,6 +178,7 @@
                         emplId: ids[i]
                     })
                 }
+                if (!addPeoples.length) return
                 for (let i = 0; i < nodeList.length; i++) {
                     if (nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
                         nodeList[i].AddPeople = addPeoples
@@ -188,7 +189,11 @@
             }
         },
         created: function () {
-            this.initStart()
+            this.initStart(() => {
+                if (this.tableForm.DeptName.length > 0) {
+                    this.tableForm.DeptName = this.tableForm.DeptName.split(',')
+                }
+            })
         },
 
     })

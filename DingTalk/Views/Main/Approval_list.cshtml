@@ -16,12 +16,13 @@
               element-loading-text="数据加载中"
               element-loading-spinner="el-icon-loading"
               element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="TaskId" label="流水号"></el-table-column>
+        <el-table-column prop="TaskId" label="流水号" width="100"></el-table-column>
         <el-table-column prop="FlowName" label="审批类型"></el-table-column>
-        <el-table-column prop="Title" label="标题"></el-table-column>
-        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="Title" label="标题" width="200"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人" width="100"></el-table-column>
         <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
-        <el-table-column v-if="Index != '0'" prop="State" label="状态"></el-table-column>
+        <el-table-column v-if="Index != '0'" prop="FlowState" label="状态"></el-table-column>
+        <el-table-column prop="CurrentTime" label="最后处理时间"></el-table-column>
         <el-table-column v-if="Index == 3" prop="State" label="是否已读">
             <template slot-scope="scope">
                 <span v-if="scope.row.IsRead" class="greenFont">已读</span>
@@ -129,7 +130,7 @@
                         nodeid: row.NodeId,
                         id: row.Id,
                         index: Index,
-                        state: row.State
+                        state: row.FlowState  
                     }
                     if (row.FlowId == 1) {
                         loadPage('/Main/approval_officeSupplies' + _formatQueryStr(param))
