@@ -42,9 +42,7 @@
                     :disable-transitions="false" v-on:close="handleClose(tag)">
                 {{tag.name}}
             </el-tag>
-            <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
-            @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-                <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>*@
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
         </el-form-item>
         <el-form-item label="开始日期" required="required">
             <el-date-picker v-model="tableForm.StartTime" :class="{ redborder:tableForm.StartTime ==''}" :editable="false" style="width:140px;"

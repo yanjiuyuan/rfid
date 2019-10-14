@@ -332,6 +332,7 @@ var mixin = {
                 { min: 1, max: 25, message: '长度在 1 到 25 个字符', trigger: 'blur' }
             ],
             ProjectId: [
+                { required: true, validator: checkProjectId, trigger: 'blur' },
                 { required: true, message: '内容不能为空！', trigger: 'change' }
             ],
             Title: [
@@ -697,7 +698,7 @@ var mixin = {
                 if (valid) {
                     that.disablePage = true
                     for (let r in that.ruleForm) {
-                        if (that.ruleForm[r] == '') delete r
+                        if (that.ruleForm[r] == '' || that.ruleForm[r] == null) delete that.ruleForm[r]
                     }
                     var paramArr = [that.ruleForm]
                     let mustList = []
@@ -760,17 +761,17 @@ var mixin = {
                 "Remark": this.ruleForm.Mark,
                 "ImageUrl": this.ruleForm.ImageUrl || '',
                 "OldImageUrl": this.ruleForm.OldImageUrl || '',
-                "FileUrl ": this.ruleForm.FileUrl || '',
-                "MediaId  ": this.ruleForm.MediaId  || '',
+                "FileUrl": this.ruleForm.FileUrl || '',
+                "MediaId": this.ruleForm.MediaId  || '',
                 "OldFileUrl": this.ruleForm.OldFileUrl || '',
-                "FilePDFUrl ": this.ruleForm.FilePDFUrl || '',
-                "MediaIdPDF  ": this.ruleForm.MediaIdPDF  || '',
-                "OldFilePDFUrl ": this.ruleForm.OldFilePDFUrl || '',
+                "FilePDFUrl": this.ruleForm.FilePDFUrl || '',
+                "MediaIdPDF": this.ruleForm.MediaIdPDF  || '',
+                "OldFilePDFUrl": this.ruleForm.OldFilePDFUrl || '',
                 "ProjectId": this.ruleForm.ProjectId || '',
                 "ProjectName": this.ruleForm.ProjectName || '',
                 "ProjectType": this.ruleForm.ProjectType || '',
-                "counts ": this.ruleForm.counts || '',
-                "tpName ": this.ruleForm.tpName || '',
+                "counts": this.ruleForm.counts || '',
+                "tpName": this.ruleForm.tpName || '',
                 "TaskId": TaskId,
                 "ApplyMan": DingData.nickName,
                 "ApplyManId": DingData.userid,
@@ -784,7 +785,7 @@ var mixin = {
 
             })
             for (let r in paramArr[0]) {
-                if (paramArr[0][r] == '') delete r
+                if (paramArr[0][r] == '' || that.ruleForm[r] == null) delete paramArr[0][r]
             }
             let mustList = []
             let choseList = []
@@ -840,21 +841,33 @@ var mixin = {
         },
         //退回审批 
         returnBk() {
-            let param = {
-                "Id": this.ruleForm.Id,
-                "Remark": this.ruleForm.Mark
-            }
-            this.returnSubmit(param)
+            this.$confirm('是否确认退回申请？')
+                .then(_ => {
+                    let param = {
+                        "Id": this.ruleForm.Id,
+                        "Remark": this.ruleForm.Mark
+                    }
+                    this.returnSubmit(param)
+                })
+                .catch(_ => {
+
+                });
         },
         //撤回审批
         rebackSubmit() {
-            this.disablePage = true
-            var param = {
-                "Id": this.ruleForm.Id,
-                "NodeId": 0,
-                "Remark": this.ruleForm.Mark
-            }
-            this.returnSubmit(param)
+            this.$confirm('是否确认撤回申请？')
+                .then(_ => {
+                    this.disablePage = true
+                    var param = {
+                        "Id": this.ruleForm.Id,
+                        "NodeId": 0,
+                        "Remark": this.ruleForm.Mark
+                    }
+                    this.returnSubmit(param)
+                })
+                .catch(_ => {
+
+                });
         },
         returnSubmit(option) {
             this.disablePage = true
@@ -937,6 +950,11 @@ var mixin = {
             }
             if (!this.tableForm) this.tableForm = {}
             this.ruleForm.IsBacked = false
+            this.ruleForm.IsPost = false
+            this.ruleForm.NodeId = '0'
+            delete this.ruleForm.Id
+            delete this.ruleForm.TaskId
+            delete this.ruleForm.ApplyTime
             ReApprovalTempData = {
                 valid: true,
                 dataArr: this.dataArr,
@@ -1140,14 +1158,14 @@ var mixin = {
                         }
                     }
                 }
-                if (this.index && this.index != '0' && this.index != '2') {
-                    for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                            this.NodeId = this.nodeList[i].NodeId
-                            break
-                        }
-                    }
-                }
+                //if (this.index && this.index != '0' && this.index != '2') {
+                //    for (let i = this.nodeList.length - 1; i >= 0; i--) {
+                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                //            this.NodeId = this.nodeList[i].NodeId
+                //            break
+                //        }
+                //    }
+                //}
                 this.getNodeInfo_done(this.nodeList)
             })
             
@@ -1244,12 +1262,12 @@ var mixin = {
             });
         },
         //选多人
-        addGroup() {
+        addGroup(users) {
             var that = this
             console.log('addGroup')
             DingTalkPC.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
-                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: users||[], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 onSuccess: function (data) {
                     that.groupPeople = data
@@ -1480,9 +1498,9 @@ var mixin = {
         },
         fileListToUrl() {
             if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
-                this.ruleForm.FilePDFUrl = ''
-                this.ruleForm.OldFilePDFUrl = ''
-                this.ruleForm.MediaIdPDF = ''
+                this.ruleForm['FilePDFUrl'] = ''
+                this.ruleForm['OldFilePDFUrl'] = ''
+                this.ruleForm['MediaIdPDF'] = ''
                 for (var i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
                     this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
@@ -1494,9 +1512,9 @@ var mixin = {
                 }
             }
             if (this.fileList[0] && this.fileList[0].response && this.fileList[0].response.Content) {
-                this.ruleForm.FileUrl = ''
-                this.ruleForm.OldFileUrl = ''
-                this.ruleForm.MediaId = ''
+                this.ruleForm['FileUrl'] = ''
+                this.ruleForm['OldFileUrl'] = ''
+                this.ruleForm['MediaId'] = ''
                 for (var i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name
