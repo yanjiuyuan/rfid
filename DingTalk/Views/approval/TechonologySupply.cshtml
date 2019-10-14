@@ -24,8 +24,15 @@
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="其他工程师" prop="OtherEngineers">
+            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                    :disable-transitions="false" v-on:close="handleClose(tag)">
+                {{tag.name}}
+            </el-tag>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
+
             <el-input v-model="tableForm.OtherEngineers" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumbers()">+ 选人</el-button>
+
         </el-form-item>
         <el-form-item label="合作单位" prop="Customer">
             <sam-input :value.sync="tableForm.Customer" style="width:400px;" :required="true"></sam-input>

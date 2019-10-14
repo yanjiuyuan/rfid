@@ -30,9 +30,9 @@
             <span style="font-size:1.2rem;">文件夹列表</span>
             <el-button v-on:click="dialogFormVisible = true" v-if="pathList.length > 5" size="small" type="primary">新建文件夹</el-button>
         </div>
-        <div v-for="f in folderList" class="folder-box" v-on:mouseover="getProject(f.path)" style="cursor:pointer;position:relative;">
+        <div v-for="(f,i) in folderList" class="folder-box" v-on:mouseover="getProject(f.path)" style="cursor:pointer;position:relative;">
             <el-tooltip effect="light" :content="f.path" placement="bottom-start">
-                <img v-on:click="openFolder(f.path)" src="~/Content/images/folder.png" />
+                <img v-on:click="openFolder(i)" src="~/Content/images/folder.png" />
             </el-tooltip>
             <p v-if="f.count>0" style="position:absolute;top:40px;right:20px;" class="el-badge__content">{{f.count}}</p>
             <p>{{f.path | substring}}</p>
@@ -100,7 +100,7 @@
                        @*:on-remove="handleFileRemove"*@
                        :on-error="errUpload"
                        :before-upload="BeforeFileUpload"
-                       :on-success="handleFileCardSuccess"
+                       :on-success="HandleFileSuccess"
                        :limit="5"
                        multiple>
                 <i class="el-icon-upload"></i>
@@ -181,7 +181,7 @@
                 if (keyword) url = url + '&keyword=' + keyword
                 this.uploadUrl = this.uploadUrl + '&ApplyManId=' + DingData.userid + '&ApplyMan=' + DingData.nickName
                 this.GetData(url, (data) => {
-
+                    console.log(JSON.stringify(data))
                     that.pathList = _cloneArr(pathList)
 
                     let folderArr = []
@@ -209,6 +209,7 @@
                 var param = {
                     key: this.pathList.join('\\') + '\\' + filename
                 }
+                console.log('hover~~~2')
                 this.Path = param.key
                 url = "/Project/QuaryProjectInfo" + _formatQueryStr(param)
                 $.ajax({
@@ -239,11 +240,11 @@
                 this.getFileData(this.pathList, this.searchKey)
             },
             //打开某文件夹相关操作
-            openFolder: function (folderName) {
+            openFolder: function (i) {
                 //改变路径，加载新的文件夹、表单数据、切换相关变量
                 if (this.clockFolder) return
                 let pathList = _cloneArr(this.pathList)
-                pathList.push(folderName)
+                pathList.push(this.folderList[i].path)
                 //this.pathList.push(folderName)
                 this.getFileData(pathList)
             },

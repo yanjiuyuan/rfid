@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~3')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~2')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -1158,14 +1158,14 @@ var mixin = {
                         }
                     }
                 }
-                if (this.index && this.index != '0' && this.index != '2') {
-                    for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                            this.NodeId = this.nodeList[i].NodeId
-                            break
-                        }
-                    }
-                }
+                //if (this.index && this.index != '0' && this.index != '2') {
+                //    for (let i = this.nodeList.length - 1; i >= 0; i--) {
+                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                //            this.NodeId = this.nodeList[i].NodeId
+                //            break
+                //        }
+                //    }
+                //}
                 this.getNodeInfo_done(this.nodeList)
             })
             
@@ -1262,12 +1262,12 @@ var mixin = {
             });
         },
         //选多人
-        addGroup() {
+        addGroup(users) {
             var that = this
             console.log('addGroup')
             DingTalkPC.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
-                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: users||[], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 onSuccess: function (data) {
                     that.groupPeople = data
