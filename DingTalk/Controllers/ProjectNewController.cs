@@ -84,9 +84,15 @@ namespace DingTalk.Controllers
                         fileCount = getFileInfos.Length;
                     }
                     int i = 0;
+                    bool IsFile = false;
                     //绝对路径转相对
                     string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
+                    if (File.Exists(item))
+                    {
+                        IsFile = true;
+                    }
                     string FileName = Path.GetFileName(RelativePath);
+                   
                     //RePathList.Add(FileName);
                     if (FileName.Length > 2)
                     {
@@ -99,6 +105,7 @@ namespace DingTalk.Controllers
                     {
                         FileModelsList.Add(new FileModels()
                         {
+                            IsFile= IsFile,
                             order = i,
                             path = FileName,
                             count = fileCount,
@@ -110,6 +117,7 @@ namespace DingTalk.Controllers
                         {
                             FileModelsList.Add(new FileModels()
                             {
+                                IsFile = IsFile,
                                 order = i,
                                 path = FileName,
                                 count = fileCount,
@@ -878,9 +886,9 @@ namespace DingTalk.Controllers
     public class FileModels
     {
         /// <summary>
-        /// 文件类型 (0 文件夹 1 文件)
+        /// 是否是文件
         /// </summary>
-        int type { get; set; }
+        public bool IsFile { get; set; }
         public string path { get; set; }
         public int count { get; set; }
         public int order { get; set; }
