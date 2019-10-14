@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~2')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~5')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID

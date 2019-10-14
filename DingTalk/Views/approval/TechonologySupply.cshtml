@@ -29,10 +29,6 @@
                 {{tag.name}}
             </el-tag>
             <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
-
-            <el-input v-model="tableForm.OtherEngineers" style="width:500px;" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumbers()">+ 选人</el-button>
-
         </el-form-item>
         <el-form-item label="合作单位" prop="Customer">
             <sam-input :value.sync="tableForm.Customer" style="width:400px;" :required="true"></sam-input>
@@ -79,6 +75,7 @@
                 addPeopleNodes: [1], //额外添加审批人节点数组
                 tableForm: {
                     DeptName: [],
+                    groupPeople: [],
                     ResponsibleMan: "",
                     ResponsibleManId: '',
                     OtherEngineers: "",
@@ -102,21 +99,33 @@
         },
         methods: {
             onSubmit(formName) {
-                //console.log(this.ruleForm)
-                //return
-                let callBack = (taskId) => {
-                    this.tableForm['TaskId'] = taskId
-                    this.tableForm.DeptName = this.tableForm.DeptName.join(',')
-                    this.PostData('TechnicalSupport/Save', this.tableForm, () => {
-                        this.$alert('恭喜提交成功', '提示信息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                goHome()
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid && this.groupPeople[0]) {
+                        
+                        let callBack = (taskId) => {
+                            let names = []
+                            let ids = []
+                            for (let p of this.groupPeople) {
+                                names.push(p.name)
+                                ids.push(p.emplId)
                             }
-                        })
-                    })
-                }
-                this.approvalSubmit(callBack)
+                            this.tableForm.OtherEngineers = names.join(',')
+                            this.tableForm.OtherEngineersId = ids.join(',')
+                            this.tableForm['TaskId'] = taskId
+                            this.tableForm.DeptName = this.tableForm.DeptName.join(',')
+                            this.PostData('TechnicalSupport/Save', this.tableForm, () => {
+                                this.$alert('恭喜提交成功', '提示信息', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        goHome()
+                                    }
+                                })
+                            })
+                        }
+                        this.approvalSubmit(callBack)
+                    }
+                })
+                
             },
             //添加负责人
             addPeerNumber() {
@@ -152,27 +161,6 @@
                     onFail: function (err) { }
                 });
             },
-            //添加参与工程师
-            addPeerNumbers() {
-                var that = this
-                DingTalkPC.biz.contact.choose({
-                    users: [],
-                    corpId: DingData.CorpId,
-                    max: 10,
-                    onSuccess: function (data) {
-                        console.log(data)
-                        let names = []
-                        let ids = []
-                        for (let d of data) {
-                            names.push(d.name)
-                            ids.push(d.emplId)
-                        }
-                        that.tableForm.OtherEngineers = names.join(',')
-                        that.tableForm.OtherEngineersId = ids.join(',')
-                    },
-                    onFail: function (err) { }
-                });
-            },
             //关联项目负责人 的节点
             getNodeInfo_done(nodeList) {
                 let names = this.tableForm.ResponsibleMan.split(',')
@@ -197,9 +185,7 @@
         },
         created: function () {
             this.initStart(() => {
-                if (this.tableForm.DeptName.length > 0) {
-                    this.tableForm.DeptName = this.tableForm.DeptName.split(',')
-                }
+                
             })
         },
 
