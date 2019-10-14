@@ -841,21 +841,33 @@ var mixin = {
         },
         //退回审批 
         returnBk() {
-            let param = {
-                "Id": this.ruleForm.Id,
-                "Remark": this.ruleForm.Mark
-            }
-            this.returnSubmit(param)
+            this.$confirm('是否确认退回申请？')
+                .then(_ => {
+                    let param = {
+                        "Id": this.ruleForm.Id,
+                        "Remark": this.ruleForm.Mark
+                    }
+                    this.returnSubmit(param)
+                })
+                .catch(_ => {
+
+                });
         },
         //撤回审批
         rebackSubmit() {
-            this.disablePage = true
-            var param = {
-                "Id": this.ruleForm.Id,
-                "NodeId": 0,
-                "Remark": this.ruleForm.Mark
-            }
-            this.returnSubmit(param)
+            this.$confirm('是否确认撤回申请？')
+                .then(_ => {
+                    this.disablePage = true
+                    var param = {
+                        "Id": this.ruleForm.Id,
+                        "NodeId": 0,
+                        "Remark": this.ruleForm.Mark
+                    }
+                    this.returnSubmit(param)
+                })
+                .catch(_ => {
+
+                });
         },
         returnSubmit(option) {
             this.disablePage = true
