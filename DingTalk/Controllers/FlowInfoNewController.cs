@@ -451,8 +451,6 @@ namespace DingTalk.Controllers
                             }
                             if (taskList.Count == 1 && taskList.IndexOf(tasks) == 0)  //未选人
                             {
-                                //
-
                                 if (fServer.GetTasksByNotFinished(tasks.TaskId.ToString(), tasks.NodeId.ToString()).Count == 0)
                                 {
                                     await SendOaMsgNew(tasks.FlowId, dic["PeopleId"].ToString(), tasks.TaskId.ToString(),
@@ -477,9 +475,6 @@ namespace DingTalk.Controllers
                                                 taskNew.NodeId.ToString(),
                                                 false, false);
                                             Thread.Sleep(200);
-                                            //     SentCommonMsg(PeopleId,
-                                            //string.Format("您有一条待审批的流程(流水号:{0})，请及时登入研究院信息管理系统进行审批。", tasks.TaskId),
-                                            //taskNew.ApplyMan, taskNew.Remark, null);
                                         }
                                         i++;
                                     }

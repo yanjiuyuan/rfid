@@ -144,12 +144,6 @@ namespace DingTalk.Controllers
                         };
                     }
                     string CheckPath = path;
-
-                    //if (AppearCount > 6)
-                    //{
-                    //    int k = GetIndexOfString(path, "\\", 6);
-                    //    path = path.Substring(0, k - 1);
-                    //}
                     //项目负责人
                     bool IsProjectLeader = context.ProjectInfo.Where(p => p.ResponsibleManId == userId && p.FilePath == path).ToList().Count() > 0 ? true : false;
                     //小组成员
@@ -883,6 +877,10 @@ namespace DingTalk.Controllers
 
     public class FileModels
     {
+        /// <summary>
+        /// 文件类型 (0 文件夹 1 文件)
+        /// </summary>
+        int type { get; set; }
         public string path { get; set; }
         public int count { get; set; }
         public int order { get; set; }

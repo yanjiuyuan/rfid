@@ -164,7 +164,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 车辆查询
         /// </summary>
-        /// <param name="key">查询关键字</param>
+        /// <param name="key">车牌号、车名、颜色、</param>
         /// <returns></returns>
         [Route("Quary")]
         [HttpGet]
@@ -357,7 +357,7 @@ namespace DingTalk.Controllers
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页容量</param>
         /// <param name="applyManId">调用接口人Id</param>
-        /// <param name="key">关键字(姓名、车辆信息、部门信息、流水号)</param>
+        /// <param name="key">关键字(姓名、车辆信息、部门信息、流水号、车牌号)</param>
         /// <param name="IsSend">是否推送用户(默认否)</param>
         /// <param name="IsPublic">是否是公车(默认是)</param>
         /// <returns></returns>
