@@ -45,7 +45,7 @@
                        :nodeid="nodeInfo.NodeId">
     </sam-approver-list>*@
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <template v-if="index==0">
             <el-form-item label="审批意见" prop="mark">

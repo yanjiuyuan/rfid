@@ -14,3 +14,6 @@
         <el-option v-for="d in DingData.dept" :label="d" :value="d" key="d"></el-option>
     </el-select>
 </el-form-item>
+<el-form-item label="意见">
+    <sam-input :value.sync="ruleForm.remark" style="width:600px;" :maxlength="80"></sam-input>
+</el-form-item>

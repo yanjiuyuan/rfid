@@ -8,7 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form id="formImg" :model="tableForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent id="formImg" :model="tableForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="标题">
             <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>

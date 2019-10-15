@@ -9,7 +9,7 @@
         <i class="el-icon-arrow-left"></i>
         {{ruleForm.Title}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--搜索表格-->
         <template>
             <span style="padding:3px;">流水号</span>

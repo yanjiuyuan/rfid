@@ -7,12 +7,12 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
 
 
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:500px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -414,7 +414,7 @@
                         Object.assign(this.ruleForm, proj)
                         this.ruleForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
                         if (proj.ProjectType == '产品类' || proj.ProjectType == '教育类') this.uploadFileConfig[14].must = true
-                        proj.ProjectType == '研发类' && proj.ProjectSmallType == '纵向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
+                        proj.ProjectType == '研发类' && proj.ProjectSmallType == '横向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
                     }
                 }
                 //根据项目显示文件

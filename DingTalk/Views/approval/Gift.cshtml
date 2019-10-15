@@ -47,8 +47,8 @@
         </el-table>
         <!--编辑项目表单-->
         <el-dialog title="编辑礼品库存" :visible.sync="dialogFormVisible">
-            <el-form :model="editForm" ref="ruleForm" label-width="100px" class="demo-ruleForm"
-                     enctype="multipart/form-data" :inline="true">
+            <el-form v-on:submit.native.prevent :model="editForm" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                     enctype="multipart/form-data">
                 <template>
                     <el-form-item v-for="(value,key) in excelConfig" :prop="key" :label="value">
                         <el-input v-model="editForm[key]"></el-input>
@@ -99,7 +99,7 @@
         </el-table-column>
     </el-table>
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/startForm.cshtml")
         @RenderPage("~/Views/Shared/startButton.cshtml")

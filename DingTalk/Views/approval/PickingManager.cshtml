@@ -11,7 +11,7 @@
     </div>
     @*用车数据*@
     <!--检索项目表单-->
-    <el-form :inline="true" :model="searchParam" class="demo-form-inline"
+    <el-form v-on:submit.native.prevent :model="searchParam" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
             <sam-input :value.sync="searchParam.key" style="width:200px;" placeholder="申请人、申请部门、物料名称"></sam-input>

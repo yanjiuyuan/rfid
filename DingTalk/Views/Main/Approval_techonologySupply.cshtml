@@ -8,11 +8,11 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
     </el-form>
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="120px" class="demo-tableForm">
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="120px" class="demo-tableForm">
 
         <el-form-item label="技术支持部门">
             <el-input v-model="tableForm.DeptName" style="width:600px;" :disabled="true" type="textarea"></el-input>
@@ -110,7 +110,7 @@
             </el-form-item>
         </template>
     </el-form>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <template>
@@ -147,10 +147,6 @@
                 demo.fileListToUrl()
                 this.$refs['tableForm'].validate((valid) => {
                     if (valid && this.ruleForm.FileUrl) {
-                        let param = {
-                            "Id": this.ruleForm.Id,
-                            "Remark": this.tableForm.Mark
-                        }
                         if (NodeId == 1) {
                             if (this.fileList.length == 0) {
                                 this.elementAlert('提示信息', '未上传文件') 
@@ -159,13 +155,6 @@
                             this.fileListToUrl()
                             this.tableForm['StartTime'] = _dateToString(this.tableForm.StartTime[0])
                             this.tableForm['EndTime'] = _dateToString(this.tableForm.StartTime[1])
-                            param = {
-                                "Id": this.ruleForm.Id,
-                                "Remark": this.tableForm.Mark,
-                                "FileUrl": this.ruleForm.FileUrl,
-                                "MediaId": this.ruleForm.MediaId,
-                                "OldFileUrl": this.ruleForm.OldFileUrl,
-                            }
                         }
                         
                         if (NodeId == 4) {
@@ -196,15 +185,14 @@
                             this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
                                 this.PostData('ProjectNew/AddProject', [param2], (res) => {
                                     //return
-                                    this.aggreSubmit(param)
+                                    this.aggreSubmit()
                                 })
                             })
                             return
                         }
-                        console.log(JSON.stringify(param))
                         //return
                         this.PostData('TechnicalSupport/Modify', this.tableForm, (res) => {
-                            this.aggreSubmit(param)
+                            this.aggreSubmit()
                         })
                     }
                     else {
@@ -240,6 +228,9 @@
                         that.tableForm.TeamMembers = names.join(',')
                         that.tableForm.TeamMembersId = ids.join(',')
                         that.nodeList[5].AddPeople = addPeoples
+                        for (let d of addPeoples) {
+                            $("#" + 5).after('<span class="el-tag ' + 5 + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 4) + '</span >')
+                        }
                     },
                     onFail: function (err) { }
                 });
@@ -253,12 +244,28 @@
             getHelpTable() {
                 this.GetData('TechnicalSupport/Read?taskid=' + TaskId, (res) => {
                     this.tableForm = res
+                    if (this.tableForm.TeamMembersId && NodeId == 1) {
+                        let names = this.tableForm.TeamMembers.split(',')
+                        let ids = this.tableForm.TeamMembersId.split(',')
+                        let addPeoples = []
+                        for (let i = 0; i < ids.length; i++) {
+                            addPeoples.push({
+                                name: names[i],
+                                emplId: ids[i],
+                            })
+                        }
+                        this.addPeopleNodes = [5]
+                        this.nodeList[5].AddPeople = addPeoples
+                        for (let d of addPeoples) {
+                            $("#" + 5).after('<span class="el-tag ' + 5 + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 4) + '</span >')
+                        }
+                    }
                 })
             },
         },
         created: function () {
             this.initEnd(() => { this.getHelpTable() })
-            if (NodeId == 1) this.noEdit = false
+            if (NodeId == 1 && Index != '2') this.noEdit = false
         }
     })
 
