@@ -8,10 +8,10 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="驾驶员" prop="DrivingMan">
             <el-input v-model="tableForm.DrivingMan" style="width:200px;" :disabled="true"></el-input>
@@ -42,7 +42,7 @@
             </el-date-picker>
         </el-form-item>
     </el-form>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--添加审批人-->
         <el-form-item>
             <el-checkbox v-model="checked">本人同意<b v-on:click="showMore" style="color:#88B6FF;"><< 私车公用协议书 >></b></el-checkbox>

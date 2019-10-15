@@ -34,7 +34,7 @@
         </el-collapse-item>
     </el-collapse>
 
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/endForm.cshtml")
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <template v-if="state=='已完成'">

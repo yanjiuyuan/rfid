@@ -9,10 +9,10 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="协作部门" prop="CooperateDept">
             <el-select v-model="tableForm.CooperateDept" style="width:300px;">
@@ -42,7 +42,7 @@
         </el-form-item>
     </el-form>
 
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="上传相关文件">
             <el-upload class="upload-demo"
                        drag

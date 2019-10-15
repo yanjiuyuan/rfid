@@ -9,7 +9,7 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
 
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="用途及使用说明">
             <el-input v-model="ruleForm.Remark" :disabled="true" style="width:500px;"></el-input>

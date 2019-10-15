@@ -8,10 +8,10 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="加班事由" prop="OverTimeContent">
             <el-input v-model="tableForm.OverTimeContent" style="width:90%;"></el-input>
@@ -50,7 +50,7 @@
         </el-form-item>
         <hr />
     </el-form>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>

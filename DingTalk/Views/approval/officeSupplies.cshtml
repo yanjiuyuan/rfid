@@ -71,7 +71,7 @@
         </el-table-column>
     </el-table>
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="预计总价">

@@ -630,7 +630,7 @@
     <Content Include="Scripts\drag.js" />
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element-ui.common.js" />
-    <Content Include="Scripts\element.js" />
+    <Content Include="Scripts\element1.js" />
     <Content Include="Scripts\elementUi\alert.js" />
     <Content Include="Scripts\elementUi\aside.js" />
     <Content Include="Scripts\elementUi\autocomplete.js" />

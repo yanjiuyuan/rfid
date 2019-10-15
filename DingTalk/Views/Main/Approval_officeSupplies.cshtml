@@ -30,7 +30,7 @@
                        :total="totalRows">
         </el-pagination>
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="预计总价">
             <el-input v-model="totalPrice" :disabled="true"></el-input>

@@ -10,7 +10,7 @@
         添加项目
     </div>
     <!--创建项目表单-->
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <template>
             <el-form-item label="项目名称" prop="inputProjectName">

@@ -41,7 +41,7 @@
 
     @*用车数据*@
     <!--检索项目表单-->
-    <el-form :inline="true" :model="searchParam" class="demo-form-inline"
+    <el-form v-on:submit.native.prevent :model="searchParam" class="demo-form-inline"
              size="medium">
         <el-form-item label="关键字">
             <sam-input :value.sync="searchParam.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
@@ -109,8 +109,8 @@
 
     <!--编辑车辆信息表单-->
     <el-dialog title="编辑车辆信息" :visible.sync="dialogFormVisible">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
-                 enctype="multipart/form-data" :inline="true">
+        <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
+                 enctype="multipart/form-data">
             <template>
                 <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' " :key="i" :label="tableItems[i]" :prop="i">
                     <el-input v-model="ruleForm[i]"></el-input>

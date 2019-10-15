@@ -8,10 +8,10 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="单位名称" prop="Company">
             <el-select v-model="tableForm.Company" style="width:400px;">
@@ -49,7 +49,7 @@
             </el-date-picker>
         </el-form-item>
     </el-form>
-    <el-form :model="ruleForm" :rules="rules" :inline="true" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
 
         <el-form-item label="上传图片" required="required">
             <el-upload action="/drawingupload/Upload"

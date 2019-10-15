@@ -17,7 +17,7 @@
         <i class="el-icon-arrow-left"></i>
         添加流程
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="流程Id" prop="FlowId">
             <el-input v-model="ruleForm.FlowId"></el-input>

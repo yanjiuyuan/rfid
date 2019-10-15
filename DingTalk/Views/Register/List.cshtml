@@ -47,7 +47,7 @@
 
     </el-collapse>
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         <el-form-item label="类别Id" prop="Sort_ID">
             <el-input v-model="ruleForm.Sort_ID"></el-input>
@@ -67,8 +67,8 @@
     </el-form>
 
     <el-dialog title="编辑类别" :visible.sync="dialogFormVisible">
-        <el-form :model="tableForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
-                 enctype="multipart/form-data" :inline="true">
+        <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                 enctype="multipart/form-data">
             <template>
                 <el-form-item label="类别Id" prop="Sort_ID">
                     <el-input v-model="tableForm.Sort_ID"></el-input>

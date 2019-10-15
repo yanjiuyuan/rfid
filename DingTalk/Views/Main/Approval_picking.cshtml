@@ -24,7 +24,7 @@
                        :total="totalRows">
         </el-pagination>
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="上传图片" v-if="NodeId >= 3" required="required">

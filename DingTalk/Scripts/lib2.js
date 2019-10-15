@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~2')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~3')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -13,6 +13,9 @@ var Id = 0 //自增task表的id
 var UserList = [] //所有用户数据
 var imgConfig = [] //审批主页图片和路由配置
 var ReApprovalTempData = {} //重新发起审批保存的临时数据
+var imageListOrigin = []
+var fileListOrigin = []
+var pdfListOrigin = []
 var imageList = []
 var fileList = []
 var pdfList = []
@@ -717,7 +720,7 @@ var mixin = {
 
                                     }
                                 });
-                                //that.disablePage = false
+                                that.disablePage = false
                                 return
                             }
                             for (let a of node.AddPeople) {
@@ -755,6 +758,9 @@ var mixin = {
             this.disablePage = true
             var paramArr = []
             var that = this
+            this.fileList.splice(0, fileListOrigin.length)
+            this.imggeList.splice(0, imageListOrigin.length)
+            this.pdfList.splice(0, pdfListOrigin.length)
             this.fileListToUrl()
             paramArr.push({
                 "Id": this.ruleForm.Id,
@@ -1081,6 +1087,7 @@ var mixin = {
                         url: document.location + (img.substring(2)).replace(/\\/g, "/")
                     })
                 }
+                imageListOrigin = _cloneArr(imageList)
                 this.imageList = imageList
             }
             if (data.FileUrl && data.FileUrl.length > 5) {
@@ -1096,6 +1103,7 @@ var mixin = {
                         mediaId: MediaIdList[i]
                     })
                 }
+                fileListOrigin = _cloneArr(fileList)
                 this.fileList = fileList
             }
             if (data.FilePDFUrl && data.FilePDFUrl.length > 5) {
@@ -1113,6 +1121,7 @@ var mixin = {
                         state: stateList[i] || '1'
                     })
                 }
+                pdfListOrigin = _cloneArr(pdfList)
                 this.pdfList = pdfList
             }
         },
@@ -1158,14 +1167,14 @@ var mixin = {
                         }
                     }
                 }
-                //if (this.index && this.index != '0' && this.index != '2') {
-                //    for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                //            this.NodeId = this.nodeList[i].NodeId
-                //            break
-                //        }
-                //    }
-                //}
+                if (this.index && this.index != '0' && this.index != '2') {
+                    for (let i = this.nodeList.length - 1; i >= 0; i--) {
+                        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                            this.NodeId = this.nodeList[i].NodeId
+                            break
+                        }
+                    }
+                }
                 this.getNodeInfo_done(this.nodeList)
             })
             
@@ -1376,22 +1385,10 @@ var mixin = {
             this.showPre = true;
         },
         handlePictureRemove(file, fileList) {
-            this.changePictureList(fileList)
+            this.imageList = _cloneArr(fileList)
         },
         handlePictureCardSuccess(response, file, fileList) {
-            this.changePictureList(fileList)
-        },
-        changePictureList(fileList) {
-            console.log(fileList)
-            this.ruleForm['ImageUrl'] = ''
-            this.ruleForm['OldImageUrl'] = ''
-            for (var i = 0; i < fileList.length; i++) {
-                this.ruleForm.ImageUrl += fileList[i].response.Content
-                this.ruleForm.OldImageUrl += fileList[i].name
-                if (i == fileList.length - 1) break
-                this.ruleForm.ImageUrl += ','
-                this.ruleForm.OldImageUrl += ','
-            }
+            this.imageList = _cloneArr(fileList)
         },
         judgeRole(roleName) {
             var url = '/Role/GetRoleInfo?RoleName=' + roleName
@@ -1497,6 +1494,20 @@ var mixin = {
             location.href = serverUrl + 'ProjectNew/DownLoad?path=' + path
         },
         fileListToUrl() {
+            if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
+                this.ruleForm['FilePDFUrl'] = ''
+                this.ruleForm['OldFilePDFUrl'] = ''
+                this.ruleForm['MediaIdPDF'] = ''
+                for (var i = 0; i < this.pdfList.length; i++) {
+                    this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
+                    this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
+                    this.ruleForm.MediaIdPDF += this.pdfList[i].mediaid
+                    if (i == this.pdfList.length - 1) break
+                    this.ruleForm.FilePDFUrl += ','
+                    this.ruleForm.OldFilePDFUrl += ','
+                    this.ruleForm.MediaIdPDF += ','
+                }
+            }
             if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
                 this.ruleForm['FilePDFUrl'] = ''
                 this.ruleForm['OldFilePDFUrl'] = ''
@@ -1753,6 +1764,8 @@ function lengthLimit(min, max) {
     }
 }
 
+
+
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
@@ -1776,7 +1789,51 @@ Vue.component('sam-input', {
     },
 })
 
+var n = `<template>
+            <el-form-item :label="label1 || '开始时间'" :required="true || required">  
+                <el-date-picker v-model="value1" :class="{ redborder: value1 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item :label="label2 || '结束时间'" required="required">
+                <el-date-picker v-model="value2" :class="{ redborder: value2 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
+                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                </el-date-picker>
+            </el-form-item>
+        </template>`
 
+Vue.component('sam-timerange', {
+    props: ['label1', 'label2', 'type', 'value1', 'value2', 'required'],
+    template: `<div> 
+                <el-form-item :label="label1 || '开始时间'" :required="true || required">  
+                    <el-date-picker v-model="v1" :class="{ redborder: value1 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
+                                    type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item :label="label2 || '结束时间'" required="required">
+                    <el-date-picker  v-model="v2" :class="{ redborder: value2 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
+                                    type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
+               </div>`,
+    data: function () {
+        return {
+            v1: '',
+            v2: ''
+        }
+    },
+    methods: {
+        onChange(value) {
+            if (this.v1 && this.v2 && this.v1 > this.v2) {
+                this.v1 = this.v2
+                this.$message({ type: 'error', message: `取值范围错误！` });
+                return
+            }
+            this.$emit('update:value1', this.v1)
+            this.$emit('update:value2', this.v2)
+        }
+    },
+})
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
@@ -2019,7 +2076,7 @@ Vue.component('ding', {
             <div v-show="dinglist && dinglist.length && dinglist.length>0" style="display:inline-block;">
                 <el-button type="primary" v-on:click="Ding">钉一下</el-button>
                 <el-dialog title="编辑钉一下内容" :visible.sync="dialogFormVisible">
-                  <el-form :model="form">
+                  <el-form v-on:submit.native.prevent :model="form">
                     <el-form-item label="钉信息" :label-width="formLabelWidth">
                       <el-input v-model="form.text" auto-complete="off"></el-input>
                     </el-form-item>

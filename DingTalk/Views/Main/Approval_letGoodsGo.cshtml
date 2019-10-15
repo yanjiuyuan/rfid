@@ -8,7 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="tableForm" :rules="rules" :inline="true" ref="tableForm" label-width="120px" class="demo-tableForm">
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="120px" class="demo-tableForm">
 
         @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="单位名称">

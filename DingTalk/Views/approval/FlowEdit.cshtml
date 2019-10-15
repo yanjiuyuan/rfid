@@ -21,7 +21,7 @@
             <template slot="title">
                 <span style="font-size:20px;">{{key}}</span>
             </template>
-            <el-form class="demo-ruleForm">
+            <el-form v-on:submit.native.prevent class="demo-ruleForm">
                 <sam-approver-edit :nodeList="value" :dingdata="{nickName:name,userid:id}"></sam-approver-edit>
             </el-form>
         </el-collapse-item>

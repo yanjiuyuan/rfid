@@ -43,7 +43,7 @@
             <el-table :data="projectInfo" stripe border>
                 <el-table-column type="expand">
                     <template slot-scope="props">
-                        <el-form label-position="left" inline class="table-expand">
+                        <el-form v-on:submit.native.prevent label-position="left" inline class="table-expand">
                             <span>创建时间:{{ props.row.CreateTime }}</span>&nbsp;&nbsp;
                             <span>开始时间:{{ props.row.StartTime }}</span>&nbsp;&nbsp;
                             <span>结束时间:{{ props.row.EndTime }}</span><br />
@@ -112,7 +112,7 @@
 
     <!--新建文件夹表单-->
     <el-dialog title="新建文件夹" :visible.sync="dialogFormVisible">
-        <el-form :model="formInline" class="demo-form-inline" :rules="rules" ref="formInline"
+        <el-form v-on:submit.native.prevent :model="formInline" class="demo-form-inline" :rules="rules" ref="formInline"
                  size="medium" >
             <el-form-item label="名称" prop="name">
                 <el-input v-model="formInline.name"></el-input>
@@ -187,7 +187,7 @@
                     let folderArr = []
                     let fileArr = []
                     for (let d of data) {
-                        d.path.indexOf('.') > 0 ? fileArr.push(d) : folderArr.push(d)
+                        d.IsFile ? fileArr.push(d) : folderArr.push(d)
                     }
                     that.folderList = folderArr
                     that.data = fileArr

@@ -8,7 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form :model="tableForm" :rules="rules" :inline="true" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="项目名称">
             <el-input v-model="tableForm.ProjectName" style="width:550px;" :disabled="true"></el-input>
@@ -35,19 +35,19 @@
             <el-input v-model="tableForm.TeamMembersId" style="display:none;"></el-input>
         </el-form-item>
         <el-form-item label="项目大类">
-            <el-input v-model="tableForm.ProjectType" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectType" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目小类">
-            <el-input v-model="tableForm.ProjectSmallType" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectSmallType" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="创建时间">
-            <el-input v-model="tableForm.CreateTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.CreateTime" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="开始时间">
-            <el-input v-model="tableForm.StartTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.StartTime" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="结束时间">
-            <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EndTime" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="是否评审" v-if="NodeId >= 2">
             <el-radio :disabled="NodeId >2" v-model="tableForm.IsReview" :label="true">是</el-radio>

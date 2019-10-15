@@ -10,10 +10,10 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <!--创建项目表单-->
-    <el-form :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="项目名称" prop="ProjectName">
             <sam-input :value.sync="tableForm.ProjectName" :required="true"></sam-input>
@@ -44,7 +44,8 @@
             </el-tag>
             <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
         </el-form-item>
-        <el-form-item label="开始日期" required="required">
+        <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
+        @*<el-form-item label="开始日期" required="required">
             <el-date-picker v-model="tableForm.StartTime" :class="{ redborder:tableForm.StartTime ==''}" :editable="false" style="width:140px;"
                             type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
             </el-date-picker>
@@ -53,9 +54,9 @@
             <el-date-picker v-model="tableForm.EndTime" :class="{ redborder:tableForm.EndTime ==''}" :editable="false" style="width:140px;"
                             type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
             </el-date-picker>
-        </el-form-item>
+        </el-form-item>*@
     </el-form>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="项目立项书和项目答辩PPT，测试项目上传方案" required="required">
             <el-upload class="upload-demo"
@@ -172,8 +173,8 @@
         created: function () {
             this.initStart(() => {
                 //重新发起、临时保存数据处理
-                this.ptypes[0] = this.tableForm.ProjectType
-                this.ptypes[1] = this.tableForm.ProjectSmallType
+                if (this.tableForm.ProjectType) this.ptypes[0] = this.tableForm.ProjectType
+                if (this.tableForm.ProjectSmallType) tthis.ptypes[1] = this.tableForm.ProjectSmallType
                 if (this.tableForm.TeamMembersId) {
                     let names = this.tableForm.TeamMembers.split(',')
                     let ids = this.tableForm.TeamMembersId.split(',')
@@ -184,7 +185,6 @@
                         })
                     }
                 }
-                
             })
         }
     })

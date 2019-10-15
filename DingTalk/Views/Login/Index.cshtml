@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout-noLogin.cshtml";
 }
 
-<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+<el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
     <el-form-item label="账号" prop="username">
         <el-input v-model="ruleForm.username"></el-input>
     </el-form-item>

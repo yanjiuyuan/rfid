@@ -88,7 +88,7 @@
         @*</el-form-item>*@
     </template>
     <hr />
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/startForm.cshtml")
         <el-form-item label="项目名称" prop="ProjectName">
