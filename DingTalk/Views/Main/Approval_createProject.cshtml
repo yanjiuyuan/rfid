@@ -8,7 +8,7 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
+    <el-form v-on:submit.native.prevent :model="tableForm" ref="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="项目名称">
             <el-input v-model="tableForm.ProjectName" style="width:550px;" :disabled="true"></el-input>
@@ -50,8 +50,8 @@
             <el-input v-model="tableForm.EndTime" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="是否评审" v-if="NodeId >= 2">
-            <el-radio :disabled="NodeId >2" v-model="tableForm.IsReview" :label="true">是</el-radio>
-            <el-radio :disabled="NodeId >2" v-model="tableForm.IsReview" :label="false">否</el-radio>
+            <el-radio :disabled="NodeId >2 || index == 2" v-model="tableForm.IsReview" :label="true">是</el-radio>
+            <el-radio :disabled="NodeId >2 || index == 2" v-model="tableForm.IsReview" :label="false">否</el-radio>
         </el-form-item>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="立项文件">
@@ -89,29 +89,32 @@
         methods: {
             onSubmit() {
                 var that = this
-                if (NodeId == 3 || NodeId == 2) {
-                    if (NodeId == 3 && !this.tableForm.ProjectId) {
-                        this.$alert('项目编号不能为空', '提示信息', {
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        if (NodeId == 3 || NodeId == 2) {
+                            this.PostData('CreateProject/Modify', this.tableForm, (res) => {
+                                if (NodeId != 3) {
+                                    that.aggreSubmit()
+                                    return
+                                }
+                                this.tableForm['CooperativeUnit'] = this.tableForm.Customer
+                                this.tableForm['ApplyMan'] = this.nodeInfo.NodePeople
+                                this.tableForm['ApplyManId'] = this.nodeInfo.PeopleId
+                                this.PostData('ProjectNew/AddProject', [this.tableForm], (res) => {
+                                    this.aggreSubmit()
+                                })
+                            })
+                        }
+                        else {
+                            this.aggreSubmit()
+                        }
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
                             confirmButtonText: '确定'
                         })
-                        return
                     }
-                    this.PostData('CreateProject/Modify', this.tableForm, (res) => {
-                        if (NodeId != 3) {
-                            that.aggreSubmit()
-                            return
-                        }
-                        this.tableForm['CooperativeUnit'] = this.tableForm.Customer
-                        this.tableForm['ApplyMan'] = this.nodeInfo.NodePeople
-                        this.tableForm['ApplyManId'] = this.nodeInfo.PeopleId
-                        this.PostData('ProjectNew/AddProject', [this.tableForm], (res) => {
-                            this.aggreSubmit()
-                        })
-                    })
-                }
-                else {
-                    this.aggreSubmit()
-                }
+                })
             },
             printTable() {
                 this.PostData('createProject/PrintPDF', {
