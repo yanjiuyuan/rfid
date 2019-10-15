@@ -356,7 +356,6 @@
     <Compile Include="Controllers\EvectionController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\FileNewController.cs" />
-    <Compile Include="Controllers\FlowInfoController.cs" />
     <Compile Include="Controllers\FlowInfoNewController.cs" />
     <Compile Include="Controllers\GiftTableController.cs" />
     <Compile Include="Controllers\GodownManagerController.cs" />

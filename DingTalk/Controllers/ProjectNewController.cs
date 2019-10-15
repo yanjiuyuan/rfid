@@ -84,10 +84,17 @@ namespace DingTalk.Controllers
                         fileCount = getFileInfos.Length;
                     }
                     int i = 0;
+                    bool IsFile = false;
                     //绝对路径转相对
                     string RelativePath = FileHelper.RelativePath(AppDomain.CurrentDomain.BaseDirectory, item);
+                    if (File.Exists(item))
+                    {
+                        IsFile = true;
+                    }
                     string FileName = Path.GetFileName(RelativePath);
-                    //RePathList.Add(FileName);
+
+                    DateTime createTime = getFolder.CreationTime;//获取目录或者文件的创建 日期
+
                     if (FileName.Length > 2)
                     {
                         if (!Int32.TryParse(FileName.Substring(0, 2), out i))
@@ -99,6 +106,8 @@ namespace DingTalk.Controllers
                     {
                         FileModelsList.Add(new FileModels()
                         {
+                            createTime = createTime,
+                            IsFile = IsFile,
                             order = i,
                             path = FileName,
                             count = fileCount,
@@ -110,6 +119,8 @@ namespace DingTalk.Controllers
                         {
                             FileModelsList.Add(new FileModels()
                             {
+                                createTime = createTime,
+                                IsFile = IsFile,
                                 order = i,
                                 path = FileName,
                                 count = fileCount,
@@ -118,6 +129,7 @@ namespace DingTalk.Controllers
                     }
                 }
 
+                FileModelsList = FileModelsList.OrderByDescending(f => f.createTime).ToList();
                 using (DDContext context = new DDContext())
                 {
                     //项目管理员
@@ -129,7 +141,7 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            data = FileModelsList.OrderBy(f => f.order),
+                            data = FileModelsList,
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -139,17 +151,11 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            data = FileModelsList.OrderBy(f => f.order),
+                            data = FileModelsList,
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
                     string CheckPath = path;
-
-                    //if (AppearCount > 6)
-                    //{
-                    //    int k = GetIndexOfString(path, "\\", 6);
-                    //    path = path.Substring(0, k - 1);
-                    //}
                     //项目负责人
                     bool IsProjectLeader = context.ProjectInfo.Where(p => p.ResponsibleManId == userId && p.FilePath == path).ToList().Count() > 0 ? true : false;
                     //小组成员
@@ -161,7 +167,7 @@ namespace DingTalk.Controllers
                         {
                             return new NewErrorModel()
                             {
-                                data = FileModelsList.OrderBy(f => f.order),
+                                data = FileModelsList,
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         }
@@ -184,7 +190,7 @@ namespace DingTalk.Controllers
                         }
                         return new NewErrorModel()
                         {
-                            data = FileModelsList.OrderBy(f => f.order),
+                            data = FileModelsList,
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -883,6 +889,14 @@ namespace DingTalk.Controllers
 
     public class FileModels
     {
+        /// <summary>
+        /// 文件创建时间
+        /// </summary>
+        public DateTime createTime { get; set; }
+        /// <summary>
+        /// 是否是文件
+        /// </summary>
+        public bool IsFile { get; set; }
         public string path { get; set; }
         public int count { get; set; }
         public int order { get; set; }
