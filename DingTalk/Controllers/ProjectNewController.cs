@@ -92,8 +92,9 @@ namespace DingTalk.Controllers
                         IsFile = true;
                     }
                     string FileName = Path.GetFileName(RelativePath);
-                   
-                    //RePathList.Add(FileName);
+
+                    DateTime createTime = getFolder.CreationTime;//获取目录或者文件的创建 日期
+
                     if (FileName.Length > 2)
                     {
                         if (!Int32.TryParse(FileName.Substring(0, 2), out i))
@@ -105,7 +106,8 @@ namespace DingTalk.Controllers
                     {
                         FileModelsList.Add(new FileModels()
                         {
-                            IsFile= IsFile,
+                            createTime = createTime,
+                            IsFile = IsFile,
                             order = i,
                             path = FileName,
                             count = fileCount,
@@ -117,6 +119,7 @@ namespace DingTalk.Controllers
                         {
                             FileModelsList.Add(new FileModels()
                             {
+                                createTime = createTime,
                                 IsFile = IsFile,
                                 order = i,
                                 path = FileName,
@@ -126,6 +129,7 @@ namespace DingTalk.Controllers
                     }
                 }
 
+                FileModelsList = FileModelsList.OrderByDescending(f => f.createTime).ToList();
                 using (DDContext context = new DDContext())
                 {
                     //项目管理员
@@ -137,7 +141,7 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            data = FileModelsList.OrderBy(f => f.order),
+                            data = FileModelsList,
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -147,7 +151,7 @@ namespace DingTalk.Controllers
                     {
                         return new NewErrorModel()
                         {
-                            data = FileModelsList.OrderBy(f => f.order),
+                            data = FileModelsList,
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -163,7 +167,7 @@ namespace DingTalk.Controllers
                         {
                             return new NewErrorModel()
                             {
-                                data = FileModelsList.OrderBy(f => f.order),
+                                data = FileModelsList,
                                 error = new Error(0, "读取成功！", "") { },
                             };
                         }
@@ -186,7 +190,7 @@ namespace DingTalk.Controllers
                         }
                         return new NewErrorModel()
                         {
-                            data = FileModelsList.OrderBy(f => f.order),
+                            data = FileModelsList,
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -885,6 +889,10 @@ namespace DingTalk.Controllers
 
     public class FileModels
     {
+        /// <summary>
+        /// 文件创建时间
+        /// </summary>
+        public DateTime createTime { get; set; }
         /// <summary>
         /// 是否是文件
         /// </summary>

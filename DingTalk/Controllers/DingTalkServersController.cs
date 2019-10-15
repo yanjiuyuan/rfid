@@ -431,13 +431,14 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <param name="title">标题</param>
-        /// <param name="applyMan">申请人</param>
+        /// <param name="flowName">流程名</param>
+        /// <param name="taskId">流水号</param>
         /// <param name="linkUrl">链接路径</param>
         /// <returns></returns>
         [Route("sendOaMessage")]
         [HttpPost]
         public async Task<object> sendOaMessage(string userId, string title,
-            string applyMan, string linkUrl = "eapp://page/start/index")
+          string flowName, string taskId, string linkUrl = "eapp://page/start/index")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
@@ -453,7 +454,8 @@ namespace DingTalk.Controllers
                 {
                     title = title,
                     form = new form[] {
-                        new form{ key="申请人：",value=applyMan},
+                        new form{ key="流水号：",value=taskId},
+                        new form{ key="流程类型：",value=flowName},
                         new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
                     },
                     //rich = new rich
