@@ -51,13 +51,23 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 获取部门下所有用户信息
         /// </summary>
-        /// <param name="deptId"></param>
+        /// <param name="deptIdList">实例： 77212117,56943182</param>
         /// <returns></returns>
         [Route("GetDeptUserListByDeptId")]
-        public async Task<string> GetDeptUserListByDeptId(int deptId)
+        public async Task<Dictionary<int, string>> GetDeptUserListByDeptId(string deptIdList)
         {
-            var result = await dtManager.GetDeptUserListByDeptId(deptId);
-            return result;
+            Dictionary<int, string> keyValuePairs = new Dictionary<int, string>();
+            if (deptIdList != null)
+            {
+                string[] deptIds = deptIdList.Split(',');
+                foreach (var item in deptIds)
+                {
+                    DingTalkManager dingTalkManager = new DingTalkManager();
+                    var result = await dingTalkManager.GetDeptUserListByDeptId(int.Parse(item));
+                    keyValuePairs.Add(int.Parse(item), result);
+                }
+            }
+            return keyValuePairs;
         }
 
         /// <summary>
@@ -126,13 +136,16 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("singleDepartment")]
-        public async Task<string> singleDepartment(int Id)
+        public async Task<List<string>> singleDepartment(List<int> IdList)
         {
-            //var allDptStr = await dtManager.GetDepartmentList();
-            //var allDpt = JsonConvert.DeserializeObject<DepartmentResponseModel>(allDptStr);
-            DingTalkManager dingTalkManager = new DingTalkManager();
-            var result = await dingTalkManager.SingleDepartment(Id);
-            return result;
+            List<string> resultList = new List<string>();
+            foreach (var item in IdList)
+            {
+                DingTalkManager dingTalkManager = new DingTalkManager();
+                var result = await dingTalkManager.SingleDepartment(item);
+                resultList.Add(result);
+            }
+            return resultList;
         }
         private string GetRandomNum()
         {
@@ -167,7 +180,8 @@ namespace DingTalk.Controllers
             List<string> deptNameList = new List<string>();
             foreach (var item in userDetail.department)
             {
-                string res = await singleDepartment(int.Parse(item));
+                List<int> vs = new List<int>(int.Parse(item));
+                string res = "";//await singleDepartment(vs);
                 Models.ServerModels.DeptModel deptModel = JsonConvert.DeserializeObject<Models.ServerModels.DeptModel>(res);
                 deptNameList.Add(deptModel.name);
             }
