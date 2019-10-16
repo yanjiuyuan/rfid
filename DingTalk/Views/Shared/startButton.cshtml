@@ -8,7 +8,7 @@
     <sam-input :value.sync="ruleForm.remark" style="width:600px;" :maxlength="80"></sam-input>
 </el-form-item>
 
-<sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :specialRoleNames="specialRoleNames" :specialRole="specialRole"></sam-approver-list>
+<sam-approver-list :nodeList="nodeList" :nodedata="nodeInfo" :sprolenames="specialRoleNames" :specialRole="specialRole"></sam-approver-list>
 <el-form-item>
     <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">提交申请</el-button>
     <el-button type="primary" v-on:click="saveTempData">临时保存</el-button>

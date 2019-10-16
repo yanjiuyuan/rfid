@@ -15,20 +15,14 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="技术支持部门">
-            <el-checkbox-group v-model="tableForm.DeptName">
-                <el-checkbox v-for="s in DeptNames" :label="s"></el-checkbox>
-            </el-checkbox-group>
+            <sam-checkbox :str.sync="tableForm.DeptName" :arr="DeptNames"></sam-checkbox>
         </el-form-item>
         <el-form-item label="项目负责人" prop="ResponsibleMan">
             <el-input v-model="tableForm.ResponsibleMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="其他工程师" prop="OtherEngineers">
-            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
-                    :disable-transitions="false" v-on:close="handleClose(tag)">
-                {{tag.name}}
-            </el-tag>
-            <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
+            <sam-group :names.sync="tableForm.OtherEngineers" :ids.sync="tableForm.OtherEngineersId"></sam-group>
         </el-form-item>
         <el-form-item label="合作单位" prop="Customer">
             <sam-input :value.sync="tableForm.Customer" style="width:400px;" :required="true"></sam-input>
@@ -74,8 +68,7 @@
                 CompanyNames: CompanyNames,
                 addPeopleNodes: [1], //额外添加审批人节点数组
                 tableForm: {
-                    DeptName: [],
-                    groupPeople: [],
+                    DeptName: "",
                     ResponsibleMan: "",
                     ResponsibleManId: '',
                     OtherEngineers: "",
@@ -100,19 +93,9 @@
         methods: {
             onSubmit(formName) {
                 this.$refs['tableForm'].validate((valid) => {
-                    if (valid && this.groupPeople[0]) {
-                        
+                    if (valid) {
                         let callBack = (taskId) => {
-                            let names = []
-                            let ids = []
-                            for (let p of this.groupPeople) {
-                                names.push(p.name)
-                                ids.push(p.emplId)
-                            }
-                            this.tableForm.OtherEngineers = names.join(',')
-                            this.tableForm.OtherEngineersId = ids.join(',')
                             this.tableForm['TaskId'] = taskId
-                            this.tableForm.DeptName = this.tableForm.DeptName.join(',')
                             this.PostData('TechnicalSupport/Save', this.tableForm, () => {
                                 this.$alert('恭喜提交成功', '提示信息', {
                                     confirmButtonText: '确定',
@@ -123,6 +106,13 @@
                             })
                         }
                         this.approvalSubmit(callBack)
+                    }
+                    else {
+                        this.$alert('表单数据不全或有误', '提交错误', {
+                            confirmButtonText: '确定'
+                        });
+                        console.log('error submit!!');
+                        return false;
                     }
                 })
                 
@@ -150,6 +140,7 @@
                         }
                         for (let i = 0; i < that.nodeList.length; i++) {
                             if (that.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
+                                that.nodeList[i].AddPeople = []
                                 that.nodeList[i].AddPeople = addPeoples
                                 $("." + i).remove()
                                 $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + addPeoples[0].name.substring(0, 3) + '</span >')

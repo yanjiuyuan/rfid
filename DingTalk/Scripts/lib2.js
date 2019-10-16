@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~3')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~1')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -570,7 +570,7 @@ var mixin = {
         },
         //初始化方法
         initStart(callBack = function () { }) {
-            Index = '-1'
+            Index = 0
             this.DingData = DingData
             this.data = []
             this.tableData = []
@@ -1078,11 +1078,13 @@ var mixin = {
             fileList = []
             pdfList = []
             if (data.ImageUrl && data.ImageUrl.length > 5) {
-                var tempList = data.ImageUrl.split(',')
-                for (let img of tempList) {
+                var urlList = data.ImageUrl.split(',')
+                var oldUrlList = data.OldImageUrl.split(',')
+                for (let i = 0; i < urlList.length; i++) {
                     imageList.push({
-                        name: 'hello.jpg',
-                        url: document.location + (img.substring(2)).replace(/\\/g, "/")
+                        response: { Content: urlList[i] },
+                        name: oldUrlList[i],
+                        url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/")
                     })
                 }
                 imageListOrigin = _cloneArr(imageList)
@@ -1093,8 +1095,9 @@ var mixin = {
                 var urlList = data.FileUrl.split(',')
                 var oldUrlList = data.OldFileUrl.split(',')
                 var MediaIdList = data.MediaId ? data.MediaId.split(',') : []
-                for (var i = 0; i < urlList.length; i++) {
+                for (let i = 0; i < urlList.length; i++) {
                     fileList.push({
+                        response: { Content: urlList[i] },
                         name: oldUrlList[i],
                         path: urlList[i].replace(/\\/g, "/"),
                         url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
@@ -1111,8 +1114,9 @@ var mixin = {
                 var MediaIdList = data.MediaIdPDF ? data.MediaIdPDF.split(',') : []
                 var stateList = data.PdfState ? data.PdfState.split(',') : []
                 
-                for (var i = 0; i < urlList.length; i++) {
+                for (let i = 0; i < urlList.length; i++) {
                     pdfList.push({
+                        response: { Content: urlList[i] },
                         name: oldUrlList[i],
                         url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/"),
                         mediaId: MediaIdList[i],
@@ -1165,14 +1169,14 @@ var mixin = {
                         }
                     }
                 }
-                if (this.index && this.index != '0' && this.index != '2') {
-                    for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                            this.NodeId = this.nodeList[i].NodeId
-                            break
-                        }
-                    }
-                }
+                //if (this.index && this.index != '0' && this.index != '2') {
+                //    for (let i = this.nodeList.length - 1; i >= 0; i--) {
+                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                //            this.NodeId = this.nodeList[i].NodeId
+                //            break
+                //        }
+                //    }
+                //}
                 this.getNodeInfo_done(this.nodeList)
             })
             
@@ -1503,8 +1507,8 @@ var mixin = {
             this.ruleForm['OldFileUrl'] = ''
             this.ruleForm['MediaId'] = ''
 
-            if (this.imageList[0] && this.imageList[0].response && this.imageList[0].response.Content) {
-                for (var i = 0; i < this.imageList.length; i++) {
+            if (this.imageList[0] && this.imageList[0].response && this.imageList[0].response.Content ) {
+                for (let i = 0; i < this.imageList.length; i++) {
                     this.ruleForm.ImageUrl += this.imageList[i].response.Content
                     this.ruleForm.OldImageUrl += this.imageList[i].name
                     if (i == this.imageList.length - 1) break
@@ -1513,10 +1517,10 @@ var mixin = {
                 }
             }
             if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
-                for (var i = 0; i < this.pdfList.length; i++) {
+                for (let i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
                     this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
-                    this.ruleForm.MediaIdPDF += this.pdfList[i].mediaid
+                    this.pdfList[i].mediaid ? this.ruleForm.MediaIdPDF += this.pdfList[i].mediaid : this.ruleForm.MediaIdPDF += this.pdfList[i].mediaId
                     if (i == this.pdfList.length - 1) break
                     this.ruleForm.FilePDFUrl += ','
                     this.ruleForm.OldFilePDFUrl += ','
@@ -1524,10 +1528,10 @@ var mixin = {
                 }
             }
             if (this.fileList[0] && this.fileList[0].response && this.fileList[0].response.Content) {
-                for (var i = 0; i < this.fileList.length; i++) {
+                for (let i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name
-                    this.ruleForm.MediaId += this.fileList[i].mediaid
+                    this.fileList[i].mediaid ? this.ruleForm.MediaId += this.fileList[i].mediaid : this.ruleForm.MediaId += this.fileList[i].mediaId
                     if (i == this.fileList.length - 1) break
                     this.ruleForm.FileUrl += ','
                     this.ruleForm.OldFileUrl += ','
@@ -1762,6 +1766,25 @@ function lengthLimit(min, max) {
     }
 }
 
+
+//多选控件
+Vue.component('sam-checkbox', {
+    props: ['str','arr'],
+    template: ` <el-checkbox-group v-model="value" v-on:change="handleChange">
+                    <el-checkbox v-for="a in arr" :label="a" :key="a"></el-checkbox>
+                </el-checkbox-group>`,
+    data: function () {
+        return {
+            value: this.str ? this.str.split(',') : [],
+        }
+    },
+    methods: {
+        handleChange(arr) {
+            console.log(arr)
+            this.$emit('update:str', arr.join(','))
+        },
+    },
+})
 //选择小组组件
 Vue.component('sam-group', {
     props: ['names', 'ids'],
@@ -1783,7 +1806,7 @@ Vue.component('sam-group', {
             var that = this
             DingTalkPC.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
-                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: this.tids, //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 onSuccess: function (data) {
                     console.log(data)
@@ -1870,7 +1893,7 @@ Vue.component('sam-timerange', {
 
 //钉钉审批组件
 Vue.component('sam-approver-list', {
-    props: ['nodedata', 'nodelist', 'specialRoles', 'specialRoleNames'],
+    props: ['nodedata', 'nodelist', 'specialRoles', 'sprolenames'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
@@ -1917,7 +1940,7 @@ Vue.component('sam-approver-list', {
 
                            <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.IsSelectMore)">+ 选人</el-button>
-                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[0] && role.name == node.NodeName" v-model="member1"
+                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
@@ -1926,7 +1949,7 @@ Vue.component('sam-approver-list', {
                                       :value="JSON.stringify(member)">
                                     </el-option>
                                 </el-select>
-                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == specialRoleNames[1] && role.name == node.NodeName"" v-model="member2"
+                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[1] && role.name == node.NodeName"" v-model="member2"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member2,node.NodeId)">
                                     <el-option
                                       v-for="member in role.members"
