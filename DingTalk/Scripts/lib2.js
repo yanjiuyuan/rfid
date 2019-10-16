@@ -405,12 +405,10 @@ var mixin = {
                 { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ],
             StartTime: [
-                { required: true, message: '开始时间不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { required: true, message: '开始时间不能为空！', trigger: 'change' }
             ], 
             EndTimeTime: [
-                { required: true, message: '结束时间不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { required: true, message: '结束时间不能为空！', trigger: 'change' }
             ], 
             UseTime: [
                 { required: true, message: '时长不能为空！', trigger: 'change' },
@@ -1766,28 +1764,50 @@ function lengthLimit(min, max) {
 
 //选择小组组件
 Vue.component('sam-group', {
-    props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder', 'disabled'],
+    props: ['names', 'ids'],
     template: `  <div>
-                    <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                    <el-tag :key="tag.emplId" v-for="tag in tags" closable
                             :disable-transitions="false" v-on:close="handleClose(tag)">
-                        {{tag.name}}
+                        {{tag}}
                     </el-tag>
-                    <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
+                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
                  </div>`,
     data: function () {
         return {
-            Index: Index
+            tags: this.names ? this.names.split(',') : [],
+            tids: this.ids ? this.ids.split(',') : []
         }
     },
     methods: {
-        onBlur(e) {
-            let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
-            if (this.type == 'number') {
-                if (value > this.max) value = this.max
-                if (value < this.min) value = this.min
+        addGroup() {
+            var that = this
+            DingTalkPC.biz.contact.choose({
+                multiple: true, //是否多选： true多选 false单选； 默认true
+                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                corpId: DingData.CorpId, //企业id
+                onSuccess: function (data) {
+                    console.log(data)
+                    for (let d of data) {
+                        that.tags.push(d.name)
+                        that.tids.push(d.emplId)
+                    }
+                    that.$emit('update:names', that.tags.join(','))
+                    that.$emit('update:ids', that.tids.join(','))
+                },
+                onFail: function (err) { }
+            });
+        },
+        handleClose(tag) {
+            for (let i = 0; i < this.tags.length; i++) {
+                if (this.tags[i] == tag) {
+                    this.tags.splice(i, 1)
+                    this.tids.splice(i, 1)
+                    break
+                }
             }
-            this.$emit('update:value', value)
-        }
+            this.$emit('update:names', this.tags.join(','))
+            this.$emit('update:ids', this.tids.join(','))
+        },
     },
 })
 
@@ -1795,7 +1815,7 @@ Vue.component('sam-group', {
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
-                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur" :disabled='Index == 2 || disabled'
+                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur" :disabled='Index != 0 || disabled'
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {

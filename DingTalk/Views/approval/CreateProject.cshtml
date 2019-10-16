@@ -38,23 +38,14 @@
             <el-input v-model="tableForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目组成员" required="required">
-            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+            <sam-group :names.sync="tableForm.TeamMembers" :ids.sync="tableForm.TeamMembersId"></sam-group>
+            @*<el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
                     :disable-transitions="false" v-on:close="handleClose(tag)">
                 {{tag.name}}
             </el-tag>
-            <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
+            <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>*@
         </el-form-item>
         <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
-        @*<el-form-item label="开始日期" required="required">
-            <el-date-picker v-model="tableForm.StartTime" :class="{ redborder:tableForm.StartTime ==''}" :editable="false" style="width:140px;"
-                            type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
-            </el-date-picker>
-        </el-form-item>
-        <el-form-item label="结束日期" required="required">
-            <el-date-picker v-model="tableForm.EndTime" :class="{ redborder:tableForm.EndTime ==''}" :editable="false" style="width:140px;"
-                            type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
-            </el-date-picker>
-        </el-form-item>*@
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
@@ -100,9 +91,16 @@
                     DeptName: '',
                     Customer: '',
                     ProjectName: '',
+                    TeamMembersId: '',
+                    TeamMembers: '',
                     ProjectId: null,
                     StartTime: '',
                     EndTime: ''
+                },
+                rules: {
+                    TeamMembersId: [
+                        { required: true, message: '项目组成员不能为空', trigger: 'blur' },
+                    ],
                 }
             }
         },
@@ -110,17 +108,9 @@
             //添加项目
             onSubmit() {
                 var that = this
-                this.fileListToUrl()
                 this.$refs['tableForm'].validate((valid) => {
-                    if (valid && this.groupPeople[0] && this.tableForm.StartTime && this.tableForm.EndTime && this.ruleForm.FileUrl) {
-                        console.log('1')
+                    if (valid &&  this.fileList.length == 0) {
                         that.disablePage = true
-                        let names = []
-                        let ids = []
-                        for (let p of this.groupPeople) {
-                            names.push(p.name)
-                            ids.push(p.emplId)
-                        }
                         var param = {
                             "CreateTime": _getTime(),
                             "IsEnable": true,
@@ -177,16 +167,6 @@
                 //重新发起、临时保存数据处理
                 if (this.tableForm.ProjectType) this.ptypes[0] = this.tableForm.ProjectType
                 if (this.tableForm.ProjectSmallType) this.ptypes[1] = this.tableForm.ProjectSmallType
-                if (this.tableForm.TeamMembersId) {
-                    let names = this.tableForm.TeamMembers.split(',')
-                    let ids = this.tableForm.TeamMembersId.split(',')
-                    for (let i = 0; i < ids.length; i++) {
-                        this.groupPeople.push({
-                            emplId: ids[i],
-                            name: names[i]
-                        })
-                    }
-                }
             })
         }
     })
