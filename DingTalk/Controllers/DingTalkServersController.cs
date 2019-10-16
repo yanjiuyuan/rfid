@@ -136,16 +136,10 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("singleDepartment")]
-        public async Task<List<string>> singleDepartment(List<int> IdList)
+        public async Task<string> singleDepartment(int Id)
         {
-            List<string> resultList = new List<string>();
-            foreach (var item in IdList)
-            {
-                DingTalkManager dingTalkManager = new DingTalkManager();
-                var result = await dingTalkManager.SingleDepartment(item);
-                resultList.Add(result);
-            }
-            return resultList;
+            var result = await dtManager.SingleDepartment(Id);
+            return result;
         }
         private string GetRandomNum()
         {
@@ -180,8 +174,7 @@ namespace DingTalk.Controllers
             List<string> deptNameList = new List<string>();
             foreach (var item in userDetail.department)
             {
-                List<int> vs = new List<int>(int.Parse(item));
-                string res = "";//await singleDepartment(vs);
+                string res = await singleDepartment(int.Parse(item));
                 Models.ServerModels.DeptModel deptModel = JsonConvert.DeserializeObject<Models.ServerModels.DeptModel>(res);
                 deptNameList.Add(deptModel.name);
             }
