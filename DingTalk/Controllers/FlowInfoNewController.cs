@@ -1642,12 +1642,12 @@ namespace DingTalk.Controllers
                 //待我审批
                 case 0:
                     tasks = tasks.Where(t => t.State == 0 && t.IsEnable == 1
-                    && t.IsPost == false && t.IsSend != true).ToList();
+                    && t.IsPost != true && t.IsSend != true).ToList();
                     break;
                 //我已审批
                 case 1:
                     tasks = tasks.Where(t => t.State == 1 && t.IsEnable == 1
-                    && t.IsPost == false && t.IsSend != true).ToList();
+                    && t.IsPost != true && t.IsSend != true).ToList();
                     break;
                 //我发起的
                 case 2:
