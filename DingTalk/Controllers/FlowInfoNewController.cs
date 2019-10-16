@@ -1514,7 +1514,7 @@ namespace DingTalk.Controllers
                             {
                                 if (tasksCurrentSub.IsBacked == true || tasksPost.IsBacked == true)
                                 {
-                                    item.NodeId = -1;
+                                    item.NodeId = 0;
                                 }
                                 else
                                 {
@@ -2178,7 +2178,7 @@ namespace DingTalk.Controllers
                         strLink = "eapp://page/approve/approve?index=2";
                         return await dingTalkServersController.sendOaMessage(ApplyManId,
                         string.Format(string.Format("您提交的{0}已退回，请知晓。", flows.FlowName), TaskId),
-                        flows.FlowName, TaskId,strLink);
+                        flows.FlowName, TaskId, strLink);
                     }
                     else
                     {
@@ -2188,7 +2188,7 @@ namespace DingTalk.Controllers
                             strLink = "eapp://page/approve/approve?index=3";
                             return await dingTalkServersController.sendOaMessage(ApplyManId,
                             string.Format(string.Format("{0}提交的{1}抄送给您，请知晓。", ApplyMan, flows.FlowName), TaskId),
-                            flows.FlowName, TaskId,strLink);
+                            flows.FlowName, TaskId, strLink);
                         }
                         else
                         {
@@ -2196,7 +2196,7 @@ namespace DingTalk.Controllers
                             strLink = "eapp://page/approve/approve?index=0";
                             return await dingTalkServersController.sendOaMessage(ApplyManId,
                             string.Format(string.Format("{0}提交的{1}需要您审批", ApplyMan, flows.FlowName), TaskId),
-                            flows.FlowName, TaskId,strLink);
+                            flows.FlowName, TaskId, strLink);
                         }
                     }
                 }
