@@ -17,7 +17,7 @@
             <el-input v-model="tableForm.ProjectState" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目编号" v-if="NodeId >= 3" prop="ProjectId">
-            <sam-input v-if="NodeId==3" :value.sync="tableForm.ProjectId" style="width:550px;"></sam-input>
+            <sam-input v-if="NodeId==3 && index==0" :value.sync="tableForm.ProjectId" style="width:550px;"></sam-input>
             <el-input v-else v-model="tableForm.ProjectId" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="合作单位">
@@ -50,8 +50,8 @@
             <el-input v-model="tableForm.EndTime" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="是否评审" v-if="NodeId >= 2">
-            <el-radio :disabled="NodeId >2 || index == 2" v-model="tableForm.IsReview" :label="true">是</el-radio>
-            <el-radio :disabled="NodeId >2 || index == 2" v-model="tableForm.IsReview" :label="false">否</el-radio>
+            <el-radio :disabled="NodeId >2 || index != 0" v-model="tableForm.IsReview" :label="true">是</el-radio>
+            <el-radio :disabled="NodeId >2 || index != 0" v-model="tableForm.IsReview" :label="false">否</el-radio>
         </el-form-item>
         <!--相关文件-->
         <el-form-item v-if="fileList.length > 0" label="立项文件">
