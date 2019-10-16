@@ -51,7 +51,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 获取部门下所有用户信息
         /// </summary>
-        /// <param name="deptIdList"></param>
+        /// <param name="deptIdList">实例： 77212117,56943182</param>
         /// <returns></returns>
         [Route("GetDeptUserListByDeptId")]
         public async Task<Dictionary<int, string>> GetDeptUserListByDeptId(string deptIdList)
