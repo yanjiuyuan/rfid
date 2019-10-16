@@ -138,7 +138,8 @@ namespace DingTalk.Controllers
         [Route("singleDepartment")]
         public async Task<string> singleDepartment(int Id)
         {
-            var result = await dtManager.SingleDepartment(Id);
+            DingTalkManager dingTalkManager = new DingTalkManager();
+            var result = await dingTalkManager.SingleDepartment(Id);
             return result;
         }
         private string GetRandomNum()
