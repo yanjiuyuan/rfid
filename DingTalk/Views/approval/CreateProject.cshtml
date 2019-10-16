@@ -167,6 +167,8 @@
             },
             handleChange(value) {
                 console.log(value)
+                this.tableForm['ProjectType'] = value[0]
+                this.tableForm['ProjectSmallType'] = value[1]
                 this.ptypes = value
             }
         },
@@ -174,7 +176,7 @@
             this.initStart(() => {
                 //重新发起、临时保存数据处理
                 if (this.tableForm.ProjectType) this.ptypes[0] = this.tableForm.ProjectType
-                if (this.tableForm.ProjectSmallType) tthis.ptypes[1] = this.tableForm.ProjectSmallType
+                if (this.tableForm.ProjectSmallType) this.ptypes[1] = this.tableForm.ProjectSmallType
                 if (this.tableForm.TeamMembersId) {
                     let names = this.tableForm.TeamMembers.split(',')
                     let ids = this.tableForm.TeamMembersId.split(',')

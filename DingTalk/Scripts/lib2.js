@@ -758,9 +758,9 @@ var mixin = {
             this.disablePage = true
             var paramArr = []
             var that = this
-            this.fileList.splice(0, fileListOrigin.length)
-            this.imggeList.splice(0, imageListOrigin.length)
-            this.pdfList.splice(0, pdfListOrigin.length)
+            if (this.fileList.length > 0) this.fileList.splice(0, fileListOrigin.length)
+            if (this.imageList.length > 0) this.imageList.splice(0, imageListOrigin.length)
+            if (this.pdfList.length > 0) this.pdfList.splice(0, pdfListOrigin.length)
             this.fileListToUrl()
             paramArr.push({
                 "Id": this.ruleForm.Id,
@@ -1273,7 +1273,7 @@ var mixin = {
         //选多人
         addGroup(users) {
             var that = this
-            console.log('addGroup')
+            console.log(users)
             DingTalkPC.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
                 users: users||[], //默认选中的用户列表，员工userid；成功回调中应包含该信息
@@ -1494,24 +1494,27 @@ var mixin = {
             location.href = serverUrl + 'ProjectNew/DownLoad?path=' + path
         },
         fileListToUrl() {
-            if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
-                this.ruleForm['FilePDFUrl'] = ''
-                this.ruleForm['OldFilePDFUrl'] = ''
-                this.ruleForm['MediaIdPDF'] = ''
-                for (var i = 0; i < this.pdfList.length; i++) {
-                    this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
-                    this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
-                    this.ruleForm.MediaIdPDF += this.pdfList[i].mediaid
-                    if (i == this.pdfList.length - 1) break
-                    this.ruleForm.FilePDFUrl += ','
-                    this.ruleForm.OldFilePDFUrl += ','
-                    this.ruleForm.MediaIdPDF += ','
+            this.ruleForm['ImageUrl'] = ''
+            this.ruleForm['OldImageUrl'] = ''
+
+            this.ruleForm['FilePDFUrl'] = ''
+            this.ruleForm['OldFilePDFUrl'] = ''
+            this.ruleForm['MediaIdPDF'] = ''
+
+            this.ruleForm['FileUrl'] = ''
+            this.ruleForm['OldFileUrl'] = ''
+            this.ruleForm['MediaId'] = ''
+
+            if (this.imageList[0] && this.imageList[0].response && this.imageList[0].response.Content) {
+                for (var i = 0; i < this.imageList.length; i++) {
+                    this.ruleForm.ImageUrl += this.imageList[i].response.Content
+                    this.ruleForm.OldImageUrl += this.imageList[i].name
+                    if (i == this.imageList.length - 1) break
+                    this.ruleForm.ImageUrl += ','
+                    this.ruleForm.OldImageUrl += ','
                 }
             }
             if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
-                this.ruleForm['FilePDFUrl'] = ''
-                this.ruleForm['OldFilePDFUrl'] = ''
-                this.ruleForm['MediaIdPDF'] = ''
                 for (var i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
                     this.ruleForm.OldFilePDFUrl += this.pdfList[i].name
@@ -1523,9 +1526,6 @@ var mixin = {
                 }
             }
             if (this.fileList[0] && this.fileList[0].response && this.fileList[0].response.Content) {
-                this.ruleForm['FileUrl'] = ''
-                this.ruleForm['OldFileUrl'] = ''
-                this.ruleForm['MediaId'] = ''
                 for (var i = 0; i < this.fileList.length; i++) {
                     this.ruleForm.FileUrl += this.fileList[i].response.Content
                     this.ruleForm.OldFileUrl += this.fileList[i].name
@@ -1764,8 +1764,34 @@ function lengthLimit(min, max) {
     }
 }
 
+//选择小组组件
+Vue.component('sam-group', {
+    props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder', 'disabled'],
+    template: `  <div>
+                    <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
+                            :disable-transitions="false" v-on:close="handleClose(tag)">
+                        {{tag.name}}
+                    </el-tag>
+                    <el-button class="button-new-tag" size="small" v-on:click="addGroup(groupPeople)">+ 添加</el-button>
+                 </div>`,
+    data: function () {
+        return {
+            Index: Index
+        }
+    },
+    methods: {
+        onBlur(e) {
+            let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
+            if (this.type == 'number') {
+                if (value > this.max) value = this.max
+                if (value < this.min) value = this.min
+            }
+            this.$emit('update:value', value)
+        }
+    },
+})
 
-
+//输入框组件
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
@@ -1788,20 +1814,7 @@ Vue.component('sam-input', {
         }
     },
 })
-
-var n = `<template>
-            <el-form-item :label="label1 || '开始时间'" :required="true || required">  
-                <el-date-picker v-model="value1" :class="{ redborder: value1 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
-                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item :label="label2 || '结束时间'" required="required">
-                <el-date-picker v-model="value2" :class="{ redborder: value2 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
-                                type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
-                </el-date-picker>
-            </el-form-item>
-        </template>`
-
+//时间区间选择器组件
 Vue.component('sam-timerange', {
     props: ['label1', 'label2', 'type', 'value1', 'value2', 'required'],
     template: `<div> 
@@ -1823,7 +1836,7 @@ Vue.component('sam-timerange', {
         }
     },
     methods: {
-        onChange(value) {
+        onChange() {
             if (this.v1 && this.v2 && this.v1 > this.v2) {
                 this.v1 = this.v2
                 this.$message({ type: 'error', message: `取值范围错误！` });
