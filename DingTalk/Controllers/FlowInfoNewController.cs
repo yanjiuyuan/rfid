@@ -209,7 +209,7 @@ namespace DingTalk.Controllers
                             {
                                 //与上一级处理人重复
                                 if (tasksChoosed.ApplyManId == PreApplyManId && iSendCount == 0
-                                    && tasksChoosed.FlowId.ToString() != "26" && tasksChoosed.FlowId.ToString() != "27" && tasksChoosed.FlowId.ToString() != "34")  //临时处理
+                                    && tasksChoosed.FlowId.ToString() != "26" && tasksChoosed.FlowId.ToString() != "27" && tasksChoosed.FlowId.ToString() != "34" && tasksChoosed.FlowId.ToString() != "30")  //临时处理
                                 {
                                     tasksChoosed.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     tasksChoosed.State = 1; //修改审批状态
