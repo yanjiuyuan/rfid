@@ -789,6 +789,24 @@ namespace DingTalk.Controllers
                             context.SaveChanges();
                         }
                     }
+                    else  //已选的抄送
+                    {
+                        List<Tasks> TaskSendList = context.Tasks.Where(u => u.TaskId == OldTaskId && u.NodeId.ToString()== FindNodeId).ToList();
+                        if (TaskSendList.Count > 0)
+                        {
+                            Tasks TasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == OldTaskId.ToString() && t.NodeId == 0).FirstOrDefault();
+                            foreach (var item in TaskSendList)
+                            {
+                                item.IsEnable = 1;
+                                context.Entry<Tasks>(item).State = EntityState.Modified;
+                                context.SaveChanges();
+                                //推送抄送消息
+                                SentCommonMsg(item.ApplyManId,
+                                string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", item.TaskId),
+                                TasksApplyMan.ApplyMan, TasksApplyMan.Remark, null, TasksApplyMan.TaskId.ToString());
+                            }
+                        }
+                    }
                     if (IsSend == true)
                     {
                         if (!string.IsNullOrEmpty(PeopleId))

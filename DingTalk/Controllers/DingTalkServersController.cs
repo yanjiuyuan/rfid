@@ -108,13 +108,6 @@ namespace DingTalk.Controllers
             return results;
         }
 
-        //[Route("departmentListQuaryByDeptId")]
-        //public async Task<string> departmentListQuaryByDeptId()
-        //{
-        //    var allDptStr = await dtManager.GetDepartmentList();
-        //    return allDptStr;
-        //}
-
         [Route("addDepartment")]
         public async Task<string> DepartmentAdd()
         {
@@ -182,6 +175,28 @@ namespace DingTalk.Controllers
             userDetail.dept = deptNameList;
             return userDetail;
         }
+
+        /// <summary>
+        /// 根据部门Id 获取子部门Id
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
+
+        [Route("GetChildDeptByDeptId")]
+        [System.Web.Http.HttpPost]
+        public async Task<Dictionary<string, string>> GetChildDeptByDeptId(string deptId)
+        {
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+            string[] vs = deptId.Split(',');
+            foreach (var item in vs)
+            {
+                DingTalkManager dingTalkManager = new DingTalkManager();
+                var result = await dingTalkManager.GetChildDeptByDeptId(item);
+                keyValuePairs.Add(item, result);
+            }
+            return keyValuePairs;
+        }
+
         [Route("getDepartmentUserList")]
         [System.Web.Http.HttpPost]
         public async Task<string> GetDepartmentUserList()

@@ -26,5 +26,7 @@ namespace DingTalkServer
         public string GetMessageListStatusUrl { get; set; }
         public string UploadMediaUrl { get; set; }
         public string DownloadFileUrl { get; set; }
+
+        public string GetChildDeptByDeptIdUrl { get; set; }
     }
 }

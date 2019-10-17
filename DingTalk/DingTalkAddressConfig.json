@@ -21,4 +21,5 @@
   "GetMessageListStatusUrl": "https://oapi.dingtalk.com/message/list_message_status",
   "GetDepartmentByUserId": "https://oapi.dingtalk.com/department/list_parent_depts",
   "GetWorkMsgUrl": "https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2",
+  "GetChildDeptByDeptIdUrl": "https://oapi.dingtalk.com/department/list_ids"
 }

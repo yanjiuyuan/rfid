@@ -37,6 +37,16 @@ namespace DingTalkServer
             return result;
         }
 
+        public Task<string> GetChildDeptByDeptId(string dptId)
+        {
+            _client.QueryString.Add("id", dptId);
+            var url = _addressConfig.GetChildDeptByDeptIdUrl;
+            var result = _client.Get(url);
+            return result;
+        }
+
+        
+
         public  Task<string> CreateUser(AddUserRequestModel user)
         {
             var url = _addressConfig.CreateUserUrl;
