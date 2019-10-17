@@ -6,7 +6,7 @@
 <!--添加审批人-->
 <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
 <template v-if="index==0">
-    <el-form-item label="审批意见" prop="mark">
+    <el-form-item label="审批意见" prop="Mark">
         <sam-input :value.sync="ruleForm.Mark" style="width:600px;"></sam-input>
     </el-form-item>
     <el-form-item>
@@ -22,6 +22,6 @@
 <template v-if="index==2 && state=='未完成'">
     <el-form-item>
         <Ding2 :dinglist="dingList"></Ding2>
-        <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
+        <el-button v-if="rebackAble" type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
     </el-form-item>
 </template>
