@@ -198,37 +198,6 @@ namespace DingTalk.Controllers
                                             error = new Error(0, "流程创建成功！", "") { },
                                         };
                                     }
-
-                                    //特殊处理(暂时)
-                                    //if (tasks.FlowId.ToString() == "33")
-                                    //{
-                                    //    NodeInfo nodeInfoCurrent = context.NodeInfo.Where(n => n.FlowId.ToString() == "33" && n.NodeId.ToString() == "2").FirstOrDefault();
-                                    //    Tasks taskCurrent = new Tasks()
-                                    //    {
-                                    //        TaskId = tasks.TaskId,
-                                    //        ApplyMan = nodeInfoCurrent.NodePeople,
-                                    //        ApplyManId = nodeInfoCurrent.PeopleId,
-                                    //        IsPost = false,
-                                    //        State = 0,
-                                    //        IsSend = false,
-                                    //        NodeId = 2,
-                                    //        IsEnable = 1,
-                                    //        FlowId = 6
-                                    //    };
-                                    //    context.Tasks.Add(taskCurrent);
-                                    //    context.SaveChanges();
-                                    //    await SendOaMsgNew(tasks.FlowId, taskCurrent.ApplyManId,
-                                    //        TaskId.ToString(), tasksApplyMan.ApplyMan,
-                                    //        tasksApplyMan.Remark, context, flows.ApproveUrl,
-                                    //         nextNodeInfo.NodeId.ToString());
-                                    //    Thread.Sleep(100);
-
-                                    //    return new NewErrorModel()
-                                    //    {
-                                    //        data = TaskId.ToString(),
-                                    //        error = new Error(0, "流程创建成功！", "") { },
-                                    //    };
-                                    //}
                                 }
                             }
                         }
@@ -791,7 +760,7 @@ namespace DingTalk.Controllers
                     }
                     else  //已选的抄送
                     {
-                        List<Tasks> TaskSendList = context.Tasks.Where(u => u.TaskId == OldTaskId && u.NodeId.ToString()== FindNodeId).ToList();
+                        List<Tasks> TaskSendList = context.Tasks.Where(u => u.TaskId == OldTaskId && u.NodeId.ToString() == FindNodeId).ToList();
                         if (TaskSendList.Count > 0)
                         {
                             Tasks TasksApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == OldTaskId.ToString() && t.NodeId == 0).FirstOrDefault();
@@ -1530,7 +1499,7 @@ namespace DingTalk.Controllers
                             item.CurrentTime = tasksCurrentSub.ApplyTime;
                             if (Index != 0)
                             {
-                                if (tasksCurrentSub.IsBacked == true || tasksPost.IsBacked == true)
+                                if ((tasksPost != null ? (tasksCurrentSub.IsBacked == true) : (false)) || (tasksPost != null ? (tasksPost.IsBacked == true) : (false)))
                                 {
                                     item.NodeId = 0;
                                 }
@@ -1665,7 +1634,7 @@ namespace DingTalk.Controllers
                 //我已审批
                 case 1:
                     tasks = tasks.Where(t => t.State == 1 && t.IsEnable == 1
-                    && t.IsPost != true && t.IsSend != true).ToList();
+                    && t.IsSend != true).ToList();
                     break;
                 //我发起的
                 case 2:
