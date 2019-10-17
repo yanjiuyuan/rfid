@@ -484,7 +484,8 @@ namespace DingTalk.Controllers
                     List<Tasks> taskList = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.State == 0 && t.IsSend != true).ToList();
                     foreach (var task in taskList)
                     {
-                        context.Tasks.Remove(task);
+                        task.IsEnable = 0; task.State = 0;
+                        context.Entry<Tasks>(task).State=EntityState.Modified;
                         context.SaveChanges();
                     }
 
