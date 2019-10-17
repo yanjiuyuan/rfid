@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~1')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~2')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -276,9 +276,9 @@ var checkProjectId = (rule, value, callback) => {
         return callback(new Error('项目编号不能为空'));
     }
     setTimeout(() => {
-        let reg1 = /^[0-9]{4}\w+\w+[0-9]{3}$/
+        let reg1 = /^[0-9]{4}[a-zA-Z]{2,3}[0-9]{3}$/
         if (!reg1.test(value)) {
-            callback(new Error('请输入正确格式，例如：1234**567'));
+            callback(new Error('请输入正确格式，例如：1234**567,*为字母'));
         } else {
             callback();
         }
@@ -340,7 +340,7 @@ var mixin = {
             ],
             Title: [
                 { required: true, message: '标题内容不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { min: 0, max: 30, message: '长度在 60 个字符以内', trigger: 'blur' }
             ],
             ImageUrl: [
                 { required: true, message: '图片不能为空！', trigger: 'change' }
@@ -621,7 +621,7 @@ var mixin = {
             callBack()
             loadHtml("mainPage", "partPage")
         },
-        initEnd(callBack = function (){}) {
+        initEnd(callBack = function () { }) {
             if (UrlObj.flowid) {
                 FlowId = UrlObj.flowid
                 FlowName = UrlObj.flowName
@@ -656,6 +656,7 @@ var mixin = {
             this.purchaseList = []
             this.noList = []
             this.pageSize = 5
+            this.rebackAble = true
             this.ruleForm = {
                 ApplyMan: DingData.nickName,
                 ApplyManId: DingData.userid,
@@ -682,6 +683,7 @@ var mixin = {
                 State: '1',
                 Title: FlowName,
             }
+           
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeInfo()
             this.GetDingList(TaskId)
@@ -851,7 +853,7 @@ var mixin = {
                         "Id": this.ruleForm.Id,
                         "Remark": this.ruleForm.Mark
                     }
-                    this.returnSubmit(param)
+                    this.returnSubmit(param, '退回')
                 })
                 .catch(_ => {
 
@@ -867,13 +869,13 @@ var mixin = {
                         "NodeId": 0,
                         "Remark": this.ruleForm.Mark
                     }
-                    this.returnSubmit(param)
+                    this.returnSubmit(param,'撤回')
                 })
                 .catch(_ => {
 
                 });
         },
-        returnSubmit(option) {
+        returnSubmit(option,type) {
             this.disablePage = true
             var param = {
                 "TaskId": TaskId,
@@ -892,7 +894,7 @@ var mixin = {
                 param[o] = option[o]
             }
             this.PostData("/FlowInfoNew/FlowBack", param, (res) => {
-                this.$alert('审批已退回', '提示信息', {
+                this.$alert('审批已' + type, '提示信息', {
                     confirmButtonText: '确定',
                     callback: action => {
                         loadPage('/main/Approval_list')
@@ -1027,16 +1029,16 @@ var mixin = {
                     if(FlowId != 6)this.ruleForm.ProjectType = proj.ProjectType
                     this.project = proj
                     this.ruleForm.Title = proj.ProjectId + ' - ' + proj.ProjectName
-                }
 
-                for (let i = 0; i < this.nodeList.length; i++) {
-                    if (this.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
-                        this.nodeList[i].AddPeople = [{
-                            name: proj.ResponsibleMan,
-                            emplId: proj.ResponsibleManId
-                        }]
-                        $("." + i).remove()
-                        $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + proj.ResponsibleMan.substring(0, 3) + '</span >')
+                    for (let i = 0; i < this.nodeList.length; i++) {
+                        if (this.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
+                            this.nodeList[i].AddPeople = [{
+                                name: proj.ResponsibleMan,
+                                emplId: proj.ResponsibleManId
+                            }]
+                            $("." + i).remove()
+                            $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + proj.ResponsibleMan.substring(0, 3) + '</span >')
+                        }
                     }
                 }
             }
@@ -1144,6 +1146,10 @@ var mixin = {
                         tempNodeList.push(node)
                     }
                     lastNode = node
+                    //判断是否可以撤回
+                    if (this.rebackAble && node.IsSend == false && node.ApplyTime && node.ApplyManId && node.ApplyManId != DingData.userid) {
+                        this.rebackAble = false
+                    }
                 }
                 this.nodeList = _cloneArr(tempNodeList)
 
@@ -1620,12 +1626,8 @@ var mixin = {
         },
         //根据taskId获取下一个需要审批的人，即要钉的人
         GetDingList(taskId) {
-            console.log('111s')
             this.GetData('/DingTalkServers/Ding' + _formatQueryStr({ taskId: taskId }), (res) => {
-                console.log('23333333333')
-                console.log(res)
                 if (!res) return
-                console.log('332')
                 this.dingList = []
                 this.dingList.push(res.ApplyManId)
             })

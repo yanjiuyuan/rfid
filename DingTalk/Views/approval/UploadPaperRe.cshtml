@@ -17,7 +17,7 @@
     <!--表格實體-->
     <h3>审批列表</h3>
     <el-table :data="allData" stripe border>
-        <el-table-column prop="TaskId" label="审批编号">
+        <el-table-column prop="TaskId" label="流水号">
         </el-table-column>
         <el-table-column prop="ApplyMan" label="申请人">
         </el-table-column>
@@ -67,7 +67,7 @@
         </el-form-item>
 
         <el-form-item label="套数">
-            <el-input v-model="ruleForm.counts"></el-input>
+            <sam-input :value.sync="ruleForm.counts" type="number" :required="true" :min="1" style="width:100px;"></sam-input>
         </el-form-item>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
@@ -204,6 +204,10 @@
         methods: {
             //提交审批
             onSubmit(formName) {
+                if (!this.ruleForm.counts) {
+                    this.$message({ type: 'error', message: `表单填不完整或格式不正确，请检查` });
+                    return
+                }
                 var that = this
                 this.approvalSubmit(function (taskId) {
                     that.bindData(taskId)

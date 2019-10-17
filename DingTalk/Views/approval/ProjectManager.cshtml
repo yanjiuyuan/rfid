@@ -206,8 +206,8 @@
             getProject() {
                 var that = this
                 var param = {
-                    key: this.formInline.key,
-                    projectState: this.formInline.projectState.join('_')
+                    //key: this.formInline.key,
+                    //projectState: this.formInline.projectState.join('_')
                 }
                 //if (this.formInline.key) {
                 //    param.key = this.formInline.key
@@ -261,7 +261,7 @@
                 });
             },
             printout() {
-                this.GetData('ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
+                this.GetData('/ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
                     DingTalkPC.device.notification.alert({ message: '获取成功~', title: '提示信息' })
                 })
             },
