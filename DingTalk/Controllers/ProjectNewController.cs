@@ -518,7 +518,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("QuaryProjectInfo")]
-        public NewErrorModel QuaryProjectInfo(string key, string startTime = "", string endTime = "", string projectState = "",
+        public NewErrorModel QuaryProjectInfo(string key = "", string startTime = "", string endTime = "", string projectState = "",
             string projectType = "", string projectSmallType = "")
         {
             try

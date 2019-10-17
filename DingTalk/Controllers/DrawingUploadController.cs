@@ -526,17 +526,7 @@ namespace DingTalk.Controllers
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
                     string ProjectId = tasks.ProjectId;
-
-                    ////判断是否有权限触发按钮
-                    //string PeopleId = context.NodeInfo.Where(n => n.NodeName == "行政盖章" && n.FlowId == FlowId).First().PeopleId;
-                    //if (UserId != PeopleId)
-                    //{
-                    //    return JsonConvert.SerializeObject(new ErrorModel
-                    //    {
-                    //        errorCode = 1,
-                    //        errorMessage = "没有权限"
-                    //    });
-                    //}
+                    
                     //判断流程是否已结束
                     List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.IsSend != true && t.State == 0).ToList();
                     if (tasksList.Count > 0)
@@ -657,9 +647,6 @@ namespace DingTalk.Controllers
         {
             try
             {
-                //EFHelper<Purchase> eFHelper = new EFHelper<Purchase>();
-                //System.Linq.Expressions.Expression<Func<Purchase, bool>> where = p => p.TaskId == taskId;
-                //List<Purchase> purchases = eFHelper.GetListBy(where);
                 using (DDContext context = new DDContext())
                 {
                     var SelectPurchaseList = from p in context.Purchase
