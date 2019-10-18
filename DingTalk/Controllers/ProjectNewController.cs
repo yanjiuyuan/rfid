@@ -529,7 +529,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     ProjectInfoList = context.ProjectInfo.ToList();
-                    if (key != "")
+                    if (key != "" && key != null)
                     {
                         ProjectInfoList = ProjectInfoList.Where(p =>
                          (!string.IsNullOrEmpty(p.ProjectId) ? p.ProjectId.Contains(key) : false) ||
