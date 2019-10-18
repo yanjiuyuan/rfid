@@ -528,7 +528,7 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     ProjectInfoList = context.ProjectInfo.ToList();
-                    if (!string.IsNullOrEmpty(key))
+                    if (key != "")
                     {
                         ProjectInfoList = ProjectInfoList.Where(p =>
                          (!string.IsNullOrEmpty(p.ProjectId) ? p.ProjectId.Contains(key) : false) ||
@@ -717,6 +717,36 @@ namespace DingTalk.Controllers
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(1, ex.Message, "") { },
+                };
+            }
+        }
+
+        /// <summary>
+        /// 项目信息修改
+        /// </summary>
+        /// <param name="projectInfo"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("ProjectInfoModify")]
+        public NewErrorModel ProjectInfoModify(ProjectInfo projectInfo)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
+                    context.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "修改成功！", "") { },
+                };
             }
             catch (Exception ex)
             {

@@ -299,8 +299,9 @@ namespace DingTalk.Controllers
                 using (DDContext context = new DDContext())
                 {
                     string strUrl = "";
-                    string strFilePDFUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FilePDFUrl;
-                    string strFileUrl = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault().FileUrl;
+                    Tasks tasksQuery = context.Tasks.Where(t => t.TaskId.ToString() == taskId && t.NodeId == 0).FirstOrDefault();
+                    string strFilePDFUrl = tasksQuery.FilePDFUrl;
+                    string strFileUrl = tasksQuery.FileUrl;
 
                     if (!string.IsNullOrEmpty(strFileUrl))
                     {
@@ -316,16 +317,17 @@ namespace DingTalk.Controllers
                     {
                         List<string> ListPath = new List<string>(FilePDFUrl);
 
-                        List<List<string>> ListListPath = CheckPathLength(ListPath);
-
-                        foreach (var item in ListListPath)
+                        Dictionary<int,List<string>> keyValuePairs = CheckPathLength(ListPath);
+                        int i = 0;
+                        foreach (var item in keyValuePairs)
                         {
+                            i++;
                             string SavePath = string.Format(@"{0}\UploadFile\Ionic\{1}.zip",
                                    AppDomain.CurrentDomain.BaseDirectory,
-                                    "流水号" + taskId + "图纸打包第" + ListListPath.IndexOf(item) + 1 + "份" +
+                                    "流水号" + taskId + "图纸打包第" + i + "份" +
                                     DateTime.Now.ToString("yyyyMMddHHmmss"));
                             //文件压缩打包
-                            IonicHelper.CompressMulti(item, SavePath, false);
+                            IonicHelper.CompressMulti(item.Value, SavePath, false);
                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
                             SavePath = "~\\" + FileHelper.RelativePath(HttpContext.Current.Server.MapPath("~/"), SavePath);
 
@@ -356,37 +358,42 @@ namespace DingTalk.Controllers
         }
 
 
-        public List<List<string>> CheckPathLength(List<string> vs)
+        public Dictionary<int,List<string>> CheckPathLength(List<string> vs)
         {
             long listLength = 0;
-            List<List<string>> ListNewPathList = new List<List<string>>();
-            List<string> ListNewPath = new List<string>();
+            int i = 0;
+            Dictionary<int, List<string>> keyValuePairs = new Dictionary<int, List<string>>();
             foreach (var item in vs)
             {
+                List<string> vss = new List<string>();
                 FileInfo fileInfo = new FileInfo(HttpContext.Current.Server.MapPath(item));
                 listLength += fileInfo.Length;
-                if (listLength < 1024 * 1024 * 9) //9M
+                string newPathName = (HttpContext.Current.Server.MapPath(item).Substring(0, HttpContext.Current.Server.MapPath(item).Length - 18)) +
+                    System.IO.Path.GetExtension(HttpContext.Current.Server.MapPath(item));
+                File.Copy(HttpContext.Current.Server.MapPath(item), newPathName, true);
+
+                if (listLength < 1024 * 1024 * 6) //9M
                 {
-                    string newPathName = (HttpContext.Current.Server.MapPath(item).Substring(0, HttpContext.Current.Server.MapPath(item).Length - 18)) +
-                     System.IO.Path.GetExtension(HttpContext.Current.Server.MapPath(item));
-                    File.Copy(HttpContext.Current.Server.MapPath(item), newPathName, true);
-                    ListNewPath.Add(newPathName);
-                    ListNewPathList.Add(ListNewPath);
-                    listLength = 0;
+                    if (keyValuePairs.Count == 0)
+                    {
+                        vss.Add(newPathName);
+                        keyValuePairs.Add(i, vss);
+                    }
+                    else
+                    {
+                        vss = keyValuePairs[i];
+                        vss.Add(newPathName);
+                        keyValuePairs[i] = vss;
+                    }
                 }
                 else
                 {
-                    string newPathName = (HttpContext.Current.Server.MapPath(item).Substring(0, HttpContext.Current.Server.MapPath(item).Length - 18)) +
-                    System.IO.Path.GetExtension(HttpContext.Current.Server.MapPath(item));
-                    File.Copy(HttpContext.Current.Server.MapPath(item), newPathName, true);
-                    ListNewPath.Add(newPathName);
-                    if (vs.IndexOf(item) == vs.Count - 1)
-                    {
-                        ListNewPathList.Add(ListNewPath);
-                    }
+                    i++;
+                    vss.Add(newPathName);
+                    keyValuePairs.Add(i, vss);
                 }
             }
-            return ListNewPathList;
+            return keyValuePairs;
         }
     }
 }
