@@ -15,6 +15,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -740,6 +741,15 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    ProjectInfo projectInfoQuery = context.ProjectInfo.Find(projectInfo.Id);
+                    if (projectInfoQuery.ProjectName != projectInfo.ProjectName)
+                    {
+                        //修改项目路径
+                        projectInfo.FilePath.Replace(projectInfoQuery.ProjectName, projectInfo.ProjectName);
+
+                        System.IO.File.Move(HttpContext.Current.Server.MapPath(projectInfoQuery.FilePath), HttpContext.Current.Server.MapPath(projectInfo.FilePath));
+                    }
+
                     context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
                 }
