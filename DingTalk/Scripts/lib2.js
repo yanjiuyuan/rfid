@@ -518,6 +518,7 @@ var mixin = {
                         console.log(url)
                         console.log(res)
                     }
+                    that.disablePage = false
                     if (that.doWithErrcode(res.error)) {
                         return
                     }
@@ -553,6 +554,7 @@ var mixin = {
                     console.log(url)
                     console.log(JSON.parse(param))
                     console.log(res)
+                    that.disablePage = false
                     if (that.doWithErrcode(res.error, errorFunc)) {
                         return
                     }
@@ -607,7 +609,7 @@ var mixin = {
                 NodeId: '0',
                 //ApplyTime: _getTime(),
                 IsEnable: '1',
-                FlowId: FlowId + '',
+                FlowId: FlowId,
                 IsSend: false,
                 State: '1', 
                 Title: FlowName,
@@ -1705,60 +1707,6 @@ var mixin = {
             })
         }
     }
-}
-
-function doWithErrcode(error,demo) {
-    if (!error) {
-        return 1
-    }
-    if (error && error.errorCode != 0) {
-        console.error(error.errorMessage)
-        demo.elementAlert('报错信息', error.errorMessage)
-        return 1
-    }
-    return 0
-}
-function GetData(url, succe, demo) {
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (res) {
-            if (typeof (res) == 'string') res = JSON.parse(data)
-            console.log(url)
-            console.log(res)
-            if (doWithErrcode(res.error,demo)) {
-                return
-            }
-            res.count ? succe(res.data, res.count) : succe(res.data)
-        },
-        error: function (err) {
-            console.error(url)
-            console.error(err)
-        }
-    })
-}
-
-function PostData(url, param, succe, error) {
-    $.ajax({
-        url: url,
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(param),
-        success: function (res) {
-            console.log(url)
-            console.log(param)
-            console.log(res)
-            if (doWithErrcode(res.error)) {
-                return
-            }
-            succe(res.data)
-        },
-        error: function (err) {
-            error(err)
-            console.error(url)
-            console.error(err)
-        }
-    })
 }
 
 //表单限制输入，返回对象函数

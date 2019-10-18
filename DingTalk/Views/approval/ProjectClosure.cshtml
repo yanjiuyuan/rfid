@@ -7,6 +7,9 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+    </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
 
@@ -286,16 +289,6 @@
                 ApplicationUnit: [],//横向，表2
                 DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单)
                 projectFundingList: [],//项目经费使用情况
-                ruleForm: {
-                    Title: "结题申请",
-                    ApplyMan: DingData.nickName,
-                    ApplyManId: DingData.userid,
-                    Dept: DingData.departName,
-                    ProjectId: '',
-                    ProjectName: '',
-                    IsTransverse: true,
-                    IsPortrait: true,
-                },
                 rules: {
                     ActualCycleStart: { required: true, message: '项目开发周期不能为空', trigger: 'blur' },
                     ContractAmount: { required: true, message: '合同金额不能为空', trigger: 'blur' },
@@ -393,7 +386,7 @@
                         projectFundingList: this.projectFundingList,
                         longitudinalProject: this.LongitudinalProject,
                     }
-                    console.log(JSON.stringify(param))
+                    //console.log(JSON.stringify(param))
                     this.PostData('ProjectClosure/Save', param, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
