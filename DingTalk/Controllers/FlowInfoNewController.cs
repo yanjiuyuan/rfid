@@ -485,7 +485,7 @@ namespace DingTalk.Controllers
                     foreach (var task in taskList)
                     {
                         task.IsEnable = 0; task.State = 0;
-                        context.Entry<Tasks>(task).State=EntityState.Modified;
+                        context.Entry<Tasks>(task).State = EntityState.Modified;
                         context.SaveChanges();
                     }
 

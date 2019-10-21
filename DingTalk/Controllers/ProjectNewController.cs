@@ -539,7 +539,7 @@ namespace DingTalk.Controllers
                         ).ToList();
                     }
                     ProjectInfoList = ProjectInfoList.Where(p => startTime == "" ? 1 == 1 : (DateTime.Parse(startTime) <= DateTime.Parse(p.StartTime)) &&
-                    endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();     
+                    endTime == "" ? 1 == 1 : (DateTime.Parse(endTime) >= DateTime.Parse(p.EndTime))).ToList();
                     ProjectInfoList = ProjectInfoList.Where(p => (projectType == "" ? 1 == 1 : p.ProjectType == projectType)
                     && (projectSmallType == "" ? 1 == 1 : p.ProjectSmallType == projectSmallType)).ToList();
 
@@ -739,15 +739,15 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    ProjectInfo projectInfoQuery = context.ProjectInfo.Find(projectInfo.Id);
+                    ProjectInfo projectInfoQuery = context.ProjectInfo.AsNoTracking().Where(p=>p.ProjectId== projectInfo.ProjectId).FirstOrDefault();
                     if (projectInfoQuery.ProjectName != projectInfo.ProjectName)
                     {
                         //修改项目路径
-                        projectInfo.FilePath.Replace(projectInfoQuery.ProjectName, projectInfo.ProjectName);
-
+                        projectInfo.FilePath = projectInfo.FilePath.Replace(projectInfoQuery.ProjectName, projectInfo.ProjectName);                     
                         System.IO.Directory.Move(HttpContext.Current.Server.MapPath(projectInfoQuery.FilePath), HttpContext.Current.Server.MapPath(projectInfo.FilePath));
+                        //projectInfoQuery = projectInfo;
                     }
-
+                    
                     context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
                 }
