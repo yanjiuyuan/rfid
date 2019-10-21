@@ -22,10 +22,10 @@
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
         <el-form-item label="用车事由" prop="MainContent">
-            <el-input v-model="tableForm.MainContent" style="width:550px;"></el-input>
+            <sam-input :value.sync="tableForm.MainContent" style="width:550px;"></sam-input>
         </el-form-item>
         <el-form-item label="计划行车路线" prop="PlantTravelWay">
-            <el-input v-model="tableForm.PlantTravelWay" style="width:550px;"></el-input>
+            <sam-input :value.sync="tableForm.PlantTravelWay" style="width:550px;"></sam-input>
         </el-form-item>
 
         @*<el-form-item label="起始公里数" prop="StartKilometres">

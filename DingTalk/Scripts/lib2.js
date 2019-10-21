@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~2')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~1')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -793,7 +793,7 @@ var mixin = {
 
             })
             for (let r in paramArr[0]) {
-                if (paramArr[0][r] == '' || that.ruleForm[r] == null) delete paramArr[0][r]
+                if (paramArr[0][r] == '' || paramArr[0][r] == null) delete paramArr[0][r]
             }
             let mustList = []
             let choseList = []
@@ -837,7 +837,6 @@ var mixin = {
                 }
             }
             console.log(JSON.stringify(paramArr))
-            //return
             this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
                 this.$alert('审批成功', '提示信息', {
                     confirmButtonText: '确定',
@@ -1709,6 +1708,59 @@ var mixin = {
     }
 }
 
+function doWithErrcode(error, demo) {
+    if (!error) {
+        return 1
+    }
+    if (error && error.errorCode != 0) {
+        console.error(error.errorMessage)
+        demo.elementAlert('报错信息', error.errorMessage)
+        return 1
+    }
+    return 0
+}
+function GetData(url, succe, demo) {
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (res) {
+            if (typeof (res) == 'string') res = JSON.parse(data)
+            console.log(url)
+            console.log(res)
+            if (doWithErrcode(res.error, demo)) {
+                return
+            }
+            res.count ? succe(res.data, res.count) : succe(res.data)
+        },
+        error: function (err) {
+            console.error(url)
+            console.error(err)
+        }
+    })
+}
+
+function PostData(url, param, succe, error) {
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(param),
+        success: function (res) {
+            console.log(url)
+            console.log(param)
+            console.log(res)
+            if (doWithErrcode(res.error)) {
+                return
+            }
+            succe(res.data)
+        },
+        error: function (err) {
+            error(err)
+            console.error(url)
+            console.error(err)
+        }
+    })
+}
 //表单限制输入，返回对象函数
 function lengthLimit(min, max) {
     return {

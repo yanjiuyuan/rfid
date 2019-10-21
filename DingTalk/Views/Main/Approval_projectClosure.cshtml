@@ -148,13 +148,14 @@
             </el-collapse-item>
             <el-collapse-item :name="5" :key="5" v-if="NodeId != 1">
                 <template slot="title">
-                    <span style="font-size:20px;">项目经费使用情况表</span>
+                    <span style="color:red;"> * </span><span style="font-size:20px;">项目经费使用情况表</span>
                 </template>
-                <el-table :data="ProjectFundingList" stripe border v-if="NodeId == 2">
+                <el-table :data="ProjectFundingList" stripe border v-if="NodeId == 2 && Index == 0">
                     <el-table-column type="index"></el-table-column>
-                    <el-table-column v-for="(value,key) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
+                    <el-table-column v-for="(value,key,i) in ProjectFundingListConfig" :prop="key" :label="value" :key="key">
                         <template slot-scope="scope">
-                            <el-input type="textarea" v-model="scope.row[key]" v-on:change="computeCount(scope.$index,scope.row)"></el-input>
+                            <el-input v-if="i==0" type="textarea" v-model="scope.row[key]" :disabled="true"></el-input>
+                            <el-input v-else type="textarea" v-model="scope.row[key]" v-on:change="computeCount(scope.$index,scope.row)"></el-input>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -177,6 +178,9 @@
 </el-main>
 
 <script>
+    if (UrlObj.flowid) {
+        TaskId = UrlObj.taskid
+    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -507,7 +511,7 @@
             computeCount(index, row) {
                 let tmpMoney = 0
                 for (let i = 1; i < this.ProjectFundingList.length - 1; i++) {
-                    if (!this.ProjectFundingList[i].Money) this.ProjectFundingList[i].Money = 0
+                    //if (!this.ProjectFundingList[i].Money) this.ProjectFundingList[i].Money = 0
                     tmpMoney += parseFloat(this.ProjectFundingList[i].Money)
                 } 
                 this.ProjectFundingList[0].Money = (this.ProjectFundingList[1].Money - 0) + (this.ProjectFundingList[2].Money - 0)
@@ -551,10 +555,11 @@
             },
             //详细信息获取
             showDetailedList1(index, row) {
+                if (!row) return
                 console.log(row)
                 this.dt1Index = index + 1
                 let url = ''
-                switch (row.Type) {
+                switch (row.Type) {//
                     case '零部件采购申请':
                         url = 'PurchaseNew/ReadPurchaseTable';
                         this.DetailedList1_detailConfig = {
@@ -613,6 +618,7 @@
                 })
             },
             showDetailedList2(index, row) {
+                if (!row) return
                 this.GetData('IntellectualProperty/Read?TaskId=' + row.OldTaskId, (res) => {
                     this.DetailedList2_detail = res
                 })

@@ -148,7 +148,7 @@
                     @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>*@
                     <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
                 </el-form-item>
-                <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
+                <sam-timerange :value1.sync="ruleForm.StartTime" :value2.sync="ruleForm.EndTime"></sam-timerange>
                 @*<el-form-item label="开始时间" required="required" prop="StartTime">
                     <el-input v-model="ruleForm.StartTime"></el-input>
                 </el-form-item>
@@ -189,8 +189,6 @@
                     DeptName: '',
                     ProjectState: '',
                     ProjectType: '',
-                    StartTime: '',
-                    EndTime: '',
                     CompanyName: '',
                     BusinessDocker: ''
                 },
@@ -325,7 +323,7 @@
                         param["ResponsibleManId"] = this.ResponsibleMan[0].emplId
                         param["TeamMembers"] = names.join(',')
                         param["TeamMembersId"] = ids.join(',')
-                        console.log(param)
+                        console.log(JSON.stringify(param))
                         that.PostData("/ProjectNew/ProjectInfoModify", param, (res) => {
                             that.$alert(data.errorMessage, '提示信息', {
                                 confirmButtonText: '确定',

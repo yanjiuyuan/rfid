@@ -10,7 +10,7 @@
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <span style="color:red">*</span>@*<span style="padding:3px;">关键字</span>*@
         <sam-input :value.sync="key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
@@ -207,7 +207,14 @@
             this.initStart()
         }
     })
-
+    document.onkeydown = function (e) { // 回车提交表单
+        // 兼容FF和IE和Opera
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            demo.searchCode()
+        }
+    }
 </script>
 
 
