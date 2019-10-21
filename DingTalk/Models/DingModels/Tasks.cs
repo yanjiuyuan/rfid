@@ -39,6 +39,13 @@ namespace DingTalk.Models.DingModels
         /// 是否启用
         /// </summary>
         public int? IsEnable { get; set; }
+
+        /// <summary>
+        /// 审批状态(Index=0:待我审批 1:我已审批 2:我发起的 3:抄送我的)
+        /// </summary>
+        public int? Type { get; set; }
+
+
         /// <summary>
         /// 流程Id
         /// </summary>

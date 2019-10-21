@@ -210,83 +210,83 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="startTime">开始时间(2018-08-07 00:00:00)</param>
         /// <param name="endTime">结束时间(2018-08-27 00:00:00)</param>
-        [Route("QuaryByTime")]
-        [HttpGet]
-        public NewErrorModel QuaryByTime(string startTime, string endTime)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    List<Car> cars = context.Car.ToList();
-                    List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
-                    List<Car> carsQuery = new List<Car>();//条件过滤集合
-                    List<Car> carsDic = new List<Car>();
-                    foreach (var ct in carTables)
-                    {
-                        if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
-                        {
-                            if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
-                            {
-                                Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
-                                if (car != null)
-                                {
-                                    car.IsOccupyCar = true;
-                                    car.OccupyCarId = ct.Id.ToString();
-                                    car.UseMan = ct.DrivingMan;
-                                    car.UseTimes = ct.StartTime + "---" + ct.EndTime;
-                                    carsQuery.Add(car);
-                                }
-                            }
-                        }
-                    }
+        //[Route("QuaryByTime")]
+        //[HttpGet]
+        //public NewErrorModel QuaryByTime(string startTime, string endTime)
+        //{
+        //    try
+        //    {
+        //        using (DDContext context = new DDContext())
+        //        {
+        //            List<Car> cars = context.Car.ToList();
+        //            List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
+        //            List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
+        //            List<Car> carsQuery = new List<Car>();//条件过滤集合
+        //            List<Car> carsDic = new List<Car>();
+        //            foreach (var ct in carTables)
+        //            {
+        //                if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
+        //                {
+        //                    if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
+        //                    {
+        //                        Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
+        //                        if (car != null)
+        //                        {
+        //                            car.IsOccupyCar = true;
+        //                            car.OccupyCarId = ct.Id.ToString();
+        //                            car.UseMan = ct.DrivingMan;
+        //                            car.UseTimes = ct.StartTime + "---" + ct.EndTime;
+        //                            carsQuery.Add(car);
+        //                        }
+        //                    }
+        //                }
+        //            }
 
-                    foreach (var c in cars)
-                    {
-                        if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
-                        {
-                            c.OccupyCarId = "";
-                            c.IsOccupyCar = false;
-                            c.UseTimes = "";
-                            carsQuery.Add(c);
-                        }
-                    }
+        //            foreach (var c in cars)
+        //            {
+        //                if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
+        //                {
+        //                    c.OccupyCarId = "";
+        //                    c.IsOccupyCar = false;
+        //                    c.UseTimes = "";
+        //                    carsQuery.Add(c);
+        //                }
+        //            }
 
-                    Dictionary<string, List<Car>> keyValuePairs = new Dictionary<string, List<Car>>();
+        //            Dictionary<string, List<Car>> keyValuePairs = new Dictionary<string, List<Car>>();
 
-                    foreach (var item in carsQuery)
-                    {
-                        if (!keyValuePairs.Keys.Contains(item.Name))
-                        {
-                            keyValuePairs.Add(item.Name, new List<Car>() {
-                             item
-                          });
-                        }
-                        else
-                        {
-                            List<Car> carsNew = new List<Car>();
-                            carsNew = keyValuePairs[item.Name];
-                            carsNew.Add(item);
-                            keyValuePairs[item.Name] = carsNew;
-                        }
-                    }
-                    //2019 09 29 end
-                    return new NewErrorModel()
-                    {
-                        data = keyValuePairs,
-                        error = new Error(0, "读取成功！", "") { },
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
-            }
-        }
+        //            foreach (var item in carsQuery)
+        //            {
+        //                if (!keyValuePairs.Keys.Contains(item.Name))
+        //                {
+        //                    keyValuePairs.Add(item.Name, new List<Car>() {
+        //                     item
+        //                  });
+        //                }
+        //                else
+        //                {
+        //                    List<Car> carsNew = new List<Car>();
+        //                    carsNew = keyValuePairs[item.Name];
+        //                    carsNew.Add(item);
+        //                    keyValuePairs[item.Name] = carsNew;
+        //                }
+        //            }
+        //            //2019 09 29 end
+        //            return new NewErrorModel()
+        //            {
+        //                data = keyValuePairs,
+        //                error = new Error(0, "读取成功！", "") { },
+        //            };
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(1, ex.Message, "") { },
+        //        };
+        //    }
+        //}
 
 
         /// <summary>
@@ -482,16 +482,14 @@ namespace DingTalk.Controllers
                                        && (!(string.IsNullOrEmpty(key)) ? (t.ApplyMan.Contains(key) || t.Dept.Contains(key)) : t.ApplyMan != null)
                                        select new
                                        {
+                                           TaskId = t.TaskId,
                                            Dept = t.Dept,
                                            ApplyMan = t.ApplyMan,
                                            UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
                                            MainContent = ct.MainContent,
                                            UseKilometres = ct.UseKilometres,
-
                                            StartKilometres = ct.StartKilometres == null ? "" : ct.StartKilometres,
-                                           EndKilometres = ct.EndKilometres == null ? "" : ct.EndKilometres,
-                                           //FactKilometre = ct.FactKilometre,
-                                           //Remark = t.Remark
+                                           EndKilometres = ct.EndKilometres == null ? "" : ct.EndKilometres,                      
                                        };
                         var takeQuaryPri = QuaryPri.Skip((pageIndex - 1) * pageSize).Take(pageSize);
 
