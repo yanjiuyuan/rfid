@@ -15,7 +15,6 @@ namespace DingTalk.Controllers
     [RoutePrefix("Role")]
     public class RoleController : ApiController
     {
-
         /// <summary>
         /// 同步旧数据(第一次用)
         /// </summary>
@@ -41,7 +40,7 @@ namespace DingTalk.Controllers
                         });
                         context.SaveChanges();
                     }
-               
+
                     foreach (var item in context.Role.ToList())
                     {
                         context.Database.ExecuteSqlCommand($"update roles set roleid={item.Id} where rolename='{item.RoleName}'");
@@ -51,7 +50,6 @@ namespace DingTalk.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -108,7 +106,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("AddRole")]
         [HttpPost]
-        public NewErrorModel AddRole(List<Role> roles)
+        public NewErrorModel AddRole([FromBody]List<Role> roles)
         {
             try
             {
@@ -161,7 +159,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("ModifyRole")]
         [HttpPost]
-        public NewErrorModel ModifyRole([FromBody]RoleOperator roleOperator)
+        public NewErrorModel ModifyRole(RoleOperator roleOperator)
         {
             try
             {
@@ -304,9 +302,9 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="roleOperator"></param>
         /// <returns></returns>
-        [Route("ModifyRole")]
+        [Route("ModifyRoleDetail")]
         [HttpPost]
-        public NewErrorModel ModifyRole(RoleOperatorRoles roleOperator)
+        public NewErrorModel ModifyRoleDetail(RoleOperatorRoles roleOperator)
         {
             try
             {
@@ -391,33 +389,30 @@ namespace DingTalk.Controllers
                 };
             }
         }
-
-        public class RoleOperator
-        {
-            /// <summary>
-            /// 当前操作人Id
-            /// </summary>
-            public string applyManId { get; set; }
-            public List<Role> roles { get; set; }
-        }
-
-
-        public class RoleOperatorRoles
-        {
-            /// <summary>
-            /// 当前操作人Id
-            /// </summary>
-            public string applyManId { get; set; }
-            public List<Roles> roles { get; set; }
-        }
-
-
-
-        public class RoleListOperator
-        {
-            public List<Role> roles { get; set; }
-        }
-
-
     }
+    public class RoleOperator
+    {
+        /// <summary>
+        /// 当前操作人Id
+        /// </summary>
+        public string applyManId { get; set; }
+        public List<Role> roles { get; set; }
+    }
+
+    public class RoleOperatorRoles
+    {
+        /// <summary>
+        /// 当前操作人Id
+        /// </summary>
+        public string applyManId { get; set; }
+        public List<Roles> roles { get; set; }
+    }
+
+
+
+    public class RoleListOperator
+    {
+        public List<Role> roles { get; set; }
+    }
+
 }
