@@ -98,6 +98,11 @@ namespace DingTalk.Controllers
             return await GetDeptUserListByDeptId(deptIdListQuery);
         }
 
+        /// <summary>
+        /// 递归取子部门Id
+        /// </summary>
+        /// <param name="vs"></param>
+        /// <param name="departmentList"></param>
         public void QueryDeptChildId(List<int> vs, List<department> departmentList)
         {
             List<int> vsPro = new List<int>();

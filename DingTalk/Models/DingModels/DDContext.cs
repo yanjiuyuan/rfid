@@ -95,5 +95,9 @@ namespace DingTalk.Models.DingModels
 
         public virtual DbSet<ProcessingProgress> ProcessingProgress { get; set; }
 
+        public virtual DbSet<Role> Role { get; set; }
+
+
+
     }
 }
