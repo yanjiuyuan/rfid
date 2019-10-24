@@ -62,7 +62,6 @@ namespace DingTalk.Controllers
                         errorMessage = "文件数为0"
                     });
                 }
-
                 var file = Request.Files[0];
                 if (file.ContentLength == 0)
                 {

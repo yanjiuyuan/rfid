@@ -101,6 +101,7 @@ namespace DingTalk.Controllers
                 projectClosureModel.applicationUnitList = applicationUnitList;
                 projectClosureModel.projectFundingList = projectFundingList;
                 projectClosureModel.longitudinalProject = longitudinalProjects;
+                
                 return new NewErrorModel()
                 {
                     data = projectClosureModel,
