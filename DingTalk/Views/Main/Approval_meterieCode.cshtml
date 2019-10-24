@@ -112,7 +112,6 @@
         purpose: '用途',
         Remark: '备注'
     }
-    var bomUrl = "/ItemCodeAdd/GetTable?TaskId=" + TaskId
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -169,6 +168,7 @@
             //获取bom表信息
             getBomInfo() {
                 var that = this
+                var bomUrl = "/ItemCodeAdd/GetTable?TaskId=" + TaskId
                 $.ajax({
                     url: bomUrl,
                     type: "GET",

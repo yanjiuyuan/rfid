@@ -27,13 +27,13 @@
 
         <template v-if="reInput">
             <el-form-item label="实际行车路线" prop="FactTravelWay">
-                <el-input v-model="tableForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></el-input>
+                <sam-input :value.sync="tableForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></sam-input>
             </el-form-item>
             <el-form-item label="起始公里数" prop="StartKilometres">
-                <el-input v-model="tableForm.StartKilometres" :disabled="ifDisabeleEdit"></el-input>
+                <sam-input :value.sync="tableForm.StartKilometres" type="number" :disabled="ifDisabeleEdit"></sam-input>
             </el-form-item>
             <el-form-item label="结束公里数" prop="EndKilometres">
-                <el-input v-model="tableForm.EndKilometres" :disabled="ifDisabeleEdit"></el-input>
+                <sam-input :value.sync="tableForm.EndKilometres" type="number" :disabled="ifDisabeleEdit"></sam-input>
             </el-form-item>
             <el-form-item label="使用公里数">
                 <el-input v-model="UseKilometres" :disabled="true"></el-input>

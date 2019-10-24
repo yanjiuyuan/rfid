@@ -7,15 +7,12 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-        @RenderPage("~/Views/Shared/startForm.cshtml")
-    </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
-
-
+    </el-form>
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" :inline="false" ref="tableForm" label-width="140px" class="demo-ruleForm">
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:500px;" v-on:change="selectProject">
+            <el-select v-model="tableForm.ProjectId" placeholder="请选择" style="width:500px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -26,29 +23,21 @@
             </el-select>
         </el-form-item>
         <el-form-item label="项目类型">
-            <el-input v-model="ruleForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目负责人">
-            <el-input v-model="ruleForm.ResponsibleMan" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ResponsibleMan" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="小组成员">
-            <el-input v-model="ruleForm.TeamMembers" type="textarea" autosize style="width:500px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.TeamMembers" type="textarea" autosize style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="计划开始时间">
-            <el-input v-model="ruleForm.StartTime" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.StartTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="计划结束时间">
-            <el-input v-model="ruleForm.EndTime" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目开发周期" prop="ActualCycleStart">
-            <el-date-picker v-model="timeRange" :editable="false"
-                            type="daterange"
-                            v-on:change="selectActualTime"
-                            range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="返回时间">
-            </el-date-picker>
-        </el-form-item>
+        <sam-timerange :label1="'项目开始时间'" :label2="'项目结束时间'" :value1.sync="tableForm.ActualCycleStart" :value2.sync="tableForm.ActualCycleEnd"></sam-timerange>
         <el-form-item label="项目相关数据">
             <el-table :data="DetailedList" stripe border>
                 <el-table-column type="index"></el-table-column>
@@ -59,20 +48,20 @@
 
 
         <el-form-item label="是否有横向合作单位">
-            <el-radio-group v-model="ruleForm.IsTransverse" v-on:change="heng">
+            <el-radio-group v-model="tableForm.IsTransverse" v-on:change="heng">
                 <el-radio :label=true>是</el-radio>
                 <el-radio :label=false>否</el-radio>
             </el-radio-group>
         </el-form-item>
-        <template v-if="ruleForm.IsTransverse">
+        <template v-if="tableForm.IsTransverse">
             <el-form-item label="合同金额" prop="ContractAmount">
-                <el-input v-model="ruleForm.ContractAmount"></el-input>
+                <el-input v-model="tableForm.ContractAmount"></el-input>
             </el-form-item>
             <el-form-item label="合同编码" prop="ContractNo">
-                <el-input v-model="ruleForm.ContractNo"></el-input>
+                <el-input v-model="tableForm.ContractNo"></el-input>
             </el-form-item>
             <el-form-item label="实际到账" prop="ActualMoney">
-                <el-input v-model="ruleForm.ActualMoney"></el-input>
+                <el-input v-model="tableForm.ActualMoney"></el-input>
             </el-form-item>
             <el-table :data="ApplicationUnit" stripe border>
                 <el-table-column type="index"></el-table-column>
@@ -95,13 +84,13 @@
 
 
         <el-form-item label="是否有申报纵向项目">
-            <el-radio-group v-model="ruleForm.IsPortrait" v-on:change="zhong">
+            <el-radio-group v-model="tableForm.IsPortrait" v-on:change="zhong">
                 >
                 <el-radio :label=true>是</el-radio>
                 <el-radio :label=false>否</el-radio>
             </el-radio-group>
         </el-form-item>
-        <template v-if="ruleForm.IsPortrait">
+        <template v-if="tableForm.IsPortrait">
             <el-table :data="LongitudinalProject" stripe border>
                 <el-table-column type="index"></el-table-column>
                 <el-table-column label="操作">
@@ -139,9 +128,10 @@
             </el-form-item>
             <hr />
         </template>
-
+    </el-form>
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/startButton.cshtml")
-
     </el-form>
 </el-main>
 
@@ -291,6 +281,7 @@
                 projectFundingList: [],//项目经费使用情况
                 rules: {
                     ActualCycleStart: { required: true, message: '项目开发周期不能为空', trigger: 'blur' },
+                    ActualCycleEnd: { required: true, message: '项目开发周期不能为空', trigger: 'blur' },
                     ContractAmount: { required: true, message: '合同金额不能为空', trigger: 'blur' },
                     ContractNo: { required: true, message: '合同编码不能为空', trigger: 'blur' },
                     ActualMoney: { required: true, message: '实际到账不能为空', trigger: 'blur' },
@@ -355,21 +346,21 @@
             },
             onSubmit(formName) {
                 for (let con of this.uploadFileConfig) {
-                    if (con.must && !this.ruleForm[con.attribute]) {
+                    if (con.must && !this.tableForm[con.attribute]) {
                         this.$alert(con.label + ' 未上传', '提示信息')
                         return
                     }
                 }
-                if (this.ruleForm.IsTransverse && this.ApplicationUnit.length == 0) {
+                if (this.tableForm.IsTransverse && this.ApplicationUnit.length == 0) {
                     this.$alert('未填写转化/应用单位情况表', '提示信息')
                     return
                 }
-                if (this.ruleForm.IsPortrait && this.LongitudinalProject.length == 0) {
+                if (this.tableForm.IsPortrait && this.LongitudinalProject.length == 0) {
                     this.$alert('未填写纵向项目基本情况表', '提示信息')
                     return
                 }
                 let callBack = (taskId) => {
-                    this.ruleForm['TaskId'] = taskId
+                    this.tableForm['TaskId'] = taskId
                     for (let det of this.DetailedList) {
                         det['TaskId'] = taskId
                     }
@@ -380,13 +371,13 @@
                         app['TaskId'] = taskId
                     }
                     let param = {
-                        projectClosure: this.ruleForm,
+                        projectClosure: this.tableForm,
                         detailedLists: this.DetailedList,
                         applicationUnitList: this.ApplicationUnit,
                         projectFundingList: this.projectFundingList,
                         longitudinalProject: this.LongitudinalProject,
                     }
-                    //console.log(JSON.stringify(param))
+                    console.log(JSON.stringify(param))
                     this.PostData('ProjectClosure/Save', param, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
@@ -404,8 +395,8 @@
                     if (proj.ProjectId == id) {
                         delete proj.ApplyMan
                         delete proj.ApplyManId
-                        Object.assign(this.ruleForm, proj)
-                        this.ruleForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
+                        Object.assign(this.tableForm, proj)
+                        this.tableForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
                         if (proj.ProjectType == '产品类' || proj.ProjectType == '教育类') this.uploadFileConfig[14].must = true
                         proj.ProjectType == '研发类' && proj.ProjectSmallType == '横向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
                     }
@@ -415,8 +406,8 @@
                     this.uploadFileConfig[0].fileList = []
                     this.uploadFileConfig[1].fileList = []
                     if (!res.fileUrl) {
-                        this.ruleForm['SuggestBook1'] = ''
-                        this.ruleForm['PPT2'] = ''
+                        this.tableForm['SuggestBook1'] = ''
+                        this.tableForm['PPT2'] = ''
                         return
                     }
                     let param1 = []
@@ -450,8 +441,8 @@
                     console.log(this.uploadFileConfig[1])
                     console.log(param1)
                     console.log(param2)
-                    this.ruleForm['SuggestBook1'] = JSON.stringify(param1)
-                    this.ruleForm['PPT2'] = JSON.stringify(param2)
+                    this.tableForm['SuggestBook1'] = JSON.stringify(param1)
+                    this.tableForm['PPT2'] = JSON.stringify(param2)
                  
                 })
                 //根据项目显示bom
@@ -463,14 +454,15 @@
             loadReApprovalData() {
                 if (!ReApprovalTempData.valid) return
                 this.ruleForm = ReApprovalTempData.ruleForm
+                this.tableForm = ReApprovalTempData.tableForm
                 this.LongitudinalProject = ReApprovalTempData.LongitudinalProject
                 this.ApplicationUnit = ReApprovalTempData.ApplicationUnit
                 this.DetailedList = ReApprovalTempData.DetailedList
                 this.ProjectFundingList = ReApprovalTempData.ProjectFundingList
 
                 for (let con of this.uploadFileConfig) {
-                    if (this.ruleForm[con.attribute]) {
-                        let urlObj = JSON.parse(this.ruleForm[con.attribute])
+                    if (this.tableForm[con.attribute]) {
+                        let urlObj = JSON.parse(this.tableForm[con.attribute])
                         for (let obj of urlObj) {
                             con.fileList.push({
                                 name: obj.FileName,
@@ -509,7 +501,7 @@
                         "FileName": file.name
                     })
                 }
-                this.ruleForm[attribute] = JSON.stringify(param)
+                this.tableForm[attribute] = JSON.stringify(param)
             },
             handleSuccess(response, file, fileList) {
                 var that = this
@@ -544,8 +536,8 @@
                             })
                         }
                         console.log(param)
-                        that.ruleForm[attribute] = JSON.stringify(param)
-                        console.log(that.ruleForm)
+                        that.tableForm[attribute] = JSON.stringify(param)
+                        console.log(that.tableForm)
                         loading.close()
                     }
                 })

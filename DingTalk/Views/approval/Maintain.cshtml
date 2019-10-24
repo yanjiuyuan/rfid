@@ -91,6 +91,18 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/startForm.cshtml")
+        <el-form-item label="项目名称" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectId + '-' + item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+        </el-form-item>
+
         @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>

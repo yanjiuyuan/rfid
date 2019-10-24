@@ -97,7 +97,7 @@
         StandardNumber: '标准号',
         Features: '典型特征',
         purpose: '用途',
-        Remark: '备注'
+        //Remark: '备注'
     }
     var allConfig = _cloneObj(meterielConfig)
     var configDictionary = {}
@@ -105,6 +105,20 @@
     allConfig['BigCode'] = '大类编码'
     allConfig['SmallCodeName'] = '小类名称'
     allConfig['SmallCode'] = '小类编码'
+    allConfig = {
+        Name: '物料名称',
+        BigCodeName: '大类名称',
+        BigCode: '大类编码',
+        SmallCodeName: '小类名称',
+        SmallCode: '小类编码',
+        Standard: '规格型号',
+        Unit: '单位',
+        SurfaceTreatment: '表面处理',
+        PerformanceLevel: '性能等级',
+        StandardNumber: '标准号',
+        Features: '典型特征',
+        purpose: '用途',
+    }
     for (let c in allConfig) {
         configDictionary[allConfig[c]] = c
     }
