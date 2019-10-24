@@ -1,5 +1,5 @@
 ﻿//实例总参数
-console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~1')
+console.log('lib load success~~~~~~~~~~~~~~~~~~~~~~~~~~~~1.01')
 var FlowId = 0 //当前审批流程ID
 var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
@@ -1367,8 +1367,10 @@ var mixin = {
 
         //图片上传事件
         beforePictureUpload(file) {
-            console.log('before file')
-            console.log(file)
+            if (!file.size) {
+                this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
+                return false
+            }
             file.name = 'helloWorld'
             const isJPG = file.type === 'image/jpeg'
             const isPNG = file.type === 'image/png'
@@ -1423,6 +1425,10 @@ var mixin = {
             return false
         },
         BeforeFileUpload(file) {
+            if (!file.size) {
+                this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
+                return false
+            }
             for (let p of this.fileList) {
                 if (file.name == p.name) {
                     this.$message.error('已存在相同文件名文件!')
@@ -1443,6 +1449,10 @@ var mixin = {
             return true
         },
         beforeExcelUpload(file) {
+            if (!file.size) {
+                this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
+                return false
+            }
             for (let p of this.excelList) {
                 if (file.name == p.name) {
                     this.$message.error('已存在相同文件名文件!')
@@ -1768,7 +1778,32 @@ function lengthLimit(min, max) {
     }
 }
 
-
+//下拉框控件
+Vue.component('sam-checkbox', {
+    props: ['str', 'arr'],
+    template: ` 
+                <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                    <el-option v-for="item in projectList"
+                               :key="item.ProjectId"
+                               :label="item.ProjectId + '-' + item.ProjectName"
+                               :value="item.ProjectId">
+                        <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
+                        <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                    </el-option>
+                </el-select>
+              `,
+    data: function () {
+        return {
+            value: this.str ? this.str.split(',') : [],
+        }
+    },
+    methods: {
+        handleChange(arr) {
+            console.log(arr)
+            this.$emit('update:str', arr.join(','))
+        },
+    },
+})
 //多选控件
 Vue.component('sam-checkbox', {
     props: ['str','arr'],

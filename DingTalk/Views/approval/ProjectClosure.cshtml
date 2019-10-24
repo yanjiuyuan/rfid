@@ -9,10 +9,8 @@
     </div>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="140px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
-    </el-form>
-    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" :inline="false" ref="tableForm" label-width="140px" class="demo-ruleForm">
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="tableForm.ProjectId" placeholder="请选择" style="width:500px;" v-on:change="selectProject">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:500px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -22,6 +20,8 @@
                 </el-option>
             </el-select>
         </el-form-item>
+    </el-form>
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" :inline="false" ref="tableForm" label-width="140px" class="demo-ruleForm">
         <el-form-item label="项目类型">
             <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
@@ -395,6 +395,9 @@
                     if (proj.ProjectId == id) {
                         delete proj.ApplyMan
                         delete proj.ApplyManId
+                        //Object.assign(this.ruleForm, proj)
+                        this.ruleForm.ProjectId = proj.ProjectId
+                        this.ruleForm.ProjectName = proj.ProjectName
                         Object.assign(this.tableForm, proj)
                         this.tableForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
                         if (proj.ProjectType == '产品类' || proj.ProjectType == '教育类') this.uploadFileConfig[14].must = true
@@ -481,6 +484,10 @@
                 attribute = attr
             },
             beforeUpload(file) {
+                if (!file.size) {
+                    this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
+                    return false
+                }
                 const isLt2M = file.size / 1024 / 1024 < 9
                 if (!isLt2M) {
                     this.$message.error('上传文件大小不能超过 9MB!')
