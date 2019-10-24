@@ -27,6 +27,7 @@ namespace DingTalk.Controllers
 
     public class DingTalkServersController : ApiController
     {
+        List<int> deptIdListQuery = new List<int>();
         DingTalkManager dtManager;
         public DingTalkConfig DTConfig { get; set; } = new DingTalkConfig();
         public DingTalkServersController()
@@ -48,26 +49,75 @@ namespace DingTalk.Controllers
             return result;
         }
 
+
+
         /// <summary>
-        /// 获取部门下所有用户信息
+        /// 获取当前部门下所有用户信息
         /// </summary>
-        /// <param name="deptIdList">实例： 77212117,56943182</param>
+        /// <param name="deptIdList">实例： [77212117,56943182]</param>
         /// <returns></returns>
         [Route("GetDeptUserListByDeptId")]
-        public async Task<Dictionary<int, string>> GetDeptUserListByDeptId(string deptIdList)
+        public async Task<Dictionary<int, string>> GetDeptUserListByDeptId(List<int> deptIdList)
         {
             Dictionary<int, string> keyValuePairs = new Dictionary<int, string>();
             if (deptIdList != null)
             {
-                string[] deptIds = deptIdList.Split(',');
-                foreach (var item in deptIds)
+                foreach (var item in deptIdList.Distinct())
                 {
                     DingTalkManager dingTalkManager = new DingTalkManager();
-                    var result = await dingTalkManager.GetDeptUserListByDeptId(int.Parse(item));
-                    keyValuePairs.Add(int.Parse(item), result);
+                    var result = await dingTalkManager.GetDeptUserListByDeptId(item);
+                    keyValuePairs.Add(item, result);
                 }
             }
             return keyValuePairs;
+        }
+
+
+        /// <summary>
+        /// 获取当前部门及其子部门下所有用户信息
+        /// </summary>
+        /// <param name="deptIdList"> 实例 [77212117,56943182]</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("GetDeptAndChildUserListByDeptId")]
+        public async Task<Dictionary<int, string>> GetDeptAndChildUserListByDeptId([FromBody] List<int> deptIdList)
+        {
+            //获取部门列表
+            string departmentList = await DepartmentList();
+            DepartmentListModel departmentListModel = JsonConvert.DeserializeObject<DepartmentListModel>(departmentList);
+
+            Dictionary<int, string> keyValuePairs = new Dictionary<int, string>();
+            List<int> deptIdListPro = new List<int>();
+            if (deptIdList != null)
+            {
+                if (departmentListModel.department.Count > 0)
+                {
+                    QueryDeptChildId(deptIdList, departmentListModel.department);
+                }
+            }
+            return await GetDeptUserListByDeptId(deptIdListQuery);
+        }
+
+        public void QueryDeptChildId(List<int> vs, List<department> departmentList)
+        {
+            List<int> vsPro = new List<int>();
+            foreach (var vss in vs)
+            {
+                deptIdListQuery.Add(vss);
+                var departmentListNew = departmentList.Where(d => d.parentid == vss).ToList();
+                if (departmentListNew.Count > 0)
+                {
+                    foreach (var item in departmentListNew)
+                    {
+                        vsPro.Add(item.id);
+                    }
+                }
+            }
+            if (vsPro.Count > 0)
+            {
+                deptIdListQuery.AddRange(vsPro);
+                QueryDeptChildId(vsPro, departmentList);
+            }
         }
 
         /// <summary>
@@ -80,33 +130,34 @@ namespace DingTalk.Controllers
             var result = await dtManager.GetDepartmentByUserId(userId);
             return result;
         }
+
         /// <summary>
         /// 根据用户Id获取第二级部门信息
         /// </summary>
         /// <returns></returns>
-        [Route("departmentQuaryByUserId")]
-        public async Task<string> departmentQuaryByUserId(string userId)
-        {
-            var result = await dtManager.GetDepartmentByUserId(userId);
-            DepartmentListModel departmentListModel = JsonConvert.DeserializeObject<DepartmentListModel>(result);
-            List<List<string>> ListString = departmentListModel.department;
-            List<string> ListDepartmentId = new List<string>();
-            foreach (List<string> item in ListString)
-            {
-                if (ListString.IndexOf(item) == 0)
-                {
-                    foreach (var Id in item)
-                    {
-                        if (item.IndexOf(Id) == (item.Count - 2))
-                        {
-                            ListDepartmentId.Add(Id);
-                        }
-                    }
-                }
-            }
-            var results = await dtManager.SingleDepartment(Int32.Parse(ListDepartmentId[0]));
-            return results;
-        }
+        //[Route("departmentQuaryByUserId")]
+        //public async Task<string> departmentQuaryByUserId(string userId)
+        //{
+        //    var result = await dtManager.GetDepartmentByUserId(userId);
+        //    DepartmentListModel departmentListModel = JsonConvert.DeserializeObject<DepartmentListModel>(result);
+        //    List<List<string>> ListString = departmentListModel.department;
+        //    List<string> ListDepartmentId = new List<string>();
+        //    foreach (List<string> item in ListString)
+        //    {
+        //        if (ListString.IndexOf(item) == 0)
+        //        {
+        //            foreach (var Id in item)
+        //            {
+        //                if (item.IndexOf(Id) == (item.Count - 2))
+        //                {
+        //                    ListDepartmentId.Add(Id);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    var results = await dtManager.SingleDepartment(Int32.Parse(ListDepartmentId[0]));
+        //    return results;
+        //}
 
         [Route("addDepartment")]
         public async Task<string> DepartmentAdd()
