@@ -92,7 +92,7 @@
         methods: {
             onSubmit(formName) {
                 this.$refs['tableForm'].validate((valid) => {
-                    if (!valid) {
+                    if (valid) {
                         this.fileListToUrl()
                         let callBack = (taskId) => {
                             this.tableForm['TaskId'] = taskId
@@ -110,7 +110,7 @@
                         this.approvalSubmit(callBack)
                     }
                     else {
-                        that.$alert('表单信息不全或有误', '提示信息', {
+                        this.$alert('表单信息不全或有误', '提示信息', {
                             confirmButtonText: '确定'
                         })
                     }
@@ -140,8 +140,8 @@
                             names.push(d.name)
                             ids.push(d.emplId)
                         } 
-                        that.selectTime.CooperateMan = names.join(',')
-                        that.selectTime.CooperateManId = ids.join(',')
+                        that.tableForm.CooperateMan = names.join(',')
+                        that.tableForm.CooperateManId = ids.join(',')
                     },
                     onFail: function (err) { }
                 });

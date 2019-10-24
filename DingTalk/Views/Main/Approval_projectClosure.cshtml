@@ -11,9 +11,8 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" label-width="120px" class="demo-ruleForm">
 
         @RenderPage("~/Views/Shared/endForm.cshtml")
-
         <el-form-item label="项目类型">
-            <el-input v-model="tableForm.ProjectType " style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ProjectType" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目负责人">
             <el-input v-model="tableForm.ResponsibleMan" style="width:200px;" :disabled="true"></el-input>
@@ -148,7 +147,8 @@
             </el-collapse-item>
             <el-collapse-item :name="5" :key="5" v-if="NodeId != 1">
                 <template slot="title">
-                    <span style="color:red;"> * </span><span style="font-size:20px;">项目经费使用情况表</span>
+                    <span style="color:red;"> * </span>
+                    <span style="font-size:20px;">项目经费使用情况表</span>
                 </template>
                 <el-table :data="ProjectFundingList" stripe border v-if="NodeId == 2 && Index == 0">
                     <el-table-column type="index"></el-table-column>

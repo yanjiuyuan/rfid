@@ -219,11 +219,11 @@
                     return
                 }
                 this.tableData.push(_cloneObj(this.goods[0]))
-                //原方法
-                return
-                this.goods.push(_cloneObj(meteriel))
+                
             },
-
+            deleteGood(index, good) {
+                this.tableData.splice(index, 1)
+            },
             //切换编码类型
             changeCodeType(e) {
                 console.log(e)
