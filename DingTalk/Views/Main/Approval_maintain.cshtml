@@ -45,7 +45,7 @@
         Standard: '规格型号',
         Unit: '单位',
         Count: '数量',
-        Price: '单价(预计)',
+        Price: '单价',
         MaintainContent: '维修内容',
         NeedTime: '需用时间',
         Mark: '备注'
@@ -80,7 +80,7 @@
                 }, () => { this.elementAlert('提示信息','获取成功，请在工作通知中查收') })
             },
             printBom() {
-                this.PostData('Borrow/PrintExcel', {
+                this.PostData('Maintain/PrintExcel', {
                     UserId: DingData.userid,
                     TaskId: TaskId
                 }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })

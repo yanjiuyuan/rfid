@@ -100,7 +100,7 @@
         },
         created: function () {
             this.initEnd(() => { this.getTable() })
-            if (NodeId == '1' || NodeId == '2') this.reInput = true
+            if ((NodeId == '1' && Index != '2') || NodeId == '2') this.reInput = true
             if (NodeId == '2' || Index > 0) this.disabledRemark = true
         }
     })

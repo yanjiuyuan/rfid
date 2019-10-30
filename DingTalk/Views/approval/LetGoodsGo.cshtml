@@ -110,7 +110,7 @@
                 //return
                 this.fileListToUrl()
                 if (!this.ruleForm.ImageUrl) {
-                    this.elementAlert('alert', '未上传图片')
+                    this.elementAlert('提示', '未上传图片，请先上传后提交')
                     return
                 }
                 let callBack = (taskId) => {

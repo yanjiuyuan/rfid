@@ -14,20 +14,20 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="来文单位" prop="ReceivingUnit">
-            <el-input v-model="ruleForm.ReceivingUnit" style="width:500px;"></el-input>
+            <sam-input :value.sync="tableForm.ReceivingUnit" :required="true" style="width:500px;"></sam-input>
         </el-form-item>
         <el-form-item label="文件文号">
-            <el-input v-model="ruleForm.FileNo" style="width:500px;"></el-input>
+            <sam-input :value.sync="tableForm.FileNo" :required="true" style="width:500px;"></sam-input>
         </el-form-item>
         <el-form-item label="收文时间" prop="ReceivingTime">
-            <el-date-picker v-model="ruleForm.ReceivingTime"
+            <el-date-picker v-model="tableForm.ReceivingTime"
                             value-format="yyyy-MM-dd"
                             type="date" :editable="false"
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
         <el-form-item label="主要内容" prop="MainIdea">
-            <el-input v-model="ruleForm.MainIdea" type="textarea" row="5" style="width:500px;"></el-input>
+            <sam-input :value.sync="tableForm.MainIdea" :required="true" style="width:500px;" type="textarea"></sam-input>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -68,22 +68,32 @@
             onSubmit(formName) {
                 console.log('submit!');
                 var that = this
-                let url = '/Receiving/save'
-                var param = _cloneObj(this.tableForm)
-                let callBack = function (taskId) {
-                    console.log(taskId)
-                    param.TaskId = taskId
-                    console.log(JSON.stringify(param))
-                    that._postData(url, function (data) {
-                        that.$alert('恭喜提交成功', '提示信息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                goHome()
-                            }
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid) {
+                        let url = '/Receiving/save'
+                        var param = _cloneObj(this.tableForm)
+                        let callBack = function (taskId) {
+                            console.log(taskId)
+                            param.TaskId = taskId
+                            console.log(JSON.stringify(param))
+                            that._postData(url, function (data) {
+                                that.$alert('恭喜提交成功', '提示信息', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        goHome()
+                                    }
+                                })
+                            }, param)
+                        }
+                        that.approvalSubmit(callBack)
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
                         })
-                    }, param)
-                }
-                this.approvalSubmit(callBack)
+                    }
+                })
+                
             },
            
 

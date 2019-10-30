@@ -56,6 +56,8 @@
                 this._getData("/Gift/GetPrintPDF", function (result) {
                     if (result.errcode != 0) {
                         that.elementAlert('alert', result.errmsg)
+                    } else {
+                        that.elementAlert('提示信息', '获取成功，请在工作通知中查收')
                     }
                 },
                 {

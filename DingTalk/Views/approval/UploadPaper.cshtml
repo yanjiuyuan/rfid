@@ -42,6 +42,7 @@
         @*</el-form-item>*@
     </template>
     <div style="margin:10px;">
+        <span style="color:red;">下载使用说明书 - > </span><el-button size="mini" type="primary" v-on:click="downloadServerFile(demoUrl)" :disabled="disablePage">下载说明书</el-button>
         <span style="color:red;">上传所需excel模板 - > </span><el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
         <p>提示：为了确保信息的准确性，请下载导入模板，并在最新模板上进行修改</p>
     </div>
@@ -120,6 +121,10 @@
 
 <script>
     var mediaId = '@@lAvPBY0V47H4Ai_OIqLuUc5MMPmu'
+    var demoUrl = '~/UploadFile/Flies/图纸审批使用教程V1.020191030101019.docx'
+    if (DingData.CompanyId == 2) {
+        demoUrl = '~/UploadFile/Flies/图纸审批使用教程V1.020191030095607.docx'
+    }
     var upBom = []
     var demo = new Vue({
         el: "#partPage",
@@ -127,7 +132,7 @@
         data: function () {
             return {
                 mediaId: mediaId,
-
+                demoUrl: demoUrl,
                 tableData: [],
                 specialRole: [],
                 specialRoleNames: [],

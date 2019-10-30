@@ -104,7 +104,7 @@
             onSubmit(formName) {
                 console.log('submit!')
                 var that = this
-                this.$refs['ruleForm'].validate((valid) => {
+                this.$refs['tableForm'].validate((valid) => {
                     if (valid) {
                         let url = '/CarTable/TableModify'
                         var param = _cloneObj(that.tableForm)
@@ -112,6 +112,11 @@
                         that._postData(url, function () {
                             that.aggreSubmit()
                         }, param)
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
                     }
                 })
             },

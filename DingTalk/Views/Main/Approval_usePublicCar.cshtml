@@ -109,6 +109,11 @@
                             that.aggreSubmit()
                         }, param)
                     }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
                 })
             },
             //选车操作
