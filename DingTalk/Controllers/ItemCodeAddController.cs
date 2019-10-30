@@ -1,4 +1,4 @@
-﻿using Common.DbHelper;
+﻿
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using Newtonsoft.Json;
@@ -47,11 +47,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
 
@@ -75,11 +71,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
 
@@ -111,11 +103,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
 
@@ -149,10 +137,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -188,10 +173,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -199,51 +181,51 @@ namespace DingTalk.Controllers
         /// 同步物料编码数据数据
         /// </summary>
         /// <returns></returns>
-        [Route("SynchroMySqldata")]
-        [HttpGet]
-        public object SynchroMySqldata()
-        {
-            try
-            {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                using (DDContext context = new DDContext())
-                {
+        //[Route("SynchroMySqldata")]
+        //[HttpGet]
+        //public object SynchroMySqldata()
+        //{
+        //    try
+        //    {
+        //        Stopwatch stopwatch = new Stopwatch();
+        //        stopwatch.Start();
+        //        using (DDContext context = new DDContext())
+        //        {
 
-                    List<MaterialCode> MaterialCodeList = new List<MaterialCode>();
-                    string strSql = "select * from materialcode";
-                    DataSet dataSets = MySqlHelper.GetDataSet(strSql);
-                    DataTable dataTable = dataSets.Tables[0];
-                    foreach (DataRow dr in dataTable.Rows)
-                    {
-                        MaterialCodeList.Add(new MaterialCode()
-                        {
-                            materialCodeNumber = dr["materialCodeNumber"].ToString(),
-                            materialName = dr["materialName"].ToString(),
-                            materiaType = dr["materiaType"].ToString(),
-                        });
-                    }
+        //            List<MaterialCode> MaterialCodeList = new List<MaterialCode>();
+        //            string strSql = "select * from materialcode";
+        //            DataSet dataSets = MySqlHelper.GetDataSet(strSql);
+        //            DataTable dataTable = dataSets.Tables[0];
+        //            foreach (DataRow dr in dataTable.Rows)
+        //            {
+        //                MaterialCodeList.Add(new MaterialCode()
+        //                {
+        //                    materialCodeNumber = dr["materialCodeNumber"].ToString(),
+        //                    materialName = dr["materialName"].ToString(),
+        //                    materiaType = dr["materiaType"].ToString(),
+        //                });
+        //            }
                     
-                    context.MaterialCode.RemoveRange(context.MaterialCode.ToList());
-                    context.MaterialCode.AddRange(MaterialCodeList);
-                    context.SaveChanges();
-                };
-                stopwatch.Stop();
-                return new NewErrorModel()
-                {
-                    //count = KisOffices.Count,
-                    //data = KisOffices,
-                    error = new Error(0, string.Format("同步成功！耗时：{0}", stopwatch.ElapsedMilliseconds), "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
-            }
-        }
+        //            context.MaterialCode.RemoveRange(context.MaterialCode.ToList());
+        //            context.MaterialCode.AddRange(MaterialCodeList);
+        //            context.SaveChanges();
+        //        };
+        //        stopwatch.Stop();
+        //        return new NewErrorModel()
+        //        {
+        //            //count = KisOffices.Count,
+        //            //data = KisOffices,
+        //            error = new Error(0, string.Format("同步成功！耗时：{0}", stopwatch.ElapsedMilliseconds), "") { },
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new NewErrorModel()
+        //        {
+        //            error = new Error(1, ex.Message, "") { },
+        //        };
+        //    }
+        //}
 
 
         /// <summary>

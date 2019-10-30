@@ -1,4 +1,4 @@
-namespace DingTalk.Models.DingModels
+ï»¿namespace DingTalk.Models.DingModels
 {
     using System;
     using System.Collections.Generic;
@@ -6,56 +6,50 @@ namespace DingTalk.Models.DingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Roles
+    [Table("Role")]
+    public partial class Role
     {
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
-      
+
         /// <summary>
-        /// ½ÇÉ«Ãû
+        /// è§’è‰²å
         /// </summary>
         [StringLength(200)]
         public string RoleName { get; set; }
-     
+
         /// <summary>
-        /// ´´½¨ÈË
+        /// åˆ›å»ºäºº
         /// </summary>
         [StringLength(200)]
         public string CreateMan { get; set; }
 
         /// <summary>
-        /// ´´½¨ÈËId
+        /// åˆ›å»ºäººId
         /// </summary>
         [StringLength(200)]
         public string CreateManId { get; set; }
-       
+
         /// <summary>
-        /// ´´½¨Ê±¼ä
+        /// åˆ›å»ºæ—¶é—´
         /// </summary>
         [StringLength(200)]
         public string CreateTime { get; set; }
         
         /// <summary>
-        /// ÓµÓĞÈ¨ÏŞµÄÈË
-        /// </summary>
-        [StringLength(200)]
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// ÓµÓĞÈ¨ÏŞµÄÈËµÄId
-        /// </summary>
-        [StringLength(200)]
-        public string UserId { get; set; }
-
-        /// <summary>
-        /// ÊÇ·ñÆôÓÃ
+        /// æ˜¯å¦å¯ç”¨
         /// </summary>
         public bool? IsEnable { get; set; }
 
         /// <summary>
-        /// ½ÇÉ«IdÖ÷¼ü
+        /// æè¿°ä¿¡æ¯
         /// </summary>
-        public int? RoleId { get; set; }
+        [StringLength(200)]
+        public string Remark { get; set; }
+
+
+        [NotMapped]
+        public List<Roles> roles { get; set; }
     }
 }

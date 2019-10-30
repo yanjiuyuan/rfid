@@ -98,6 +98,11 @@ namespace DingTalk.Controllers
             return await GetDeptUserListByDeptId(deptIdListQuery);
         }
 
+        /// <summary>
+        /// 递归取子部门Id
+        /// </summary>
+        /// <param name="vs"></param>
+        /// <param name="departmentList"></param>
         public void QueryDeptChildId(List<int> vs, List<department> departmentList)
         {
             List<int> vsPro = new List<int>();
@@ -824,11 +829,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
 
         }
@@ -886,10 +887,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(2, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -947,10 +945,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 

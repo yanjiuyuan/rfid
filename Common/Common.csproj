@@ -90,7 +90,6 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Ionic\IonicHelper.cs" />
     <Compile Include="JsonHelper\JsonHelper.cs" />
-    <Compile Include="LogHelper\Logger.cs" />
     <Compile Include="PDF\PDFHelper.cs" />
     <Compile Include="PDF\PDFWaterMark.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

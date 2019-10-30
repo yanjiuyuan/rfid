@@ -49,7 +49,7 @@ namespace WebZhongZhi.Controllers
             }
             catch (Exception ex)
             {
-                return Content(string.Format("{{'errcode': -1, 'errmsg':'{0}'}}", ex.Message));
+                throw ex;
             }
         }
 

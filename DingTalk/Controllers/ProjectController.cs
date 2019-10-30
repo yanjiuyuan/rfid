@@ -170,11 +170,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 3,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
@@ -204,11 +200,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 2,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
@@ -293,11 +285,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
 
         }
@@ -383,11 +371,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
@@ -533,11 +517,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
@@ -583,11 +563,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
@@ -629,11 +605,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
@@ -728,11 +700,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
 
