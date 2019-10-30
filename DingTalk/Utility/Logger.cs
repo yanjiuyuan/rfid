@@ -4,36 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace Common.LogHelper
+namespace DingTalk.Utility
 {
     public class Logger
     {
         static Logger()
         {
-            XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, 
-                "CfgFiles\\log4net.cfg.xml")));
+            XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CfgFiles\\log4net.config")));
             ILog Log = LogManager.GetLogger(typeof(Logger));
             Log.Info("系统初始化Logger模块");
         }
 
         private ILog loger = null;
-        private Logger(Type type)
+        public Logger(Type type)
         {
             loger = LogManager.GetLogger(type);
         }
 
-        /// <summary>
-        /// 创建Logger
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static Logger CreateLogger(Type type)
-        {
-            return new Logger(type);
-        }
 
         /// <summary>
         /// Log4日志

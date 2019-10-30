@@ -11,8 +11,7 @@ namespace DingTalk.Models.DingModels
             : base("name=DDContext")
         {
         }
-
-        public virtual DbSet<Approve> Approve { get; set; }
+        public virtual DbSet<ContextError> ContextError{ get; set; }
         public virtual DbSet<FlowMan> FlowMan { get; set; }
         public virtual DbSet<FlowProgress> FlowProgress { get; set; }
         public virtual DbSet<FlowQx> FlowQx { get; set; }

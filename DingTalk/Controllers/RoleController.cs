@@ -15,6 +15,27 @@ namespace DingTalk.Controllers
     [RoutePrefix("Role")]
     public class RoleController : ApiController
     {
+        [HttpPost]
+        [Route("TestLog2")]
+        public NewErrorModel TestLog2(List<Role> roles)
+        {
+
+            try
+            {
+                int i = Int32.Parse(roles[0].CreateManId);
+                throw new NotImplementedException("方法不被支持");
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "321", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         /// <summary>
         /// 同步旧数据(第一次用)
         /// </summary>
@@ -48,9 +69,9 @@ namespace DingTalk.Controllers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
 
@@ -92,10 +113,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -145,10 +163,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -203,10 +218,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -245,10 +257,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -289,10 +298,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -334,10 +340,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -382,11 +385,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
-                {
-                    errorCode = 0,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
     }

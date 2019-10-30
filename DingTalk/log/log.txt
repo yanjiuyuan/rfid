@@ -1,0 +1,28 @@
+2019-10-28 10:01:16,223 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 10:01:18,595 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 10:24:35,208 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 10:24:36,264 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 10:28:32,614 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 10:28:34,748 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 10:31:00,237 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 10:31:02,252 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 10:49:43,606 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 10:49:46,525 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 10:51:14,994 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 10:51:17,080 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 11:15:09,594 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 11:15:12,291 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 11:17:20,241 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 11:17:23,117 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 11:28:48,757 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 11:28:51,650 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 11:44:11,803 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 11:44:14,651 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 16:44:56,387 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 16:45:00,162 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 16:46:05,374 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Role/TestLog2 时出现异常，信息：输入字符串的格式不正确。，数据库日志Id：1
+2019-10-28 17:00:22,203 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 17:00:25,093 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 17:23:01,778 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-10-28 17:23:06,164 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-10-28 17:25:41,267 [6] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Role/TestLog2 时出现异常，信息：输入字符串的格式不正确。，详见数据库日志Id：2

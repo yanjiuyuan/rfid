@@ -38,11 +38,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
 
@@ -65,11 +61,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
 
@@ -96,11 +88,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new ErrorModel()
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                };
+                throw ex;
             }
         }
     }

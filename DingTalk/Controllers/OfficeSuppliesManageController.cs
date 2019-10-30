@@ -43,10 +43,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -76,10 +73,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return new NewErrorModel()
-                {
-                    error = new Error(1, ex.Message, "") { },
-                };
+                throw ex;
             }
         }
 
@@ -145,11 +139,7 @@ namespace DingTalk.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new ErrorModel()
-                {
-                    errorCode = 1,
-                    errorMessage = ex.Message
-                });
+                throw ex;
             }
         }
         #endregion
