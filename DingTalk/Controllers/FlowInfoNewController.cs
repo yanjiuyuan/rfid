@@ -2332,9 +2332,14 @@ namespace DingTalk.Controllers
                             }
                         }
                     }
+                    Dictionary<string, List<NodeInfo>> keyValuePairsPro = new Dictionary<string, List<NodeInfo>>();
+                    foreach (var item in keyValuePairs)
+                    {
+                        keyValuePairsPro.Add(item.Key, item.Value.OrderBy(i => i.NodeId).ToList());
+                    }
                     return new NewErrorModel()
                     {
-                        data = keyValuePairs,
+                        data = keyValuePairsPro,
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
