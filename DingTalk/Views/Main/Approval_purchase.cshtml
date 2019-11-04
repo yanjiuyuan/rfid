@@ -132,10 +132,14 @@
                 }, () => { this.elementAlert('提示信息','获取成功，请在工作通知中查收') })
             },
             printBom() {
-                this.PostData('PurchaseNew/PrintExcel', {
+                this.GetData('PurchaseNew/PrintExcel' + _formatQueryStr({
                     UserId: DingData.userid,
                     TaskId: TaskId
-                }, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
+                }), () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
+                //this.PostData('PurchaseNew/PrintExcel', {
+                //    UserId: DingData.userid,
+                //    TaskId: TaskId
+                //}, () => { this.elementAlert('提示信息', '获取成功，请在工作通知中查收') })
             }
         },
         created: function () {
