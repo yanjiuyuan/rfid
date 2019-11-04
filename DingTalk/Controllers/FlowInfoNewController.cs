@@ -2342,6 +2342,63 @@ namespace DingTalk.Controllers
             }
         }
 
+
+        /// <summary>
+        /// 批量新增流程节点信息
+        /// </summary>
+        /// <param name="nodeInfos"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("AddNodeInfoInfo")]
+        public NewErrorModel AddNodeInfoInfo(List<NodeInfo> nodeInfos)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    context.NodeInfo.AddRange(nodeInfos);
+                    context.SaveChanges();
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "新增成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 删除流程节点信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("DelNodeInfoInfoById")]
+        public NewErrorModel DelNodeInfoInfoById(int Id)
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    NodeInfo nodeInfo = context.NodeInfo.Find(Id);
+                    context.NodeInfo.Remove(nodeInfo);
+                    context.SaveChanges();
+                    return new NewErrorModel()
+                    {
+                        error = new Error(0, "删除成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         /// <summary>
         /// 批量更新流程节点信息
         /// </summary>

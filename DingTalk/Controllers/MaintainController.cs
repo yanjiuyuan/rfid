@@ -116,8 +116,8 @@ namespace DingTalk.Controllers
                     var SelectGoDownList = from g in GoDownList
                                            select new
                                            {
-                                               g.Name,
                                                g.CodeNo,
+                                               g.Name,
                                                g.Standard,
                                                g.Unit,
                                                g.Count,
@@ -150,12 +150,12 @@ namespace DingTalk.Controllers
                     //绘制BOM表单PDF
                     List<string> contentList = new List<string>()
                         {
-                            "序号","供应商","物料名称","物料编码","规格型号","单位","数量","单价(预计)","维修内容","需用时间","备注"
+                            "序号","物料编码","物料名称","规格型号","单位","数量","单价(预计)","维修内容","需用时间","备注"
                         };
 
                     float[] contentWithList = new float[]
                     {
-                        50, 60, 60 ,60, 60, 60, 60, 60, 60,60,100
+                        50, 60 ,60, 60, 60, 60, 60, 60,60,100
                     };
 
 
