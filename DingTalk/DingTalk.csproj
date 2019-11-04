@@ -918,6 +918,7 @@
     <Content Include="Views\Shared\endButton.cshtml" />
     <Content Include="Views\Shared\startButton.cshtml" />
     <Content Include="Views\approval\FlowEdit.cshtml" />
+    <Content Include="Views\approval\logManager.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

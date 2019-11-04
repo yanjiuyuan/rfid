@@ -157,5 +157,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult logManager()
+        {
+            return View();
+        }
     }
 }

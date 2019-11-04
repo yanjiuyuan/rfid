@@ -485,14 +485,29 @@ var mixin = {
         Index: '',
     },
     methods: {
-        doWithErrcode(error, errorFunc) {
+        doWithErrcode(error,url, errorFunc) {
             if (!error) {
                 return 1
             }
             if (error && error.errorCode != 0) {
                 this.elementAlert('报错信息', error.errorMessage)
                 if (errorFunc) errorFunc()
-                console.log(errorFunc)
+                //报错日志
+                $.ajax({
+                    url: 'ContextError/Read',
+                    type: 'GET',
+                    success: function (res) {
+                        if (typeof (res) == 'string') res = JSON.parse(res)
+                        console.log('ContextError/Read')
+                        console.log(url)
+                        console.log(res)
+                    },
+                    error: function (err) {
+                        console.error(url)
+                        console.log('ContextError/Read')
+                        console.error(err)
+                    }
+                })
                 return 1
             }
             return 0
@@ -519,7 +534,7 @@ var mixin = {
                         console.log(res)
                     }
                     that.disablePage = false
-                    if (that.doWithErrcode(res.error)) {
+                    if (that.doWithErrcode(res.error,url)) {
                         return
                     }
                     res.count ? succe(res.data, res.count) : succe(res.data)
