@@ -340,7 +340,7 @@ var mixin = {
             ],
             Title: [
                 { required: true, message: '标题内容不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 60 个字符以内', trigger: 'blur' }
+                { min: 0, max: 60, message: '长度在 60 个字符以内', trigger: 'blur' }
             ],
             ImageUrl: [
                 { required: true, message: '图片不能为空！', trigger: 'change' }
@@ -911,7 +911,7 @@ var mixin = {
         saveTempData() {
             let data = {}
             data['tableData'] = this.tableData || []
-            data['data'] = this.data || []
+            //data['data'] = this.data || []
             data['ruleForm'] = this.ruleForm || {}
             data['tableForm'] = this.tableForm || {}
             data['purchaseList'] = this.purchaseList || []
@@ -925,7 +925,7 @@ var mixin = {
             let data = this.loadData()
             if (data) {
                 this['tableData'] = data.tableData
-                this['data'] = data.data
+                //this['data'] = data.data
                 this['ruleForm'] = data.ruleForm
                 this['tableForm'] = data.tableForm
                 this['purchaseList'] = data.purchaseList
@@ -940,11 +940,13 @@ var mixin = {
             var Days = 7;
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+            console.log(JSON.stringify(data))
             document.cookie = FlowId + "=" + escape(JSON.stringify(data)) + ";expires=" + exp.toGMTString();
         },
         loadData() {
             var arr, reg = new RegExp("(^| )" + FlowId + "=([^;]*)(;|$)");
             if ((arr = document.cookie.match(reg)) && unescape(arr[2])) {
+                console.log(unescape(arr[2]))
                 return JSON.parse(unescape(arr[2]))
             }
         },
@@ -1435,10 +1437,6 @@ var mixin = {
                     return false
                 }
             }
-            if (!file.type) {
-                this.$message({ type: 'error', message: `不支持文件类型，请重新选择！` });
-                return false
-            }
             file.name = 'helloWorld'
             isPdf = false
             const isLt2M = file.size / 1024 / 1024 < 9
@@ -1654,13 +1652,13 @@ var mixin = {
                 headers: { Accept: 'application/json'},
                 success: function (data) {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
+                    console.log(url)
+                    console.log(param)
+                    console.log(data)
                     if (data.error && data.error.errorCode != 0) {
                         that.elementAlert('报错信息', data.error.errorMessage)
                         return
                     }
-                    console.log(url)
-                    console.log(param)
-                    console.log(data)
                     if (alertStr) {
                         that.$alert(alertStr.length > 2 ? alertStr : data.error.errorMessage, alertTitle, {
                             confirmButtonText: '确定',

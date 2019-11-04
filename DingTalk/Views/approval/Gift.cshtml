@@ -151,6 +151,14 @@
                     this.elementAlert('提交失败', '没有选择礼品')
                     return
                 }
+                for (let p of this.purchaseList) {
+                    for (let d of this.allData) {
+                        if (p.GiftNo == d.Id && p.GiftCount > d.Stock) {
+                            this.$message({ type: 'error', message: p.GiftName + `超出库存数！` });
+                            return
+                        }
+                    }
+                }
                 var that = this
                 let url = '/Gift/TableSave'
                 let callBack = function (taskId) {
@@ -213,7 +221,7 @@
             },
             //编辑库存
             editGift() {
-                this.PostData('Gift/StockModify', this.editForm, (res) => {
+                this.PostData('Gift/StockModify', [this.editForm], (res) => {
                     this.getAllGifts()
                     this.dialogFormVisible = false
                 })
@@ -224,7 +232,17 @@
                 this.dialogFormVisible = true
             },
             //添加礼品
-            addGood(index,row) {
+            addGood(index, row) {
+                if (row.Stock <= 0) {
+                    this.$message({ type: 'error', message: `当前礼品暂无库存` });
+                    return
+                }
+                for (let p of this.purchaseList) {
+                    if (p.GiftNo == row.Id) {
+                        this.$message({ type: 'error', message: `重复选择` });
+                        return
+                    }
+                }
                 this.purchaseList.push({
                     GiftNo: row.Id,
                     GiftName: row.GiftName,

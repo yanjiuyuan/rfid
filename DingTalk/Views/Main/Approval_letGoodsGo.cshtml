@@ -41,12 +41,11 @@
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
-            <el-upload action=""
-                       list-type="picture-card"
-                       :on-preview="handlePictureCardPreview2"
-                       :file-list="imageList">
-            </el-upload>
+            <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
         </el-form-item>
+        <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
+            <img :src="preUrl" />
+        </div>
         <hr />
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")

@@ -8,14 +8,8 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <el-form v-on:submit.native.prevent id="formImg" :model="tableForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-        <el-form-item label="标题">
-            <el-input v-model="ruleForm.Title" style="width:300px;" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="申请人">
-            <el-input v-model="ruleForm.ApplyMan" style="width:200px;" :disabled="true"></el-input>
-        </el-form-item>
-
+    <el-form v-on:submit.native.prevent id="formImg" :model="tableForm" :rules="rules" ref="tableForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/endForm.cshtml")
         <el-form-item label="来文单位">
             <el-input v-model="tableForm.ReceivingUnit" style="width:500px;" :disabled="true"></el-input>
         </el-form-item>
@@ -49,42 +43,18 @@
         <el-form-item label="拟办意见" prop="Suggestion">
             <el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1"></el-input>
         </el-form-item>
-
         <hr />
-
         <template v-if="NodeId >= 3">
             <el-form-item label="领导阅示" prop="Leadership">
                 <el-input v-model="tableForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>3"></el-input>
             </el-form-item>
         </template>
-
         <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="false" :nodedata="nodeInfo"></sam-approver-list>
-        <template v-if="index==0">
-            <el-form-item label="建议">
-                <el-input v-model="ruleForm.Remark" style="width:500px;"></el-input>
-            </el-form-item>
-            <el-form-item label="操作">
-                <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">同意</el-button>
-                <el-button v-show="nodeInfo.IsBack" type="warning" v-on:click="returnBk()">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 &&( state=='被退回' || state=='已撤回')">
-            <el-form-item>
-                <el-button type="primary" v-on:click="reApproval" :disabled="disablePage">重新发起</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2">
-            <el-form-item v-if="state=='未完成'">
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-            <el-form-item v-else>
-                <el-button type="primary" v-on:click="print" :disabeld="disablePage">打印</el-button>
-            </el-form-item>
-        </template>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
+        <el-form-item label="操作" v-if="state=='已完成'">
+            <el-button type="primary" v-on:click="print">打印</el-button>
+        </el-form-item>
     </el-form>
-
 </el-main>
 
 <script>
@@ -99,27 +69,31 @@
         },
         methods: {
             onSubmit(formName) {
-                console.log('submit!')
-                console.log(this.tableForm)
-                this.disablePage = true
                 var that = this
-                let url = '/Receiving/Modify'
-                this.tableForm.Review = ''
-                this.tableForm.HandleImplementation = ''
-                //console.log(param)
-                //return
-                this._postData(url, function (data) {
-                    if (data.error.errorCode == 0) {
-                        that.aggreSubmit({
-                            Id: that.ruleForm.Id,
-                            Remark: that.ruleForm.Remark
-                        })
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        that.disablePage = true
+                        let url = '/Receiving/Modify'
+                        that.tableForm.Review = ''
+                        that.tableForm.HandleImplementation = ''
+                        that._postData(url, function (data) {
+                            if (data.error.errorCode == 0) {
+                                that.aggreSubmit({
+                                    Id: that.ruleForm.Id,
+                                    Remark: that.ruleForm.Remark
+                                })
+                            }
+                            else {
+                                that.element.alert('提示信息', '提交失败')
+                            }
+                        }, that.tableForm)
                     }
                     else {
-                        that.element.alert('提示信息','提交失败')
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
                     }
-                }, this.tableForm)
-
+                })
             },
             returnBk() {
                 let param = {
@@ -153,8 +127,6 @@
             print() {
                 var that = this
                 var param = { taskId: TaskId, UserId: DingData.userid }
-                console.log('打印开始')
-                console.log(param)
                 this._getData('/Receiving/GetReport', function (data) {
                     console.log('打印结果')
                     console.log(data)

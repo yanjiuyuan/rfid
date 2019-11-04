@@ -14,12 +14,12 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="加班事由" prop="OverTimeContent">
-            <el-input v-model="tableForm.OverTimeContent" style="width:90%;"></el-input>
+            <sam-input :value.sync="tableForm.OverTimeContent" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
                 <el-date-picker v-model="tableForm.DateTime"
-                                type="date"
+                                type="date" :editable="false"
                                 value-format="yyyy-MM-dd"
                                 placeholder="选择日期" :editable="false"
                                 align="right">
@@ -28,7 +28,7 @@
         </el-form-item>
         <el-form-item label="加班时间" prop="StartTime">
             <el-time-select placeholder="起始时间"
-                            v-model="tableForm.StartTime"
+                            v-model="tableForm.StartTime" :editable="false"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
@@ -37,7 +37,7 @@
                             }">
             </el-time-select>
             <el-time-select placeholder="结束时间"
-                            v-model="tableForm.EndTimeTime"
+                            v-model="tableForm.EndTimeTime" :editable="false"
                             :picker-options="{
                               start: '08:30',
                               step: '00:30',
@@ -45,7 +45,7 @@
                               minTime: tableForm.StartTime
                             }">
         </el-form-item>
-        <el-form-item label="加班时长(小时)">
+        <el-form-item label="加班时长(小时)" v-if="UseTime">
             <el-input v-model="UseTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <hr />
@@ -76,23 +76,34 @@
         methods: {
             onSubmit(formName) {
                 var that = this
-                let url = '/OverTimeTable/OverTimeTableSave'
-                var param = _cloneObj(this.tableForm)
-                param.UseTime = this.UseTime
-                let callBack = function (taskId) {
-                    console.log(taskId)
-                    param.TaskId = taskId
-                    console.log(JSON.stringify(param))
-                    that._postData(url, function (data) {
-                        that.$alert('恭喜提交成功', '提示信息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                goHome()
-                            }
+                //this.fileListToUrl()
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        let url = '/OverTimeTable/OverTimeTableSave'
+                        var param = _cloneObj(that.tableForm)
+                        param.UseTime = that.UseTime
+                        let callBack = function (taskId) {
+                            console.log(taskId)
+                            param.TaskId = taskId
+                            console.log(JSON.stringify(param))
+                            that._postData(url, function (data) {
+                                that.$alert('恭喜提交成功', '提示信息', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        goHome()
+                                    }
+                                })
+                            }, param)
+                        }
+                        that.approvalSubmit(callBack)
+                    }
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
                         })
-                    }, param)
-                }
-                this.approvalSubmit(callBack)
+                    }
+                })
+                
             }
         },
         created: function () {
@@ -100,6 +111,7 @@
         },
         computed: {
             UseTime: function () {
+                if (!this.tableForm.StartTime || !this.tableForm.EndTimeTime) return
                 let StartTime = this.tableForm.StartTime
                 let EndTimeTime = this.tableForm.EndTimeTime
                 let startHour = parseInt(StartTime.split(':')[0])
