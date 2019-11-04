@@ -2305,7 +2305,7 @@ namespace DingTalk.Controllers
         /// <param name="applyManId"></param>
         /// <returns></returns>
         [Route("GetNodeInfoInfoByApplyManId")]
-        public NewErrorModel GetNodeInfoInfoByApplyManId(string applyManId)
+        public NewErrorModel GetNodeInfoInfoByApplyManId(string applyManId = "")
         {
             try
             {
@@ -2322,9 +2322,12 @@ namespace DingTalk.Controllers
                             if (item.PeopleId.Contains(applyManId))
                             {
                                 Flows flow = flows.Where(f => f.FlowId.ToString() == item.FlowId).FirstOrDefault();
-                                if (!keyValuePairs.ContainsKey(flow.FlowName))
+                                if (flow != null)
                                 {
-                                    keyValuePairs.Add(flow.FlowName, nodeInfos.Where(n => n.FlowId == item.FlowId).ToList());
+                                    if (!keyValuePairs.ContainsKey(flow.FlowName))
+                                    {
+                                        keyValuePairs.Add(flow.FlowName, nodeInfos.Where(n => n.FlowId == item.FlowId).ToList());
+                                    }
                                 }
                             }
                         }
