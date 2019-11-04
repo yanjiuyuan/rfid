@@ -15,35 +15,68 @@ namespace DingTalk.Models.DingModels
 
         public int? NodeId { get; set; }
 
+        /// <summary>
+        /// 流程Id
+        /// </summary>
         [StringLength(100)]
         public string FlowId { get; set; }
 
+        /// <summary>
+        /// 节点名称
+        /// </summary>
         [StringLength(200)]
         public string NodeName { get; set; }
 
+        /// <summary>
+        /// 节点配置好的审批人
+        /// </summary>
         [StringLength(500)]
         public string NodePeople { get; set; }
 
+        /// <summary>
+        /// 节点配置好的审批人Id
+        /// </summary>
         [StringLength(500)]
         public string PeopleId { get; set; }
 
+        /// <summary>
+        /// 下一个处理节点的Id
+        /// </summary>
         [StringLength(200)]
         public string PreNodeId { get; set; }
 
+        /// <summary>
+        /// 多人出现时是否需要同时处理
+        /// </summary>
         public bool? IsAllAllow { get; set; }
 
         [StringLength(500)]
         public string Condition { get; set; }
 
+        /// <summary>
+        /// 是否可以退回
+        /// </summary>
         public bool? IsBack { get; set; }
 
+        /// <summary>
+        /// 是否需要选人
+        /// </summary>
         public bool? IsNeedChose { get; set; }
 
+        /// <summary>
+        /// 是否是抄送
+        /// </summary>
         public bool? IsSend { get; set; }
 
+        /// <summary>
+        /// 退回节点的NodeId
+        /// </summary>
         [StringLength(100)]
         public string BackNodeId { get; set; }
 
+        /// <summary>
+        /// 选择节点的NodeId
+        /// </summary>
         [StringLength(100)]
         public string ChoseNodeId { get; set; }
 

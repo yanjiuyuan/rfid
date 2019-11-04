@@ -9,3 +9,5 @@
 2019-11-04 13:57:48,913 [9] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetNodeInfoInfoByApplyManId 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：44
 2019-11-04 13:59:14,989 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-11-04 13:59:16,908 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 14:01:26,581 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 14:01:27,784 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
