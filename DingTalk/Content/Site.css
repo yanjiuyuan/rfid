@@ -19,6 +19,15 @@
 .text {
     font-size: 14px;
 }
+.el-icon-circle-plus {
+    transition: all .4s;
+    -moz-transition: all .4s;
+    -webkit-transition: all .4s;
+    -o-transition: all .4s;
+}
+.el-icon-circle-plus:hover {
+    transform: scale(1.2);
+}
 
 .item {
     padding: 18px 0;

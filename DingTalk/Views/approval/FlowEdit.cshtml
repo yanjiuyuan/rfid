@@ -67,10 +67,14 @@
                     }
                 }
                 console.log(param)
-                this.PostData('FlowInfoNew/ChangeNodeInfo', param, (res) => {
+                this.PostData('FlowInfoNew/UpdateNodeInfos', param, (res) => {
                     this.$message({ type: 'success', message: `修改成功` });
                     this.getFlows()
                 })
+                //this.PostData('FlowInfoNew/ChangeNodeInfo', param, (res) => {
+                //    this.$message({ type: 'success', message: `修改成功` });
+                //    this.getFlows()
+                //})
             },
             //切换人
             choosePeople(){
@@ -96,7 +100,7 @@
                     for (let r in res) {
                         for (let node of res[r]) {
                             node['AddPeople'] = []
-                            //抄送人分组
+                            //审批人分组
                             if (node.NodePeople && node.NodePeople.length > 0) {//
                                 node.NodePeople = node.NodePeople.split(',')
                                 node.PeopleId = node.PeopleId.split(',')

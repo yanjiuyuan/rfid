@@ -305,6 +305,8 @@ var mixin = {
         ruleForm: {
             Title: ''
         },
+        specialRole: [],
+        specialRoleNames: [],
         tableForm:{},
         DingData: {},
         nodeList: [],
@@ -317,7 +319,6 @@ var mixin = {
         imageList: [],
         excelList: [],
         mediaList: [],
-        specialRoleNames: [],
         specialRole: [],
         preApprove: true,
         isBack: false,
@@ -2035,9 +2036,6 @@ Vue.component('sam-approver-list', {
         }
     },
     methods: {
-        addNode() {
-
-        },
         //选人控件添加
         addMember(nodeId) {
             let selectMoreList = this.nodedata.IsSelectMore.split(',')
@@ -2310,17 +2308,24 @@ Vue.component('sam-addapprover', {
 
 //钉钉审批编辑组件
 Vue.component('sam-approver-edit', {
-    props: ['nodedata', 'nodelist', 'specialRoles', 'specialRoleNames', 'dingdata'],
+    props: ['nodelist', 'dingdata', 'addable'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
-                            <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
-                                {{node.NodeName}}
-                            </el-tag>
-
+                            <template v-if="addable">
+                                <el-tag v-on:click="editNode" type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
+                                    {{node.NodeName}}
+                                </el-tag>
+                                <i v-on:click="deleteNode(node,index)" style="margin-left:-16px;" class="el-icon-circle-close"></i>
+                            </template>
+                            <template v-else>
+                                <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
+                                    {{node.NodeName}}
+                                </el-tag>
+                            </template>
                             <template v-for="(p,a) in node.NodePeople">
                                 <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
                                 <el-tag :key="a"
@@ -2332,7 +2337,6 @@ Vue.component('sam-approver-edit', {
                                         >
                                     {{p}}
                                 </el-tag>
-                                
                                 <span v-if="a < node.NodePeople.length-1">,</span>
                             </template>
                             
@@ -2340,7 +2344,6 @@ Vue.component('sam-approver-edit', {
                                 <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
                                 <el-tag :key="a" 
                                         :closable="false"
-                                        v-on:close="deletePeople(ap.emplId)"
                                         v-if="node.AddPeople.length>0"
                                         :disable-transitions="false"
                                         style="text-align:center;"
@@ -2349,17 +2352,26 @@ Vue.component('sam-approver-edit', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="node.NodePeople && node.NodePeople.indexOf(dingdata.nickName)>=0">
-                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId)">+ 选人</el-button>
+                           <template v-if="node.NodeId >0 && node.NodeName != '结束'">
+                                <el-button class="button-new-tag" size="small" v-on:click="addMember(node.NodeId)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
-                                <i class="el-icon-arrow-down approve-arrow"  type="primary"></i>
+                                <template v-if="addable">
+                                    <span style="color:#CACACA;margin-left:60px;font-size:14px;">|</span>
+                                    </br>
+                                    <i v-on:click="addNode(node.NodeId+1)" class="el-icon-circle-plus approve-arrow"  type="primary"></i>
+                                    </br>
+                                    <span style="color:#CACACA;margin-left:59px;font-size:14px;">⤓</span>
+                                    </br>
+                                </template>
+                                <i v-else class="el-icon-arrow-down approve-arrow"  type="primary"></i>
                                 </br>
                             </div>
                         </template>
 
-                    </el-form-item></div>`,
+                    </el-form-item>
+                </div>`,
     data: function () {
         return {
             inputValue: '',
@@ -2367,12 +2379,10 @@ Vue.component('sam-approver-edit', {
             member1: '',
             member2: '',
             inputVisible: false,
+            form: {}
         }
     },
     methods: {
-        addNode() {
-
-        },
         //选人控件添加
         addMember(nodeId) {
             var that = this
@@ -2397,9 +2407,6 @@ Vue.component('sam-approver-edit', {
                                     $("." + nodeId).remove()
                                     data[0].name = data2.name
                                     node.AddPeople = data
-                                    //for (let d of data) {
-                                    //    $("#" + nodeId).after('<span class="el-tag ' + nodeId + '" style="width: 60px; text-align: center; ">' + d.name.substring(0, 4) + '</span >')
-                                    //}
                                 }
                             }
                         },
@@ -2411,36 +2418,23 @@ Vue.component('sam-approver-edit', {
                 onFail: function (err) { }
             });
         },
-        //下拉框选人添加
-        selectSpecialMember(userInfo, nodeId) {
-            console.log(userInfo)
-            userInfo = JSON.parse(userInfo)
-            console.log(userInfo)
-            console.log(nodeId)
-            for (let node of this.nodelist) {
-                if (node.NodeId != nodeId)
-                    continue
-                node.AddPeople = [userInfo]
-            }
-        },
+        addNode(nodeId) {
 
-        deletePeople(emplId) {
-            for (let node of this.nodelist) {
-                for (let a of node.AddPeople) {
-                    if (a.emplId == emplId) {
-                        node.AddPeople.splice(node.AddPeople.indexOf(a), 1);
-                    }
-                }
+        },
+        deleteNode(node, index) {
+            console.log(this.nodelist)
+            console.log(index)
+            this.nodelist.splice(index, 1)
+            for (let i = 0; i < this.nodelist.length - 1; i++) {
+                if (i < index) continue
+                this.nodelist[i].PreNodeId = parseInt(this.nodelist[i].PreNodeId) - 1 + ''
+                this.nodelist[i].NodeId --
             }
+            this.nodelist[this.nodelist.length-1].NodeId--
         },
-        handleClose(emplId) {
-            for (let node of this.nodelist)
-                for (var i = 0; i < node.AddPeople.length; i++) {
-                    if (node.AddPeople[i].emplId == emplId)
-                        node.AddPeople.splice(i, 1)
-                }
-        },
+        editNode() {
 
+        }
     },
     computed: {
 
