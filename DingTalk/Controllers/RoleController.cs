@@ -325,6 +325,46 @@ namespace DingTalk.Controllers
         }
 
 
+        [Route("GetRoleInfoList")]
+        [HttpPost]
+        public NewErrorModel GetRoleInfoList()
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Dictionary<string, List<Roles>> keyValuePairs = new Dictionary<string, List<Roles>>();
+                    var RoleList = context.Roles.ToList();
+                    foreach (var item in RoleList)
+                    {
+                        if (!keyValuePairs.Keys.Contains(item.RoleName))
+                        {
+                            keyValuePairs.Add(item.RoleName, new List<Roles>() {
+                                item
+                            });
+                        }
+                        else
+                        {
+                            List<Roles> roles = keyValuePairs[item.RoleName];
+                            roles.Add(item);
+                            keyValuePairs[item.RoleName] = roles;
+                        }
+                    }
+
+                    return new NewErrorModel()
+                    {
+                        data= keyValuePairs,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
 
         /// <summary>
         /// 获取角色信息
