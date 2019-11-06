@@ -2446,21 +2446,80 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    foreach (var item in nodeInfos)
+                    //校验数据
+                    if (nodeInfos != null && nodeInfos.Count > 0)
                     {
-                        context.Entry<NodeInfo>(item).State = EntityState.Modified;
-                    }
-                    context.SaveChanges();
+                        nodeInfos = nodeInfos.OrderBy(n => n.NodeId).ToList();
+                        //校验流程是否能走完
 
-                    return new NewErrorModel()
+                        if (CheckNodeInfo(nodeInfos[0], nodeInfos) != null)
+                        {
+                            string flowid = nodeInfos[0].FlowId.ToString();
+                            //清空旧数据
+                            List<NodeInfo> nodeInfosList = context.NodeInfo.Where(n => n.FlowId == flowid).ToList();
+                            //新增数据
+                            context.NodeInfo.RemoveRange(nodeInfosList);
+                            foreach (var item in nodeInfos)
+                            {
+                                context.NodeInfo.Add(item);
+                            }
+                            context.SaveChanges();
+
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "修改成功！", "") { },
+                            };
+                        }
+                        else {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "格式有误！", "") { },
+                            };
+                        }
+                    }
+                    else
                     {
-                        error = new Error(0, "修改成功！", "") { },
-                    };
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "接收不到参数！", "") { },
+                        };
+                    }
+
+                  
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+
+        /// <summary>
+        /// 数据校验(后端用)
+        /// </summary>
+        /// <param name="nodeInfo"></param>
+        /// <param name="nodeInfos"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("CheckNodeInfo")]
+        public NodeInfo CheckNodeInfo(NodeInfo nodeInfo, List<NodeInfo> nodeInfos)
+        {
+            NodeInfo nodeInfoPro = nodeInfos.Where(n => n.NodeId.ToString() == nodeInfo.PreNodeId).FirstOrDefault();
+            if (nodeInfoPro != null)
+            {
+                if (nodeInfoPro.NodeName != "结束")
+                {
+                    return CheckNodeInfo(nodeInfoPro, nodeInfos);
+                }
+                else
+                {
+                    return nodeInfoPro;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
 
