@@ -15,26 +15,6 @@ namespace DingTalk.Controllers
     [RoutePrefix("Role")]
     public class RoleController : ApiController
     {
-        [HttpPost]
-        [Route("TestLog2")]
-        public NewErrorModel TestLog2(List<Role> roles)
-        {
-
-            try
-            {
-                int i = Int32.Parse(roles[0].CreateManId);
-                throw new NotImplementedException("方法不被支持");
-                return new NewErrorModel()
-                {
-                    error = new Error(0, "321", "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
 
         /// <summary>
         /// 同步旧数据(第一次用)
@@ -346,10 +326,6 @@ namespace DingTalk.Controllers
 
 
 
-
-
-
-
         /// <summary>
         /// 获取角色信息
         /// </summary>
@@ -358,13 +334,13 @@ namespace DingTalk.Controllers
         /// 测试数据: Role/GetRoleInfo?RoleName=图纸校对人员
         [Route("GetRoleInfo")]
         [HttpGet]
-        public object GetRoleInfo(string RoleName)
+        public object GetRoleInfo(string RoleName = "")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    if (string.IsNullOrEmpty(RoleName))
+                    if (RoleName != null && RoleName == "")
                     {
                         var RoleList = context.Roles.ToList();
                         return RoleList;
