@@ -15,26 +15,6 @@ namespace DingTalk.Controllers
     [RoutePrefix("Role")]
     public class RoleController : ApiController
     {
-        [HttpPost]
-        [Route("TestLog2")]
-        public NewErrorModel TestLog2(List<Role> roles)
-        {
-
-            try
-            {
-                int i = Int32.Parse(roles[0].CreateManId);
-                throw new NotImplementedException("方法不被支持");
-                return new NewErrorModel()
-                {
-                    error = new Error(0, "321", "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
 
         /// <summary>
         /// 同步旧数据(第一次用)
@@ -345,8 +325,44 @@ namespace DingTalk.Controllers
         }
 
 
+        [Route("GetRoleInfoList")]
+        [HttpPost]
+        public NewErrorModel GetRoleInfoList()
+        {
+            try
+            {
+                using (DDContext context = new DDContext())
+                {
+                    Dictionary<string, List<Roles>> keyValuePairs = new Dictionary<string, List<Roles>>();
+                    var RoleList = context.Roles.ToList();
+                    foreach (var item in RoleList)
+                    {
+                        if (!keyValuePairs.Keys.Contains(item.RoleName))
+                        {
+                            keyValuePairs.Add(item.RoleName, new List<Roles>() {
+                                item
+                            });
+                        }
+                        else
+                        {
+                            List<Roles> roles = keyValuePairs[item.RoleName];
+                            roles.Add(item);
+                            keyValuePairs[item.RoleName] = roles;
+                        }
+                    }
 
-
+                    return new NewErrorModel()
+                    {
+                        data= keyValuePairs,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
 
 
@@ -358,13 +374,13 @@ namespace DingTalk.Controllers
         /// 测试数据: Role/GetRoleInfo?RoleName=图纸校对人员
         [Route("GetRoleInfo")]
         [HttpGet]
-        public object GetRoleInfo(string RoleName)
+        public object GetRoleInfo(string RoleName = "")
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
-                    if (string.IsNullOrEmpty(RoleName))
+                    if (RoleName != null && RoleName == "")
                     {
                         var RoleList = context.Roles.ToList();
                         return RoleList;

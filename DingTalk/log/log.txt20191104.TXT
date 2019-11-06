@@ -1,0 +1,23 @@
+2019-11-04 13:47:10,599 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 13:47:12,734 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 13:50:11,461 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 13:50:13,427 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 13:54:03,993 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 13:54:05,823 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 13:54:58,935 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetNodeInfoInfoByApplyManId 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：42
+2019-11-04 13:57:37,214 [9] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetNodeInfoInfoByApplyManId 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：43
+2019-11-04 13:57:48,913 [9] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetNodeInfoInfoByApplyManId 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：44
+2019-11-04 13:59:14,989 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 13:59:16,908 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 14:01:26,581 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 14:01:27,784 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 14:37:44,512 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 14:37:46,351 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 14:39:41,471 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 14:39:43,359 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 14:56:27,522 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 14:56:29,644 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 15:06:49,205 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 15:06:51,153 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-04 15:09:43,742 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-04 15:09:45,573 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
