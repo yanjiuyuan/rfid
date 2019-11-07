@@ -2422,7 +2422,7 @@ namespace DingTalk.Controllers
                 {
                     return new NewErrorModel()
                     {
-                        data = context.NodeInfo.Where(n => n.FlowId == flowId).ToList(),
+                        data = context.NodeInfo.Where(n => n.FlowId == flowId).OrderBy(n=>n.NodeId).ToList(),
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
@@ -2450,8 +2450,33 @@ namespace DingTalk.Controllers
                     if (nodeInfos != null && nodeInfos.Count > 0)
                     {
                         nodeInfos = nodeInfos.OrderBy(n => n.NodeId).ToList();
-                        //校验流程是否能走完
+                        
+                        //校验必填项目
+                        //foreach (var item in nodeInfos)
+                        //{
+                        //    if (item.IsNeedChose == true)
+                        //    {
+                        //        if (string.IsNullOrEmpty(item.IsSelectMore) || string.IsNullOrEmpty       (item.ChoseNodeId) || string.IsNullOrEmpty(item.ChoseType))
+                        //        {
+                        //            return new NewErrorModel()
+                        //            {
+                        //                error = new Error(1, $"格式有误：                                         {JsonConvert.SerializeObject(item)}！", "") { },
+                        //            };
+                        //        }
+                        //        else
+                        //        {
+                        //            if (item.ChoseType == "1")
+                        //            {
+                        //                if (string.IsNullOrEmpty(item.RoleNames))
+                        //                {
 
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                        
+                        //校验流程是否能走完
                         if (CheckNodeInfo(nodeInfos[0], nodeInfos) != null)
                         {
                             string flowid = nodeInfos[0].FlowId.ToString();
@@ -2470,10 +2495,11 @@ namespace DingTalk.Controllers
                                 error = new Error(0, "修改成功！", "") { },
                             };
                         }
-                        else {
+                        else
+                        {
                             return new NewErrorModel()
                             {
-                                error = new Error(1, "格式有误！", "") { },
+                                error = new Error(1, "流程走不完啦！", "") { },
                             };
                         }
                     }
@@ -2484,8 +2510,6 @@ namespace DingTalk.Controllers
                             error = new Error(1, "接收不到参数！", "") { },
                         };
                     }
-
-                  
                 }
             }
             catch (Exception ex)
