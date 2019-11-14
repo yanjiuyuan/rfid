@@ -68,7 +68,7 @@ namespace DingTalk.Models.DingModels
         public int? SORT_ID { get; set; }
 
         /// <summary>
-        /// 是否支持手机
+        /// 是否支持手机审批推送
         /// </summary>
         public bool? IsSupportMobile { get; set; }
 
@@ -96,10 +96,16 @@ namespace DingTalk.Models.DingModels
         public string PcUrl { get; set; }
 
         /// <summary>
-        /// 手机端图片路径
+        /// 手机端发起页面路径
         /// </summary>
         [StringLength(200)]
         public string PhoneUrl { get; set; }
+
+
+        /// <summary>
+        /// 是否流程(可能为功能模块)
+        /// </summary>
+        public int? IsFlow { get; set; }
 
     }
 }
