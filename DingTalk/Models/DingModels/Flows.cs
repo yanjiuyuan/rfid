@@ -101,7 +101,6 @@ namespace DingTalk.Models.DingModels
         [StringLength(200)]
         public string PhoneUrl { get; set; }
 
-
         /// <summary>
         /// 是否流程(可能为功能模块)
         /// </summary>
