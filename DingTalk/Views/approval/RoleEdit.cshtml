@@ -146,43 +146,20 @@
                 this.ruleForm.IsEnableArr = names
             },
             //编辑项目并保存
-            editProject(formName) {
-                var that = this
-                this.$refs[formName].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name) {
-                        console.log(valid)
-                        that.disablePage = true
-                        let names = []
-                        let ids = []
-                        for (let p of this.groupPeople) {
-                            names.push(p.name)
-                            ids.push(p.emplId)
-                        }
-                        var param = {}
-                        for (let r in that.ruleForm) {
-                            param[r] = that.ruleForm[r]
-                        }
-                        param["Id"] = id
-                        param["ResponsibleMan"] = this.ResponsibleMan[0].name
-                        param["ResponsibleManId"] = this.ResponsibleMan[0].emplId
-                        param["TeamMembers"] = names.join(',')
-                        param["TeamMembersId"] = ids.join(',')
-                        console.log(JSON.stringify(param))
-                        that.PostData("/ProjectNew/ProjectInfoModify", param, (res) => {
-                            that.$alert(data.errorMessage, '提示信息', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    that.dialogFormVisible = false
-                                    that.getProject()
-                                }
-                            })
-                        })
-                    }
-                    else {
-                        that.$alert('表单信息不全或有误', '提示信息', {
-                            confirmButtonText: '确定'
-                        })
-                    }
+            editProject() {
+                let names = this.ruleForm.UserNames
+                let ids = this.ruleForm.UserIds
+                for (let i = 0; i < ids.length; i++) {
+                    this.ruleForm.role.push({
+                        CreateMan: names[i],
+                        CreateManId: ids[i],
+                        IsEnable: this.ruleForm.IsEnableStr.indexOf(names[i]) > 0 ? true : false
+                    })
+                }
+                this.PostData('Role/ModifyRole', this.ruleForm, (res) => {
+                    this.$message({ type: 'success', message: `修改成功` });
+                    this.getRoles()
+                    this.ruleForm = _cloneObj(initObj)
                 })
             },
             //打开编辑表单
@@ -197,6 +174,7 @@
                     ids.push(r.UserId)
                     if (r.IsEnable)ables.push(r.UserName)
                 }
+                this.ruleForm["Id"] = row.Id
                 this.ruleForm.IsEnableArr = names
                 this.ruleForm.UserNames = names.join(',')
                 this.ruleForm.UserIds = ids.join(',')
@@ -206,7 +184,6 @@
             },
             handleDelete(index, row) {
                 console.log(index, row);
-                
             }
         },
         created: function () {
