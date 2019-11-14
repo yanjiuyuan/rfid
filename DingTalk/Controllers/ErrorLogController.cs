@@ -66,7 +66,7 @@ namespace DingTalk.Controllers
                 List<ErrorLogs> errorLogs = eFHelper.GetListBy(e=>e.ApplyTime!=null, e=>e.Id,false);
                 return new NewErrorModel()
                 {
-                    data = errorLogs,
+                    data = errorLogs.OrderByDescending(e=>e.Id),
                     count = errorLogs.Count(),
                     error = new Error(0, "保存成功！", "") { },
                 };

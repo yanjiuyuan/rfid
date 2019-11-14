@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
                             RoleName = item,
                             CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                             CreateMan = "超级管理员",
-                            CreateManId = "Administrator",
+                            CreateManId = "083452125733424957",
                             IsEnable = true,
                         });
                         context.SaveChanges();
