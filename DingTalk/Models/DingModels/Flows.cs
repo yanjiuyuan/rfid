@@ -104,7 +104,7 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// 是否流程(可能为功能模块)
         /// </summary>
-        public int? IsFlow { get; set; }
+        public bool? IsFlow { get; set; }
 
     }
 }
