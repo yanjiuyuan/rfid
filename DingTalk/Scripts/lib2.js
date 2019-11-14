@@ -1850,7 +1850,7 @@ Vue.component('sam-checkbox', {
 })
 //选择小组组件
 Vue.component('sam-group', {
-    props: ['names', 'ids' ,'single'],
+    props: ['names', 'ids' ,'single','onchange'],
     template: `  <div>
                     <el-tag :key="tag" v-if="names" v-for="tag in names.split(',')" closable
                             :disable-transitions="false" v-on:close="handleClose(tag)">
@@ -1885,6 +1885,7 @@ Vue.component('sam-group', {
                     }
                     that.$emit('update:names', that.tags.join(','))
                     that.$emit('update:ids', that.tids.join(','))
+                    if (that.onchange) that.onchange(that.tags, that.tids)
                 },
                 onFail: function (err) { }
             });
@@ -1901,6 +1902,7 @@ Vue.component('sam-group', {
             }
             this.$emit('update:names', this.tags.join(','))
             this.$emit('update:ids', this.tids.join(','))
+            if (this.onchange) this.onchange(this.tags, this.tids)
         },
     },
 })

@@ -12,7 +12,7 @@
     <!--物料搜索-->
     <div>
         <span style="color:red">*</span><span style="padding:3px;">关键字</span>
-        <sam-input :value.sync="key" :required="true" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        <sam-input :value.sync="key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="search">搜索</el-button>
         @*<el-input v-model="value" type="textarea"></el-input>*@
         <!--物料列表表格實體-->
@@ -86,6 +86,7 @@
                 }
                 this.GetData(url, (res) => {
                     this.data = res
+                    this.totalRows = res.length
                     this.getData()
                 })
             },
@@ -94,6 +95,7 @@
             }
         },
         created: function () {
+            this.search()
             loadHtml("mainPage", "partPage")
         }
     })
