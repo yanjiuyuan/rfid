@@ -574,6 +574,10 @@ var mixin = {
                     if (that.doWithErrcode(res.error, errorFunc)) {
                         return
                     }
+                    if (res.data == null) {
+                        succe([])
+                        return
+                    }
                     res.data = JSON.stringify(res.data).replace(/null/g, '""')
                     succe(JSON.parse(res.data))
                 },
@@ -1793,7 +1797,7 @@ function lengthLimit(min, max) {
 }
 
 //下拉框控件
-Vue.component('sam-checkbox', {
+Vue.component('sam-dropdown', {
     props: ['str', 'arr'],
     template: ` 
                 <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
@@ -1820,7 +1824,7 @@ Vue.component('sam-checkbox', {
 })
 //多选控件
 Vue.component('sam-checkbox', {
-    props: ['str','arr'],
+    props: ['str','arr','onchange'],
     template: ` <el-checkbox-group v-model="value" v-on:change="handleChange">
                     <el-checkbox v-for="a in arr" :label="a" :key="a"></el-checkbox>
                 </el-checkbox-group>`,
@@ -1831,16 +1835,24 @@ Vue.component('sam-checkbox', {
     },
     methods: {
         handleChange(arr) {
-            console.log(arr)
-            this.$emit('update:str', arr.join(','))
+            let trr = []
+            for (let a of this.arr) {
+                if (arr.indexOf(a) >= 0) {
+                    trr.push(a)
+                }
+            }
+            this.$emit('update:str', trr.join(','))
+            if (this.onchange) {
+                this.onchange(trr)
+            }
         },
     },
 })
 //选择小组组件
 Vue.component('sam-group', {
-    props: ['names', 'ids'],
+    props: ['names', 'ids' ,'single'],
     template: `  <div>
-                    <el-tag :key="tag.emplId" v-for="tag in tags" closable
+                    <el-tag :key="tag" v-if="names" v-for="tag in names.split(',')" closable
                             :disable-transitions="false" v-on:close="handleClose(tag)">
                         {{tag}}
                     </el-tag>
@@ -1848,15 +1860,21 @@ Vue.component('sam-group', {
                  </div>`,
     data: function () {
         return {
-            tags: this.names ? this.names.split(',') : [],
-            tids: this.ids ? this.ids.split(',') : []
+            tags: [],
+            tids: []
         }
     },
     methods: {
         addGroup() {
             var that = this
+            this.tags = this.names ? this.names.split(',') : []
+            this.tids = this.ids ? this.ids.split(',') : []
+            if (this.single) {
+                this.tags = []
+                this.tids = []
+            }
             DingTalkPC.biz.contact.choose({
-                multiple: true, //是否多选： true多选 false单选； 默认true
+                multiple: this.single ? false :true, //是否多选： true多选 false单选； 默认true
                 users: this.tids, //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 onSuccess: function (data) {
@@ -1872,6 +1890,8 @@ Vue.component('sam-group', {
             });
         },
         handleClose(tag) {
+            this.tags = this.names ? this.names.split(',') : []
+            this.tids = this.ids ? this.ids.split(',') : []
             for (let i = 0; i < this.tags.length; i++) {
                 if (this.tags[i] == tag) {
                     this.tags.splice(i, 1)
@@ -2308,7 +2328,7 @@ Vue.component('sam-addapprover', {
 
 //钉钉审批编辑组件
 Vue.component('sam-approver-edit', {
-    props: ['nodelist', 'dingdata', 'addable'],
+    props: ['nodelist', 'dingdata', 'addable','rolelist','postdata'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
@@ -2316,10 +2336,11 @@ Vue.component('sam-approver-edit', {
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
                             <template v-if="addable">
-                                <el-tag v-on:click="editNode" type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
-                                    {{node.NodeName}}
+                                <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" 
+                                    :id="node.NodeId" >
+                                    <span v-on:click="editNode(node,index)">{{node.NodeName}}</span>
                                 </el-tag>
-                                <i v-on:click="deleteNode(node,index)" style="margin-left:-16px;" class="el-icon-circle-close"></i>
+                                <i v-if="index>0&&index<nodelist.length-1" v-on:click="deleteNode(node,index)" style="margin-left:-16px;" class="el-icon-circle-close"></i>
                             </template>
                             <template v-else>
                                 <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
@@ -2352,7 +2373,7 @@ Vue.component('sam-approver-edit', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="node.NodeId >0 && node.NodeName != '结束'">
+                           <template v-if="node.NodeId >0 && node.NodeName != '结束' && !addable">
                                 <el-button class="button-new-tag" size="small" v-on:click="addMember(node.NodeId)">+ 选人</el-button>
                             </template>
 
@@ -2360,7 +2381,7 @@ Vue.component('sam-approver-edit', {
                                 <template v-if="addable">
                                     <span style="color:#CACACA;margin-left:60px;font-size:14px;">|</span>
                                     </br>
-                                    <i v-on:click="addNode(node.NodeId+1)" class="el-icon-circle-plus approve-arrow"  type="primary"></i>
+                                    <i v-on:click="addNode(node)" class="el-icon-circle-plus approve-arrow"  type="primary"></i>
                                     </br>
                                     <span style="color:#CACACA;margin-left:59px;font-size:14px;">⤓</span>
                                     </br>
@@ -2369,25 +2390,121 @@ Vue.component('sam-approver-edit', {
                                 </br>
                             </div>
                         </template>
-
                     </el-form-item>
+                    <el-button type="primary" v-on:click="save">保存节点配置</el-button>
+                    <el-dialog :title="dialogName" :visible.sync="dialogFormVisible">
+                            <el-form v-on:submit.native.prevent :model="form" :rules="rules" ref="form" label-width="120px" class="demo-ruleForm"
+                                     enctype="multipart/form-data">
+                                <template>
+                                    <el-form-item label="节点名称" prop="NodeName">
+                                        <el-input v-model="form.NodeName"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="审批人配置" required="required">
+                                        <sam-group :names.sync="form.NodePeople" :ids.sync="form.PeopleId" :single="!form.IsSend"></sam-group>
+                                    </el-form-item>
+                                    <el-form-item label="是否可以退回">
+                                        <el-radio-group v-model="form.IsBack" :disabled="disabled1">
+                                            <el-radio :label="true">是</el-radio>
+                                            <el-radio :label="false">否</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="退回节点Id">
+                                        <sam-input :value.sync="form.BackNodeId" type="number"></sam-input>
+                                    </el-form-item>
+                                    <el-form-item label="是否是抄送节点">
+                                        <el-radio-group v-model="form.IsSend" v-on:change="isSend">
+                                            <el-radio :label="true">是</el-radio>
+                                            <el-radio :label="false">否</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="是否需要选人">
+                                        <el-radio-group v-model="form.IsNeedChose">
+                                            <el-radio :label="true">是</el-radio>
+                                            <el-radio :label="false">否</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <template v-if="form.IsNeedChose">
+                                        <el-form-item label="需要审批的节点">
+                                            <sam-checkbox :str.sync="form.ChoseNodeId" :arr="chooseArr" :onchange="onchange"></sam-checkbox>
+                                        </el-form-item>
+                                        <el-form-item label="需要多选的节点">
+                                            <sam-checkbox :str.sync="chooseMore" :arr="needChooseArr"></sam-checkbox>
+                                        </el-form-item>
+                                        <el-form-item label="必选的节点">
+                                            <sam-checkbox :str.sync="chooseMust" :arr="needChooseArr"></sam-checkbox>
+                                        </el-form-item>
+                                        <el-form-item label="角色选人节点">
+                                            <sam-checkbox :str.sync="chooseType" :arr="needChooseArr"></sam-checkbox>
+                                        </el-form-item>
+                                        <el-form-item v-if="chooseType!=''" v-for="(r,i) of chooseType.split(',')" key="r" :label="'节点 '+ r +' 选人角色'">
+                                            <el-select v-model="chooseRole[i]" style="width:300px;">
+                                                <el-option v-for="(v,k) of rolelist" :label="k" :value="k" key="k"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </template>
+                                    <hr />
+                                    <el-form-item>
+                                        <el-button v-if="dialogName == '添加节点'" type="primary" v-on:click="onAddSubmit">添加</el-button>
+                                        <el-button v-else type="primary" v-on:click="onEditSubmit">编辑</el-button>
+                                        <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+                                    </el-form-item>
+                                </template>
+                            </el-form>
+                        </el-dialog>
                 </div>`,
     data: function () {
         return {
             inputValue: '',
             NodeId: 0,
+            key:0,
             member1: '',
             member2: '',
             inputVisible: false,
-            form: {}
+
+            //编辑相关
+            disabled1: false,
+            dialogName: '编辑节点',
+            dialogFormVisible: false,
+            form: {
+                IsBack: true,
+                IsNeedChose: false,
+                IsSend: false,
+            },
+            chooseArr: [],//后续节点
+            needChooseArr:[],//后续且需要选人的节点
+            chooseMore: '',
+            chooseMust: '',
+            chooseType: '',
+            chooseRole: ['', '', '', '', ''],
+            //rolelist: ['管理员', '行政人员'],
+            rules: {
+                NodeName: { required: true, message: '该项不能为空', trigger: 'blur' }
+            }
         }
     },
     methods: {
+        //选择需要选人的节点事件
+        onchange(arr) {
+            console.log('选择需要选人的节点事件')
+            console.log(arr)
+            this.needChooseArr = arr
+
+        },
+        //抄送节点不能退回
+        isSend(value) {
+            console.log(value)
+            if (value) {
+                this.form.IsBack = false
+                this.disabled1 = true
+            } else {
+                this.disabled1 = false
+            }
+        },
         //选人控件添加
         addMember(nodeId) {
             var that = this
             DingTalkPC.biz.contact.choose({
-                multiple: false, //是否多选： true多选 false单选； 默认true
+                multiple: true, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
@@ -2418,9 +2535,6 @@ Vue.component('sam-approver-edit', {
                 onFail: function (err) { }
             });
         },
-        addNode(nodeId) {
-
-        },
         deleteNode(node, index) {
             console.log(this.nodelist)
             console.log(index)
@@ -2432,8 +2546,168 @@ Vue.component('sam-approver-edit', {
             }
             this.nodelist[this.nodelist.length-1].NodeId--
         },
-        editNode() {
+        //编辑节点提交
+        editNode(node, index) {
+            
+            if (node.NodeName == '结束') return
+            this.dialogName = "编辑节点"
+            this.chooseArr = []//后续节点
+            this.needChooseArr = []//后续且需要选人的节点
+            this.chooseMore = ''
+            this.chooseMust = ''
+            this.chooseType = ''
+            this.chooseRole = ['', '', '', '', '']
 
+            this.form.NodePeople = ''
+            this.form.PeopleId = ''
+
+            for (let i = node.NodeId + 1; i < this.nodelist.length-1; i++) {
+                this.chooseArr.push(i + '')
+            }
+            let needChooseArr = []
+            if (node.ChoseNodeId) needChooseArr = node.ChoseNodeId.split(',')
+            if (needChooseArr.length > 0) {
+                let moreArr = node.IsSelectMore.split(',')
+                let mustArr = node.IsMandatory.split(',')
+                let typeArr = node.ChoseType.split(',')
+                this.needChooseArr = needChooseArr
+                for (let i = 0; i < needChooseArr.length; i++) {
+                    if (moreArr[i] == '1') this.chooseMore = this.chooseMore + needChooseArr[i] + ','
+                    if (mustArr[i] == '1') this.chooseMust = this.chooseMust + needChooseArr[i] + ','
+                    if (typeArr[i] == '1') this.chooseType = this.chooseType + needChooseArr[i] + ','
+                }
+                this.chooseMore = this.chooseMore.substr(0, this.chooseMore.length - 1)
+                this.chooseMust = this.chooseMust.substr(0, this.chooseMust.length - 1)
+                this.chooseType = this.chooseType.substr(0, this.chooseType.length - 1)
+                if (node.RoleNames) this.chooseRole = [node.RoleNames.split(','),'', '', '', '']
+            }
+            this.form = _cloneObj(node)
+            this.form.NodePeople = ''
+            this.form.PeopleId = ''
+            if (node.NodePeople) this.form.NodePeople = node.NodePeople.join(',')
+            if (node.PeopleId) this.form.PeopleId = node.PeopleId.join(',')
+    
+            console.log(JSON.stringify(this.form))
+            this.dialogFormVisible = true
+        },
+        onEditSubmit() {
+            this.dowithForm()
+            let nodes = []
+            for (let node of this.nodelist) {
+                if (node.NodeId < this.form.NodeId) {
+                    nodes.push(node)
+                }
+            }
+            let tmpForm = _cloneObj(this.form)
+            if (tmpForm.NodePeople) {
+                tmpForm.NodePeople = tmpForm.NodePeople.split(',')
+                tmpForm.PeopleId = tmpForm.PeopleId.split(',')
+            } 
+            nodes.push(tmpForm)
+            for (let node of this.nodelist) {
+                if (node.NodeId > this.form.NodeId) {
+                    nodes.push(node)
+                }
+            }
+            console.log(nodes)
+            this.$emit('update:nodelist', _cloneArr(nodes))
+            this.dialogFormVisible = false
+        },
+        //保存节点配置
+        save() {
+            let param = []
+            for (let n of this.nodelist) {
+                let node = _cloneObj(n)
+                if (node.NodePeople) node.NodePeople = node.NodePeople.join(',')
+                if (node.PeopleId) node.PeopleId = node.PeopleId.join(',')
+                param.push(node)
+            }
+            console.log(param)
+            console.log(JSON.stringify(param))
+            //return
+            this.postdata('FlowInfoNew/UpdateNodeInfos', param, (res) => {
+                this.$message({ type: 'success', message: `修改成功` });
+            })
+        },
+        //添加节点提交
+        dowithForm() {
+            console.log(_cloneObj(this.form))
+            this.form.IsSelectMore = ''
+            this.form.IsMandatory = ''
+            this.form.ChoseType = ''
+            this.form.RoleNames = ''
+            for (let id of this.form.ChoseNodeId.split(',')) {
+                this.chooseMore.indexOf(id) >= 0 ? this.form.IsSelectMore += '1' : this.form.IsSelectMore += '0'
+                this.form.IsSelectMore += ','
+                this.chooseMust.indexOf(id) >= 0 ? this.form.IsMandatory += '1' : this.form.IsMandatory += '0'
+                this.form.IsMandatory += ','
+                this.chooseType.indexOf(id) >= 0 ? this.form.ChoseType += '1' : this.form.ChoseType += '0'
+                this.form.ChoseType += ','
+            }
+            this.form.IsSelectMore = this.form.IsSelectMore.substr(0, this.form.IsSelectMore.length - 1)
+            this.form.IsMandatory = this.form.IsMandatory.substr(0, this.form.IsMandatory.length - 1)
+            this.form.ChoseType = this.form.ChoseType.substr(0, this.form.ChoseType.length - 1)
+            for (let i = 0; i < this.chooseType.split(',').length; i++) {
+                this.form.RoleNames += this.chooseRole[i]
+                this.form.RoleNames += ','
+            }
+            this.form.RoleNames = this.form.RoleNames.substr(0, this.form.RoleNames.length - 1)
+            console.log(_cloneObj(this.form))
+        },
+        addNode(node) {
+            //初始化参数
+            this.dialogName = "添加节点"
+            this.chooseArr = []//后续节点
+            this.needChooseArr = []//后续且需要选人的节点
+            this.chooseMore = ''
+            this.chooseMust = ''
+            this.chooseType = ''
+            this.chooseRole = ['', '', '', '', '']
+            this.form.NodeId = node.NodeId + 1
+            this.form.FlowId = node.FlowId
+            this.form.PreNodeId = node.NodeId + 2 + ''
+            this.form.IsBack = true
+            this.form.IsNeedChose = false
+            this.form.IsSend = false
+            this.form.NodePeople = ''
+            this.form.PeopleId = ''
+            this.form.BackNodeId = '0'
+            this.form.ChoseNodeId = ''
+            this.form.IsSelectMore = ''
+            this.form.IsMandatory = ''
+            this.form.ChoseType = ''
+            this.form.RoleNames = ''
+            console.log(this.form)
+            for (let i = node.NodeId + 2; i < this.nodelist.length; i++) {
+                this.chooseArr.push(i + '')
+            }
+            this.dialogFormVisible = true
+
+        },
+        onAddSubmit() {
+            this.dowithForm()
+            let nodes = []
+            for (let node of this.nodelist) {
+                if (node.NodeId < this.form.NodeId) {
+                    nodes.push(node)
+                } 
+            }
+            let tmpForm = _cloneObj(this.form)
+            if (tmpForm.NodePeople) {
+                tmpForm.NodePeople = tmpForm.NodePeople.split(',')
+                tmpForm.PeopleId = tmpForm.PeopleId.split(',')
+            } 
+            nodes.push(tmpForm)
+            for (let node of this.nodelist) {
+                if (node.NodeId >= this.form.NodeId) {
+                    node.NodeId++
+                    node.PreNodeId = node.NodeId + 1 + ''
+                    nodes.push(node)
+                }
+            }
+            console.log(nodes)
+            this.$emit('update:nodelist', _cloneArr(nodes))
+            this.dialogFormVisible = false
         }
     },
     computed: {
