@@ -148,7 +148,7 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 修改角色种类
+        /// 修改角色及其相应权限
         /// </summary>
         /// <param name="roleOperator"></param>
         /// <returns></returns>
@@ -208,79 +208,79 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="roleOperator"></param>
         /// <returns></returns>
-        [Route("AddRolePower")]
-        [HttpPost]
-        public NewErrorModel AddRolePower(RoleOperatorRoles roleOperator)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    if (context.Roles.Where(r => r.UserId == roleOperator.applyManId && r.RoleName == "超级管理员").ToList().Count > 0)
-                    {
-                        context.Roles.AddRange(roleOperator.roles);
-                        context.SaveChanges();
-                        return new NewErrorModel()
-                        {
-                            error = new Error(0, "添加成功！", "") { },
-                        };
-                    }
-                    else
-                    {
-                        return new NewErrorModel()
-                        {
-                            error = new Error(1, "没有添加权限！", "") { },
-                        };
-                    }
+        //[Route("AddRolePower")]
+        //[HttpPost]
+        //public NewErrorModel AddRolePower(RoleOperatorRoles roleOperator)
+        //{
+        //    try
+        //    {
+        //        using (DDContext context = new DDContext())
+        //        {
+        //            if (context.Roles.Where(r => r.UserId == roleOperator.applyManId && r.RoleName == "超级管理员").ToList().Count > 0)
+        //            {
+        //                context.Roles.AddRange(roleOperator.roles);
+        //                context.SaveChanges();
+        //                return new NewErrorModel()
+        //                {
+        //                    error = new Error(0, "添加成功！", "") { },
+        //                };
+        //            }
+        //            else
+        //            {
+        //                return new NewErrorModel()
+        //                {
+        //                    error = new Error(1, "没有添加权限！", "") { },
+        //                };
+        //            }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         /// <summary>
         /// 修改角色权限
         /// </summary>
         /// <param name="roleOperator"></param>
         /// <returns></returns>
-        [Route("ModifyRolePower")]
-        [HttpPost]
-        public NewErrorModel ModifyRolePower(RoleOperatorRoles roleOperator)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    if (context.Roles.Where(r => r.UserId == roleOperator.applyManId && r.RoleName == "超级管理员").ToList().Count > 0)
-                    {
-                        foreach (var item in roleOperator.roles)
-                        {
-                            context.Entry<Roles>(item).State = System.Data.Entity.EntityState.Modified;
-                        }
-                        context.SaveChanges();
-                        return new NewErrorModel()
-                        {
-                            error = new Error(0, "修改成功！", "") { },
-                        };
-                    }
-                    else
-                    {
-                        return new NewErrorModel()
-                        {
-                            error = new Error(1, "没有修改权限！", "") { },
-                        };
-                    }
+        //[Route("ModifyRolePower")]
+        //[HttpPost]
+        //public NewErrorModel ModifyRolePower(RoleOperatorRoles roleOperator)
+        //{
+        //    try
+        //    {
+        //        using (DDContext context = new DDContext())
+        //        {
+        //            if (context.Roles.Where(r => r.UserId == roleOperator.applyManId && r.RoleName == "超级管理员").ToList().Count > 0)
+        //            {
+        //                foreach (var item in roleOperator.roles)
+        //                {
+        //                    context.Entry<Roles>(item).State = System.Data.Entity.EntityState.Modified;
+        //                }
+        //                context.SaveChanges();
+        //                return new NewErrorModel()
+        //                {
+        //                    error = new Error(0, "修改成功！", "") { },
+        //                };
+        //            }
+        //            else
+        //            {
+        //                return new NewErrorModel()
+        //                {
+        //                    error = new Error(1, "没有修改权限！", "") { },
+        //                };
+        //            }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
 
         /// <summary>
@@ -288,41 +288,41 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="roleOperator"></param>
         /// <returns></returns>
-        [Route("ModifyRoleDetail")]
-        [HttpPost]
-        public NewErrorModel ModifyRoleDetail(RoleOperatorRoles roleOperator)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    if (context.Roles.Where(r => r.UserId == roleOperator.applyManId && r.RoleName == "超级管理员").ToList().Count > 0)
-                    {
-                        foreach (var item in roleOperator.roles)
-                        {
-                            context.Entry<Roles>(item).State = System.Data.Entity.EntityState.Modified;
-                        }
-                        context.SaveChanges();
-                        return new NewErrorModel()
-                        {
-                            error = new Error(0, "修改成功！", "") { },
-                        };
-                    }
-                    else
-                    {
-                        return new NewErrorModel()
-                        {
-                            error = new Error(1, "没有修改权限！", "") { },
-                        };
-                    }
+        //[Route("ModifyRoleDetail")]
+        //[HttpPost]
+        //public NewErrorModel ModifyRoleDetail(RoleOperatorRoles roleOperator)
+        //{
+        //    try
+        //    {
+        //        using (DDContext context = new DDContext())
+        //        {
+        //            if (context.Roles.Where(r => r.UserId == roleOperator.applyManId && r.RoleName == "超级管理员").ToList().Count > 0)
+        //            {
+        //                foreach (var item in roleOperator.roles)
+        //                {
+        //                    context.Entry<Roles>(item).State = System.Data.Entity.EntityState.Modified;
+        //                }
+        //                context.SaveChanges();
+        //                return new NewErrorModel()
+        //                {
+        //                    error = new Error(0, "修改成功！", "") { },
+        //                };
+        //            }
+        //            else
+        //            {
+        //                return new NewErrorModel()
+        //                {
+        //                    error = new Error(1, "没有修改权限！", "") { },
+        //                };
+        //            }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
 
         [Route("GetRoleInfoList")]
@@ -414,20 +414,48 @@ namespace DingTalk.Controllers
         public List<Role> roles { get; set; }
     }
 
-    public class RoleOperatorRoles
-    {
-        /// <summary>
-        /// 当前操作人Id
-        /// </summary>
-        public string applyManId { get; set; }
-        public List<Roles> roles { get; set; }
-    }
+    //public class RoleOperatorRoles
+    //{
+    //    /// <summary>
+    //    /// 当前操作人Id
+    //    /// </summary>
+    //    public string applyManId { get; set; }
+    //    public List<Roles> roles { get; set; }
+    //}
 
 
 
-    public class RoleListOperator
-    {
-        public List<Role> roles { get; set; }
-    }
+    //public class RoleListOperator
+    //{
+    //    public List<Role> roles { get; set; }
+    //}    //public class RoleOperatorRoles
+    //{
+    //    /// <summary>
+    //    /// 当前操作人Id
+    //    /// </summary>
+    //    public string applyManId { get; set; }
+    //    public List<Roles> roles { get; set; }
+    //}
+
+
+
+    //public class RoleListOperator
+    //{
+    //    public List<Role> roles { get; set; }
+    //}    //public class RoleOperatorRoles
+    //{
+    //    /// <summary>
+    //    /// 当前操作人Id
+    //    /// </summary>
+    //    public string applyManId { get; set; }
+    //    public List<Roles> roles { get; set; }
+    //}
+
+
+
+    //public class RoleListOperator
+    //{
+    //    public List<Role> roles { get; set; }
+    //}
 
 }
