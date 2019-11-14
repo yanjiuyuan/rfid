@@ -23,8 +23,8 @@
             <template slot="title">
                 <span style="font-size:20px;">{{m.SORT_NAME}}</span>
             </template>
-            <div v-for="l in m.flows" v-if="l.url" class="approval-box" v-on:click="toApprove(l.url,l)" style="cursor:pointer;">
-                <div class="approval-box-img" :style="{backgroundPosition:l.position}"></div>
+            <div v-for="l in m.flows" v-if="l.PcUrl" class="approval-box" v-on:click="toApprove(l.PcUrl,l)" style="cursor:pointer;">
+                <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
                 <p>{{l.FlowName}}</p>
             </div>
         </el-collapse-item>
@@ -247,13 +247,18 @@
         },
         methods: {
             getMenu: function () {
-                this.GetData('FlowInfoNew/LoadFlowSort?userid=' + DingData.userid, (res) => {
-                    for (let r of res) {
-                        _mergeObjectArr(r.flows, imgConfig, 'FlowId')
-                    }
-                    this.menu = res
-                    //this.filterMenuList()
+                this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=' + DingData.userid, (res) => {
+                    res = JSON.stringify(res).replace(/null/g, '""')
+                    this.menu = JSON.parse(res)
                 })
+
+                //this.GetData('FlowInfoNew/LoadFlowSort?userid=' + DingData.userid, (res) => {
+                //    for (let r of res) {
+                //        _mergeObjectArr(r.flows, imgConfig, 'FlowId')
+                //    }
+                //    this.menu = res
+                //    //this.filterMenuList()
+                //})
             },
             filterMenuList() {
                 var that = this
