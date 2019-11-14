@@ -35,7 +35,7 @@ namespace DingTalk.Controllers
                 }
                 return new NewErrorModel()
                 {
-                    data = contextErrors,
+                    data = contextErrors.OrderByDescending(c=>c.Id),
                     error = new Error(0, "读取成功！", "") { },
                 };
             }

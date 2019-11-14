@@ -33,7 +33,7 @@ namespace DingTalk.Controllers
                 eFHelper.Add(ErrorLog);
                 //钉钉推送超管
 
-                string[] SaIds = System.Configuration.ConfigurationManager.AppSettings["sa"].Split(',');
+                string[] SaIds = System.Configuration.ConfigurationManager.AppSettings["administrator"].Split(',');
                 DingTalkServersController dingTalkServersController = new DingTalkServersController();
 
                 foreach (var SaId in SaIds)
@@ -66,14 +66,15 @@ namespace DingTalk.Controllers
                 List<ErrorLogs> errorLogs = eFHelper.GetListBy(e=>e.ApplyTime!=null, e=>e.Id,false);
                 return new NewErrorModel()
                 {
-                    data = errorLogs.OrderByDescending(e=>e.Id),
+                    data = errorLogs,
                     count = errorLogs.Count(),
                     error = new Error(0, "保存成功！", "") { },
                 };
             }
             catch (Exception ex)
             {
-                throw ex;
+                return null;
+                //throw ex;
             }
         }
     }
