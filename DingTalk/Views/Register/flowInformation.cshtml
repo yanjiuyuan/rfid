@@ -32,62 +32,6 @@
         <i class="el-icon-arrow-left"></i>
         流程编辑
     </div>
-    <el-dialog :title="dialogName" :visible.sync="dialogFormVisible">
-        <el-form v-on:submit.native.prevent :model="form" :rules="rules" ref="form" label-width="120px" class="demo-ruleForm"
-                 enctype="multipart/form-data">
-            <template>
-                <el-form-item label="节点名称" prop="NodeName">
-                    <el-input v-model="form.NodeName"></el-input>
-                </el-form-item>
-                <el-form-item label="审批人配置" required="required">
-                    <sam-group :names.sync="form.NodePeople" :ids.sync="form.PeopleId"></sam-group>
-                </el-form-item>
-                <el-form-item label="是否可以退回">
-                    <el-radio-group v-model="form.IsEnable">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="退回节点Id">
-                    <sam-input :value.sync="form.BackNodeId" type="number"></sam-input>
-                </el-form-item>
-                <el-form-item label="是否是抄送节点">
-                    <el-radio-group v-model="form.IsSend">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="是否需要选人">
-                    <el-radio-group v-model="form.IsNeedChose">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <template v-if="form.IsNeedChose">
-                    <el-form-item label="需要审批的节点">
-                        <sam-checkbox :str.sync="form.ChoseNodeId" :arr="chooseArr"></sam-checkbox>
-                    </el-form-item>
-                    <el-form-item label="需要多选的节点">
-                        <sam-checkbox :str.sync="chooseMore" :arr="form.ChoseNodeId.split(',')"></sam-checkbox>
-                    </el-form-item>
-                    <el-form-item label="必选的节点">
-                        <sam-checkbox :str.sync="chooseMust" :arr="form.ChoseNodeId.split(',')"></sam-checkbox>
-                    </el-form-item>
-                    <el-radio-group v-model="form.ChoseType">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
-                    </el-radio-group>
-                </template>
-
-                <hr />
-                <el-form-item>
-                    <el-button type="primary" v-on:click="onEditSubmit('ruleForm')">编辑</el-button>
-                    <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
-                </el-form-item>
-            </template>
-        </el-form>
-    </el-dialog>
-
 
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
@@ -99,7 +43,7 @@
         </el-form-item>
 
         <el-form-item label="节点配置">
-            <sam-approver-edit :nodeList="nodeList" :dingdata="DingData" :addable="true"></sam-approver-edit>
+            <sam-approver-edit :nodeList.sync="nodeList" :dingdata="DingData" :addable="true" :rolelist="rolelist" :postdata="PostData"></sam-approver-edit>
         </el-form-item>
 
         <el-form-item label="PC页面路径" prop="PcUrl">
@@ -169,24 +113,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                dialogName:'编辑节点',
-                dialogFormVisible: true,
-                form: {
-                    ChoseNodeId: '',
-                    BackNodeId: '0',
-                },
-                chooseArr: [5, 6, 7],
-                chooseMore: '',
-                chooseMust: '',
-                v1: '',
-                v2: '',
-                v3: '',
-                v4: '',
-                v5: '',
-                v6: '',
-                v7: '',
-
-                roleList:['管理员','行政人员'],
+                rolelist: {},
                 nodeList:[],
                 x: 54,
                 y: 46,
@@ -277,19 +204,23 @@
                             node.PeopleId = node.PeopleId.split(',')
                         }
                     }
+                    if (res.length == 0) {
+                        res = [{ "Id": 20065, "NodeId": 0, "FlowId": "1", "NodeName": "申请人发起", "NodePeople": null, "PeopleId": null, "PreNodeId": "1", "IsAllAllow": true, "Condition": "1", "IsBack": false, "IsNeedChose": true, "IsSend": false, "BackNodeId": null, "ChoseNodeId": "1", "IsSelectMore": "0", "IsMandatory": "1", "ChoseType": "0", "RoleNames": null, "RolesList": null, "AddPeople": [] },
+                            { "Id": 20070, "NodeId": 5, "FlowId": "1", "NodeName": "结束", "NodePeople": null, "PeopleId": null, "PreNodeId": null, "IsAllAllow": true, "Condition": "0", "IsBack": false, "IsNeedChose": false, "IsSend": false, "BackNodeId": null, "ChoseNodeId": null, "IsSelectMore": null, "IsMandatory": null, "ChoseType": null, "RoleNames": null, "RolesList": null, "AddPeople": [] }]
+                    }
                     this.nodeList = res
                 })
             },
             getRoles() {
-                this.GetData('Role/GetRoleInfo?RoleName=管理员', (res) => {
-                    this.roleList = res
+                this.PostData('Role/GetRoleInfoList', {}, (res) => {
+                    this.rolelist = res
                 })
             }
         },
         created: function () {
             this.getPosition()
             this.getNodeList()
-            //this.getRoles()
+            this.getRoles()
             loadHtml("mainPage", "partPage")
         }
     })
