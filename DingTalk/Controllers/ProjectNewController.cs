@@ -249,6 +249,8 @@ namespace DingTalk.Controllers
             };
         }
 
+
+
         /// <summary>
         /// 批量生成项目文件
         /// </summary>
@@ -260,7 +262,17 @@ namespace DingTalk.Controllers
         {
             DDContext dDContext = new DDContext();
             List<ProjectInfo> projectInfoList = dDContext.ProjectInfo.ToList();
+
+            //矫正项目路径
             foreach (var item in projectInfoList)
+            {
+                item.FilePath = $"\\UploadFile\\ProjectFile\\{item.CompanyName}\\{item.ProjectType}\\{item.ProjectSmallType}\\{item.ProjectName}\\";
+                dDContext.Entry<ProjectInfo>(item).State = System.Data.Entity.EntityState.Modified;
+            }
+            dDContext.SaveChanges();
+
+            List<ProjectInfo> projectInfoListNew = dDContext.ProjectInfo.ToList();
+            foreach (var item in projectInfoListNew)
             {
                 AddProjectFile(item.FilePath);
             }
