@@ -166,21 +166,21 @@ namespace DingTalk.Controllers
                         {
                             context.Entry<Role>(item).State = System.Data.Entity.EntityState.Modified;
                         }
-                        context.SaveChanges();
                         foreach (var item in roleOperator.roles)
                         {
                             List<Roles> roles = context.Roles.Where(t => t.RoleId == item.Id).ToList();
                             if (roles.Count > 0)
                             {
+                                context.Roles.RemoveRange(roles);
                                 foreach (var items in roles)
                                 {
                                     items.RoleName = item.RoleName;
-                                    context.Entry<Roles>(items).State = System.Data.Entity.EntityState.Modified;
+                                    context.Roles.Add(items);
+                                    //context.Entry<Roles>(items).State = System.Data.Entity.EntityState.Modified;
                                 }
-                                context.SaveChanges();
                             }
                         }
-
+                        context.SaveChanges();
                         return new NewErrorModel()
                         {
                             error = new Error(0, "修改成功！", "") { },

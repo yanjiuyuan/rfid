@@ -31,7 +31,7 @@ namespace DingTalk.Controllers
                 else
                 {
                     contextErrors = context.ContextError.Where(c => c.RequestUrl.Contains(key)
-                    ).ToList();
+                   || c.Id.ToString()== key).ToList();
                 }
                 return new NewErrorModel()
                 {

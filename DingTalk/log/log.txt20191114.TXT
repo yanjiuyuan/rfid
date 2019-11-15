@@ -1,0 +1,26 @@
+2019-11-14 09:53:04,414 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 09:53:07,207 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 09:58:15,032 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 09:58:17,137 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 14:21:52,169 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 14:22:17,388 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 14:22:19,392 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 14:55:47,793 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 14:55:49,899 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 15:00:22,871 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 15:00:25,067 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 15:02:53,999 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 15:02:56,186 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 15:07:52,001 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 15:07:53,968 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 17:03:17,183 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 17:03:19,769 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 17:03:35,228 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=manager325 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：104
+2019-11-14 17:15:47,579 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 17:15:49,563 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 17:29:51,599 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 17:29:53,678 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 17:33:08,837 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 17:33:10,822 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-14 17:48:56,631 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-14 17:48:58,724 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
