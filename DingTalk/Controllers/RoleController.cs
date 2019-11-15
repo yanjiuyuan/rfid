@@ -172,23 +172,14 @@ namespace DingTalk.Controllers
                             foreach (var item in roleOperator.roles)
                             {
                                 List<Roles> rolesNew = roles.Where(t => t.RoleId == item.Id).ToList();
-                                if (rolesNew.Count > 0)
+                                context.Roles.RemoveRange(rolesNew);
+                                foreach (var items in item.roles)
                                 {
-                                    context.Roles.RemoveRange(rolesNew);
-
-                                    foreach (var items in item.roles)
-                                    {
-                                        items.RoleName = item.RoleName;
-                                        context.Roles.Add(items);
-                                    }
+                                    items.RoleName = item.RoleName;
+                                    context.Roles.Add(items);
                                 }
                             }
                         }
-                        else
-                        {
-                            context.Roles.RemoveRange(roles);
-                        }
-                        
                         context.SaveChanges();
                         return new NewErrorModel()
                         {
@@ -361,7 +352,7 @@ namespace DingTalk.Controllers
 
                     return new NewErrorModel()
                     {
-                        data= keyValuePairs,
+                        data = keyValuePairs,
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
