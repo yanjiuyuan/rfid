@@ -193,7 +193,6 @@ namespace DingTalk.Controllers
                             error = new Error(1, "没有修改权限！", "") { },
                         };
                     }
-
                 }
             }
             catch (Exception ex)
