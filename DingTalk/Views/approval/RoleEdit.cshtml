@@ -43,7 +43,7 @@
                     <sam-input :value.sync="ruleForm.RoleName" placeholder="角色名称"></sam-input>
                 </el-form-item>
                 <el-form-item label="权限成员">
-                    <sam-group :names.sync="ruleForm.UserNames" :ids.sync="ruleForm.UserIds" :onchange=""></sam-group>
+                    <sam-group :names.sync="ruleForm.UserNames" :ids.sync="ruleForm.UserIds" :onchange="onEditRolemanChange"></sam-group>
                 </el-form-item>
                 <el-form-item label="是否启用">
                     <el-radio-group v-model="ruleForm.IsEnable">
@@ -52,7 +52,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="启用成员">
-                    <sam-checkbox :str.sync="ruleForm.IsEnableStr" :arr="ruleForm.IsEnableArr" :onchange="onEditRolemanChange"></sam-checkbox>
+                    <sam-checkbox :str.sync="ruleForm.IsEnableStr" :arr="ruleForm.IsEnableArr"></sam-checkbox>
                 </el-form-item>
                 <hr />
                 <el-form-item>
@@ -63,13 +63,12 @@
         </el-form>
     </el-dialog>
     <!--添加角色表单-->
-    <el-form v-on:submit.native.prevent :model="addForm" class="demo-form-inline"
-             size="medium">
+    <el-form v-on:submit.native.prevent :model="addForm" class="demo-form-inline" size="medium">
         <el-form-item label="角色名称">
-            <sam-input :value.sync="addForm.RoleName" placeholder="角色名称"></sam-input>
+            <sam-input :value.sync="addForm.RoleName" placeholder="角色名称" style="width:300px;"></sam-input>
         </el-form-item>
         <el-form-item label="权限成员">
-            <sam-group :names.sync="addForm.UserNames" :ids.sync="addForm.UserIds" :onchange=""></sam-group>
+            <sam-group :names.sync="addForm.UserNames" :ids.sync="addForm.UserIds" :onchange="onAddRolemanChange"></sam-group>
         </el-form-item>
         <el-form-item label="是否启用">
             <el-radio-group v-model="addForm.IsEnable">
@@ -78,7 +77,7 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="启用成员">
-            <sam-checkbox :str.sync="addForm.IsEnableStr" :arr="addForm.IsEnableArr" :onchange="onAddRolemanChange"></sam-checkbox>
+            <sam-checkbox :str.sync="addForm.IsEnableStr" :arr="addForm.IsEnableArr"></sam-checkbox>
         </el-form-item>
         <el-form-item>
             <el-button type="primary" v-on:click="addRole">添加</el-button>
@@ -118,22 +117,28 @@
             //获取角色数据
             getRoles() {
                 this.GetData('Role/GetRole?applyManId=' + DingData.userid, (res) => {
-                    this.data = data
-                    this.totalRows = data.length
+                    this.data = res
+                    this.totalRows = res.length
                     this.getData()
+                    for (let d of this.tableData) {
+                        d.IsEnable ? d.IsEnable = '是' : d.IsEnable ='否'
+                    }
                 })    
             },
             addRole() {
-                let names = this.addForm.UserNames
-                let ids = this.addForm.UserIds
+                let names = this.addForm.UserNames.split(',')
+                let ids = this.addForm.UserIds.split(',')
+                this.addForm['roles'] = []
                 for (let i = 0; i < ids.length; i++) {
-                    this.addForm.role.push({
+                    this.addForm.roles.push({
                         CreateMan: names[i],
                         CreateManId: ids[i],
                         IsEnable: this.addForm.IsEnableStr.indexOf(names[i])>0 ? true : false
                     })
                 }
-                this.PostData('Role/AddRole', this.addForm, (res) => {
+                let param = { applyManId: DingData.userid, roles: [this.addForm]}
+                console.log(JSON.stringify(param))
+                this.PostData('Role/AddRole', param, (res) => {
                     this.$message({ type: 'success', message: `添加成功` });
                     this.getRoles()
                     this.addForm = _cloneObj(initObj)
@@ -147,19 +152,24 @@
             },
             //编辑项目并保存
             editProject() {
-                let names = this.ruleForm.UserNames
-                let ids = this.ruleForm.UserIds
+                let names = this.ruleForm.UserNames.split(',')
+                let ids = this.ruleForm.UserIds.split(',')
+                this.ruleForm['roles'] = []//
                 for (let i = 0; i < ids.length; i++) {
-                    this.ruleForm.role.push({
+                    this.ruleForm.roles.push({
+                        RoleId: this.ruleForm.Id,
                         CreateMan: names[i],
                         CreateManId: ids[i],
-                        IsEnable: this.ruleForm.IsEnableStr.indexOf(names[i]) > 0 ? true : false
+                        IsEnable: this.ruleForm.IsEnableStr.indexOf(names[i]) >= 0 ? true : false
                     })
                 }
-                this.PostData('Role/ModifyRole', this.ruleForm, (res) => {
+                let param = { applyManId: DingData.userid, roles: [this.ruleForm] }
+                console.log(JSON.stringify(param))
+                this.PostData('Role/ModifyRole', param, (res) => {
                     this.$message({ type: 'success', message: `修改成功` });
                     this.getRoles()
                     this.ruleForm = _cloneObj(initObj)
+                    this.dialogFormVisible = false
                 })
             },
             //打开编辑表单
@@ -175,6 +185,8 @@
                     if (r.IsEnable)ables.push(r.UserName)
                 }
                 this.ruleForm["Id"] = row.Id
+                this.ruleForm["CreateTime"] = row.CreateTime
+                this.ruleForm["RoleName"] = row.RoleName
                 this.ruleForm.IsEnableArr = names
                 this.ruleForm.UserNames = names.join(',')
                 this.ruleForm.UserIds = ids.join(',')

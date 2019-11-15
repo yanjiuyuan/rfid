@@ -1875,7 +1875,7 @@ Vue.component('sam-group', {
             }
             DingTalkPC.biz.contact.choose({
                 multiple: this.single ? false :true, //是否多选： true多选 false单选； 默认true
-                users: this.tids, //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: [], //this.tids 默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 onSuccess: function (data) {
                     console.log(data)

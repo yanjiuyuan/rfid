@@ -154,12 +154,12 @@
                         let names = []
                         for (let g of this.groupPeople) {
                             ids.push(g.emplId)
-                            names.push(name)
+                            names.push(g.name)
                         }
                         this.tableForm.ApplyMan = names.join(',')
                         this.tableForm.ApplyManId = ids.join(',')
                         console.log(this.tableForm)
-                        this.PostData('FlowInfoNew/LoadFlowModify', this.tableForm, (res) => {
+                        this.PostData('FlowInfoNew/LoadFlowModify', { applyManId: DingData.userid, FlowSortList: [this.tableForm] }, (res) => {
                             this.$alert('编辑成功', '提示');
                             this.dialogFormVisible = false
                             this.getMenu()
