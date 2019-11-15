@@ -42,10 +42,6 @@
             <el-input v-model="ruleForm.FlowId"></el-input>
         </el-form-item>
 
-        <el-form-item label="节点配置">
-            <sam-approver-edit :nodeList.sync="nodeList" :dingdata="DingData" :addable="true" :rolelist="rolelist" :postdata="PostData"></sam-approver-edit>
-        </el-form-item>
-
         <el-form-item label="PC页面路径" prop="PcUrl">
             <el-input v-model="ruleForm.PcUrl"></el-input>
         </el-form-item>
@@ -55,7 +51,13 @@
                 <el-radio :label="0">否</el-radio>
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="是否支持移动端" prop="IsSupportMobile">
+        <el-form-item label="是否是流程">
+            <el-radio-group v-model="ruleForm.IsFlow">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否支持移动端推送" prop="IsSupportMobile">
             <el-radio-group v-model="ruleForm.IsSupportMobile">
                 <el-radio :label="true">是</el-radio>
                 <el-radio :label="false">否</el-radio>
@@ -69,13 +71,16 @@
             <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
         </el-form-item>
         <template v-if="ruleForm.IsSupportMobile">
-            <el-form-item label="移动端通知路径" prop="ApproveUrl">
+            <el-form-item label="移动端通知路径">
                 <el-input v-model="ruleForm.ApproveUrl"></el-input>
             </el-form-item>
-            <el-form-item label="移动端页面路径" prop="PhoneUrl">
+            <el-form-item label="移动端页面路径">
                 <el-input v-model="ruleForm.PhoneUrl"></el-input>
             </el-form-item>
         </template>
+         <el-form-item label="节点配置" v-if="ruleForm.IsFlow">
+            <sam-approver-edit :nodeList.sync="nodeList" :dingdata="DingData" :addable="true" :rolelist="rolelist" :postdata="PostData"></sam-approver-edit>
+        </el-form-item>
         <el-form-item label="图标选择">
             <div>
                 <span class="redBorder"
