@@ -24,6 +24,12 @@ namespace DingTalk.Models.DingModels
         public string FlowName { get; set; }
 
         /// <summary>
+        /// 流程名(移动端)
+        /// </summary>
+        [StringLength(200)]
+        public string FlowNameMobile { get; set; }
+
+        /// <summary>
         /// 创建人
         /// </summary>
         [StringLength(300)]
