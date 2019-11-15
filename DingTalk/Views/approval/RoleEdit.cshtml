@@ -131,8 +131,10 @@
                 this.addForm['roles'] = []
                 for (let i = 0; i < ids.length; i++) {
                     this.addForm.roles.push({
-                        CreateMan: names[i],
-                        CreateManId: ids[i],
+                        CreateMan: DingData.nickName,
+                        CreateManId: DingData.userid,
+                        UserName: names[i],
+                        UserId: ids[i],
                         IsEnable: this.addForm.IsEnableStr.indexOf(names[i])>0 ? true : false
                     })
                 }
@@ -158,8 +160,10 @@
                 for (let i = 0; i < ids.length; i++) {
                     this.ruleForm.roles.push({
                         RoleId: this.ruleForm.Id,
-                        CreateMan: names[i],
-                        CreateManId: ids[i],
+                        CreateMan: DingData.nickName,
+                        CreateManId: DingData.userid,
+                        UserName: names[i],
+                        UserId: ids[i],
                         IsEnable: this.ruleForm.IsEnableStr.indexOf(names[i]) >= 0 ? true : false
                     })
                 }
