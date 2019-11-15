@@ -166,20 +166,29 @@ namespace DingTalk.Controllers
                         {
                             context.Entry<Role>(item).State = System.Data.Entity.EntityState.Modified;
                         }
-                        foreach (var item in roleOperator.roles)
+                        List<Roles> roles = context.Roles.ToList();
+                        if (roleOperator.roles.Count > 0)
                         {
-                            List<Roles> roles = context.Roles.Where(t => t.RoleId == item.Id).ToList();
-                            if (roles.Count > 0)
+                            foreach (var item in roleOperator.roles)
                             {
-                                context.Roles.RemoveRange(roles);
-                                foreach (var items in roles)
+                                List<Roles> rolesNew = roles.Where(t => t.RoleId == item.Id).ToList();
+                                if (rolesNew.Count > 0)
                                 {
-                                    items.RoleName = item.RoleName;
-                                    context.Roles.Add(items);
-                                    //context.Entry<Roles>(items).State = System.Data.Entity.EntityState.Modified;
+                                    context.Roles.RemoveRange(rolesNew);
+
+                                    foreach (var items in item.roles)
+                                    {
+                                        items.RoleName = item.RoleName;
+                                        context.Roles.Add(items);
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                            context.Roles.RemoveRange(roles);
+                        }
+                        
                         context.SaveChanges();
                         return new NewErrorModel()
                         {
