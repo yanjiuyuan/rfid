@@ -19,7 +19,7 @@
         <el-table-column label="操作" style="width:300px;">
             <template slot-scope="scope" style="width:300px;">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                @*<el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>*@
             </template>
         </el-table-column>>
     </el-table>
@@ -133,14 +133,14 @@
                     this.addForm.roles.push({
                         CreateMan: DingData.nickName,
                         CreateManId: DingData.userid,
+                        CreateTime: _getTime(),
                         UserName: names[i],
                         UserId: ids[i],
                         IsEnable: this.addForm.IsEnableStr.indexOf(names[i])>0 ? true : false
                     })
                 }
-                let param = { applyManId: DingData.userid, roles: [this.addForm]}
-                console.log(JSON.stringify(param))
-                this.PostData('Role/AddRole', param, (res) => {
+                console.log(JSON.stringify([this.addForm]))
+                this.PostData('Role/AddRole', [this.addForm], (res) => {
                     this.$message({ type: 'success', message: `添加成功` });
                     this.getRoles()
                     this.addForm = _cloneObj(initObj)
@@ -191,15 +191,26 @@
                 this.ruleForm["Id"] = row.Id
                 this.ruleForm["CreateTime"] = row.CreateTime
                 this.ruleForm["RoleName"] = row.RoleName
+                row.IsEnable == '否' ? this.ruleForm["IsEnable"] = false : this.ruleForm["IsEnable"] = true
                 this.ruleForm.IsEnableArr = names
                 this.ruleForm.UserNames = names.join(',')
                 this.ruleForm.UserIds = ids.join(',')
                 this.ruleForm.IsEnableStr = ables.join(',')
+                console.log()
                 this.dialogFormVisible = true
                 
             },
             handleDelete(index, row) {
                 console.log(index, row);
+                this.ruleForm["Id"] = row.Id
+                this.ruleForm['roles'] = []
+                let param = { applyManId: DingData.userid, roles: [this.ruleForm] }
+                console.log(JSON.stringify(param))
+                this.PostData('Role/ModifyRole', param, (res) => {
+                    this.$message({ type: 'success', message: `删除成功` });
+                    this.getRoles()
+                    this.ruleForm = _cloneObj(initObj)
+                })
             }
         },
         created: function () {
