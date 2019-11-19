@@ -1,0 +1,17 @@
+2019-11-15 09:53:09,937 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 09:53:12,339 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 10:03:22,281 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 10:03:24,131 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 10:10:16,080 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Role/ModifyRole 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：108
+2019-11-15 13:36:34,912 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 13:36:37,107 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 13:40:03,998 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 13:40:05,968 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 13:46:17,444 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 13:46:19,368 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 14:42:51,593 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 14:42:52,838 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 14:48:24,032 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 14:48:26,258 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-15 15:20:41,549 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-15 15:20:47,719 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

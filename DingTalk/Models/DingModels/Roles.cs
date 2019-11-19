@@ -11,13 +11,13 @@ namespace DingTalk.Models.DingModels
         [Column(TypeName = "numeric")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Id { get; set; }
-      
+
         /// <summary>
         /// 角色名
         /// </summary>
         [StringLength(200)]
         public string RoleName { get; set; }
-     
+
         /// <summary>
         /// 创建人
         /// </summary>

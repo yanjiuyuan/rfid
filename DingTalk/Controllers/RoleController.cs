@@ -126,9 +126,17 @@ namespace DingTalk.Controllers
                                 }
                                 else
                                 {
+                                    item.CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     context.Role.Add(item);
+                                    context.SaveChanges();
+                                    Role role = context.Role.Where(r => r.RoleName == item.RoleName).FirstOrDefault();
                                     if (item.roles.Count > 0)
                                     {
+                                        foreach (var r in item.roles)
+                                        {
+                                            r.RoleName = role.RoleName;
+                                            r.RoleId = Int32.Parse(role.Id.ToString());
+                                        }
                                         context.Roles.AddRange(item.roles);
                                     }
                                 }
@@ -179,6 +187,13 @@ namespace DingTalk.Controllers
                     {
                         foreach (var item in roleOperator.roles)
                         {
+                            if (item.RoleName.Contains("超级管理员"))
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(0, $"角色 {item.RoleName} 不允许修改！", "") { },
+                                };
+                            }
                             context.Entry<Role>(item).State = System.Data.Entity.EntityState.Modified;
                         }
                         List<Roles> roles = context.Roles.ToList();
