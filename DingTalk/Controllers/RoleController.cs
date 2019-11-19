@@ -112,14 +112,25 @@ namespace DingTalk.Controllers
                 {
                     if (roles != null && roles.Count > 0)
                     {
+                        List<Role> roleQuery = context.Role.ToList();
                         foreach (var item in roles)
                         {
                             if (context.Roles.Where(r => r.UserId == item.CreateManId && r.RoleName == "超级管理员").ToList().Count() > 0)
                             {
-                                context.Role.Add(item);
-                                if (item.roles.Count > 0)
+                                if (roleQuery.Where(r => r.RoleName == item.RoleName).ToList().Count > 0)
                                 {
-                                    context.Roles.AddRange(item.roles);
+                                    return new NewErrorModel()
+                                    {
+                                        error = new Error(1, $"角色名：{item.RoleName} 已存在！", "") { },
+                                    };
+                                }
+                                else
+                                {
+                                    context.Role.Add(item);
+                                    if (item.roles.Count > 0)
+                                    {
+                                        context.Roles.AddRange(item.roles);
+                                    }
                                 }
                             }
                             else
