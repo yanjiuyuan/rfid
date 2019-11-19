@@ -117,6 +117,10 @@ namespace DingTalk.Controllers
                             if (context.Roles.Where(r => r.UserId == item.CreateManId && r.RoleName == "超级管理员").ToList().Count() > 0)
                             {
                                 context.Role.Add(item);
+                                if (item.roles.Count > 0)
+                                {
+                                    context.Roles.AddRange(item.roles);
+                                }
                             }
                             else
                             {
