@@ -241,8 +241,8 @@ namespace DingTalk.Controllers
                         }
                         else
                         {
-                            string ApplyTime = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First().ApplyTime;
-                            nodeInfo.NodePeople = nodeInfo.NodePeople + "  " + ApplyTime;
+                            Tasks tasksNew = context.Tasks.Where(q => q.TaskId.ToString() == TaskId && q.NodeId == nodeInfo.NodeId).First();
+                            nodeInfo.NodePeople = nodeInfo.NodePeople + "  " + tasksNew.ApplyTime + "   " + tasksNew.Remark;
                         }
                     }
                     DataTable dtApproveView = ClassChangeHelper.ToDataTable(NodeInfoList);
