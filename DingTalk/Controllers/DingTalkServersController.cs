@@ -43,10 +43,13 @@ namespace DingTalk.Controllers
 
         #region department curd
         [Route("departmentList")]
-        public async Task<string> DepartmentList()
+        public async Task<NewErrorModel> DepartmentList()
         {
             var result = await dtManager.GetDepartmentList();
-            return result;
+            return new NewErrorModel()
+            {
+                data = result
+            };
         }
 
 

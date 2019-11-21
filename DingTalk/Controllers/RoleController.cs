@@ -191,7 +191,7 @@ namespace DingTalk.Controllers
                             {
                                 return new NewErrorModel()
                                 {
-                                    error = new Error(0, $"角色 {item.RoleName} 不允许修改！", "") { },
+                                    error = new Error(1, $"角色 {item.RoleName} 不允许修改！", "") { },
                                 };
                             }
                             context.Entry<Role>(item).State = System.Data.Entity.EntityState.Modified;

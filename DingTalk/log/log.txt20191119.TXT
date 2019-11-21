@@ -1,0 +1,6 @@
+2019-11-19 15:22:19,538 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-19 15:22:22,947 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-19 15:35:18,832 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-19 15:35:22,321 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-19 15:44:14,645 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-19 15:44:18,437 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
