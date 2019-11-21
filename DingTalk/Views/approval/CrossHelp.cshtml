@@ -28,15 +28,8 @@
             <el-input v-model="tableForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
         </el-form-item>
 
-        <el-form-item label="协作时间" prop="PlanBeginTime">
-            <el-date-picker v-model="timeRange"
-                            type="daterange"
-                            v-on:change="selectTime" :editable="false"
-                            range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="结束时间">
-            </el-date-picker>
-        </el-form-item>
+        <sam-timerange :value1.sync="tableForm.PlanBeginTime" label1="协作开始时间" :value2.sync="tableForm.PlanEndTime" label2="协作结束时间"></sam-timerange>
+        
         <el-form-item label="计划天数" prop="PlanDays">
             <el-input v-model="tableForm.PlanDays" style="width:200px;"></el-input>
         </el-form-item>
@@ -67,7 +60,6 @@
         mixins: [mixin],
         data: function () {
             return {
-                timeRange: [],
                 useTimeList: [],
                 DeptNames: DeptNames,
                 addPeopleNodes: [4, 6], //额外添加审批人节点数组
@@ -115,15 +107,6 @@
                         })
                     }
                 })
-            },
-            //选时间操作
-            selectTime(value) {
-                console.log(value)
-                if (!value[0]) return
-                let days = (value[1] - value[0])/(3600*24*1000) + 1
-                this.tableForm.PlanBeginTime = _timeToString(value[0]).substring(0,10)
-                this.tableForm.PlanEndTime = _timeToString(value[1]).substring(0, 10)
-                this.tableForm.PlanDays = days - parseInt(days/7) * 2
             },
             //添加协作人
             addPeerNumber() {

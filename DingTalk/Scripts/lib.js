@@ -29,6 +29,7 @@ let PTypes = [
     { label: '教育类', value: '教育类', children: [{ value: '教育', label: '教育' }, { value: '测试', label: '测试' }] }
 ]
 let status = ["在研", "已完成", "终止"]
+let Depts = []
 let DeptNames = [ '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
@@ -567,6 +568,7 @@ var mixin = {
                 data: param,
                 success: function (res) {
                     if (showLoading) { loading.close() }
+                    if (typeof (res) == 'string') res = JSON.parse(res) 
                     console.log(url)
                     console.log(JSON.parse(param))
                     console.log(res)
@@ -761,6 +763,13 @@ var mixin = {
                             }
                         }
                     }
+                    //选人去重
+                    let compareObj = {}
+                    paramArr = paramArr.reduce((item, next) => {
+                        compareObj[next.NodeId + next.ApplyManId] ? '' : compareObj[next.NodeId + next.ApplyManId] = true && item.push(next);
+                        return item;
+                    }, [])
+
                     console.log(JSON.stringify(paramArr))
                     that.PostData('FlowInfoNew/CreateTaskInfo', paramArr, (res) => {
                         callBack(res)
@@ -856,6 +865,14 @@ var mixin = {
                     }
                 }
             }
+
+            //选人去重
+            let compareObj = {}
+            paramArr = paramArr.reduce((item, next) => {
+                compareObj[next.NodeId + next.ApplyManId] ? '' : compareObj[next.NodeId + next.ApplyManId] = true && item.push(next);
+                return item;
+            }, [])
+
             console.log(JSON.stringify(paramArr))
             this.PostData("/FlowInfoNew/SubmitTaskInfo", paramArr, (res) => {
                 this.$alert('审批成功', '提示信息', {
@@ -882,7 +899,7 @@ var mixin = {
         },
         //撤回审批
         rebackSubmit() {
-            this.$confirm('是否确认撤回申请？')
+            this.$confirm('是否确认撤回申请？','提示信息')
                 .then(_ => {
                     this.disablePage = true
                     var param = {
@@ -930,7 +947,7 @@ var mixin = {
         //显示临时保存数据
         saveTempData() {
             let data = {}
-            data['tableData'] = this.tableData || []
+            //data['tableData'] = this.tableData || []
             //data['data'] = this.data || []
             data['ruleForm'] = this.ruleForm || {}
             data['tableForm'] = this.tableForm || {}
@@ -938,13 +955,14 @@ var mixin = {
             data['imageList'] = this.imageList || []
             data['fileList'] = this.fileList || []
             data['pdfList'] = this.pdfList || []
+            data['nodeList'] = this.nodeList || []
             this.saveData(data)
             this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
         },
         loadTempData() {
             let data = this.loadData()
             if (data) {
-                this['tableData'] = data.tableData
+                //this['tableData'] = data.tableData
                 //this['data'] = data.data
                 this['ruleForm'] = data.ruleForm
                 this['tableForm'] = data.tableForm
@@ -953,6 +971,9 @@ var mixin = {
                 this['fileList'] = data.fileList
                 this['pdfList'] = data.pdfList
                 this.$message({ type: 'success', message: `获取临时保存数据成功，需要再次保存请点击保存按钮` });
+                setTimeout(() => {
+                    this['nodeList'] = data.nodeList
+                }, 2000)
                 this.saveData(null)
             }
         },
@@ -961,13 +982,14 @@ var mixin = {
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
             console.log(JSON.stringify(data))
-            document.cookie = FlowId + "=" + escape(JSON.stringify(data)) + ";expires=" + exp.toGMTString();
+            document.cookie = FlowId + "=" + JSON.stringify(data) + ";expires=" + exp.toGMTString();
         },
         loadData() {
             var arr, reg = new RegExp("(^| )" + FlowId + "=([^;]*)(;|$)");
-            if ((arr = document.cookie.match(reg)) && unescape(arr[2])) {
-                console.log(unescape(arr[2]))
-                return JSON.parse(unescape(arr[2]))
+            if ((arr = document.cookie.match(reg)) && arr[2]) {
+                console.log('获取临时保存数据 成功----------!')
+                console.log(arr[2])
+                return JSON.parse(arr[2])
             }
         },
         //重新发起审批
@@ -1774,6 +1796,7 @@ function PostData(url, param, succe, error) {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(param),
         success: function (res) {
+            if (typeof (res) == 'string') res = JSON.parse(res) 
             console.log(url)
             console.log(param)
             console.log(res)
@@ -1923,8 +1946,8 @@ Vue.component('sam-input', {
         onBlur(e) {
             let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
             if (this.type == 'number') {
-                if (value > this.max) value = this.max
-                if (value < this.min) value = this.min
+                if (value > this.max) value = parseInt(this.max)
+                if (value < this.min) value = parseInt(this.min)
             }
             this.$emit('update:value', value)
         }
@@ -1947,8 +1970,8 @@ Vue.component('sam-timerange', {
                </div>`,
     data: function () {
         return {
-            v1: '',
-            v2: ''
+            v1: this.value1,
+            v2: this.value2
         }
     },
     methods: {
@@ -2153,7 +2176,7 @@ Vue.component('sam-approver-list', {
 
 //钉钉----钉一下功能组件
 Vue.component('Ding2', {
-    props: ['dinglist', 'userid','flowid'],
+    props: ['dinglist'],
     template: `
             <div v-show="dinglist && dinglist.length && dinglist.length>0" style="display:inline-block;">
                 <el-button type="primary" v-on:click="Ding">钉一下</el-button>
@@ -2169,7 +2192,8 @@ Vue.component('Ding2', {
             let param = {
                 userId: this.dinglist[0],
                 title: '请帮我审核一下流水号为 ' + TaskId + ' 的流程',
-                applyMan: this.userid,
+                flowName: FlowName,
+                taskId: TaskId,
                 linkUrl: "eapp://page/approve/approve?index=0"
             }
             let url = 'DingTalkServers/sendOaMessage' + _formatQueryStr(param)

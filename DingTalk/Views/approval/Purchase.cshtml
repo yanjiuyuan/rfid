@@ -53,12 +53,12 @@
         </el-table-column>
         <el-table-column prop="Price" label="单价" width="100">
             <template slot-scope="scope">
-                <sam-input :value.sync="scope.row.Price" type="number"></sam-input>
+                <sam-input :value.sync="scope.row.Price" type="number" min="0"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Count" label="数量" width="100">
             <template slot-scope="scope">
-                <sam-input :value.sync="scope.row.Count" type="number" :required="true"></sam-input>
+                <sam-input :value.sync="scope.row.Count" type="number" min="0" :required="true"></sam-input>
             </template>
         </el-table-column>
         <el-table-column prop="Purpose" label="用途">
@@ -157,7 +157,7 @@
             searchCode() {
                 var that = this
                 if (!this.key) {
-                    this.$message({ type: 'error', message: `請输入关键字` });
+                    this.$message({ type: 'error', message: `请输入关键字` });
                     return
                 }
                 var url = '/Purchase/GetICItem?Key=' + that.key
@@ -198,7 +198,7 @@
             totalPrice: function () {
                 var totalPrice = 0
                 for (let p of this.purchaseList) {
-                    totalPrice = parseFloat(totalPrice + p.Price * p.Count).toFixed(2)
+                    totalPrice = parseFloat((totalPrice + p.Price * p.Count).toFixed(2))
                 }
                 return totalPrice
             }

@@ -83,6 +83,7 @@
                 //钉一下需要的参数
                 noEdit: true,
                 tableForm: {
+                    FactDays:1,
                 },
                 rules: {
                     FactBeginTime: { required: true, message: '实际开始时间不能为空', trigger: 'blur' },
@@ -172,8 +173,8 @@
             }
         },
         created: function () {
-            if (NodeId == 4) this.noEdit = false
             this.initEnd(() => { this.getHelpTable() })
+            if (NodeId == 4) this.noEdit = false
         }
     })
 
