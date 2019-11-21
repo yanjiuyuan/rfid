@@ -25,7 +25,7 @@
     <script src="~/Scripts/element1.js"></script>
     @*<script src="https://unpkg.com/element-ui/lib/index.js"></script>*@
     @*<script src="~/Scripts/element-ui.js"></script>*@
-    <script src="~/Scripts/lib2.js"></script>
+    <script src="~/Scripts/lib.js"></script>
 
     <script src="~/JqueryUI/jquery-ui.min.js"></script>
     <script src="~/Scripts/anyLine.js"></script>
@@ -156,6 +156,8 @@
                     data: {},
                     contentType: "application/json; charset=utf-8",
                     success: function (data) {
+                        console.log('/DingTalkServers/getUserDetail?userId=' + DingData.userid)
+                        console.log(data)
                         if (typeof (data) == 'string') data = JSON.parse(data)
                         DingData.nickName = data.name
                         DingData.department = data.department
@@ -177,6 +179,11 @@
         console.log('dd error: ' + JSON.stringify(err));
     });
 
+
+    //获取部门信息
+    PostData('DingTalkServers/departmentList', {}, (res) => {
+        Depts = res
+    })
 </script>
 
 

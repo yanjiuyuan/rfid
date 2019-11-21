@@ -25,7 +25,7 @@
     <!--物料列表表格實體-->
     <p style="font-size:24px;">总价预计  <span style="color:red;font-size:24px;">{{totalPrice}}</span>元</p>
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(d,i) in data" :name="i+1" :key="i">
+        <el-collapse-item v-for="(d,i) in purchaseList" :name="i+1" :key="i">
             <template slot="title">
                 <span style="font-size:20px;">部门名称:{{d.name}},请购总价预计</span>
                 <span style="color:red;">{{d.tmpTotalPrice}}</span>元
@@ -38,7 +38,7 @@
                 <el-table-column prop="Count" label="数量"></el-table-column>
                 <el-table-column prop="Price" label="预计单价">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row.Price" v-on:change="compute" type="number" :class="{ redborder:scope.row.Price ==''}"></el-input>
+                        <el-input v-model="scope.row.Price" v-on:change="compute" min="0" type="number" :class="{ redborder:scope.row.Price ==''}"></el-input>
                     </template>
                 </el-table-column>
                 <el-table-column prop="Purpose" label="用途">
@@ -73,6 +73,7 @@
                 searchForm: {
                     name: '',
                 },
+                purchaseList:[],
                 activeNames: [1, 2, 3, 4, 5, 6],
             }
         },
@@ -118,10 +119,9 @@
             //删除不需要的物品
             deleteItem(index, row) {
                 console.log(row)
-                console.log(demo.data)
-                for (let d of demo.data) {
+                for (let d of this.purchaseList) {
                     if (row.dept == d.name) {
-                        d.tmpTotalPrice = (d.tmpTotalPrice - parseFloat(row.Price * row.Count)).toFixed(2)
+                        d.tmpTotalPrice = parseFloat(d.tmpTotalPrice - row.Price * row.Count).toFixed(2)
                         d.value.splice(index, 1)
                     }
                 }
@@ -136,7 +136,7 @@
                     success: function (data) {
                         console.log(url)
                         console.log(data)
-                        that.data = []
+                        that.purchaseList = []
                         var deptStr = ''
                         for (let d of data) {
                             if (d.dept && deptStr.indexOf(d.dept) < 0) {
@@ -146,14 +146,14 @@
                         deptStr = deptStr.substring(0, deptStr.length - 1)
                         deptList = deptStr.split(',')
                         for (let d of deptList) {
-                            that.data.push({
+                            that.purchaseList.push({
                                 name: d,
                                 value: [],
                                 tmpTotalPrice: 0
                             })
                         }
                         for (let d of data) {
-                            for (let l of that.data) {
+                            for (let l of that.purchaseList) {
                                 if (d.dept == l.name) {
                                     d.Price = d.ExpectPrice
                                     l.value.push(d)
@@ -167,10 +167,10 @@
                 })
             },
             compute() {
-                for (let l of this.data) {
+                for (let l of this.purchaseList) {
                     l.tmpTotalPrice = 0
                 }
-                for (let l of this.data) {
+                for (let l of this.purchaseList) {
                     for (let v of l.value) {
                         if (!v.Price) continue
                         let price = parseFloat(v.Price).toFixed(2)
@@ -183,7 +183,7 @@
         computed: {
             totalPrice(){
                 let tmpPrice = 0
-                for (let l of this.data) {
+                for (let l of this.purchaseList) {
                     for (let v of l.value) {
                         if (!v.Price) continue
                         let price = parseFloat(v.Price).toFixed(2)
@@ -191,7 +191,7 @@
                         tmpPrice += price * v.Count
                     }
                 } 
-                return tmpPrice
+                return tmpPrice.toFixed(2)
             }
         },
         created: function () {

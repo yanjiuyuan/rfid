@@ -57,7 +57,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                totalPrice: 0,
+                items: items,
             }
         },
         methods: {
@@ -77,9 +77,7 @@
                 this.GetData("/OfficeSupplies/ReadTable?TaskId=" + TaskId, (data) => {
                     that.data = data
 
-                    for (let p of data) {
-                        this.totalPrice = this.totalPrice + p.ExpectPrice * p.Count
-                    }
+                   
                     that.getData()
                     that.totalRows = that.data.length
                 })
@@ -88,6 +86,16 @@
             setState(index, row) {
                 row.IsDelete = !row.IsDelete
             },
+        },
+        computed: {
+            totalPrice() {
+                let tmpPrice = 0
+                for (let p of this.data) {
+                    if (p.IsDelete) continue
+                    tmpPrice = tmpPrice + p.ExpectPrice * p.Count
+                }
+                return tmpPrice.toFixed(2)
+            }
         },
         created: function () {
             this.initEnd(() => { this.getBomInfo() })

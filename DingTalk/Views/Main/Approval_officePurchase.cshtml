@@ -10,7 +10,7 @@
     </div>
     <p style="font-size:24px;">总价预计 <span style="color:red;font-size:24px;">{{totalPrice}}</span>元</p>
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(d,i) in dataList" :name="i+1" :key="i">
+        <el-collapse-item v-for="(d,i) in data" :name="i+1" :key="i">
             <template slot="title">
                 <span style="font-size:16px;">部门名称:{{d.name}},请购总价预计</span>
                 <span style="color:red;">{{d.tmpTotalPrice}}</span>元
@@ -24,7 +24,7 @@
                 <el-table-column prop="Count" label="数量"></el-table-column>
                 <el-table-column prop="totalPrice" label="总价"></el-table-column>
                 <el-table-column prop="Purpose" label="用途"></el-table-column>
-                <el-table-column label="是否删除" width="150" v-if="NodeId == 2">
+                <el-table-column label="是否删除" width="150" v-if="NodeId == 2 && index == 0">
                     <template slot-scope="scope">
                         <el-button size="mini" @*v-if="NodeId == 2"*@ :type="scope.row.IsDelete?'primary':'danger'" v-on:click="setState(scope.$index, scope.row)">{{scope.row.IsDelete?'还原':'删除'}}</el-button>
                         <span :class="{'redFont':scope.row.IsDelete,'greenFont':!scope.row.IsDelete}">{{scope.row.IsDelete?'已删除':'正常'}}</span>
@@ -52,7 +52,8 @@
         data: function () {
             return {
                 activeNames: [1, 2, 3, 4, 5, 6],
-                totalPrice:0,
+                data:[],
+                //totalPrice:0,
             }
         },
         methods: {
@@ -62,7 +63,7 @@
                 if (NodeId == '2') {
                     let url = '/OfficeSuppliesPurchase/ModifyTable'
                     var param = []
-                    for (let d of that.dataList) {
+                    for (let d of that.data) {
                         for (let v of d.value) {
                             param.push(v)
                         }
@@ -86,11 +87,20 @@
             //设置BOM表单状态
             setState(index, row) {
                 row.IsDelete = !row.IsDelete
+                for (let d of this.data) {
+                    if (d.name == row.Dept) {
+                        if (row.IsDelete) {
+                            d.tmpTotalPrice = parseFloat((d.tmpTotalPrice - row.totalPrice).toFixed(2))
+                        } else {
+                            d.tmpTotalPrice = parseFloat((d.tmpTotalPrice + row.totalPrice).toFixed(2))
+                        }
+                    }
+                }
             },
             getBomInfo() {
                 var that = this
                 this._getData("/OfficeSuppliesPurchase/ReadTable" , function (data) {
-                    that.dataList = []
+                    that.data = []
                     console.log('获取bom表')
                     console.log(data)
                     var deptList = []
@@ -105,25 +115,38 @@
                     console.log(deptStr)
                     console.log(deptList)
                     for (let d of deptList) {
-                        that.dataList.push({
+                        that.data.push({
                             name: d,
                             value: [],
                             tmpTotalPrice: 0
                         })
                     }
                     for (let d of data) {
-                        for (let l of that.dataList) {
+                        for (let l of that.data) {
                             if (d.Dept == l.name) {
                                 d['totalPrice'] = (d.Price * d.Count)
                                 l.value.push(d)
                                 l.tmpTotalPrice += (d.Price * d.Count)
-                                that.totalPrice += (d.Price * d.Count)
+                                l.tmpTotalPrice = parseFloat(l.tmpTotalPrice.toFixed(2))
                                 break
                             }
                         }
                     }
-                    that.totalPrice = that.totalPrice.toFixed(2)
                 }, { TaskId: TaskId })
+            }
+        },
+        computed: {
+            totalPrice() {
+                let tmpPrice = 0
+                for (let l of this.data) {
+                    for (let v of l.value) {
+                        if (!v.Price || v.IsDelete) continue
+                        let price = parseFloat(v.Price).toFixed(2)
+                        if (!price) price == 0
+                        tmpPrice += price * v.Count
+                    }
+                }
+                return tmpPrice.toFixed(2)
             }
         },
         created: function () {
