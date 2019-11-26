@@ -1534,7 +1534,7 @@ namespace DingTalk.Controllers
                 //我已审批
                 case 1:
                     tasks = tasks.Where(t => t.State == 1 && t.IsEnable == 1
-                    && t.IsSend != true).ToList();
+                    && t.IsSend != true && t.IsPost != true).ToList();
                     break;
                 //我发起的
                 case 2:
