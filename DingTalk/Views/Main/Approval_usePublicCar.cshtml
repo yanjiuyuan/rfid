@@ -51,7 +51,7 @@
             <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="车辆选择" prop="CarId" v-if="NodeId == 2">
+        <el-form-item label="车辆选择" prop="CarId" v-if="NodeId == 2 && index == 0">
             <el-select v-model="tableForm.CarId" v-on:change="selectCar" filterable placeholder="请选择">
                 <el-option v-for="item in carList"
                            :key="item.Id"

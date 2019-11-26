@@ -48,7 +48,7 @@
         @*<el-form-item label="所属公司">
                 <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
             </el-form-item>*@
-        <template v-if="NodeId >= 1">
+        <template v-if="NodeId > 1 || (NodeId == 1 && index == 0)">
             <hr />
             <el-form-item label="测试项目名称" prop="ProjectName">
                 <sam-input :value.sync="tableForm.ProjectName" style="width:400px;" :required="true" :disabled="noEdit"></sam-input>

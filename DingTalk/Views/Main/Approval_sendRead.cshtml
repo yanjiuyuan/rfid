@@ -44,7 +44,7 @@
             <el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1"></el-input>
         </el-form-item>
         <hr />
-        <template v-if="NodeId >= 3">
+        <template v-if="NodeId > 3|| (NodeId == 3 && index == 0)">
             <el-form-item label="领导阅示" prop="Leadership">
                 <el-input v-model="tableForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>3"></el-input>
             </el-form-item>

@@ -181,8 +181,12 @@
 
 
     //获取部门信息
-    PostData('DingTalkServers/departmentList', {}, (res) => {
-        Depts = res
+    GetData('DingTalkServers/GetDepartmentList', (res) => {
+        Depts = JSON.parse(res).department
+        DeptNames = []
+        for (let d of Depts) {
+            DeptNames.push(d.name)
+        }
     })
 </script>
 
