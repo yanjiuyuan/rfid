@@ -1448,7 +1448,7 @@ namespace DingTalk.Controllers
                             item.ApplyMan = tasksPost.ApplyMan;
                             item.ApplyTime = tasksPost.ApplyTime;
                         }
-                        Tasks tasksCurrentSub = taskQuery.Where(t => t.State == 1 && t.IsEnable == 1 && t.IsSend != true).LastOrDefault();
+                        Tasks tasksCurrentSub = taskQuery.Where(t => t.State == 1 && t.IsEnable == 1 && t.IsSend != true).OrderBy(t=>t.NodeId).LastOrDefault();
                         if (tasksCurrentSub != null)
                         {
                             item.CurrentTime = tasksCurrentSub.ApplyTime;
