@@ -210,6 +210,7 @@
                 let url = 'Gift/GetStock?key=' + this.searchForm.key
                 if (!this.searchForm.key) url = 'Gift/GetStock'
                 this.GetData(url, (res) => {
+                    if (res.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
                     this.tableData = res
                 })
             },

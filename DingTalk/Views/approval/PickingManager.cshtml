@@ -100,7 +100,7 @@
                 let param = _cloneObj(this.searchParam)
                 param.IsSend = true
                 this.GetData("/Pick/Query" + _formatQueryStr(param), (res) => {
-                    this.$message({ type: 'success', message: `已文件推送到钉钉，请查收` });
+                    this.$message({ type: 'success', message: `文件已推送到钉钉，请查收` });
                 })
                 
             },

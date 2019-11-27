@@ -166,7 +166,7 @@
                         startTime: that.tableForm.StartTime,
                         endTime: that.tableForm.EndTime
                     }
-                    that._getData('/CarMananger/QuaryByTime', function (data) {
+                    that.GetData('CarMananger/QuaryByTimeNew' + _formatQueryStr(param), function (data) {
                         for (let d of data) {
                             if (d.Id == that.tableForm.CarId) {
                                 that.carName = d.Name + ' - ' + d.CarNumber
@@ -174,7 +174,7 @@
                             }
                         }
                         that.carList = data
-                    } , param)
+                    })
                 }, { TaskId: TaskId })
             }
         },

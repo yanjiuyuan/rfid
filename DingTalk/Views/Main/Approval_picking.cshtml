@@ -82,7 +82,7 @@
         methods: {
             //提交审批
             onSubmit(formName) {
-                if (NodeId == 3 && this.ruleForm.ImageUrl == 0) {
+                if (NodeId == 3 && this.imageList.length == 0) {
                     this.$message({ type: 'error', message: `请先上传图片` });
                     return
                 }
