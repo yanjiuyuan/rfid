@@ -1433,7 +1433,6 @@ namespace DingTalk.Controllers
                     List<Flows> flows = context.Flows.ToList();
                     List<Tasks> tasks = tasksAll.Where(t => t.ApplyManId == ApplyManId).ToList();
                     List<TasksState> tasksStates = context.TasksState.ToList();
-
                     //流程分类
                     tasks = TasksSort(Index, tasks);
                     foreach (var item in tasks)
