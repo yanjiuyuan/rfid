@@ -81,7 +81,7 @@
             onSubmit() {
                 var that = this
                 let valid = false
-                for (let d of that.data) {
+                for (let d of that.purchaseList) {
                     for (let v of d.value) {
                         if(d.value.length>0) valid = true
                         if (v.Price == '') {
@@ -98,7 +98,7 @@
                 let callBack = function (taskId) {
                     console.log(taskId)
                     var param = []
-                    for (let d of that.data) {
+                    for (let d of that.purchaseList) {
                         for (let v of d.value) {
                             v.TaskId = taskId
                             param.push(v)

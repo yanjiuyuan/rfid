@@ -86,7 +86,7 @@
                 this.GetData("/PurchaseNew/ReadPurchaseTable?TaskId=" + TaskId, (data) => {
                     that.data = data
                     for (let p of data) {
-                        this.totalPrice = (this.totalPrice + p.Price * p.Count).toFixed(2)
+                        this.totalPrice = parseFloat((this.totalPrice + p.Price * p.Count).toFixed(2))
                     }
                     that.getData()
                     that.totalRows = that.data.length

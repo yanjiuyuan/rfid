@@ -31,7 +31,7 @@
         <el-form-item label="计划天数">
             <el-input v-model="tableForm.PlanDays" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <template v-if="NodeId >= 4">
+        <template v-if="NodeId > 4 || (NodeId == 4 && index == 0)">
             <el-form-item label="实际开始时间" prop="FactBeginTime">
                 <el-date-picker v-model="tableForm.FactBeginTime" :editable="false" :disabled="noEdit" v-on:change="selectTime"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">

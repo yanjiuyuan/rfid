@@ -19,9 +19,9 @@
                 <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="协作人" prop="CooperateMan">
-            <el-input v-model="tableForm.CooperateMan" style="width:500px;" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+
+        <el-form-item label="协作人" required="required">
+            <sam-group :names.sync="tableForm.CooperateMan" :ids.sync="tableForm.CooperateManId"></sam-group>
         </el-form-item>
 
         <el-form-item label="协作内容" prop="CooperateContent">
@@ -29,7 +29,7 @@
         </el-form-item>
 
         <sam-timerange :value1.sync="tableForm.PlanBeginTime" label1="协作开始时间" :value2.sync="tableForm.PlanEndTime" label2="协作结束时间"></sam-timerange>
-        
+
         <el-form-item label="计划天数" prop="PlanDays">
             <el-input v-model="tableForm.PlanDays" style="width:200px;"></el-input>
         </el-form-item>
@@ -108,27 +108,6 @@
                     }
                 })
             },
-            //添加协作人
-            addPeerNumber() {
-                var that = this
-                DingTalkPC.biz.contact.choose({
-                    users: [],
-                    corpId: DingData.CorpId,
-                    max: 10,
-                    onSuccess: function (data) {
-                        console.log(data)
-                        let names = []
-                        let ids = []
-                        for (let d of data) {
-                            names.push(d.name)
-                            ids.push(d.emplId)
-                        } 
-                        that.tableForm.CooperateMan = names.join(',')
-                        that.tableForm.CooperateManId = ids.join(',')
-                    },
-                    onFail: function (err) { }
-                });
-            }
         },
         created: function () {
             this.initStart()

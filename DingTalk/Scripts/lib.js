@@ -5,7 +5,7 @@ var FlowName = '' //当前审批流程名称
 var NodeId = 0 //审批节点ID
 var TaskId = 0 //审批任务ID
 var state = ''//流程状态
-var State = 0 //多异步辅助状态
+var State = '未完成' //多异步辅助状态
 var Index = 0 //审批列表类型参数 0-带我审批 1-我已审批 2-我发起的 3-抄送我的
 var UrlObj = {} //url参数对象
 var QueryObj = {} //获取url参数对象
@@ -947,20 +947,22 @@ var mixin = {
         //显示临时保存数据
         saveTempData() {
             let data = {}
+            let files = {}
             //data['tableData'] = this.tableData || []
             //data['data'] = this.data || []
             data['ruleForm'] = this.ruleForm || {}
             data['tableForm'] = this.tableForm || {}
             data['purchaseList'] = this.purchaseList || []
             data['imageList'] = this.imageList || []
-            data['fileList'] = this.fileList || []
+            files['fileList'] = this.fileList || []
             data['pdfList'] = this.pdfList || []
             data['nodeList'] = this.nodeList || []
-            this.saveData(data)
+            this.saveData(data, files)
             this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
         },
         loadTempData() {
-            let data = this.loadData()
+            let data = this.loadData(FlowId)
+            let files = this.loadData(FlowId + '-file')
             if (data) {
                 //this['tableData'] = data.tableData
                 //this['data'] = data.data
@@ -974,18 +976,22 @@ var mixin = {
                 setTimeout(() => {
                     this['nodeList'] = data.nodeList
                 }, 2000)
-                this.saveData(null)
+                this.saveData(null,null)
+            }
+            if (files) {
+                this['fileList'] = files.fileList
             }
         },
-        saveData(data) {
+        saveData(data,files) {
             var Days = 7;
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
             console.log(JSON.stringify(data))
             document.cookie = FlowId + "=" + JSON.stringify(data) + ";expires=" + exp.toGMTString();
+            document.cookie = FlowId + "-file=" + JSON.stringify(files) + ";expires=" + exp.toGMTString();
         },
-        loadData() {
-            var arr, reg = new RegExp("(^| )" + FlowId + "=([^;]*)(;|$)");
+        loadData(cookieName) {
+            var arr, reg = new RegExp("(^| )" + cookieName + "=([^;]*)(;|$)");
             if ((arr = document.cookie.match(reg)) && arr[2]) {
                 console.log('获取临时保存数据 成功----------!')
                 console.log(arr[2])
@@ -1759,9 +1765,9 @@ var mixin = {
 }
 
 function doWithErrcode(error, demo) {
-    if (!error) {
-        return 1
-    }
+    //if (!error) {
+    //    return 1
+    //}
     if (error && error.errorCode != 0) {
         console.error(error.errorMessage)
         demo.elementAlert('报错信息', error.errorMessage)
@@ -1903,6 +1909,7 @@ Vue.component('sam-group', {
                 onSuccess: function (data) {
                     console.log(data)
                     for (let d of data) {
+                        if (that.tids.indexOf(d.emplId)>=0) continue
                         that.tags.push(d.name)
                         that.tids.push(d.emplId)
                     }
@@ -2034,7 +2041,7 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0">
+                           <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成'" >
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.IsSelectMore)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
@@ -2062,22 +2069,12 @@ Vue.component('sam-approver-list', {
                             </div>
                         </template>
 
-                        <el-input class="input-new-tag"
-                                    v-if="inputVisible"
-                                    v-model="inputValue"
-                                    ref="saveTagInput"
-                                    size="small"
-                                    v-on:keyup.enter.native="handleInputConfirm"
-                                    v-on:blur="handleInputConfirm">
-                        </el-input>
                     </el-form-item></div>`,
     data: function () {
         return {
-            inputValue: '',
-            NodeId: 0,
+            State: State,
             member1: '',
             member2: '',
-            inputVisible: false,
         }
     },
     methods: {
@@ -2153,21 +2150,6 @@ Vue.component('sam-approver-list', {
                 }
             }
         },
-        handleClose(emplId) {
-            for (let node of this.nodelist) 
-                for (var i = 0; i < node.AddPeople.length; i++) {
-                    if (node.AddPeople[i].emplId == emplId)
-                        node.AddPeople.splice(i, 1)
-                }
-        },
-        handleInputConfirm() {
-            let inputValue = this.inputValue;
-            if (inputValue) {
-                this.approvers.push(inputValue);
-            }
-            this.inputVisible = false;
-            this.inputValue = '';
-        }
     },
     computed: {
         

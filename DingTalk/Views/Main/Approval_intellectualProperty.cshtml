@@ -26,7 +26,7 @@
         </el-form-item>
 
         <hr />
-        <template v-if="NodeId >= 5">
+        <template v-if="NodeId > 5 || (NodeId == 5 && index == 0)">
             <el-form-item label="发明人或设计人" prop="ActualInventor">
                 <el-input v-model="tableForm.ActualInventor" placeholder="按贡献大小排序" style="width:500px;" :disabled="true"></el-input>
                 <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()" v-if="!noEdit">+ 选人</el-button>
