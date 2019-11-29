@@ -308,13 +308,13 @@ var mixin = {
         },
         specialRole: [],
         specialRoleNames: [],
-        TableForm:{},
+        tableForm:{},
         DingData: {},
         nodeList: [],
         nodeInfo: {},
         NodeIds: [],
         data: [],
-        TableData: [],
+        tableData: [],
         fileList: [],
         pdfList: [],
         imageList: [],
@@ -597,7 +597,7 @@ var mixin = {
             Index = 0
             this.DingData = DingData
             this.data = []
-            this.TableData = []
+            this.tableData = []
             this.nodeList = []
             this.nodeInfo = {}
             this.pdfList = []
@@ -637,11 +637,9 @@ var mixin = {
                 Title: FlowName,
             }
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
-            this.loadTempData()
-            this.loadReApprovalData()
-            this.getNodeInfo()
+            this.getNodeList(true)
             this.getProjects()
-            this.getApproInfo()
+            this.getNodeInfo()
             callBack()
             loadHtml("mainPage", "partPage")
         },
@@ -667,7 +665,7 @@ var mixin = {
                
             this.DingData = DingData
             this.data = []
-            this.TableData = []
+            this.tableData = []
             this.nodeList = []
             this.nodeInfo = {}
             this.pdfList = []
@@ -709,9 +707,9 @@ var mixin = {
             }
            
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
-            this.getNodeInfo()
+            this.getNodeList()
             this.GetDingList(TaskId)
-            this.getApproInfo()
+            this.getNodeInfo()
             this.getFormData()
             callBack()
             loadHtml("mainPage", "partPage")
@@ -947,52 +945,54 @@ var mixin = {
         //显示临时保存数据
         saveTempData() {
             let data = {}
-            let files = {}
-            //data['TableData'] = this.TableData || []
+            //data['tableData'] = this.tableData || []
             //data['data'] = this.data || []
+            let files = this.fileList || []
+            let purchaseList = this.purchaseList || []
             data['ruleForm'] = this.ruleForm || {}
-            data['TableForm'] = this.TableForm || {}
-            data['purchaseList'] = this.purchaseList || []
+            data['tableForm'] = this.tableForm || {}
             data['imageList'] = this.imageList || []
-            files['fileList'] = this.fileList || []
             data['pdfList'] = this.pdfList || []
             data['nodeList'] = this.nodeList || []
-            this.saveData(data, files)
+            this.saveData(data, files, purchaseList)
             this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
         },
         loadTempData() {
             let data = this.loadData(FlowId)
             let files = this.loadData(FlowId + '-file')
+            let purchaseList = this.loadData(FlowId + '-purchaseList')
             if (data) {
-                //this['TableData'] = data.TableData
+                //this['tableData'] = data.tableData
                 //this['data'] = data.data
                 this['ruleForm'] = data.ruleForm
-                this['TableForm'] = data.TableForm
-                this['purchaseList'] = data.purchaseList
+                this['tableForm'] = data.tableForm
+                //this['purchaseList'] = data.purchaseList
                 this['imageList'] = data.imageList
                 this['fileList'] = data.fileList
                 this['pdfList'] = data.pdfList
                 this.$message({ type: 'success', message: `获取临时保存数据成功，需要再次保存请点击保存按钮` });
-                setTimeout(() => {
-                    this['nodeList'] = data.nodeList
-                }, 2000)
-                this.saveData(null,null)
+                this['nodeList'] = data.nodeList
+                this.saveData(null, null, null)
             }
             if (files) {
-                this['fileList'] = files.fileList
+                this['fileList'] = files
+            }
+            if (purchaseList) {
+                this['purchaseList'] = purchaseList
             }
         },
-        saveData(data,files) {
+        saveData(data, files, purchaseList) {
             var Days = 7;
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
-            console.log(JSON.stringify(data))
             document.cookie = FlowId + "=" + JSON.stringify(data) + ";expires=" + exp.toGMTString();
             document.cookie = FlowId + "-file=" + JSON.stringify(files) + ";expires=" + exp.toGMTString();
+            document.cookie = FlowId + "-purchaseList=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
         },
         loadData(cookieName) {
             var arr, reg = new RegExp("(^| )" + cookieName + "=([^;]*)(;|$)");
-            if ((arr = document.cookie.match(reg)) && arr[2]) {
+            arr = document.cookie.match(reg)
+            if (arr && arr[2]) {
                 console.log('获取临时保存数据 成功----------!')
                 console.log(arr[2])
                 return JSON.parse(arr[2])
@@ -1005,7 +1005,7 @@ var mixin = {
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
-            if (!this.TableForm) this.TableForm = {}
+            if (!this.tableForm) this.tableForm = {}
             this.ruleForm.IsBacked = false
             this.ruleForm.IsPost = false
             this.ruleForm.NodeId = '0'
@@ -1019,12 +1019,13 @@ var mixin = {
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
                 ruleForm: this.ruleForm,
+                //nodeList: this.nodeList
             }
-            ReApprovalTempData['TableForm'] = this.TableForm || {}
+            ReApprovalTempData['tableForm'] = this.tableForm || {}
             if (this.data) {
                 ReApprovalTempData['dataArr'] = this.data
-            }else if (this.TableData) {
-                ReApprovalTempData['dataArr'] = this.TableData
+            }else if (this.tableData) {
+                ReApprovalTempData['dataArr'] = this.tableData
             }
             //if(items) ReApprovalTempData['items'] = items
             for (let img of imgConfig) {
@@ -1037,11 +1038,12 @@ var mixin = {
         loadReApprovalData() {
             if (!ReApprovalTempData.valid) return
             this.ruleForm = ReApprovalTempData.ruleForm
-            this.TableForm = ReApprovalTempData.TableForm
+            this.tableForm = ReApprovalTempData.tableForm
             this.dataArr = ReApprovalTempData.dataArr
             this.imageList = ReApprovalTempData.imageList
             this.fileList = ReApprovalTempData.fileList
             this.pdfList = ReApprovalTempData.pdfList
+            //this.nodeList = ReApprovalTempData.nodeList
             ReApprovalTempData.valid = false
             this['purchaseList'] = ReApprovalTempData.dataArr
         },
@@ -1049,7 +1051,7 @@ var mixin = {
         //获取全部方法
         getData() {
             var start = this.pageSize * (this.currentPage - 1)
-            this.TableData = this.data.slice(start, start + this.pageSize)
+            this.tableData = this.data.slice(start, start + this.pageSize)
         },
         handleSizeChange: function (val) {
             this.currentPage = 1
@@ -1132,11 +1134,13 @@ var mixin = {
             pdfList = []
             if (data.ImageUrl && data.ImageUrl.length > 5) {
                 var urlList = data.ImageUrl.split(',')
-                var oldUrlList = data.OldImageUrl.split(',')
+                var oldUrlList = []
+                data.OldImageUrl ? oldUrlList = data.OldImageUrl.split(',') : oldUrlList = []
+                //var oldUrlList = data.OldImageUrl.split(',')
                 for (let i = 0; i < urlList.length; i++) {
                     imageList.push({
                         response: { Content: urlList[i] },
-                        name: oldUrlList[i],
+                        name: oldUrlList[i] || '图片' + i,
                         url: document.location + (urlList[i].substring(2)).replace(/\\/g, "/")
                     })
                 }
@@ -1181,7 +1185,7 @@ var mixin = {
             }
         },
         //获取审批/抄送 相关人员列表
-        getNodeInfo() {
+        getNodeList(ifStart) {
             var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             this.GetData(url, (res) => {
                 this.isBack = res[0].IsBack
@@ -1226,15 +1230,12 @@ var mixin = {
                         }
                     }
                 }
-                //if (this.index && this.index != '0' && this.index != '2') {
-                //    for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                //            this.NodeId = this.nodeList[i].NodeId
-                //            break
-                //        }
-                //    }
-                //}
                 this.getNodeInfo_done(this.nodeList)
+                //发起页面获取临时保存数据和重新发起数据
+                if (ifStart) {
+                    this.loadTempData()
+                    this.loadReApprovalData()
+                }
             })
             
         },
@@ -1259,13 +1260,12 @@ var mixin = {
             })
         },
         //获取審批節點數據
-        getApproInfo() {
+        getNodeInfo() {
             var url = "/FlowInfoNew/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
             this.GetData(url, (res) => {
                 this.nodeInfo = res[0]
                 NodeId = res[0].NodeId
             })
-            this.loadReApprovalData()
         },
         //审批所有流程通过，后续处理
         doneSubmit(text) {
@@ -1376,13 +1376,17 @@ var mixin = {
         //搜索物料列表
         searchCode(formName) {
             var that = this
-            if (!this.searchForm.name) return
+            if (!this.searchForm.name) {
+                this.$message({ type: 'error', message: `请输入关键字` });
+                return
+            }
             var url = '/Purchase/GetICItem?Key=' + that.searchForm.name
             $.ajax({
                 url: url,
                 success: function (data) {
                     console.log(url)
                     data = JSON.parse(data)
+                    if (data.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
                     console.log(data)
                     that.data = data
                     that.totalRows = data.length
@@ -1953,9 +1957,14 @@ Vue.component('sam-input', {
         onBlur(e) {
             let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
             if (this.type == 'number') {
-                if (value > this.max) value = parseInt(this.max)
-                if (value < this.min) value = parseInt(this.min)
+                value = parseInt(value)
+                let max = parseInt(this.max)
+                let min = parseInt(this.min)
+                if (value > max) value = max
+                if (value < min) value = min
+                value = value + ''
             }
+            e.target.value = value
             this.$emit('update:value', value)
         }
     },
@@ -1965,12 +1974,12 @@ Vue.component('sam-timerange', {
     props: ['label1', 'label2', 'type', 'value1', 'value2', 'required'],
     template: `<div> 
                 <el-form-item :label="label1 || '开始时间'" :required="true || required">  
-                    <el-date-picker v-model="v1" :class="{ redborder: value1 =='' && !required}" :ediTable="false" style="width:160px;" v-on:change="onChange"
+                    <el-date-picker v-model="v1" :class="{ redborder: value1 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
                                     type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item :label="label2 || '结束时间'" required="required">
-                    <el-date-picker  v-model="v2" :class="{ redborder: value2 =='' && !required}" :ediTable="false" style="width:160px;" v-on:change="onChange"
+                    <el-date-picker  v-model="v2" :class="{ redborder: value2 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
                                     type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
@@ -2222,7 +2231,7 @@ Vue.component('ding', {
                     <el-form-item label="钉时间" :label-width="formLabelWidth">
                       <div class="block">
                         <span class="demonstration">默认</span>
-                        <el-date-picker :ediTable="false"
+                        <el-date-picker :editable="false"
                           v-model="form.alertDate"
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm"

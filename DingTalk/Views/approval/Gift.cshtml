@@ -14,12 +14,12 @@
         <h1>礼品库存管理</h1>
         <h2>添加礼品</h2>
         <!--表格實體-->
-        <el-Table :data="excelData" stripe border>
-            <el-Table-column prop="CodeNo" type="index"></el-Table-column>
-            <el-Table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
-            </el-Table-column>
+        <el-table :data="excelData" stripe border>
+            <el-table-column prop="CodeNo" type="index"></el-table-column>
+            <el-table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
+            </el-table-column>
 
-        </el-Table>
+        </el-table>
         <!--上传表單-->
         <el-upload class="upload-demo"
                    action="/drawingupload/UploadAndGetInfo"
@@ -34,17 +34,17 @@
         <el-button type="primary" v-on:click="addGifts">添加礼品</el-button>
         <h2>所有礼品</h2>
         <!--表格實體-->
-        <el-Table :data="allData" stripe border>
-            <el-Table-column prop="CodeNo" type="index"></el-Table-column>
-            <el-Table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
-            </el-Table-column>
-            <el-Table-column label="操作" width="150">
+        <el-table :data="allData" stripe border>
+            <el-table-column prop="CodeNo" type="index"></el-table-column>
+            <el-table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
+            </el-table-column>
+            <el-table-column label="操作" width="150">
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="showEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="mini" type="danger" v-on:click="deleteGift(scope.$index, scope.row)">删除</el-button>
                 </template>
-            </el-Table-column>
-        </el-Table>
+            </el-table-column>
+        </el-table>
         <!--编辑项目表单-->
         <el-dialog title="编辑礼品库存" :visible.sync="dialogFormVisible">
             <el-form v-on:submit.native.prevent :model="editForm" ref="ruleForm" label-width="100px" class="demo-ruleForm"
@@ -72,32 +72,32 @@
         <el-button type="primary" v-on:click="searchGifts">搜索</el-button>
     </div>
     <!--搜索结果礼品列表表格實體-->
-    <el-Table :data="TableData" stripe border>
-        <el-Table-column prop="CodeNo" type="index"></el-Table-column>
-        <el-Table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
-        </el-Table-column>
-        <el-Table-column label="操作">
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="CodeNo" type="index"></el-table-column>
+        <el-table-column v-for="(value,key) in excelConfig" :prop="key" :label="value" :key="key">
+        </el-table-column>
+        <el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
             </template>
-        </el-Table-column>
-    </el-Table>
+        </el-table-column>
+    </el-table>
     <hr />
     <h3>已选礼品</h3>
     <!--采购列表表格實體-->
-    <el-Table :data="purchaseList" stripe border>
-        <el-Table-column prop="GiftName" label="礼品名称"></el-Table-column>
-        <el-Table-column prop="GiftCount" label="礼品数量">
+    <el-table :data="purchaseList" stripe border>
+        <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
+        <el-table-column prop="GiftCount" label="礼品数量">
             <template slot-scope="scope">
                 <el-input v-model="scope.row.GiftCount"></el-input>
             </template>
-        </el-Table-column>
-        <el-Table-column label="操作" width="80">
+        </el-table-column>
+        <el-table-column label="操作" width="80">
             <template slot-scope="scope">
                 <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
             </template>
-        </el-Table-column>
-    </el-Table>
+        </el-table-column>
+    </el-table>
 
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
@@ -182,7 +182,7 @@
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {
-                //this.TableData = []
+                //this.tableData = []
                 console.log(response)
                 for (let d of response[0].Value) {
                     let tmpData = {}
@@ -210,7 +210,8 @@
                 let url = 'Gift/GetStock?key=' + this.searchForm.key
                 if (!this.searchForm.key) url = 'Gift/GetStock'
                 this.GetData(url, (res) => {
-                    this.TableData = res
+                    if (res.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
+                    this.tableData = res
                 })
             },
             //删除库存

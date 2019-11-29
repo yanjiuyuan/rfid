@@ -19,20 +19,20 @@
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
-    <el-Table :data="TableData" stripe border>
-        <el-Table-column prop="fNumber" label="物料编码"></el-Table-column>
-        <el-Table-column prop="fName" label="物料名称"></el-Table-column>
-        <el-Table-column prop="fQty" label="实收数量"></el-Table-column>
-        <el-Table-column prop="fModel" label="规格型号"></el-Table-column>
-        <el-Table-column prop="unitName" label="单位"></el-Table-column>
-        <el-Table-column prop="fFullName" label="供应商"></el-Table-column>
-        <el-Table-column label="操作">
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="fNumber" label="物料编码"></el-table-column>
+        <el-table-column prop="fName" label="物料名称"></el-table-column>
+        <el-table-column prop="fQty" label="实收数量"></el-table-column>
+        <el-table-column prop="fModel" label="规格型号"></el-table-column>
+        <el-table-column prop="unitName" label="单位"></el-table-column>
+        <el-table-column prop="fFullName" label="供应商"></el-table-column>
+        <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+                <p v-if="noList.indexOf(scope.row.fNumber) >= 0">已选择</p>
+                <el-button v-else size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
             </template>
-        </el-Table-column>
-    </el-Table>
+        </el-table-column>
+    </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
         <el-pagination v-on:size-change="handleSizeChange"
@@ -47,23 +47,26 @@
     <hr />
     <h3>已选物料</h3>
     <!--采购列表表格實體-->
-    <el-Table :data="purchaseList" stripe border>
-        <el-Table-column prop="fNumber" label="物料编码"></el-Table-column>
-        <el-Table-column prop="fName" label="物料名称"></el-Table-column>
-        <el-Table-column prop="fQty" label="实收数量" width="100">
+    <el-table :data="purchaseList" stripe border>
+        <el-table-column prop="fNumber" label="物料编码"></el-table-column>
+        <el-table-column prop="fName" label="物料名称"></el-table-column>
+        <el-table-column prop="fQty" label="实收数量" width="100">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.fQty" prop="Count" :class="{ redborder:scope.row.fQty =='' || scope.row.fQty > scope.row.have}"></el-input>
+                <sam-input :value.sync="scope.row.fQty" type="number" min="0" :max="scope.row.have" :required="true"></sam-input>
             </template>
-        </el-Table-column>
-        <el-Table-column prop="fModel" label="规格型号"></el-Table-column>
-        <el-Table-column prop="unitName" label="单位"></el-Table-column>
-        <el-Table-column prop="fFullName" label="供应商"></el-Table-column>
-        <el-Table-column label="操作" width="80">
+            @*<template slot-scope="scope">
+                <el-input v-model="scope.row.fQty" prop="Count" :class="{ redborder:scope.row.fQty =='' || scope.row.fQty > scope.row.have}"></el-input>
+            </template>*@
+        </el-table-column>
+        <el-table-column prop="fModel" label="规格型号"></el-table-column>
+        <el-table-column prop="unitName" label="单位"></el-table-column>
+        <el-table-column prop="fFullName" label="供应商"></el-table-column>
+        <el-table-column label="操作" width="80">
             <template slot-scope="scope">
                 <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
             </template>
-        </el-Table-column>
-    </el-Table>
+        </el-table-column>
+    </el-table>
 
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
@@ -130,9 +133,13 @@
             //搜索物料列表
             searchCode() {
                 var that = this
-                if (!this.searchForm.name) return
+                if (!this.searchForm.name) {
+                    this.$message({ type: 'error', message: `请输入关键字` });
+                    return
+                }
                 var url = jinDomarn + 'Godown/ReadGodownInfoSingle?keyWord=' + that.searchForm.name
                 this.GetData(url, function (data) {
+                    if (data.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
                     that.data = data
                     that.totalRows = data.length
                     that.getData()
@@ -140,9 +147,13 @@
             },
             searchNo() {
                 var that = this
-                if (!this.searchForm.no) return
+                if (!this.searchForm.no) {
+                    this.$message({ type: 'error', message: `请输采购单编号` });
+                    return
+                }
                 var url = jinDomarn + 'Godown/GetGodownInfoByFBillNo?FBillNo=' + that.searchForm.no
                 this.GetData(url, function (data) {
+                    if (data.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
                     for (let d of data) {
                         that.purchaseList.push(d)
                     }
@@ -169,12 +180,14 @@
                 });
             },
             //添加申请物料
-            addGood(index, good) {
+            addGood(index, g) {
+                let good = _cloneObj(g)
                 for (let p of this.purchaseList) {
                     if (p.fNumber == good.fNumber) return
                 }
                 good['have'] = good.fQty
                 this.purchaseList.push(good)
+                this.noList.push(good.fNumber)
             },
         },
         created: function () {
