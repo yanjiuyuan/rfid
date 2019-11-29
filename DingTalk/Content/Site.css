@@ -154,6 +154,7 @@ a {
     top: 10%;
     left: 10%;
     width: 80%;
+    max-height: 700px;
 }
 /*首页选项卡*/
 .card {

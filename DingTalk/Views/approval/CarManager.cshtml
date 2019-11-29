@@ -117,8 +117,11 @@
         <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
                  enctype="multipart/form-data">
             <template>
-                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' " :key="i" :label="tableItems[i]" :prop="i">
-                    <el-input v-model="ruleForm[i]"></el-input>
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='UnitPricePerKilometre' " :key="i" :label="tableItems[i]" :prop="i">
+                    <sam-input :value.sync="ruleForm[i]"></sam-input>
+                </el-form-item>
+                <el-form-item label="每公里单价(元)" prop="UnitPricePerKilometre">
+                    <sam-input :value.sync="ruleForm.UnitPricePerKilometre" type="number" min="0" :required="true"></sam-input>
                 </el-form-item>
                 <hr />
                 <el-form-item>
@@ -279,10 +282,16 @@
                 }
                
                 let handle = function (data) {
-                    console.log('删除成功')
                     that.getCar()
                 }
-                this._getData(url, handle, param)
+                this.$confirm('是否确定删除该车辆？')
+                    .then(_ => {
+                        this._getData(url, handle, param)
+                    })
+                    .catch(_ => {
+
+                    });
+                
             },
             //添加车辆按钮事件
             handleAdd: function () {

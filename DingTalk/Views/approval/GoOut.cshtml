@@ -29,13 +29,7 @@
             <el-input v-model="tableForm.Content" style="width:550px;"></el-input>
         </el-form-item>
         <el-form-item label="外出时间" prop="BeginTime">
-            <el-date-picker v-model="timeRange"
-                            type="datetimerange"
-                            v-on:change="selectTime" :editable="false"
-                            range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="返回时间">
-            </el-date-picker>
+            <sam-timerange :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :onchange="selectTime"></sam-timerange>
         </el-form-item>
         <el-form-item label="时长/小时" prop="Duration">
             <el-input v-model="tableForm.Duration" style="width:200px;"></el-input>
@@ -170,6 +164,8 @@
             },
             //选时间操作
             selectTime(value) {
+                console.log('选时间操作')
+                console.log(value)
                 if (!value[0]) return
                 this.tableForm.Duration = _computeDurTime(value[0], value[1], 'h')
                 this.tableForm.BeginTime = _timeToString(value[0])

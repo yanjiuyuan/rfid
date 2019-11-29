@@ -18,33 +18,24 @@
             @*<el-button class="button-new-tag" size="small" v-on:click="addDrivingMan()">+ 选人</el-button>*@
         </el-form-item>
         <el-form-item label="同行人">
-            <el-input v-model="tableForm.PeerNumber" style="width:500px;" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+            <sam-group :names.sync="tableForm.PeerNumber" :ids.sync="tableForm.PeerNumberId"></sam-group>
         </el-form-item>
         <el-form-item label="用车事由" prop="MainContent">
-            <sam-input :value.sync="tableForm.MainContent" style="width:550px;"></sam-input>
+            <sam-input :value.sync="tableForm.MainContent" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="计划行车路线" prop="PlantTravelWay">
-            <sam-input :value.sync="tableForm.PlantTravelWay" style="width:550px;"></sam-input>
+            <sam-input :value.sync="tableForm.PlantTravelWay" :required="true"></sam-input>
         </el-form-item>
 
-        @*<el-form-item label="起始公里数" prop="StartKilometres">
-                <el-input v-model="ruleForm.StartKilometres"></el-input>
-            </el-form-item>*@
-
-        <el-form-item label="用车时间" prop="StartTime">
-            <el-date-picker v-model="timeRange"
-                            type="datetimerange"
-                            v-on:change="selectTime"
-                            @*:picker-options="dayPickerOptions"*@
-                            range-separator="至"
-                            start-placeholder="开始时间" :editable="false"
-                            end-placeholder="返回时间">
-            </el-date-picker>
+        <el-form-item label="用车时间" prop="StartTime" v-if="doneloadTmp">
+            <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--添加审批人-->
+        <el-form-item>
+            <el-checkbox v-model="ifGoout">本人同意已提交外出申请</el-checkbox>
+        </el-form-item>
         <el-form-item>
             <el-checkbox v-model="checked">本人同意<b v-on:click="showMore" style="color:#88B6FF;"><< 研究院车辆安全使用协议 >></b></el-checkbox>
         </el-form-item>
@@ -114,9 +105,9 @@
         data: function () {
             return {
                 carList: [],
-                timeRange: [],
                 useTimeList: [],
                 checked: false,
+                ifGoout: false,
                 activeNames: [],
                 tableForm: {
                     CarId: "",
@@ -139,32 +130,20 @@
                     StartTime: commonInput,
                     EndTime: commonInput
                 },
-                dayPickerOptions: {
-                    shortcuts: [
-                        {
-                            text: '今天',
-                            onClick(picker) {
-                                picker.$emit('pick', new Date());
-                            }
-                        }, {
-                            text: '明天',
-                            onClick(picker) {
-                                const date = new Date();
-                                date.setTime(date.getTime() + 3600 * 1000 * 24);
-                                picker.$emit('pick', date);
-                        }
-                    }]
-                }
             }
         },
         methods: {
             onSubmit(formName) {
                 console.log('submit!');
                 if (!this.checked) {
-                    this.$message({ type: 'error', message: `必须先同意用车协议才可申请'` });
+                    this.$message({ type: 'error', message: `必须先同意用车协议才可申请` });
                     return
                 }
-                if (this.nodeList[1].AddPeople[0].emplId == "0907095238746571") {
+                if (!this.ifGoout) {
+                    this.$message({ type: 'error', message: `必须先提交外出申请才可申请` });
+                    return
+                }
+                if (this.nodeList[1].AddPeople.length>0 && this.nodeList[1].AddPeople[0].emplId == "0907095238746571") {
                     this.$alert('用车无需季老师审批,如是部长级请选本人', '提示信息')
                     return
                 }
@@ -185,17 +164,18 @@
                     },param)
                 }
                 console.log(param)
-                this.approvalSubmit(callBack)
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) that.approvalSubmit(callBack)
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
             },
             showMore() {
                 console.log('hello?')
                 this.activeNames = [1]
-            },
-            //选时间操作
-            selectTime(value) {
-                if (!value[0]) return
-                this.tableForm.StartTime = _timeToString(value[0])
-                this.tableForm.EndTime = _timeToString(value[1])
             },
             //添加用车人
             addDrivingMan() {
@@ -212,22 +192,6 @@
                     onFail: function (err) { }
                 });
             },
-            //添加同行人
-            addPeerNumber() {
-                var that = this
-                DingTalkPC.biz.contact.choose({
-                    users: [],
-                    corpId: DingData.CorpId,
-                    max: 10,
-                    onSuccess: function (data) {
-                        console.log(data)
-                        let names = []
-                        for (let d of data) names.push(d.name)
-                        that.tableForm.PeerNumber = names.join(',')
-                    },
-                    onFail: function (err) { }
-                });
-            }
         },
         created: function () {
             this.initStart()

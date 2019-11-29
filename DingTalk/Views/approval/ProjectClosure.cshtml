@@ -37,7 +37,9 @@
         <el-form-item label="计划结束时间">
             <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
-        <sam-timerange :label1="'项目开始时间'" :label2="'项目结束时间'" :value1.sync="tableForm.ActualCycleStart" :value2.sync="tableForm.ActualCycleEnd"></sam-timerange>
+        <el-form-item label="项目周期">
+            <sam-timerange :value1.sync="tableForm.ActualCycleStart" :value2.sync="tableForm.ActualCycleEnd"></sam-timerange>
+        </el-form-item>
         <el-form-item label="项目相关数据">
             <el-table :data="DetailedList" stripe border>
                 <el-table-column type="index"></el-table-column>

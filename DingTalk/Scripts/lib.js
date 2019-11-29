@@ -167,6 +167,30 @@ function _timeToString(date, split) {
     return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
 }
 
+function _stringToDate(str) {
+    str = str.replace(/-/g, '/'); 
+    var date = new Date(str);
+    date.setDate(date.getDate() + 1);
+    return date
+}
+
+function _stringToTime(str) {
+    var tempStrs = str.split(" ");
+    var dateStrs = tempStrs[0].split("-");
+    var year = parseInt(dateStrs[0], 10);
+    var month = parseInt(dateStrs[1], 10) - 1;
+    var day = parseInt(dateStrs[2], 10);
+    var timeStrs = tempStrs[1].split(":");
+    var hour = parseInt(timeStrs[0], 10);
+    var minute = parseInt(timeStrs[1], 10);
+    var second = parseInt(timeStrs[2], 10);
+    var date = new Date(year, month, day, hour, minute, second);
+    console.log('new date')
+    console.log(date)
+    return date;
+}
+
+
 function _getTime() {
     var split = "-"
     var d = new Date()
@@ -595,6 +619,7 @@ var mixin = {
         //初始化方法
         initStart(callBack = function () { }) {
             Index = 0
+            this.doneloadTmp = false 
             this.DingData = DingData
             this.data = []
             this.tableData = []
@@ -965,14 +990,13 @@ var mixin = {
                 //this['tableData'] = data.tableData
                 //this['data'] = data.data
                 this['ruleForm'] = data.ruleForm
-                this['tableForm'] = data.tableForm
+                this.tableForm = data.tableForm
                 //this['purchaseList'] = data.purchaseList
                 this['imageList'] = data.imageList
                 this['fileList'] = data.fileList
                 this['pdfList'] = data.pdfList
                 this.$message({ type: 'success', message: `获取临时保存数据成功，需要再次保存请点击保存按钮` });
                 this['nodeList'] = data.nodeList
-                this.saveData(null, null, null)
             }
             if (files) {
                 this['fileList'] = files
@@ -980,6 +1004,7 @@ var mixin = {
             if (purchaseList) {
                 this['purchaseList'] = purchaseList
             }
+            this.saveData(null, null, null)
         },
         saveData(data, files, purchaseList) {
             var Days = 7;
@@ -990,10 +1015,10 @@ var mixin = {
             document.cookie = FlowId + "-purchaseList=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
         },
         loadData(cookieName) {
-            var arr, reg = new RegExp("(^| )" + cookieName + "=([^;]*)(;|$)");
+            let arr, reg = new RegExp("(^| )" + cookieName + "=([^;]*)(;|$)");
             arr = document.cookie.match(reg)
-            if (arr && arr[2]) {
-                console.log('获取临时保存数据 成功----------!')
+            if (arr && arr[2] && arr[2] != 'null' && arr[2] != '[]') {
+                console.log('获取临时保存数据 -- ' + cookieName + ' 成功----------!')
                 console.log(arr[2])
                 return JSON.parse(arr[2])
             }
@@ -1001,6 +1026,7 @@ var mixin = {
         //重新发起审批
         reApproval() {
             this.disablePage = true
+            State = '未完成'
             var tmpPdfList = []
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
@@ -1235,6 +1261,7 @@ var mixin = {
                 if (ifStart) {
                     this.loadTempData()
                     this.loadReApprovalData()
+                    this.doneloadTmp = true
                 }
             })
             
@@ -1971,34 +1998,56 @@ Vue.component('sam-input', {
 })
 //时间区间选择器组件
 Vue.component('sam-timerange', {
-    props: ['label1', 'label2', 'type', 'value1', 'value2', 'required'],
-    template: `<div> 
-                <el-form-item :label="label1 || '开始时间'" :required="true || required">  
-                    <el-date-picker v-model="v1" :class="{ redborder: value1 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
-                                    type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item :label="label2 || '结束时间'" required="required">
-                    <el-date-picker  v-model="v2" :class="{ redborder: value2 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
-                                    type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
-                    </el-date-picker>
-                </el-form-item>
-               </div>`,
+    props: ['value1', 'value2', 'required', 'onchange'],
+    template: `<div>
+                 <el-date-picker
+                      v-model="value"
+                      type="datetimerange"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      :picker-options="pickerOptions"
+                      :class="{ redborder: value1 =='' && !required}"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                      v-on:change='onChange'
+                      align="right">
+                </el-date-picker>
+               </div>
+               `,
     data: function () {
         return {
-            v1: this.value1,
-            v2: this.value2
+            value: this.value1 ? [this.value1, this.value2] : null,
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
         }
     },
     methods: {
-        onChange() {
-            if (this.v1 && this.v2 && this.v1 > this.v2) {
-                this.v1 = this.v2
-                this.$message({ type: 'error', message: `取值范围错误！` });
-                return
+        onChange(data) {
+            console.log('onchange1')
+            if (!data) data = ['', '']
+            console.log(data)
+            this.$emit('update:value1', data[0])
+            this.$emit('update:value2', data[1])
+            if (this.onchange) {
+                this.onchange([_stringToTime(data[0]), _stringToTime(data[1])])
             }
-            this.$emit('update:value1', this.v1)
-            this.$emit('update:value2', this.v2)
         }
     },
 })

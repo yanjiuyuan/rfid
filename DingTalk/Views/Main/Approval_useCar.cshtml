@@ -158,12 +158,12 @@
             }
         },
         created: function () {
-            if (NodeId == 3) {
+            if (NodeId == 3 && Index == 0) {
                 this.elementAlert('提示', '该步骤需要拍照上传，请到移动端审批。')
                 this.disablePage = true
             }
             this.initEnd(() => { this.getUseCarTable() })
-            if (NodeId == '3' || NodeId == '4' || NodeId == '5' || NodeId == '6') this.reInput = true
+            if (NodeId == '3' || NodeId == '4' || NodeId == '5') this.reInput = true
         }
     })
  
