@@ -446,7 +446,7 @@ var time_spinner = __webpack_require__(34);
 
       var date = void 0;
       if (newVal instanceof Date) {
-        date = Object(date_util_["limitTimeRange"])(newVal, this.selectableRange, this.format);
+        date = Object(date_util_["limitTimeRange"])(newVal, this.selecTableRange, this.format);
       } else if (!newVal) {
         date = this.defaultValue ? new Date(this.defaultValue) : new Date();
       }
@@ -459,8 +459,8 @@ var time_spinner = __webpack_require__(34);
         this.needInitAdjust = false;
       }
     },
-    selectableRange: function selectableRange(val) {
-      this.$refs.spinner.selectableRange = val;
+    selecTableRange: function selecTableRange(val) {
+      this.$refs.spinner.selecTableRange = val;
     },
     defaultValue: function defaultValue(val) {
       if (!Object(date_util_["isDate"])(this.value)) {
@@ -477,7 +477,7 @@ var time_spinner = __webpack_require__(34);
       defaultValue: null,
       date: new Date(),
       oldValue: new Date(),
-      selectableRange: [],
+      selecTableRange: [],
       selectionRange: [0, 2],
       disabled: false,
       arrowControl: false,
@@ -523,7 +523,7 @@ var time_spinner = __webpack_require__(34);
       var first = arguments[1];
 
       if (first) return;
-      var date = Object(date_util_["clearMilliseconds"])(Object(date_util_["limitTimeRange"])(this.date, this.selectableRange, this.format));
+      var date = Object(date_util_["clearMilliseconds"])(Object(date_util_["limitTimeRange"])(this.date, this.selecTableRange, this.format));
       this.$emit('pick', date, visible, first);
     },
     handleKeydown: function handleKeydown(event) {
@@ -547,7 +547,7 @@ var time_spinner = __webpack_require__(34);
       }
     },
     isValidValue: function isValidValue(date) {
-      return Object(date_util_["timeWithinRange"])(date, this.selectableRange, this.format);
+      return Object(date_util_["timeWithinRange"])(date, this.selecTableRange, this.format);
     },
     adjustSpinners: function adjustSpinners() {
       return this.$refs.spinner.adjustSpinners();
@@ -665,7 +665,7 @@ var render = function() {
             class: "el-date-editor--" + _vm.type,
             attrs: {
               readonly:
-                !_vm.editable ||
+                !_vm.ediTable ||
                 _vm.readonly ||
                 _vm.type === "dates" ||
                 _vm.type === "week",
@@ -759,7 +759,7 @@ var render = function() {
                   autocomplete: "off",
                   placeholder: _vm.startPlaceholder,
                   disabled: _vm.pickerDisabled,
-                  readonly: !_vm.editable || _vm.readonly,
+                  readonly: !_vm.ediTable || _vm.readonly,
                   name: _vm.name && _vm.name[0]
                 },
                 domProps: { value: _vm.displayValue && _vm.displayValue[0] },
@@ -788,7 +788,7 @@ var render = function() {
                   autocomplete: "off",
                   placeholder: _vm.endPlaceholder,
                   disabled: _vm.pickerDisabled,
-                  readonly: !_vm.editable || _vm.readonly,
+                  readonly: !_vm.ediTable || _vm.readonly,
                   name: _vm.name && _vm.name[1]
                 },
                 domProps: { value: _vm.displayValue && _vm.displayValue[1] },
@@ -1201,7 +1201,7 @@ var validator = function validator(val) {
       validator: validator
     },
     popperClass: String,
-    editable: {
+    ediTable: {
       type: Boolean,
       default: true
     },
@@ -1427,8 +1427,8 @@ var validator = function validator(val) {
       }
     },
     formatToValue: function formatToValue(date) {
-      var isFormattable = Object(date_util_["isDateObject"])(date) || Array.isArray(date) && date.every(date_util_["isDateObject"]);
-      if (this.valueFormat && isFormattable) {
+      var isFormatTable = Object(date_util_["isDateObject"])(date) || Array.isArray(date) && date.every(date_util_["isDateObject"]);
+      if (this.valueFormat && isFormatTable) {
         return formatAsFormatAndType(date, this.valueFormat, this.type, this.rangeSeparator);
       } else {
         return date;
@@ -1649,13 +1649,13 @@ var validator = function validator(val) {
       var updateOptions = function updateOptions() {
         var options = _this3.pickerOptions;
 
-        if (options && options.selectableRange) {
-          var ranges = options.selectableRange;
+        if (options && options.selecTableRange) {
+          var ranges = options.selecTableRange;
           var parser = TYPE_VALUE_RESOLVER_MAP.datetimerange.parser;
           var format = DEFAULT_FORMATS.timerange;
 
           ranges = Array.isArray(ranges) ? ranges : [ranges];
-          _this3.picker.selectableRange = ranges.map(function (range) {
+          _this3.picker.selecTableRange = ranges.map(function (range) {
             return parser(range, format, _this3.rangeSeparator);
           });
         }
@@ -1663,7 +1663,7 @@ var validator = function validator(val) {
         for (var option in options) {
           if (options.hasOwnProperty(option) &&
           // 忽略 time-picker 的该配置项
-          option !== 'selectableRange') {
+          option !== 'selecTableRange') {
             _this3.picker[option] = options[option];
           }
         }
@@ -2283,10 +2283,10 @@ var repeat_click = __webpack_require__(30);
       return this.date.getSeconds();
     },
     hoursList: function hoursList() {
-      return Object(date_util_["getRangeHours"])(this.selectableRange);
+      return Object(date_util_["getRangeHours"])(this.selecTableRange);
     },
     minutesList: function minutesList() {
-      return Object(date_util_["getRangeMinutes"])(this.selectableRange, this.hours);
+      return Object(date_util_["getRangeMinutes"])(this.selecTableRange, this.hours);
     },
     arrowHourList: function arrowHourList() {
       var hours = this.hours;
@@ -2304,7 +2304,7 @@ var repeat_click = __webpack_require__(30);
 
   data: function data() {
     return {
-      selectableRange: [],
+      selecTableRange: [],
       currentScrollbar: null
     };
   },
@@ -2733,7 +2733,7 @@ var render = function() {
                   "div",
                   { staticClass: "el-picker-panel__content" },
                   [
-                    _c("date-table", {
+                    _c("date-Table", {
                       directives: [
                         {
                           name: "show",
@@ -2754,7 +2754,7 @@ var render = function() {
                       },
                       on: { pick: _vm.handleDatePick }
                     }),
-                    _c("year-table", {
+                    _c("year-Table", {
                       directives: [
                         {
                           name: "show",
@@ -2773,7 +2773,7 @@ var render = function() {
                       },
                       on: { pick: _vm.handleYearPick }
                     }),
-                    _c("month-table", {
+                    _c("month-Table", {
                       directives: [
                         {
                           name: "show",
@@ -2887,14 +2887,14 @@ var button_default = /*#__PURE__*/__webpack_require__.n(button_);
 // EXTERNAL MODULE: ./packages/date-picker/src/panel/time.vue + 4 modules
 var panel_time = __webpack_require__(27);
 
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/year-table.vue?vue&type=template&id=c86ab5e0&
-var year_tablevue_type_template_id_c86ab5e0_render = function() {
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/year-Table.vue?vue&type=template&id=c86ab5e0&
+var year_Tablevue_type_template_id_c86ab5e0_render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "table",
-    { staticClass: "el-year-table", on: { click: _vm.handleYearTableClick } },
+    "Table",
+    { staticClass: "el-year-Table", on: { click: _vm.handleYearTableClick } },
     [
       _c("tbody", [
         _c("tr", [
@@ -3025,11 +3025,11 @@ var year_tablevue_type_template_id_c86ab5e0_render = function() {
     ]
   )
 }
-var year_tablevue_type_template_id_c86ab5e0_staticRenderFns = []
-year_tablevue_type_template_id_c86ab5e0_render._withStripped = true
+var year_Tablevue_type_template_id_c86ab5e0_staticRenderFns = []
+year_Tablevue_type_template_id_c86ab5e0_render._withStripped = true
 
 
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/year-table.vue?vue&type=template&id=c86ab5e0&
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/year-Table.vue?vue&type=template&id=c86ab5e0&
 
 // EXTERNAL MODULE: external "element-ui/lib/utils/dom"
 var dom_ = __webpack_require__(2);
@@ -3037,7 +3037,7 @@ var dom_ = __webpack_require__(2);
 // EXTERNAL MODULE: external "element-ui/lib/utils/util"
 var util_ = __webpack_require__(3);
 
-// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/year-table.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/year-Table.vue?vue&type=script&lang=js&
 //
 //
 //
@@ -3088,7 +3088,7 @@ var util_ = __webpack_require__(3);
 
 
 
-var year_tablevue_type_script_lang_js_datesInYear = function datesInYear(year) {
+var year_Tablevue_type_script_lang_js_datesInYear = function datesInYear(year) {
   var numOfDays = Object(date_util_["getDayCountOfYear"])(year);
   var firstDay = new Date(year, 0, 1);
   return Object(date_util_["range"])(numOfDays).map(function (n) {
@@ -3096,7 +3096,7 @@ var year_tablevue_type_script_lang_js_datesInYear = function datesInYear(year) {
   });
 };
 
-/* harmony default export */ var year_tablevue_type_script_lang_js_ = ({
+/* harmony default export */ var year_Tablevue_type_script_lang_js_ = ({
   props: {
     disabledDate: {},
     value: {},
@@ -3120,7 +3120,7 @@ var year_tablevue_type_script_lang_js_datesInYear = function datesInYear(year) {
       var style = {};
       var today = new Date();
 
-      style.disabled = typeof this.disabledDate === 'function' ? year_tablevue_type_script_lang_js_datesInYear(year).every(this.disabledDate) : false;
+      style.disabled = typeof this.disabledDate === 'function' ? year_Tablevue_type_script_lang_js_datesInYear(year).every(this.disabledDate) : false;
       style.current = Object(util_["arrayFindIndex"])(Object(util_["coerceTruthyValueToArray"])(this.value), function (date) {
         return date.getFullYear() === year;
       }) >= 0;
@@ -3139,12 +3139,12 @@ var year_tablevue_type_script_lang_js_datesInYear = function datesInYear(year) {
     }
   }
 });
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/year-table.vue?vue&type=script&lang=js&
- /* harmony default export */ var basic_year_tablevue_type_script_lang_js_ = (year_tablevue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/year-Table.vue?vue&type=script&lang=js&
+ /* harmony default export */ var basic_year_Tablevue_type_script_lang_js_ = (year_Tablevue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
 
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/year-table.vue
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/year-Table.vue
 
 
 
@@ -3153,9 +3153,9 @@ var componentNormalizer = __webpack_require__(0);
 /* normalize component */
 
 var component = Object(componentNormalizer["a" /* default */])(
-  basic_year_tablevue_type_script_lang_js_,
-  year_tablevue_type_template_id_c86ab5e0_render,
-  year_tablevue_type_template_id_c86ab5e0_staticRenderFns,
+  basic_year_Tablevue_type_script_lang_js_,
+  year_Tablevue_type_template_id_c86ab5e0_render,
+  year_Tablevue_type_template_id_c86ab5e0_staticRenderFns,
   false,
   null,
   null,
@@ -3165,17 +3165,17 @@ var component = Object(componentNormalizer["a" /* default */])(
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "packages/date-picker/src/basic/year-table.vue"
-/* harmony default export */ var year_table = (component.exports);
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/month-table.vue?vue&type=template&id=654d4f42&
-var month_tablevue_type_template_id_654d4f42_render = function() {
+component.options.__file = "packages/date-picker/src/basic/year-Table.vue"
+/* harmony default export */ var year_Table = (component.exports);
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/month-Table.vue?vue&type=template&id=654d4f42&
+var month_Tablevue_type_template_id_654d4f42_render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "table",
+    "Table",
     {
-      staticClass: "el-month-table",
+      staticClass: "el-month-Table",
       on: { click: _vm.handleMonthTableClick, mousemove: _vm.handleMouseMove }
     },
     [
@@ -3206,13 +3206,13 @@ var month_tablevue_type_template_id_654d4f42_render = function() {
     ]
   )
 }
-var month_tablevue_type_template_id_654d4f42_staticRenderFns = []
-month_tablevue_type_template_id_654d4f42_render._withStripped = true
+var month_Tablevue_type_template_id_654d4f42_staticRenderFns = []
+month_Tablevue_type_template_id_654d4f42_render._withStripped = true
 
 
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/month-table.vue?vue&type=template&id=654d4f42&
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/month-Table.vue?vue&type=template&id=654d4f42&
 
-// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/month-table.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/month-Table.vue?vue&type=script&lang=js&
 //
 //
 //
@@ -3227,13 +3227,13 @@ month_tablevue_type_template_id_654d4f42_render._withStripped = true
 //
 //
 //
-
-
-
 
 
 
-var month_tablevue_type_script_lang_js_datesInMonth = function datesInMonth(year, month) {
+
+
+
+var month_Tablevue_type_script_lang_js_datesInMonth = function datesInMonth(year, month) {
   var numOfDays = Object(date_util_["getDayCountOfMonth"])(year, month);
   var firstDay = new Date(year, month, 1);
   return Object(date_util_["range"])(numOfDays).map(function (n) {
@@ -3254,7 +3254,7 @@ var getMonthTimestamp = function getMonthTimestamp(time) {
     return NaN;
   }
 };
-/* harmony default export */ var month_tablevue_type_script_lang_js_ = ({
+/* harmony default export */ var month_Tablevue_type_script_lang_js_ = ({
   props: {
     disabledDate: {},
     value: {},
@@ -3302,7 +3302,7 @@ var getMonthTimestamp = function getMonthTimestamp(time) {
   data: function data() {
     return {
       months: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
-      tableRows: [[], [], []],
+      TableRows: [[], [], []],
       lastRow: null,
       lastColumn: null
     };
@@ -3322,7 +3322,7 @@ var getMonthTimestamp = function getMonthTimestamp(time) {
       var today = new Date();
       var month = cell.text;
       var defaultValue = this.defaultValue ? Array.isArray(this.defaultValue) ? this.defaultValue : [this.defaultValue] : [];
-      style.disabled = typeof this.disabledDate === 'function' ? month_tablevue_type_script_lang_js_datesInMonth(year, month).every(this.disabledDate) : false;
+      style.disabled = typeof this.disabledDate === 'function' ? month_Tablevue_type_script_lang_js_datesInMonth(year, month).every(this.disabledDate) : false;
       style.current = Object(util_["arrayFindIndex"])(Object(util_["coerceTruthyValueToArray"])(this.value), function (date) {
         return date.getFullYear() === year && date.getMonth() === month;
       }) >= 0;
@@ -3439,7 +3439,7 @@ var getMonthTimestamp = function getMonthTimestamp(time) {
       var _this2 = this;
 
       // TODO: refactory rows / getCellClasses
-      var rows = this.tableRows;
+      var rows = this.TableRows;
       var disabledDate = this.disabledDate;
       var selectedDate = [];
       var now = getMonthTimestamp(new Date());
@@ -3483,9 +3483,9 @@ var getMonthTimestamp = function getMonthTimestamp(time) {
     }
   }
 });
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/month-table.vue?vue&type=script&lang=js&
- /* harmony default export */ var basic_month_tablevue_type_script_lang_js_ = (month_tablevue_type_script_lang_js_); 
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/month-table.vue
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/month-Table.vue?vue&type=script&lang=js&
+ /* harmony default export */ var basic_month_Tablevue_type_script_lang_js_ = (month_Tablevue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/month-Table.vue
 
 
 
@@ -3493,10 +3493,10 @@ var getMonthTimestamp = function getMonthTimestamp(time) {
 
 /* normalize component */
 
-var month_table_component = Object(componentNormalizer["a" /* default */])(
-  basic_month_tablevue_type_script_lang_js_,
-  month_tablevue_type_template_id_654d4f42_render,
-  month_tablevue_type_template_id_654d4f42_staticRenderFns,
+var month_Table_component = Object(componentNormalizer["a" /* default */])(
+  basic_month_Tablevue_type_script_lang_js_,
+  month_Tablevue_type_template_id_654d4f42_render,
+  month_Tablevue_type_template_id_654d4f42_staticRenderFns,
   false,
   null,
   null,
@@ -3505,18 +3505,18 @@ var month_table_component = Object(componentNormalizer["a" /* default */])(
 )
 
 /* hot reload */
-if (false) { var month_table_api; }
-month_table_component.options.__file = "packages/date-picker/src/basic/month-table.vue"
-/* harmony default export */ var month_table = (month_table_component.exports);
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/date-table.vue?vue&type=template&id=5d1f3341&
-var date_tablevue_type_template_id_5d1f3341_render = function() {
+if (false) { var month_Table_api; }
+month_Table_component.options.__file = "packages/date-picker/src/basic/month-Table.vue"
+/* harmony default export */ var month_Table = (month_Table_component.exports);
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/date-Table.vue?vue&type=template&id=5d1f3341&
+var date_Tablevue_type_template_id_5d1f3341_render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "table",
+    "Table",
     {
-      staticClass: "el-date-table",
+      staticClass: "el-date-Table",
       class: { "is-week-mode": _vm.selectionMode === "week" },
       attrs: { cellspacing: "0", cellpadding: "0" },
       on: { click: _vm.handleClick, mousemove: _vm.handleMouseMove }
@@ -3544,7 +3544,7 @@ var date_tablevue_type_template_id_5d1f3341_render = function() {
               "tr",
               {
                 key: key,
-                staticClass: "el-date-table__row",
+                staticClass: "el-date-Table__row",
                 class: { current: _vm.isWeekActive(row[1]) }
               },
               _vm._l(row, function(cell, key) {
@@ -3565,13 +3565,13 @@ var date_tablevue_type_template_id_5d1f3341_render = function() {
     ]
   )
 }
-var date_tablevue_type_template_id_5d1f3341_staticRenderFns = []
-date_tablevue_type_template_id_5d1f3341_render._withStripped = true
+var date_Tablevue_type_template_id_5d1f3341_staticRenderFns = []
+date_Tablevue_type_template_id_5d1f3341_render._withStripped = true
 
 
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/date-table.vue?vue&type=template&id=5d1f3341&
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/date-Table.vue?vue&type=template&id=5d1f3341&
 
-// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/date-table.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/basic/date-Table.vue?vue&type=script&lang=js&
 //
 //
 //
@@ -3611,7 +3611,7 @@ date_tablevue_type_template_id_5d1f3341_render._withStripped = true
 
 
 var _WEEKS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-var date_tablevue_type_script_lang_js_getDateTimestamp = function getDateTimestamp(time) {
+var date_Tablevue_type_script_lang_js_getDateTimestamp = function getDateTimestamp(time) {
   if (typeof time === 'number' || typeof time === 'string') {
     return Object(date_util_["clearTime"])(new Date(time)).getTime();
   } else if (time instanceof Date) {
@@ -3624,12 +3624,12 @@ var date_tablevue_type_script_lang_js_getDateTimestamp = function getDateTimesta
 // remove the first element that satisfies `pred` from arr
 // return a new array if modification occurs
 // return the original array otherwise
-var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray(arr, pred) {
+var date_Tablevue_type_script_lang_js_removeFromArray = function removeFromArray(arr, pred) {
   var idx = typeof pred === 'function' ? Object(util_["arrayFindIndex"])(arr, pred) : arr.indexOf(pred);
   return idx >= 0 ? [].concat(arr.slice(0, idx), arr.slice(idx + 1)) : arr;
 };
 
-/* harmony default export */ var date_tablevue_type_script_lang_js_ = ({
+/* harmony default export */ var date_Tablevue_type_script_lang_js_ = ({
   mixins: [locale_default.a],
 
   props: {
@@ -3708,13 +3708,13 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
       day = day === 0 ? 7 : day;
 
       var offset = this.offsetDay;
-      var rows = this.tableRows;
+      var rows = this.TableRows;
       var count = 1;
 
       var startDate = this.startDate;
       var disabledDate = this.disabledDate;
       var selectedDate = this.selectionMode === 'dates' ? Object(util_["coerceTruthyValueToArray"])(this.value) : [];
-      var now = date_tablevue_type_script_lang_js_getDateTimestamp(new Date());
+      var now = date_Tablevue_type_script_lang_js_getDateTimestamp(new Date());
 
       for (var i = 0; i < 6; i++) {
         var row = rows[i];
@@ -3735,9 +3735,9 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
 
           var index = i * 7 + j;
           var time = Object(date_util_["nextDate"])(startDate, index - offset).getTime();
-          cell.inRange = time >= date_tablevue_type_script_lang_js_getDateTimestamp(_this.minDate) && time <= date_tablevue_type_script_lang_js_getDateTimestamp(_this.maxDate);
-          cell.start = _this.minDate && time === date_tablevue_type_script_lang_js_getDateTimestamp(_this.minDate);
-          cell.end = _this.maxDate && time === date_tablevue_type_script_lang_js_getDateTimestamp(_this.maxDate);
+          cell.inRange = time >= date_Tablevue_type_script_lang_js_getDateTimestamp(_this.minDate) && time <= date_Tablevue_type_script_lang_js_getDateTimestamp(_this.maxDate);
+          cell.start = _this.minDate && time === date_Tablevue_type_script_lang_js_getDateTimestamp(_this.minDate);
+          cell.end = _this.maxDate && time === date_Tablevue_type_script_lang_js_getDateTimestamp(_this.maxDate);
           var isToday = time === now;
 
           if (isToday) {
@@ -3796,12 +3796,12 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
       this.markRange(this.minDate, newVal);
     },
     minDate: function minDate(newVal, oldVal) {
-      if (date_tablevue_type_script_lang_js_getDateTimestamp(newVal) !== date_tablevue_type_script_lang_js_getDateTimestamp(oldVal)) {
+      if (date_Tablevue_type_script_lang_js_getDateTimestamp(newVal) !== date_Tablevue_type_script_lang_js_getDateTimestamp(oldVal)) {
         this.markRange(this.minDate, this.maxDate);
       }
     },
     maxDate: function maxDate(newVal, oldVal) {
-      if (date_tablevue_type_script_lang_js_getDateTimestamp(newVal) !== date_tablevue_type_script_lang_js_getDateTimestamp(oldVal)) {
+      if (date_Tablevue_type_script_lang_js_getDateTimestamp(newVal) !== date_Tablevue_type_script_lang_js_getDateTimestamp(oldVal)) {
         this.markRange(this.minDate, this.maxDate);
       }
     }
@@ -3809,7 +3809,7 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
 
   data: function data() {
     return {
-      tableRows: [[], [], [], [], [], []],
+      TableRows: [[], [], [], [], [], []],
       lastRow: null,
       lastColumn: null
     };
@@ -3899,8 +3899,8 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
       return false;
     },
     markRange: function markRange(minDate, maxDate) {
-      minDate = date_tablevue_type_script_lang_js_getDateTimestamp(minDate);
-      maxDate = date_tablevue_type_script_lang_js_getDateTimestamp(maxDate) || minDate;
+      minDate = date_Tablevue_type_script_lang_js_getDateTimestamp(minDate);
+      maxDate = date_Tablevue_type_script_lang_js_getDateTimestamp(maxDate) || minDate;
       var _ref = [Math.min(minDate, maxDate), Math.max(minDate, maxDate)];
       minDate = _ref[0];
       maxDate = _ref[1];
@@ -4000,7 +4000,7 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
         });
       } else if (this.selectionMode === 'dates') {
         var _value = this.value || [];
-        var newValue = cell.selected ? date_tablevue_type_script_lang_js_removeFromArray(_value, function (date) {
+        var newValue = cell.selected ? date_Tablevue_type_script_lang_js_removeFromArray(_value, function (date) {
           return date.getTime() === newDate.getTime();
         }) : [].concat(_value, [newDate]);
         this.$emit('pick', newValue);
@@ -4008,9 +4008,9 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
     }
   }
 });
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/date-table.vue?vue&type=script&lang=js&
- /* harmony default export */ var basic_date_tablevue_type_script_lang_js_ = (date_tablevue_type_script_lang_js_); 
-// CONCATENATED MODULE: ./packages/date-picker/src/basic/date-table.vue
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/date-Table.vue?vue&type=script&lang=js&
+ /* harmony default export */ var basic_date_Tablevue_type_script_lang_js_ = (date_Tablevue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./packages/date-picker/src/basic/date-Table.vue
 
 
 
@@ -4018,10 +4018,10 @@ var date_tablevue_type_script_lang_js_removeFromArray = function removeFromArray
 
 /* normalize component */
 
-var date_table_component = Object(componentNormalizer["a" /* default */])(
-  basic_date_tablevue_type_script_lang_js_,
-  date_tablevue_type_template_id_5d1f3341_render,
-  date_tablevue_type_template_id_5d1f3341_staticRenderFns,
+var date_Table_component = Object(componentNormalizer["a" /* default */])(
+  basic_date_Tablevue_type_script_lang_js_,
+  date_Tablevue_type_template_id_5d1f3341_render,
+  date_Tablevue_type_template_id_5d1f3341_staticRenderFns,
   false,
   null,
   null,
@@ -4030,9 +4030,9 @@ var date_table_component = Object(componentNormalizer["a" /* default */])(
 )
 
 /* hot reload */
-if (false) { var date_table_api; }
-date_table_component.options.__file = "packages/date-picker/src/basic/date-table.vue"
-/* harmony default export */ var date_table = (date_table_component.exports);
+if (false) { var date_Table_api; }
+date_Table_component.options.__file = "packages/date-picker/src/basic/date-Table.vue"
+/* harmony default export */ var date_Table = (date_Table_component.exports);
 // CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/date-picker/src/panel/date.vue?vue&type=script&lang=js&
 //
 //
@@ -4251,18 +4251,18 @@ date_table_component.options.__file = "packages/date-picker/src/basic/date-table
       var date = function date(_date) {
         _this3.$refs.timepicker.date = _date;
       };
-      var selectableRange = function selectableRange(_selectableRange) {
-        _this3.$refs.timepicker.selectableRange = _selectableRange;
+      var selecTableRange = function selecTableRange(_selecTableRange) {
+        _this3.$refs.timepicker.selecTableRange = _selecTableRange;
       };
 
       this.$watch('value', value);
       this.$watch('date', date);
-      this.$watch('selectableRange', selectableRange);
+      this.$watch('selecTableRange', selecTableRange);
 
       format(this.timeFormat);
       value(this.value);
       date(this.date);
-      selectableRange(this.selectableRange);
+      selecTableRange(this.selecTableRange);
     },
     handleClear: function handleClear() {
       this.date = this.getDefaultValue();
@@ -4365,9 +4365,9 @@ date_table_component.options.__file = "packages/date-picker/src/basic/date-table
     handleDatePick: function handleDatePick(value) {
       if (this.selectionMode === 'day') {
         var newDate = this.value ? Object(date_util_["modifyDate"])(this.value, value.getFullYear(), value.getMonth(), value.getDate()) : Object(date_util_["modifyWithTimeString"])(value, this.defaultTime);
-        // change default time while out of selectableRange
+        // change default time while out of selecTableRange
         if (!this.checkDateWithinRange(newDate)) {
-          newDate = Object(date_util_["modifyDate"])(this.selectableRange[0][0], value.getFullYear(), value.getMonth(), value.getDate());
+          newDate = Object(date_util_["modifyDate"])(this.selecTableRange[0][0], value.getFullYear(), value.getMonth(), value.getDate());
         }
         this.date = newDate;
         this.emit(this.date, this.showTime);
@@ -4507,12 +4507,12 @@ date_table_component.options.__file = "packages/date-picker/src/basic/date-table
       return this.defaultValue ? new Date(this.defaultValue) : new Date();
     },
     checkDateWithinRange: function checkDateWithinRange(date) {
-      return this.selectableRange.length > 0 ? Object(date_util_["timeWithinRange"])(date, this.selectableRange, this.format || 'HH:mm:ss') : true;
+      return this.selecTableRange.length > 0 ? Object(date_util_["timeWithinRange"])(date, this.selecTableRange, this.format || 'HH:mm:ss') : true;
     }
   },
 
   components: {
-    TimePicker: panel_time["a" /* default */], YearTable: year_table, MonthTable: month_table, DateTable: date_table, ElInput: input_default.a, ElButton: button_default.a
+    TimePicker: panel_time["a" /* default */], YearTable: year_Table, MonthTable: month_Table, DateTable: date_Table, ElInput: input_default.a, ElButton: button_default.a
   },
 
   data: function data() {
@@ -4528,7 +4528,7 @@ date_table_component.options.__file = "packages/date-picker/src/basic/date-table
       visible: false,
       currentView: 'date',
       disabledDate: '',
-      selectableRange: [],
+      selecTableRange: [],
       firstDayOfWeek: 7,
       showWeekNumber: false,
       timePickerVisible: false,
@@ -4924,7 +4924,7 @@ var date_rangevue_type_template_id_2652849a_render = function() {
                         : _vm._e(),
                       _c("div", [_vm._v(_vm._s(_vm.leftLabel))])
                     ]),
-                    _c("date-table", {
+                    _c("date-Table", {
                       attrs: {
                         "selection-mode": "range",
                         date: _vm.leftDate,
@@ -4989,7 +4989,7 @@ var date_rangevue_type_template_id_2652849a_render = function() {
                       }),
                       _c("div", [_vm._v(_vm._s(_vm.rightLabel))])
                     ]),
-                    _c("date-table", {
+                    _c("date-Table", {
                       attrs: {
                         "selection-mode": "range",
                         date: _vm.rightDate,
@@ -5401,7 +5401,7 @@ var date_rangevue_type_script_lang_js_calcDefaultValue = function calcDefaultVal
       this.$nextTick(function () {
         if (_this.$refs.maxTimePicker && _this.maxDate && _this.maxDate < _this.minDate) {
           var format = 'HH:mm:ss';
-          _this.$refs.maxTimePicker.selectableRange = [[Object(date_util_["parseDate"])(Object(date_util_["formatDate"])(_this.minDate, format), format), Object(date_util_["parseDate"])('23:59:59', format)]];
+          _this.$refs.maxTimePicker.selecTableRange = [[Object(date_util_["parseDate"])(Object(date_util_["formatDate"])(_this.minDate, format), format), Object(date_util_["parseDate"])('23:59:59', format)]];
         }
       });
       if (val && this.$refs.minTimePicker) {
@@ -5696,7 +5696,7 @@ var date_rangevue_type_script_lang_js_calcDefaultValue = function calcDefaultVal
     }
   },
 
-  components: { TimePicker: panel_time["a" /* default */], DateTable: date_table, ElInput: input_default.a, ElButton: button_default.a }
+  components: { TimePicker: panel_time["a" /* default */], DateTable: date_Table, ElInput: input_default.a, ElButton: button_default.a }
 });
 // CONCATENATED MODULE: ./packages/date-picker/src/panel/date-range.vue?vue&type=script&lang=js&
  /* harmony default export */ var panel_date_rangevue_type_script_lang_js_ = (date_rangevue_type_script_lang_js_); 
@@ -5816,7 +5816,7 @@ var month_rangevue_type_template_id_f2645fb8_render = function() {
                         : _vm._e(),
                       _c("div", [_vm._v(_vm._s(_vm.leftLabel))])
                     ]),
-                    _c("month-table", {
+                    _c("month-Table", {
                       attrs: {
                         "selection-mode": "range",
                         date: _vm.leftDate,
@@ -5862,7 +5862,7 @@ var month_rangevue_type_template_id_f2645fb8_render = function() {
                       }),
                       _c("div", [_vm._v(_vm._s(_vm.rightLabel))])
                     ]),
-                    _c("month-table", {
+                    _c("month-Table", {
                       attrs: {
                         "selection-mode": "range",
                         date: _vm.rightDate,
@@ -6163,7 +6163,7 @@ var month_rangevue_type_script_lang_js_calcDefaultValue = function calcDefaultVa
     }
   },
 
-  components: { MonthTable: month_table, ElInput: input_default.a, ElButton: button_default.a }
+  components: { MonthTable: month_Table, ElInput: input_default.a, ElButton: button_default.a }
 });
 // CONCATENATED MODULE: ./packages/date-picker/src/panel/month-range.vue?vue&type=script&lang=js&
  /* harmony default export */ var panel_month_rangevue_type_script_lang_js_ = (month_rangevue_type_script_lang_js_); 

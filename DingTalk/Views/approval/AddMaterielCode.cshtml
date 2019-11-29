@@ -20,25 +20,25 @@
         </el-form-item>
 
         <!--表格實體-->
-        <el-table :data="tableData" stripe border>
-            <el-table-column prop="CodeNo" type="index"></el-table-column>
-            <el-table-column label="操作">
+        <el-Table :data="TableData" stripe border>
+            <el-Table-column prop="CodeNo" type="index"></el-Table-column>
+            <el-Table-column label="操作">
                 <template slot-scope="scope">
                     <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
                 </template>
-            </el-table-column>
+            </el-Table-column>
 
-            <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+            <el-Table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <sam-input :value.sync="scope.row[key]" :required="true"></sam-input>
                 </template>
-            </el-table-column>
-            <el-table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) <0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+            </el-Table-column>
+            <el-Table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) <0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <sam-input :value.sync="scope.row[key]"></sam-input>
                 </template>
-            </el-table-column>
-        </el-table>
+            </el-Table-column>
+        </el-Table>
         <!--上传表單-->
         <el-upload class="upload-demo"
                    action="/drawingupload/UploadAndGetInfo"
@@ -156,15 +156,15 @@
         },
         methods: {
             onSubmit(formName) {
-                if (this.tableData.length == 0) {
+                if (this.TableData.length == 0) {
                     this.addGoods()
-                    if (this.tableData.length == 0) {
+                    if (this.TableData.length == 0) {
                         this.elementAlert('提示信息', '未添加编码')
                         return
                     }
                 }
-                for (var i = 0; i < this.tableData.length;i++) {
-                    let d = this.tableData[i]
+                for (var i = 0; i < this.TableData.length;i++) {
+                    let d = this.TableData[i]
                     if (!d.BigCode || !d.BigCode || !d.Name || !d.Standard || !d.BigCodeName || !d.SmallCodeName) {
                         this.elementAlert('提示信息', '第 ' + (i+1) + ' 表单未填写完整')
                         return
@@ -175,7 +175,7 @@
             bindAll(taskId) {
                 var that = this
                 var paramArr = []
-                for (let p of this.tableData) {
+                for (let p of this.TableData) {
                     p.TaskId = taskId
                     paramArr.push(p)
                 }
@@ -196,19 +196,19 @@
 
             //上传文件方法
             handleSuccess(response, file, fileList) {
-                //this.tableData = []
+                //this.TableData = []
                 for (let d of response[0].Value) {
                     let tmpData = {}
                     for (let s in d) {
                         tmpData[configDictionary[s]] = d[s]
                     }
-                    this.tableData.push(tmpData)
+                    this.TableData.push(tmpData)
                 }
                 return
-                for (let i = 0; i < tableData.length; i++) {
-                    let data = tableData[i]
+                for (let i = 0; i < TableData.length; i++) {
+                    let data = TableData[i]
                     if (i != 0 && data['Column1'] && data['Column1'] != "") {
-                        this.tableData.push(data)
+                        this.TableData.push(data)
                     }
                 }
             },
@@ -218,16 +218,16 @@
                     this.elementAlert('提示信息', '表单未填写完整')
                     return
                 }
-                this.tableData.push(_cloneObj(this.goods[0]))
+                this.TableData.push(_cloneObj(this.goods[0]))
                 
             },
             deleteGood(index, good) {
-                this.tableData.splice(index, 1)
+                this.TableData.splice(index, 1)
             },
             //切换编码类型
             changeCodeType(e) {
                 console.log(e)
-                this.tableData = []
+                this.TableData = []
                 this.getMaterielCode()
                 this.goods = []
                 this.goods.push(_cloneObj(meteriel))

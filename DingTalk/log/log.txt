@@ -1,2 +1,9 @@
-2019-11-27 17:28:17,699 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
-2019-11-27 17:28:20,417 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 08:31:29,752 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 08:31:31,780 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 08:57:15,550 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 08:57:17,424 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 09:07:27,636 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 09:07:29,475 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 09:09:40,723 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Save 时出现异常，信息：各表中的列名必须唯一。在表 'TableName1' 中多次指定了列名 'string'。，详见数据库日志Id：218
+2019-11-29 09:14:07,546 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 09:14:09,356 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,6 +1,6 @@
 /*! jQuery UI - v1.11.0 - 2014-06-26
 * http://jqueryui.com
-* Includes: core.js, widget.js, mouse.js, position.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, accordion.js, autocomplete.js, button.js, datepicker.js, dialog.js, menu.js, progressbar.js, selectmenu.js, slider.js, spinner.js, tabs.js, tooltip.js, effect.js, effect-blind.js, effect-bounce.js, effect-clip.js, effect-drop.js, effect-explode.js, effect-fade.js, effect-fold.js, effect-highlight.js, effect-puff.js, effect-pulsate.js, effect-scale.js, effect-shake.js, effect-size.js, effect-slide.js, effect-transfer.js
+* Includes: core.js, widget.js, mouse.js, position.js, draggable.js, droppable.js, resizable.js, selecTable.js, sorTable.js, accordion.js, autocomplete.js, button.js, datepicker.js, dialog.js, menu.js, progressbar.js, selectmenu.js, slider.js, spinner.js, tabs.js, tooltip.js, effect.js, effect-blind.js, effect-bounce.js, effect-clip.js, effect-drop.js, effect-explode.js, effect-fade.js, effect-fold.js, effect-highlight.js, effect-puff.js, effect-pulsate.js, effect-scale.js, effect-shake.js, effect-size.js, effect-slide.js, effect-transfer.js
 * Copyright 2014 jQuery Foundation and other contributors; Licensed MIT */
 
 (function( factory ) {
@@ -1537,7 +1537,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		addClasses: true,
 		appendTo: "parent",
 		axis: false,
-		connectToSortable: false,
+		connectToSorTable: false,
 		containment: false,
 		cursor: "auto",
 		cursorAt: false,
@@ -1762,7 +1762,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 			dropped = $.ui.ddmanager.drop(this, event);
 		}
 
-		//if a drop comes from outside (a sortable)
+		//if a drop comes from outside (a sorTable)
 		if (this.dropped) {
 			dropped = this.dropped;
 			this.dropped = false;
@@ -2138,58 +2138,58 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 });
 
-$.ui.plugin.add("draggable", "connectToSortable", {
+$.ui.plugin.add("draggable", "connectToSorTable", {
 	start: function( event, ui, inst ) {
 
 		var o = inst.options,
-			uiSortable = $.extend({}, ui, { item: inst.element });
-		inst.sortables = [];
-		$(o.connectToSortable).each(function() {
-			var sortable = $( this ).sortable( "instance" );
-			if (sortable && !sortable.options.disabled) {
-				inst.sortables.push({
-					instance: sortable,
-					shouldRevert: sortable.options.revert
+			uiSorTable = $.extend({}, ui, { item: inst.element });
+		inst.sorTables = [];
+		$(o.connectToSorTable).each(function() {
+			var sorTable = $( this ).sorTable( "instance" );
+			if (sorTable && !sorTable.options.disabled) {
+				inst.sorTables.push({
+					instance: sorTable,
+					shouldRevert: sorTable.options.revert
 				});
-				sortable.refreshPositions();	// Call the sortable's refreshPositions at drag start to refresh the containerCache since the sortable container cache is used in drag and needs to be up to date (this will ensure it's initialised as well as being kept in step with any changes that might have happened on the page).
-				sortable._trigger("activate", event, uiSortable);
+				sorTable.refreshPositions();	// Call the sorTable's refreshPositions at drag start to refresh the containerCache since the sorTable container cache is used in drag and needs to be up to date (this will ensure it's initialised as well as being kept in step with any changes that might have happened on the page).
+				sorTable._trigger("activate", event, uiSorTable);
 			}
 		});
 
 	},
 	stop: function( event, ui, inst ) {
 
-		//If we are still over the sortable, we fake the stop event of the sortable, but also remove helper
-		var uiSortable = $.extend( {}, ui, {
+		//If we are still over the sorTable, we fake the stop event of the sorTable, but also remove helper
+		var uiSorTable = $.extend( {}, ui, {
 			item: inst.element
 		});
 
-		$.each(inst.sortables, function() {
+		$.each(inst.sorTables, function() {
 			if (this.instance.isOver) {
 
 				this.instance.isOver = 0;
 
 				inst.cancelHelperRemoval = true; //Don't remove the helper in the draggable instance
-				this.instance.cancelHelperRemoval = false; //Remove it in the sortable instance (so sortable plugins like revert still work)
+				this.instance.cancelHelperRemoval = false; //Remove it in the sorTable instance (so sorTable plugins like revert still work)
 
-				//The sortable revert is supported, and we have to set a temporary dropped variable on the draggable to support revert: "valid/invalid"
+				//The sorTable revert is supported, and we have to set a temporary dropped variable on the draggable to support revert: "valid/invalid"
 				if (this.shouldRevert) {
 					this.instance.options.revert = this.shouldRevert;
 				}
 
-				//Trigger the stop of the sortable
+				//Trigger the stop of the sorTable
 				this.instance._mouseStop(event);
 
 				this.instance.options.helper = this.instance.options._helper;
 
-				//If the helper has been the original item, restore properties in the sortable
+				//If the helper has been the original item, restore properties in the sorTable
 				if (inst.options.helper === "original") {
 					this.instance.currentItem.css({ top: "auto", left: "auto" });
 				}
 
 			} else {
-				this.instance.cancelHelperRemoval = false; //Remove the helper in the sortable instance
-				this.instance._trigger("deactivate", event, uiSortable);
+				this.instance.cancelHelperRemoval = false; //Remove the helper in the sorTable instance
+				this.instance._trigger("deactivate", event, uiSorTable);
 			}
 
 		});
@@ -2199,25 +2199,25 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 
 		var that = this;
 
-		$.each(inst.sortables, function() {
+		$.each(inst.sorTables, function() {
 
 			var innermostIntersecting = false,
-				thisSortable = this;
+				thisSorTable = this;
 
-			//Copy over some variables to allow calling the sortable's native _intersectsWith
+			//Copy over some variables to allow calling the sorTable's native _intersectsWith
 			this.instance.positionAbs = inst.positionAbs;
 			this.instance.helperProportions = inst.helperProportions;
 			this.instance.offset.click = inst.offset.click;
 
 			if (this.instance._intersectsWith(this.instance.containerCache)) {
 				innermostIntersecting = true;
-				$.each(inst.sortables, function() {
+				$.each(inst.sorTables, function() {
 					this.instance.positionAbs = inst.positionAbs;
 					this.instance.helperProportions = inst.helperProportions;
 					this.instance.offset.click = inst.offset.click;
-					if (this !== thisSortable &&
+					if (this !== thisSorTable &&
 						this.instance._intersectsWith(this.instance.containerCache) &&
-						$.contains(thisSortable.instance.element[0], this.instance.element[0])
+						$.contains(thisSorTable.instance.element[0], this.instance.element[0])
 					) {
 						innermostIntersecting = false;
 					}
@@ -2230,10 +2230,10 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 				if (!this.instance.isOver) {
 
 					this.instance.isOver = 1;
-					//Now we fake the start of dragging for the sortable instance,
-					//by cloning the list group item, appending it to the sortable and using it as inst.currentItem
-					//We can then fire the start event of the sortable with our passed browser event, and our own helper (so it doesn't create a new one)
-					this.instance.currentItem = $(that).clone().removeAttr("id").appendTo(this.instance.element).data("ui-sortable-item", true);
+					//Now we fake the start of dragging for the sorTable instance,
+					//by cloning the list group item, appending it to the sorTable and using it as inst.currentItem
+					//We can then fire the start event of the sorTable with our passed browser event, and our own helper (so it doesn't create a new one)
+					this.instance.currentItem = $(that).clone().removeAttr("id").appendTo(this.instance.element).data("ui-sorTable-item", true);
 					this.instance.options._helper = this.instance.options.helper; //Store helper option to later restore it
 					this.instance.options.helper = function() { return ui.helper[0]; };
 
@@ -2247,7 +2247,7 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 					this.instance.offset.parent.left -= inst.offset.parent.left - this.instance.offset.parent.left;
 					this.instance.offset.parent.top -= inst.offset.parent.top - this.instance.offset.parent.top;
 
-					inst._trigger("toSortable", event);
+					inst._trigger("toSorTable", event);
 					inst.dropped = this.instance.element; //draggable revert needs that
 					//hack so receive/update callbacks work (mostly)
 					inst.currentItem = inst.element;
@@ -2255,15 +2255,15 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 
 				}
 
-				//Provided we did all the previous steps, we can fire the drag event of the sortable on every draggable drag, when it intersects with the sortable
+				//Provided we did all the previous steps, we can fire the drag event of the sorTable on every draggable drag, when it intersects with the sorTable
 				if (this.instance.currentItem) {
 					this.instance._mouseDrag(event);
 				}
 
 			} else {
 
-				//If it doesn't intersect with the sortable, and it intersected before,
-				//we fake the drag stop of the sortable, but make sure it doesn't remove the helper by using cancelHelperRemoval
+				//If it doesn't intersect with the sorTable, and it intersected before,
+				//we fake the drag stop of the sorTable, but make sure it doesn't remove the helper by using cancelHelperRemoval
 				if (this.instance.isOver) {
 
 					this.instance.isOver = 0;
@@ -2284,7 +2284,7 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 						this.instance.placeholder.remove();
 					}
 
-					inst._trigger("fromSortable", event);
+					inst._trigger("fromSorTable", event);
 					inst.dropped = false; //draggable revert needs that
 				}
 
@@ -3933,18 +3933,18 @@ var resizable = $.ui.resizable;
 
 
 /*!
- * jQuery UI Selectable 1.11.0
+ * jQuery UI SelecTable 1.11.0
  * http://jqueryui.com
  *
  * Copyright 2014 jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  *
- * http://api.jqueryui.com/selectable/
+ * http://api.jqueryui.com/selecTable/
  */
 
 
-var selectable = $.widget("ui.selectable", $.ui.mouse, {
+var selecTable = $.widget("ui.selecTable", $.ui.mouse, {
 	version: "1.11.0",
 	options: {
 		appendTo: "body",
@@ -3965,7 +3965,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 		var selectees,
 			that = this;
 
-		this.element.addClass("ui-selectable");
+		this.element.addClass("ui-selecTable");
 
 		this.dragged = false;
 
@@ -3976,7 +3976,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 			selectees.each(function() {
 				var $this = $(this),
 					pos = $this.offset();
-				$.data(this, "selectable-item", {
+				$.data(this, "selecTable-item", {
 					element: this,
 					$element: $this,
 					left: pos.left,
@@ -3996,15 +3996,15 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 
 		this._mouseInit();
 
-		this.helper = $("<div class='ui-selectable-helper'></div>");
+		this.helper = $("<div class='ui-selecTable-helper'></div>");
 	},
 
 	_destroy: function() {
 		this.selectees
 			.removeClass("ui-selectee")
-			.removeData("selectable-item");
+			.removeData("selecTable-item");
 		this.element
-			.removeClass("ui-selectable ui-selectable-disabled");
+			.removeClass("ui-selecTable ui-selecTable-disabled");
 		this._mouseDestroy();
 	},
 
@@ -4036,14 +4036,14 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 		}
 
 		this.selectees.filter(".ui-selected").each(function() {
-			var selectee = $.data(this, "selectable-item");
+			var selectee = $.data(this, "selecTable-item");
 			selectee.startselected = true;
 			if (!event.metaKey && !event.ctrlKey) {
 				selectee.$element.removeClass("ui-selected");
 				selectee.selected = false;
 				selectee.$element.addClass("ui-unselecting");
 				selectee.unselecting = true;
-				// selectable UNSELECTING callback
+				// selecTable UNSELECTING callback
 				that._trigger("unselecting", event, {
 					unselecting: selectee.element
 				});
@@ -4052,7 +4052,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 
 		$(event.target).parents().addBack().each(function() {
 			var doSelect,
-				selectee = $.data(this, "selectable-item");
+				selectee = $.data(this, "selecTable-item");
 			if (selectee) {
 				doSelect = (!event.metaKey && !event.ctrlKey) || !selectee.$element.hasClass("ui-selected");
 				selectee.$element
@@ -4061,7 +4061,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 				selectee.unselecting = !doSelect;
 				selectee.selecting = doSelect;
 				selectee.selected = doSelect;
-				// selectable (UN)SELECTING callback
+				// selecTable (UN)SELECTING callback
 				if (doSelect) {
 					that._trigger("selecting", event, {
 						selecting: selectee.element
@@ -4098,10 +4098,10 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 		this.helper.css({ left: x1, top: y1, width: x2 - x1, height: y2 - y1 });
 
 		this.selectees.each(function() {
-			var selectee = $.data(this, "selectable-item"),
+			var selectee = $.data(this, "selecTable-item"),
 				hit = false;
 
-			//prevent helper from being selected if appendTo: selectable
+			//prevent helper from being selected if appendTo: selecTable
 			if (!selectee || selectee.element === that.element[0]) {
 				return;
 			}
@@ -4125,7 +4125,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 				if (!selectee.selecting) {
 					selectee.$element.addClass("ui-selecting");
 					selectee.selecting = true;
-					// selectable SELECTING callback
+					// selecTable SELECTING callback
 					that._trigger("selecting", event, {
 						selecting: selectee.element
 					});
@@ -4145,7 +4145,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 							selectee.$element.addClass("ui-unselecting");
 							selectee.unselecting = true;
 						}
-						// selectable UNSELECTING callback
+						// selecTable UNSELECTING callback
 						that._trigger("unselecting", event, {
 							unselecting: selectee.element
 						});
@@ -4158,7 +4158,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 
 						selectee.$element.addClass("ui-unselecting");
 						selectee.unselecting = true;
-						// selectable UNSELECTING callback
+						// selecTable UNSELECTING callback
 						that._trigger("unselecting", event, {
 							unselecting: selectee.element
 						});
@@ -4176,7 +4176,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 		this.dragged = false;
 
 		$(".ui-unselecting", this.element[0]).each(function() {
-			var selectee = $.data(this, "selectable-item");
+			var selectee = $.data(this, "selecTable-item");
 			selectee.$element.removeClass("ui-unselecting");
 			selectee.unselecting = false;
 			selectee.startselected = false;
@@ -4185,7 +4185,7 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 			});
 		});
 		$(".ui-selecting", this.element[0]).each(function() {
-			var selectee = $.data(this, "selectable-item");
+			var selectee = $.data(this, "selecTable-item");
 			selectee.$element.removeClass("ui-selecting").addClass("ui-selected");
 			selectee.selecting = false;
 			selectee.selected = true;
@@ -4205,18 +4205,18 @@ var selectable = $.widget("ui.selectable", $.ui.mouse, {
 
 
 /*!
- * jQuery UI Sortable 1.11.0
+ * jQuery UI SorTable 1.11.0
  * http://jqueryui.com
  *
  * Copyright 2014 jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  *
- * http://api.jqueryui.com/sortable/
+ * http://api.jqueryui.com/sorTable/
  */
 
 
-var sortable = $.widget("ui.sortable", $.ui.mouse, {
+var sorTable = $.widget("ui.sorTable", $.ui.mouse, {
 	version: "1.11.0",
 	widgetEventPrefix: "sort",
 	ready: false,
@@ -4264,14 +4264,14 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 	},
 
 	_isFloating: function( item ) {
-		return (/left|right/).test(item.css("float")) || (/inline|table-cell/).test(item.css("display"));
+		return (/left|right/).test(item.css("float")) || (/inline|Table-cell/).test(item.css("display"));
 	},
 
 	_create: function() {
 
 		var o = this.options;
 		this.containerCache = {};
-		this.element.addClass("ui-sortable");
+		this.element.addClass("ui-sorTable");
 
 		//Get the items
 		this.refresh();
@@ -4301,19 +4301,19 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 	},
 
 	_setHandleClassName: function() {
-		this.element.find( ".ui-sortable-handle" ).removeClass( "ui-sortable-handle" );
+		this.element.find( ".ui-sorTable-handle" ).removeClass( "ui-sorTable-handle" );
 		$.each( this.items, function() {
 			( this.instance.options.handle ?
 				this.item.find( this.instance.options.handle ) : this.item )
-				.addClass( "ui-sortable-handle" );
+				.addClass( "ui-sorTable-handle" );
 		});
 	},
 
 	_destroy: function() {
 		this.element
-			.removeClass( "ui-sortable ui-sortable-disabled" )
-			.find( ".ui-sortable-handle" )
-				.removeClass( "ui-sortable-handle" );
+			.removeClass( "ui-sorTable ui-sorTable-disabled" )
+			.find( ".ui-sorTable-handle" )
+				.removeClass( "ui-sorTable-handle" );
 		this._mouseDestroy();
 
 		for ( var i = this.items.length - 1; i >= 0; i-- ) {
@@ -4498,7 +4498,7 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 
 		this.dragging = true;
 
-		this.helper.addClass("ui-sortable-helper");
+		this.helper.addClass("ui-sorTable-helper");
 		this._mouseDrag(event); //Execute the drag once - this causes the helper not to be visible before getting its correct position
 		return true;
 
@@ -4581,7 +4581,7 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 			// an item from one container to another the
 			// currentContainer is switched before the placeholder is moved.
 			//
-			// Without this, moving items in "sub-sortables" can cause
+			// Without this, moving items in "sub-sorTables" can cause
 			// the placeholder to jitter between the outer and inner container.
 			if (item.instance !== this.currentContainer) {
 				continue;
@@ -4667,7 +4667,7 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 			this._mouseUp({ target: null });
 
 			if(this.options.helper === "original") {
-				this.currentItem.css(this._storedCSS).removeClass("ui-sortable-helper");
+				this.currentItem.css(this._storedCSS).removeClass("ui-sorTable-helper");
 			} else {
 				this.currentItem.show();
 			}
@@ -4843,13 +4843,13 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 				for ( j = cur.length - 1; j >= 0; j--){
 					inst = $.data(cur[j], this.widgetFullName);
 					if(inst && inst !== this && !inst.options.disabled) {
-						queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element) : $(inst.options.items, inst.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), inst]);
+						queries.push([$.isFunction(inst.options.items) ? inst.options.items.call(inst.element) : $(inst.options.items, inst.element).not(".ui-sorTable-helper").not(".ui-sorTable-placeholder"), inst]);
 					}
 				}
 			}
 		}
 
-		queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
+		queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sorTable-helper").not(".ui-sorTable-placeholder"), this]);
 
 		function addItems() {
 			items.push( this );
@@ -4976,8 +4976,8 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 
 					var nodeName = that.currentItem[0].nodeName.toLowerCase(),
 						element = $( "<" + nodeName + ">", that.document[0] )
-							.addClass(className || that.currentItem[0].className+" ui-sortable-placeholder")
-							.removeClass("ui-sortable-helper");
+							.addClass(className || that.currentItem[0].className+" ui-sorTable-placeholder")
+							.removeClass("ui-sorTable-helper");
 
 					if ( nodeName === "tr" ) {
 						that.currentItem.children().each(function() {
@@ -5388,7 +5388,7 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 					this._storedCSS[i] = "";
 				}
 			}
-			this.currentItem.css(this._storedCSS).removeClass("ui-sortable-helper");
+			this.currentItem.css(this._storedCSS).removeClass("ui-sorTable-helper");
 		} else {
 			this.currentItem.show();
 		}
@@ -5396,7 +5396,7 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 		if(this.fromOutside && !noPropagation) {
 			delayedTriggers.push(function(event) { this._trigger("receive", event, this._uiHash(this.fromOutside)); });
 		}
-		if((this.fromOutside || this.domPosition.prev !== this.currentItem.prev().not(".ui-sortable-helper")[0] || this.domPosition.parent !== this.currentItem.parent()[0]) && !noPropagation) {
+		if((this.fromOutside || this.domPosition.prev !== this.currentItem.prev().not(".ui-sorTable-helper")[0] || this.domPosition.parent !== this.currentItem.parent()[0]) && !noPropagation) {
 			delayedTriggers.push(function(event) { this._trigger("update", event, this._uiHash()); }); //Trigger update callback if the DOM position has changed
 		}
 
@@ -6741,11 +6741,11 @@ $.widget( "ui.autocomplete", {
 		this.isMultiLine =
 			// Textareas are always multi-line
 			isTextarea ? true :
-			// Inputs are always single-line, even if inside a contentEditable element
-			// IE also treats inputs as contentEditable
+			// Inputs are always single-line, even if inside a contentEdiTable element
+			// IE also treats inputs as contentEdiTable
 			isInput ? false :
-			// All other element types are determined by whether or not they're contentEditable
-			this.element.prop( "isContentEditable" );
+			// All other element types are determined by whether or not they're contentEdiTable
+			this.element.prop( "isContentEdiTable" );
 
 		this.valueMethod = this.element[ isTextarea || isInput ? "val" : "text" ];
 		this.isNewMenu = true;
@@ -7747,7 +7747,7 @@ function Datepicker() {
 	this._triggerClass = "ui-datepicker-trigger"; // The name of the trigger marker class
 	this._dialogClass = "ui-datepicker-dialog"; // The name of the dialog marker class
 	this._disableClass = "ui-datepicker-disabled"; // The name of the disabled covering marker class
-	this._unselectableClass = "ui-datepicker-unselectable"; // The name of the unselectable cell marker class
+	this._unselecTableClass = "ui-datepicker-unselecTable"; // The name of the unselecTable cell marker class
 	this._currentClass = "ui-datepicker-current-day"; // The name of the current day marker class
 	this._dayOverClass = "ui-datepicker-days-cell-over"; // The name of the day hover marker class
 	this.regional = []; // Available regional settings, indexed by language code
@@ -7790,18 +7790,18 @@ function Datepicker() {
 			// either relative to today's year (-nn:+nn), relative to currently displayed year
 			// (c-nn:c+nn), absolute (nnnn:nnnn), or a combination of the above (nnnn:-n)
 		showOtherMonths: false, // True to show dates in other months, false to leave blank
-		selectOtherMonths: false, // True to allow selection of dates in other months, false for unselectable
+		selectOtherMonths: false, // True to allow selection of dates in other months, false for unselecTable
 		showWeek: false, // True to show week of the year, false to not show it
 		calculateWeek: this.iso8601Week, // How to calculate the week of the year,
 			// takes a Date and returns the number of the week for it
 		shortYearCutoff: "+10", // Short year values < this are in the current century,
 			// > this are in the previous century,
 			// string value starting with "+" for current year + value
-		minDate: null, // The earliest selectable date, or null for no limit
-		maxDate: null, // The latest selectable date, or null for no limit
+		minDate: null, // The earliest selecTable date, or null for no limit
+		maxDate: null, // The latest selecTable date, or null for no limit
 		duration: "fast", // Duration of display/closure
 		beforeShowDay: null, // Function that takes a date and returns an array with
-			// [0] = true if selectable, false if not, [1] = custom CSS class name(s) or "",
+			// [0] = true if selecTable, false if not, [1] = custom CSS class name(s) or "",
 			// [2] = cell title (optional), e.g. $.datepicker.noWeekends
 		beforeShow: null, // Function that takes an input field and
 			// returns a set of custom settings for the date picker
@@ -8680,7 +8680,7 @@ $.extend(Datepicker.prototype, {
 		var inst,
 			target = $(id);
 
-		if ($(td).hasClass(this._unselectableClass) || this._isDisabledDatepicker(target[0])) {
+		if ($(td).hasClass(this._unselecTableClass) || this._isDisabledDatepicker(target[0])) {
 			return;
 		}
 
@@ -8744,7 +8744,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Set as beforeShowDay function to prevent selection of weekends.
 	 * @param  date  Date - the date to customise
-	 * @return [boolean, string] - is this date selectable?, what is its CSS class?
+	 * @return [boolean, string] - is this date selecTable?, what is its CSS class?
 	 */
 	noWeekends: function(date) {
 		var day = date.getDay();
@@ -9299,7 +9299,7 @@ $.extend(Datepicker.prototype, {
 			monthNames, monthNamesShort, beforeShowDay, showOtherMonths,
 			selectOtherMonths, defaultDate, html, dow, row, group, col, selectedDate,
 			cornerClass, calender, thead, day, daysInMonth, leadDays, curRows, numRows,
-			printDate, dRow, tbody, daySettings, otherMonth, unselectable,
+			printDate, dRow, tbody, daySettings, otherMonth, unselecTable,
 			tempDate = new Date(),
 			today = this._daylightSavingAdjust(
 				new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate())), // clear time
@@ -9408,7 +9408,7 @@ $.extend(Datepicker.prototype, {
 					(/all|right/.test(cornerClass) && row === 0 ? (isRTL ? prev : next) : "") +
 					this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate,
 					row > 0 || col > 0, monthNames, monthNamesShort) + // draw month headers
-					"</div><table class='ui-datepicker-calendar'><thead>" +
+					"</div><Table class='ui-datepicker-calendar'><thead>" +
 					"<tr>";
 				thead = (showWeek ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") + "</th>" : "");
 				for (dow = 0; dow < 7; dow++) { // days of the week
@@ -9434,7 +9434,7 @@ $.extend(Datepicker.prototype, {
 						daySettings = (beforeShowDay ?
 							beforeShowDay.apply((inst.input ? inst.input[0] : null), [printDate]) : [true, ""]);
 						otherMonth = (printDate.getMonth() !== drawMonth);
-						unselectable = (otherMonth && !selectOtherMonths) || !daySettings[0] ||
+						unselecTable = (otherMonth && !selectOtherMonths) || !daySettings[0] ||
 							(minDate && printDate < minDate) || (maxDate && printDate > maxDate);
 						tbody += "<td class='" +
 							((dow + firstDay + 6) % 7 >= 5 ? " ui-datepicker-week-end" : "") + // highlight weekends
@@ -9443,18 +9443,18 @@ $.extend(Datepicker.prototype, {
 							(defaultDate.getTime() === printDate.getTime() && defaultDate.getTime() === selectedDate.getTime()) ?
 							// or defaultDate is current printedDate and defaultDate is selectedDate
 							" " + this._dayOverClass : "") + // highlight selected day
-							(unselectable ? " " + this._unselectableClass + " ui-state-disabled": "") +  // highlight unselectable days
+							(unselecTable ? " " + this._unselecTableClass + " ui-state-disabled": "") +  // highlight unselecTable days
 							(otherMonth && !showOtherMonths ? "" : " " + daySettings[1] + // highlight custom dates
 							(printDate.getTime() === currentDate.getTime() ? " " + this._currentClass : "") + // highlight selected day
 							(printDate.getTime() === today.getTime() ? " ui-datepicker-today" : "")) + "'" + // highlight today (if different)
 							((!otherMonth || showOtherMonths) && daySettings[2] ? " title='" + daySettings[2].replace(/'/g, "&#39;") + "'" : "") + // cell title
-							(unselectable ? "" : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'") + ">" + // actions
+							(unselecTable ? "" : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'") + ">" + // actions
 							(otherMonth && !showOtherMonths ? "&#xa0;" : // display for other months
-							(unselectable ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>" : "<a class='ui-state-default" +
+							(unselecTable ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>" : "<a class='ui-state-default" +
 							(printDate.getTime() === today.getTime() ? " ui-state-highlight" : "") +
 							(printDate.getTime() === currentDate.getTime() ? " ui-state-active" : "") + // highlight selected day
 							(otherMonth ? " ui-priority-secondary" : "") + // distinguish dates from other months
-							"' href='#'>" + printDate.getDate() + "</a>")) + "</td>"; // display selectable date
+							"' href='#'>" + printDate.getDate() + "</a>")) + "</td>"; // display selecTable date
 						printDate.setDate(printDate.getDate() + 1);
 						printDate = this._daylightSavingAdjust(printDate);
 					}
@@ -9465,7 +9465,7 @@ $.extend(Datepicker.prototype, {
 					drawMonth = 0;
 					drawYear++;
 				}
-				calender += "</tbody></table>" + (isMultiMonth ? "</div>" +
+				calender += "</tbody></Table>" + (isMultiMonth ? "</div>" +
 							((numMonths[0] > 0 && col === numMonths[1]-1) ? "<div class='ui-datepicker-row-break'></div>" : "") : "");
 				group += calender;
 			}

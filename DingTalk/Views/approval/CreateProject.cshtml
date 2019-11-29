@@ -13,18 +13,18 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" :inline="false" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="项目名称" prop="ProjectName">
-            <sam-input :value.sync="tableForm.ProjectName" :required="true"></sam-input>
+            <sam-input :value.sync="TableForm.ProjectName" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="承担部门">
-            <el-select v-model="tableForm.DeptName" style="width:300px;">
+            <el-select v-model="TableForm.DeptName" style="width:300px;">
                 <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="合作单位" prop="Customer">
-            <sam-input :value.sync="tableForm.Customer" placeholder="没有填'无'"></sam-input>
+            <sam-input :value.sync="TableForm.Customer" placeholder="没有填'无'"></sam-input>
         </el-form-item>
         <el-form-item label="项目类型" required="required">
             <div class="block">
@@ -35,12 +35,12 @@
             </div>
         </el-form-item>
         <el-form-item label="项目负责人">
-            <el-input v-model="tableForm.ApplyMan" :disabled="true"></el-input>
+            <el-input v-model="TableForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="项目组成员" required="required">
-            <sam-group :names.sync="tableForm.TeamMembers" :ids.sync="tableForm.TeamMembersId"></sam-group>
+            <sam-group :names.sync="TableForm.TeamMembers" :ids.sync="TableForm.TeamMembersId"></sam-group>
         </el-form-item>
-        <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
+        <sam-timerange :value1.sync="TableForm.StartTime" :value2.sync="TableForm.EndTime"></sam-timerange>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
@@ -76,7 +76,7 @@
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 DeptNames: DeptNames,
                 //CompanyNames: CompanyNames,
-                tableForm: {
+                TableForm: {
                     ApplyMan: DingData.nickName,
                     ApplyManId: DingData.userid,
                     CompanyName: '泉州华中科技大学智能制造研究院',
@@ -103,7 +103,7 @@
             onSubmit() {
                 var that = this
                 //this.fileListToUrl()
-                this.$refs['tableForm'].validate((valid) => {
+                this.$refs['TableForm'].validate((valid) => {
                     if (valid &&  this.fileList.length > 0) {
                         that.disablePage = true
                         var param = {
@@ -113,17 +113,17 @@
                             "IsFinish": false,
                             "ApplyMan": DingData.nickName,
                             "ApplyManId": DingData.userid,
-                            "StartTime": this.tableForm.StartTime,
-                            "EndTime": this.tableForm.EndTime,
-                            "TeamMembers": this.tableForm.TeamMembers,
-                            "TeamMembersId": this.tableForm.TeamMembersId,
+                            "StartTime": this.TableForm.StartTime,
+                            "EndTime": this.TableForm.EndTime,
+                            "TeamMembers": this.TableForm.TeamMembers,
+                            "TeamMembersId": this.TableForm.TeamMembersId,
                             "CreateManId": DingData.userid,
                             "CreateMan": DingData.nickName,
-                            "ProjectName": this.tableForm.ProjectName,
-                            "ProjectId": this.tableForm.inputProjectId,
-                            "CompanyName": this.tableForm.CompanyName,
-                            "Customer": this.tableForm.Customer,
-                            "DeptName": this.tableForm.DeptName,
+                            "ProjectName": this.TableForm.ProjectName,
+                            "ProjectId": this.TableForm.inputProjectId,
+                            "CompanyName": this.TableForm.CompanyName,
+                            "Customer": this.TableForm.Customer,
+                            "DeptName": this.TableForm.DeptName,
                             "ProjectType": this.ptypes[0],
                             "ProjectSmallType": this.ptypes[1],
                             "ResponsibleMan": this.ruleForm.ApplyMan,
@@ -152,16 +152,16 @@
             },
             handleChange(value) {
                 console.log(value)
-                this.tableForm['ProjectType'] = value[0]
-                this.tableForm['ProjectSmallType'] = value[1]
+                this.TableForm['ProjectType'] = value[0]
+                this.TableForm['ProjectSmallType'] = value[1]
                 this.ptypes = value
             }
         },
         created: function () {
             this.initStart(() => {
                 //重新发起、临时保存数据处理
-                if (this.tableForm.ProjectType) this.ptypes[0] = this.tableForm.ProjectType
-                if (this.tableForm.ProjectSmallType) this.ptypes[1] = this.tableForm.ProjectSmallType
+                if (this.TableForm.ProjectType) this.ptypes[0] = this.TableForm.ProjectType
+                if (this.TableForm.ProjectSmallType) this.ptypes[1] = this.TableForm.ProjectSmallType
             })
         }
     })

@@ -192,13 +192,13 @@ If enabled, shows a border and background when inline. Disabling may
 allow closer integration.
 
 ###	layout ({ ... })
-Set the position of elements in a table layout.
-You could create any layout possible with HTML tables by specifying
+Set the position of elements in a Table layout.
+You could create any layout possible with HTML Tables by specifying
 cell position and size of each part.
 @todo document how this works.
 
 ###	limit ('')
-Limit the selectable colors to any of the predefined limits:
+Limit the selecTable colors to any of the predefined limits:
 
 *	``''``		No limitations, allow 8bpp color for a palette of all 16 million colors.
 *	``websafe``	Set of 216 colors composed of 00, 33, 66, 99, cc and ff color channel values in #rrggbb.

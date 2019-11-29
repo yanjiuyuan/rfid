@@ -308,13 +308,13 @@ var mixin = {
         },
         specialRole: [],
         specialRoleNames: [],
-        tableForm:{},
+        TableForm:{},
         DingData: {},
         nodeList: [],
         nodeInfo: {},
         NodeIds: [],
         data: [],
-        tableData: [],
+        TableData: [],
         fileList: [],
         pdfList: [],
         imageList: [],
@@ -597,7 +597,7 @@ var mixin = {
             Index = 0
             this.DingData = DingData
             this.data = []
-            this.tableData = []
+            this.TableData = []
             this.nodeList = []
             this.nodeInfo = {}
             this.pdfList = []
@@ -667,7 +667,7 @@ var mixin = {
                
             this.DingData = DingData
             this.data = []
-            this.tableData = []
+            this.TableData = []
             this.nodeList = []
             this.nodeInfo = {}
             this.pdfList = []
@@ -948,10 +948,10 @@ var mixin = {
         saveTempData() {
             let data = {}
             let files = {}
-            //data['tableData'] = this.tableData || []
+            //data['TableData'] = this.TableData || []
             //data['data'] = this.data || []
             data['ruleForm'] = this.ruleForm || {}
-            data['tableForm'] = this.tableForm || {}
+            data['TableForm'] = this.TableForm || {}
             data['purchaseList'] = this.purchaseList || []
             data['imageList'] = this.imageList || []
             files['fileList'] = this.fileList || []
@@ -964,10 +964,10 @@ var mixin = {
             let data = this.loadData(FlowId)
             let files = this.loadData(FlowId + '-file')
             if (data) {
-                //this['tableData'] = data.tableData
+                //this['TableData'] = data.TableData
                 //this['data'] = data.data
                 this['ruleForm'] = data.ruleForm
-                this['tableForm'] = data.tableForm
+                this['TableForm'] = data.TableForm
                 this['purchaseList'] = data.purchaseList
                 this['imageList'] = data.imageList
                 this['fileList'] = data.fileList
@@ -1005,7 +1005,7 @@ var mixin = {
             for (let pdf of this.pdfList) {
                 if (pdf.state == '1') tmpPdfList.push(pdf)
             }
-            if (!this.tableForm) this.tableForm = {}
+            if (!this.TableForm) this.TableForm = {}
             this.ruleForm.IsBacked = false
             this.ruleForm.IsPost = false
             this.ruleForm.NodeId = '0'
@@ -1020,11 +1020,11 @@ var mixin = {
                 pdfList: tmpPdfList,
                 ruleForm: this.ruleForm,
             }
-            ReApprovalTempData['tableForm'] = this.tableForm || {}
+            ReApprovalTempData['TableForm'] = this.TableForm || {}
             if (this.data) {
                 ReApprovalTempData['dataArr'] = this.data
-            }else if (this.tableData) {
-                ReApprovalTempData['dataArr'] = this.tableData
+            }else if (this.TableData) {
+                ReApprovalTempData['dataArr'] = this.TableData
             }
             //if(items) ReApprovalTempData['items'] = items
             for (let img of imgConfig) {
@@ -1037,7 +1037,7 @@ var mixin = {
         loadReApprovalData() {
             if (!ReApprovalTempData.valid) return
             this.ruleForm = ReApprovalTempData.ruleForm
-            this.tableForm = ReApprovalTempData.tableForm
+            this.TableForm = ReApprovalTempData.TableForm
             this.dataArr = ReApprovalTempData.dataArr
             this.imageList = ReApprovalTempData.imageList
             this.fileList = ReApprovalTempData.fileList
@@ -1049,7 +1049,7 @@ var mixin = {
         //获取全部方法
         getData() {
             var start = this.pageSize * (this.currentPage - 1)
-            this.tableData = this.data.slice(start, start + this.pageSize)
+            this.TableData = this.data.slice(start, start + this.pageSize)
         },
         handleSizeChange: function (val) {
             this.currentPage = 1
@@ -1965,12 +1965,12 @@ Vue.component('sam-timerange', {
     props: ['label1', 'label2', 'type', 'value1', 'value2', 'required'],
     template: `<div> 
                 <el-form-item :label="label1 || '开始时间'" :required="true || required">  
-                    <el-date-picker v-model="v1" :class="{ redborder: value1 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
+                    <el-date-picker v-model="v1" :class="{ redborder: value1 =='' && !required}" :ediTable="false" style="width:160px;" v-on:change="onChange"
                                     type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item :label="label2 || '结束时间'" required="required">
-                    <el-date-picker  v-model="v2" :class="{ redborder: value2 =='' && !required}" :editable="false" style="width:160px;" v-on:change="onChange"
+                    <el-date-picker  v-model="v2" :class="{ redborder: value2 =='' && !required}" :ediTable="false" style="width:160px;" v-on:change="onChange"
                                     type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
@@ -2222,7 +2222,7 @@ Vue.component('ding', {
                     <el-form-item label="钉时间" :label-width="formLabelWidth">
                       <div class="block">
                         <span class="demonstration">默认</span>
-                        <el-date-picker :editable="false"
+                        <el-date-picker :ediTable="false"
                           v-model="form.alertDate"
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm"

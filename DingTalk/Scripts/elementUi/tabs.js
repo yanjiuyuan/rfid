@@ -348,7 +348,7 @@ var tab_navvue_type_script_lang_js_firstUpperCase = function firstUpperCase(str)
   props: {
     panes: Array,
     currentName: String,
-    editable: Boolean,
+    ediTable: Boolean,
     onTabClick: {
       type: Function,
       default: noop
@@ -522,7 +522,7 @@ var tab_navvue_type_script_lang_js_firstUpperCase = function firstUpperCase(str)
 
     var type = this.type,
         panes = this.panes,
-        editable = this.editable,
+        ediTable = this.ediTable,
         stretch = this.stretch,
         onTabClick = this.onTabClick,
         onTabRemove = this.onTabRemove,
@@ -554,7 +554,7 @@ var tab_navvue_type_script_lang_js_firstUpperCase = function firstUpperCase(str)
       var _ref;
 
       var tabName = pane.name || pane.index || index;
-      var closable = pane.isClosable || editable;
+      var closable = pane.isClosable || ediTable;
 
       pane.index = '' + index;
 
@@ -687,7 +687,7 @@ tab_nav_component.options.__file = "packages/tabs/src/tab-nav.vue"
     closable: Boolean,
     addable: Boolean,
     value: {},
-    editable: Boolean,
+    ediTable: Boolean,
     tabPosition: {
       type: String,
       default: 'top'
@@ -804,13 +804,13 @@ tab_nav_component.options.__file = "packages/tabs/src/tab-nav.vue"
         handleTabAdd = this.handleTabAdd,
         currentName = this.currentName,
         panes = this.panes,
-        editable = this.editable,
+        ediTable = this.ediTable,
         addable = this.addable,
         tabPosition = this.tabPosition,
         stretch = this.stretch;
 
 
-    var newButton = editable || addable ? h(
+    var newButton = ediTable || addable ? h(
       'span',
       {
         'class': 'el-tabs__new-tab',
@@ -834,7 +834,7 @@ tab_nav_component.options.__file = "packages/tabs/src/tab-nav.vue"
         currentName: currentName,
         onTabClick: handleTabClick,
         onTabRemove: handleTabRemove,
-        editable: editable,
+        ediTable: ediTable,
         type: type,
         panes: panes,
         stretch: stretch

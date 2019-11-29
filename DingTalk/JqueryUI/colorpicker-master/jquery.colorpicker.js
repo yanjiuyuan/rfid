@@ -66,7 +66,7 @@
 				return a.pos[1] - b.pos[1];
 			});
 
-			// Determine dimensions of the table
+			// Determine dimensions of the Table
 			width = 0;
 			height = 0;
 			$.each (layout, function(index, part) {
@@ -93,7 +93,7 @@
 				}
 			});
 
-			// Generate the table
+			// Generate the Table
 			html = '';
 			cell = layout[index = 0];
 			for (y = 0; y < height; ++y) {
@@ -135,7 +135,7 @@
 				html += '</tr>';
 			}
 
-			return '<table cellspacing="0" cellpadding="0" border="0"><tbody>' + html + '</tbody></table>';
+			return '<Table cellspacing="0" cellpadding="0" border="0"><tbody>' + html + '</tbody></Table>';
 		};
 
 	$.colorpicker = new function() {
@@ -2004,7 +2004,7 @@
 			inline:				true,		// Show any divs as inline by default
 			inlineFrame:		true,		// Show a border and background when inline.
 			layout: {
-				map:		[0, 0, 1, 5],	// Left, Top, Width, Height (in table cells).
+				map:		[0, 0, 1, 5],	// Left, Top, Width, Height (in Table cells).
 				bar:		[1, 0, 1, 5],
 				preview:	[2, 0, 1, 1],
 				hsv:		[2, 1, 1, 1],
@@ -2283,7 +2283,7 @@
 				part,
 				parts_list,
 				layout_parts,
-				table,
+				Table,
 				classes;
 
 			that._setColor(that.inline || !that.element.is('input') ? that.options.color : that.element.val());
@@ -2322,7 +2322,7 @@
 					}
 				});
 
-				table = $(_layoutTable(layout_parts, function(cell, x, y) {
+				Table = $(_layoutTable(layout_parts, function(cell, x, y) {
 					classes = ['ui-colorpicker-' + cell.part + '-container'];
 
 					if (x > 0) {
@@ -2339,7 +2339,7 @@
 						+ ' valign="top"></td>';
 				})).appendTo(that.dialog);
 				if (that.options.inlineFrame) {
-					table.addClass('ui-dialog-content ui-widget-content');
+					Table.addClass('ui-dialog-content ui-widget-content');
 				}
 
 				that._initAllParts();

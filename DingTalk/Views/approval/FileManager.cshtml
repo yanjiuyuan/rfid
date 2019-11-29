@@ -40,10 +40,10 @@
         <!--项目详情-->
         <div v-if="pathList.length == 4" style="clear:left;">
             <span style="font-size:1.2rem;">项目详情</span>
-            <el-table :data="projectInfo" stripe border>
-                <el-table-column type="expand">
+            <el-Table :data="projectInfo" stripe border>
+                <el-Table-column type="expand">
                     <template slot-scope="props">
-                        <el-form v-on:submit.native.prevent label-position="left" inline class="table-expand">
+                        <el-form v-on:submit.native.prevent label-position="left" inline class="Table-expand">
                             <span>创建时间:{{ props.row.CreateTime }}</span>&nbsp;&nbsp;
                             <span>开始时间:{{ props.row.StartTime }}</span>&nbsp;&nbsp;
                             <span>结束时间:{{ props.row.EndTime }}</span><br />
@@ -51,19 +51,19 @@
                             <br />&nbsp;
                         </el-form>
                     </template>
-                </el-table-column>
-                <el-table-column prop="ProjectId" label="项目编号"></el-table-column>
-                <el-table-column prop="ProjectName" label="项目名称"></el-table-column>
-                <el-table-column prop="DeptName" label="部门名称"></el-table-column>
-                <el-table-column prop="ApplyMan" label="创建人"></el-table-column>
-                <el-table-column prop="ResponsibleMan" label="项目负责人"></el-table-column>
-                <el-table-column prop="ProjectState" label="状态"></el-table-column>
-                <el-table-column label="操作" width="150">
+                </el-Table-column>
+                <el-Table-column prop="ProjectId" label="项目编号"></el-Table-column>
+                <el-Table-column prop="ProjectName" label="项目名称"></el-Table-column>
+                <el-Table-column prop="DeptName" label="部门名称"></el-Table-column>
+                <el-Table-column prop="ApplyMan" label="创建人"></el-Table-column>
+                <el-Table-column prop="ResponsibleMan" label="项目负责人"></el-Table-column>
+                <el-Table-column prop="ProjectState" label="状态"></el-Table-column>
+                <el-Table-column label="操作" width="150">
                     <template slot-scope="scope">
                         <el-button size="mini" v-on:click="openDetailFolder(scope.row.FilePath)">详情</el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </el-Table-column>
+            </el-Table>
         </div>
         <!--底部文件扩展功能-->
         <template v-if="pathList.length > 4">
@@ -72,15 +72,15 @@
                 <span style="font-size:1.2rem;">文件列表</span>
             </div>
             <div v-if="downloadUrl"><p style="color:red;">复制链接到浏览器下载可查看进度=></p><a>{{downloadUrl}}</a></div>
-            <el-table :data="tableData" stripe border>
-                <el-table-column prop="path" label="文件名"></el-table-column>
-                <el-table-column label="操作" width="150">
+            <el-Table :data="TableData" stripe border>
+                <el-Table-column prop="path" label="文件名"></el-Table-column>
+                <el-Table-column label="操作" width="150">
                     <template slot-scope="scope">
                         <el-button size="mini" v-on:click="downloadFile(scope.$index, scope.row)">下载</el-button>
                         <el-button size="mini" type="danger" v-on:click="deleteFile(scope.$index, scope.row)">删除</el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </el-Table-column>
+            </el-Table>
             <!--底部翻頁-->
             <div style="text-align:right">
                 <el-pagination v-on:size-change="handleSizeChange"
@@ -133,7 +133,7 @@
         data: function () {
             return {
                 data: [],
-                tableData: [],
+                TableData: [],
                 projectInfo: [],
                 folderList: [],
                 dialogFormVisible: false,

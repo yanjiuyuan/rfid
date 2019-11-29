@@ -676,7 +676,7 @@ var i,
 	// Proper syntax: http://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
 	identifier = characterEncoding.replace( "w", "w#" ),
 
-	// Acceptable operators http://www.w3.org/TR/selectors/#attribute-selectors
+	// AccepTable operators http://www.w3.org/TR/selectors/#attribute-selectors
 	attributes = "\\[" + whitespace + "*(" + characterEncoding + ")" + whitespace +
 		"*(?:([*^$|!~]?=)" + whitespace + "*(?:(['\"])((?:\\\\.|[^\\\\])*?)\\3|(" + identifier + ")|)|)" + whitespace + "*\\]",
 
@@ -1020,7 +1020,7 @@ function createPositionalPseudo( fn ) {
 /**
  * Checks a node for validity as a Sizzle context
  * @param {Element|Object=} context
- * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
+ * @returns {Element|Object|Boolean} The input node if accepTable, otherwise a falsy value
  */
 function testContext( context ) {
 	return context && typeof context.getElementsByTagName !== strundefined && context;
@@ -1483,7 +1483,7 @@ Sizzle.uniqueSort = function( results ) {
 
 	// Unless we *know* we can detect duplicates, assume their presence
 	hasDuplicate = !support.detectDuplicates;
-	sortInput = !support.sortStable && results.slice( 0 );
+	sortInput = !support.sortSTable && results.slice( 0 );
 	results.sort( sortOrder );
 
 	if ( hasDuplicate ) {
@@ -2535,7 +2535,7 @@ function select( selector, context, results, seed ) {
 // One-time assignments
 
 // Sort stability
-support.sortStable = expando.split("").sort( sortOrder ).join("") === expando;
+support.sortSTable = expando.split("").sort( sortOrder ).join("") === expando;
 
 // Support: Chrome<14
 // Always assume duplicates if they aren't passed to the comparison function
@@ -3079,7 +3079,7 @@ jQuery.Callbacks = function( options ) {
 
 	var // 当前列表是否正被触发 flag标志
 		firing,
-		// Last fire value (for non-forgettable lists)//最后的访问值
+		// Last fire value (for non-forgetTable lists)//最后的访问值
 		memory,
 		// 回调列表是否已经被fired flag标志
 		fired,
@@ -3091,7 +3091,7 @@ jQuery.Callbacks = function( options ) {
 		firingStart,
 		// Actual callback list
 		list = [],
-		// Stack of fire calls for repeatable lists 可重复调用的callback放置stack中
+		// Stack of fire calls for repeaTable lists 可重复调用的callback放置stack中
 		stack = !options.once && [],
 		// Fire callbacks
 		fire = function( data ) {
@@ -4195,13 +4195,13 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 
 	// Setup
 	div.setAttribute( "className", "t" );
-	div.innerHTML = "  <link/><table></table><a href='/a'>a</a>";
+	div.innerHTML = "  <link/><Table></Table><a href='/a'>a</a>";
 
 	// IE strips leading whitespace when .innerHTML is used
 	support.leadingWhitespace = div.firstChild.nodeType === 3;
 
 	// Make sure that tbody elements aren't automatically inserted
-	// IE will insert them into empty tables
+	// IE will insert them into empty Tables
 	support.tbody = !div.getElementsByTagName( "tbody" ).length;
 
 	// Make sure that link elements get serialized correctly by innerHTML
@@ -4636,7 +4636,7 @@ jQuery.event = {
 
 	dispatch: function( event ) {
 
-		// Make a writable jQuery.Event from the native event object
+		// Make a wriTable jQuery.Event from the native event object
 		event = jQuery.event.fix( event );
 
 		var i, ret, handleObj, matched, j,
@@ -4747,7 +4747,7 @@ jQuery.event = {
 			return event;
 		}
 
-		// Create a writable copy of the event object and normalize some properties
+		// Create a wriTable copy of the event object and normalize some properties
 		var i, prop, copy,
 			type = event.type,
 			originalEvent = event,
@@ -5332,10 +5332,10 @@ var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figca
 		legend: [ 1, "<fieldset>", "</fieldset>" ],
 		area: [ 1, "<map>", "</map>" ],
 		param: [ 1, "<object>", "</object>" ],
-		thead: [ 1, "<table>", "</table>" ],
-		tr: [ 2, "<table><tbody>", "</tbody></table>" ],
-		col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
-		td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
+		thead: [ 1, "<Table>", "</Table>" ],
+		tr: [ 2, "<Table><tbody>", "</tbody></Table>" ],
+		col: [ 2, "<Table><tbody></tbody><colgroup>", "</colgroup></Table>" ],
+		td: [ 3, "<Table><tbody><tr>", "</tr></tbody></Table>" ],
 
 		// IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
 		// unless wrapped in a div with non-breaking characters in front of it.
@@ -5378,9 +5378,9 @@ function fixDefaultChecked( elem ) {
 }
 
 // Support: IE<8
-// Manipulating tables requires a tbody
+// Manipulating Tables requires a tbody
 function manipulationTarget( elem, content ) {
-	return jQuery.nodeName( elem, "table" ) &&
+	return jQuery.nodeName( elem, "Table" ) &&
 		jQuery.nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ?
 
 		elem.getElementsByTagName("tbody")[0] ||
@@ -5608,15 +5608,15 @@ jQuery.extend({
 						nodes.push( context.createTextNode( rleadingWhitespace.exec( elem )[0] ) );
 					}
 
-					// Remove IE's autoinserted <tbody> from table fragments
+					// Remove IE's autoinserted <tbody> from Table fragments
 					if ( !support.tbody ) {
 
-						// String was a <table>, *may* have spurious <tbody>
-						elem = tag === "table" && !rtbody.test( elem ) ?
+						// String was a <Table>, *may* have spurious <tbody>
+						elem = tag === "Table" && !rtbody.test( elem ) ?
 							tmp.firstChild :
 
 							// String was a bare <thead> or <tfoot>
-							wrap[1] === "<table>" && !rtbody.test( elem ) ?
+							wrap[1] === "<Table>" && !rtbody.test( elem ) ?
 								tmp :
 								0;
 
@@ -5674,7 +5674,7 @@ jQuery.extend({
 				setGlobalEval( tmp );
 			}
 
-			// Capture executables
+			// Capture execuTables
 			if ( scripts ) {
 				j = 0;
 				while ( (elem = tmp[ j++ ]) ) {
@@ -5968,7 +5968,7 @@ jQuery.fn.extend({
 					// Reenable scripts
 					jQuery.map( scripts, restoreScript );
 
-					// Evaluate executable scripts on first document insertion
+					// Evaluate execuTable scripts on first document insertion
 					for ( i = 0; i < hasScripts; i++ ) {
 						node = scripts[ i ];
 						if ( rscriptType.test( node.type || "" ) &&
@@ -6092,7 +6092,7 @@ function defaultDisplay( nodeName ) {
 			"display:block;padding:0;margin:0;border:0";
 
 	// Setup
-	div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+	div.innerHTML = "  <link/><Table></Table><a href='/a'>a</a><input type='checkbox'/>";
 	a = div.getElementsByTagName( "a" )[ 0 ];
 
 	a.style.cssText = "float:left;opacity:.5";
@@ -6303,7 +6303,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 			"display:block;padding:0;margin:0;border:0";
 
 	// Setup
-	div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+	div.innerHTML = "  <link/><Table></Table><a href='/a'>a</a><input type='checkbox'/>";
 	a = div.getElementsByTagName( "a" )[ 0 ];
 
 	a.style.cssText = "float:left;opacity:.5";
@@ -6341,7 +6341,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 
 			// Setup
 			div.setAttribute( "className", "t" );
-			div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+			div.innerHTML = "  <link/><Table></Table><a href='/a'>a</a><input type='checkbox'/>";
 
 			container = document.createElement( "div" );
 			container.style.cssText = containerStyles;
@@ -6349,13 +6349,13 @@ function addGetHookIf( conditionFn, hookFn ) {
 			body.appendChild( container ).appendChild( div );
 
 			// Support: IE8
-			// Check if table cells still have offsetWidth/Height when they are set
-			// to display:none and there are still other visible table cells in a
-			// table row; if so, offsetWidth/Height are not reliable for use when
+			// Check if Table cells still have offsetWidth/Height when they are set
+			// to display:none and there are still other visible Table cells in a
+			// Table row; if so, offsetWidth/Height are not reliable for use when
 			// determining if an element has been hidden directly using
 			// display:none (it is still safe to use offsets if a parent element is
 			// hidden; don safety goggles and see bug #4512 for more information).
-			div.innerHTML = "<table><tr><td></td><td>t</td></tr></table>";
+			div.innerHTML = "<Table><tr><td></td><td>t</td></tr></Table>";
 			tds = div.getElementsByTagName( "td" );
 			tds[ 0 ].style.cssText = "padding:0;margin:0;border:0;display:none";
 			isSupported = ( tds[ 0 ].offsetHeight === 0 );
@@ -6364,7 +6364,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 			tds[ 1 ].style.display = "none";
 
 			// Support: IE8
-			// Check if empty table cells still have offsetWidth/Height
+			// Check if empty Table cells still have offsetWidth/Height
 			reliableHiddenOffsetsVal = isSupported && ( tds[ 0 ].offsetHeight === 0 );
 
 			body.removeChild( container );
@@ -6505,9 +6505,9 @@ var
 		ralpha = /alpha\([^)]*\)/i,
 	ropacity = /opacity\s*=\s*([^)]*)/,
 
-	// swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
+	// swappable if display is none or starts with Table except "Table", "Table-cell", or "Table-caption"
 	// see here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
-	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
+	rdisplayswap = /^(none|Table(?!-c[ea]).+)/,
 	rnumsplit = new RegExp( "^(" + pnum + ")(.*)$", "i" ),
 	rrelNum = new RegExp( "^([+-])=(" + pnum + ")", "i" ),
 
@@ -7747,7 +7747,7 @@ jQuery.fn.delay = function( time, type ) {
 
 	// Setup
 	div.setAttribute( "className", "t" );
-	div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+	div.innerHTML = "  <link/><Table></Table><a href='/a'>a</a><input type='checkbox'/>";
 	a = div.getElementsByTagName("a")[ 0 ];
 
 	// First batch of tests.
@@ -8195,9 +8195,9 @@ if ( !getSetAttribute ) {
 		set: nodeHook.set
 	};
 
-	// Set contenteditable to false on removals(#10429)
+	// Set contentediTable to false on removals(#10429)
 	// Setting to empty string throws an error as an invalid value
-	jQuery.attrHooks.contenteditable = {
+	jQuery.attrHooks.contentediTable = {
 		set: function( elem, value, name ) {
 			nodeHook.set( elem, value === "" ? false : value, name );
 		}
@@ -8351,7 +8351,7 @@ jQuery.each([
 	"colSpan",
 	"useMap",
 	"frameBorder",
-	"contentEditable"
+	"contentEdiTable"
 ], function() {
 	jQuery.propFix[ this.toLowerCase() ] = this;
 });
@@ -9050,7 +9050,7 @@ jQuery.extend({
 			jqXHR = {
 				readyState: 0,
 
-				// Builds headers hashtable if needed
+				// Builds headers hashTable if needed
 				getResponseHeader: function( key ) {
 					var match;
 					if ( state === 2 ) {
@@ -9523,7 +9523,7 @@ var r20 = /%20/g,
 	rbracket = /\[\]$/,
 	rCRLF = /\r?\n/g,
 	rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
-	rsubmittable = /^(?:input|select|textarea|keygen)/i;
+	rsubmitTable = /^(?:input|select|textarea|keygen)/i;
 
 function buildParams( prefix, obj, traditional, add ) {
 	var name;
@@ -9602,7 +9602,7 @@ jQuery.fn.extend({
 			var type = this.type;
 			// Use .is(":disabled") so that fieldset[disabled] works
 			return this.name && !jQuery( this ).is( ":disabled" ) &&
-				rsubmittable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
+				rsubmitTable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
 				( this.checked || !rcheckableType.test( type ) );
 		})
 		.map(function( i, elem ) {

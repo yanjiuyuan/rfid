@@ -252,7 +252,7 @@ var render = function() {
             class: "el-date-editor--" + _vm.type,
             attrs: {
               readonly:
-                !_vm.editable ||
+                !_vm.ediTable ||
                 _vm.readonly ||
                 _vm.type === "dates" ||
                 _vm.type === "week",
@@ -346,7 +346,7 @@ var render = function() {
                   autocomplete: "off",
                   placeholder: _vm.startPlaceholder,
                   disabled: _vm.pickerDisabled,
-                  readonly: !_vm.editable || _vm.readonly,
+                  readonly: !_vm.ediTable || _vm.readonly,
                   name: _vm.name && _vm.name[0]
                 },
                 domProps: { value: _vm.displayValue && _vm.displayValue[0] },
@@ -375,7 +375,7 @@ var render = function() {
                   autocomplete: "off",
                   placeholder: _vm.endPlaceholder,
                   disabled: _vm.pickerDisabled,
-                  readonly: !_vm.editable || _vm.readonly,
+                  readonly: !_vm.ediTable || _vm.readonly,
                   name: _vm.name && _vm.name[1]
                 },
                 domProps: { value: _vm.displayValue && _vm.displayValue[1] },
@@ -788,7 +788,7 @@ var validator = function validator(val) {
       validator: validator
     },
     popperClass: String,
-    editable: {
+    ediTable: {
       type: Boolean,
       default: true
     },
@@ -1014,8 +1014,8 @@ var validator = function validator(val) {
       }
     },
     formatToValue: function formatToValue(date) {
-      var isFormattable = Object(date_util_["isDateObject"])(date) || Array.isArray(date) && date.every(date_util_["isDateObject"]);
-      if (this.valueFormat && isFormattable) {
+      var isFormatTable = Object(date_util_["isDateObject"])(date) || Array.isArray(date) && date.every(date_util_["isDateObject"]);
+      if (this.valueFormat && isFormatTable) {
         return formatAsFormatAndType(date, this.valueFormat, this.type, this.rangeSeparator);
       } else {
         return date;
@@ -1236,13 +1236,13 @@ var validator = function validator(val) {
       var updateOptions = function updateOptions() {
         var options = _this3.pickerOptions;
 
-        if (options && options.selectableRange) {
-          var ranges = options.selectableRange;
+        if (options && options.selecTableRange) {
+          var ranges = options.selecTableRange;
           var parser = TYPE_VALUE_RESOLVER_MAP.datetimerange.parser;
           var format = DEFAULT_FORMATS.timerange;
 
           ranges = Array.isArray(ranges) ? ranges : [ranges];
-          _this3.picker.selectableRange = ranges.map(function (range) {
+          _this3.picker.selecTableRange = ranges.map(function (range) {
             return parser(range, format, _this3.rangeSeparator);
           });
         }
@@ -1250,7 +1250,7 @@ var validator = function validator(val) {
         for (var option in options) {
           if (options.hasOwnProperty(option) &&
           // 忽略 time-picker 的该配置项
-          option !== 'selectableRange') {
+          option !== 'selecTableRange') {
             _this3.picker[option] = options[option];
           }
         }

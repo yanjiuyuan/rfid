@@ -409,7 +409,7 @@ namespace DingTalk.Controllers
                             // Could add a check to verify that there is an element 0
                             foreach (var rec in Quary)
                             {
-                                // Use reflection to get property names, to create table, Only first time, others will follow
+                                // Use reflection to get property names, to create Table, Only first time, others will follow
                                 if (oProps == null)
                                 {
                                     oProps = ((Type)rec.GetType()).GetProperties();
@@ -488,7 +488,7 @@ namespace DingTalk.Controllers
                             // Could add a check to verify that there is an element 0
                             foreach (var rec in QuaryPri)
                             {
-                                // Use reflection to get property names, to create table, Only first time, others will follow
+                                // Use reflection to get property names, to create Table, Only first time, others will follow
                                 if (oProps == null)
                                 {
                                     oProps = ((Type)rec.GetType()).GetProperties();
