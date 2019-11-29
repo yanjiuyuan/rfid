@@ -46,9 +46,6 @@ namespace DingTalk.Utility.Filters
                 context.SaveChanges();
                 this.logger.Error($"在响应 {requestUrl} 时出现异常，信息：{errorMsg}，详见数据库日志Id：{contextError.Id}");
             }
-        
-
-
             actionExecutedContext.Response = actionExecutedContext.Request.CreateResponse(
             System.Net.HttpStatusCode.OK, new NewErrorModel
             {
