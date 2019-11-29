@@ -6,6 +6,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+
     [Table("ApplicationUnit")]
     public partial class ApplicationUnit
     {
