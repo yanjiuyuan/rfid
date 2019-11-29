@@ -348,7 +348,7 @@ window.Modernizr = (function( window, document, undefined ) {
     // empty string.
 
     // Because the testing of the CSS property names (with "-", as
-    // opposed to the camelCase DOM properties) is non-portable and
+    // opposed to the camelCase DOM properties) is non-porTable and
     // non-standard but works in WebKit and IE (but not Gecko or Opera),
     // we explicitly reject properties with dashes so that authors
     // developing in WebKit or IE first don't end up with
@@ -460,7 +460,7 @@ window.Modernizr = (function( window, document, undefined ) {
     /*
      * The Modernizr.touch test only indicates if the browser supports
      *    touch events, which does not necessarily reflect a touchscreen
-     *    device, as evidenced by tablets running Windows 7 or, alas,
+     *    device, as evidenced by Tablets running Windows 7 or, alas,
      *    the Palm Pre / WebOS (touch) phones.
      *
      * Additionally, Chrome (desktop) used to lie about its support on this,
@@ -594,8 +594,8 @@ window.Modernizr = (function( window, document, undefined ) {
     };
 
 
-    // Super comprehensive table about all the unique implementations of
-    // border-radius: muddledramblings.com/table-of-css3-border-radius-compliance
+    // Super comprehensive Table about all the unique implementations of
+    // border-radius: muddledramblings.com/Table-of-css3-border-radius-compliance
 
     tests['borderradius'] = function() {
         return testPropsAll('borderRadius');
@@ -931,7 +931,7 @@ window.Modernizr = (function( window, document, undefined ) {
                       docElement.removeChild(inputElem);
 
                     } else if ( /^(search|tel)$/.test(inputElemType) ){
-                      // Spec doesn't define any special parsing or detectable UI
+                      // Spec doesn't define any special parsing or detecTable UI
                       //   behaviors so we pass these through as true
 
                       // Interestingly, opera fails the earlier test, so it doesn't
@@ -1037,7 +1037,7 @@ window.Modernizr = (function( window, document, undefined ) {
       var reSkip = /^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i;
 
       /** Not all elements can be cloned in IE **/
-      var saveClones = /^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i;
+      var saveClones = /^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|Table|tbody|td|th|tr|ul)$/i;
 
       /** Detect whether the browser supports default html5 styles */
       var supportsHtml5Styles;

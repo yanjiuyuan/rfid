@@ -96,7 +96,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: external "element-ui/lib/utils/util"
 var util_ = __webpack_require__(3);
 
-// CONCATENATED MODULE: ./packages/table/src/config.js
+// CONCATENATED MODULE: ./packages/Table/src/config.js
 
 
 var cellStarts = {
@@ -108,7 +108,7 @@ var cellStarts = {
     minWidth: 48,
     realWidth: 48,
     order: '',
-    className: 'el-table-column--selection'
+    className: 'el-Table-column--selection'
   },
   expand: {
     width: 48,
@@ -155,7 +155,7 @@ var cellForced = {
         },
         attrs: {
           value: store.isSelected(row),
-          disabled: column.selectable ? !column.selectable.call(null, row, $index) : false
+          disabled: column.selecTable ? !column.selecTable.call(null, row, $index) : false
         },
         on: {
           'input': function input() {
@@ -164,7 +164,7 @@ var cellForced = {
         }
       });
     },
-    sortable: false,
+    sorTable: false,
     resizable: false
   },
   index: {
@@ -188,7 +188,7 @@ var cellForced = {
 
       return h('div', [i]);
     },
-    sortable: false
+    sorTable: false
   },
   expand: {
     renderHeader: function renderHeader(h, _ref5) {
@@ -200,9 +200,9 @@ var cellForced = {
       var row = _ref6.row,
           store = _ref6.store;
 
-      var classes = ['el-table__expand-icon'];
+      var classes = ['el-Table__expand-icon'];
       if (store.states.expandRows.indexOf(row) > -1) {
-        classes.push('el-table__expand-icon--expanded');
+        classes.push('el-Table__expand-icon--expanded');
       }
       var callback = function callback(e) {
         e.stopPropagation();
@@ -218,9 +218,9 @@ var cellForced = {
         [h('i', { 'class': 'el-icon el-icon-arrow-right' })]
       );
     },
-    sortable: false,
+    sorTable: false,
     resizable: false,
-    className: 'el-table__expand-column'
+    className: 'el-Table__expand-column'
   }
 };
 
@@ -249,10 +249,10 @@ function treeCellPrefix(h, _ref8) {
     store.loadOrToggle(row);
   };
   if (treeNode.indent) {
-    ele.push(h('span', { 'class': 'el-table__indent', style: { 'padding-left': treeNode.indent + 'px' } }));
+    ele.push(h('span', { 'class': 'el-Table__indent', style: { 'padding-left': treeNode.indent + 'px' } }));
   }
   if (typeof treeNode.expanded === 'boolean' && !treeNode.noLazyChildren) {
-    var expandClasses = ['el-table__expand-icon', treeNode.expanded ? 'el-table__expand-icon--expanded' : ''];
+    var expandClasses = ['el-Table__expand-icon', treeNode.expanded ? 'el-Table__expand-icon--expanded' : ''];
     var iconClasses = ['el-icon-arrow-right'];
     if (treeNode.loading) {
       iconClasses = ['el-icon-loading'];
@@ -267,18 +267,18 @@ function treeCellPrefix(h, _ref8) {
       [h('i', { 'class': iconClasses })]
     ));
   } else {
-    ele.push(h('span', { 'class': 'el-table__placeholder' }));
+    ele.push(h('span', { 'class': 'el-Table__placeholder' }));
   }
   return ele;
 }
-// EXTERNAL MODULE: ./packages/table/src/util.js
+// EXTERNAL MODULE: ./packages/Table/src/util.js
 var util = __webpack_require__(8);
 
 // EXTERNAL MODULE: external "element-ui/lib/checkbox"
 var checkbox_ = __webpack_require__(17);
 var checkbox_default = /*#__PURE__*/__webpack_require__.n(checkbox_);
 
-// CONCATENATED MODULE: ./packages/table/src/table-column.js
+// CONCATENATED MODULE: ./packages/Table/src/Table-column.js
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 
@@ -287,7 +287,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var columnIdSeed = 1;
 
-/* harmony default export */ var table_column = ({
+/* harmony default export */ var Table_column = ({
   name: 'ElTableColumn',
 
   props: {
@@ -303,7 +303,7 @@ var columnIdSeed = 1;
     width: {},
     minWidth: {},
     renderHeader: Function,
-    sortable: {
+    sorTable: {
       type: [Boolean, String],
       default: false
     },
@@ -320,7 +320,7 @@ var columnIdSeed = 1;
     showOverflowTooltip: Boolean,
     fixed: [Boolean, String],
     formatter: Function,
-    selectable: Function,
+    selecTable: Function,
     reserveSelection: Boolean,
     filterMethod: Function,
     filteredValue: Array,
@@ -355,14 +355,14 @@ var columnIdSeed = 1;
   computed: {
     owner: function owner() {
       var parent = this.$parent;
-      while (parent && !parent.tableId) {
+      while (parent && !parent.TableId) {
         parent = parent.$parent;
       }
       return parent;
     },
     columnOrTableParent: function columnOrTableParent() {
       var parent = this.$parent;
-      while (parent && !parent.tableId && !parent.columnId) {
+      while (parent && !parent.TableId && !parent.columnId) {
         parent = parent.$parent;
       }
       return parent;
@@ -487,7 +487,7 @@ var columnIdSeed = 1;
     registerNormalWatchers: function registerNormalWatchers() {
       var _this3 = this;
 
-      var props = ['label', 'property', 'filters', 'filterMultiple', 'sortable', 'index', 'formatter', 'className', 'labelClassName', 'showOverflowTooltip'];
+      var props = ['label', 'property', 'filters', 'filterMultiple', 'sorTable', 'index', 'formatter', 'className', 'labelClassName', 'showOverflowTooltip'];
       // 一些属性具有别名
       var aliases = {
         prop: 'property',
@@ -546,10 +546,10 @@ var columnIdSeed = 1;
   created: function created() {
     var parent = this.columnOrTableParent;
     this.isSubColumn = this.owner !== parent;
-    this.columnId = (parent.tableId || parent.columnId) + '_column_' + columnIdSeed++;
+    this.columnId = (parent.TableId || parent.columnId) + '_column_' + columnIdSeed++;
 
     var type = this.type || 'default';
-    var sortable = this.sortable === '' ? true : this.sortable;
+    var sorTable = this.sorTable === '' ? true : this.sorTable;
     var defaults = _extends({}, cellStarts[type], {
       id: this.columnId,
       type: type,
@@ -564,14 +564,14 @@ var columnIdSeed = 1;
       isColumnGroup: false,
       filterOpened: false,
       // sort 相关属性
-      sortable: sortable,
+      sorTable: sorTable,
       // index 列
       index: this.index
     });
 
     var basicProps = ['columnKey', 'label', 'className', 'labelClassName', 'type', 'renderHeader', 'formatter', 'fixed', 'resizable'];
     var sortProps = ['sortMethod', 'sortBy', 'sortOrders'];
-    var selectProps = ['selectable', 'reserveSelection'];
+    var selectProps = ['selecTable', 'reserveSelection'];
     var filterProps = ['filterMethod', 'filters', 'filterMultiple', 'filterOpened', 'filteredValue', 'filterPlacement'];
 
     var column = this.getPropsData(basicProps, sortProps, selectProps, filterProps);
@@ -605,15 +605,15 @@ var columnIdSeed = 1;
     return h('div', this.$slots.default);
   }
 });
-// CONCATENATED MODULE: ./packages/table-column/index.js
+// CONCATENATED MODULE: ./packages/Table-column/index.js
 
 
 /* istanbul ignore next */
-table_column.install = function (Vue) {
-  Vue.component(table_column.name, table_column);
+Table_column.install = function (Vue) {
+  Vue.component(Table_column.name, Table_column);
 };
 
-/* harmony default export */ var packages_table_column = __webpack_exports__["default"] = (table_column);
+/* harmony default export */ var packages_Table_column = __webpack_exports__["default"] = (Table_column);
 
 /***/ }),
 
@@ -722,7 +722,7 @@ var orderBy = function orderBy(array, sortKey, reverse, sortMethod, sortBy) {
   }).sort(function (a, b) {
     var order = compare(a, b);
     if (!order) {
-      // make stable https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+      // make sTable https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
       order = a.index - b.index;
     }
     return order * reverse;
@@ -731,9 +731,9 @@ var orderBy = function orderBy(array, sortKey, reverse, sortMethod, sortBy) {
   });
 };
 
-var getColumnById = function getColumnById(table, columnId) {
+var getColumnById = function getColumnById(Table, columnId) {
   var column = null;
-  table.columns.forEach(function (item) {
+  Table.columns.forEach(function (item) {
     if (item.id === columnId) {
       column = item;
     }
@@ -741,10 +741,10 @@ var getColumnById = function getColumnById(table, columnId) {
   return column;
 };
 
-var getColumnByKey = function getColumnByKey(table, columnKey) {
+var getColumnByKey = function getColumnByKey(Table, columnKey) {
   var column = null;
-  for (var i = 0; i < table.columns.length; i++) {
-    var item = table.columns[i];
+  for (var i = 0; i < Table.columns.length; i++) {
+    var item = Table.columns[i];
     if (item.columnKey === columnKey) {
       column = item;
       break;
@@ -753,10 +753,10 @@ var getColumnByKey = function getColumnByKey(table, columnKey) {
   return column;
 };
 
-var getColumnByCell = function getColumnByCell(table, cell) {
-  var matches = (cell.className || '').match(/el-table_[^\s]+/gm);
+var getColumnByCell = function getColumnByCell(Table, cell) {
+  var matches = (cell.className || '').match(/el-Table_[^\s]+/gm);
   if (matches) {
-    return getColumnById(table, matches[0]);
+    return getColumnById(Table, matches[0]);
   }
   return null;
 };

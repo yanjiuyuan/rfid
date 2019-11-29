@@ -445,7 +445,7 @@ function def (obj, key, val, enumerable) {
   Object.defineProperty(obj, key, {
     value: val,
     enumerable: !!enumerable,
-    writable: true,
+    wriTable: true,
     configurable: true
   });
 }
@@ -4991,14 +4991,14 @@ var mustUseProp = function (tag, type, attr) {
   )
 };
 
-var isEnumeratedAttr = makeMap('contenteditable,draggable,spellcheck');
+var isEnumeratedAttr = makeMap('contentediTable,draggable,spellcheck');
 
 var isBooleanAttr = makeMap(
   'allowfullscreen,async,autofocus,autoplay,checked,compact,controls,declare,' +
   'default,defaultchecked,defaultmuted,defaultselected,defer,disabled,' +
   'enabled,formnovalidate,hidden,indeterminate,inert,ismap,itemscope,loop,multiple,' +
   'muted,nohref,noresize,noshade,novalidate,nowrap,open,pauseonexit,readonly,' +
-  'required,reversed,scoped,seamless,selected,sortable,translate,' +
+  'required,reversed,scoped,seamless,selected,sorTable,translate,' +
   'truespeed,typemustmatch,visible'
 );
 
@@ -5111,7 +5111,7 @@ var isHTMLTag = makeMap(
   'a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,' +
   's,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,' +
   'embed,object,param,source,canvas,script,noscript,del,ins,' +
-  'caption,col,colgroup,table,thead,tbody,td,th,tr,' +
+  'caption,col,colgroup,Table,thead,tbody,td,th,tr,' +
   'button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,' +
   'output,progress,select,textarea,' +
   'details,dialog,menu,menuitem,summary,' +
@@ -6728,7 +6728,7 @@ function model (
     warn$1(
       "<" + (el.tag) + " v-model=\"" + value + "\">: " +
       "v-model is not supported on this element type. " +
-      'If you are working with contenteditable, it\'s recommended to ' +
+      'If you are working with contentediTable, it\'s recommended to ' +
       'wrap a library dedicated for that purpose inside a custom component.'
     );
   }
@@ -8155,7 +8155,7 @@ var Transition = {
 // Provides transition support for list items.
 // supports move transitions using the FLIP technique.
 
-// Because the vdom's children update algorithm is "unstable" - i.e.
+// Because the vdom's children update algorithm is "unsTable" - i.e.
 // it doesn't guarantee the relative positioning of removed elements,
 // we force transition-group to update its children into two passes:
 // in the first pass, we remove all nodes that need to be removed,

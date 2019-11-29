@@ -397,7 +397,7 @@ var time_spinner = __webpack_require__(34);
 
       var date = void 0;
       if (newVal instanceof Date) {
-        date = Object(date_util_["limitTimeRange"])(newVal, this.selectableRange, this.format);
+        date = Object(date_util_["limitTimeRange"])(newVal, this.selecTableRange, this.format);
       } else if (!newVal) {
         date = this.defaultValue ? new Date(this.defaultValue) : new Date();
       }
@@ -410,8 +410,8 @@ var time_spinner = __webpack_require__(34);
         this.needInitAdjust = false;
       }
     },
-    selectableRange: function selectableRange(val) {
-      this.$refs.spinner.selectableRange = val;
+    selecTableRange: function selecTableRange(val) {
+      this.$refs.spinner.selecTableRange = val;
     },
     defaultValue: function defaultValue(val) {
       if (!Object(date_util_["isDate"])(this.value)) {
@@ -428,7 +428,7 @@ var time_spinner = __webpack_require__(34);
       defaultValue: null,
       date: new Date(),
       oldValue: new Date(),
-      selectableRange: [],
+      selecTableRange: [],
       selectionRange: [0, 2],
       disabled: false,
       arrowControl: false,
@@ -474,7 +474,7 @@ var time_spinner = __webpack_require__(34);
       var first = arguments[1];
 
       if (first) return;
-      var date = Object(date_util_["clearMilliseconds"])(Object(date_util_["limitTimeRange"])(this.date, this.selectableRange, this.format));
+      var date = Object(date_util_["clearMilliseconds"])(Object(date_util_["limitTimeRange"])(this.date, this.selecTableRange, this.format));
       this.$emit('pick', date, visible, first);
     },
     handleKeydown: function handleKeydown(event) {
@@ -498,7 +498,7 @@ var time_spinner = __webpack_require__(34);
       }
     },
     isValidValue: function isValidValue(date) {
-      return Object(date_util_["timeWithinRange"])(date, this.selectableRange, this.format);
+      return Object(date_util_["timeWithinRange"])(date, this.selecTableRange, this.format);
     },
     adjustSpinners: function adjustSpinners() {
       return this.$refs.spinner.adjustSpinners();
@@ -615,7 +615,7 @@ var render = function() {
             class: "el-date-editor--" + _vm.type,
             attrs: {
               readonly:
-                !_vm.editable ||
+                !_vm.ediTable ||
                 _vm.readonly ||
                 _vm.type === "dates" ||
                 _vm.type === "week",
@@ -709,7 +709,7 @@ var render = function() {
                   autocomplete: "off",
                   placeholder: _vm.startPlaceholder,
                   disabled: _vm.pickerDisabled,
-                  readonly: !_vm.editable || _vm.readonly,
+                  readonly: !_vm.ediTable || _vm.readonly,
                   name: _vm.name && _vm.name[0]
                 },
                 domProps: { value: _vm.displayValue && _vm.displayValue[0] },
@@ -738,7 +738,7 @@ var render = function() {
                   autocomplete: "off",
                   placeholder: _vm.endPlaceholder,
                   disabled: _vm.pickerDisabled,
-                  readonly: !_vm.editable || _vm.readonly,
+                  readonly: !_vm.ediTable || _vm.readonly,
                   name: _vm.name && _vm.name[1]
                 },
                 domProps: { value: _vm.displayValue && _vm.displayValue[1] },
@@ -1151,7 +1151,7 @@ var validator = function validator(val) {
       validator: validator
     },
     popperClass: String,
-    editable: {
+    ediTable: {
       type: Boolean,
       default: true
     },
@@ -1377,8 +1377,8 @@ var validator = function validator(val) {
       }
     },
     formatToValue: function formatToValue(date) {
-      var isFormattable = Object(date_util_["isDateObject"])(date) || Array.isArray(date) && date.every(date_util_["isDateObject"]);
-      if (this.valueFormat && isFormattable) {
+      var isFormatTable = Object(date_util_["isDateObject"])(date) || Array.isArray(date) && date.every(date_util_["isDateObject"]);
+      if (this.valueFormat && isFormatTable) {
         return formatAsFormatAndType(date, this.valueFormat, this.type, this.rangeSeparator);
       } else {
         return date;
@@ -1599,13 +1599,13 @@ var validator = function validator(val) {
       var updateOptions = function updateOptions() {
         var options = _this3.pickerOptions;
 
-        if (options && options.selectableRange) {
-          var ranges = options.selectableRange;
+        if (options && options.selecTableRange) {
+          var ranges = options.selecTableRange;
           var parser = TYPE_VALUE_RESOLVER_MAP.datetimerange.parser;
           var format = DEFAULT_FORMATS.timerange;
 
           ranges = Array.isArray(ranges) ? ranges : [ranges];
-          _this3.picker.selectableRange = ranges.map(function (range) {
+          _this3.picker.selecTableRange = ranges.map(function (range) {
             return parser(range, format, _this3.rangeSeparator);
           });
         }
@@ -1613,7 +1613,7 @@ var validator = function validator(val) {
         for (var option in options) {
           if (options.hasOwnProperty(option) &&
           // 忽略 time-picker 的该配置项
-          option !== 'selectableRange') {
+          option !== 'selecTableRange') {
             _this3.picker[option] = options[option];
           }
         }
@@ -2233,10 +2233,10 @@ var repeat_click = __webpack_require__(30);
       return this.date.getSeconds();
     },
     hoursList: function hoursList() {
-      return Object(date_util_["getRangeHours"])(this.selectableRange);
+      return Object(date_util_["getRangeHours"])(this.selecTableRange);
     },
     minutesList: function minutesList() {
-      return Object(date_util_["getRangeMinutes"])(this.selectableRange, this.hours);
+      return Object(date_util_["getRangeMinutes"])(this.selecTableRange, this.hours);
     },
     arrowHourList: function arrowHourList() {
       var hours = this.hours;
@@ -2254,7 +2254,7 @@ var repeat_click = __webpack_require__(30);
 
   data: function data() {
     return {
-      selectableRange: [],
+      selecTableRange: [],
       currentScrollbar: null
     };
   },
@@ -2770,8 +2770,8 @@ var advanceTime = function advanceTime(date, amount) {
     },
     handleChange: function handleChange() {
       if (this.isValidValue([this.minDate, this.maxDate])) {
-        this.$refs.minSpinner.selectableRange = [[time_rangevue_type_script_lang_js_minTimeOfDay(this.minDate), this.maxDate]];
-        this.$refs.maxSpinner.selectableRange = [[this.minDate, time_rangevue_type_script_lang_js_maxTimeOfDay(this.maxDate)]];
+        this.$refs.minSpinner.selecTableRange = [[time_rangevue_type_script_lang_js_minTimeOfDay(this.minDate), this.maxDate]];
+        this.$refs.maxSpinner.selecTableRange = [[this.minDate, time_rangevue_type_script_lang_js_maxTimeOfDay(this.maxDate)]];
         this.$emit('pick', [this.minDate, this.maxDate], true);
       }
     },
@@ -2786,11 +2786,11 @@ var advanceTime = function advanceTime(date, amount) {
     handleConfirm: function handleConfirm() {
       var visible = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-      var minSelectableRange = this.$refs.minSpinner.selectableRange;
-      var maxSelectableRange = this.$refs.maxSpinner.selectableRange;
+      var minSelecTableRange = this.$refs.minSpinner.selecTableRange;
+      var maxSelecTableRange = this.$refs.maxSpinner.selecTableRange;
 
-      this.minDate = Object(date_util_["limitTimeRange"])(this.minDate, minSelectableRange, this.format);
-      this.maxDate = Object(date_util_["limitTimeRange"])(this.maxDate, maxSelectableRange, this.format);
+      this.minDate = Object(date_util_["limitTimeRange"])(this.minDate, minSelecTableRange, this.format);
+      this.maxDate = Object(date_util_["limitTimeRange"])(this.maxDate, maxSelecTableRange, this.format);
 
       this.$emit('pick', [this.minDate, this.maxDate], visible);
     },
@@ -2811,7 +2811,7 @@ var advanceTime = function advanceTime(date, amount) {
       }
     },
     isValidValue: function isValidValue(date) {
-      return Array.isArray(date) && Object(date_util_["timeWithinRange"])(this.minDate, this.$refs.minSpinner.selectableRange) && Object(date_util_["timeWithinRange"])(this.maxDate, this.$refs.maxSpinner.selectableRange);
+      return Array.isArray(date) && Object(date_util_["timeWithinRange"])(this.minDate, this.$refs.minSpinner.selecTableRange) && Object(date_util_["timeWithinRange"])(this.maxDate, this.$refs.maxSpinner.selecTableRange);
     },
     handleKeydown: function handleKeydown(event) {
       var keyCode = event.keyCode;

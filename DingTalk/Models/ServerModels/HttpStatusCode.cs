@@ -139,8 +139,8 @@ namespace DingTalk.Models.ServerModels
         MethodNotAllowed = 405,
         //
         // 摘要: 
-        //     等效于 HTTP 状态 406。 System.Net.HttpStatusCode.NotAcceptable 指示客户端已用 Accept 头指示将不接受资源的任何可用表示形式。
-        NotAcceptable = 406,
+        //     等效于 HTTP 状态 406。 System.Net.HttpStatusCode.NotAccepTable 指示客户端已用 Accept 头指示将不接受资源的任何可用表示形式。
+        NotAccepTable = 406,
         //
         // 摘要: 
         //     等效于 HTTP 状态 407。 System.Net.HttpStatusCode.ProxyAuthenticationRequired 指示请求的代理要求身份验证。

@@ -204,7 +204,7 @@ var render = function() {
     "div",
     {
       staticClass: "el-collapse",
-      attrs: { role: "tablist", "aria-multiselectable": "true" }
+      attrs: { role: "tablist", "aria-multiselecTable": "true" }
     },
     [_vm._t("default")],
     2

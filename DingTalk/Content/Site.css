@@ -43,7 +43,7 @@ form{
 .hint {
     color: #808080;
 }
-.tableRight{
+.TableRight{
     float:right;
     margin-top:10px;
     margin-right:10px;
@@ -75,13 +75,13 @@ form{
     border: 1px solid #F56C6C;
 }
 
-.el-table .warning-row {
+.el-Table .warning-row {
     background: oldlace;
 }
-.el-table .error-row {
+.el-Table .error-row {
     background: oldlace;
 }
-.el-table .success-row {
+.el-Table .success-row {
     background: #f0f9eb;
 }
 
@@ -363,7 +363,7 @@ ol li {
     padding-right: 8px;
 }
 
-.el-table__expanded-cell[class*=cell]{
+.el-Table__expanded-cell[class*=cell]{
     padding: 0px 10px;
 }
 #partPage{
@@ -411,16 +411,16 @@ canvas {
     
 }
 /*表格缩小*/
-.el-table .cell input[validateevent*="true"] {
+.el-Table .cell input[validateevent*="true"] {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
 
-.el-table .cell .repadding input {
+.el-Table .cell .repadding input {
     padding-left: 15px !important;
 }
 
-.el-table .cell .repadding i {
+.el-Table .cell .repadding i {
     width: 0px !important;
 }
 

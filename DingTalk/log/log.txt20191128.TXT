@@ -1,0 +1,12 @@
+2019-11-28 16:03:01,340 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-28 16:03:05,049 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-28 16:06:18,054 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DataTable/Read 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：213
+2019-11-28 16:32:42,572 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-28 16:32:45,876 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-28 16:35:16,259 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DataTable/Read 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：214
+2019-11-28 16:37:10,125 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DataTable/Read 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：215
+2019-11-28 16:38:08,923 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DataTable/Read 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：216
+2019-11-28 17:41:33,588 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-28 17:41:36,593 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-28 17:47:04,943 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-28 17:47:07,679 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

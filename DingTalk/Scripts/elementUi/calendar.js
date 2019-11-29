@@ -301,7 +301,7 @@ var render = function() {
           "div",
           { key: "no-range", staticClass: "el-calendar__body" },
           [
-            _c("date-table", {
+            _c("date-Table", {
               attrs: {
                 date: _vm.date,
                 "selected-day": _vm.realSelectedDay,
@@ -316,7 +316,7 @@ var render = function() {
           "div",
           { key: "has-range", staticClass: "el-calendar__body" },
           _vm._l(_vm.validatedRange, function(range, index) {
-            return _c("date-table", {
+            return _c("date-Table", {
               key: index,
               attrs: {
                 date: range[0],
@@ -349,13 +349,13 @@ var date_default = /*#__PURE__*/__webpack_require__.n(date_);
 // EXTERNAL MODULE: external "element-ui/lib/utils/date-util"
 var date_util_ = __webpack_require__(1);
 
-// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/calendar/src/date-table.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/calendar/src/date-Table.vue?vue&type=script&lang=js&
 
 
 
 
 var WEEK_DAYS = Object(date_util_["getI18nSettings"])().dayNames;
-/* harmony default export */ var date_tablevue_type_script_lang_js_ = ({
+/* harmony default export */ var date_Tablevue_type_script_lang_js_ = ({
   props: {
     selectedDay: String, // formated date yyyy-MM-dd
     range: {
@@ -530,10 +530,10 @@ var WEEK_DAYS = Object(date_util_["getI18nSettings"])().dayNames;
       );
     })]);
     return h(
-      'table',
+      'Table',
       {
         'class': {
-          'el-calendar-table': true,
+          'el-calendar-Table': true,
           'is-range': this.isInRange
         },
         attrs: { cellspacing: '0',
@@ -544,8 +544,8 @@ var WEEK_DAYS = Object(date_util_["getI18nSettings"])().dayNames;
           'tr',
           {
             'class': {
-              'el-calendar-table__row': true,
-              'el-calendar-table__row--hide-border': index === 0 && _this.hideHeader
+              'el-calendar-Table__row': true,
+              'el-calendar-Table__row--hide-border': index === 0 && _this.hideHeader
             },
             key: index },
           [row.map(function (cell, key) {
@@ -569,13 +569,13 @@ var WEEK_DAYS = Object(date_util_["getI18nSettings"])().dayNames;
     );
   }
 });
-// CONCATENATED MODULE: ./packages/calendar/src/date-table.vue?vue&type=script&lang=js&
- /* harmony default export */ var src_date_tablevue_type_script_lang_js_ = (date_tablevue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./packages/calendar/src/date-Table.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_date_Tablevue_type_script_lang_js_ = (date_Tablevue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
 
-// CONCATENATED MODULE: ./packages/calendar/src/date-table.vue
-var date_table_render, date_table_staticRenderFns
+// CONCATENATED MODULE: ./packages/calendar/src/date-Table.vue
+var date_Table_render, date_Table_staticRenderFns
 
 
 
@@ -583,9 +583,9 @@ var date_table_render, date_table_staticRenderFns
 /* normalize component */
 
 var component = Object(componentNormalizer["a" /* default */])(
-  src_date_tablevue_type_script_lang_js_,
-  date_table_render,
-  date_table_staticRenderFns,
+  src_date_Tablevue_type_script_lang_js_,
+  date_Table_render,
+  date_Table_staticRenderFns,
   false,
   null,
   null,
@@ -595,8 +595,8 @@ var component = Object(componentNormalizer["a" /* default */])(
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "packages/calendar/src/date-table.vue"
-/* harmony default export */ var date_table = (component.exports);
+component.options.__file = "packages/calendar/src/date-Table.vue"
+/* harmony default export */ var date_Table = (component.exports);
 // CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/calendar/src/main.vue?vue&type=script&lang=js&
 //
 //
@@ -672,7 +672,7 @@ var oneDay = 86400000;
   mixins: [locale_default.a],
 
   components: {
-    DateTable: date_table
+    DateTable: date_Table
   },
 
   props: {

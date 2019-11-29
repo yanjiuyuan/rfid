@@ -26,7 +26,6 @@
         /// <summary>
         /// 前端调用参数
         /// </summary>
-        [MaxLength(1000)]
         public string RequstResult { get; set; }
 
         /// <summary>

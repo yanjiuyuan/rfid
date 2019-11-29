@@ -448,7 +448,7 @@ var stopPropagation = function stopPropagation(e) {
       };
 
       if (config.checkStrictly) {
-        // when every node is selectable, click event should not trigger expand event.
+        // when every node is selecTable, click event should not trigger expand event.
         events.nativeOn.click = stopPropagation;
       }
 
@@ -558,7 +558,7 @@ var stopPropagation = function stopPropagation(e) {
         },
         'class': {
           'el-cascader-node': true,
-          'is-selectable': checkStrictly,
+          'is-selecTable': checkStrictly,
           'in-active-path': inActivePath,
           'in-checked-path': inCheckedPath,
           'is-active': isChecked,
@@ -778,7 +778,7 @@ cascader_menu_component.options.__file = "packages/cascader-panel/src/cascader-m
 var shared_ = __webpack_require__(22);
 
 // CONCATENATED MODULE: ./packages/cascader-panel/src/node.js
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.wriTable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 

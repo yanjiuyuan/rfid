@@ -356,6 +356,7 @@
     <Compile Include="App_Start\SwaggerNet.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bussiness\EF\EFHelper.cs" />
+    <Compile Include="Bussiness\EF\SqlHelper.cs" />
     <Compile Include="Bussiness\FlowInfo\FlowInfoServer.cs" />
     <Compile Include="Bussiness\Word\WordHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -367,6 +368,7 @@
     <Compile Include="Controllers\ContractManagerController.cs" />
     <Compile Include="Controllers\CooperateManagerController.cs" />
     <Compile Include="Controllers\CreateProjectController.cs" />
+    <Compile Include="Controllers\DataTableController.cs" />
     <Compile Include="Controllers\DrawingChangeController.cs" />
     <Compile Include="Controllers\DrawingDownController.cs" />
     <Compile Include="Controllers\DrawingUploadController.cs" />
@@ -406,6 +408,7 @@
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\ShowDetailController.cs" />
     <Compile Include="Controllers\DingTalkServersController.cs" />
+    <Compile Include="Controllers\TableManagerController.cs" />
     <Compile Include="Controllers\TechnicalSupportController.cs" />
     <Compile Include="Controllers\VoteManagerController.cs" />
     <Compile Include="DingTalkHelper\TopSDKTest.cs" />
@@ -444,6 +447,9 @@
     <Compile Include="Models\DingModels\ProjectClosure.cs" />
     <Compile Include="Models\DingModels\ProjectFunding.cs" />
     <Compile Include="Models\DingModels\Role.cs" />
+    <Compile Include="Models\DingModels\SqlExe.cs" />
+    <Compile Include="Models\DingModels\TableInfo.cs" />
+    <Compile Include="Models\DingModels\Tables.cs" />
     <Compile Include="Models\DingModels\TasksQuery.cs" />
     <Compile Include="Models\ServerModels\AccessTokenResponseModel.cs" />
     <Compile Include="Models\ServerModels\AddRepartmentModel.cs" />

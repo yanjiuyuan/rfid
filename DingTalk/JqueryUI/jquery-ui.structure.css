@@ -37,7 +37,7 @@
 .ui-helper-clearfix:before,
 .ui-helper-clearfix:after {
 	content: "";
-	display: table;
+	display: Table;
 	border-collapse: collapse;
 }
 .ui-helper-clearfix:after {
@@ -165,16 +165,16 @@
 	right: -5px;
 	top: -5px;
 }
-.ui-selectable {
+.ui-selecTable {
 	-ms-touch-action: none;
 	touch-action: none;
 }
-.ui-selectable-helper {
+.ui-selecTable-helper {
 	position: absolute;
 	z-index: 100;
 	border: 1px dotted black;
 }
-.ui-sortable-handle {
+.ui-sorTable-handle {
 	-ms-touch-action: none;
 	touch-action: none;
 }
@@ -368,7 +368,7 @@ button.ui-button::-moz-focus-inner {
 .ui-datepicker select.ui-datepicker-year {
 	width: 49%;
 }
-.ui-datepicker table {
+.ui-datepicker Table {
 	width: 100%;
 	font-size: .9em;
 	border-collapse: collapse;
@@ -418,7 +418,7 @@ button.ui-button::-moz-focus-inner {
 .ui-datepicker-multi .ui-datepicker-group {
 	float: left;
 }
-.ui-datepicker-multi .ui-datepicker-group table {
+.ui-datepicker-multi .ui-datepicker-group Table {
 	width: 95%;
 	margin: 0 auto .4em;
 }

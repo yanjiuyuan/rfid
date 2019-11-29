@@ -12,18 +12,18 @@
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 
-    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="申请名称" prop="Name">
-            <el-input v-model="tableForm.Name" style="width:550px;"></el-input>
+            <el-input v-model="TableForm.Name" style="width:550px;"></el-input>
         </el-form-item>
         <el-form-item label="申请类别" prop="Type">
-            <el-select v-model="tableForm.Type" style="width:300px;">
+            <el-select v-model="TableForm.Type" style="width:300px;">
                 <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="tableForm.ProjectNo" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+            <el-select v-model="TableForm.ProjectNo" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -34,7 +34,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="申请发明人" prop="Inventor">
-            <el-input v-model="tableForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
+            <el-input v-model="TableForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
     </el-form>
@@ -70,7 +70,7 @@
                     emplId: '15545554432996107'
                 }],
 
-                tableForm: {
+                TableForm: {
                     Company: "",
                     Name: '',
                     Type: "",
@@ -87,12 +87,12 @@
         },
         methods: {
             onSubmit(formName) {
-                this.tableForm['Project'] = this.ruleForm.ProjectName
+                this.TableForm['Project'] = this.ruleForm.ProjectName
                 //根据类型添加审批人
-                this.tableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
+                this.TableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 let callBack = (taskId) => {
-                    this.tableForm['TaskId'] = taskId
-                    this.PostData('IntellectualProperty/Save', this.tableForm, () => {
+                    this.TableForm['TaskId'] = taskId
+                    this.PostData('IntellectualProperty/Save', this.TableForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -118,10 +118,10 @@
                             names.push(d.name)
                             ids.push(d.emplId)
                         }
-                        that.tableForm.Inventor = names.join(',')
-                        that.tableForm.InventorId = ids.join(',')
-                        that.tableForm.ActualInventor = names.join(',')
-                        that.tableForm.ActualInventorId = ids.join(',')
+                        that.TableForm.Inventor = names.join(',')
+                        that.TableForm.InventorId = ids.join(',')
+                        that.TableForm.ActualInventor = names.join(',')
+                        that.TableForm.ActualInventorId = ids.join(',')
                     },
                     onFail: function (err) { }
                 });

@@ -46,13 +46,13 @@
 	float:					left;
 }
 
-.ui-colorpicker table {
+.ui-colorpicker Table {
 	width:					100%;
-    font-size:				100%; /* Reset browser table font-size */
+    font-size:				100%; /* Reset browser Table font-size */
 	margin:					0;
 }
 
-.ui-colorpicker table td {
+.ui-colorpicker Table td {
 	vertical-align:			top;
 }
 

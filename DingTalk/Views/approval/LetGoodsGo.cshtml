@@ -11,10 +11,10 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="单位名称" prop="Company">
-            <el-select v-model="tableForm.Company" style="width:400px;">
+            <el-select v-model="TableForm.Company" style="width:400px;">
                 <el-option v-for="item in CompanyNames"
                            :key="item"
                            :label="item"
@@ -23,26 +23,26 @@
             </el-select>
         </el-form-item>
         <el-form-item label="车牌号">
-            <el-input v-model="tableForm.CarNo" style="width:200px;"></el-input>
+            <el-input v-model="TableForm.CarNo" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="Tel">
-            <el-input v-model="tableForm.Tel" style="width:200px;"></el-input>
+            <el-input v-model="TableForm.Tel" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="物品名称" prop="Name">
-            <el-input v-model="tableForm.Name" style="width:300px;"></el-input>
+            <el-input v-model="TableForm.Name" style="width:300px;"></el-input>
         </el-form-item>
         <el-form-item label="数量" prop="Count">
-            <el-input v-model="tableForm.Count" style="width:200px;"></el-input>
+            <el-input v-model="TableForm.Count" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="单位" prop="Unit">
-            <el-input v-model="tableForm.Unit" style="width:200px;"></el-input>
+            <el-input v-model="TableForm.Unit" style="width:200px;"></el-input>
         </el-form-item>
         <el-form-item label="放行理由" prop="Cause">
-            <el-input v-model="tableForm.Cause" type="textarea" style="width:500px;"></el-input>
+            <el-input v-model="TableForm.Cause" type="textarea" style="width:500px;"></el-input>
         </el-form-item>
         <el-form-item label="放行日期" prop="Date">
-            <el-date-picker v-model="tableForm.Date"
-                            type="date" :editable="false"
+            <el-date-picker v-model="TableForm.Date"
+                            type="date" :ediTable="false"
                             value-format="yyyy-MM-dd"
                             @*v-on:change="selectTime"*@
                             placeholder="选择日期">
@@ -82,7 +82,7 @@
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
-                tableForm: {
+                TableForm: {
                     CarNo: "",
                     Company: '泉州华中科技大学智能制造研究院',
                     Tel: "",
@@ -114,8 +114,8 @@
                     return
                 }
                 let callBack = (taskId) => {
-                    this.tableForm['TaskId'] = taskId
-                    this.PostData('MaterialRelease/Save', this.tableForm, () => {
+                    this.TableForm['TaskId'] = taskId
+                    this.PostData('MaterialRelease/Save', this.TableForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {

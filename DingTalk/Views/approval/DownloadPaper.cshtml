@@ -13,18 +13,18 @@
     <template v-if="project.length == 0">
         <h4>选择项目</h4>
         <!--表格實體-->
-        <el-table :data="tableData" stripe border>
-            <el-table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
-            </el-table-column>
-            <el-table-column label="操作">
+        <el-Table :data="TableData" stripe border>
+            <el-Table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
+            </el-Table-column>
+            <el-Table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button v-on:click.native.prevent="selectProject(scope.$index, tableData)"
+                    <el-button v-on:click.native.prevent="selectProject(scope.$index, TableData)"
                                type="pirmary" size="small">
                         选择项目
                     </el-button>
                 </template>
-            </el-table-column>
-        </el-table>
+            </el-Table-column>
+        </el-Table>
         <!--底部翻頁-->
         <div style="text-align:right">
             <el-pagination v-on:size-change="handleSizeChange"
@@ -38,33 +38,33 @@
         </div>
     </template>
     <template v-else>
-        <el-table :data="project" stripe border>
-            <el-table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
-            </el-table-column>
-            <el-table-column label="操作">
+        <el-Table :data="project" stripe border>
+            <el-Table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
+            </el-Table-column>
+            <el-Table-column label="操作">
                 <template slot-scope="scope">
                     <el-button v-on:click.native.prevent="project = []"
                                type="pirmary" size="small">
                         重新选择
                     </el-button>
                 </template>
-            </el-table-column>
-        </el-table>
+            </el-Table-column>
+        </el-Table>
     </template>
 
     <!--部件编辑部分-->
-    <el-table :data="tableParts"
+    <el-Table :data="TableParts"
               style="width: 100%;margin-top:100px;">
-        <el-table-column label="流水号" prop="TaskId"></el-table-column>
-        <el-table-column label="代号" prop="DrawingNo"></el-table-column>
-        <el-table-column label="名称" prop="Name"></el-table-column>
-        @*<el-table-column label="材料" prop="MaterialScience"></el-table-column>
-        <el-table-column label="品牌" prop="Brand"></el-table-column>*@
-        <el-table-column label="数量" prop="Count"></el-table-column>
-        <el-table-column label="单位" prop="Unit"></el-table-column>
-        <el-table-column label="类别" prop="Sorts"></el-table-column>
-        <el-table-column label="备注" prop="Mark"></el-table-column>
-        <el-table-column type="expand">
+        <el-Table-column label="流水号" prop="TaskId"></el-Table-column>
+        <el-Table-column label="代号" prop="DrawingNo"></el-Table-column>
+        <el-Table-column label="名称" prop="Name"></el-Table-column>
+        @*<el-Table-column label="材料" prop="MaterialScience"></el-Table-column>
+        <el-Table-column label="品牌" prop="Brand"></el-Table-column>*@
+        <el-Table-column label="数量" prop="Count"></el-Table-column>
+        <el-Table-column label="单位" prop="Unit"></el-Table-column>
+        <el-Table-column label="类别" prop="Sorts"></el-Table-column>
+        <el-Table-column label="备注" prop="Mark"></el-Table-column>
+        <el-Table-column type="expand">
             <template slot-scope="scope">
                 <el-collapse accordion>
                     <el-collapse-item v-for="(flow,index) in scope.row.flows" :key="flow.id" :title="flow.ProcedureName">
@@ -74,7 +74,7 @@
                                 <el-input v-model="flow.ProcedureName" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.ProcedureInfoId)" type="danger" class="tableRight">删除工序</el-button>
+                                <el-button size="mini" v-on:click="deleteFlow(scope.row.DrawingNo,index,flow.ProcedureInfoId)" type="danger" class="TableRight">删除工序</el-button>
                             </el-form-item>
                         </el-form>
                         <!--工作分配列表-->
@@ -114,7 +114,7 @@
                                                 :name="['startTime','endTime']"
                                                 type="daterange"
                                                 align="right"
-                                                unlink-panels :editable="false"
+                                                unlink-panels :ediTable="false"
                                                 range-separator="至"
                                                 start-placeholder="开始日期"
                                                 end-placeholder="结束日期"
@@ -139,13 +139,13 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item>
-                        <el-button size="mini" type="primary" class="tableRight"
+                        <el-button size="mini" type="primary" class="TableRight"
                                    v-on:click="addFlow(scope.row,scope.row.DrawingNo)">绑定工序</el-button>
                     </el-form-item>
                 </el-form>
             </template>
-        </el-table-column>
-    </el-table>
+        </el-Table-column>
+    </el-Table>
     <!--底部翻頁-->
     <div style="text-align:right">
         <el-pagination v-on:size-change="partsSizeChange"
@@ -175,7 +175,7 @@
                 //项目列表相关参数
                 data: [],
                 nodeInfo: {},
-                tableData: [],
+                TableData: [],
                 projectItems: {
                     ProjectId: '项目编号',
                     ProjectName: '项目名称',
@@ -187,7 +187,7 @@
                 project: [],
                 //零件列表相关参数
                 parts: [],
-                tableParts: [],
+                TableParts: [],
                 partsRows: 0,
                 partsCurrentPage: 1,
                 partsPageSize: 5,
@@ -653,7 +653,7 @@
             getPartsData() {
                 console.log('get part data')
                 var start = this.partsPageSize * (this.partsCurrentPage - 1)
-                this.tableParts = this.parts.slice(start, start + this.partsPageSize)
+                this.TableParts = this.parts.slice(start, start + this.partsPageSize)
             },
             partsSizeChange: function (val) {
                 console.log('part size change')

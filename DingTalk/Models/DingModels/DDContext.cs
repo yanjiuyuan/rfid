@@ -11,7 +11,7 @@ namespace DingTalk.Models.DingModels
             : base("name=DDContext")
         {
         }
-        public virtual DbSet<ContextError> ContextError{ get; set; }
+        public virtual DbSet<ContextError> ContextError { get; set; }
         public virtual DbSet<FlowMan> FlowMan { get; set; }
         public virtual DbSet<FlowProgress> FlowProgress { get; set; }
         public virtual DbSet<FlowQx> FlowQx { get; set; }
@@ -95,6 +95,11 @@ namespace DingTalk.Models.DingModels
         public virtual DbSet<ProcessingProgress> ProcessingProgress { get; set; }
 
         public virtual DbSet<Role> Role { get; set; }
+
+        public DbSet<TableInfo> TableInfo { get; set; }
+        public DbSet<Tables> Tables { get; set; }
+        public DbSet<SqlExe> SqlExe { get; set; }
+
 
 
 

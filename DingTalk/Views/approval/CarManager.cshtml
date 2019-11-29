@@ -17,8 +17,8 @@
         <el-button v-on:click="handleAdd" type="primary">添加车辆</el-button>
     </div>
     <!--表格實體-->
-    <el-table :data="tableData" stripe border>
-        <el-table-column v-for="i in items" :prop="i" :key="i" :label="tableItems[i]"></el-table-column>
+    <el-table :data="TableData" stripe border>
+        <el-table-column v-for="i in items" :prop="i" :key="i" :label="TableItems[i]"></el-table-column>
 
         <el-table-column label="操作" width="200">
             <template slot-scope="scope">
@@ -48,7 +48,7 @@
         </el-form-item>
         <el-form-item label="用车时间" required="required">
             <el-date-picker v-model="timeRange"
-                            type="datetimerange" :editable="false"
+                            type="datetimerange" :ediTable="false"
                             v-on:change="selectTime"
                             @*:picker-options="dayPickerOptions"*@
                             range-separator="至"
@@ -73,7 +73,7 @@
         </el-form-item>
     </el-form>
     <!--表格實體-->
-    <el-table :data="tableData2" stripe border v-if="searchParam.IsPublic">
+    <el-table :data="TableData2" stripe border v-if="searchParam.IsPublic">
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
@@ -89,7 +89,7 @@
             </template>
         </el-table-column>
     </el-table>
-    <el-table :data="tableData2" stripe border v-else>
+    <el-table :data="TableData2" stripe border v-else>
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
@@ -122,6 +122,8 @@
                 </el-form-item>
                 <el-form-item label="每公里单价(元)" prop="UnitPricePerKilometre">
                     <sam-input :value.sync="ruleForm.UnitPricePerKilometre" type="number" min="0" :required="true"></sam-input>
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' " :key="i" :label="TableItems[i]" :prop="i">
+                    <el-input v-model="ruleForm[i]"></el-input>
                 </el-form-item>
                 <hr />
                 <el-form-item>
@@ -138,7 +140,7 @@
 <script>
     var Index = 0
     var id = ''
-    var tableItems = {
+    var TableItems = {
         Name: "名称",
         Type: "品牌",
         CarNumber: "车牌号" ,
@@ -152,7 +154,7 @@
     }
     var items = []
     var ruleForm = {}
-    for (let t in tableItems) {
+    for (let t in TableItems) {
         items.push(t)
         ruleForm[t] = ''
     }
@@ -165,9 +167,9 @@
                 disableAdd: false,
                 showAddUser: false,
                 isAdd: true,
-                tableData: [],
+                TableData: [],
                 items: items,
-                tableItems: tableItems,
+                TableItems: TableItems,
                 formInline: {
                     key: ''
                 },
@@ -194,7 +196,7 @@
                 timeRange: [],
                 totalRows2: 0,
                 data2: [],
-                tableData2:[],
+                TableData2:[],
                 ruleForm: ruleForm,
                 dialogFormVisible: false
             }
@@ -363,12 +365,12 @@
             },
             selectCarType(value) {
                 this.data2 = []
-                this.tableData2 = []
+                this.TableData2 = []
             },
             //翻頁相關事件
             getData2() {
                 var start = this.searchParam.pageSize * (this.searchParam.pageIndex - 1)
-                this.tableData2 = this.data2.slice(start, start + this.searchParam.pageSize)
+                this.TableData2 = this.data2.slice(start, start + this.searchParam.pageSize)
             },
             handleSizeChange2: function (val) {
                 this.searchParam.pageIndex = 1

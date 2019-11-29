@@ -30,6 +30,13 @@
         </el-form-item>
         <el-form-item label="外出时间" prop="BeginTime">
             <sam-timerange :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :onchange="selectTime"></sam-timerange>
+            <el-date-picker v-model="timeRange"
+                            type="datetimerange"
+                            v-on:change="selectTime" :ediTable="false"
+                            range-separator="至"
+                            start-placeholder="开始时间"
+                            end-placeholder="返回时间">
+            </el-date-picker>
         </el-form-item>
         <el-form-item label="时长/小时" prop="Duration">
             <el-input v-model="tableForm.Duration" style="width:200px;"></el-input>
