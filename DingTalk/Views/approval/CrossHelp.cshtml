@@ -12,26 +12,29 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="协作部门" prop="CooperateDept">
-            <el-select v-model="TableForm.CooperateDept" style="width:300px;">
+            <el-select v-model="tableForm.CooperateDept" style="width:300px;">
                 <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
 
         <el-form-item label="协作人" required="required">
-            <sam-group :names.sync="TableForm.CooperateMan" :ids.sync="TableForm.CooperateManId"></sam-group>
+            <sam-group :names.sync="tableForm.CooperateMan" :ids.sync="tableForm.CooperateManId"></sam-group>
         </el-form-item>
 
         <el-form-item label="协作内容" prop="CooperateContent">
-            <el-input v-model="TableForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
+            <el-input v-model="tableForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item label="协作周期" prop="StartTime">
+            <sam-timerange :value1.sync="tableForm.PlanBeginTime" :value2.sync="tableForm.PlanEndTime"></sam-timerange>
         </el-form-item>
 
-        <sam-timerange :value1.sync="TableForm.PlanBeginTime" label1="协作开始时间" :value2.sync="TableForm.PlanEndTime" label2="协作结束时间"></sam-timerange>
+        <sam-timerange :value1.sync="tableForm.PlanBeginTime" label1="协作开始时间" :value2.sync="tableForm.PlanEndTime" label2="协作结束时间"></sam-timerange>
 
         <el-form-item label="计划天数" prop="PlanDays">
-            <el-input v-model="TableForm.PlanDays" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.PlanDays" style="width:200px;"></el-input>
         </el-form-item>
     </el-form>
 
@@ -63,7 +66,7 @@
                 useTimeList: [],
                 DeptNames: DeptNames,
                 addPeopleNodes: [4, 6], //额外添加审批人节点数组
-                TableForm: {
+                tableForm: {
                     CooperateDept: "",
                     CooperateMan: "",
                     CooperateManId: "",
@@ -83,12 +86,12 @@
         },
         methods: {
             onSubmit(formName) {
-                this.$refs['TableForm'].validate((valid) => {
+                this.$refs['tableForm'].validate((valid) => {
                     if (valid) {
                         this.fileListToUrl()
                         let callBack = (taskId) => {
-                            this.TableForm['TaskId'] = taskId
-                            this.PostData('Cooperate/Save', this.TableForm, () => {
+                            this.tableForm['TaskId'] = taskId
+                            this.PostData('Cooperate/Save', this.tableForm, () => {
                                 this.$alert('恭喜提交成功', '提示信息', {
                                     confirmButtonText: '确定',
                                     callback: action => {

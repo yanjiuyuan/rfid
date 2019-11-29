@@ -154,6 +154,7 @@ a {
     top: 10%;
     left: 10%;
     width: 80%;
+    max-height: 700px;
 }
 /*首页选项卡*/
 .card {
@@ -262,7 +263,8 @@ ol li {
 .approval-box-img {
     width: 60px;
     height: 60px;
-    background: url(images/icon900-540.png) no-repeat;
+    background: url(images/icon780-420.png) no-repeat;
+    background-size: 780px 420px;
     background-position: -54px -47px;
     margin: auto;
 }

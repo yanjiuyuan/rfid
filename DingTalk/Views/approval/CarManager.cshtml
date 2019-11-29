@@ -17,16 +17,16 @@
         <el-button v-on:click="handleAdd" type="primary">添加车辆</el-button>
     </div>
     <!--表格實體-->
-    <el-Table :data="TableData" stripe border>
-        <el-Table-column v-for="i in items" :prop="i" :key="i" :label="TableItems[i]"></el-Table-column>
+    <el-table :data="TableData" stripe border>
+        <el-table-column v-for="i in items" :prop="i" :key="i" :label="TableItems[i]"></el-table-column>
 
-        <el-Table-column label="操作" width="200">
+        <el-table-column label="操作" width="200">
             <template slot-scope="scope">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 <el-button size="mini" type="danger" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
-        </el-Table-column>
-    </el-Table>
+        </el-table-column>
+    </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
         <el-pagination v-on:size-change="handleSizeChange"
@@ -73,31 +73,31 @@
         </el-form-item>
     </el-form>
     <!--表格實體-->
-    <el-Table :data="TableData2" stripe border v-if="searchParam.IsPublic">
-        <el-Table-column prop="Dept" label="使用部门"></el-Table-column>
-        <el-Table-column prop="ApplyMan" label="申请人"></el-Table-column>
-        <el-Table-column prop="UseTime" label="用车日期"></el-Table-column>
-        <el-Table-column prop="Name" label="使用车辆"></el-Table-column>
-        <el-Table-column prop="MainContent" label="用途"></el-Table-column>
-        <el-Table-column prop="UseKilometres" label="总里程/KM"></el-Table-column>
-        <el-Table-column prop="FactKilometre" label="实际里程/KM"></el-Table-column>
-        <el-Table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-Table-column>
-        <el-Table-column prop="AllPrice" label="费用估值/元"></el-Table-column>
-        <el-Table-column label="操作" width="100">
+    <el-table :data="TableData2" stripe border v-if="searchParam.IsPublic">
+        <el-table-column prop="Dept" label="使用部门"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="UseTime" label="用车日期"></el-table-column>
+        <el-table-column prop="Name" label="使用车辆"></el-table-column>
+        <el-table-column prop="MainContent" label="用途"></el-table-column>
+        <el-table-column prop="UseKilometres" label="总里程/KM"></el-table-column>
+        <el-table-column prop="FactKilometre" label="实际里程/KM"></el-table-column>
+        <el-table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-table-column>
+        <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
+        <el-table-column label="操作" width="100">
             <template slot-scope="scope">
                 <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             </template>
-        </el-Table-column>
-    </el-Table>
-    <el-Table :data="TableData2" stripe border v-else>
-        <el-Table-column prop="Dept" label="使用部门"></el-Table-column>
-        <el-Table-column prop="ApplyMan" label="申请人"></el-Table-column>
-        <el-Table-column prop="UseTime" label="用车日期"></el-Table-column>
-        <el-Table-column prop="MainContent" label="用途"></el-Table-column>
-        <el-Table-column prop="StartKilometres" label="起始公里"></el-Table-column>
-        <el-Table-column prop="EndKilometres" label="结束公里"></el-Table-column>
-        <el-Table-column prop="UseKilometres" label="总里程/KM"></el-Table-column>
-    </el-Table>
+        </el-table-column>
+    </el-table>
+    <el-table :data="TableData2" stripe border v-else>
+        <el-table-column prop="Dept" label="使用部门"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="UseTime" label="用车日期"></el-table-column>
+        <el-table-column prop="MainContent" label="用途"></el-table-column>
+        <el-table-column prop="StartKilometres" label="起始公里"></el-table-column>
+        <el-table-column prop="EndKilometres" label="结束公里"></el-table-column>
+        <el-table-column prop="UseKilometres" label="总里程/KM"></el-table-column>
+    </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
         <el-pagination v-on:size-change="handleSizeChange2"
@@ -117,6 +117,11 @@
         <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
                  enctype="multipart/form-data">
             <template>
+                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='UnitPricePerKilometre' " :key="i" :label="tableItems[i]" :prop="i">
+                    <sam-input :value.sync="ruleForm[i]"></sam-input>
+                </el-form-item>
+                <el-form-item label="每公里单价(元)" prop="UnitPricePerKilometre">
+                    <sam-input :value.sync="ruleForm.UnitPricePerKilometre" type="number" min="0" :required="true"></sam-input>
                 <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' " :key="i" :label="TableItems[i]" :prop="i">
                     <el-input v-model="ruleForm[i]"></el-input>
                 </el-form-item>
@@ -279,10 +284,16 @@
                 }
                
                 let handle = function (data) {
-                    console.log('删除成功')
                     that.getCar()
                 }
-                this._getData(url, handle, param)
+                this.$confirm('是否确定删除该车辆？')
+                    .then(_ => {
+                        this._getData(url, handle, param)
+                    })
+                    .catch(_ => {
+
+                    });
+                
             },
             //添加车辆按钮事件
             handleAdd: function () {

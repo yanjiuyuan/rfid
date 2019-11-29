@@ -11,7 +11,7 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="同行人">
             <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
@@ -21,14 +21,15 @@
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 添加</el-button>
         </el-form-item>
         <el-form-item label="外出地点" prop="Place">
-            <el-input type="textarea" v-model="TableForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
+            <el-input type="textarea" v-model="tableForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
             <el-button type="primary" v-on:click="dialogFormVisible = true">添加地点</el-button>
             <el-button type="danger" v-on:click="removePlace">删除地点</el-button>
         </el-form-item>
         <el-form-item label="外出事由" prop="Content">
-            <el-input v-model="TableForm.Content" style="width:550px;"></el-input>
+            <el-input v-model="tableForm.Content" style="width:550px;"></el-input>
         </el-form-item>
         <el-form-item label="外出时间" prop="BeginTime">
+            <sam-timerange :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :onchange="selectTime"></sam-timerange>
             <el-date-picker v-model="timeRange"
                             type="datetimerange"
                             v-on:change="selectTime" :ediTable="false"
@@ -38,7 +39,7 @@
             </el-date-picker>
         </el-form-item>
         <el-form-item label="时长/小时" prop="Duration">
-            <el-input v-model="TableForm.Duration" style="width:200px;"></el-input>
+            <el-input v-model="tableForm.Duration" style="width:200px;"></el-input>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -86,7 +87,7 @@
                 placeArr: [],
                 placeStr: '',
                 groupPeople: [],
-                TableForm: {
+                tableForm: {
                     Duration: "",
                     EvectionMan: '',
                     EvectionManId: '',
@@ -138,7 +139,7 @@
             onSubmit(formName) {
                 var that = this
                 let url = '/Evection/Save'
-                var param = _cloneObj(this.TableForm)
+                var param = _cloneObj(this.tableForm)
                 this.fileListToUrl()
                 console.log(param)
                 let callBack = function (taskId) {
@@ -158,7 +159,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.placeArr.push(this.form.Place)
-                        this.TableForm.Place = this.placeArr.join(',')
+                        this.tableForm.Place = this.placeArr.join(',')
                         this.dialogFormVisible = false
                         this.form.Place = ''
                     }
@@ -166,14 +167,16 @@
             },
             removePlace() {
                 this.placeArr.pop()
-                this.TableForm.Place = this.placeArr.join(',')
+                this.tableForm.Place = this.placeArr.join(',')
             },
             //选时间操作
             selectTime(value) {
+                console.log('选时间操作')
+                console.log(value)
                 if (!value[0]) return
-                this.TableForm.Duration = _computeDurTime(value[0], value[1], 'h')
-                this.TableForm.BeginTime = _timeToString(value[0])
-                this.TableForm.EndTime = _timeToString(value[1])
+                this.tableForm.Duration = _computeDurTime(value[0], value[1], 'h')
+                this.tableForm.BeginTime = _timeToString(value[0])
+                this.tableForm.EndTime = _timeToString(value[1])
             },
             // 添加同行人
             addPeerNumber() {
@@ -190,8 +193,8 @@
                             names.push(d.name)
                             numbers.push(d.emplId)
                         }
-                        that.TableForm.EvectionMan = names.join(',')
-                        that.TableForm.EvectionManId = numbers.join(',')
+                        that.tableForm.EvectionMan = names.join(',')
+                        that.tableForm.EvectionManId = numbers.join(',')
                     },
                     onFail: function (err) { }
                 });

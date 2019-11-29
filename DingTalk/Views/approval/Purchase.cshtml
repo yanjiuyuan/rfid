@@ -11,7 +11,7 @@
     </div>
     <div>
         <span style="color:red">*</span>@*<span style="padding:3px;">关键字</span>*@
-        <sam-input :value.sync="key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        <sam-input :value.sync="searchForm.name" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
         <el-button type="primary" v-on:click="searchCode">搜索</el-button>
     </div>
     <!--物料列表表格實體-->
@@ -120,7 +120,7 @@
                     Count: ''
                 },
                 addPeopleNodes: [1],
-                key: '',
+                searchForm: {name:''}
             }
         },
         methods: {
@@ -152,27 +152,6 @@
                     })
                 }
                 this.approvalSubmit(callBack)
-            },
-            //搜索物料列表
-            searchCode() {
-                var that = this
-                if (!this.key) {
-                    this.$message({ type: 'error', message: `请输入关键字` });
-                    return
-                }
-                var url = '/Purchase/GetICItem?Key=' + that.key
-                $.ajax({
-                    url: url,
-                    success: function (data) {
-                        console.log(url)
-                        console.log("搜索物料列表ok")
-                        data = JSON.parse(data)
-                        console.log(data)
-                        that.data = data
-                        that.totalRows = data.length
-                        that.getData()
-                    }
-                })
             },
             //添加申请物料
             addGood(index, good) {

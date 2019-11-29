@@ -9,7 +9,7 @@ namespace DingTalk.Bussiness.EF
 {
     public class SqlHelper
     {
-        
+
         public string CreateTable(Tables table)
         {
             StringBuilder sb = new StringBuilder();

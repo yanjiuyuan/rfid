@@ -140,6 +140,7 @@
                 }
                 var url = jinDomarn + 'OfficeSupply/GetOfficeInfo?Key=' + this.searchForm.name
                 this._getData(url, (res) => {
+                    if (res.data.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
                     this.data = res.data
                     this.totalRows = res.data.length
                     this.getData()
