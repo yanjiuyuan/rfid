@@ -1447,7 +1447,7 @@ namespace DingTalk.Controllers
                             item.ApplyMan = tasksPost.ApplyMan;
                             item.ApplyTime = tasksPost.ApplyTime;
                         }
-                        Tasks tasksCurrentSub = taskQuery.Where(t => t.State == 1 && t.IsEnable == 1 && t.IsSend != true).LastOrDefault();
+                        Tasks tasksCurrentSub = taskQuery.Where(t => t.State == 1 && t.IsEnable == 1 && t.IsSend != true).OrderBy(t => t.NodeId).LastOrDefault();
                         if (tasksCurrentSub != null)
                         {
                             item.CurrentTime = tasksCurrentSub.ApplyTime;
@@ -2421,7 +2421,7 @@ namespace DingTalk.Controllers
                 {
                     return new NewErrorModel()
                     {
-                        data = context.NodeInfo.Where(n => n.FlowId == flowId).OrderBy(n=>n.NodeId).ToList(),
+                        data = context.NodeInfo.Where(n => n.FlowId == flowId).OrderBy(n => n.NodeId).ToList(),
                         error = new Error(0, "读取成功！", "") { },
                     };
                 }
@@ -2449,7 +2449,7 @@ namespace DingTalk.Controllers
                     if (nodeInfos != null && nodeInfos.Count > 0)
                     {
                         nodeInfos = nodeInfos.OrderBy(n => n.NodeId).ToList();
-                        
+
                         //校验必填项目
                         //foreach (var item in nodeInfos)
                         //{
@@ -2474,7 +2474,7 @@ namespace DingTalk.Controllers
                         //        }
                         //    }
                         //}
-                        
+
                         //校验流程是否能走完
                         if (CheckNodeInfo(nodeInfos[0], nodeInfos) != null)
                         {

@@ -1,0 +1,26 @@
+2019-11-29 08:31:29,752 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 08:31:31,780 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 08:57:15,550 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 08:57:17,424 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 09:07:27,636 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 09:07:29,475 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 09:09:40,723 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Save 时出现异常，信息：各表中的列名必须唯一。在表 'TableName1' 中多次指定了列名 'string'。，详见数据库日志Id：218
+2019-11-29 09:14:07,546 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 09:14:09,356 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 14:58:13,374 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 14:58:16,041 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 15:00:28,712 [9] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：219
+2019-11-29 15:02:05,379 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 15:02:08,264 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 15:04:12,157 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：“string”附近有语法错误。，详见数据库日志Id：220
+2019-11-29 15:05:11,774 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 15:05:13,072 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 15:06:29,963 [14] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：附加类型“DingTalk.Models.DingModels.Tables”的实体失败，因为相同类型的其他实体已具有相同的主键值。在使用 "Attach" 方法或者将实体的状态设置为 "Unchanged" 或 "Modified" 时如果图形中的任何实体具有冲突键值，则可能会发生上述行为。这可能是因为某些实体是新的并且尚未接收数据库生成的键值。在此情况下，使用 "Add" 方法或者 "Added" 实体状态跟踪该图形，然后将非新实体的状态相应设置为 "Unchanged" 或 "Modified"。，详见数据库日志Id：221
+2019-11-29 15:08:10,453 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：无法删除此对象，因为未在 ObjectStateManager 中找到它。，详见数据库日志Id：222
+2019-11-29 15:09:22,125 [22] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：无法对 表 'TableName1' 执行 删除，因为它不存在，或者您没有所需的权限。，详见数据库日志Id：223
+2019-11-29 15:14:22,982 [24] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：数据库中已存在名为 'TableName1' 的对象。，详见数据库日志Id：224
+2019-11-29 15:17:55,892 [40] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Mofify 时出现异常，信息：无法删除此对象，因为未在 ObjectStateManager 中找到它。，详见数据库日志Id：225
+2019-11-29 15:21:31,818 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-11-29 15:21:34,537 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-11-29 15:24:08,127 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Save 时出现异常，信息：数据库中已存在名为 'TableName1' 的对象。，详见数据库日志Id：226
+2019-11-29 15:24:29,219 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/TableManager/Save 时出现异常，信息：数据库中已存在名为 'TableName1' 的对象。，详见数据库日志Id：227

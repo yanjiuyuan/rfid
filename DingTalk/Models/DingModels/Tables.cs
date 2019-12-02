@@ -60,7 +60,7 @@
 
 
         /// <summary>
-        /// 当前操作类型(1 新增 2 删除 3 修改(列属性不支持修改)) 调用修改接口时传
+        /// 当前操作类型(1 新增  2 删除 3 修改 ) 调用修改接口时传
         /// </summary>
         [NotMapped]
         public OperateType operateType { get; set; }

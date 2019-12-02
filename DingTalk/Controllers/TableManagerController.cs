@@ -32,7 +32,6 @@ namespace DingTalk.Controllers
                     {
                         item.tableInfos = tablleInfos.Where(t => t.TableID == item.ID).ToList();
                     }
-
                     return new NewErrorModel()
                     {
                         data = tablles,
@@ -75,7 +74,6 @@ namespace DingTalk.Controllers
                             SqlHelper sqlHelper = new SqlHelper();
                             string strSql = sqlHelper.CreateTable(tablle);
                             int iResult = dataContext.Database.ExecuteSqlCommand(strSql);
-
 
                             //记录执行Sql
                             sqlHelper.SaveSqlExe(tablle, strSql, dataContext);
@@ -125,11 +123,42 @@ namespace DingTalk.Controllers
                 {
                     if (tablle != null)
                     {
+                        if (tablle.operateType == OperateType.Add)
+                        {
+                            return Save(tablle);
+                        }
+
                         //动态拼接创建表Sql
                         SqlHelper sqlHelper = new SqlHelper();
                         Tables tablleOld = dataContext.Tables.Find(tablle.ID);
                         string strSql = sqlHelper.ModifyTable(tablle, tablleOld);
-                        string strResult = dataContext.Database.SqlQuery<string>(strSql).ToString();
+
+                        //删除表处理
+                        if (tablle.operateType == OperateType.Delete)
+                        {
+                            //判断表是否存在防止误操作
+                            if (dataContext.Tables.Where(t => t.TableName == tablle.TableName).ToList().Count == 0)
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(0, "表不存在！", "") { },
+                                };
+                            }
+                        }
+
+                        int iResult = dataContext.Database.ExecuteSqlCommand(strSql);
+
+                        //删除表处理
+                        if (tablle.operateType == OperateType.Delete)
+                        {
+                            dataContext.Tables.Remove(dataContext.Tables.Find(tablle.ID));
+                            dataContext.TableInfo.RemoveRange(dataContext.TableInfo.Where(t=>t.TableID==tablle.ID));
+                            dataContext.SaveChanges();
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "删除成功！", "") { },
+                            };
+                        }
 
                         //记录执行Sql
                         sqlHelper.SaveSqlExe(tablle, strSql, dataContext);
