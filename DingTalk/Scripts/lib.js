@@ -619,6 +619,7 @@ var mixin = {
         //初始化方法
         initStart(callBack = function () { }) {
             Index = 0
+            State = "未完成"
             this.doneloadTmp = false 
             this.DingData = DingData
             this.data = []
@@ -1506,6 +1507,10 @@ var mixin = {
             return false
         },
         BeforeFileUpload(file) {
+            if (file.name.indexOf('.')<0) {
+                this.$message.error('文件类型不正确，请重新选择！  ')
+                return false
+            }
             if (!file.size) {
                 this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
                 return false
@@ -1972,7 +1977,7 @@ Vue.component('sam-group', {
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
-                        :minlength = minlength||0 :maxlength = maxlength||30 v-on:blur="onBlur" :disabled='Index != 0 || disabled'
+                        :minlength = minlength||0 :maxlength = maxlength||50 v-on:blur="onBlur" :disabled='Index != 0 || disabled'
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {

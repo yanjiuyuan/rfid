@@ -29,7 +29,7 @@
         <el-form-item label="计划行车路线" prop="PlantTravelWay">
             <sam-input :value.sync="tableForm.PlantTravelWay" :required="true"></sam-input>
         </el-form-item>
-        <el-form-item label="用车时间" prop="StartTime">
+        <el-form-item label="用车时间" prop="StartTime" v-if="doneloadTmp">
             <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
         </el-form-item>
     </el-form>
