@@ -17,8 +17,8 @@
         <el-button v-on:click="handleAdd" type="primary">添加车辆</el-button>
     </div>
     <!--表格實體-->
-    <el-table :data="TableData" stripe border>
-        <el-table-column v-for="i in items" :prop="i" :key="i" :label="TableItems[i]"></el-table-column>
+    <el-table :data="tableData" stripe border>
+        <el-table-column v-for="i in items" :prop="i" :key="i" :label="tableItems[i]"></el-table-column>
 
         <el-table-column label="操作" width="200">
             <template slot-scope="scope">
@@ -73,7 +73,7 @@
         </el-form-item>
     </el-form>
     <!--表格實體-->
-    <el-table :data="TableData2" stripe border v-if="searchParam.IsPublic">
+    <el-table :data="tableData2" stripe border v-if="searchParam.IsPublic">
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
@@ -83,13 +83,8 @@
         <el-table-column prop="FactKilometre" label="实际里程/KM"></el-table-column>
         <el-table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-table-column>
         <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
-        <el-table-column label="操作" width="100">
-            <template slot-scope="scope">
-                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            </template>
-        </el-table-column>
     </el-table>
-    <el-table :data="TableData2" stripe border v-else>
+    <el-table :data="tableData2" stripe border v-else>
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
@@ -122,9 +117,6 @@
                 </el-form-item>
                 <el-form-item label="每公里单价(元)" prop="UnitPricePerKilometre">
                     <sam-input :value.sync="ruleForm.UnitPricePerKilometre" type="number" min="0" :required="true"></sam-input>
-                <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' " :key="i" :label="TableItems[i]" :prop="i">
-                    <el-input v-model="ruleForm[i]"></el-input>
-                </el-form-item>
                 <hr />
                 <el-form-item>
                     <el-button v-if="isAdd" type="primary" v-on:click="addCar('ruleForm')" :disabled="disableAdd">添加</el-button>
@@ -140,7 +132,7 @@
 <script>
     var Index = 0
     var id = ''
-    var TableItems = {
+    var tableItems = {
         Name: "名称",
         Type: "品牌",
         CarNumber: "车牌号" ,
@@ -154,7 +146,7 @@
     }
     var items = []
     var ruleForm = {}
-    for (let t in TableItems) {
+    for (let t in tableItems) {
         items.push(t)
         ruleForm[t] = ''
     }
@@ -169,7 +161,7 @@
                 isAdd: true,
                 TableData: [],
                 items: items,
-                TableItems: TableItems,
+                tableItems: tableItems,
                 formInline: {
                     key: ''
                 },
@@ -196,7 +188,7 @@
                 timeRange: [],
                 totalRows2: 0,
                 data2: [],
-                TableData2:[],
+                tableData2:[],
                 ruleForm: ruleForm,
                 dialogFormVisible: false
             }
@@ -322,7 +314,7 @@
             //用车数据相关
             searchData: function () {
                 if (this.timeRange.length < 2) {
-                    this.$message({ type: 'error', message: `請輸入時間` });
+                    this.$message({ type: 'error', message: `请输入时间` });
                     return
                 }
                 var that = this
@@ -365,12 +357,12 @@
             },
             selectCarType(value) {
                 this.data2 = []
-                this.TableData2 = []
+                this.tableData2 = []
             },
             //翻頁相關事件
             getData2() {
                 var start = this.searchParam.pageSize * (this.searchParam.pageIndex - 1)
-                this.TableData2 = this.data2.slice(start, start + this.searchParam.pageSize)
+                this.tableData2 = this.data2.slice(start, start + this.searchParam.pageSize)
             },
             handleSizeChange2: function (val) {
                 this.searchParam.pageIndex = 1

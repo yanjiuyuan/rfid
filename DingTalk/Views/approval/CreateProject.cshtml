@@ -40,10 +40,9 @@
         <el-form-item label="项目组成员" required="required">
             <sam-group :names.sync="tableForm.TeamMembers" :ids.sync="tableForm.TeamMembersId"></sam-group>
         </el-form-item>
-        <el-form-item label="项目周期" prop="StartTime">
+        <el-form-item label="项目周期" prop="StartTime" v-if="doneloadTmp">
             <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
         </el-form-item>
-        <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">

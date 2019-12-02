@@ -14,11 +14,7 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="同行人">
-            <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
-                    :disable-transitions="false" v-on:close="handleClose(tag)">
-                {{tag.name}}
-            </el-tag>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 添加</el-button>
+            <sam-group :names.sync="tableForm.EvectionMan" :ids.sync="tableForm.EvectionManId"></sam-group>
         </el-form-item>
         <el-form-item label="外出地点" prop="Place">
             <el-input type="textarea" v-model="tableForm.Place" :value="placeStr" style="width:400px;" :disabled="true"></el-input>
@@ -26,17 +22,10 @@
             <el-button type="danger" v-on:click="removePlace">删除地点</el-button>
         </el-form-item>
         <el-form-item label="外出事由" prop="Content">
-            <el-input v-model="tableForm.Content" style="width:550px;"></el-input>
+            <sam-input :value.sync="tableForm.Content" :required="true" :maxlength="120"></sam-input>
         </el-form-item>
-        <el-form-item label="外出时间" prop="BeginTime">
+        <el-form-item label="外出时间" prop="BeginTime" v-if="doneloadTmp">
             <sam-timerange :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :onchange="selectTime"></sam-timerange>
-            <el-date-picker v-model="timeRange"
-                            type="datetimerange"
-                            v-on:change="selectTime" :ediTable="false"
-                            range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="返回时间">
-            </el-date-picker>
         </el-form-item>
         <el-form-item label="时长/小时" prop="Duration">
             <el-input v-model="tableForm.Duration" style="width:200px;"></el-input>
@@ -86,7 +75,6 @@
                 timeRange: [],
                 placeArr: [],
                 placeStr: '',
-                groupPeople: [],
                 tableForm: {
                     Duration: "",
                     EvectionMan: '',
@@ -102,7 +90,7 @@
                 },
                 rules: {
                     Content: [{ required: true, message: '外出事由不能为空', trigger: 'blur' },
-                    { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                    { min: 0, max: 120, message: '长度在 120 个字符以内', trigger: 'blur' }
                     ],
                     Place: [{ required: true, message: '外出地点不能为空', trigger: 'blur' },
                     { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
@@ -140,7 +128,6 @@
                 var that = this
                 let url = '/Evection/Save'
                 var param = _cloneObj(this.tableForm)
-                this.fileListToUrl()
                 console.log(param)
                 let callBack = function (taskId) {
                     param.TaskId = taskId
@@ -153,7 +140,18 @@
                         })
                     }, param)
                 }
-                this.approvalSubmit(callBack)
+
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        this.approvalSubmit(callBack)
+                        
+                    }
+                    else {
+                        this.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
             },
             addPlace(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -174,38 +172,9 @@
                 console.log('选时间操作')
                 console.log(value)
                 if (!value[0]) return
-                this.tableForm.Duration = _computeDurTime(value[0], value[1], 'h')
+                this.tableForm.Duration = _computeDurTime(value[0], value[1], 'h') + ''
                 this.tableForm.BeginTime = _timeToString(value[0])
                 this.tableForm.EndTime = _timeToString(value[1])
-            },
-            // 添加同行人
-            addPeerNumber() {
-                var that = this
-                DingTalkPC.biz.contact.choose({
-                    users: [],
-                    corpId: DingData.CorpId,
-                    max: 10,
-                    onSuccess: function (data) {
-                        that.groupPeople = that.groupPeople.concat(data)
-                        let names = []
-                        let numbers = []
-                        for (let d of that.groupPeople) {
-                            names.push(d.name)
-                            numbers.push(d.emplId)
-                        }
-                        that.tableForm.EvectionMan = names.join(',')
-                        that.tableForm.EvectionManId = numbers.join(',')
-                    },
-                    onFail: function (err) { }
-                });
-            },
-            handleClose(tag) {
-                for (let i = 0; i < this.groupPeople.length; i++) {
-                    if (this.groupPeople[i].emplId == tag.emplId) {
-                        this.groupPeople.splice(i, 1)
-                        break
-                    }
-                }
             },
         },
         created: function () {
