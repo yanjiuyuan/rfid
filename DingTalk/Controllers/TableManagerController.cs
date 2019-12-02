@@ -130,7 +130,7 @@ namespace DingTalk.Controllers
 
                         //动态拼接创建表Sql
                         SqlHelper sqlHelper = new SqlHelper();
-                        Tables tablleOld = dataContext.Tables.Find(tablle.ID);
+                        Tables tablleOld = dataContext.Tables.AsNoTracking().Where(t=>t.ID==tablle.ID).FirstOrDefault();
                         string strSql = sqlHelper.ModifyTable(tablle, tablleOld);
 
                         //删除表处理
@@ -163,7 +163,8 @@ namespace DingTalk.Controllers
                         //记录执行Sql
                         sqlHelper.SaveSqlExe(tablle, strSql, dataContext);
                         //修改实体信息
-                        dataContext.Entry<Tables>(tablle).State =
+                        tablleOld = tablle;
+                        dataContext.Entry<Tables>(tablleOld).State =
                             System.Data.Entity.EntityState.Modified;
                         dataContext.SaveChanges();
 
@@ -171,6 +172,7 @@ namespace DingTalk.Controllers
                         if (tablle.tableInfos != null && tablle.tableInfos.Count > 0)
                         {
                             strSqltablleInfos = sqlHelper.ModifyTableInfo(tablle.tableInfos, tablle);
+                            int iResultstrSqltablleInfos = dataContext.Database.ExecuteSqlCommand(strSqltablleInfos);
                             //记录执行Sql
                             sqlHelper.SaveSqlExe(tablle, strSqltablleInfos, dataContext);
                             //修改实体信息
@@ -182,7 +184,7 @@ namespace DingTalk.Controllers
                                         dataContext.TableInfo.Add(item);
                                         break;
                                     case OperateType.Delete:
-                                        dataContext.TableInfo.Remove(item);
+                                        dataContext.TableInfo.Remove(dataContext.TableInfo.Find(item.ID));
                                         break;
                                     case OperateType.Modify:
                                         dataContext.Entry<TableInfo>(item).State =
