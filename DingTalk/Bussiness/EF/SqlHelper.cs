@@ -99,6 +99,7 @@ namespace DingTalk.Bussiness.EF
         {
             dataContext.SqlExe.Add(new SqlExe()
             {
+                TableName=tablle.TableName,
                 ApplyMan = tablle.CreateMan,
                 ApplyManId = tablle.CreateManId,
                 Sql = strSql,

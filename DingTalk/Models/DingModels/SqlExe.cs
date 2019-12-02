@@ -18,6 +18,8 @@
         /// </summary>
         public string Sql { get; set; }
 
+        public string TableName { get; set; }
+
         public string ApplyMan { get; set; }
 
         public string ApplyManId { get; set; }
