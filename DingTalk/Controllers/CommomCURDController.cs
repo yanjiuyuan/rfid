@@ -37,6 +37,7 @@ namespace DingTalk.Controllers
 
                     }
                 }
+                return null;
             }
             catch (Exception ex)
             {
