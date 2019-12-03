@@ -41,7 +41,7 @@ namespace DingTalk.Bussiness.EF
         /// <param name="tableNew">新表</param>
         /// <param name="tableOld">旧表</param>
         /// <returns></returns>
-        public string ModifyTable(Tables tableNew,Tables tableOld)
+        public string ModifyTable(Tables tableNew, Tables tableOld)
         {
             StringBuilder sb = new StringBuilder();
             switch (tableNew.operateType)
@@ -74,6 +74,15 @@ namespace DingTalk.Bussiness.EF
                     case OperateType.Delete: //删除列
                         sb.Append($" alter table {tablle.TableName}  drop column {tablleInfo.ColumnName};");
                         break;
+                    case OperateType.Modify:
+                        //修改字段名
+                        sb.Append($" EXEC sp_rename '{tablle.TableName}.{tablleInfo.ColumnNameOld}', '{tablleInfo.ColumnName}', 'column'");
+                        //修改字段长度
+                        if (tablleInfo.ColumnProperty == 0)
+                        {
+                            sb.Append($" alter table {tablle.TableName} alter {tablleInfo.ColumnName} test NVARCHAR({tablleInfo.ColumnLength})");
+                        }
+                        break;
                 }
             }
             return sb.ToString();
@@ -94,12 +103,42 @@ namespace DingTalk.Bussiness.EF
             }
         }
 
+        public string CommomCURDRead(Tables tables)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($" select * from {tables.TableName} where 1=1 ");
+            foreach (var item in tables.tableInfos)
+            {
+                if (item.IsSupportQuery)
+                {
+                    switch (item.ColumnProperty)
+                    {
+                        //string
+                        case 0:
+                            sb.Append($" and {item.ColumnName}='{item.Value}' ");
+                            break;
+                        //int
+                        case 1:
+                            sb.Append($" and {item.ColumnName}={item.Value} ");
+                            break;
+                        //bool
+                        case 2:
+                            sb.Append($" and {item.ColumnName}={item.Value} ");
+                            break;
+                    }
+                }
+            }
+            return sb.ToString();
+        }
+
+
+
 
         public void SaveSqlExe(Tables tablle, string strSql, DDContext dataContext)
         {
             dataContext.SqlExe.Add(new SqlExe()
             {
-                TableName=tablle.TableName,
+                TableName = tablle.TableName,
                 ApplyMan = tablle.CreateMan,
                 ApplyManId = tablle.CreateManId,
                 Sql = strSql,

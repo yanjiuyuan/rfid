@@ -18,7 +18,7 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="flowId"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [Route("Read")]
         public NewErrorModel Read(int flowId)
         {
@@ -31,6 +31,14 @@ namespace DingTalk.Controllers
                     foreach (var item in tablles)
                     {
                         item.tableInfos = tablleInfos.Where(t => t.TableID == item.ID).ToList();
+                    }
+                    //ColumnNameOld赋值
+                    foreach (var item in tablles)
+                    {
+                        foreach (var tbinfo in item.tableInfos)
+                        {
+                            tbinfo.ColumnNameOld = tbinfo.ColumnName;
+                        }
                     }
                     return new NewErrorModel()
                     {

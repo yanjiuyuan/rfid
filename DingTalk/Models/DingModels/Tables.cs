@@ -29,17 +29,17 @@
         public string Remark { get; set; }
 
         /// <summary>
-        /// 是否支持新增(字段)
+        /// 是否支持新增(预留字段)
         /// </summary>
         public bool IsAdd { get; set; }
 
         /// <summary>
-        /// 是否支持删除(字段)
+        /// 是否支持删除(预留字段)
         /// </summary>
         public bool IsDel { get; set; }
 
         /// <summary>
-        /// 是否支持修改(字段)
+        /// 是否支持修改(预留字段)
         /// </summary>
         public bool IsModify { get; set; }
 
@@ -60,7 +60,7 @@
 
 
         /// <summary>
-        /// 当前操作类型(1 新增  2 删除 3 修改 ) 调用修改接口时传
+        /// 当前操作类型(0 不变  1 新增  2 删除 3 修改 ) 调用修改接口时传
         /// </summary>
         [NotMapped]
         public OperateType operateType { get; set; }
@@ -74,6 +74,7 @@
     /// </summary>
     public enum OperateType
     {
+        None=0,
         Add = 1,
         Delete = 2,
         Modify = 3 

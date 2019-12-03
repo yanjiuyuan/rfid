@@ -24,6 +24,12 @@
         public string ColumnName { get; set; }
 
         /// <summary>
+        /// 修改前的列名
+        /// </summary>
+        [NotMapped]
+        public string ColumnNameOld { get; set; }
+
+        /// <summary>
         /// 注释
         /// </summary>
         public string Note { get; set; }
@@ -59,7 +65,13 @@
         public bool IsSupportModify { get; set; }
 
         /// <summary>
-        /// 当前操作类型(1 新增 2 删除 3 修改) 调用修改接口时传
+        /// 键值(CURD时传)
+        /// </summary>
+        [NotMapped]
+        public string Value { get; set; }
+
+        /// <summary>
+        /// 当前操作类型(0 不操作 1 新增 2 删除 3 修改) 调用修改接口时传
         /// </summary>
         [NotMapped]
         public OperateType operateType { get; set; }

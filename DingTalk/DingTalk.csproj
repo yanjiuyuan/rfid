@@ -364,6 +364,7 @@
     <Compile Include="Controllers\CarManangerController.cs" />
     <Compile Include="Controllers\CarTableController.cs" />
     <Compile Include="Controllers\CarTableNewController.cs" />
+    <Compile Include="Controllers\CommomCURDController.cs" />
     <Compile Include="Controllers\ContextErrorController.cs" />
     <Compile Include="Controllers\ContractManagerController.cs" />
     <Compile Include="Controllers\CooperateManagerController.cs" />
