@@ -20,7 +20,7 @@
         </el-form-item>
 
         <!--表格實體-->
-        <el-Table :data="TableData" stripe border>
+        <el-Table :data="tableData" stripe border>
             <el-Table-column prop="CodeNo" type="index"></el-Table-column>
             <el-Table-column label="操作">
                 <template slot-scope="scope">
@@ -156,15 +156,15 @@
         },
         methods: {
             onSubmit(formName) {
-                if (this.TableData.length == 0) {
+                if (this.tableData.length == 0) {
                     this.addGoods()
-                    if (this.TableData.length == 0) {
+                    if (this.tableData.length == 0) {
                         this.elementAlert('提示信息', '未添加编码')
                         return
                     }
                 }
-                for (var i = 0; i < this.TableData.length;i++) {
-                    let d = this.TableData[i]
+                for (var i = 0; i < this.tableData.length;i++) {
+                    let d = this.tableData[i]
                     if (!d.BigCode || !d.BigCode || !d.Name || !d.Standard || !d.BigCodeName || !d.SmallCodeName) {
                         this.elementAlert('提示信息', '第 ' + (i+1) + ' 表单未填写完整')
                         return
@@ -175,7 +175,7 @@
             bindAll(taskId) {
                 var that = this
                 var paramArr = []
-                for (let p of this.TableData) {
+                for (let p of this.tableData) {
                     p.TaskId = taskId
                     paramArr.push(p)
                 }
@@ -196,19 +196,19 @@
 
             //上传文件方法
             handleSuccess(response, file, fileList) {
-                //this.TableData = []
+                //this.tableData = []
                 for (let d of response[0].Value) {
                     let tmpData = {}
                     for (let s in d) {
                         tmpData[configDictionary[s]] = d[s]
                     }
-                    this.TableData.push(tmpData)
+                    this.tableData.push(tmpData)
                 }
                 return
-                for (let i = 0; i < TableData.length; i++) {
-                    let data = TableData[i]
+                for (let i = 0; i < tableData.length; i++) {
+                    let data = tableData[i]
                     if (i != 0 && data['Column1'] && data['Column1'] != "") {
-                        this.TableData.push(data)
+                        this.tableData.push(data)
                     }
                 }
             },
@@ -218,16 +218,16 @@
                     this.elementAlert('提示信息', '表单未填写完整')
                     return
                 }
-                this.TableData.push(_cloneObj(this.goods[0]))
+                this.tableData.push(_cloneObj(this.goods[0]))
                 
             },
             deleteGood(index, good) {
-                this.TableData.splice(index, 1)
+                this.tableData.splice(index, 1)
             },
             //切换编码类型
             changeCodeType(e) {
                 console.log(e)
-                this.TableData = []
+                this.tableData = []
                 this.getMaterielCode()
                 this.goods = []
                 this.goods.push(_cloneObj(meteriel))
