@@ -67,10 +67,10 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
-        <el-form-item label="添加到" v-if="Index == '0' && NodeId == 2">
+        @*<el-form-item label="添加到" v-if="Index == '0' && NodeId == 2">
             <el-radio v-model="codeType" label="1">零部件</el-radio>
             <el-radio v-model="codeType" label="2">办公用品</el-radio>
-        </el-form-item>
+        </el-form-item>*@
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
             <el-upload action=""

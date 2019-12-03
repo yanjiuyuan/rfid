@@ -1,0 +1,195 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        {{FlowName}}-{{nodeInfo.NodeName}}
+    </div>
+    <!--物料搜索-->
+    <div>
+        <span style="color:red">*</span><span style="padding:3px;">关键字</span>
+        <sam-input :value.sync="searchForm.name" :required="true" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+    </div>
+    <!--物料列表表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="fNumber" label="物料编码"></el-table-column>
+        <el-table-column prop="fName" label="物料名称"></el-table-column>
+        <el-table-column prop="fModel" label="规格型号"></el-table-column>
+        <el-table-column prop="unitName" label="单位"></el-table-column>
+        <el-table-column prop="fNote" label="预计单价"></el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <p v-if="noList.indexOf(scope.row.fNumber) >= 0">已选择</p>
+                <el-button v-else size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+    <hr />
+    <h3>已选办公用品</h3>
+    <!--采购列表表格實體-->
+    <el-table :data="purchaseList" stripe border>
+        <el-table-column prop="CodeNo" label="物料编码"></el-table-column>
+        <el-table-column prop="Name" label="物料名称"></el-table-column>
+        <el-table-column prop="Standard" label="规格型号"></el-table-column>
+        <el-table-column prop="Unit" label="单位"></el-table-column>
+        <el-table-column prop="ExpectPrice" label="预计单价" width="100"></el-table-column>
+        <el-table-column prop="Count" label="数量" width="100">
+            <template slot-scope="scope">
+                <sam-input :value.sync="scope.row.Count" type="number" min="0" :required="true"></sam-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Purpose" label="用途">
+            <template slot-scope="scope">
+                <sam-input :value.sync="scope.row.Purpose"></sam-input>
+            </template>
+        </el-table-column>
+        <el-table-column prop="Mark" label="备注">
+            <template slot-scope="scope">
+                <sam-input :value.sync="scope.row.Mark"></sam-input>
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" width="80">
+            <template slot-scope="scope">
+                <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+             id="uploadForm" enctype="multipart/form-data">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+        <el-form-item label="预计总价">
+            <el-input v-model="totalPrice" :disabled="true"></el-input>
+        </el-form-item>
+        @RenderPage("~/Views/Shared/startButton.cshtml")
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                good: {
+                    ExpectPrice: '',
+                    Unit: '',
+                    Count: ''
+                },
+                searchForm: {
+                    name: '',
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                if (!this.purchaseList.length) {
+                    this.$message({ type: 'error', message: `请选择办公用品！` });
+                    return
+                }
+                for (let p of this.purchaseList) {
+                    if (p.Count == '') {
+                        this.$message({ type: 'error', message: `请填写已选用品信息！` });
+                        return
+                    }
+                }
+                var that = this
+                let url = '/OfficeSupplies/SaveTable'
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    var param = []
+                    for (let p of that.purchaseList) {
+                        p.TaskId = taskId
+                        param.push(p)
+                    }
+                    console.log(JSON.stringify(param))
+                    that._postData(url, function (data) {
+                        that.$alert('恭喜提交审批成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    }, param)
+                }
+                this.approvalSubmit(callBack)
+            },
+            //搜索物料列表
+            searchCode(formName) {
+                this.searchForm.name = this.searchForm.name.replace(/\s/g,'')
+                if (!this.searchForm.name) {
+                    //success / info / warning / error
+                    this.$message({type: 'error',message: `输入错误` });
+                    return
+                }
+                var url = jinDomarn + 'OfficeSupply/GetOfficeInfo?Key=' + this.searchForm.name
+                this._getData(url, (res) => {
+                    if (res.data.length == 0) this.$message({ type: 'warning', message: `获取数据数为0` })
+                    this.data = res.data
+                    this.totalRows = res.data.length
+                    this.getData()
+                })
+            },
+            //添加申请物料
+            addGood(index, good) {
+                for (let p of this.purchaseList) {
+                    if (p.CodeNo == good.fNumber) return
+                }
+                this.purchaseList.push({
+                    CodeNo: good.fNumber,
+                    Name: good.fName,
+                    Standard: good.fModel,
+                    Unit: good.unitName,
+                    ExpectPrice: good.fNote,// == '0' ? '' : good.FNote,
+                    Count: '',
+                    Purpose: '',
+                    UrgentDate: '',
+                    Mark: ''
+                })
+                this.noList.push(good.fNumber)
+            },
+        },
+        computed: {
+            totalPrice: function () {
+                let price = 0
+                for (let p of this.purchaseList) {
+                    console.log(price)
+                    price = parseFloat(price + p.ExpectPrice * p.Count)
+                    console.log(p.ExpectPrice * p.Count)
+                    console.log(price)
+                }
+                return price.toFixed(2)
+            }
+        },
+        created: function () {
+            this.initStart()
+        }
+    })
+    document.onkeydown = function (e) { // 回车提交表单
+        // 兼容FF和IE和Opera
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            demo.searchCode()
+        }
+    }
+</script>
+
+
+

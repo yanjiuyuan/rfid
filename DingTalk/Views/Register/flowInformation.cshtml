@@ -32,6 +32,140 @@
         <i class="el-icon-arrow-left"></i>
         流程编辑
     </div>
+    <h2>编辑数据表</h2>
+    <!--数据表列表-->
+    <el-Table :data="tables" stripe border>
+        <el-Table-column prop="CodeNo" type="index"></el-Table-column>
+        <el-Table-column label="操作" width="160">
+            <template slot-scope="scope">
+                <el-button size="mini" v-if="scope.$index == tableData.length-1" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini" type="danger" v-on:click="deleteTable(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-Table-column>
+        <el-Table-column prop="TableName" label="表名" width="200"></el-Table-column>
+        <el-Table-column prop="CreateMan" label="创建人" width="200"></el-Table-column>
+        <el-Table-column prop="CreateManId" label="创建人Id" width="200"></el-Table-column>
+        <el-Table-column prop="IsAdd" label="是否支持自增" width="200"></el-Table-column>
+        <el-Table-column prop="IsDel" label="是否支持删除" width="200"></el-Table-column>
+        <el-Table-column prop="IsModify" label="是否支持修改" width="200"></el-Table-column>
+        <el-Table-column prop="IsEnable" label="是否启用" width="200"></el-Table-column>
+        <el-Table-column prop="Remark" label="备注" width="200"></el-Table-column>
+    </el-Table>
+    <!--编辑数据表单-->
+    <el-dialog :title="type + '数据表'" :visible.sync="dialogFormVisible">
+        <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="150px" class="demo-ruleForm" style="width:800px;"
+                 enctype="multipart/form-data">
+            <template>
+                <el-form-item label="表名" prop="TableName">
+                    <el-input v-model="tableForm.TableName"></el-input>
+                </el-form-item>
+                <el-form-item label="是否支持新增(字段)">
+                    <el-radio-group v-model="tableForm.IsAdd">
+                        <el-radio :label="true">是</el-radio>
+                        <el-radio :label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否支持删除(字段)">
+                    <el-radio-group v-model="tableForm.IsDel">
+                        <el-radio :label="true">是</el-radio>
+                        <el-radio :label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否支持修改(字段)">
+                    <el-radio-group v-model="tableForm.IsModify">
+                        <el-radio :label="true">是</el-radio>
+                        <el-radio :label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="是否生效">
+                    <el-radio-group v-model="tableForm.IsEnable">
+                        <el-radio :label="true">是</el-radio>
+                        <el-radio :label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="编辑字段">
+                    <el-Table :data="tableData" stripe border>
+                        <el-Table-column prop="CodeNo" type="index"></el-Table-column>
+                        <el-Table-column label="操作" width="160">
+                            <template slot-scope="scope">
+                                <el-button size="mini" v-if="scope.$index == tableData.length-1" v-on:click="addGoods(scope.$index, scope.row)">添加</el-button>
+                                <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="ColumnName" label="字段名" width="200">
+                            <template slot-scope="scope">
+                                <sam-input :value.sync="scope.row.ColumnName" :required="true"></sam-input>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="ColumnProperty" label="数据类型" width="120">
+                            <template slot-scope="scope">
+                                <el-select v-model="scope.row.ColumnProperty" placeholder="请选择">
+                                    <el-option v-for="item in types"
+                                               :key="item.value"
+                                               :label="item.label"
+                                               :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="ColumnLength" label="字段长度" width="100">
+                            <template slot-scope="scope">
+                                <sam-input :value.sync="scope.row.ColumnLength" type="number" min="0" :required="true"></sam-input>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="IsNull" label="是否可为空" width="160">
+                            <template slot-scope="scope">
+                                <el-radio-group v-model="scope.row.IsNull">
+                                    <el-radio :label="true">是</el-radio>
+                                    <el-radio :label="false">否</el-radio>
+                                </el-radio-group>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="IsSupportQuery" label="是否支持查询" width="160">
+                            <template slot-scope="scope">
+                                <el-radio-group v-model="scope.row.IsSupportQuery">
+                                    <el-radio :label="true">是</el-radio>
+                                    <el-radio :label="false">否</el-radio>
+                                </el-radio-group>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="IsSupportDelete" label="是否支持删除" width="160">
+                            <template slot-scope="scope">
+                                <el-radio-group v-model="scope.row.IsSupportDelete">
+                                    <el-radio :label="true">是</el-radio>
+                                    <el-radio :label="false">否</el-radio>
+                                </el-radio-group>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="IsSupportModify" label="是否支持修改" width="160">
+                            <template slot-scope="scope">
+                                <el-radio-group v-model="scope.row.IsSupportModify">
+                                    <el-radio :label="true">是</el-radio>
+                                    <el-radio :label="false">否</el-radio>
+                                </el-radio-group>
+                            </template>
+                        </el-Table-column>
+                        <el-Table-column prop="Note" label="注释" width="200">
+                            <template slot-scope="scope">
+                                <sam-input :value.sync="scope.row.Note"></sam-input>
+                            </template>
+                        </el-Table-column>
+                    </el-Table>
+                </el-form-item>
+                <hr />
+                <el-form-item>
+                    <el-button type="primary" v-on:click="editTable">{{type}}</el-button>
+                    <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
+                </el-form-item>
+            </template>
+        </el-form>
+
+    </el-dialog>
+    <!--添加表格相关操作-->
+    <el-button type="primary" v-on:click="handleAdd" :disabled="disablePage">添加数据集</el-button>
+    <hr />
+    <!--添加表格相关操作-->
+
 
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
@@ -78,13 +212,15 @@
                 <el-input v-model="ruleForm.PhoneUrl"></el-input>
             </el-form-item>
         </template>
-         <el-form-item label="节点配置" v-if="ruleForm.IsFlow">
+
+        <el-form-item label="节点配置" v-if="ruleForm.IsFlow">
             <sam-approver-edit :nodeList.sync="nodeList" :dingdata="DingData" :addable="true" :rolelist="rolelist" :postdata="PostData"></sam-approver-edit>
         </el-form-item>
+
         <el-form-item label="图标选择">
             <div>
                 <span class="redBorder"
-                      v-bind:style="{ marginLeft: x + 'px',marginTop: y + 'px'}"></span>
+                      v-bind:style="{ marginLeft: parseInt(x) + 54 + 'px',marginTop: parseInt(y) + 47 + 'px'}"></span>
                 <img src="~/Content/images/icon900-540.png" />
             </div>
             <div>
@@ -113,6 +249,31 @@
     for (let i = 0; i < ids.length; i++) {
         groupPeople.push({ emplId: ids[i], name: names[i] })
     }
+
+    //添加数据表初始参数
+    let initTable = {
+        FlowId: editFlow.FlowId,
+        TableName: '',
+        Remark : '',
+        IsAdd: false,
+        IsDel : false,
+        IsModify : false,
+        IsEnable: false,
+        CreateMan: DingData.nickName,
+        CreateManId: DingData.userid,
+        operateType : 1
+    }
+    let initItem = {
+        ColumnName : '',
+        Note: '',
+        ColumnProperty: '0',
+        ColumnLength: 50,
+        IsNull : true,
+        IsSupportQuery : false,
+        IsSupportDelete : false,
+        IsSupportModify: false,
+        operateType: 1
+    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -120,9 +281,28 @@
             return {
                 rolelist: {},
                 nodeList:[],
-                x: 54,
-                y: 46,
+                x: 0,
+                y: 0,
                 ruleForm: editFlow,
+                tableForm: _cloneObj(initTable),//添加的表单
+                tableData: [_cloneObj(initItem)],//添加的字段
+                oldData:[],//原有字段，由于判断是否修改
+                tables: [],//现有表
+                type: '添加',
+                dialogFormVisible: false,
+                types: [{
+                    value: '0',
+                    label: 'string'
+                    },
+                    {
+                        value: '1',
+                        label: 'int '
+                    },
+                    {
+                        value: '2',
+                        label: 'bool'
+                    }],
+
                 groupPeople: groupPeople,
                 rules: {
                     ApproveUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
@@ -134,6 +314,96 @@
             }
         },
         methods: {
+            //添加字段
+            addGoods(index,row) {
+                if (!row.ColumnName) {
+                    this.$message({ type: 'error', message: `字段名不能为空，请填写` });
+                    return
+                }
+                this.tableData.push(_cloneObj(initItem))
+            },
+            //删除字段
+            deleteGood(index, good) {
+                this.tableData.splice(index, 1)
+            },
+            //编辑表格
+            editTable() {
+                if (!this.tableForm.TableName) {
+                    this.$message({ type: 'error', message: `表名不能为空，请填写` });
+                    return
+                }
+                if (!this.tableData[this.tableData.length-1].ColumnName) {
+                    this.$message({ type: 'error', message: `字段名不能为空，请填写` });
+                    return
+                }
+                let arr = []
+                for (let t of this.tableData) {
+                    if (!t.ID) {
+                        t['operateType'] = '1'
+                        arr.push(t)
+                        continue
+                    }
+                    let ifDel = true
+                    for (let o of this.oldData) {
+                        if (t.ID == o.ID) {
+                            ifDel == false
+                            if (JSON.stringify(o) != JSON.stringify(t)) {
+                                t['operateType'] = '3'
+                                arr.push(t)
+                            }
+                            break
+                        }
+                    }
+                    if (ifDel) {
+                        t['operateType'] = '2'
+                        arr.push(t)
+                    }
+                }
+                this.tableForm["tableInfos"] = arr
+                console.log(JSON.stringify(this.tableForm))
+                this.PostData('TableManager/Mofify', this.tableForm, (rew) => {
+                    this.$message({ type: 'success', message: `操作成功` });
+                    this.getTables()
+                    this.dialogFormVisible = false
+                })
+            },
+            //获取表格
+            getTables() {
+                this.GetData('/TableManager/Read', { flowId: editFlow.FlowId }, (res) => {
+                    this.tables = res
+                })
+            },
+            //打开编辑表单
+            handleAdd() {
+                this.type = '添加'
+                this.tableForm = _cloneObj(initTable)
+                this.tableForm['operateType'] = 1//代表添加
+                this.tableData = [_cloneObj(initItem)]
+                this.dialogFormVisible = true
+            },
+            handleEdit(index, row) {
+                console.log(index)
+                console.log(row)
+                this.type = '编辑'
+                this.tableForm = row
+                this.tableForm['operateType'] = 3//代表修改
+                this.tableData = row.tableInfos
+                this.oldData = _cloneArr(row.tableInfos)
+                this.dialogFormVisible = true
+            },
+            deleteTable(index, row) {
+                console.log(row);
+                row['operateType'] = 2//代表删除
+                this.$confirm('是否确认删除该数据表？')
+                    .then(_ => {
+                        this.PostData('TableManager/Mofify', this.tableForm, (rew) => {
+                            this.$message({ type: 'success', message: `删除成功` });
+                            this.getTables()
+                            this.dialogFormVisible = false
+                        })
+                    })
+            },
+
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -209,9 +479,11 @@
                             node.PeopleId = node.PeopleId.split(',')
                         }
                     }
+                    console.log('res~~~~~~~~~~~~~~~~~~~')
+                    console.log(res)
                     if (res.length == 0) {
-                        res = [{ "Id": 20065, "NodeId": 0, "FlowId": "1", "NodeName": "申请人发起", "NodePeople": null, "PeopleId": null, "PreNodeId": "1", "IsAllAllow": true, "Condition": "1", "IsBack": false, "IsNeedChose": true, "IsSend": false, "BackNodeId": null, "ChoseNodeId": "1", "IsSelectMore": "0", "IsMandatory": "1", "ChoseType": "0", "RoleNames": null, "RolesList": null, "AddPeople": [] },
-                            { "Id": 20070, "NodeId": 5, "FlowId": "1", "NodeName": "结束", "NodePeople": null, "PeopleId": null, "PreNodeId": null, "IsAllAllow": true, "Condition": "0", "IsBack": false, "IsNeedChose": false, "IsSend": false, "BackNodeId": null, "ChoseNodeId": null, "IsSelectMore": null, "IsMandatory": null, "ChoseType": null, "RoleNames": null, "RolesList": null, "AddPeople": [] }]
+                        res = [{ "NodeId": 0, "FlowId": "1", "NodeName": "申请人发起", "NodePeople": null, "PeopleId": null, "PreNodeId": "1", "IsAllAllow": true, "Condition": "1", "IsBack": false, "IsNeedChose": true, "IsSend": false, "BackNodeId": null, "ChoseNodeId": "1", "IsSelectMore": "0", "IsMandatory": "1", "ChoseType": "0", "RoleNames": null, "RolesList": null, "AddPeople": [] },
+                            { "NodeId": 5, "FlowId": "1", "NodeName": "结束", "NodePeople": null, "PeopleId": null, "PreNodeId": null, "IsAllAllow": true, "Condition": "0", "IsBack": false, "IsNeedChose": false, "IsSend": false, "BackNodeId": null, "ChoseNodeId": null, "IsSelectMore": null, "IsMandatory": null, "ChoseType": null, "RoleNames": null, "RolesList": null, "AddPeople": [] }]
                     }
                     this.nodeList = res
                 })
@@ -226,6 +498,7 @@
             this.getPosition()
             this.getNodeList()
             this.getRoles()
+            this.getTables()//获取数据表
             loadHtml("mainPage", "partPage")
         }
     })

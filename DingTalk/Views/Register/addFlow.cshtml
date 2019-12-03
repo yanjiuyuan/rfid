@@ -55,7 +55,7 @@
         <el-form-item label="图标选择">
             <div>
                 <span class="redBorder"
-                      v-bind:style="{ marginLeft: x + 'px',marginTop: y + 'px'}"></span>
+                      v-bind:style="{ marginLeft: parseInt(x) + 54 + 'px',marginTop: parseInt(y) + 47 + 'px'}"></span>
                 <img src="~/Content/images/icon900-540.png" />
             </div>
             <div>
@@ -79,8 +79,8 @@
         mixins: [mixin],
         data: function () {
             return {
-                x: 54,
-                y: 46,
+                x: 0,
+                y: 0,
                 ruleForm: {
                     FlowId: '',
                     FlowName: '',

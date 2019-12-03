@@ -927,6 +927,7 @@
     <Content Include="Views\approval\FlowEdit.cshtml" />
     <Content Include="Views\approval\logManager.cshtml" />
     <Content Include="Views\approval\RoleEdit.cshtml" />
+    <Content Include="Views\approval\up.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
