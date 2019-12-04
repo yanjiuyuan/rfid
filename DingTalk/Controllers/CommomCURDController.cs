@@ -138,7 +138,7 @@ namespace DingTalk.Controllers
     {
         public string TableName { get; set; }
 
-        public List<column> columns { get; set; }
+        public List<Dictionary<string, string>> columns { get; set; }
 
     }
 
