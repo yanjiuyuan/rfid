@@ -14,6 +14,55 @@ namespace DingTalk.Controllers
     public class CommomCURDController : ApiController
     {
         /// <summary>
+        /// 通用保存方法
+        /// </summary>
+        /// <param name="cURDModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Save")]
+        public NewErrorModel Save(CURDModel cURDModel)
+        {
+            try
+            {
+                if (cURDModel != null && cURDModel.tables != null && cURDModel.tables.Count > 0)
+                {
+                    using (DDContext dataContext = new DDContext())
+                    {
+                        SqlHelper sqlHelper = new SqlHelper();
+                        foreach (var item in cURDModel.tables)
+                        {
+                            string strSql = sqlHelper.Insert(item);
+                            int iResult = dataContext.Database.ExecuteSqlCommand(strSql);
+                            if (iResult != 1)
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, $"{item.TableName} 格式有误,插入失败！", "") { },
+                                };
+                            }
+                        }
+                    }
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, "批量插入成功！", "") { },
+                    };
+                }
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, "参数有误！", "") { },
+                    };
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 通用读取方法
         /// </summary>
         /// <param name="cURDModel"></param>
@@ -36,8 +85,15 @@ namespace DingTalk.Controllers
                         string strSql = sqlHelper.CommomCURDRead(cURDModel.tables[0]);
 
                     }
+                    return null;
                 }
-                return null;
+                else
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, "参数有误！", "") { },
+                    };
+                }
             }
             catch (Exception ex)
             {
