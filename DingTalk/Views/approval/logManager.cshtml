@@ -16,7 +16,7 @@
         <el-button type="primary" v-on:click="search">搜索</el-button>
         @*<el-input v-model="value" type="textarea"></el-input>*@
         <!--物料列表表格實體-->
-        <el-Table :data="TableData" stripe border>
+        <el-Table :data="tableData" stripe border>
             <el-Table-column type="expand">
                 <template slot-scope="props">
                     <el-form label-position="left" inline class="demo-Table-expand">
@@ -74,7 +74,7 @@
             return {
                 key: '',
                 data: [],
-                TableData: [],
+                tableData: [],
                 detail: {}
             }
         },

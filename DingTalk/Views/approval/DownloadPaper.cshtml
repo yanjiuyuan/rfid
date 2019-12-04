@@ -13,12 +13,12 @@
     <template v-if="project.length == 0">
         <h4>选择项目</h4>
         <!--表格實體-->
-        <el-Table :data="TableData" stripe border>
+        <el-Table :data="tableData" stripe border>
             <el-Table-column v-for="(value,key) in projectItems" :prop="key" :label="value" :key="key">
             </el-Table-column>
             <el-Table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button v-on:click.native.prevent="selectProject(scope.$index, TableData)"
+                    <el-button v-on:click.native.prevent="selectProject(scope.$index, tableData)"
                                type="pirmary" size="small">
                         选择项目
                     </el-button>
@@ -175,7 +175,7 @@
                 //项目列表相关参数
                 data: [],
                 nodeInfo: {},
-                TableData: [],
+                tableData: [],
                 projectItems: {
                     ProjectId: '项目编号',
                     ProjectName: '项目名称',
