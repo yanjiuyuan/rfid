@@ -131,6 +131,13 @@ namespace DingTalk.Controllers
                 {
                     if (tablle != null)
                     {
+                        if (tablle.operateType == OperateType.None)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "请尝试修改OperateType参数！", "") { },
+                            }; ;
+                        }
                         if (tablle.operateType == OperateType.Add)
                         {
                             return Save(tablle);
@@ -138,8 +145,12 @@ namespace DingTalk.Controllers
 
                         //动态拼接创建表Sql
                         SqlHelper sqlHelper = new SqlHelper();
-                        Tables tablleOld = dataContext.Tables.AsNoTracking().Where(t=>t.ID==tablle.ID).FirstOrDefault();
-                        string strSql = sqlHelper.ModifyTable(tablle, tablleOld);
+                        string strSql = string.Empty;
+                        Tables tablleOld = dataContext.Tables.AsNoTracking().Where(t => t.ID == tablle.ID).FirstOrDefault();
+                        if (tablle.operateType == OperateType.Modify)
+                        {
+                            strSql = sqlHelper.ModifyTable(tablle, tablleOld);
+                        }
 
                         //删除表处理
                         if (tablle.operateType == OperateType.Delete)
@@ -160,7 +171,7 @@ namespace DingTalk.Controllers
                         if (tablle.operateType == OperateType.Delete)
                         {
                             dataContext.Tables.Remove(dataContext.Tables.Find(tablle.ID));
-                            dataContext.TableInfo.RemoveRange(dataContext.TableInfo.Where(t=>t.TableID==tablle.ID));
+                            dataContext.TableInfo.RemoveRange(dataContext.TableInfo.Where(t => t.TableID == tablle.ID));
                             dataContext.SaveChanges();
                             return new NewErrorModel()
                             {

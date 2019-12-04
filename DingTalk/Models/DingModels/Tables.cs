@@ -16,11 +16,13 @@
         /// <summary>
         /// 外键(必传)
         /// </summary>
+        [Required]
         public int FlowId { get; set; }
 
         /// <summary>
         /// 表名
         /// </summary>
+        [Required]
         public string TableName { get; set; }
 
         /// <summary>
@@ -49,19 +51,22 @@
         public bool IsEnable { get; set; }
 
         /// <summary>
-        /// 创建人
+        /// 最终操作人
         /// </summary>
+        [Required]
         public string CreateMan { get; set; }
 
         /// <summary>
-        /// 创建人Id
+        /// 最终操作人Id
         /// </summary>
+        [Required]
         public string CreateManId { get; set; }
 
 
         /// <summary>
         /// 当前操作类型(0 不变  1 新增  2 删除 3 修改 ) 调用修改接口时传
         /// </summary>
+        [Required]
         [NotMapped]
         public OperateType operateType { get; set; }
 
@@ -74,9 +79,9 @@
     /// </summary>
     public enum OperateType
     {
-        None=0,
+        None = 0,
         Add = 1,
         Delete = 2,
-        Modify = 3 
+        Modify = 3
     }
 }

@@ -103,6 +103,11 @@ namespace DingTalk.Bussiness.EF
             }
         }
 
+        /// <summary>
+        /// 通用读取
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <returns></returns>
         public string CommomCURDRead(Tables tables)
         {
             StringBuilder sb = new StringBuilder();
@@ -131,8 +136,71 @@ namespace DingTalk.Bussiness.EF
             return sb.ToString();
         }
 
+        /// <summary>
+        /// 插入 
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <returns></returns>
+        public string Insert(Tables tables)
+        {
+            StringBuilder sb = new StringBuilder();
+            string columnName = string.Empty;
+            string columnValue = string.Empty;
+            foreach (var item in tables.tableInfos)
+            {
+                if (item.ColumnProperty == 0) //string 
+                {
+                    if (tables.tableInfos.IndexOf(item) == tables.tableInfos.Count - 1)
+                    {
+                        columnName += item.ColumnName;
+                        columnValue += "'" + item.Value + "'";
+                    }
+                    else
+                    {
+                        columnName += item.ColumnName + ",";
+                        columnValue += "'" + item.Value + "'" + ",";
+                    }
+                }
+                if (item.ColumnProperty == 1) //int
+                {
+                    if (tables.tableInfos.IndexOf(item) == tables.tableInfos.Count - 1)
+                    {
+                        columnName += item.ColumnName;
+                        columnValue += item.Value;
+                    }
+                    else
+                    {
+                        columnName += item.ColumnName + ",";
+                        columnValue += item.Value + ",";
+                    }
+                }
+
+                if (item.ColumnProperty == 2) //bool
+                {
+                    if (tables.tableInfos.IndexOf(item) == tables.tableInfos.Count - 1)
+                    {
+                        columnName += item.ColumnName;
+                        columnValue += (item.Value.ToLower()=="true"?"1":"0");
+                    }
+                    else
+                    {
+                        columnName += item.ColumnName + ",";
+                        columnValue += (item.Value.ToLower() == "true" ? "1" : "0") + ",";
+                    }
+                }
+
+            }
+            sb.Append($" insert into {tables.TableName}({columnName}) values({columnValue})");
+            return sb.ToString();
+        }
 
 
+        /// <summary>
+        /// 记入Sql
+        /// </summary>
+        /// <param name="tablle"></param>
+        /// <param name="strSql"></param>
+        /// <param name="dataContext"></param>
 
         public void SaveSqlExe(Tables tablle, string strSql, DDContext dataContext)
         {
