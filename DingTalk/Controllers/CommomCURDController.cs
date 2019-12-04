@@ -24,36 +24,37 @@ namespace DingTalk.Controllers
         {
             try
             {
-                if (cURDModel != null && cURDModel.tables != null && cURDModel.tables.Count > 0)
-                {
-                    using (DDContext dataContext = new DDContext())
-                    {
-                        SqlHelper sqlHelper = new SqlHelper();
-                        foreach (var item in cURDModel.tables)
-                        {
-                            string strSql = sqlHelper.Insert(item);
-                            int iResult = dataContext.Database.ExecuteSqlCommand(strSql);
-                            if (iResult != 1)
-                            {
-                                return new NewErrorModel()
-                                {
-                                    error = new Error(1, $"{item.TableName} 格式有误,插入失败！", "") { },
-                                };
-                            }
-                        }
-                    }
-                    return new NewErrorModel()
-                    {
-                        error = new Error(1, "批量插入成功！", "") { },
-                    };
-                }
-                else
-                {
-                    return new NewErrorModel()
-                    {
-                        error = new Error(1, "参数有误！", "") { },
-                    };
-                }
+                //if (cURDModel != null && cURDModel.tables != null && cURDModel.tables.Count > 0)
+                //{
+                //    using (DDContext dataContext = new DDContext())
+                //    {
+                //        SqlHelper sqlHelper = new SqlHelper();
+                //        foreach (var item in cURDModel.tables)
+                //        {
+                //            string strSql = sqlHelper.Insert(item);
+                //            int iResult = dataContext.Database.ExecuteSqlCommand(strSql);
+                //            if (iResult != 1)
+                //            {
+                //                return new NewErrorModel()
+                //                {
+                //                    error = new Error(1, $"{item.TableName} 格式有误,插入失败！", "") { },
+                //                };
+                //            }
+                //        }
+                //    }
+                //    return new NewErrorModel()
+                //    {
+                //        error = new Error(1, "批量插入成功！", "") { },
+                //    };
+                //}
+                //else
+                //{
+                //    return new NewErrorModel()
+                //    {
+                //        error = new Error(1, "参数有误！", "") { },
+                //    };
+                //}
+                return null;
             }
             catch (Exception)
             {
@@ -73,27 +74,29 @@ namespace DingTalk.Controllers
         {
             try
             {
-                if (cURDModel != null && cURDModel.tables != null && cURDModel.tables.Count > 0)
-                {
-                    using (DDContext dataContext = new DDContext())
-                    {
+                //if (cURDModel != null && cURDModel.tables != null && cURDModel.tables.Count > 0)
+                //{
+                //    using (DDContext dataContext = new DDContext())
+                //    {
 
-                    }
-                    SqlHelper sqlHelper = new SqlHelper();
-                    if (cURDModel.tables.Count == 1) //单表
-                    {
-                        string strSql = sqlHelper.CommomCURDRead(cURDModel.tables[0]);
+                //    }
+                //    SqlHelper sqlHelper = new SqlHelper();
+                //    if (cURDModel.tables.Count == 1) //单表
+                //    {
+                //        string strSql = sqlHelper.CommomCURDRead(cURDModel.tables[0]);
 
-                    }
-                    return null;
-                }
-                else
-                {
-                    return new NewErrorModel()
-                    {
-                        error = new Error(1, "参数有误！", "") { },
-                    };
-                }
+                //    }
+                //    return null;
+                //}
+                //else
+                //{
+                //    return new NewErrorModel()
+                //    {
+                //        error = new Error(1, "参数有误！", "") { },
+                //    };
+                //}
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -112,17 +115,48 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 表数据
         /// </summary>
-        public List<Tables> tables { get; set; }
+        //public List<Tables> tables { get; set; }
+
+        /// <summary>
+        /// 表数据
+        /// </summary>
+        public List<CURDModelSave> CURDModelSave { get; set; }
 
         /// <summary>
         /// 页码
         /// </summary>
-        public int pageIndex { get; set; }
+        //public int pageIndex { get; set; }
 
         /// <summary>
         /// 页容量(默认每页5条)
         /// </summary>
 
-        public int pageSize { get; set; }
+        //public int pageSize { get; set; }
+    }
+
+    public class CURDModelSave
+    {
+        public string TableName { get; set; }
+
+        public List<column> columns { get; set; }
+
+    }
+
+    public class column
+    {
+        /// <summary>
+        /// 字段名
+        /// </summary>
+        public string ColumnName { get; set; }
+
+        /// <summary>
+        /// 字段属性( 0 : string  1 : int  2 : bool)
+        /// </summary>
+        public int ColumnProperty { get; set; }
+
+        /// <summary>
+        /// 字段值
+        /// </summary>
+        public string ColumnValue { get; set; }
     }
 }
