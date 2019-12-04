@@ -72,7 +72,7 @@
                 <span style="font-size:1.2rem;">文件列表</span>
             </div>
             <div v-if="downloadUrl"><p style="color:red;">复制链接到浏览器下载可查看进度=></p><a>{{downloadUrl}}</a></div>
-            <el-Table :data="TableData" stripe border>
+            <el-Table :data="tableData" stripe border>
                 <el-Table-column prop="path" label="文件名"></el-Table-column>
                 <el-Table-column label="操作" width="150">
                     <template slot-scope="scope">
@@ -133,7 +133,7 @@
         data: function () {
             return {
                 data: [],
-                TableData: [],
+                tableData: [],
                 projectInfo: [],
                 folderList: [],
                 dialogFormVisible: false,

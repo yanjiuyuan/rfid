@@ -38,22 +38,38 @@
         <el-Table-column prop="CodeNo" type="index"></el-Table-column>
         <el-Table-column label="操作" width="160">
             <template slot-scope="scope">
-                <el-button size="mini" v-if="scope.$index == tableData.length-1" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 <el-button size="mini" type="danger" v-on:click="deleteTable(scope.$index, scope.row)">删除</el-button>
             </template>
         </el-Table-column>
         <el-Table-column prop="TableName" label="表名" width="200"></el-Table-column>
-        <el-Table-column prop="CreateMan" label="创建人" width="200"></el-Table-column>
-        <el-Table-column prop="CreateManId" label="创建人Id" width="200"></el-Table-column>
-        <el-Table-column prop="IsAdd" label="是否支持自增" width="200"></el-Table-column>
-        <el-Table-column prop="IsDel" label="是否支持删除" width="200"></el-Table-column>
-        <el-Table-column prop="IsModify" label="是否支持修改" width="200"></el-Table-column>
-        <el-Table-column prop="IsEnable" label="是否启用" width="200"></el-Table-column>
+        <el-Table-column prop="CreateMan" label="创建人" width="100"></el-Table-column>
+        <el-Table-column prop="CreateManId" label="创建人Id" width="100"></el-Table-column>
+        <el-Table-column prop="IsAdd" label="是否支持自增" width="100">
+            <template slot-scope="scope">
+                <span>{{scope.row.IsAdd | boolean}}</span>
+            </template>
+        </el-Table-column>
+        <el-Table-column prop="IsDel" label="是否支持删除" width="100">
+            <template slot-scope="scope">
+                <span>{{scope.row.IsDel | boolean}}</span>
+            </template>
+        </el-Table-column>
+        <el-Table-column prop="IsModify" label="是否支持修改" width="100">
+            <template slot-scope="scope">
+                <span>{{scope.row.IsModify | boolean}}</span>
+            </template>
+        </el-Table-column>
+        <el-Table-column prop="IsEnable" label="是否启用" width="100">
+            <template slot-scope="scope">
+                <span>{{scope.row.IsEnable | boolean}}</span>
+            </template>
+        </el-Table-column>
         <el-Table-column prop="Remark" label="备注" width="200"></el-Table-column>
     </el-Table>
     <!--编辑数据表单-->
-    <el-dialog :title="type + '数据表'" :visible.sync="dialogFormVisible">
-        <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="150px" class="demo-ruleForm" style="width:800px;"
+    <el-dialog :title="type + '数据表'" :visible.sync="dialogFormVisible" style="width:150%;left:-300px;">
+        <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="150px" class="demo-ruleForm"
                  enctype="multipart/form-data">
             <template>
                 <el-form-item label="表名" prop="TableName">
@@ -266,7 +282,7 @@
     let initItem = {
         ColumnName : '',
         Note: '',
-        ColumnProperty: '0',
+        ColumnProperty: 0,
         ColumnLength: 50,
         IsNull : true,
         IsSupportQuery : false,
@@ -291,15 +307,15 @@
                 type: '添加',
                 dialogFormVisible: false,
                 types: [{
-                    value: '0',
+                    value: 0,
                     label: 'string'
                     },
                     {
-                        value: '1',
+                        value: 1,
                         label: 'int '
                     },
                     {
-                        value: '2',
+                        value: 2,
                         label: 'bool'
                     }],
 
@@ -325,6 +341,9 @@
             //删除字段
             deleteGood(index, good) {
                 this.tableData.splice(index, 1)
+                if (this.tableData.length == 0) {
+                    this.tableData.push(_cloneObj(initItem))
+                }
             },
             //编辑表格
             editTable() {
@@ -337,16 +356,15 @@
                     return
                 }
                 let arr = []
+                //新增与修改操作
                 for (let t of this.tableData) {
                     if (!t.ID) {
                         t['operateType'] = '1'
                         arr.push(t)
                         continue
                     }
-                    let ifDel = true
                     for (let o of this.oldData) {
                         if (t.ID == o.ID) {
-                            ifDel == false
                             if (JSON.stringify(o) != JSON.stringify(t)) {
                                 t['operateType'] = '3'
                                 arr.push(t)
@@ -354,13 +372,25 @@
                             break
                         }
                     }
-                    if (ifDel) {
-                        t['operateType'] = '2'
-                        arr.push(t)
+                }
+                //删除操作
+                for (let o of this.oldData) {
+                    let ifHave = false
+                    for (let t of this.tableData) {
+                        console.log(t.ID + ' - ' + o.ID)
+                        if (t.ID == o.ID) {
+                            ifHave = true
+                            break
+                        }
+                    }
+                    if (!ifHave) {
+                        o['operateType'] = '2'
+                        arr.push(o)
                     }
                 }
                 this.tableForm["tableInfos"] = arr
                 console.log(JSON.stringify(this.tableForm))
+                //return
                 this.PostData('TableManager/Mofify', this.tableForm, (rew) => {
                     this.$message({ type: 'success', message: `操作成功` });
                     this.getTables()
@@ -369,7 +399,7 @@
             },
             //获取表格
             getTables() {
-                this.GetData('/TableManager/Read', { flowId: editFlow.FlowId }, (res) => {
+                this.GetData('/TableManager/Read?flowId=' + editFlow.FlowId, (res) => {
                     this.tables = res
                 })
             },
@@ -385,9 +415,9 @@
                 console.log(index)
                 console.log(row)
                 this.type = '编辑'
-                this.tableForm = row
+                this.tableForm = _cloneObj(row)
                 this.tableForm['operateType'] = 3//代表修改
-                this.tableData = row.tableInfos
+                this.tableData = _cloneArr(row.tableInfos)
                 this.oldData = _cloneArr(row.tableInfos)
                 this.dialogFormVisible = true
             },

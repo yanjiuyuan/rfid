@@ -1797,6 +1797,15 @@ var mixin = {
                 }
             })
         }
+    },
+    filters: {
+        boolean: function (value) {
+            if (value == true || value == 'true') {
+                return '是'
+            } else {
+                return '否'
+            }
+        }
     }
 }
 
