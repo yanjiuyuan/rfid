@@ -53,6 +53,11 @@
         /// 是否支持查询
         /// </summary>
         public bool IsSupportQuery { get; set; }
+        
+        /// <summary>
+        /// 是否支持模糊查询(新增字段)
+        /// </summary>
+        public bool IsSupporLikeQuery { get; set; }
 
         /// <summary>
         /// 是否支持删除

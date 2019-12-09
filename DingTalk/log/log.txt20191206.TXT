@@ -1,0 +1,10 @@
+2019-12-06 09:27:21,204 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-06 09:27:23,161 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-06 14:01:07,851 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-06 14:01:10,269 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-06 14:05:21,048 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/CommomCURD/Modify 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：278
+2019-12-06 14:07:20,985 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-06 14:07:22,821 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-06 14:11:17,049 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/CommomCURD/Modify 时出现异常，信息：关键字 'set' 附近有语法错误。，详见数据库日志Id：279
+2019-12-06 14:12:53,401 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-06 14:12:55,275 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,5 @@
-﻿using DingTalk.Models.DingModels;
+﻿using DingTalk.Controllers;
+using DingTalk.Models.DingModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -137,62 +138,196 @@ namespace DingTalk.Bussiness.EF
         }
 
         /// <summary>
-        /// 插入 
+        /// 批量插入
         /// </summary>
-        /// <param name="tables"></param>
+        /// <param name="cURDModelSave"></param>
+        /// <param name="tableInfos"></param>
         /// <returns></returns>
-        public string Insert(Tables tables)
+        public string Insert(CURDModelSave cURDModelSave, List<TableInfo> tableInfos)
         {
+
             StringBuilder sb = new StringBuilder();
+            string tableName = cURDModelSave.TableName;
             string columnName = string.Empty;
             string columnValue = string.Empty;
-            foreach (var item in tables.tableInfos)
+            foreach (var columnsList in cURDModelSave.columns)
             {
-                if (item.ColumnProperty == 0) //string 
+                int i = 0;
+                foreach (var column in columnsList)
                 {
-                    if (tables.tableInfos.IndexOf(item) == tables.tableInfos.Count - 1)
-                    {
-                        columnName += item.ColumnName;
-                        columnValue += "'" + item.Value + "'";
-                    }
-                    else
-                    {
-                        columnName += item.ColumnName + ",";
-                        columnValue += "'" + item.Value + "'" + ",";
-                    }
-                }
-                if (item.ColumnProperty == 1) //int
-                {
-                    if (tables.tableInfos.IndexOf(item) == tables.tableInfos.Count - 1)
-                    {
-                        columnName += item.ColumnName;
-                        columnValue += item.Value;
-                    }
-                    else
-                    {
-                        columnName += item.ColumnName + ",";
-                        columnValue += item.Value + ",";
-                    }
-                }
+                    i++;
+                    int iColumnProperty = tableInfos.Where(t => t.ColumnName == column.Key.ToString()).FirstOrDefault().ColumnProperty;
 
-                if (item.ColumnProperty == 2) //bool
-                {
-                    if (tables.tableInfos.IndexOf(item) == tables.tableInfos.Count - 1)
+                    if (iColumnProperty == 0) //string 
                     {
-                        columnName += item.ColumnName;
-                        columnValue += (item.Value.ToLower()=="true"?"1":"0");
+                        if (i == columnsList.Count)
+                        {
+                            columnName += column.Key;
+                            columnValue += "'" + column.Value + "'";
+                        }
+                        else
+                        {
+                            columnName += column.Key + ",";
+                            columnValue += "'" + column.Value + "'" + ",";
+                        }
                     }
-                    else
+                    if (iColumnProperty == 1) //int
                     {
-                        columnName += item.ColumnName + ",";
-                        columnValue += (item.Value.ToLower() == "true" ? "1" : "0") + ",";
+                        if (i == columnsList.Count)
+                        {
+                            columnName += column.Key;
+                            columnValue += column.Value;
+                        }
+                        else
+                        {
+                            columnName += column.Key + ",";
+                            columnValue += column.Value + ",";
+                        }
+                    }
+
+                    if (iColumnProperty == 2) //bool
+                    {
+                        if (i == columnsList.Count)
+                        {
+                            columnName += column.Key;
+                            columnValue += (column.Value.ToString().ToLower() == "true" ? "1" : "0");
+                        }
+                        else
+                        {
+                            columnName += column.Key + ",";
+                            columnValue += (column.Value.ToString().ToLower() == "true" ? "1" : "0") + ",";
+                        }
                     }
                 }
-
             }
-            sb.Append($" insert into {tables.TableName}({columnName}) values({columnValue})");
+            sb.Append($" insert into {tableName}({columnName}) values({columnValue}) ;");
             return sb.ToString();
         }
+
+
+        /// <summary>
+        /// 批量修改
+        /// </summary>
+        /// <param name="cURDModelSave"></param>
+        /// <param name="tableInfos"></param>
+        /// <returns></returns>
+        public string Modify(CURDModelSave cURDModelSave, List<TableInfo> tableInfos)
+        {
+
+            StringBuilder sb = new StringBuilder();
+            string tableName = cURDModelSave.TableName;
+            List<string> columnNameAndValue = new List<string>();
+            string id = string.Empty;
+            foreach (var columnsList in cURDModelSave.columns)
+            {
+                foreach (var column in columnsList)
+                {
+                    if (column.Key.ToString().ToLower() == "id")
+                    {
+                        id = column.Value.ToString();
+                    }
+                    else
+                    {
+                        TableInfo tableInfo = tableInfos.Where(t => t.ColumnName == column.Key.ToString()).FirstOrDefault();
+                        int iColumnProperty = tableInfo.ColumnProperty;
+                        bool IsModify = tableInfo.IsSupportModify;
+                        if (IsModify) //当前字段是否支持修改
+                        {
+                            if (iColumnProperty == 0) //string 
+                            {
+                                columnNameAndValue.Add($"  {column.Key}='{column.Value }'");
+                            }
+                            if (iColumnProperty == 1) //int
+                            {
+                                columnNameAndValue.Add($"  {column.Key}={column.Value }");
+                            }
+                            if (iColumnProperty == 2) //bool
+                            {
+                                columnNameAndValue.Add($"  {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                            }
+                        }
+                    }
+                }
+            }
+            sb.Append($" update {tableName} set  {string.Join(",", columnNameAndValue)} where id={id};");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="cURDModelSave"></param>
+        /// <returns></returns>
+        public string Delete(CURDModelSave cURDModelSave)
+        {
+
+            StringBuilder sb = new StringBuilder();
+            string tableName = cURDModelSave.TableName;
+            string columnName = string.Empty;
+            string columnValue = string.Empty;
+            List<string> strWhereList = new List<string>(); ;
+            foreach (var columnsList in cURDModelSave.columns)
+            {
+                foreach (var column in columnsList)
+                {
+                    if (column.Key.ToLower() == "id")
+                    {
+                        strWhereList.Add($" id={column.Value} ");
+                    }
+                }
+            }
+            sb.Append($" delete  from  {tableName} where {string.Join(" or ", strWhereList)}");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 读取
+        /// </summary>
+        /// <param name="cURDModelSave"></param>
+        /// <param name="tableInfos"></param>
+        /// <returns></returns>
+        public string Read(CURDModelSave cURDModelSave, List<TableInfo> tableInfos)
+        {
+            StringBuilder sb = new StringBuilder();
+            string tableName = cURDModelSave.TableName;
+            List<string> columnNameAndValue = new List<string>();
+            string id = string.Empty;
+            foreach (var columnsList in cURDModelSave.columns)
+            {
+                foreach (var column in columnsList)
+                {
+                    if (column.Key.ToString().ToLower() == "id")
+                    {
+                        //直接返回
+                        return $" select * from {tableName} where id={column.Value.ToString()}";
+                    }
+                    else
+                    {
+                        TableInfo tableInfo = tableInfos.Where(t => t.ColumnName == column.Key.ToString()).FirstOrDefault();
+                        int iColumnProperty = tableInfo.ColumnProperty;
+                        bool IsModify = tableInfo.IsSupportModify;
+                        if (IsModify) //当前字段是否支持修改
+                        {
+                            if (iColumnProperty == 0) //string 
+                            {
+                                columnNameAndValue.Add($"  {column.Key}='{column.Value }'");
+                            }
+                            if (iColumnProperty == 1) //int
+                            {
+                                columnNameAndValue.Add($"  {column.Key}={column.Value }");
+                            }
+                            if (iColumnProperty == 2) //bool
+                            {
+                                columnNameAndValue.Add($"  {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                            }
+                        }
+                    }
+                }
+            }
+            sb.Append($" update {tableName} set  {string.Join(",", columnNameAndValue)} where id={id};");
+            return sb.ToString();
+        }
+
 
 
         /// <summary>
