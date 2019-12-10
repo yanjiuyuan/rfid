@@ -3,6 +3,7 @@ using DingTalk.Models;
 using DingTalk.Models.DingModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -107,7 +108,7 @@ namespace DingTalk.Controllers
                     }
                     return new NewErrorModel()
                     {
-                        count= iCount,
+                        count = iCount,
                         error = new Error(0, $"批量删除成功！共计删除:{iCount.ToString()}条数据 ", "") { },
                     };
                 }
@@ -199,28 +200,28 @@ namespace DingTalk.Controllers
             {
                 if (cURDModel != null && cURDModel.SaveModels != null && cURDModel.SaveModels.Count > 0)
                 {
-                    using (DDContext dataContext = new DDContext())
+                    DDContext dataContext = new DDContext();
+                    SqlHelper sqlHelper = new SqlHelper();
+                    foreach (var item in cURDModel.SaveModels)
                     {
-                        SqlHelper sqlHelper = new SqlHelper();
-                        foreach (var item in cURDModel.SaveModels)
-                        {
-                            List<TableInfo> tableInfos = dataContext.TableInfo.Where(t => t.TableID ==
-                            dataContext.Tables.Where(s => s.TableName == item.TableName).FirstOrDefault().ID
-                            ).ToList();
-                            string strSql = sqlHelper.Read(item, tableInfos);
-                            int iResult = dataContext.Database.ExecuteSqlCommand(strSql);
-                            if (iResult != 1)
-                            {
-                                return new NewErrorModel()
-                                {
-                                    error = new Error(1, $"{item.TableName} 格式有误,读取失败！", "") { },
-                                };
-                            }
-                            else
-                            {
+                        List<TableInfo> tableInfos = dataContext.TableInfo.Where(t => t.TableID ==
+                        dataContext.Tables.Where(s => s.TableName == item.TableName).FirstOrDefault().ID
+                        ).ToList();
+                        string strSql = sqlHelper.Read(item, tableInfos);
 
-                            }
-                        }
+                        DataTable result = SqlAdoHelper.ExecuteDataTable(strSql);
+
+                        //List<TestTable> testTables = dataContext.Database.SqlQuery<TestTable>(strSql).ToList();
+
+                        //var results = dataContext.Database.SqlQuery<object>(strSql).ToList();
+
+                        //dynamic result = dataContext.Database.SqlQuery<object>(strSql).ToList();
+                        
+                        return new NewErrorModel()
+                        {
+                            data = result,
+                            error = new Error(0, $"{item.TableName} 读取成功！", "") { },
+                        };
                     }
                 }
                 else
@@ -237,6 +238,14 @@ namespace DingTalk.Controllers
                 throw ex;
             }
         }
+    }
+
+    public class TestTable
+    {
+        public string ColumnName3 { get; set; }
+        public string ColumnName4 { get; set; }
+        public int ColumnName6 { get; set; }
+        public bool ColumnName7 { get; set; }
     }
 
     public class CURDModel
@@ -259,20 +268,22 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 页码
         /// </summary>
-        //public int pageIndex { get; set; }
+        public int pageIndex { get; set; }
 
         /// <summary>
         /// 页容量(默认每页5条)
         /// </summary>
 
-        //public int pageSize { get; set; }
+        public int pageSize { get; set; }
     }
 
     public class CURDModelSave
     {
         public string TableName { get; set; }
 
-        public List<Dictionary<string, object>> columns { get; set; }
+        public string SqlWhere { get; set; }
+
+        public List<Dictionary<string, object>> Columns { get; set; }
 
     }
 

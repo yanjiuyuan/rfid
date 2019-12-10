@@ -150,7 +150,7 @@ namespace DingTalk.Bussiness.EF
             string tableName = cURDModelSave.TableName;
             string columnName = string.Empty;
             string columnValue = string.Empty;
-            foreach (var columnsList in cURDModelSave.columns)
+            foreach (var columnsList in cURDModelSave.Columns)
             {
                 int i = 0;
                 foreach (var column in columnsList)
@@ -218,7 +218,7 @@ namespace DingTalk.Bussiness.EF
             string tableName = cURDModelSave.TableName;
             List<string> columnNameAndValue = new List<string>();
             string id = string.Empty;
-            foreach (var columnsList in cURDModelSave.columns)
+            foreach (var columnsList in cURDModelSave.Columns)
             {
                 foreach (var column in columnsList)
                 {
@@ -266,7 +266,7 @@ namespace DingTalk.Bussiness.EF
             string columnName = string.Empty;
             string columnValue = string.Empty;
             List<string> strWhereList = new List<string>(); ;
-            foreach (var columnsList in cURDModelSave.columns)
+            foreach (var columnsList in cURDModelSave.Columns)
             {
                 foreach (var column in columnsList)
                 {
@@ -290,9 +290,9 @@ namespace DingTalk.Bussiness.EF
         {
             StringBuilder sb = new StringBuilder();
             string tableName = cURDModelSave.TableName;
-            List<string> columnNameAndValue = new List<string>();
+            List<string> strWhere = new List<string>();
             string id = string.Empty;
-            foreach (var columnsList in cURDModelSave.columns)
+            foreach (var columnsList in cURDModelSave.Columns)
             {
                 foreach (var column in columnsList)
                 {
@@ -305,26 +305,49 @@ namespace DingTalk.Bussiness.EF
                     {
                         TableInfo tableInfo = tableInfos.Where(t => t.ColumnName == column.Key.ToString()).FirstOrDefault();
                         int iColumnProperty = tableInfo.ColumnProperty;
-                        bool IsModify = tableInfo.IsSupportModify;
-                        if (IsModify) //当前字段是否支持修改
+                        bool IsSupportQuery = tableInfo.IsSupportQuery;
+                        bool IsSupporLikeQuery = tableInfo.IsSupporLikeQuery;
+                        if (IsSupportQuery) //当前字段是否支持查询
                         {
-                            if (iColumnProperty == 0) //string 
+                            if (iColumnProperty == 2) //bit
                             {
-                                columnNameAndValue.Add($"  {column.Key}='{column.Value }'");
+                                strWhere.Add($" {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
                             }
-                            if (iColumnProperty == 1) //int
+                            if (IsSupporLikeQuery) //是否支持模糊查询
                             {
-                                columnNameAndValue.Add($"  {column.Key}={column.Value }");
+                                if (iColumnProperty == 0) //string 
+                                {
+                                    strWhere.Add($"  { column.Key } like  '%{ column.Value }%'");
+                                }
+                                if (iColumnProperty == 1) //int
+                                {
+                                    strWhere.Add($"  { column.Key } like '%{column.Value }%'");
+                                }
                             }
-                            if (iColumnProperty == 2) //bool
+                            else
                             {
-                                columnNameAndValue.Add($"  {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                if (iColumnProperty == 0) //string 
+                                {
+                                    strWhere.Add($"  { column.Key } =  '{ column.Value }' ");
+                                }
+                                if (iColumnProperty == 1) //int
+                                {
+                                    strWhere.Add($"  { column.Key } = {column.Value } ");
+                                }
+                                if (iColumnProperty == 2) //bool
+                                {
+                                    strWhere.Add($"  { column.Key } = {(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                }
                             }
                         }
                     }
                 }
             }
-            sb.Append($" update {tableName} set  {string.Join(",", columnNameAndValue)} where id={id};");
+            sb.Append($"  select * from  {tableName}  where 1=1 and  {string.Join("and", strWhere)};");
+            if (!string.IsNullOrEmpty(cURDModelSave.SqlWhere))
+            {
+
+            }
             return sb.ToString();
         }
 
