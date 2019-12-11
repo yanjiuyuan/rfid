@@ -960,6 +960,64 @@ namespace DingTalk.Controllers
         }
 
         #endregion
+
+        #region 盯盘
+
+        /// <summary>
+        /// 获取企业自定义空间
+        /// </summary>
+        [HttpGet]
+        [Route("GetSpaceId")]
+        public async Task<NewErrorModel> GetSpaceId()
+        {
+            DingTalkManager dingTalkManager = new DingTalkManager();
+            var result = await dingTalkManager.GetSpaceId(DTConfig.AgentId);
+            DingPanModel dingPanModel = JsonConvert.DeserializeObject<DingPanModel>(result);
+            if (dingPanModel != null && dingPanModel.errcode == 0)
+            {
+                return new NewErrorModel()
+                {
+                    data = dingPanModel.spaceid,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            else
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(dingPanModel.errcode, dingPanModel.errmsg, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// 发送钉盘文件给指定用户
+        /// </summary>
+        [HttpPost]
+        [Route("SendDingPanFileToUser")]
+        public async Task<string> SendDingPanFileToUser(SendDingPanModel sendDingPanModel)
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            HttpsClient _client = new HttpsClient();
+            _client.QueryString.Add("access_token", access_token);
+            _client.QueryString.Add("agent_id", DTConfig.AgentId);
+            _client.QueryString.Add("userid", sendDingPanModel.userid);
+            _client.QueryString.Add("media_id", sendDingPanModel.media_id);
+            _client.QueryString.Add("file_name", sendDingPanModel.file_name);
+            var url = _addressConfig.GetSendDingPanFileUrl;
+            sendDingPanModel.agent_id = DTConfig.AgentId;
+            sendDingPanModel.access_token = access_token;
+            var result = await _client.UploadModel(url, sendDingPanModel);
+            return result;
+            
+        }
+
+
+
+        #endregion
     }
 
     public class CompanyModel

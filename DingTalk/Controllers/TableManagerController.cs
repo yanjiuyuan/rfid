@@ -14,6 +14,123 @@ namespace DingTalk.Controllers
     public class TableManagerController : ApiController
     {
         /// <summary>
+        /// 外键搜索(用于赋值)
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("OukKeyRead")]
+        public NewErrorModel OukKeyRead()
+        {
+            try
+            {
+                using (DDContext dataContext = new DDContext())
+                {
+                    List<Tables> tablles = dataContext.Tables.ToList();
+                    List<TableInfo> tablleInfos = dataContext.TableInfo.ToList();
+
+                    foreach (var item in tablles)
+                    {
+                        item.tableInfos = tablleInfos.Where(t => t.TableID == item.ID).ToList();
+                    }
+                    //ColumnNameOld赋值
+                    foreach (var item in tablles)
+                    {
+                        foreach (var tbinfo in item.tableInfos)
+                        {
+                            tbinfo.ColumnNameOld = tbinfo.ColumnName;
+                        }
+                    }
+                    return new NewErrorModel()
+                    {
+                        data = tablles,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 外键绑定
+        /// </summary>
+        /// <param name="pks"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("OukKeySave")]
+        public NewErrorModel OukKeySave(Pks pks)
+        {
+            try
+            {
+                using (DDContext dataContext = new DDContext())
+                {
+                    TableInfo tableInfo = dataContext.TableInfo.Where(t => t.ID == pks.ColumnId).FirstOrDefault();
+
+                    if (tableInfo.ColumnProperty == 0 || tableInfo.ColumnProperty == 1)
+                    {
+                        dataContext.Pks.Add(pks);
+                        dataContext.Pks.Add(new Pks()
+                        {
+                            ColumnId = pks.OutColumnId,
+                            OutColumnId = pks.ColumnId
+                        });
+                        dataContext.SaveChanges();
+                    }
+                    else
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "bool类型的字段不能用于外键绑定！", "") { },
+                        };
+                    }
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "保存成功！", "") { },
+                };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 外键删除
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("OukKeyDel")]
+        public NewErrorModel OukKeyDel(int Id)
+        {
+            try
+            {
+                using (DDContext dataContext = new DDContext())
+                {
+                    Pks pks = dataContext.Pks.Find(Id);
+                    Pks pksPro = dataContext.Pks.Where(p => p.ColumnId == pks.OutColumnId).FirstOrDefault();
+                    dataContext.Pks.Remove(pks);
+                    dataContext.Pks.Remove(pksPro);
+                    dataContext.SaveChanges();
+                }
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "保存成功！", "") { },
+                };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        /// <summary>
         /// 数据库表读取 
         /// </summary>
         /// <param name="flowId"></param>
@@ -26,8 +143,10 @@ namespace DingTalk.Controllers
             {
                 using (DDContext dataContext = new DDContext())
                 {
-                    List<Tables> tablles = dataContext.Tables.Where(t => t.FlowId == flowId).ToList();
+                    List<Tables> tabllesAll = dataContext.Tables.ToList();
+                    List<Tables> tablles = tabllesAll.Where(t => t.FlowId == flowId).ToList();
                     List<TableInfo> tablleInfos = dataContext.TableInfo.ToList();
+                    List<Pks> pksList = dataContext.Pks.ToList();
                     foreach (var item in tablles)
                     {
                         item.tableInfos = tablleInfos.Where(t => t.TableID == item.ID).ToList();
@@ -37,6 +156,20 @@ namespace DingTalk.Controllers
                     {
                         foreach (var tbinfo in item.tableInfos)
                         {
+                            List<Pks> pks = pksList.Where(p => p.ColumnId == tbinfo.ID).ToList();
+
+                            if (pks.Count > 0)
+                            {
+                                //查找关联的字段名和表名
+                                foreach (var pk in pks)
+                                {
+                                    TableInfo tableInfo = tablleInfos.Where(t => t.ID == pk.OutColumnId).FirstOrDefault();
+                                    pk.ColumName = tableInfo.ColumnName;
+                                    Tables tables = tabllesAll.Where(t => t.ID == tableInfo.TableID).FirstOrDefault();
+                                    pk.TableName = tables.TableName;
+                                }
+                                tbinfo.Pks = pks;
+                            }
                             tbinfo.ColumnNameOld = tbinfo.ColumnName;
                         }
                     }

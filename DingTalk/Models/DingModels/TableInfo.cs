@@ -81,5 +81,10 @@
         [NotMapped]
         public OperateType operateType { get; set; }
 
+        /// <summary>
+        /// 外键信息
+        /// </summary>
+        [NotMapped]
+        public List<Pks> Pks { get; set; }
     }
 }

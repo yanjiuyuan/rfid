@@ -445,6 +445,7 @@
     <Compile Include="Models\DingModels\ContextError.cs" />
     <Compile Include="Models\DingModels\DetailedList.cs" />
     <Compile Include="Models\DingModels\LongitudinalProject.cs" />
+    <Compile Include="Models\DingModels\Pks.cs" />
     <Compile Include="Models\DingModels\ProcessingProgress.cs" />
     <Compile Include="Models\DingModels\ProjectClosure.cs" />
     <Compile Include="Models\DingModels\ProjectFunding.cs" />
@@ -522,6 +523,8 @@
     <Compile Include="Models\DingModels\Vote.cs" />
     <Compile Include="Models\DingModels\Worker.cs" />
     <Compile Include="Models\DingModels\WorkTime.cs" />
+    <Compile Include="Models\ServerModels\DingPanModel.cs" />
+    <Compile Include="Models\ServerModels\DingPanPostModel.cs" />
     <Compile Include="Models\ServerModels\DownloadFileModel.cs" />
     <Compile Include="Models\ServerModels\DrowDownModel.cs" />
     <Compile Include="Models\ServerModels\ErrorModel.cs" />
@@ -555,6 +558,7 @@
     <Compile Include="Models\ServerModels\PrintModel.cs" />
     <Compile Include="Models\ServerModels\RequestBaseModel.cs" />
     <Compile Include="Models\ServerModels\ResponseBaseModel.cs" />
+    <Compile Include="Models\ServerModels\SendDingPanModel.cs" />
     <Compile Include="Models\ServerModels\SendOAModel.cs" />
     <Compile Include="Models\ServerModels\SendProgressModel.cs" />
     <Compile Include="Models\ServerModels\TaskFlowModel.cs" />

@@ -100,8 +100,7 @@ namespace DingTalk.Models.DingModels
         public DbSet<Tables> Tables { get; set; }
         public DbSet<SqlExe> SqlExe { get; set; }
 
-
-
-
+        public DbSet<Pks> Pks { get; set; }
+        
     }
 }
