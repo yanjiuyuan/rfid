@@ -10,7 +10,7 @@
         <i class="el-icon-arrow-left"></i>
         {{FlowName}}-{{nodeInfo.NodeName}}
     </div>
-    <template v-if="FlowId == '6'" v-for="(d,index) in dataArr">
+    <template v-for="(d,index) in dataArr" v-if="FlowId == 6">
         <h2 style="text-align:center;">{{d.Sorts}}件列表</h2>
         <!--表格實體-->
         <el-table :data="d.tableData" stripe border>
@@ -28,40 +28,19 @@
             </el-pagination>
         </div>
     </template>
-    <template v-if="FlowId != '6'">
-        <!--表格實體-->
-        <el-table :data="tableData" stripe border>
-            <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
-            </el-table-column>
-        </el-table>
-        <!--底部翻頁-->
-        <div style="text-align:right">
-            <el-pagination v-on:size-change="handleSizeChange"
-                           v-on:current-change="handleCurrentChange"
-                           :current-page="currentPage"
-                           :page-sizes="[1, 3, 5, 10]"
-                           :page-size="5"
-                           layout="total, sizes, prev, pager, next, jumper"
-                           :total="totalRows">
-            </el-pagination>
-        </div>
-    </template> 
-
-
+    <el-table :data="data" stripe border>
+        <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
+        </el-table-column>
+    </el-table>
+    <br/>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
-        <template v-if="FlowId == 6">
-            <el-form-item label="图纸用途">
-                <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="图纸设计人员">
-                <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
-            </el-form-item>
-        </template>
-
-        <el-form-item label="套数" v-if="FlowId == 23">
-            <el-input v-model="ruleForm.counts" :disabled="true"></el-input>
+        <el-form-item label="图纸用途">
+            <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="图纸设计人员">
+            <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
@@ -72,20 +51,20 @@
         </div>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
-            <el-button type="primary" v-on:click="downloadAllPdf">下载所有图纸</el-button>
+            <el-button type="primary" v-if="state == '已完成'"  v-on:click="downloadAllPdf">下载所有图纸</el-button>
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
 
-                    <el-switch v-if="index == 0 && FlowId == '6'" v-model="f.state"
+                    <el-switch v-if="index == 0" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
                                active-text="通过" inactive-text="不通过"
                                active-value="1" inactive-value="0"
                                v-on:change="setPdfState">
                     </el-switch>
-                    <span v-if="index == 2 && FlowId == '6'">{{f.state == '1'? '通过' : '不通过'}}</span>
+                    <span v-if="index != 0 && NodeId > 1 && FlowId == 6">{{f.state == '1'? '通过' : '不通过'}}</span>
                 </div>
             </el-card>
         </el-form-item>
@@ -101,7 +80,7 @@
         </el-form-item>
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
-        <el-form-item label="操作" v-if="FlowId == '6'">
+        <el-form-item label="操作">
             <el-button v-if="State == '已完成'" type="primary" v-on:click="stampAndGet">打印表单</el-button>
             <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         </el-form-item>
@@ -123,7 +102,7 @@
                                 <button id="tools_turn_right">正转</button>
                                 <button id="tools_turn_left">逆转</button>
                                 @*<button id="tools_undo">撤回</button>&nbsp;&nbsp;&nbsp;
-                                 <button id="tools_redo">redo</button>*@
+                                    <button id="tools_redo">redo</button>*@
                             </span>
                         </div>
                     </div>
@@ -209,13 +188,8 @@
 
 
 </el-main>
-<script>
-    var fileList = []
-    var stampRole = {}//圖紙審批 可打印并 下載的角色信息
-</script>
 
 <script>
-    serverUrl = 'http://17e245o364.imwork.net:49415/'
     $("#mask").hide()
     var items = {}
     var dataArr = [
@@ -273,7 +247,7 @@
                 this.aggreSubmit()
             },
             
-            //图纸盖章并获取文件
+            //图纸盖章并获取
             stampAndGet() {
                 FilePDFUrl = FilePDFUrl.replace(/\\/g, '\\\\')
                 var paramObj = {
@@ -283,7 +257,6 @@
                 }
                 var that = this
                 let url = "/DrawingUpload/PrintAndSend"
-                //if (FlowId == '23') url = "/PurchaseOrder/QuaryByTaskId?TaskId="
                 $.ajax({
                     url: url,
                     type: "POST",
@@ -292,14 +265,7 @@
                     success: function (data) {
                         console.log(paramObj)
                         console.log(data)
-                        var alertStr = ''
-                        data.errorMessage ? alertStr = data.errorMessage : alertStr = data.errmsg
-                        that.$alert(alertStr, '反馈消息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-
-                            }
-                        });
+                        this.$message({ type: 'success', message: `获取成功，请在工作通知中查收` });
                     },
                     error: function (err) {
                         console.log(err);
@@ -331,41 +297,24 @@
 
             //获取bom表信息
             getBomInfo() {
-                var that = this
-                let url = "/DrawingUpload/GetPurchase?TaskId=" + TaskId
-                if (FlowId == '23') url = "/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: function (data) {
-                        console.log("/DrawingUpload/GetPurchase?TaskId=" + TaskId)
-                        if (typeof (data) == 'string') data = JSON.parse(data)
-                        that.data = data
-                        if (FlowId == 23 || FlowId == 1) that.data = data.data
-                        console.log(data)
-                        if (FlowId == 6) {
-                            for (let a of that.dataArr) {
-                                for (let d of data) {
-                                    if (a.Sorts == d.Sorts) {
-                                        a.data.push(d)
-                                    }
+                if (FlowId == 23) {
+                    this.GetData("/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId, (data) => {
+                        this.data = data
+                    })
+                } 
+                if (FlowId == 6) {
+                    this.GetData("/DrawingUploadNew/GetPurchase?TaskId=" + TaskId, (data) => {
+                        for (let a of that.dataArr) {
+                            for (let d of data) {
+                                if (a.Sorts == d.Sorts) {
+                                    a.data.push(d)
                                 }
-                                a.tableData = a.data.slice(0, 5)
-                                a.totalRows = a.data.length
                             }
-                        } else {
-                            for (let d of that.data) {
-                                if (d.UrgentDate) d.UrgentDate = d.UrgentDate.substring(0,10)
-                            }
-                            that.getData()
-                            that.totalRows = that.data.length
+                            a.tableData = a.data.slice(0, 5)
+                            a.totalRows = a.data.length
                         }
-
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
+                    })
+                }
             },
 
 

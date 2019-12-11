@@ -100,7 +100,7 @@
                 this.PostData('PurchaseNew/PrintAndSend',{
                     UserId: DingData.userid,
                     TaskId: TaskId
-                }, () => { this.elementAlert('提示信息','获取成功，请在工作通知中查收') })
+                }, () => { this.$message({ type: 'success', message: `获取成功，请在工作通知中查收` }); })
             },
             printBom() {
                 this.GetData('PurchaseNew/PrintExcel' + _formatQueryStr({

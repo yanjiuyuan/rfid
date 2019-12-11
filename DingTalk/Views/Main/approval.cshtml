@@ -41,7 +41,6 @@
                 count: 2,
                 name: '',
                 id: '',
-                menu: [],
                 list: [],
                 userList: userList,
                 userName: DingData.nickName
@@ -52,6 +51,7 @@
                 this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=' + DingData.userid, (res) => {
                     res = JSON.stringify(res).replace(/null/g, '""')
                     this.menu = JSON.parse(res)
+                    menu = JSON.parse(res)
                 })
             },
             filterMenuList() {

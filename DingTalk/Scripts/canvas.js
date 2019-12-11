@@ -599,13 +599,12 @@ function saveItAsPdf() {
     //var datauri = doc.output('dataurlstring')
     //var base64 = datauri.substring(28)
     console.log(a)
-    console.log(4)
+    //console.log(4)
     $.ajax({
         url: '/File/PostFile',
         type: 'POST',
         data: param,
         success: function (data) {
-            console.log('/File/PostFile')
             demo.elementAlert('提示','保存成功')
             //alert('保存成功')
             console.log(data)

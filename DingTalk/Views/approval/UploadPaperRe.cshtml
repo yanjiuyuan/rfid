@@ -34,7 +34,7 @@
         </el-table-column>
     </el-table>
     <h3>零件列表</h3>
-    <el-table :data="data" stripe border>
+    <el-table :data="purchaseList" stripe border>
         <el-table-column prop="BomId" label="组件名称">
         </el-table-column>
         <el-table-column prop="Sorts" label="类型">
@@ -66,7 +66,7 @@
             </el-select>
         </el-form-item>
 
-        <el-form-item label="套数">
+        <el-form-item label="套数" prop="counts">
             <sam-input :value.sync="ruleForm.counts" type="number" :required="true" :min="1" style="width:100px;"></sam-input>
         </el-form-item>
         <!--PDF展示-->
@@ -191,7 +191,6 @@
 </el-main>
 
 <script>
-    $("#mask").hide()
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -205,7 +204,7 @@
             //提交审批
             onSubmit(formName) {
                 if (!this.ruleForm.counts) {
-                    this.$message({ type: 'error', message: `表单填不完整或格式不正确，请检查` });
+                    this.$message({ type: 'error', message: `套数不能为空，请重新输入` });
                     return
                 }
                 var that = this
@@ -222,7 +221,7 @@
             },
             chooseProject(index, row) {
                 console.log(row)
-                this.data = row.PurchaseList
+                this.purchaseList = row.PurchaseList
                 this.handleUrlData(row,this)
                 this.ruleForm.FileUrl = row.FileUrl
                 this.ruleForm.Title = row.Title
@@ -235,24 +234,15 @@
                 this.ruleForm.MediaIdPDF = row.MediaIdPDF
                 this.ruleForm.ProjectName = row.ProjectName
             },
-            selectProject(id) {
-                console.log(id)
-                for (var project of this.projectList) {
-                    if (project.ProjectId == id) {
-                        this.ruleForm.Title = project.ProjectName + ' - 编号：' + project.ProjectId
-                        this.ruleForm.ProjectName = project.ProjectName
-                    }
-                }
-            },
             //审批绑定BOM表数据
             bindData(taskId) {
                 var that = this
-                for (let d of this.data) {
+                for (let d of this.purchaseList) {
                     d.TaskId = taskId
                 }
                 this._postData("/PurchaseOrder/Save", function (data) {
                     that.doneSubmit()
-                }, that.data)
+                }, that.purchaseList)
             },
             clickFile(fileUrl, name, mediaId) {
                 if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
@@ -320,6 +310,7 @@
     //初始化
     $(function () {
         $("#dialog").hide()
+        $("#mask").hide()
     })
 </script>
 
