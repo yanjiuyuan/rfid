@@ -11,8 +11,9 @@ var UrlObj = {} //url参数对象
 var QueryObj = {} //获取url参数对象
 var Id = 0 //自增task表的id
 var UserList = [] //所有用户数据
-var imgConfig = [] //审批主页图片和路由配置
+var menu = []//菜单列表
 var ReApprovalTempData = {} //重新发起审批保存的临时数据
+let slParam = ['ruleForm', 'tableForm', 'imageList', 'pdfList', 'nodeList', 'dataArr', 'purchaseList', 'files']//需要临时保存的字段
 var imageListOrigin = []
 var fileListOrigin = []
 var pdfListOrigin = []
@@ -330,6 +331,7 @@ var mixin = {
         ruleForm: {
             Title: ''
         },
+        menu: [],
         specialRole: [],
         specialRoleNames: [],
         tableForm:{},
@@ -379,6 +381,9 @@ var mixin = {
             ],
             Type: [
                 { required: true, message: '类别不能为空！', trigger: 'change' }
+            ],
+            counts: [
+                { required: true, message: '套数不能为空！', trigger: 'change' }
             ],
             Name: [
                 { required: true, message: '名称不能为空！', trigger: 'change' },
@@ -970,50 +975,28 @@ var mixin = {
         
         //显示临时保存数据
         saveTempData() {
-            let data = {}
-            //data['tableData'] = this.tableData || []
-            //data['data'] = this.data || []
-            let files = this.fileList || []
-            let purchaseList = this.purchaseList || []
-            data['ruleForm'] = this.ruleForm || {}
-            data['tableForm'] = this.tableForm || {}
-            data['imageList'] = this.imageList || []
-            data['pdfList'] = this.pdfList || []
-            data['nodeList'] = this.nodeList || []
-            this.saveData(data, files, purchaseList)
+            for (let p of slParam) {
+                if (this[p]) this.saveData(p, this[p])
+            }
             this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
         },
         loadTempData() {
-            let data = this.loadData(FlowId)
-            let files = this.loadData(FlowId + '-file')
-            let purchaseList = this.loadData(FlowId + '-purchaseList')
-            if (data) {
-                //this['tableData'] = data.tableData
-                //this['data'] = data.data
-                this['ruleForm'] = data.ruleForm
-                this.tableForm = data.tableForm
-                //this['purchaseList'] = data.purchaseList
-                this['imageList'] = data.imageList
-                this['fileList'] = data.fileList
-                this['pdfList'] = data.pdfList
-                this.$message({ type: 'success', message: `获取临时保存数据成功，需要再次保存请点击保存按钮` });
-                this['nodeList'] = data.nodeList
+            for (let p of slParam) {
+                let data = this.loadData(FlowId + '-' + p)
+                if (data) {
+                    this[p] = data
+                    this.saveData(p, null)
+                }
             }
-            if (files) {
-                this['fileList'] = files
-            }
-            if (purchaseList) {
-                this['purchaseList'] = purchaseList
-            }
-            this.saveData(null, null, null)
         },
-        saveData(data, files, purchaseList) {
+        saveData(key,value) {
             var Days = 7;
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
-            document.cookie = FlowId + "=" + JSON.stringify(data) + ";expires=" + exp.toGMTString();
-            document.cookie = FlowId + "-file=" + JSON.stringify(files) + ";expires=" + exp.toGMTString();
-            document.cookie = FlowId + "-purchaseList=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
+            document.cookie = FlowId + "-" + key + "=" + JSON.stringify(value) + ";expires=" + exp.toGMTString();
+            //document.cookie = FlowId + "-file=" + JSON.stringify(files) + ";expires=" + exp.toGMTString();
+            //document.cookie = FlowId + "-purchaseList=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
+            //document.cookie = FlowId + "-dataArr=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
         },
         loadData(cookieName) {
             let arr, reg = new RegExp("(^| )" + cookieName + "=([^;]*)(;|$)");
@@ -1046,18 +1029,22 @@ var mixin = {
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
                 ruleForm: this.ruleForm,
+                items: this.items
                 //nodeList: this.nodeList
             }
             ReApprovalTempData['tableForm'] = this.tableForm || {}
-            if (this.data) {
+            if (this.data && this.data.length>0) {
                 ReApprovalTempData['dataArr'] = this.data
-            }else if (this.tableData) {
+            } else if (this.tableData && this.tableData.length > 0) {
                 ReApprovalTempData['dataArr'] = this.tableData
             }
             //if(items) ReApprovalTempData['items'] = items
-            for (let img of imgConfig) {
-                if (img.FlowId == FlowId) {
-                    loadPage(img.url)
+            console.log(ReApprovalTempData)
+            for (let m of menu) {
+                for (let f of m.flows) {
+                    if (f.FlowId == FlowId) {
+                        loadPage(f.PcUrl)
+                    }
                 }
             }
         },
@@ -1070,6 +1057,7 @@ var mixin = {
             this.imageList = ReApprovalTempData.imageList
             this.fileList = ReApprovalTempData.fileList
             this.pdfList = ReApprovalTempData.pdfList
+            this.items = ReApprovalTempData.items
             //this.nodeList = ReApprovalTempData.nodeList
             ReApprovalTempData.valid = false
             this['purchaseList'] = ReApprovalTempData.dataArr
@@ -1696,9 +1684,11 @@ var mixin = {
                     if (data.media_id) {
                         console.log(data.media_id)
                         that.mediaPdfList.push(data.media_id)
-                        fileList[fileList.length - 1]['mediaid'] = data.media_id
                     } else {
                         console.log('无media_di')
+                    }
+                    for (let i = 0; i < that.mediaPdfList.length; i++) {
+                        fileList[i]['mediaid'] = that.mediaPdfList[i]
                     }
                     that.pdfList = _cloneArr(fileList)
                     loading.close()

@@ -19,16 +19,17 @@
             <span style="color:red;"> 切换编码类型会清空已填编码！！！</span>
         </el-form-item>
 
-        <!--表格實體-->
-        <el-Table :data="tableData" stripe border>
+        <!--表格實體  -->
+        <el-Table :data="purchaseList" stripe border>
             <el-Table-column prop="CodeNo" type="index"></el-Table-column>
             <el-Table-column label="操作">
                 <template slot-scope="scope">
                     <el-button size="mini" type="danger" v-on:click="deleteGood(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-Table-column>
-
-            <el-Table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+            <el-Table-column v-for="(value,key) in allConfig" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
+            </el-Table-column>
+            @*<el-Table-column v-for="(value,key) in allConfig" v-if="needInput.indexOf(key) >=0" :prop="key" :label="value" :key="key" :style="{width:lengthConfig[key]+'px'}">
                 <template slot-scope="scope">
                     <sam-input :value.sync="scope.row[key]" :required="true"></sam-input>
                 </template>
@@ -37,20 +38,8 @@
                 <template slot-scope="scope">
                     <sam-input :value.sync="scope.row[key]"></sam-input>
                 </template>
-            </el-Table-column>
+            </el-Table-column>*@
         </el-Table>
-        <!--上传表單-->
-        <el-upload class="upload-demo"
-                   action="/drawingupload/UploadAndGetInfo"
-                   :on-success="handleSuccess"
-                   :before-upload="beforeExcelUpload"
-                   multiple
-                   :limit="1"
-                   :file-list="excelList">
-            <el-button size="small" type="primary">批量导入文件</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过4M</div>
-        </el-upload>
-        <el-button size="mini" type="primary" v-on:click="downloadFile(mediaId)" :disabled="disablePage">下载模板</el-button>
         <hr />
         <!--物料明细-->
         <template v-for="(good,index) in goods">
@@ -65,7 +54,7 @@
             </el-form-item>
             <el-form-item label="物料小类" required="required">
                 <el-select v-model="good.SmallCode" filterable placeholder="请选择" v-on:change="changeSmallCode(good)">
-                    <el-option v-for="item in good.smallMaterialCodes"
+                    <el-option v-for="item in smallMaterialCodes"
                                :key="item.materialCodeNumber"
                                :label="item.materialCodeNumber + ' - ' + item.materialName"
                                :value="item.materialCodeNumber">
@@ -133,14 +122,14 @@
     } 
     meteriel['BigCode'] = ''
     meteriel['SmallCode'] = ''
-    meteriel['smallMaterialCodes'] = []
+    //meteriel['smallMaterialCodes'] = []
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                mediaId: '@@lAvPDeC2t8bqmM3OExReeM5jC3b9',
-                excelList: [],
+                purchaseList: [],
+                smallMaterialCodes:[],
                 allConfig: allConfig,
                 lengthConfig: lengthConfig,
                 meterielConfig: meterielConfig,
@@ -156,15 +145,15 @@
         },
         methods: {
             onSubmit(formName) {
-                if (this.tableData.length == 0) {
+                if (this.purchaseList.length == 0) {
                     this.addGoods()
-                    if (this.tableData.length == 0) {
+                    if (this.purchaseList.length == 0) {
                         this.elementAlert('提示信息', '未添加编码')
                         return
                     }
                 }
-                for (var i = 0; i < this.tableData.length;i++) {
-                    let d = this.tableData[i]
+                for (var i = 0; i < this.purchaseList.length;i++) {
+                    let d = this.purchaseList[i]
                     if (!d.BigCode || !d.BigCode || !d.Name || !d.Standard || !d.BigCodeName || !d.SmallCodeName) {
                         this.elementAlert('提示信息', '第 ' + (i+1) + ' 表单未填写完整')
                         return
@@ -175,7 +164,7 @@
             bindAll(taskId) {
                 var that = this
                 var paramArr = []
-                for (let p of this.tableData) {
+                for (let p of this.purchaseList) {
                     p.TaskId = taskId
                     paramArr.push(p)
                 }
@@ -194,40 +183,28 @@
                 })
             },
 
-            //上传文件方法
-            handleSuccess(response, file, fileList) {
-                //this.tableData = []
-                for (let d of response[0].Value) {
-                    let tmpData = {}
-                    for (let s in d) {
-                        tmpData[configDictionary[s]] = d[s]
-                    }
-                    this.tableData.push(tmpData)
-                }
-                return
-                for (let i = 0; i < tableData.length; i++) {
-                    let data = tableData[i]
-                    if (i != 0 && data['Column1'] && data['Column1'] != "") {
-                        this.tableData.push(data)
-                    }
-                }
-            },
             //添加编码
             addGoods() {
                 if (!this.goods[0].BigCode || !this.goods[0].BigCode || !this.goods[0].Name || !this.goods[0].Standard) {
                     this.elementAlert('提示信息', '表单未填写完整')
                     return
                 }
-                this.tableData.push(_cloneObj(this.goods[0]))
+                for (let t of this.purchaseList) {
+                    if (t.Name == this.goods[0].Name && t.Standard == this.goods[0].Standard) {
+                        this.$message({ type: 'error', message: `物料名称、规格型号不可重复` });
+                        return
+                    }
+                }
+                this.purchaseList.push(_cloneObj(this.goods[0]))
                 
             },
             deleteGood(index, good) {
-                this.tableData.splice(index, 1)
+                this.purchaseList.splice(index, 1)
             },
             //切换编码类型
             changeCodeType(e) {
                 console.log(e)
-                this.tableData = []
+                this.purchaseList = []
                 this.getMaterielCode()
                 this.goods = []
                 this.goods.push(_cloneObj(meteriel))
@@ -327,14 +304,14 @@
                 for (let c of this.bigCodes) {
                     if (c.materialCodeNumber == good.BigCode) {
                         good['BigCodeName'] = c.materialName
-                        good.smallMaterialCodes = c.smallMaterialCodes
+                        this.smallMaterialCodes = c.smallMaterialCodes
                     }
                 }
             },
             //选择小类
             changeSmallCode(good) {
                 for (let c of this.bigCodes) {
-                    for (let s of c.smallMaterialCodes) {
+                    for (let s of this.smallMaterialCodes) {
                         if (c.materialCodeNumber == good.BigCode && s.materialCodeNumber == good.SmallCode) {
                             good['SmallCodeName'] = s.materialName
                         }

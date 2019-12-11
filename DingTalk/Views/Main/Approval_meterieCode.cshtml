@@ -131,11 +131,17 @@
                 console.log('submit!');
                 var that = this
                 if (NodeId == 2) {
+                    let codes = []
                     for (let d of this.data) {
                         if (!d.CodeNumber) {
-                            this.elementAlert('提示信息', '请输入物料编码')
+                            this.$message({ type: 'error', message: '请输入物料编码' })
                             return
                         }
+                        if (codes.indexOf(d.CodeNumber) >= 0) {
+                            this.$message({ type: 'error', message: `物料编码不可重复，请重新输入` })
+                            return
+                        }
+                        codes.push(d.CodeNumber)
                     }
                     let url = '/ItemCodeAdd/TableModify'
                     var param = _cloneArr(this.data)

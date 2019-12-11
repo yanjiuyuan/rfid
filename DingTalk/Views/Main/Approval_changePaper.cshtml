@@ -33,13 +33,10 @@
     </template>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
-        <el-form-item label="项目名称" v-if="ruleForm.ProjectName">
-            <el-input v-model="ruleForm.ProjectId + ' - ' + ruleForm.ProjectName" :disabled="true"></el-input>
-        </el-form-item>
         @RenderPage("~/Views/Shared/endForm.cshtml")
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
-            <el-button type="primary" v-on:click="downloadAllPdf">下载所有图纸</el-button>
+            <el-button type="primary" v-if="state == '已完成'" v-on:click="downloadAllPdf">下载所有图纸</el-button>
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
@@ -52,7 +49,7 @@
                                active-value="1" inactive-value="0"
                                v-on:change="setPdfState">
                     </el-switch>
-                    <span v-if="index == 2">{{f.state == '1'? '通过' : '不通过'}}</span>
+                    <span v-if="index != 0 && NodeId > 1">{{f.state == '1'? '通过' : '不通过'}}</span>
                 </div>
             </el-card>
         </el-form-item>
@@ -65,33 +62,13 @@
                 </div>
             </el-card>
         </el-form-item>
+        @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item v-if="state=='已完成'">
-            <el-button type="primary" v-on:click="print" :disabled="disablePage">打印</el-button>
+            <el-button type="primary" v-on:click="print" :disabled="disablePage">打印表单</el-button>
         </el-form-item>
-        <!--添加审批人-->
-        <sam-approver-list :nodeList="nodeList" :single="true" :nodedata="nodeInfo"></sam-approver-list>
-
-
-        <!--添加抄送人-->
-        @*<sam-addapprover :preset="preCopy" :approvers="copyers">
-        </sam-addapprover>*@
-        <template v-if="index==0">
-            <el-form-item label="审批意见" prop="mark">
-                <el-input v-model="ruleForm.mark"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" v-on:click="onSubmit" :disabled="disablePage">同意</el-button>
-                <span> - </span>
-                <el-button v-if="nodeInfo.IsBack" type="warning" v-on:click="returnBk" :disabled="disablePage">退回</el-button>
-            </el-form-item>
-        </template>
-        <template v-if="index==2 && state=='未完成' && NodeId == '1'">
-            <el-form-item>
-                <ding :dinglist="dingList"></ding>
-                <el-button type="warning" v-on:click="rebackSubmit" :disabled="disablePage">撤回</el-button>
-            </el-form-item>
-        </template>
-
+        <el-form-item>
+            <el-button type="primary" v-on:click="outBom" :disabled="disablePage">导出bom</el-button>
+        </el-form-item>
     </el-form>
 
     <!--显示PDF-->
@@ -263,6 +240,7 @@
         data: function () {
             return {
                 items: items,
+                dataArr: dataArr,
                 frameUrl: '',
                 frameShow: false
             }
@@ -286,7 +264,12 @@
                     TaskId: TaskId,
                     OldPath: FilePDFUrl
                 }, (res) => {
-                    this.elementAlert('alert', "已推送至钉钉！")
+                    this.elementAlert('alert', "获取成功，请在工作通知中查收")
+                })
+            },
+            outBom() {
+                this.GetData("/DrawingChange/GetExcelReport" + _formatQueryStr({ taskId: taskId, applyManId: DingData.userid }), (res) => {
+                    this.elementAlert('alert', "获取成功，请在工作通知中查收")
                 })
             },
             downloadAllPdf() {

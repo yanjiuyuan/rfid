@@ -59,7 +59,7 @@
     <h3>待新增图纸Bom列表</h3>
     <template v-for="(d,index) in dataArr">
         <!--表格實體-->
-        <el-Table :data="d.TableData" stripe border>
+        <el-Table :data="d.tableData" stripe border>
             <el-Table-column v-for="(value,key) in d.items" :prop="key" :label="value" :key="key">
             </el-Table-column>
         </el-Table>
@@ -83,7 +83,7 @@
                    :on-exceed="handleExceed"
                    :file-list="excelList">
             <el-button size="small" type="primary" v-on:click="bomIndex = index">上传{{d.Sorts}}件</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过4M</div>
         </el-upload>
         @*</el-form-item>*@
     </template>
@@ -147,7 +147,7 @@
                 dataArr: [
                     {
                         data: [],
-                        TableData: [],
+                        tableData: [],
                         Sorts: '标准',
                         currentPage: 1,
                         totalRows: 0,
@@ -155,7 +155,7 @@
                     },
                     {
                         data: [],
-                        TableData: [],
+                        tableData: [],
                         Sorts: '自制',
                         currentPage: 1,
                         totalRows: 0,
@@ -163,7 +163,7 @@
                     },
                     {
                         data: [],
-                        TableData: [],
+                        tableData: [],
                         Sorts: '外购',
                         currentPage: 1,
                         totalRows: 0,
@@ -174,6 +174,7 @@
         methods: {
             //提交审批
             onSubmit(formName) {
+                let that = this
                 let deleteItem = []
                 this.allData.forEach((item) => {
                     if (item.ChangeType) {
@@ -206,12 +207,7 @@
                     }
                     changeParam.fileChange['TaskId'] = taskId
                     this.PostData('DrawingChange/Save', changeParam, (res) => {
-                        this.$alert('恭喜提交成功', '提示信息', {
-                            confirmButtonText: '确定',
-                            callback: action => {
-                                goHome()
-                            }
-                        })
+                        that.doneSubmit()
                     })
                 }
                 this.approvalSubmit(callBack)
@@ -247,18 +243,18 @@
                 this.currentPage = page
                 this.dataArr[index].currentPage = page
                 this.getData()
-                this.dataArr[index].TableData = _cloneArr(this.TableData)
+                this.dataArr[index].tableData = _cloneArr(this.tableData)
             },
             //上传文件方法
             handleSuccess(response, file, fileList) {
                 console.log(response)
-                var TableData = response[0].Value
+                var tableData = response[0].Value
                 this.currentPage = 1
                 let BomId = ''
-                if (!(TableData && TableData.length > 0)) return
+                if (!(tableData && tableData.length > 0)) return
                 this.data = []
-                for (let i = 0; i < TableData.length; i++) {
-                    let data = TableData[i]
+                for (let i = 0; i < tableData.length; i++) {
+                    let data = tableData[i]
                     if (i == 0) {
                         this.items = {}
                         for (let c in data) {
@@ -291,11 +287,11 @@
                         }
                     }
                 }
-                console.log(TableData)
+                console.log(tableData)
                 //this.totalRows = this.data.length
                 this.dataArr[this.bomIndex].totalRows = this.dataArr[this.bomIndex].data.length
                 this.getData()
-                this.dataArr[this.bomIndex].TableData = this.TableData
+                this.dataArr[this.bomIndex].tableData = this.tableData
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
