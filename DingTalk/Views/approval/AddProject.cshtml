@@ -30,11 +30,6 @@
                     <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
                 </el-select>
             </el-form-item>
-            @*<el-form-item label="公司名称" required="required">
-                <el-select v-model="ruleForm.CompanyName" style="width:300px;">
-                    <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
-                </el-select>
-            </el-form-item>*@
             <el-form-item label="合作单位">
                 <el-input v-model="ruleForm.Customer"></el-input>
             </el-form-item>
@@ -54,8 +49,7 @@
                 <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
             </el-form-item>
             <el-form-item label="项目组成员" required="required">
-                <span v-for="p in groupPeople">{{p.name}} &nbsp;</span>
-                <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 选择</el-button>
+                <sam-group :names.sync="ruleForm.TeamMembers" :ids.sync="ruleForm.TeamMembersId"></sam-group>
             </el-form-item>
             <el-form-item label="项目周期" required="required">
                 <el-date-picker v-model="ruleForm.Time"
@@ -81,11 +75,12 @@
             return {
                 status: ['在研', '已完成', '终止', '暂停'],
                 ResponsibleMan: [{ name: '', emplId: '' }],
-                groupPeople: [],
                 ProjectTypes: ProjectTypes,
                 DeptNames: DeptNames,
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 ruleForm: {
+                    TeamMembers: '',
+                    TeamMembersId: '',
                     inputProjectName: '',
                     inputProjectId: '',
                     DeptName: '',
@@ -101,14 +96,8 @@
             addProject() {
                 var that = this
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.groupPeople[0].name && this.ruleForm.Time[0]) {
+                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.TeamMembersId && this.ruleForm.Time[0]) {
                         that.disablePage = true
-                        let names = []
-                        let ids = []
-                        for (let p of this.groupPeople) {
-                            names.push(p.name)
-                            ids.push(p.emplId)
-                        }
                         var param = {
                             "ProjectName": this.ruleForm.inputProjectName,
                             "CreateTime": _getTime(), 
@@ -124,8 +113,8 @@
                             "ProjectId": this.ruleForm.inputProjectId,
                             "ResponsibleMan": this.ResponsibleMan[0].name,
                             "ResponsibleManId": this.ResponsibleMan[0].emplId,
-                            "TeamMembers": names.join(','),
-                            "TeamMembersId": ids.join(','),
+                            "TeamMembers": this.ruleForm.TeamMembers,
+                            "TeamMembersId": this.ruleForm.TeamMembersId,
                             "ProjectType": this.ptypes[0],
                             "ProjectSmallType": this.ptypes[1],
                             "BusinessDocker": this.ruleForm.BusinessDocker,

@@ -49,7 +49,7 @@
         <el-form-item label="结束时间">
             <el-input v-model="tableForm.EndTime" style="width:300px;" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="是否评审" v-if="NodeId >= 2 || (NodeId == 2 && index == 0)">
+        <el-form-item label="是否评审" v-if="NodeId > 2 || (NodeId == 2 && index == 0)">
             <el-radio :disabled="NodeId >2 || index != 0" v-model="tableForm.IsReview" :label="true">是</el-radio>
             <el-radio :disabled="NodeId >2 || index != 0" v-model="tableForm.IsReview" :label="false">否</el-radio>
         </el-form-item>

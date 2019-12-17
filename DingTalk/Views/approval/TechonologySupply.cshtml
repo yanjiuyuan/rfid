@@ -14,7 +14,7 @@
 
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
-        <el-form-item label="技术支持部门">
+        <el-form-item label="技术支持部门" v-if="doneloadTmp">
             <sam-checkbox :str.sync="tableForm.DeptName" :arr="DeptNames"></sam-checkbox>
         </el-form-item>
         <el-form-item label="项目负责人" prop="ResponsibleMan">
@@ -39,7 +39,7 @@
         </el-form-item>
         <el-form-item label="要求完成时间" prop="TimeRequired">
             <el-date-picker v-model="tableForm.TimeRequired"
-                            type="date" :editable="false"
+                            type="date" :ediTable="false"
                             value-format="yyyy-MM-dd"
                              style="width:140px;"
                             @*v-on:change="selectTime"*@
@@ -47,10 +47,10 @@
             </el-date-picker>
         </el-form-item>
         <el-form-item label="客户项目整体情况" prop="ProjectOverview">
-            <sam-input :value.sync="tableForm.ProjectOverview" style="width:550px;" :type="'textarea'" :required="true"></sam-input>
+            <sam-input :value.sync="tableForm.ProjectOverview" :maxlength="140" style="width:550px;" :type="'textarea'" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="技术支持内容要点" prop="MainPoints">
-            <sam-input :value.sync="tableForm.MainPoints" style="width:550px;" :type="'textarea'" :required="true"></sam-input>
+            <sam-input :value.sync="tableForm.MainPoints" :maxlength="140" style="width:550px;" :type="'textarea'" :required="true"></sam-input>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -85,8 +85,8 @@
                     ResponsibleMan: commonInput,
                     Customer: commonInput,
                     TimeRequired: commonInput,
-                    ProjectOverview: commonInput,
-                    MainPoints: commonInput
+                    ProjectOverview: [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }],
+                    MainPoints: [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }]
                 }
             }
         },
@@ -176,7 +176,10 @@
         },
         created: function () {
             this.initStart(() => {
-                
+                if (this.tableForm.DeptName) {
+                    this.tableForm.DeptName = this.tableForm.DeptName
+                    console.log(this.tableForm.DeptName)
+                }
             })
         },
 
