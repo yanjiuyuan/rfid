@@ -48,16 +48,16 @@
             <el-button type="primary" v-on:click="getProject">搜索</el-button>
             <el-button type="primary" v-on:click="printout">批量导出</el-button>
             <!--上传表單-->
-            <el-upload class="upload-demo"
+            @*<el-upload class="upload-demo"
                        action="/drawingupload/UploadAndGetInfo"
                        :on-success="handleSuccess"
                        :before-upload="beforeExcelUpload"
                        multiple
                        :limit="1"
                        :file-list="excelList">
-                <el-button size="small" type="primary">批量导入</el-button>
+                <el-button v-if="ifPower" size="small" type="primary">批量导入</el-button>
                 <div slot="tip" class="el-upload__tip">只能上传excel文件，且不超过500kb</div>
-            </el-upload>
+            </el-upload>*@
             <span v-if="superSearch" v-on:click="superSearch = !superSearch" class="clickable-text">隐藏高级搜索</span>
             <span v-else v-on:click="superSearch = !superSearch" class="clickable-text">高级搜索</span>
         </el-form-item>
@@ -115,7 +115,7 @@
                     <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="承担部门">
-                    <el-select v-model="tableForm.DeptName" style="width:300px;">
+                    <el-select v-model="ruleForm.DeptName" style="width:300px;">
                         <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
                     </el-select>
                 </el-form-item>
@@ -125,7 +125,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="合作单位" required="required">
-                    <el-input v-model="ruleForm.CompanyName" :disabled="true"></el-input>
+                    <el-input v-model="ruleForm.CooperativeUnit" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="商务对接人">
                     <el-input v-model="ruleForm.BusinessDocker"></el-input>
@@ -140,15 +140,12 @@
                     <span>{{ResponsibleMan[0].name}} &nbsp;</span>
                     <el-button class="button-new-tag" size="small" v-on:click="addMan">+ 选择</el-button>
                 </el-form-item>
-                <el-form-item label="项目组成员" required="required">
-                    <el-tag :key="tag.emplId" v-for="tag in groupPeople" closable
-                            :disable-transitions="false" v-on:close="handleClose(tag)">
-                        {{tag.name}}
-                    </el-tag>
-                    @*<span v-for="p in groupPeople">{{p.name}} &nbsp;</span>*@
-                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+                <el-form-item label="项目组成员" prop="TeamMembers">
+                    <sam-group :names.sync="ruleForm.TeamMembers" :ids.sync="ruleForm.TeamMembersId"></sam-group>
                 </el-form-item>
-                <sam-timerange :value1.sync="ruleForm.StartTime" :value2.sync="ruleForm.EndTime"></sam-timerange>
+                <el-form-item label="项目周期" prop="StartTime">
+                    <sam-timerange :value1.sync="ruleForm.StartTime" :value2.sync="ruleForm.EndTime" :date="true"></sam-timerange>
+                </el-form-item>
                 @*<el-form-item label="开始时间" required="required" prop="StartTime">
                     <el-input v-model="ruleForm.StartTime"></el-input>
                 </el-form-item>
@@ -157,7 +154,7 @@
                 </el-form-item>*@
                 <hr />
                 <el-form-item>
-                    <el-button type="primary" v-on:click="editProject('ruleForm')">编辑</el-button>
+                    <el-button type="primary" v-on:click="editProject('ruleForm')">保存</el-button>
                     <el-button v-on:click="dialogFormVisible = false">取 消</el-button>
                 </el-form-item>
             </template>
@@ -176,6 +173,8 @@
             return {
                 data: [],
                 tableData: [],
+                ifPower:false,
+                DeptNames: DeptNames,
                 superSearch: false,
                 nodeInfo: {},
                 formInline: {
@@ -190,14 +189,20 @@
                     ProjectState: '',
                     ProjectType: '',
                     CompanyName: '',
-                    BusinessDocker: ''
+                    BusinessDocker: '',
+                    TeamMembersId: '',
+                    TeamMembers: ''
                 },
                 status: ["在研", "已完成", "终止", "暂停"],
                 ptypes: [null, null],
                 ResponsibleMan: [{ name: '', emplId: '' }],
-                groupPeople: [],
                 dialogFormVisible: false,
-                isIndeterminate: true
+                isIndeterminate: true,
+                rules: {
+                    TeamMembers: [
+                        { required: true, message: '小组成员不能为空', trigger: 'blur' },
+                    ],
+                }
             }
         },
         methods: {
@@ -235,29 +240,6 @@
                     that.totalRows = data.length
                     that.getData()
                 })
-            },
-            handleClose(tag) {
-                for (let i = 0; i < this.groupPeople.length;i++) {
-                    if (this.groupPeople[i].emplId == tag.emplId) {
-                        this.groupPeople.splice(i, 1)
-                        break
-                    }
-                }
-                
-            },
-            addGroup() {
-                var that = this
-                console.log('addGroup')
-                DingTalkPC.biz.contact.choose({
-                    multiple: true, //是否多选： true多选 false单选； 默认true
-                    users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
-                    corpId: DingData.CorpId, //企业id
-                    onSuccess: function (data) {
-                        console.log(data)
-                        that.groupPeople = that.groupPeople.concat(data)
-                    },
-                    onFail: function (err) { }
-                });
             },
             printout() {
                 this.GetData('/ProjectNew/Print?applyManId=' + DingData.userid, (res) => {
@@ -305,15 +287,9 @@
             editProject(formName) {
                 var that = this
                 this.$refs[formName].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.groupPeople[0].name) {
+                    if (valid && this.ResponsibleMan[0].name) {
                         console.log(valid)
                         that.disablePage = true
-                        let names = []
-                        let ids = []
-                        for (let p of this.groupPeople) {
-                            names.push(p.name)
-                            ids.push(p.emplId)
-                        }
                         var param = {}
                         for (let r in that.ruleForm) {
                             param[r] = that.ruleForm[r]
@@ -321,17 +297,11 @@
                         param["Id"] = id
                         param["ResponsibleMan"] = this.ResponsibleMan[0].name
                         param["ResponsibleManId"] = this.ResponsibleMan[0].emplId
-                        param["TeamMembers"] = names.join(',')
-                        param["TeamMembersId"] = ids.join(',')
                         console.log(JSON.stringify(param))
                         that.PostData("/ProjectNew/ProjectInfoModify", param, (res) => {
-                            that.$alert(data.errorMessage, '提示信息', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    that.dialogFormVisible = false
-                                    that.getProject()
-                                }
-                            })
+                            this.$message({ type: 'success', message: `保存成功` })
+                            that.dialogFormVisible = false
+                            that.getProject()
                         })
                     }
                     else {
@@ -366,10 +336,27 @@
             },
             handleDelete(index, row) {
                 console.log(index, row);
+            },
+            getPower() {
+                let that = this
+                var url2 = '/Role/GetRoleInfo?RoleName=项目管理员'
+                $.ajax({
+                    url: url2,
+                    success: function (data) {
+                        console.log(data)
+                        for (let d of data) {
+                            if (d.emplId == DingData.userid) {
+                                that.ifPower = true
+                                break
+                            }
+                        }
+                    }
+                })
             }
         },
         created: function () {
             this.getProject()
+            this.getPower()
             loadHtml("mainPage", "partPage")
         }
     })

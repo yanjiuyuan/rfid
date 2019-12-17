@@ -34,7 +34,7 @@
 
 
     <script src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"></script>
-    @*<script src="http://g.alicdn.com/dingding/open-develop/1.6.9/dingtalk.js"></script>*@
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
     <script>
         //全局变量
         var needLogin = '@ViewBag.needLogin'
@@ -76,7 +76,6 @@
     //登录钉钉
     
     $.ajax({
-        //url: 'http://17e245o364.imwork.net/signature/',
         url: '/Login/BeginDDAutoLogin',
         dataType: 'json',
         type: 'GET',
@@ -97,85 +96,95 @@
                 }
             }, 2000)
             //2代表阿法迪
-
             console.log('开始获取授权')
             console.log(DingData)
-
             //if (goError()) return
             var configObj = {
-                jsticket: DingData.JsApiTicket,
                 agentId: DingData.AgentId,
                 corpId: DingData.CorpId,
                 timeStamp: DingData.TimeStamp,
-                signature: DingData.Signature,
                 nonceStr: DingData.NonceStr,
+                signature: DingData.Signature,
+                //jsticket: DingData.JsApiTicket,
                 jsApiList: [
                     'runtime.info',
                     'biz.contact.choose',
                     'device.notification.alert',
                     'device.notification.confirm',
                     'biz.ding.post',
-                    'biz.user.get']
+                    'biz.user.get',
+                    'biz.util.uploadAttachment',
+                    'biz.util.openLink']
             }
             //console.log(configObj)
-            DingTalkPC.config(configObj);
+            dd.config(configObj);
+            ddReady()
         },
         error: function (err) {
             console.error(err)
         }
     })
     //DingTalkPC.ready回调函数
-    DingTalkPC.ready(function () {
-        var that = this
-        //PC版获取免登授权码
-        DingTalkPC.runtime.permission.requestAuthCode({
-            corpId: DingData.CorpId, //企业id
-            agentId: DingData.AgentId,//应用id
-            onSuccess: function (result) {
-                //console.log(result);
-                Window.authcode = result.code;
-            },
-            onFail: function (err) {
-                console.log('requestAuthCode fail: ' + JSON.stringify(err));
-            }
-        });
-        var startTime = new Date()
-        console.log('免登开始 ' + startTime.getSeconds())
-        DingTalkPC.biz.user.get({
-            onSuccess: function (result) {
-                console.log(result);
-                DingData.userid = result.emplId
-                DingData.isManager = result.isManager
-                DingData.nickName = result.nickName
-                console.log("你好，" + DingData.nickName)
-                //获取真实姓名
-                $.ajax({
-                    url: '/DingTalkServers/getUserDetail?userId=' + DingData.userid,
-                    dataType: 'json',
-                    type: 'POST',
-                    data: {},
-                    contentType: "application/json; charset=utf-8",
-                    success: function (data) {
-                        console.log('/DingTalkServers/getUserDetail?userId=' + DingData.userid)
-                        console.log(data)
-                        if (typeof (data) == 'string') data = JSON.parse(data)
-                        DingData.nickName = data.name
-                        DingData.department = data.department
-                        DingData.dept = data.dept
-                    },
-                    error: function (err) {
-                        console.error(err)
-                    }
-                })
-            },
-            onFail: function (err) {
-                console.log('userinfo fail: ' + JSON.stringify(err));
-            }
-        });
-    });
+    function ddReady() {
+        dd.ready(function () {
+            dd.runtime.permission.requestAuthCode({
+                corpId: DingData.CorpId,
+                onSuccess: function (result) {
+                    console.log('23333333333333333333333')
+                    console.log(result)
+                },
+                onFail: function (err) { }
 
+            });
+            //PC版获取免登授权码
+            dd.runtime.permission.requestAuthCode({
+                corpId: DingData.CorpId, //企业id
+                agentId: DingData.AgentId,//应用id
+                onSuccess: function (result) {
+                    //console.log(result);
+                    Window.authcode = result.code;
+                },
+                onFail: function (err) {
+                    console.log('requestAuthCode fail: ' + JSON.stringify(err));
+                }
+            });
+            var startTime = new Date()
+            console.log('免登开始 ' + startTime.getSeconds())
+            dd.biz.user.get({
+                onSuccess: function (result) {
+                    console.log(result);
+                    DingData.userid = result.emplId
+                    DingData.isManager = result.isManager
+                    DingData.nickName = result.nickName
+                    console.log("你好，" + DingData.nickName)
+                    //获取真实姓名
+                    $.ajax({
+                        url: '/DingTalkServers/getUserDetail?userId=' + DingData.userid,
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {},
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            console.log('/DingTalkServers/getUserDetail?userId=' + DingData.userid)
+                            console.log(data)
+                            if (typeof (data) == 'string') data = JSON.parse(data)
+                            DingData.nickName = data.name
+                            DingData.department = data.department
+                            DingData.dept = data.dept
+                        },
+                        error: function (err) {
+                            console.error(err)
+                        }
+                    })
+                },
+                onFail: function (err) {
+                    console.log('userinfo fail: ' + JSON.stringify(err));
+                }
+            });
+        });
+    }
 
-    DingTalkPC.error(function (err) {
+    dd.error(function (err) {
         console.log('dd error: ' + JSON.stringify(err));
     });
 

@@ -37,7 +37,7 @@
         <el-form-item label="项目负责人">
             <el-input v-model="tableForm.ApplyMan" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="项目组成员" required="required">
+        <el-form-item label="项目组成员" prop="TeamMembersId">
             <sam-group :names.sync="tableForm.TeamMembers" :ids.sync="tableForm.TeamMembersId"></sam-group>
         </el-form-item>
         <el-form-item label="项目周期" prop="StartTime" v-if="doneloadTmp">

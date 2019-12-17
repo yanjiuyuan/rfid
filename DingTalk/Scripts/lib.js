@@ -31,7 +31,7 @@ let PTypes = [
 ]
 let status = ["在研", "已完成", "终止"]
 let Depts = []
-let DeptNames = [ '智慧工厂事业部', '数控一代事业部', '机器人事业部', '行政部', '财务部', '制造试验部', '项目推进部', '自动化事业部']
+let DeptNames = []
 let CompanyNames = ['泉州华中科技大学智能制造研究院', '泉州华数机器人有限公司']
 
 //原型方法
@@ -364,7 +364,7 @@ var mixin = {
             ],
             ProjectId: [
                 { required: true, validator: checkProjectId, trigger: 'blur' },
-                { required: true, message: '内容不能为空！', trigger: 'change' }
+                { required: true, message: '请输入正确格式，例如：1234**567,*为字母。', trigger: 'change' }
             ],
             Title: [
                 { required: true, message: '标题内容不能为空！', trigger: 'change' },
@@ -407,10 +407,10 @@ var mixin = {
             ],
             inputProjectId: [
                 { required: true, validator: checkProjectId, trigger: 'blur' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { min: 0, max: 30, message: '请输入正确格式，例如：1234**567,*为字母。', trigger: 'blur' }
             ],
             inputProjectName: [
-                { required: true, message: '内容不能为空！', trigger: 'change' },
+                { required: true, message: '内容不能为空!', trigger: 'change' },
                 { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
             ], 
             Price: [
@@ -493,7 +493,6 @@ var mixin = {
         },
         pickerOptions: pickerOptions,
         CompanyNames: CompanyNames,
-        DeptNames: DeptNames,
         dialogFormVisible:false,
         currentPage: 1,
         totalRows: 0,
@@ -627,6 +626,7 @@ var mixin = {
             State = "未完成"
             this.doneloadTmp = false 
             this.DingData = DingData
+            this.DeptNames = DeptNames
             this.data = []
             this.tableData = []
             this.nodeList = []
@@ -668,10 +668,9 @@ var mixin = {
                 Title: FlowName,
             }
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
-            this.getNodeList(true)
+            this.getNodeList(true, callBack)
             this.getProjects()
             this.getNodeInfo()
-            callBack()
             loadHtml("mainPage", "partPage")
         },
         initEnd(callBack = function () { }) {
@@ -695,6 +694,7 @@ var mixin = {
             this.Index = Index
                
             this.DingData = DingData
+            this.DeptNames = DeptNames
             this.data = []
             this.tableData = []
             this.nodeList = []
@@ -738,11 +738,10 @@ var mixin = {
             }
            
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
-            this.getNodeList()
+            this.getNodeList(false, callBack)
             this.GetDingList(TaskId)
             this.getNodeInfo()
             this.getFormData()
-            callBack()
             loadHtml("mainPage", "partPage")
         },
         //提交审批
@@ -1029,8 +1028,8 @@ var mixin = {
                 fileList: this.fileList,
                 pdfList: tmpPdfList,
                 ruleForm: this.ruleForm,
-                items: this.items
-                //nodeList: this.nodeList
+                items: this.items,
+                nodeList: this.nodeList
             }
             ReApprovalTempData['tableForm'] = this.tableForm || {}
             if (this.data && this.data.length>0) {
@@ -1051,6 +1050,16 @@ var mixin = {
         //加载重新发起审批传递的数据
         loadReApprovalData() {
             if (!ReApprovalTempData.valid) return
+            //重新发起审批节点判断
+            for (let i = 1; i < this.nodeList.length; i++) {
+                if (!this.nodeList[i].ApplyMan && ReApprovalTempData.nodeList[i].ApplyMan) {
+                    this.nodeList[i]['AddPeople'] = [{
+                        avatar: "",
+                        emplId: ReApprovalTempData.nodeList[i].ApplyManId,
+                        name: ReApprovalTempData.nodeList[i].ApplyMan
+                    }]
+                }
+            }
             this.ruleForm = ReApprovalTempData.ruleForm
             this.tableForm = ReApprovalTempData.tableForm
             this.dataArr = ReApprovalTempData.dataArr
@@ -1200,7 +1209,7 @@ var mixin = {
             }
         },
         //获取审批/抄送 相关人员列表
-        getNodeList(ifStart) {
+        getNodeList(ifStart, callBack) {
             var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             this.GetData(url, (res) => {
                 this.isBack = res[0].IsBack
@@ -1252,6 +1261,7 @@ var mixin = {
                     this.loadReApprovalData()
                     this.doneloadTmp = true
                 }
+                callBack()
             })
             
         },
@@ -1334,10 +1344,11 @@ var mixin = {
         //选单人
         addMan() {
             var that = this
-            DingTalkPC.biz.contact.choose({
+            dd.biz.contact.choose({
                 multiple: false, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
+                max: 10,
                 onSuccess: function (data) {
                     that.ResponsibleMan = data
                     console.log(data)
@@ -1349,7 +1360,7 @@ var mixin = {
         addGroup(users) {
             var that = this
             console.log(users)
-            DingTalkPC.biz.contact.choose({
+            dd.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
                 users: users||[], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
@@ -1371,10 +1382,11 @@ var mixin = {
         },
         addGroup() {
             var that = this
-            DingTalkPC.biz.contact.choose({
+            dd.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
                 users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
-                corpId: DingData.CorpId, //企业id
+                corpId: DingData.CorpId, //企业id\
+                max: 10,
                 onSuccess: function (data) {
                     console.log(data)
                     for (let d of data) {
@@ -1543,9 +1555,14 @@ var mixin = {
         },
         HandleFileRemove(file, fileList) {
             this.fileList = _cloneArr(fileList)
+            this.mediaList = []
+            for (let f of fileList) {
+                if (f.mediaid) this.mediaList.push(f.mediaid)
+            }
         },
         HandleFileSuccess(response, file, fileList) {
             var that = this
+            this.mediaList = []
             const loading = this.$loading({
                 lock: true,
                 text: '数据获取中，请耐心等待~',
@@ -1562,15 +1579,19 @@ var mixin = {
                 success: function (data) {
                     data = JSON.parse(data)
                     console.log('上传文件到钉盘')
+                    console.log(fileList)
                     if (data.media_id) {
                         console.log(data.media_id)
-                        that.mediaList.push(data.media_id)
-                        //that.ruleForm
+                        for (let f of fileList) {
+                            if (f.uid == file.uid) {
+                                f['mediaid'] = data.media_id
+                            }
+                        }
                     } else {
                         console.log('无media_di')
                     }
-                    for (let i = 0; i < that.mediaList.length; i++) {
-                        fileList[i]['mediaid'] = that.mediaList[i]
+                    for (let f of fileList) {
+                        if (f.mediaid) that.mediaList.push(f.mediaid)
                     }
                     that.fileList = _cloneArr(fileList)
                     loading.close()
@@ -1661,6 +1682,10 @@ var mixin = {
         },
         HandlePdfFileRemove(file, fileList) {
             this.pdfList = _cloneArr(fileList) 
+            this.mediaPdfList = []
+            for (let f of fileList) {
+                if (f.mediaid) this.mediaPdfList.push(f.mediaid)
+            }
         },
         handlePdfFileSuccess(response, file, fileList) {
             var that = this
@@ -1860,7 +1885,7 @@ function lengthLimit(min, max) {
     }
 }
 
-//下拉框控件
+//选择项目控件
 Vue.component('sam-dropdown', {
     props: ['str', 'arr'],
     template: ` 
@@ -1915,8 +1940,15 @@ Vue.component('sam-checkbox', {
 //选择小组组件
 Vue.component('sam-group', {
     props: ['names', 'ids' ,'single','onchange'],
-    template: `  <div>
-                    <el-tag :key="tag" v-if="names" v-for="tag in names.split(',')" closable
+    template: `  <div v-if="names">
+                    <el-tag :key="tag" v-for="tag in names.split(',')" closable
+                            :disable-transitions="false" v-on:close="handleClose(tag)">
+                        {{tag}}
+                    </el-tag>
+                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+                 </div>
+                <div v-else>
+                    <el-tag :key="tag" v-for="tag in []" closable
                             :disable-transitions="false" v-on:close="handleClose(tag)">
                         {{tag}}
                     </el-tag>
@@ -1937,10 +1969,11 @@ Vue.component('sam-group', {
                 this.tags = []
                 this.tids = []
             }
-            DingTalkPC.biz.contact.choose({
+            dd.biz.contact.choose({
                 multiple: this.single ? false :true, //是否多选： true多选 false单选； 默认true
-                users: [], //this.tids 默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: this.tids, //this.tids 默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
+                max:10,
                 onSuccess: function (data) {
                     console.log(data)
                     for (let d of data) {
@@ -2002,12 +2035,12 @@ Vue.component('sam-input', {
 })
 //时间区间选择器组件
 Vue.component('sam-timerange', {
-    props: ['value1', 'value2', 'required', 'onchange'],
+    props: ['value1', 'value2', 'required', 'onchange','date'],
     template: `<div>
                  <el-date-picker
                       v-model="value"
-                      type="datetimerange"
-                      value-format="yyyy-MM-dd HH:mm:ss"
+                      :type="type"
+                      :value-format="format"
                       :picker-options="pickerOptions"
                       :class="{ redborder: value1 =='' && !required}"
                       range-separator="至"
@@ -2021,6 +2054,8 @@ Vue.component('sam-timerange', {
     data: function () {
         return {
             value: this.value1 ? [this.value1, this.value2] : null,
+            format: this.date ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss',
+            type: this.date ? 'daterange' : 'datetimerange',
             pickerOptions: {
                 shortcuts: [{
                     text: '最近一周',
@@ -2104,7 +2139,7 @@ Vue.component('sam-approver-list', {
                             </template>
 
                            <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成'" >
-                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node.NodeId,node.IsSelectMore)">+ 选人</el-button>
+                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
                                     <el-option
@@ -2141,13 +2176,19 @@ Vue.component('sam-approver-list', {
     },
     methods: {
         //选人控件添加
-        addMember(nodeId) {
+        addMember(node) {
+            //设置默认选人
+            let nodeId = node.NodeId
             let selectMoreList = this.nodedata.IsSelectMore.split(',')
             let choseList = this.nodedata.ChoseNodeId.split(',')
             var that = this
-            DingTalkPC.biz.contact.choose({
+            let choosed = []
+            for (let p of node.AddPeople) {
+                choosed.push(p.emplId)
+            }
+            dd.biz.contact.choose({
                 multiple: selectMoreList[choseList.indexOf(nodeId)] == '1'?true:false, //是否多选： true多选 false单选； 默认true
-                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: choosed, //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
                 onSuccess: function (data) {
@@ -2252,10 +2293,10 @@ Vue.component('Ding2', {
                     console.log(url)
                     console.log(param)
                     console.log(res)
-                    DingTalkPC.device.notification.alert({ message: '已为你催办~', title: '提示信息' })
+                    dd.device.notification.alert({ message: '已为你催办~', title: '提示信息' })
                 },
                 error: function (err) {
-                    DingTalkPC.device.notification.alert({ message: '催办失败~', title: '提示信息' })
+                    dd.device.notification.alert({ message: '催办失败~', title: '提示信息' })
                     console.error(url)
                     console.log(param)
                     console.error(err)
@@ -2284,7 +2325,7 @@ Vue.component('ding', {
                     <el-form-item label="钉时间" :label-width="formLabelWidth">
                       <div class="block">
                         <span class="demonstration">默认</span>
-                        <el-date-picker :editable="false"
+                        <el-date-picker :ediTable="false"
                           v-model="form.alertDate"
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm"
@@ -2328,7 +2369,7 @@ Vue.component('ding', {
                 //text: that.form.text,
             }
             console.log(param)
-            DingTalkPC.biz.ding.post(param)
+            dd.biz.ding.post(param)
         }
     }
 })
@@ -2444,7 +2485,7 @@ Vue.component('sam-approver-edit', {
                             </template>
 
                            <template v-if="node.NodeId >0 && node.NodeName != '结束' && !addable">
-                                <el-button class="button-new-tag" size="small" v-on:click="addMember(node.NodeId)">+ 选人</el-button>
+                                <el-button class="button-new-tag" size="small" v-on:click="addMember(node)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
@@ -2571,11 +2612,15 @@ Vue.component('sam-approver-edit', {
             }
         },
         //选人控件添加
-        addMember(nodeId) {
+        addMember(node) {
             var that = this
-            DingTalkPC.biz.contact.choose({
+            let choosed = []
+            for (let p of node.AddPeople) {
+                choosed.push(p.emplId)
+            }
+            dd.biz.contact.choose({
                 multiple: true, //是否多选： true多选 false单选； 默认true
-                users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
+                users: choosed, //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
                 onSuccess: function (data) {

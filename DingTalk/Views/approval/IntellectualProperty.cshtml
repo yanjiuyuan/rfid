@@ -12,18 +12,18 @@
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
 
-    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="申请名称" prop="Name">
-            <el-input v-model="TableForm.Name" style="width:550px;"></el-input>
+            <sam-input :value.sync="tableForm.Name"></sam-input>
         </el-form-item>
         <el-form-item label="申请类别" prop="Type">
-            <el-select v-model="TableForm.Type" style="width:300px;">
+            <el-select v-model="tableForm.Type" style="width:300px;" v-on:change="handleSelete">
                 <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="TableForm.ProjectNo" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+            <el-select v-model="tableForm.ProjectNo" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
                 <el-option v-for="item in projectList"
                            :key="item.ProjectId"
                            :label="item.ProjectId + '-' + item.ProjectName"
@@ -34,8 +34,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="申请发明人" prop="Inventor">
-            <el-input v-model="TableForm.Inventor" placeholder="按贡献大小排序" style="width:550px;" type="textarea" :disabled="true"></el-input>
-            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+            <sam-group :names.sync="tableForm.Inventor" :ids.sync="tableForm.InventorId"></sam-group>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -70,7 +69,7 @@
                     emplId: '15545554432996107'
                 }],
 
-                TableForm: {
+                tableForm: {
                     Company: "",
                     Name: '',
                     Type: "",
@@ -87,12 +86,12 @@
         },
         methods: {
             onSubmit(formName) {
-                this.TableForm['Project'] = this.ruleForm.ProjectName
+                this.tableForm['Project'] = this.ruleForm.ProjectName
                 //根据类型添加审批人
-                this.TableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
+                this.tableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 let callBack = (taskId) => {
-                    this.TableForm['TaskId'] = taskId
-                    this.PostData('IntellectualProperty/Save', this.TableForm, () => {
+                    this.tableForm['TaskId'] = taskId
+                    this.PostData('IntellectualProperty/Save', this.tableForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -101,31 +100,22 @@
                         })
                     })
                 }
-                this.approvalSubmit(callBack)
+                this.tableForm.ActualInventor = this.tableForm.Inventor
+                this.tableForm.ActualInventorId = this.tableForm.InventorId
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) that.approvalSubmit(callBack)
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
             },
-            //添加负责人
-            addPeerNumber() {
-                var that = this
-                DingTalkPC.biz.contact.choose({
-                    users: [],
-                    corpId: DingData.CorpId,
-                    max: 10,
-                    onSuccess: function (data) {
-                        console.log(data)
-                        let names = []
-                        let ids = []
-                        for (let d of data) {
-                            names.push(d.name)
-                            ids.push(d.emplId)
-                        }
-                        that.TableForm.Inventor = names.join(',')
-                        that.TableForm.InventorId = ids.join(',')
-                        that.TableForm.ActualInventor = names.join(',')
-                        that.TableForm.ActualInventorId = ids.join(',')
-                    },
-                    onFail: function (err) { }
-                });
-            },
+            handleSelete(value) {
+                value == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
+                $("." + 5).remove()
+                $("#" + 5).after('<span class="el-tag ' + 5 + '" style="width: 60px; text-align: center; ">' + this.nodeList[5].AddPeople.name + '</span >')
+            }
         },
         created: function () {
             this.initStart()
