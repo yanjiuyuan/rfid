@@ -11,7 +11,7 @@
     </div>
     <div>
         <span>项目名称</span>
-        <el-select v-model="ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+        <el-select v-model="ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject" filterable>
             <el-option v-for="item in projectList"
                        :key="item.ProjectId"
                        :label="item.ProjectName"
