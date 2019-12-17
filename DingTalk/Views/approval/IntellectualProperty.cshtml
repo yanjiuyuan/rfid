@@ -10,6 +10,17 @@
     </div>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
+        <el-form-item label="项目名称" prop="ProjectId">
+            <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-option v-for="item in projectList"
+                           :key="item.ProjectId"
+                           :label="item.ProjectId + '-' + item.ProjectName"
+                           :value="item.ProjectId">
+                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
+                </el-option>
+            </el-select>
+        </el-form-item>
     </el-form>
 
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
@@ -20,17 +31,6 @@
         <el-form-item label="申请类别" prop="Type">
             <el-select v-model="tableForm.Type" style="width:300px;" v-on:change="handleSelete">
                 <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="项目名称" prop="ProjectId">
-            <el-select v-model="tableForm.ProjectNo" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
-                <el-option v-for="item in projectList"
-                           :key="item.ProjectId"
-                           :label="item.ProjectId + '-' + item.ProjectName"
-                           :value="item.ProjectId">
-                    <span style="float: left"> {{item.ProjectId}}-{{ item.ProjectName }} </span>
-                    <span style="float: right; color: #8492a6; font-size: 13px"></span>
-                </el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="申请发明人" prop="Inventor">
@@ -80,13 +80,13 @@
                     Name: [{ required: true, message: '申请名称不能为空', trigger: 'blur' },{ min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
                     Type: [{ required: true, message: '申请类别不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
                     Inventor: [{ required: true, message: '申请发明人不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
-                    ProjectId: [{ required: true, message: '项目不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }],
                 }
             }
         },
         methods: {
             onSubmit(formName) {
                 this.tableForm['Project'] = this.ruleForm.ProjectName
+                this.tableForm['ProjectId'] = this.ruleForm.ProjectId
                 //根据类型添加审批人
                 this.tableForm['Type'] == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 let callBack = (taskId) => {
@@ -103,9 +103,9 @@
                 this.tableForm.ActualInventor = this.tableForm.Inventor
                 this.tableForm.ActualInventorId = this.tableForm.InventorId
                 this.$refs['tableForm'].validate((valid) => {
-                    if (valid) that.approvalSubmit(callBack)
+                    if (valid) this.approvalSubmit(callBack)
                     else {
-                        that.$alert('表单信息不全或有误', '提示信息', {
+                        this.$alert('表单信息不全或有误', '提示信息', {
                             confirmButtonText: '确定'
                         })
                     }
@@ -114,7 +114,7 @@
             handleSelete(value) {
                 value == '软件著作权' ? this.nodeList[5].AddPeople = [this.managers[1]] : this.nodeList[5].AddPeople = [this.managers[0]]
                 $("." + 5).remove()
-                $("#" + 5).after('<span class="el-tag ' + 5 + '" style="width: 60px; text-align: center; ">' + this.nodeList[5].AddPeople.name + '</span >')
+                $("#" + 5).after('<span class="el-tag ' + 5 + '" style="width: 60px; text-align: center; ">' + this.nodeList[5].AddPeople[0].name + '</span >')
             }
         },
         created: function () {
