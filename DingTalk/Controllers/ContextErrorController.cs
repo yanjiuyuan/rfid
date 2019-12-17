@@ -25,18 +25,23 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
+                int count = 0;
                 List<ContextError> contextErrors = new List<ContextError>();
                 if (key == "")
                 {
+                    count = context.ContextError.ToList().Count;
                     contextErrors = context.ContextError.OrderByDescending(c=>c.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 else
                 {
+                    count = context.ContextError.Where(c => c.RequestUrl.Contains(key)
+                   || c.Id.ToString() == key).ToList().Count;
                     contextErrors = context.ContextError.Where(c => c.RequestUrl.Contains(key)
                    || c.Id.ToString() == key).OrderByDescending(c => c.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 }
                 return new NewErrorModel()
                 {
+                    count= count,
                     data = contextErrors,
                     error = new Error(0, "读取成功！", "") { },
                 };

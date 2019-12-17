@@ -665,6 +665,7 @@ namespace DingTalk.Controllers
         {
             using (DDContext context = new DDContext())
             {
+                Flows flows = context.Flows.Where(f => f.FlowId.ToString() == FlowId).FirstOrDefault();
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 string FindNodeId = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId == NodeId).PreNodeId;
                 string NodeName = context.NodeInfo.SingleOrDefault(u => u.FlowId == FlowId && u.NodeId.ToString() == FindNodeId).NodeName;
@@ -711,7 +712,7 @@ namespace DingTalk.Controllers
                                 //推送抄送消息
                                 SentCommonMsg(item.ApplyManId,
                                 string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
-                                Task.ApplyMan, Task.Remark, null, item.TaskId.ToString());
+                                Task.ApplyMan, Task.Remark, null, item.TaskId.ToString(),flows.FlowName);
                                 context.SaveChanges();
                             }
                         }
@@ -740,7 +741,7 @@ namespace DingTalk.Controllers
                             //推送抄送消息
                             SentCommonMsg(ListPeopleId[i],
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
-                            Task.ApplyMan, Task.Remark, null, newTask.TaskId.ToString());
+                            Task.ApplyMan, Task.Remark, null, newTask.TaskId.ToString(), flows.FlowName);
 
                             context.Tasks.Add(newTask);
                             context.SaveChanges();
@@ -760,7 +761,7 @@ namespace DingTalk.Controllers
                                 //推送抄送消息
                                 SentCommonMsg(item.ApplyManId,
                                 string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", item.TaskId),
-                                TasksApplyMan.ApplyMan, TasksApplyMan.Remark, null, TasksApplyMan.TaskId.ToString());
+                                TasksApplyMan.ApplyMan, TasksApplyMan.Remark, null, TasksApplyMan.TaskId.ToString(), flows.FlowName);
                             }
                         }
                     }
@@ -815,7 +816,7 @@ namespace DingTalk.Controllers
                             Tasks Task = context.Tasks.Where(u => u.TaskId == OldTaskId).First();
                             SentCommonMsg(task.ApplyManId,
                             string.Format("您有一条抄送信息(流水号:{0})，请及时登入研究院信息管理系统进行查阅。", Task.TaskId),
-                            Task.ApplyMan, Task.Remark, null, Task.TaskId.ToString());
+                            Task.ApplyMan, Task.Remark, null, Task.TaskId.ToString(), flows.FlowName);
                         }
                         return FindNextPeople(FlowId, ApplyManId, true, false, OldTaskId, NodeId + 1);
                     }
@@ -2074,17 +2075,17 @@ namespace DingTalk.Controllers
                 {
                     if (IsBack)
                     {
-                        SentCommonMsg(ApplyManId, string.Format("您提交的{0}流程被退回(流水号:{1})，请知晓。", flows.FlowName, TaskId), ApplyMan, Remark, null, TaskId);
+                        SentCommonMsg(ApplyManId, string.Format("您提交的{0}流程被退回(流水号:{1})，请知晓。", flows.FlowName, TaskId), ApplyMan, Remark, null, TaskId, flows.FlowName);
                     }
                     else
                     {
                         if (IsSend)
                         {
-                            SentCommonMsg(ApplyManId, string.Format("{0}提交的{1}流程抄送给您，请知晓。", ApplyMan, flows.FlowName, TaskId), ApplyMan, Remark, null, TaskId);
+                            SentCommonMsg(ApplyManId, string.Format("{0}提交的{1}流程抄送给您，请知晓。", ApplyMan, flows.FlowName, TaskId), ApplyMan, Remark, null, TaskId, flows.FlowName);
                         }
                         else
                         {
-                            SentCommonMsg(ApplyManId, string.Format("{0}提交的{1}需要您审批", ApplyMan, flows.FlowName), ApplyMan, Remark, null, TaskId);
+                            SentCommonMsg(ApplyManId, string.Format("{0}提交的{1}需要您审批", ApplyMan, flows.FlowName), ApplyMan, Remark, null, TaskId, flows.FlowName);
                         }
                     }
                     return dingTalkServersController.sendOaMessage("测试",
@@ -2104,7 +2105,7 @@ namespace DingTalk.Controllers
                 }
                 else
                 {
-                    SentCommonMsg(ApplyManId, string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。",  TaskId),flows.FlowName,ApplyMan, Remark, TaskId);
+                    SentCommonMsg(ApplyManId, string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。",  TaskId),flows.FlowName,ApplyMan, Remark, TaskId, flows.FlowName);
                 }
                 return dingTalkServersController.sendOaMessage("测试",
                           string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId),
@@ -2121,11 +2122,12 @@ namespace DingTalk.Controllers
         /// <param name="Content"></param>
         /// <param name="Url"></param>
         /// <param name="TaskId"></param>
+        /// <param name="FlowName"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("SentCommonMsg")]
         public string SentCommonMsg(string SendPeoPleId, string Title, string ApplyMan,
-            string Content, string Url, string TaskId)
+            string Content, string Url, string TaskId,string FlowName)
         {
             TopSDKTest top = new TopSDKTest();
             OATextModel oaTextModel = new OATextModel();
@@ -2137,6 +2139,7 @@ namespace DingTalk.Controllers
             {
                 form = new form[] {
                     new form{ key="流水号：",value=TaskId},
+                      new form{ key="审批类型：",value=FlowName},
                     new form{ key="申请时间：",value=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},
                 },
                 title = Title,
