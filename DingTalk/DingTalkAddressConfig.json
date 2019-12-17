@@ -21,5 +21,10 @@
   "GetMessageListStatusUrl": "https://oapi.dingtalk.com/message/list_message_status",
   "GetDepartmentByUserId": "https://oapi.dingtalk.com/department/list_parent_depts",
   "GetWorkMsgUrl": "https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2",
-  "GetChildDeptByDeptIdUrl": "https://oapi.dingtalk.com/department/list_ids"
+  "GetChildDeptByDeptIdUrl": "https://oapi.dingtalk.com/department/list_ids",
+  "GetDingPanSpaceIdUrl": "https://oapi.dingtalk.com/cspace/get_custom_space",
+  "GetDingPanSpaceDetailUrl": "https://oapi.dingtalk.com/cspace/uesd_info",
+  "GetSendDingPanFileUrl": "https://oapi.dingtalk.com/cspace/add_to_single_chat",
+  "GetUploadFileUrl": "https://oapi.dingtalk.com/file/upload/transaction",
+  "GetGrantCustomSpace": "https://oapi.dingtalk.com/cspace/grant_custom_space"
 }

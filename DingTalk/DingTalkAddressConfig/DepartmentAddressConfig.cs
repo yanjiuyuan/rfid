@@ -19,5 +19,13 @@ namespace DingTalkServer
         public string GetResult { get; set; }
 
         public string GetDeptUserListByDeptIdUrl { get; set; }
+
+        public string GetDingPanSpaceIdUrl { get; set; }
+
+        public string GetDingPanSpaceDetailUrl { get; set; }
+
+        public string GetSendDingPanFileUrl { get; set; }
+
+        public string GetGrantCustomSpace { get; set; }
     }
 }

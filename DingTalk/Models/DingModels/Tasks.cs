@@ -170,5 +170,10 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         [NotMapped]
         public string CurrentTime { get; set; }
+
+        /// <summary>
+        /// ¶¢ÅÌÊý¾Ý
+        /// </summary>
+        //public string SpaceId { get; set; }
     }
 }

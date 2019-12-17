@@ -1,4 +1,5 @@
 ﻿using DingTalk.DingTalkHelper;
+using DingTalk.Models.ServerModels;
 using DingTalkServer.Models;
 using Newtonsoft.Json;
 using System;
@@ -111,6 +112,22 @@ namespace DingTalkServer
         public Task<string> GetJsapiTicket()
         {
             var url = _addressConfig.GetJsapiTicketUrl;
+            return _client.Get(url);
+        }
+
+        public Task<string> GetSpaceId(string agentId)
+        {
+            var url = _addressConfig.GetDingPanSpaceIdUrl;
+            _client.QueryString.Add("domain", "test");
+            _client.QueryString.Add("agent_id", agentId);
+            return _client.Get(url);
+        }
+        
+        public Task<string> SendDingPanFile(string agentId)
+        {
+            var url = _addressConfig.GetDingPanSpaceIdUrl;
+            _client.QueryString.Add("domain", "test");
+            _client.QueryString.Add("agent_id", agentId);
             return _client.Get(url);
         }
     }

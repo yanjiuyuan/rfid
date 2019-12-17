@@ -960,6 +960,99 @@ namespace DingTalk.Controllers
         }
 
         #endregion
+
+        #region 盯盘
+
+        /// <summary>
+        /// 获取企业自定义空间
+        /// </summary>
+        [HttpGet]
+        [Route("GetSpaceId")]
+        public async Task<NewErrorModel> GetSpaceId()
+        {
+            DingTalkManager dingTalkManager = new DingTalkManager();
+            var result = await dingTalkManager.GetSpaceId(DTConfig.AgentId);
+            DingPanModel dingPanModel = JsonConvert.DeserializeObject<DingPanModel>(result);
+            if (dingPanModel != null && dingPanModel.errcode == 0)
+            {
+                return new NewErrorModel()
+                {
+                    data = dingPanModel.spaceid,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            else
+            {
+                return new NewErrorModel()
+                {
+                    error = new Error(dingPanModel.errcode, dingPanModel.errmsg, "") { },
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// 授权用户访问企业自定义空间
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="type">0 表示上传 1 表示下载</param>
+        /// <param name="fileids">授权访问的文件id列表，id之间用英文逗号隔开，如"fileId1,fileId2", type=download时必须传递</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GrantCustomSpace")]
+        public async Task<string> GrantCustomSpace(string userId, int type,string fileids="")
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            HttpsClient _client = new HttpsClient();
+            _client.QueryString.Add("access_token", access_token);
+            _client.QueryString.Add("type", type == 0 ? "add" : "download");
+            _client.QueryString.Add("userid", userId);
+            _client.QueryString.Add("domain", "test");
+            
+            if (type == 0)
+            {
+                _client.QueryString.Add("path", "/"); //授权访问的路径，如授权访问所有文件传"/"，授权访问/doc文件夹传"/doc/"，需要utf-8 urlEncode, type=add时必须传递
+            }
+            else
+            {
+                _client.QueryString.Add("fileids", userId);
+            }
+
+            var url = _addressConfig.GetGrantCustomSpace;
+            var result = await _client.Get(url);
+            return result;
+        }
+
+
+        /// <summary>
+        /// 发送钉盘文件给指定用户
+        /// </summary>
+        [HttpPost]
+        [Route("SendDingPanFileToUser")]
+        public async Task<string> SendDingPanFileToUser(SendDingPanModel sendDingPanModel)
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            HttpsClient _client = new HttpsClient();
+            _client.QueryString.Add("access_token", access_token);
+            _client.QueryString.Add("agent_id", DTConfig.AgentId);
+            _client.QueryString.Add("userid", sendDingPanModel.userid);
+            _client.QueryString.Add("media_id", sendDingPanModel.media_id);
+            _client.QueryString.Add("file_name", sendDingPanModel.file_name);
+            var url = _addressConfig.GetSendDingPanFileUrl;
+            sendDingPanModel.agent_id = DTConfig.AgentId;
+            sendDingPanModel.access_token = access_token;
+            var result = await _client.UploadModel(url, sendDingPanModel);
+            return result;
+
+        }
+
+
+
+        #endregion
     }
 
     public class CompanyModel

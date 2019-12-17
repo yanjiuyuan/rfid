@@ -161,11 +161,14 @@ namespace DingTalk.Controllers
                     keyValuePairs.Add("项目编号", createProject.ProjectId);
                     keyValuePairs.Add("承担部门", createProject.DeptName);
                     keyValuePairs.Add("公司名称", createProject.CompanyName);
+                    keyValuePairs.Add("合作单位", string.IsNullOrEmpty(createProject.Customer)?"无":
+                       createProject.Customer);
+
                     keyValuePairs.Add("项目类型", createProject.ProjectType + "-" + createProject.ProjectSmallType);
                     keyValuePairs.Add("项目负责人", createProject.ResponsibleMan);
                     keyValuePairs.Add("项目组成员", createProject.TeamMembers);
                     keyValuePairs.Add("是否评审", createProject.IsReview == true ? "是" : "否");
-
+                 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
                     null, null, "2", 300, 650, null, null, null, dtApproveView, null, keyValuePairs);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);

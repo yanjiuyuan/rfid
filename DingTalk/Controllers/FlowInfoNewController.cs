@@ -2036,10 +2036,9 @@ namespace DingTalk.Controllers
             string strLink = LinkUrl + "?taskid=" + TaskId +
                             "&flowid=" + FlowId +
                             "&nodeid=" + NodeId;
-
+            Flows flows = dDContext.Flows.Where(f => f.FlowId.ToString() == FlowId.ToString()).First();
             if (IsFinnish == false)
             {
-                Flows flows = dDContext.Flows.Where(f => f.FlowId.ToString() == FlowId.ToString()).First();
                 //推送OA消息(手机端)
                 if (flows.IsSupportMobile == true)
                 {
@@ -2100,12 +2099,12 @@ namespace DingTalk.Controllers
                 {
                     strLink = "eapp://page/approve/approve?index=0";
                     return await dingTalkServersController.sendOaMessage(ApplyManId,
-               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId),
+               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", flows.FlowName,TaskId),
                ApplyMan, strLink);
                 }
                 else
                 {
-                    SentCommonMsg(ApplyManId, string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId), ApplyMan, Remark, null, TaskId);
+                    SentCommonMsg(ApplyManId, string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", flows.FlowName, TaskId), ApplyMan, Remark, null, TaskId);
                 }
                 return dingTalkServersController.sendOaMessage("测试",
                           string.Format("您有一条待审批的流程(流水号:{0})，请进入研究院信息管理系统进行审批。", TaskId),
