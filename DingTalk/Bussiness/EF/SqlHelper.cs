@@ -213,7 +213,6 @@ namespace DingTalk.Bussiness.EF
         /// <returns></returns>
         public string Modify(CURDModelSave cURDModelSave, List<TableInfo> tableInfos)
         {
-
             StringBuilder sb = new StringBuilder();
             string tableName = cURDModelSave.TableName;
             List<string> columnNameAndValue = new List<string>();
@@ -265,7 +264,7 @@ namespace DingTalk.Bussiness.EF
             string tableName = cURDModelSave.TableName;
             string columnName = string.Empty;
             string columnValue = string.Empty;
-            List<string> strWhereList = new List<string>(); ;
+            List<string> strWhereList = new List<string>();
             foreach (var columnsList in cURDModelSave.Columns)
             {
                 foreach (var column in columnsList)
@@ -290,7 +289,8 @@ namespace DingTalk.Bussiness.EF
         {
             StringBuilder sb = new StringBuilder();
             string tableName = cURDModelSave.TableName;
-            List<string> strWhere = new List<string>();
+            List<string> strWhereAnd = new List<string>();
+            List<string> strWhereOr = new List<string>();
             string id = string.Empty;
             foreach (var columnsList in cURDModelSave.Columns)
             {
@@ -307,46 +307,102 @@ namespace DingTalk.Bussiness.EF
                         int iColumnProperty = tableInfo.ColumnProperty;
                         bool IsSupportQuery = tableInfo.IsSupportQuery;
                         bool IsSupporLikeQuery = tableInfo.IsSupporLikeQuery;
+                        bool IsAnd = tableInfo.IsAnd;
                         if (IsSupportQuery) //当前字段是否支持查询
                         {
                             if (iColumnProperty == 2) //bit
                             {
-                                strWhere.Add($" {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                if (IsAnd)
+                                {
+                                    strWhereAnd.Add($" {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                }
+                                else
+                                {
+                                    strWhereOr.Add($" {column.Key}={(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                }
+
                             }
                             if (IsSupporLikeQuery) //是否支持模糊查询
                             {
                                 if (iColumnProperty == 0) //string 
                                 {
-                                    strWhere.Add($"  { column.Key } like  '%{ column.Value }%'");
+                                    if (IsAnd)
+                                    {
+                                        strWhereAnd.Add($"  { column.Key } like  '%{ column.Value }%'");
+                                    }
+                                    else
+                                    {
+                                        strWhereOr.Add($"  { column.Key } like  '%{ column.Value }%'");
+                                    }
+
                                 }
                                 if (iColumnProperty == 1) //int
                                 {
-                                    strWhere.Add($"  { column.Key } like '%{column.Value }%'");
+                                    if (IsAnd)
+                                    {
+                                        strWhereAnd.Add($"  { column.Key } like '%{column.Value }%'");
+                                    }
+                                    else
+                                    {
+                                        strWhereOr.Add($"  { column.Key } like '%{column.Value }%'");
+                                    }
+
                                 }
                             }
                             else
                             {
                                 if (iColumnProperty == 0) //string 
                                 {
-                                    strWhere.Add($"  { column.Key } =  '{ column.Value }' ");
+                                    if (IsAnd)
+                                    {
+                                        strWhereAnd.Add($"  { column.Key } =  '{ column.Value }' ");
+                                    }
+                                    else
+                                    {
+                                        strWhereOr.Add($"  { column.Key } =  '{ column.Value }' ");
+                                    }
+
                                 }
                                 if (iColumnProperty == 1) //int
                                 {
-                                    strWhere.Add($"  { column.Key } = {column.Value } ");
+                                    if (IsAnd)
+                                    {
+                                        strWhereAnd.Add($"  { column.Key } = {column.Value } ");
+                                    }
+                                    else
+                                    {
+                                        strWhereOr.Add($"  { column.Key } = {column.Value } ");
+                                    }
+
                                 }
                                 if (iColumnProperty == 2) //bool
                                 {
-                                    strWhere.Add($"  { column.Key } = {(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                    if (IsAnd)
+                                    {
+                                        strWhereAnd.Add($"  { column.Key } = {(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                    }
+                                    else
+                                    {
+                                        strWhereOr.Add($"  { column.Key } = {(column.Value.ToString().ToLower() == "true" ? "1" : "0")}");
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            sb.Append($"  select * from  {tableName}  where 1=1 and  {string.Join("and", strWhere)};");
+            sb.Append($"  select * from  {tableName}  where 1=1  ");
+            if (strWhereAnd.Count > 0)
+            {
+                sb.Append($" {" and" +"(" + string.Join("and", strWhereAnd) + ")"};");
+            }
+            if (strWhereOr.Count > 0)
+            {
+                sb.Append($" {" and" + "(" + string.Join("or", strWhereOr) + ")"};");
+            }
             if (!string.IsNullOrEmpty(cURDModelSave.SqlWhere))
             {
-
+                sb.Append(" " + cURDModelSave.SqlWhere);
             }
             return sb.ToString();
         }

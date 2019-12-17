@@ -25,5 +25,7 @@ namespace DingTalkServer
         public string GetDingPanSpaceDetailUrl { get; set; }
 
         public string GetSendDingPanFileUrl { get; set; }
+
+        public string GetGrantCustomSpace { get; set; }
     }
 }

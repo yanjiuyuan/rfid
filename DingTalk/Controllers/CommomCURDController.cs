@@ -202,27 +202,35 @@ namespace DingTalk.Controllers
                 {
                     DDContext dataContext = new DDContext();
                     SqlHelper sqlHelper = new SqlHelper();
-                    foreach (var item in cURDModel.SaveModels)
+                    if (cURDModel.SaveModels.Count == 1) //单表
                     {
-                        List<TableInfo> tableInfos = dataContext.TableInfo.Where(t => t.TableID ==
-                        dataContext.Tables.Where(s => s.TableName == item.TableName).FirstOrDefault().ID
-                        ).ToList();
-                        string strSql = sqlHelper.Read(item, tableInfos);
-
-                        DataTable result = SqlAdoHelper.ExecuteDataTable(strSql);
-
-                        //List<TestTable> testTables = dataContext.Database.SqlQuery<TestTable>(strSql).ToList();
-
-                        //var results = dataContext.Database.SqlQuery<object>(strSql).ToList();
-
-                        //dynamic result = dataContext.Database.SqlQuery<object>(strSql).ToList();
-                        
-                        return new NewErrorModel()
+                        foreach (var item in cURDModel.SaveModels)
                         {
-                            data = result,
-                            error = new Error(0, $"{item.TableName} 读取成功！", "") { },
-                        };
+                            List<TableInfo> tableInfos = dataContext.TableInfo.Where(t => t.TableID ==
+                            dataContext.Tables.Where(s => s.TableName == item.TableName).FirstOrDefault().ID
+                            ).ToList();
+                            string strSql = sqlHelper.Read(item, tableInfos);
+
+                            DataTable result = SqlAdoHelper.ExecuteDataTable(strSql);
+
+                            //List<TestTable> testTables = dataContext.Database.SqlQuery<TestTable>(strSql).ToList();
+
+                            //var results = dataContext.Database.SqlQuery<object>(strSql).ToList();
+
+                            //dynamic result = dataContext.Database.SqlQuery<object>(strSql).ToList();
+
+                            return new NewErrorModel()
+                            {
+                                data = result,
+                                error = new Error(0, $"{item.TableName} 读取成功！", "") { },
+                            };
+                        }
                     }
+                    else  //多表
+                    {
+
+                    }
+                  
                 }
                 else
                 {

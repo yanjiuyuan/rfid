@@ -174,6 +174,6 @@ namespace DingTalk.Models.DingModels
         /// <summary>
         /// ¶¢ÅÌÊý¾Ý
         /// </summary>
-        public string SpaceId { get; set; }
+        //public string SpaceId { get; set; }
     }
 }

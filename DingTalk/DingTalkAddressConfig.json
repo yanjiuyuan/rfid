@@ -25,5 +25,6 @@
   "GetDingPanSpaceIdUrl": "https://oapi.dingtalk.com/cspace/get_custom_space",
   "GetDingPanSpaceDetailUrl": "https://oapi.dingtalk.com/cspace/uesd_info",
   "GetSendDingPanFileUrl": "https://oapi.dingtalk.com/cspace/add_to_single_chat",
-  "GetUploadFileUrl": "https://oapi.dingtalk.com/file/upload/transaction"
+  "GetUploadFileUrl": "https://oapi.dingtalk.com/file/upload/transaction",
+  "GetGrantCustomSpace": "https://oapi.dingtalk.com/cspace/grant_custom_space"
 }

@@ -124,7 +124,7 @@ namespace DingTalk.Controllers
                                                g.Count,
                                                g.Price,
                                                g.Purpose,
-                                               Time = g.Standard + "-" + g.EndTime,
+                                               Time = g.StartTime + "-" + g.EndTime,
                                                g.Mark
                                            };
 

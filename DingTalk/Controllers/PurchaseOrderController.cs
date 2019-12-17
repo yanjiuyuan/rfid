@@ -31,41 +31,52 @@ namespace DingTalk.Controllers
                 DDContext context = new DDContext();
                 List<object> list = new List<object>();
                 List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId("6").Where(t => t.NodeId == 0).ToList();
+                List<Tasks> tasksListNew = new List<Tasks>();
+              List <TasksState> tasksState = context.TasksState.ToList();
+
+                foreach (var item in tasksList)
+                {
+                    if (tasksState.Where(t => t.TaskId == item.TaskId.ToString()).FirstOrDefault().State == "已完成")
+                    {
+                        tasksListNew.Add(item);
+                    }
+                }
+
 
                 var quaryList = context.Tasks.Where(t => (t.TaskId.ToString().Contains(key)
-                  || t.ProjectName.Contains(key) || t.Title.Contains(key)
-                    || t.ApplyMan.Contains(key)) && t.NodeId == 0 && t.FlowId == 6).OrderBy(t => t.TaskId).Select(t => new TasksPurcahse
-                    {
-                        Id = t.Id,
-                        TaskId = t.TaskId,
-                        ApplyMan = t.ApplyMan,
-                        ApplyManId = t.ApplyManId,
-                        ApplyTime = t.ApplyTime,
-                        Dept = t.Dept,
-                        FilePDFUrl = t.FilePDFUrl,
-                        FileUrl = t.FileUrl,
-                        FlowId = t.FlowId,
-                        ImageUrl = t.ImageUrl,
-                        IsBacked = t.IsBacked,
-                        IsEnable = t.IsEnable,
-                        IsPost = t.IsPost,
-                        IsSend = t.IsSend,
-                        MediaId = t.MediaId,
-                        MediaIdPDF = t.MediaIdPDF,
-                        NodeId = t.NodeId,
-                        OldFilePDFUrl = t.OldFilePDFUrl,
-                        OldFileUrl = t.OldFileUrl,
-                        OldImageUrl = t.OldImageUrl,
-                        PdfState = t.PdfState,
-                        ProjectId = t.ProjectId,
-                        ProjectName = t.ProjectName,
-                        Title = t.Title,
-                        PurchaseList = context.Purchase.Where(p => p.TaskId == t.TaskId.ToString()).ToList()
-                    });
+                 || t.ProjectName.Contains(key) || t.Title.Contains(key)
+                   || t.ApplyMan.Contains(key)) && t.NodeId == 0 && t.FlowId == 6).OrderBy(t => t.TaskId).Select(t => new TasksPurcahse
+                   {
+                       Id = t.Id,
+                       TaskId = t.TaskId,
+                       ApplyMan = t.ApplyMan,
+                       ApplyManId = t.ApplyManId,
+                       ApplyTime = t.ApplyTime,
+                       Dept = t.Dept,
+                       FilePDFUrl = t.FilePDFUrl,
+                       FileUrl = t.FileUrl,
+                       FlowId = t.FlowId,
+                       ImageUrl = t.ImageUrl,
+                       IsBacked = t.IsBacked,
+                       IsEnable = t.IsEnable,
+                       IsPost = t.IsPost,
+                       IsSend = t.IsSend,
+                       MediaId = t.MediaId,
+                       MediaIdPDF = t.MediaIdPDF,
+                       NodeId = t.NodeId,
+                       OldFilePDFUrl = t.OldFilePDFUrl,
+                       OldFileUrl = t.OldFileUrl,
+                       OldImageUrl = t.OldImageUrl,
+                       PdfState = t.PdfState,
+                       ProjectId = t.ProjectId,
+                       ProjectName = t.ProjectName,
+                       Title = t.Title,
+                       PurchaseList = context.Purchase.Where(p => p.TaskId == t.TaskId.ToString()).ToList()
+                   });
 
                 foreach (var item in quaryList)
                 {
-                    foreach (var tasks in tasksList)
+                    foreach (var tasks in tasksListNew)
                     {
                         if (item.TaskId == tasks.TaskId)
                         {

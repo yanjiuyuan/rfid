@@ -992,6 +992,41 @@ namespace DingTalk.Controllers
 
 
         /// <summary>
+        /// 授权用户访问企业自定义空间
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="type">0 表示上传 1 表示下载</param>
+        /// <param name="fileids">授权访问的文件id列表，id之间用英文逗号隔开，如"fileId1,fileId2", type=download时必须传递</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GrantCustomSpace")]
+        public async Task<string> GrantCustomSpace(string userId, int type,string fileids="")
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            HttpsClient _client = new HttpsClient();
+            _client.QueryString.Add("access_token", access_token);
+            _client.QueryString.Add("type", type == 0 ? "add" : "download");
+            _client.QueryString.Add("userid", userId);
+            _client.QueryString.Add("domain", "test");
+            
+            if (type == 0)
+            {
+                _client.QueryString.Add("path", "/"); //授权访问的路径，如授权访问所有文件传"/"，授权访问/doc文件夹传"/doc/"，需要utf-8 urlEncode, type=add时必须传递
+            }
+            else
+            {
+                _client.QueryString.Add("fileids", userId);
+            }
+
+            var url = _addressConfig.GetGrantCustomSpace;
+            var result = await _client.Get(url);
+            return result;
+        }
+
+
+        /// <summary>
         /// 发送钉盘文件给指定用户
         /// </summary>
         [HttpPost]
@@ -1012,7 +1047,7 @@ namespace DingTalk.Controllers
             sendDingPanModel.access_token = access_token;
             var result = await _client.UploadModel(url, sendDingPanModel);
             return result;
-            
+
         }
 
 
