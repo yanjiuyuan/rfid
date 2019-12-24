@@ -497,10 +497,10 @@
                     loading.close()
                     this.$alert('保存成功', '提示');
                     this.getTable()
-                }, (res) => { loading.close() }, (res) => {
+                }, (res) => {
                     loading.close()
                     this.$alert('文件格式不符合对应模板要求，请根据对应模板导入数据！', '提示');
-                    return
+                    return false
                 })
             },
             searchTask() {
