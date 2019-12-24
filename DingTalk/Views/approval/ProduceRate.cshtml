@@ -140,15 +140,23 @@
             <!-- 2 没权限(设计人员)--> @*placeholder="确认无误填写并保存" type="textarea"*@
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column width="150" label="设计员确认收货">
+                    <template slot-scope="scope">
+                        <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
+                                   v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                        <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
+                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Tabulator}}</p>
+                    </template>
+                </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" show-word-limit
-                                  :disabled="scope.row['IsAlreadyRead'] == '1' ||  disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                                  :disabled="scope.row['IsAlreadyRead'] == '1' || scope.row['SpeedOfProgress'] != '已完成'">
                         </el-input>
-                        <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"
-                                   v-if="scope.row.Power.indexOf(2)>=0 &&scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                        @*<el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
+                                   v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
                         <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
-                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>
+                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>*@
                     </template>
                 </el-table-column>
             </template>
@@ -438,6 +446,7 @@
             //添加加工进度
             addGood(index, good) {
                 console.log(good)
+                good.SpeedOfProgress = initTable.SpeedOfProgress
                 let param = {
                     applyManId: DingData.userid,
                     applyMan: DingData.nickName,
