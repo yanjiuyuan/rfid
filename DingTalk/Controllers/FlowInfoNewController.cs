@@ -1997,10 +1997,12 @@ namespace DingTalk.Controllers
                         else
                         {
                             List<Tasks> tasksListSend = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend == true).OrderByDescending(t => t.Id).ToList();
-                            taskOld.Id = tasksListSend[0].Id;
-                            taskOld.NodeId = tasksListSend[0].NodeId;
+                            if (tasksListSend != null)
+                            {
+                                taskOld.Id = tasksListSend[0].Id;
+                                taskOld.NodeId = tasksListSend[0].NodeId;
+                            }
                         }
-
 
                         return new NewErrorModel()
                         {
