@@ -89,7 +89,7 @@
         <el-table-column prop="GiftName" label="礼品名称"></el-table-column>
         <el-table-column prop="GiftCount" label="礼品数量">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.GiftCount"></el-input>
+                <sam-input :value.sync="scope.row.GiftCount" type="number" :required="true" :max="scope.row.max" min="0"></sam-input>
             </template>
         </el-table-column>
         <el-table-column label="操作" width="80">
@@ -247,7 +247,8 @@
                 this.purchaseList.push({
                     GiftNo: row.Id,
                     GiftName: row.GiftName,
-                    GiftCount: 1
+                    GiftCount: 1,
+                    max: parseInt(row.Stock) 
                 })
             },
             

@@ -7,32 +7,28 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        {{ruleForm.Title}}
+        生产加工进度管理
     </div>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <!--搜索表格-->
         <template>
             <span style="padding:3px;">流水号</span>
-            <sam-input :value.sync="ruleForm.taskId" style="width:200px;" placeholder="流水号"></sam-input>
-            <el-input v-model="ruleForm.taskId" style="width:200px;"></el-input>
+            <sam-input :value.sync="ruleForm.taskId" style="width:100px;" placeholder="流水号"></sam-input>
             <span style="padding:3px;">关键字</span>
-            <sam-input :value.sync="ruleForm.key" style="width:200px;" placeholder="项目名、BOM、设计员、记录人"></sam-input>
-            <el-form-item label="项目类型">
-                <div class="block">
-                    <el-cascader v-model="ruleForm.types"
-                                 :options="PTypes"
-                                 :props="{ expandTrigger: 'hover' }">
-                    </el-cascader>
-                </div>
-            </el-form-item>
+            <sam-input :value.sync="ruleForm.key" style="width:240px;" placeholder="项目名、BOM、设计员、记录人"></sam-input>
+            <span style="padding:3px;">项目类型</span>
+            <el-cascader v-model="ruleForm.types"
+                         :options="PTypes"
+                         :props="{ expandTrigger: 'hover' }">
+            </el-cascader>
             <br />
-            <span style="padding:3px;">单位</span>
+            <span style="padding:3px;margin-top:10px;">单位</span>
             <el-select v-model="companyId" placeholder="请选择">
                 <el-option v-for="c in companys" :key="c.value" :label="c.label" :value="c.value">
                 </el-option>
             </el-select>
             <el-button type="primary" v-on:click="search(false)">搜索</el-button>
-            <el-button type="primary" v-on:click="search(true)">打印</el-button>
+            <el-button type="primary" v-on:click="search(true)">打印表单</el-button>
         </template>
         <!--表格實體-->
         <h1 style="font-size:20px;">当前加工进度表<span style="color:red;">(背景色:绿-{{greenStates.join(',')}} ; 红-{{redStates.join(',')}} ; 黄-{{yellowStates.join(',')}})</span></h1>
@@ -40,7 +36,7 @@
         <el-table :data="tableData" :row-class-name="tableRowClassName"
                   style="width: 100%">
             @*<el-table-column prop="CodeNo" type="index"></el-table-column>*@
-            <!-- ruleIndex 用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人-->
+            <!-- ruleIndex 用户权限(返回 0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3(-1).实际记录人-->
             <!-- 0 生产加工进度发起人-->
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't1'" :fixed="con.fixed" :prop="con.param" :width="con.width" :label="con.label">
@@ -144,15 +140,23 @@
             <!-- 2 没权限(设计人员)--> @*placeholder="确认无误填写并保存" type="textarea"*@
             <template>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label != '备注'" :prop="con.param" width="150" :label="con.label"></el-table-column>
+                <el-table-column width="150" label="设计员确认收货">
+                    <template slot-scope="scope">
+                        <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
+                                   v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                        <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
+                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Tabulator}}</p>
+                    </template>
+                </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
                     <template slot-scope="scope">
                         <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" show-word-limit
-                                  :disabled="scope.row['IsAlreadyRead'] == '1' ||  disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0">
+                                  :disabled="scope.row['IsAlreadyRead'] == '1' || scope.row['SpeedOfProgress'] != '已完成'">
                         </el-input>
-                        <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="disabledStates.indexOf(scope.row['SpeedOfProgress']) >= 0"
-                                   v-if="scope.row.Power.indexOf(2)>=0 &&scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                        @*<el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
+                                   v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
                         <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
-                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>
+                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row[con.param]}}</p>*@
                     </template>
                 </el-table-column>
             </template>
@@ -236,7 +240,8 @@
         Column7: { param: 'TaskId', label: '流水号', upLabel: 't1', width: 100, fixed:'left'},
         Column8: { param: 'Bom', label: 'bom', upLabel: 't1', width: 200, fixed: 'left'},
         Column9: { param: 'AccountKeeping', label: '走账', upLabel: 't1', width: 120},
-        Column10: { param: 'Designer', label: '设计员', upLabel: 't12', width: 120},
+        Column10: { param: 'Designer', label: '设计员', upLabel: 't12', width: 120 },
+        Col88: { param: 'DesignerId', label: '设计员Id', upLabel: 't12', width: 120 },
         //资料接收时间
         Column11: { param: 'BomTime', label: 'BOM', upLabel: '资料接收时间' },
         Column12: { param: 'TwoD', label: '2D', upLabel: '资料接收时间' },
@@ -332,10 +337,6 @@
                 } 
                 print ? param['IsPrint'] = true : param['IsPrint'] = false
                 this.GetData('ProcessingProgress/Read' + _formatQueryStr(param), (res) => {
-                    if (!res) {
-                        this.$alert('已推送到钉钉~', '提示');
-                        return
-                    }
                     if (!res.length) {
                         this.$alert('没有数据~', '提示');
                         return
@@ -445,6 +446,7 @@
             //添加加工进度
             addGood(index, good) {
                 console.log(good)
+                good.SpeedOfProgress = initTable.SpeedOfProgress
                 let param = {
                     applyManId: DingData.userid,
                     applyMan: DingData.nickName,
@@ -496,41 +498,6 @@
                     this.$alert('保存成功', '提示');
                     this.getTable()
                 }, (res) => { loading.close() })
-            },
-            PostData(url, param, succe, errorFunc) {
-                var that = this
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(param),
-                    success: function (res) {
-                        console.log(url)
-                        console.log(param)
-                        console.log(res)
-                        if (that.doWithErrcode(res.error, errorFunc)) {
-                            return
-                        }
-                        succe(res.data)
-                    },
-                    error: function (err) {
-                        if (errorFunc) errorFunc()
-                        console.error(url)
-                        console.error(err)
-                    }
-                })
-            },
-            doWithErrcode(error, errorFunc) {
-                if (!error) {
-                    return 1
-                }
-                if (error && error.errorCode != 0) {
-                    this.elementAlert('报错信息', error.errorMessage)
-                    if (errorFunc) errorFunc()
-                    console.log(errorFunc)
-                    return 1
-                }
-                return 0
             },
             searchTask() {
                 this.GetData('ProcessingProgress/DefaultRead' + _formatQueryStr({
@@ -584,12 +551,17 @@
                     success: function (data) {
                         console.log(url)
                         console.log(data)
-                        that.inputTable[0].HeadOfDepartmentsId = data[0].emplId
-                        that.inputTable[0].HeadOfDepartments = data[0].name
-                        that.inputTable[0].NoteTakerId = data[0].emplId
-                        that.inputTable[0].NoteTaker = data[0].name
-                        that.inputTable[0]['Tabulator'] = DingData.nickName
-                        that.inputTable[0]['TabulatorId'] = DingData.userid
+                        for (let d of data) {
+                            if (DingData.userid == d.emplId) {
+                                that.ruleIndex = 1
+                                that.inputTable[0].HeadOfDepartmentsId = data[0].emplId
+                                that.inputTable[0].HeadOfDepartments = data[0].name
+                                that.inputTable[0].NoteTakerId = data[0].emplId
+                                that.inputTable[0].NoteTaker = data[0].name
+                                that.inputTable[0]['Tabulator'] = DingData.nickName
+                                that.inputTable[0]['TabulatorId'] = DingData.userid
+                            } 
+                        }
                     }
                 })
                 var url2 = '/Role/GetRoleInfo?RoleName=生产加工进度发起人'
@@ -598,7 +570,9 @@
                     success: function (data) {
                         console.log(url2)
                         console.log(data)//ruleIndex
-                        if (DingData.userid == data[0].emplId) that.ruleIndex = 0
+                        for (let d of data) {
+                            if (DingData.userid == d.emplId) that.ruleIndex = 0
+                        }
                     }
                 })
             }

@@ -28,7 +28,7 @@
     </div>
     <!--表格實體-->
     <h3>待删除图纸Bom列表</h3>
-    <el-Table :data="allData" stripe border>
+    <el-Table :data="data" stripe border>
         <el-Table-column prop="BomId" label="BOM" style="width:250px;">
         </el-Table-column>
         <el-Table-column prop="DrawingNo" label="图纸编号">
@@ -47,12 +47,11 @@
         </el-Table-column>
     </el-Table>
     <div style="text-align:right">
-        <el-pagination v-on:current-change="handlePageChange($event,index)"
-                       :current-page="page"
-                       :page-sizes="[5]"
-                       :page-size="5"
+        <el-pagination v-on:current-change="handleCurrentChange($event)"
+                       :current-page="currentPage"
+                       :page-size="500"
                        layout="total, prev, pager, next, jumper"
-                       :total="total">
+                       :total="totalRows">
         </el-pagination>
     </div>
     <hr />
@@ -134,12 +133,9 @@
         data: function () {
             return {
                 partData: [],
-                allData: [],
+                data: [],
                 fileList: [],
                 bomIndex: 0,
-                //表单参数
-                page: 1,
-                total: 0,
                 ProjectId: '',
                 ProjectName: '',
                 ProjectTypes: ['电气采购', '机械加工', '机械采购', '其他'],
@@ -176,7 +172,7 @@
             onSubmit(formName) {
                 let that = this
                 let deleteItem = []
-                this.allData.forEach((item) => {
+                this.data.forEach((item) => {
                     if (item.ChangeType) {
                         deleteItem.push(item)
                     }
@@ -221,20 +217,12 @@
                 this.GetData('/DrawingChange/Query' + _formatQueryStr({
                     ProjectName: this.ruleForm.ProjectName, ProjectType: this.ProjectType
                 }), (result) => {
-                    this.allData = result
+                    this.data = result
+                    this.totalRows = result.length
                 })
             },
             deleteDevice(index, row) {
-                row['ChangeType'] == 2 ? this.allData[index]['ChangeType'] = 0 : this.allData[index]['ChangeType'] = 2
-            },
-            //图纸审批相关方法、、、、、、、、、、、、、、、、、、、、
-            handlePageChange(page, index) {
-                console.log(page)
-                console.log(index)
-                this.page = page
-                this.getData()
-                var start = 5 * (this.page - 1)
-                this.partData = this.allData.slice(start, start + 5)
+                row['ChangeType'] == 2 ? this.data[index]['ChangeType'] = 0 : this.data[index]['ChangeType'] = 2
             },
             //bom表格翻页
             handleBomPageChange(page, index) {

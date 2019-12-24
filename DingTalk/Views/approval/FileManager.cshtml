@@ -101,11 +101,12 @@
                        :on-error="errUpload"
                        :before-upload="BeforeFileUpload"
                        :on-success="HandleFileSuccess"
+                       :on-exceed="HandleFileExceed"
                        :limit="5"
                        multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">不超过200M,最多同时上传5个文件</div>
+                <div class="el-upload__tip" slot="tip">不超过9M,最多同时上传5个文件</div>
             </el-upload>
         </template>
     </div>
@@ -227,11 +228,6 @@
                     }
                 })
             },
-            errUpload: function (err, file, fileList) {
-                console.warn(err)
-                console.warn(file)
-                console.warn(fileList)
-            },
             search() {
                 if (!this.searchKey) {
                     this.getFileData()
@@ -323,17 +319,9 @@
             },
             //上传文件
             HandleFileSuccess(response, file, fileList) {
-                console.log('上传文件返回结果')
-                console.log(this.uploadUrl)
-                console.log(file)
-                console.log(response)
-                this.$alert(response.errorMessage, '返回消息', {
-                    confirmButtonText: '确定'
-                });
-                this.getFileData()
-            },
-            handleChange: function () {
-
+                setTimeout(() => {
+                    this.getFileData()
+                },1000)
             },
             //新建文件夹
             createFolder: function () {

@@ -26,8 +26,8 @@
             <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
                 <template slot="title">
                     <span style="font-size:20px;">{{m.SORT_NAME}}({{m.Sort_ID}})</span>
-                    <i v-on:mouseenter="switchSort(m)" v-on:click="deleteSort" style="margin-left:18px;" class="el-icon-circle-close"></i>
-                    <i v-on:mouseenter="switchSort(m)" v-on:click="editSort(m)" style="margin-left:0;" class="el-icon-setting"></i>
+                    <i v-on:mouseenter="switchSort(m)" v-on:click="editSort(m)" style="margin-left:0;position:relative;" class="el-icon-setting"></i>
+                    <i v-on:mouseenter="switchSort(m)" v-on:click="deleteSort" style="margin-left:0;position:relative;" class="el-icon-circle-close"></i>
                 </template>
 
                 <draggable v-model="m.flows" v-on:end="dragFlowEnd">

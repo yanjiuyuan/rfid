@@ -18,13 +18,12 @@
     <el-Table :data="tableData" stripe border>
         <el-Table-column prop="FNumber" label="物料编码"></el-Table-column>
         <el-Table-column prop="FName" label="物料名称"></el-Table-column>
-        
         <el-Table-column prop="FModel" label="规格型号"></el-Table-column>
         <el-Table-column prop="FNote" label="单价"></el-Table-column>
         <el-Table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini"
-                           v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
+                <p v-if="noList.indexOf(scope.row.FNumber) >= 0">已选择</p>
+                <el-button v-else size="mini" v-on:click="addGood(scope.$index, scope.row)">选择</el-button>
             </template>
         </el-Table-column>
     </el-Table>
@@ -63,7 +62,7 @@
         </el-Table-column>
         <el-Table-column prop="Count" label="数量" width="100">
             <template slot-scope="scope">
-                <sam-input :value.sync="scope.row.Count" type="number" :required="true"></sam-input>
+                <sam-input :value.sync="scope.row.Count" min="0" type="number" :required="true"></sam-input>
             </template>
         </el-Table-column>
         <el-Table-column prop="MaintainContent" label="维修内容" width="300">
@@ -129,10 +128,14 @@
             onSubmit(formName) {
                 var that = this
                 for (let p of this.purchaseList) {
-                    if (!p.Unit || !p.Count || !p.MaintainContent || !p.NeedTime || this.purchaseList.length == 0) {
+                    if (!p.Unit || !p.Count || !p.MaintainContent || !p.NeedTime) {
                         this.elementAlert('提示信息', '表单未填写完整')
                         return
                     }
+                }
+                if (this.purchaseList.length == 0) {
+                    this.elementAlert('提示信息', '表单未填写完整')
+                    return
                 }
                 let callBack = function (taskId) {
                     that.bindAll(taskId)
@@ -168,6 +171,7 @@
                     MaintainContent: '',
                     Mark: ''
                 })
+                this.noList.push(good.FNumber)
             },
         },
         created: function () {

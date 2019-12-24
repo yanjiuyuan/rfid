@@ -1506,6 +1506,11 @@ var mixin = {
             this.$message({ type: 'error', message: `超出文件个数限制！` });
             return false
         },
+        errUpload: function (err, file, fileList) {
+            console.warn(err)
+            console.warn(file)
+            console.warn(fileList)
+        },
         BeforeFileUpload(file) {
             if (file.name.indexOf('.')<0) {
                 this.$message.error('文件类型不正确，请重新选择！  ')
@@ -1624,6 +1629,7 @@ var mixin = {
                     this.ruleForm.OldImageUrl += ','
                 }
             }
+            //this.ruleForm.ImageUrl = this.ruleForm.ImageUrl.replace(/[\(]/g, "（").replace(/[\)]/g, "）")
             if (this.pdfList[0] && this.pdfList[0].response && this.pdfList[0].response.Content) {
                 for (let i = 0; i < this.pdfList.length; i++) {
                     this.ruleForm.FilePDFUrl += this.pdfList[i].response.Content
@@ -2006,24 +2012,37 @@ Vue.component('sam-group', {
 })
 
 //输入框组件
+Vue.component('custom-input', {
+    props: ['value'],
+    template: `
+    <input
+      v-bind:value="value"
+      v-on:input="$emit('input', $event.target.value)"
+    >
+  `
+})
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
-    template: `<el-input :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
+    template: `<el-input v-model=value :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
                         :minlength = minlength||0 :maxlength = maxlength||50 v-on:blur="onBlur" :disabled='Index != 0 || disabled'
+                        
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {
         return {
-            Index: Index
+            Index: Index,
+            value2:this.value
         }
     },
     methods: {
         onBlur(e) {
-            let value = e.target.value.replace(/(^\s*)|(\s*$)/g, '')
+            let value = e.target.value.replace(/(^\s*)|[\/&]s*|(\s*$)/g, '')
+            console.log(value)
+            //return
             if (this.type == 'number') {
                 value = parseInt(value)
-                let max = parseInt(this.max)
-                let min = parseInt(this.min)
+                let max = parseInt(this.max) || 1000000
+                let min = parseInt(this.min) || 0
                 if (value > max) value = max
                 if (value < min) value = min
                 value = value + ''
@@ -2100,13 +2119,13 @@ Vue.component('sam-approver-list', {
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
-                            <el-tag type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
+                            <el-tag :key="index" type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
                                 {{node.NodeName}}
                             </el-tag>
 
                             <template v-for="(p,a) in node.NodePeople">
                                 <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
-                                <el-tag :key="a"
+                                <el-tag :key="p"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
@@ -2124,9 +2143,9 @@ Vue.component('sam-approver-list', {
                                 </template>
                             </template>
                             
-                            <template v-for="(ap,a) in node.AddPeople">
-                                <span v-if="a>0" style="margin-left:97px;">&nbsp;</span>
-                                <el-tag :key="a" 
+                            <template v-for="(ap,b) in node.AddPeople">
+                                <span v-if="b>0" style="margin-left:97px;">&nbsp;</span>
+                                <el-tag :class="node.NodeId+''" :key="ap.emplId"
                                         :closable="false"
                                         v-on:close="deletePeople(ap.emplId)"
                                         v-if="node.AddPeople.length>0"
@@ -2275,7 +2294,7 @@ Vue.component('Ding2', {
     methods: {
         Ding() {
             let param = {
-                userId: this.dinglist[0],
+                userId: this.dinglist?this.dinglist[0]:'',
                 title: '请帮我审核一下流水号为 ' + TaskId + ' 的流程',
                 flowName: FlowName,
                 taskId: TaskId,
@@ -2547,9 +2566,9 @@ Vue.component('sam-approver-edit', {
                                         <el-form-item label="角色选人节点">
                                             <sam-checkbox :str.sync="chooseType" :arr="needChooseArr"></sam-checkbox>
                                         </el-form-item>
-                                        <el-form-item v-if="chooseType!=''" v-for="(r,i) of chooseType.split(',')" key="r" :label="'节点 '+ r +' 选人角色'">
+                                        <el-form-item v-if="chooseType!=''" v-for="(r,i) of chooseType.split(',')" :key="r" :label="'节点 '+ r +' 选人角色'">
                                             <el-select v-model="chooseRole[i]" style="width:300px;">
-                                                <el-option v-for="(v,k) of rolelist" :label="k" :value="k" key="k"></el-option>
+                                                <el-option v-for="(v,k) of rolelist" :label="k" :value="k" :key="k"></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </template>
@@ -2567,7 +2586,6 @@ Vue.component('sam-approver-edit', {
         return {
             inputValue: '',
             NodeId: 0,
-            key:0,
             member1: '',
             member2: '',
             inputVisible: false,

@@ -20,8 +20,8 @@
         <el-table-column prop="FlowName" label="审批类型"></el-table-column>
         <el-table-column prop="Title" label="标题" width="200"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人" width="100"></el-table-column>
-        <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
         <el-table-column v-if="Index != '0'" prop="FlowState" label="状态"></el-table-column>
+        <el-table-column prop="ApplyTime" label="申请时间"></el-table-column>
         <el-table-column prop="CurrentTime" label="最后处理时间"></el-table-column>
         <el-table-column v-if="Index == 3" prop="State" label="是否已读">
             <template slot-scope="scope">

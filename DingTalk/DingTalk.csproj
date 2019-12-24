@@ -583,6 +583,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\element2.css" />
     <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
     <Content Include="Content\images\EraserTool.gif" />
@@ -625,7 +626,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\fonts\element-icons.ttf" />
-    <Content Include="Content\fonts\element-icons.woff" />
     <Content Include="Index.html" />
     <Content Include="JqueryUI\colorpicker-master\.gitignore" />
     <Content Include="JqueryUI\colorpicker-master\demo.html" />
@@ -674,6 +674,7 @@
     <Content Include="Scripts\drag.js" />
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element-ui.common.js" />
+    <Content Include="Scripts\element.js" />
     <Content Include="Scripts\element1.js" />
     <Content Include="Scripts\elementUi\alert.js" />
     <Content Include="Scripts\elementUi\aside.js" />
@@ -771,6 +772,7 @@
     <Content Include="Scripts\pdf.worker.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\vue-bk.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="SwaggerUI\css\screen.css" />
     <Content Include="SwaggerUI\images\pet_store_api.png" />
@@ -855,6 +857,7 @@
     <Content Include="JqueryUI\colorpicker-master\README.md" />
     <Content Include="JqueryUI\colorpicker-master\TODO" />
     <Content Include="CfgFiles\log4net.config" />
+    <Content Include="Content\fonts\element-icons.woff" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Login\LoginTest.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />

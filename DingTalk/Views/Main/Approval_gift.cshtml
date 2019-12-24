@@ -11,7 +11,7 @@
 
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/endForm.cshtml")
-        <el-form-item label="用途及使用说明">
+        <el-form-item label="意见">
             <el-input v-model="ruleForm.Remark" :disabled="true" style="width:500px;"></el-input>
         </el-form-item>
         <br />
@@ -24,8 +24,8 @@
         </div>
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
-        <el-form-item v-if="index!=0">
-            <el-button type="primary" v-on:click="printPdf">打印</el-button>
+        <el-form-item v-if="state=='已完成'">
+            <el-button type="primary" v-on:click="printPdf">打印表单</el-button>
         </el-form-item>
     </el-form>
 </el-main>
