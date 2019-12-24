@@ -253,11 +253,12 @@ namespace DingTalk.Controllers
             {
                 throw ex;
             }
-            finally {
+            finally
+            {
                 FlowInfoServer flowInfoServer = new FlowInfoServer();
                 int TaskId = flowInfoServer.FindMaxTaskId();
                 //同步数据
-                AsyncTasksState((TaskId-1).ToString());
+                AsyncTasksState((TaskId - 1).ToString());
             };
         }
 
@@ -459,7 +460,7 @@ namespace DingTalk.Controllers
                         }
                     }
                 }
-                
+
                 return new NewErrorModel()
                 {
                     error = new Error(0, "流程创建成功！", "") { },
@@ -472,7 +473,7 @@ namespace DingTalk.Controllers
             finally
             {
                 //同步数据
-                 AsyncTasksState(taskList[0].TaskId.ToString());
+                AsyncTasksState(taskList[0].TaskId.ToString());
             }
         }
 
@@ -2654,13 +2655,16 @@ namespace DingTalk.Controllers
             {
                 DDContext dDContext = new DDContext();
                 List<TasksState> tasksStates = new List<TasksState>();
+                List<Tasks> tasksAll = new List<Tasks>();
                 if (taskId == "")
                 {
                     tasksStates = dDContext.TasksState.ToList();
+                    tasksAll = dDContext.Tasks.ToList();
                 }
                 else
                 {
                     tasksStates = dDContext.TasksState.Where(t => t.TaskId == taskId).ToList();
+                    tasksAll = dDContext.Tasks.Where(t => t.TaskId.ToString() == taskId).ToList();
                 }
                 List<TasksState> tasksStatesMove = new List<TasksState>();
                 //清理重复数据
@@ -2679,7 +2683,7 @@ namespace DingTalk.Controllers
                 dDContext.TasksState.RemoveRange(tasksStatesMove);
                 dDContext.SaveChanges();
 
-                List<Tasks> tasksAll = dDContext.Tasks.ToList();
+
                 List<Tasks> tasks = tasksAll.Where(t => t.NodeId == 0).ToList();
                 List<Flows> flows = dDContext.Flows.ToList();
                 List<NodeInfo> nodeInfos = dDContext.NodeInfo.ToList();

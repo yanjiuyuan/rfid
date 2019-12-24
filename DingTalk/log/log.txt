@@ -49,3 +49,7 @@
 2019-12-24 15:06:06,487 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
 2019-12-24 15:23:42,404 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-12-24 15:23:44,261 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:12:08,081 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:12:09,902 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:18:54,789 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:18:56,630 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
