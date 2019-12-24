@@ -44,8 +44,8 @@
         </el-Table>
         <!--底部翻頁-->
         <div style="text-align:right">
-            <el-pagination v-on:size-change="handleSizeChange"
-                           v-on:current-change="handleCurrentChange"
+            <el-pagination v-on:size-change="handleSizeChange2"
+                           v-on:current-change="handleCurrentChange2"
                            :current-page="currentPage"
                            :page-sizes="[1, 3, 5, 10]"
                            :page-size="pageSize"
@@ -54,12 +54,6 @@
             </el-pagination>
         </div>
         <hr />
-        @*<el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
-                 id="uploadForm" enctype="multipart/form-data">
-            <el-form-item v-for="(v,k) in detail" :label="k" key="k">
-                <el-input :value="v" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
-            </el-form-item>
-        </el-form>*@
     </div>
    
    
@@ -81,14 +75,19 @@
         methods: {
             //搜索物料列表
             search(formName) {
-                var url = 'ContextError/Read?key=' + this.key
-                if (!this.key) {
-                    url = 'ContextError/Read'
+                this.getData2()
+            },
+            getData2() {
+                let param = {
+                    pageSize: this.pageSize,
+                    pageIndex: this.currentPage
                 }
-                this.GetData(url, (res) => {
-                    this.data = res
-                    this.totalRows = res.length
-                    this.getData()
+                if (this.key) {
+                    param['key'] = this.key
+                }
+                this.GetData('ContextError/Read' + _formatQueryStr(param), (res,count) => {
+                    this.tableData = res
+                    this.totalRows = count
                 })
             },
             showdetail(row) {

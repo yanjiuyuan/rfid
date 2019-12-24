@@ -1889,7 +1889,7 @@ function lengthLimit(min, max) {
 Vue.component('sam-dropdown', {
     props: ['str', 'arr'],
     template: ` 
-                <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject">
+                <el-select v-model="ruleForm.ProjectId" placeholder="请选择" style="width:400px;" v-on:change="selectProject" filterable>
                     <el-option v-for="item in projectList"
                                :key="item.ProjectId"
                                :label="item.ProjectId + '-' + item.ProjectName"
