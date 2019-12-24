@@ -223,7 +223,6 @@ namespace DingTalk.EF
         #region 6.0 分页查询 + List<T> GetPagedList<TKey>
         /// <summary>
         /// 6.0 分页查询 + List<T> GetPagedList<TKey>
-        /// </summary>
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页容量</param>
         /// <param name="whereLambda">条件 lambda表达式</param>

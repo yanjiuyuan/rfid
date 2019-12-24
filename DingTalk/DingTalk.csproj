@@ -454,6 +454,7 @@
     <Compile Include="Models\DingModels\TableInfo.cs" />
     <Compile Include="Models\DingModels\Tables.cs" />
     <Compile Include="Models\DingModels\TasksQuery.cs" />
+    <Compile Include="Models\DingModels\TasksQueryPro.cs" />
     <Compile Include="Models\ServerModels\AccessTokenResponseModel.cs" />
     <Compile Include="Models\ServerModels\AddRepartmentModel.cs" />
     <Compile Include="Models\ServerModels\AddUserRequestModel.cs" />
@@ -951,6 +952,9 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
@@ -971,6 +975,9 @@
           <CustomServerUrl>
           </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <servers defaultServer="SelfHostServer">
+            <server name="SelfHostServer" exePath="" cmdArgs="" url="http://localhost:52920/" workingDir="" />
+          </servers>
         </WebProjectProperties>
       </FlavorProperties>
       <UserProperties UserInfoConfig_1json__JSONSchema="http://json.schemastore.org/circleciconfig" />

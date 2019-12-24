@@ -1,0 +1,11 @@
+2019-12-17 09:04:09,651 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-17 09:04:12,302 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-17 09:05:16,602 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Receiving/GetReport?TaskId=5492&UserId=056652031835326264 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：347
+2019-12-17 09:07:26,043 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-17 09:07:27,989 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-17 09:09:15,326 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Receiving/GetReport?TaskId=5492&UserId=056652031835326264 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：348
+2019-12-17 09:10:07,189 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Receiving/GetReport?TaskId=5492&UserId=056652031835326264 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：349
+2019-12-17 09:37:20,309 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-17 09:37:22,105 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-17 10:20:44,893 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-17 10:20:46,814 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
