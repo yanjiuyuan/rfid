@@ -520,8 +520,10 @@ var mixin = {
                 return 1
             }
             if (error && error.errorCode != 0) {
+                if (errorFunc) {
+                    if(errorFunc() === false) return 0
+                }
                 this.elementAlert('报错信息', error.errorMessage)
-                if (errorFunc) errorFunc()
                 //报错日志
                 $.ajax({
                     url: 'ContextError/Read',
@@ -1878,7 +1880,7 @@ function PostData(url, param, succe, error) {
             succe(res.data)
         },
         error: function (err) {
-            error(err)
+            if(!error(err)) return
             console.error(url)
             console.error(err)
         }
