@@ -519,6 +519,8 @@ namespace DingTalk.Controllers
                     }
 
                     tasksState.State = "已撤回";
+                    tasksState.NodeId = "-2";
+                    tasksState.CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     context.Entry<TasksState>(tasksState).State = EntityState.Modified;
                     context.SaveChanges();
 
@@ -548,6 +550,8 @@ namespace DingTalk.Controllers
                         Tasks taskApplyMan = context.Tasks.Where(t => t.TaskId.ToString() == tasks.TaskId.ToString() && t.NodeId == 0).First();
 
                         tasksState.State = "被退回";
+                        tasksState.NodeId = "-1";
+                        tasksState.CurrentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                         context.Entry<TasksState>(tasksState).State = EntityState.Modified;
                         context.SaveChanges();
 
