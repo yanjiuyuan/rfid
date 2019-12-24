@@ -243,10 +243,6 @@ namespace DingTalk.Controllers
                 }
 
                 #endregion
-                //同步数据
-                AsyncTasksState(TaskId.ToString());
-
-
                 return new NewErrorModel()
                 {
                     data = TaskId.ToString(),
@@ -257,6 +253,10 @@ namespace DingTalk.Controllers
             {
                 throw ex;
             }
+            finally {
+                //同步数据
+                AsyncTasksState(taskList[0].TaskId.ToString());
+            };
         }
 
 
@@ -457,9 +457,7 @@ namespace DingTalk.Controllers
                         }
                     }
                 }
-
-                //同步数据
-                AsyncTasksState(taskList[0].TaskId.ToString());
+                
                 return new NewErrorModel()
                 {
                     error = new Error(0, "流程创建成功！", "") { },
@@ -468,6 +466,11 @@ namespace DingTalk.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                //同步数据
+                 AsyncTasksState(taskList[0].TaskId.ToString());
             }
         }
 
