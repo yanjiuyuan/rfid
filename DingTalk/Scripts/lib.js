@@ -2127,7 +2127,7 @@ Vue.component('sam-approver-list', {
 
                             <template v-for="(p,a) in node.NodePeople">
                                 <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
-                                <el-tag :key="p"
+                                <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"

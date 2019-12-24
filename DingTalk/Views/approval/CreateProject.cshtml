@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item label="承担部门">
             <el-select v-model="tableForm.DeptName" style="width:300px;">
-                <el-option v-for="(s,i) of DeptNames" :label="s" :value="s" key="i"></el-option>
+                <el-option v-for="(s,i) of DeptNames" :label="s" :value="s" :key="i"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="合作单位" prop="Customer">
