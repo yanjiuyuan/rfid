@@ -1454,7 +1454,6 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    ApplyManId = "manager325";
                     string strWhere = string.Empty;
                     switch (Index)
                     {
