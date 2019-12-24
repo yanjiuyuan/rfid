@@ -11,15 +11,29 @@
     </div>
     <!--物料搜索-->
     <div>
-        <span style="color:red">*</span><span style="padding:3px;">采购单编号搜索</span>
-        <sam-input :value.sync="searchForm.no" style="width:200px;" :required="true" placeholder="请输入采购单编号"></sam-input>
-        <el-button type="primary" v-on:click="searchNo">搜索</el-button>
-        <span style="color:red">*</span><span style="padding:3px;">关键字搜索</span>
-        <sam-input :value.sync="searchForm.name" style="width:200px;" :required="true" placeholder="请输入关键字"></sam-input>
-        <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+        <div>
+            <span style="padding:3px;">搜索类型</span>
+            <el-radio-group v-model="codeType" v-on:change="changeCodeType">
+                <el-radio label="1">采购单编号搜索</el-radio>
+                <el-radio label="2">关键字搜索</el-radio>
+            </el-radio-group>
+            <span style="color:red;"> 切换搜索类型会清空已选物料！！！</span>
+        </div>
+        <template v-if="codeType == 1">
+            <span style="color:red">*</span>
+            <span style="padding:3px;">采购单编号搜索</span>
+            <sam-input :value.sync="searchForm.no" style="width:200px;" :required="true" placeholder="请输入采购单编号"></sam-input>
+            <el-button type="primary" v-on:click="searchNo">搜索</el-button>
+        </template>
+        <template v-if="codeType == 2">
+            <span style="color:red">*</span>
+            <span style="padding:3px;">关键字搜索</span>
+            <sam-input :value.sync="searchForm.name" style="width:200px;" :required="true" placeholder="请输入关键字"></sam-input>
+            <el-button type="primary" v-on:click="searchCode">搜索</el-button>
+        </template>
     </div>
     <!--物料列表表格實體-->
-    <el-table :data="tableData" stripe border>
+    <el-table :data="tableData" stripe border v-if="codeType == 2">
         <el-table-column prop="fNumber" label="物料编码"></el-table-column>
         <el-table-column prop="fName" label="物料名称"></el-table-column>
         <el-table-column prop="fQty" label="实收数量"></el-table-column>
@@ -34,7 +48,7 @@
         </el-table-column>
     </el-table>
     <!--底部翻頁-->
-    <div style="text-align:right">
+    <div style="text-align:right" v-if="codeType == 2">
         <el-pagination v-on:size-change="handleSizeChange"
                        v-on:current-change="handleCurrentChange"
                        :current-page="currentPage"
@@ -94,6 +108,7 @@
         mixins: [mixin],
         data: function () {
             return {
+                codeType: '1',
                 searchForm: {
                     business: '', 
                     no:'',
@@ -129,6 +144,10 @@
                     })
                 }
                 this.approvalSubmit(callBack)
+            },
+            //切换搜索类型
+            changeCodeType(e) {
+                this.purchaseList = []
             },
             //搜索物料列表
             searchCode() {

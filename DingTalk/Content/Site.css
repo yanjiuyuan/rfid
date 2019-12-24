@@ -151,10 +151,10 @@ a {
     background-color: rgba(0,0,0,0.6);
 }
 .pre-image img {
-    top: 10%;
+    position:absolute;
     left: 10%;
-    width: 80%;
-    max-height: 700px;
+    max-width: 1200px;
+    max-height: 800px;
 }
 /*首页选项卡*/
 .card {

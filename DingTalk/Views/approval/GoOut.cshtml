@@ -143,6 +143,10 @@
 
                 this.$refs['tableForm'].validate((valid) => {
                     if (valid) {
+                        if (this.nodeList[1].AddPeople[0].emplId == DingData.userid) {
+                            this.$message({ type: 'error', message: `主管审核无法选择自己，请重选` })
+                            return
+                        }
                         this.approvalSubmit(callBack)
                         
                     }

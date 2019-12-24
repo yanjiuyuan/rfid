@@ -52,7 +52,7 @@
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item label="操作" v-if="state=='已完成'">
-            <el-button type="primary" v-on:click="print">打印</el-button>
+            <el-button type="primary" v-on:click="print">打印表单</el-button>
         </el-form-item>
     </el-form>
 </el-main>
@@ -99,16 +99,6 @@
                 let param = {
                     "Id": this.ruleForm.Id,
                     "Remark": this.ruleForm.Remark
-                }
-                this.returnSubmit(param)
-            },
-            //撤回审批
-            rebackSubmit() {
-                this.disablePage = true
-                var param = {
-                    "Id": this.ruleForm.Id,
-                    "NodeId": 0,
-                    "Remark": this.ruleForm.mark
                 }
                 this.returnSubmit(param)
             },

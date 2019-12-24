@@ -21,13 +21,13 @@
             </el-form-item>
             <el-form-item label="承担部门">
                 <el-select v-model="ruleForm.DeptName" style="width:300px;">
-                    <el-option v-for="s of DeptNames" :label="s" :value="s" key="s"></el-option>
+                    <el-option v-for="(d,index) of DeptNames" :label="d" :value="d" :key="index"></el-option>
                 </el-select>
             </el-form-item>
 
             <el-form-item label="状态" required="required">
                 <el-select v-model="ruleForm.ProjectState">
-                    <el-option v-for="s of status" :label="s" :value="s" key="s"></el-option>
+                    <el-option v-for="s of status" :label="s" :value="s" :key="s"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="合作单位">

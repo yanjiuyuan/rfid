@@ -14,7 +14,7 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="加班事由" prop="OverTimeContent">
-            <sam-input :value.sync="tableForm.OverTimeContent" :required="true"></sam-input>
+            <sam-input :value.sync="tableForm.OverTimeContent" :required="true" :maxlength="80"></sam-input>
         </el-form-item>
         <el-form-item label="加班日期" prop="DateTime">
             <div class="block">
@@ -112,12 +112,28 @@
         computed: {
             UseTime: function () {
                 if (!this.tableForm.StartTime || !this.tableForm.EndTimeTime) return
+                let hours = 0
                 let StartTime = this.tableForm.StartTime
                 let EndTimeTime = this.tableForm.EndTimeTime
                 let startHour = parseInt(StartTime.split(':')[0])
                 let startMinut = parseInt(StartTime.split(':')[1])
                 let endHour = parseInt(EndTimeTime.split(':')[0])
                 let endMinut = parseInt(EndTimeTime.split(':')[1])
+                if (startMinut) startHour += 0.5
+                if (endMinut) endHour += 0.5
+                if (startHour < 12 && endHour > 12 && endHour < 14) {
+                    hours = 12 - startHour
+                } else if (startHour >= 12 && endHour < 14) {
+                    return '0'
+                } else if (startHour >= 12 && startHour < 14 && endHour >= 14) {
+                    hours = endHour - 13.5
+                } else if (endHour <= 12 || startHour >= 13.5) {
+                    hours = endHour - startHour
+                } else {
+                    hours = endHour - startHour - 1.5
+                }
+                return hours
+
                 if (StartTime >= '13:30' || (StartTime <= '12:00' && EndTimeTime <= '12:00')) {
                     return _computedTime(startHour, startMinut, endHour, endMinut)
                 } else {

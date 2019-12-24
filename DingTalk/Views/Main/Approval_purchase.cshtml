@@ -65,20 +65,7 @@
         methods: {
             //提交审批
             onSubmit(formName) {
-                this.disablePage = true
-                if (NodeId == 3) {
-                    this.PostData('/OfficeSupplies/ModifyTable', this.data, (res) => {
-                        this.aggreSubmit({
-                            "Id": this.ruleForm.Id,
-                            "Remark": this.ruleForm.mark
-                        })
-
-                    })
-                }
-                this.aggreSubmit({
-                    "Id": this.ruleForm.Id,
-                    "Remark": this.ruleForm.mark
-                })
+                this.aggreSubmit()
             },
             //获取bom表信息
             getBomInfo() {

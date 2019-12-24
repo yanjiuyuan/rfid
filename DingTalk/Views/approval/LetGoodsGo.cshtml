@@ -11,10 +11,10 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/startForm.cshtml")
     </el-form>
-    <el-form v-on:submit.native.prevent :model="TableForm" :rules="rules" ref="TableForm" label-width="130px" class="demo-ruleForm"
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="单位名称" prop="Company">
-            <el-select v-model="TableForm.Company" style="width:400px;">
+            <el-select v-model="tableForm.Company" style="width:400px;">
                 <el-option v-for="item in CompanyNames"
                            :key="item"
                            :label="item"
@@ -23,25 +23,25 @@
             </el-select>
         </el-form-item>
         <el-form-item label="车牌号">
-            <el-input v-model="TableForm.CarNo" style="width:200px;"></el-input>
+            <sam-input :value.sync="tableForm.CarNo"></sam-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="Tel">
-            <el-input v-model="TableForm.Tel" style="width:200px;"></el-input>
+            <sam-input :value.sync="tableForm.Tel" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="物品名称" prop="Name">
-            <el-input v-model="TableForm.Name" style="width:300px;"></el-input>
+            <sam-input :value.sync="tableForm.Name" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="数量" prop="Count">
-            <el-input v-model="TableForm.Count" style="width:200px;"></el-input>
+            <sam-input :value.sync="tableForm.Count" :required="true" type="number"></sam-input>
         </el-form-item>
         <el-form-item label="单位" prop="Unit">
-            <el-input v-model="TableForm.Unit" style="width:200px;"></el-input>
+            <sam-input :value.sync="tableForm.Unit" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="放行理由" prop="Cause">
-            <el-input v-model="TableForm.Cause" type="textarea" style="width:500px;"></el-input>
+            <sam-input :value.sync="tableForm.Cause" :required="true" :maxlength="100" type="textarea"></sam-input>
         </el-form-item>
         <el-form-item label="放行日期" prop="Date">
-            <el-date-picker v-model="TableForm.Date"
+            <el-date-picker v-model="tableForm.Date"
                             type="date" :ediTable="false"
                             value-format="yyyy-MM-dd"
                             @*v-on:change="selectTime"*@
@@ -50,7 +50,6 @@
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-
         <el-form-item label="上传图片" required="required">
             <el-upload action="/drawingupload/Upload"
                        list-type="picture-card"
@@ -65,7 +64,6 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
         </el-form-item>
-        <hr />
         @RenderPage("~/Views/Shared/startButton.cshtml")
     </el-form>
 </el-main>
@@ -82,7 +80,7 @@
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
-                TableForm: {
+                tableForm: {
                     CarNo: "",
                     Company: '泉州华中科技大学智能制造研究院',
                     Tel: "",
@@ -99,8 +97,9 @@
                     Name: commonInput,
                     Count: commonInput,
                     Unit: commonInput,
-                    Cause: commonInput,
+                    Cause: [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 100 个字符以内', trigger: 'blur' }],
                     Date: commonInput,
+                    ImageUrl: { required: true, message: '该项不能为空', trigger: 'blur' }
                 }
             }
         },
@@ -108,14 +107,13 @@
             onSubmit(formName) {
                 //console.log(this.ruleForm)
                 //return
-                this.fileListToUrl()
-                if (!this.ruleForm.ImageUrl) {
+                if (this.imageList.length == 0) {
                     this.elementAlert('提示', '未上传图片，请先上传后提交')
                     return
                 }
                 let callBack = (taskId) => {
-                    this.TableForm['TaskId'] = taskId
-                    this.PostData('MaterialRelease/Save', this.TableForm, () => {
+                    this.tableForm['TaskId'] = taskId
+                    this.PostData('MaterialRelease/Save', this.tableForm, () => {
                         this.$alert('恭喜提交成功', '提示信息', {
                             confirmButtonText: '确定',
                             callback: action => {
@@ -124,7 +122,17 @@
                         })
                     })
                 }
-                this.approvalSubmit(callBack)
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        this.approvalSubmit(callBack)
+                    }
+                    else {
+                        this.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
+                //this.approvalSubmit(callBack)
             }
         },
         created: function () {

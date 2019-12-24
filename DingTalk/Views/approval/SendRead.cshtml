@@ -14,20 +14,20 @@
     <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
              enctype="multipart/form-data">
         <el-form-item label="来文单位" prop="ReceivingUnit">
-            <sam-input :value.sync="tableForm.ReceivingUnit" :required="true" style="width:500px;"></sam-input>
+            <sam-input :value.sync="tableForm.ReceivingUnit" :required="true"></sam-input>
         </el-form-item>
         <el-form-item label="文件文号">
-            <sam-input :value.sync="tableForm.FileNo" :required="true" style="width:500px;"></sam-input>
+            <sam-input :value.sync="tableForm.FileNo"></sam-input>
         </el-form-item>
         <el-form-item label="收文时间" prop="ReceivingTime">
             <el-date-picker v-model="tableForm.ReceivingTime"
-                            value-format="yyyy-MM-dd"
-                            type="date" :editable="false"
+                            value-format="yyyy-MM-dd" :edit-able="false" :editAble="false" :editable="false"
+                            type="date" format="yyyy 年 MM 月 dd 日"
                             placeholder="选择日期">
             </el-date-picker>
         </el-form-item>
         <el-form-item label="主要内容" prop="MainIdea">
-            <sam-input :value.sync="tableForm.MainIdea" :required="true" style="width:500px;" type="textarea"></sam-input>
+            <sam-input :value.sync="tableForm.MainIdea" :maxlength="140" :required="true" style="width:500px;" type="textarea"></sam-input>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -45,7 +45,6 @@
                 <div class="el-upload__tip" slot="tip">单个文件不超过9M</div>
             </el-upload>
         </el-form-item>
-        <hr />
         @RenderPage("~/Views/Shared/startButton.cshtml")
 </el-main>
 
@@ -55,6 +54,7 @@
         mixins: [mixin],
         data: function () {
             return {
+                editable:false,
                 tableForm: {
                     MainContent: "",
                     ReceivingUnit: "",
@@ -68,12 +68,11 @@
             onSubmit(formName) {
                 console.log('submit!');
                 var that = this
-                this.$refs['ruleForm'].validate((valid) => {
-                    if (valid) {
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid && this.fileList.length>0 ) {
                         let url = '/Receiving/save'
                         var param = _cloneObj(this.tableForm)
                         let callBack = function (taskId) {
-                            console.log(taskId)
                             param.TaskId = taskId
                             console.log(JSON.stringify(param))
                             that._postData(url, function (data) {
