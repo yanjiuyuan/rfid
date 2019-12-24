@@ -64,5 +64,6 @@
         /// </summary>
         public string FlowState { get; set; }
         
+        public string FlowId { get; set; }
     }
 }

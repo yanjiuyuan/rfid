@@ -1474,7 +1474,7 @@ namespace DingTalk.Controllers
                             break;
                     }
 
-                    string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
+                    string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
 
                     string strSqlCount = $"select count(*) from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId}'";
                     //string strSql = $"select d.id,d.taskid,c.FlowName,c.Title,c.applyman,d.applyManId,c.State,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%@key%' or b.FlowName like '%@key%'  or b.taskid = '@key')) {strWhere}  and ApplyManId = '@applyManId' order by d.taskid desc offset @pageIndex - 1 rows fetch next @pageSize rows only ";
@@ -2642,7 +2642,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("AsyncTasksState")]
-        public NewErrorModel AsyncTasksState(string taskId="")
+        public NewErrorModel AsyncTasksState(string taskId = "")
         {
             try
             {
@@ -2650,11 +2650,11 @@ namespace DingTalk.Controllers
                 List<TasksState> tasksStates = new List<TasksState>();
                 if (taskId == "")
                 {
-                    dDContext.TasksState.ToList();
+                    tasksStates = dDContext.TasksState.ToList();
                 }
                 else
                 {
-                    dDContext.TasksState.Where(t=>t.TaskId== taskId).ToList();
+                    tasksStates = dDContext.TasksState.Where(t => t.TaskId == taskId).ToList();
                 }
                 List<TasksState> tasksStatesMove = new List<TasksState>();
                 //清理重复数据
@@ -2685,6 +2685,10 @@ namespace DingTalk.Controllers
                     tasksState.ApplyMan = item.ApplyMan;
                     tasksState.ApplyTime = item.ApplyTime;
                     tasksState.FlowName = flowsNew.FlowName;
+                    if (flowsNew.FlowId != null && flowsNew.FlowId != 0)
+                    {
+                        tasksState.FlowId = flowsNew.FlowId.ToString();
+                    }
                     Tasks tasksNew = tasksAll.Where(t => t.TaskId == item.TaskId && t.State == 0 && t.IsEnable == 1 && t.IsSend != true).OrderByDescending(t => t.NodeId).FirstOrDefault();
                     Tasks tasksPro = tasksAll.Where(t => t.TaskId == item.TaskId && t.State == 1 && t.IsEnable == 1 && t.IsSend != true).OrderByDescending(t => t.NodeId).FirstOrDefault();
 

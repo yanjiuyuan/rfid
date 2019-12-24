@@ -50,5 +50,6 @@ namespace DingTalk.Models.DingModels
 
         [StringLength(100)]
         public string FlowName { get; set; }
+        public string FlowId { get; set; }
     }
 }
