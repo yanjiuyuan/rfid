@@ -25,7 +25,7 @@
         /// 状态
         /// </summary>
         [StringLength(500)]
-        public string State { get; set; }
+        public int State { get; set; }
 
         /// <summary>
         /// 提交时间
@@ -47,7 +47,7 @@
         /// <summary>
         /// 是否已读
         /// </summary>
-        public string IsRead { get; set; }
+        public bool IsRead { get; set; }
 
         /// <summary>
         /// 标题
@@ -64,5 +64,6 @@
         /// </summary>
         public string FlowState { get; set; }
         
+        public string FlowId { get; set; }
     }
 }
