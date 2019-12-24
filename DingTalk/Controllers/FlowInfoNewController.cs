@@ -397,7 +397,6 @@ namespace DingTalk.Controllers
                                        taskNew.NodeId.ToString(),
                                        false, false, true);
                             Thread.Sleep(100);
-
                             JsonConvert.SerializeObject(new ErrorModel
                             {
                                 errorCode = 0,
