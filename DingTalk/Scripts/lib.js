@@ -521,7 +521,7 @@ var mixin = {
             }
             if (error && error.errorCode != 0) {
                 if (errorFunc) {
-                    if(errorFunc() === false) return 0
+                    if(errorFunc() === false) return 1
                 }
                 this.elementAlert('报错信息', error.errorMessage)
                 //报错日志
@@ -536,7 +536,7 @@ var mixin = {
                     },
                     error: function (err) {
                         console.error(url)
-                        console.log('ContextError/Read')
+                        console.log('ContextError/Read err')
                         console.error(err)
                     }
                 })
@@ -603,7 +603,7 @@ var mixin = {
                     console.log(JSON.parse(param))
                     console.log(res)
                     that.disablePage = false
-                    if (that.doWithErrcode(res.error, errorFunc)) {
+                    if (that.doWithErrcode(res.error, url, errorFunc)) {
                         return
                     }
                     if (res.data == null) {

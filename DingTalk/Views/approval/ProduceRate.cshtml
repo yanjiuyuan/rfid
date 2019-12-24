@@ -461,7 +461,7 @@
                 this.PostData('ProcessingProgress/Save', param, (res) => {
                     this.$alert('保存成功', '提示');
                     this.getTable()
-                })
+                }, () => { },true)
             },
             
             //上传EXCEL进度表，并保存数据
