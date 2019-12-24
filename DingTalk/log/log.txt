@@ -15,3 +15,11 @@
 2019-12-24 09:18:57,239 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetFlowStateDetail?Index=1&ApplyManId=manager325&pageIndex=1&pageSize=5 时出现异常，信息：列名 'state' 不明确。，详见数据库日志Id：423
 2019-12-24 09:20:20,820 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-12-24 09:20:22,614 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 11:24:08,229 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 11:24:10,345 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 11:26:41,478 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 11:26:43,307 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 13:50:24,646 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 13:50:26,463 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 13:54:24,845 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 13:54:26,593 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

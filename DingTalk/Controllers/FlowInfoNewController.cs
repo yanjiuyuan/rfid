@@ -1474,7 +1474,7 @@ namespace DingTalk.Controllers
                             break;
                     }
 
-                    string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.Title,c.applyman,d.applyManId,c.State,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId}' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
+                    string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
 
                     string strSqlCount = $"select count(*) from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId}'";
                     //string strSql = $"select d.id,d.taskid,c.FlowName,c.Title,c.applyman,d.applyManId,c.State,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%@key%' or b.FlowName like '%@key%'  or b.taskid = '@key')) {strWhere}  and ApplyManId = '@applyManId' order by d.taskid desc offset @pageIndex - 1 rows fetch next @pageSize rows only ";
@@ -1503,18 +1503,14 @@ namespace DingTalk.Controllers
                     {
                         if (Index == 3)
                         {
-                            if (item.State == "1")
+                            if (item.State == 1)
                             {
-                                item.IsRead = "已读";
+                                item.IsRead = true;
                             }
                             else
                             {
-                                item.IsRead = "未读";
+                                item.IsRead = false;
                             }
-                        }
-                        else
-                        {
-                            item.FlowState = item.State;
                         }
                     }
 
