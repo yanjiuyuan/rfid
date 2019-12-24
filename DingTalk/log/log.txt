@@ -41,3 +41,9 @@
 参数名: index，详见数据库日志Id：431
 2019-12-24 14:45:46,595 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-12-24 14:45:48,650 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:04:54,146 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:04:55,994 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:05:32,034 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:05:32,994 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:06:05,503 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:06:06,487 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
