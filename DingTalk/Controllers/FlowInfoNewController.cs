@@ -254,8 +254,10 @@ namespace DingTalk.Controllers
                 throw ex;
             }
             finally {
+                FlowInfoServer flowInfoServer = new FlowInfoServer();
+                int TaskId = flowInfoServer.FindMaxTaskId();
                 //同步数据
-                AsyncTasksState(taskList[0].TaskId.ToString());
+                AsyncTasksState((TaskId-1).ToString());
             };
         }
 
