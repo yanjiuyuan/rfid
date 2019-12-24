@@ -121,7 +121,7 @@
                            action="/drawingupload/Upload"
                            :on-remove="handleRemove"
                            :before-remove="beforeRemoveFile"
-                           :before-upload="beforeUpload"
+                           :before-upload="BeforeFileUpload"
                            :on-success="handleSuccess"
                            multiple>
                     <el-button v-on:click="upClick(config.attribute)" size="small" type="primary">点击上传</el-button>
@@ -484,18 +484,6 @@
             upClick(attr) {
                 console.log(attr)
                 attribute = attr
-            },
-            beforeUpload(file) {
-                if (!file.size) {
-                    this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
-                    return false
-                }
-                const isLt2M = file.size / 1024 / 1024 < 9
-                if (!isLt2M) {
-                    this.$message.error('上传文件大小不能超过 9MB!')
-                    return false
-                }
-                return true
             },
             beforeRemoveFile(file, fileList) {
                 console.log(file)
