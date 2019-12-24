@@ -756,8 +756,7 @@ namespace DingTalk.Controllers
         /// 供应商
         /// </summary>
         public string fFullName { get; set; }
-
-
+        
         /// <summary>
         /// 入库数量
         /// </summary>

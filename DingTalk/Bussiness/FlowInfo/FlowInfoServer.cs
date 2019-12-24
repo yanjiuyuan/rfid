@@ -101,6 +101,31 @@ namespace DingTalk.Bussiness.FlowInfo
             }
         }
 
+        /// <summary>
+        /// 查找下一个处理节点(非抄送)
+        /// </summary>
+        /// <param name="nodeInfos"></param>
+        /// <param name="currentNodeId"></param>
+        /// <returns></returns>
+        public string FindNextNodeId(List<NodeInfo> nodeInfos, string currentNodeId)
+        {
+            //排序
+            nodeInfos.OrderBy(n => n.NodeId);
+            bool IsNow = false;
+            foreach (var item in nodeInfos)
+            {
+                if (IsNow && item.IsSend != true)
+                {
+                    return item.NodeId.ToString();
+                }
+                if (item.NodeId.ToString() == currentNodeId)
+                {
+                    IsNow = true;
+                }
+            }
+            return "0";
+        }
+
 
         /// <summary>
         /// 返回已审批完成的任务流

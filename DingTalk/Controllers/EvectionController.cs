@@ -223,8 +223,8 @@ namespace DingTalk.Controllers
 
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-
-                    keyValuePairs.Add("外出人员", ct.EvectionMan);
+                   
+                    keyValuePairs.Add("外出人员", tasks.ApplyMan +  (string.IsNullOrEmpty(ct.EvectionMan)?"":","+ ct.EvectionMan));
                     keyValuePairs.Add("外出地点", ct.Place);
                     keyValuePairs.Add("开始时间", ct.BeginTime);
                     keyValuePairs.Add("结束时间", ct.EndTime);

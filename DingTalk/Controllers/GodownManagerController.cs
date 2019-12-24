@@ -159,7 +159,16 @@ namespace DingTalk.Controllers
                     };
 
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-                    keyValuePairs.Add("供应商", GoDownList[0].fFullName);
+                    List<string> vs = new List<string>();
+                    foreach (var item in GoDownList)
+                    {
+                        if (!vs.Contains(item.fFullName))
+                        {
+                            vs.Add(item.fFullName);
+                        }
+                    }
+
+                    keyValuePairs.Add("供应商", string.Join(",", vs));
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
                     null, null, "2", 300, 650, contentList, contentWithList, dtSourse, dtApproveView, null, keyValuePairs);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);

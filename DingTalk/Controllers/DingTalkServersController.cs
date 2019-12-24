@@ -1000,7 +1000,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GrantCustomSpace")]
-        public async Task<string> GrantCustomSpace(string userId, int type,string fileids="")
+        public async Task<string> GrantCustomSpace(string userId, int type, string fileids = "")
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             LoginMobileController loginMobileController = new LoginMobileController();
@@ -1010,7 +1010,7 @@ namespace DingTalk.Controllers
             _client.QueryString.Add("type", type == 0 ? "add" : "download");
             _client.QueryString.Add("userid", userId);
             _client.QueryString.Add("domain", "test");
-            
+
             if (type == 0)
             {
                 _client.QueryString.Add("path", "/"); //授权访问的路径，如授权访问所有文件传"/"，授权访问/doc文件夹传"/doc/"，需要utf-8 urlEncode, type=add时必须传递
@@ -1053,6 +1053,21 @@ namespace DingTalk.Controllers
 
 
         #endregion
+
+        /// <summary>
+        /// 获取UnionId
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public string GetUnionid(string code)
+        {
+            //IDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
+            //OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
+            //req.TmpAuthCode = code;
+            //OapiSnsGetuserinfoBycodeResponse rsp = client.Execute(req, appId, appSecrect);
+            //return rsp.UserInfo.Unionid;
+            return null;
+        }
     }
 
     public class CompanyModel

@@ -80,7 +80,6 @@ namespace DingTalk.DingTalkHelper
         public string GetSign(string ticket, string nonceStr, long timeStamp, string url)
         {
             String plain = string.Format("jsapi_ticket={0}&noncestr={1}&timestamp={2}&url={3}", ticket, nonceStr, timeStamp, url);
-
             try
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(plain);
