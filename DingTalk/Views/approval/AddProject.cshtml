@@ -96,7 +96,7 @@
             addProject() {
                 var that = this
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.TeamMembersId && this.ruleForm.Time[0]) {
+                    if (valid && this.ResponsibleMan[0].name && this.ruleForm.ProjectState && this.ruleForm.Time[0]) {
                         that.disablePage = true
                         var param = {
                             "ProjectName": this.ruleForm.inputProjectName,
