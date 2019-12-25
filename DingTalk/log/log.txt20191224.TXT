@@ -1,0 +1,72 @@
+2019-12-24 08:51:33,045 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 08:51:35,350 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 08:53:41,053 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 08:53:42,824 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 09:04:32,407 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 09:04:34,223 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 09:06:29,902 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 09:06:32,019 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 09:07:52,600 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 09:07:54,356 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 09:10:21,740 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 09:10:23,569 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 09:17:02,900 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 09:17:04,896 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 09:18:57,239 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetFlowStateDetail?Index=1&ApplyManId=manager325&pageIndex=1&pageSize=5 时出现异常，信息：列名 'state' 不明确。，详见数据库日志Id：423
+2019-12-24 09:20:20,820 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 09:20:22,614 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 11:24:08,229 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 11:24:10,345 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 11:26:41,478 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 11:26:43,307 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 13:50:24,646 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 13:50:26,463 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 13:54:24,845 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 13:54:26,593 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 14:00:49,814 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 14:00:51,016 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 14:11:30,022 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 14:11:31,906 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 14:13:33,366 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 14:13:35,226 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 14:14:56,950 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 14:14:58,831 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 14:22:25,056 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 14:22:26,133 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 14:24:46,017 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetApproveInfo?TaskId=5649&ApplyManId=083452125733424957 时出现异常，信息：索引超出范围。必须为非负值并小于集合大小。
+参数名: index，详见数据库日志Id：429
+2019-12-24 14:25:31,225 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetApproveInfo?TaskId=5649&ApplyManId=083452125733424957 时出现异常，信息：索引超出范围。必须为非负值并小于集合大小。
+参数名: index，详见数据库日志Id：430
+2019-12-24 14:36:41,623 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetApproveInfo?TaskId=5649&ApplyManId=083452125733424957 时出现异常，信息：索引超出范围。必须为非负值并小于集合大小。
+参数名: index，详见数据库日志Id：431
+2019-12-24 14:45:46,595 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 14:45:48,650 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:04:54,146 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:04:55,994 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:05:32,034 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:05:32,994 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:06:05,503 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:06:06,487 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 15:23:42,404 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 15:23:44,261 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:12:08,081 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:12:09,902 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:18:54,789 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:18:56,630 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:37:22,387 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:37:24,243 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:39:31,910 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:39:34,090 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:42:16,535 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:42:18,546 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:44:44,196 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:44:46,215 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 16:45:23,846 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 16:45:25,759 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 17:25:07,219 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 17:25:09,147 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 17:27:10,171 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 17:27:12,036 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-24 17:28:14,793 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Receiving/GetReport?TaskId=5483&UserId=056652031835326264 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：446
+2019-12-24 17:29:41,037 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-24 17:29:42,868 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
