@@ -81,6 +81,7 @@ namespace DingTalk.Controllers
                             {
                                 tasks.State = 1;
                                 tasks.IsEnable = 1;
+                                tasks.IsSend = false;
                                 tasks.IsPost = true;
                                 tasks.ApplyTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                             }
