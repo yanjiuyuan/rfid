@@ -1376,7 +1376,7 @@ namespace DingTalk.Controllers
                 throw ex;
             }
         }
-        
+
         #endregion
 
         #region 左侧审批菜单栏状态读取
@@ -1459,7 +1459,7 @@ namespace DingTalk.Controllers
         [Route("GetFlowStateDetail")]
         public NewErrorModel GetFlowStateDetail(int Index,
             string ApplyManId, bool IsSupportMobile = false,
-            string Key = "",bool OnlyReturnCount=false, int pageIndex = 1, int pageSize = 99)
+            string Key = "", bool OnlyReturnCount = false, int pageIndex = 1, int pageSize = 99)
         {
             try
             {
@@ -1478,18 +1478,31 @@ namespace DingTalk.Controllers
                             strWhere = " and ispost = 1 ";
                             break;
                         case 3:
-                            if (OnlyReturnCount)
-                            {
-                                strWhere = " and isenable = 1 and issend = 1 and d.state= 0";
-                            }
-                            else
-                            {
-                                strWhere = " and isenable = 1 and issend = 1 ";
-                            }
+                            strWhere = " and isenable = 1 and issend = 1 ";
                             break;
                         default:
                             break;
                     }
+
+                    if (OnlyReturnCount)
+                    {
+                        List<string> whereList = new List<string>();
+                        whereList.Add(" and isenable = 1 and ispost != 1 and  issend != 1 and d.state= 0 ");
+                        whereList.Add(" and isenable = 1 and issend = 1 and d.state= 0");
+
+                        Dictionary<string, int> keyValuePairs = new Dictionary<string, int>();
+                        foreach (var item in whereList)
+                        {
+                            string strSqlCountNew = $" select count(*) from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select d.id, d.taskid, c.FlowName, c.FlowId, c.Title, c.applyman, d.applyManId, c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {item}   and ApplyManId = '{ApplyManId}') newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) ttt";
+                            keyValuePairs.Add(whereList.IndexOf(item)==0? "ApproveCount" : "SendMyCount", context.Database.SqlQuery<int>(strSqlCountNew).FirstOrDefault());
+                        }
+                        return new NewErrorModel()
+                        {
+                            data = keyValuePairs,
+                            error = new Error(0, "读取成功！", "") { },
+                        };
+                    }
+
                     string strSqlQuery = $"select id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select top 100 percent  d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc) newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) newtt order by TaskId desc offset {pageSize * (pageIndex - 1)} rows fetch next {pageSize} rows only";
 
 
@@ -1497,16 +1510,7 @@ namespace DingTalk.Controllers
 
 
                     int count = context.Database.SqlQuery<int>(strSqlCount).FirstOrDefault();
-
-                    if (OnlyReturnCount)
-                    {
-                        return new NewErrorModel()
-                        {
-                            count = count,
-                            data= count,
-                            error = new Error(0, "读取成功！", "") { },
-                        };
-                    }
+                    
                     //string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
 
                     //string strSqlCount = $"select count(*) from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId}'";
@@ -1529,7 +1533,7 @@ namespace DingTalk.Controllers
 
                     List<TasksQueryPro> tasksAll = context.Database.SqlQuery<TasksQueryPro>(strSqlQuery).ToList();
 
-                  
+
 
 
                     foreach (var item in tasksAll)
@@ -1546,7 +1550,7 @@ namespace DingTalk.Controllers
                             }
                         }
                     }
-                    
+
 
                     return new NewErrorModel()
                     {
