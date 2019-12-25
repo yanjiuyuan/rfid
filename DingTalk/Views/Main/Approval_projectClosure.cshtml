@@ -186,7 +186,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [],
+                activeNames: ['1'],
                 uploadFileConfig: [
                     {
                         label: '立项书或建议书',
@@ -426,59 +426,6 @@
             }
         },
         methods: {
-            getNodeInfo() {
-                var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
-                this.GetData(url, (res) => {
-                    this.isBack = res[0].IsBack
-                    this.nodeList = _cloneArr(res)
-                    let lastNode = {}
-                    let tempNodeList = []
-                    //审批人分组
-                    for (let node of this.nodeList) {
-                        if (lastNode.NodeName == node.NodeName && !lastNode.ApplyTime && !node.ApplyTime) {
-                            tempNodeList[tempNodeList.length - 1].ApplyMan = tempNodeList[tempNodeList.length - 1].ApplyMan + ',' + node.ApplyMan
-                        }
-                        else {
-                            tempNodeList.push(node)
-                        }
-                        lastNode = node
-                    }
-                    this.nodeList = _cloneArr(tempNodeList)
-
-                    for (let node of this.nodeList) {
-                        node['AddPeople'] = []
-                        //抄送人分组
-                        if (node.ApplyMan && node.ApplyMan.length > 0)
-                            node.NodePeople = node.ApplyMan.split(',')
-                        //申请人设置当前人信息
-                        if (node.NodeName.indexOf('申请人') >= 0 && !node.ApplyMan) {
-                            node.ApplyMan = DingData.nickName
-                            node.AddPeople = [{
-                                name: DingData.nickName,
-                                emplId: DingData.userid
-                            }]
-                        }
-                    }
-                    this.getNodeInfo_done(this.nodeList)
-                    //设置当前角色正确节点
-                    if (this.index && this.index != '0' && this.index != '2') {
-                        for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                            if (this.nodeList[i].ApplyManId == DingData.userid) {
-                                this.NodeIds.push(this.nodeList[i].NodeId)
-                            }
-                        }
-                    }
-                    if (this.index && this.index != '0' && this.index != '2') {
-                        for (let i = this.nodeList.length - 1; i >= 0; i--) {
-                            if (this.nodeList[i].ApplyManId == DingData.userid) {
-                                this.NodeId = this.nodeList[i].NodeId
-                                break
-                            }
-                        }
-                    }
-                })
-
-            },
             onSubmit() {
                 if (NodeId == 2 || NodeId == 8) {
                     if (NodeId == 2) {

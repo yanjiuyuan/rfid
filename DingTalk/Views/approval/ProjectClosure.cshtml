@@ -41,7 +41,7 @@
             <sam-timerange :value1.sync="tableForm.ActualCycleStart" :value2.sync="tableForm.ActualCycleEnd"></sam-timerange>
         </el-form-item>
         <el-form-item label="项目相关数据">
-            <el-table :data="DetailedList" stripe border>
+            <el-table :data="purchaseList" stripe border>
                 <el-table-column type="index"></el-table-column>
                 <el-table-column v-for="(value,key) in DetailedListConfig" :prop="key" :label="value" :key="key">
                 </el-table-column>
@@ -279,7 +279,7 @@
                 table1: {},
                 LongitudinalProject: [],//纵向，表1
                 ApplicationUnit: [],//横向，表2
-                DetailedList: [],//项目相关数据，类型(项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单)
+                purchaseList: [],//项目相关数据，类型(项目采购清单、借用清单、领料清单、入库清单、借用清单、维修清单、受理知识产权清单)
                 projectFundingList: [],//项目经费使用情况
                 rules: {
                     ActualCycleStart: { required: true, message: '项目开发周期不能为空', trigger: 'blur' },
@@ -346,6 +346,7 @@
                     this.table1[p] = ''
                 }
             },
+
             onSubmit(formName) {
                 for (let con of this.uploadFileConfig) {
                     if (con.must && !this.tableForm[con.attribute]) {
@@ -363,7 +364,7 @@
                 }
                 let callBack = (taskId) => {
                     this.tableForm['TaskId'] = taskId
-                    for (let det of this.DetailedList) {
+                    for (let det of this.purchaseList) {
                         det['TaskId'] = taskId
                     }
                     for (let long of this.LongitudinalProject) {
@@ -374,7 +375,7 @@
                     }
                     let param = {
                         projectClosure: this.tableForm,
-                        detailedLists: this.DetailedList,
+                        detailedLists: this.purchaseList,
                         applicationUnitList: this.ApplicationUnit,
                         projectFundingList: this.projectFundingList,
                         longitudinalProject: this.LongitudinalProject,
@@ -391,7 +392,7 @@
                 }
                 this.approvalSubmit(callBack)
             },
-            selectProject(id) {
+            selectProject(id) { 
                 console.log(id)
                 for (var proj of this.projectList) {
                     if (proj.ProjectId == id) {
@@ -452,7 +453,7 @@
                 })
                 //根据项目显示bom
                 this.GetData('ProjectClosure/ReadFlowInfo?projectId=' + id, (res) => {
-                    this.DetailedList = res
+                    this.purchaseList = res
                 })
             },
             //加载重新发起审批传递的数据
@@ -462,7 +463,7 @@
                 this.tableForm = ReApprovalTempData.tableForm
                 this.LongitudinalProject = ReApprovalTempData.LongitudinalProject
                 this.ApplicationUnit = ReApprovalTempData.ApplicationUnit
-                this.DetailedList = ReApprovalTempData.DetailedList
+                this.purchaseList = ReApprovalTempData.purchaseList
                 this.ProjectFundingList = ReApprovalTempData.ProjectFundingList
 
                 for (let con of this.uploadFileConfig) {

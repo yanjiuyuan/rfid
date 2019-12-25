@@ -669,6 +669,7 @@ var mixin = {
                 State: '1', 
                 Title: FlowName,
             }
+            this.tableForm = []
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeList(true, callBack)
             this.getProjects()
@@ -740,10 +741,10 @@ var mixin = {
             }
            
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
-            this.getNodeList(false, callBack)
             this.GetDingList(TaskId)
             this.getNodeInfo()
             this.getFormData()
+            this.getNodeList(false, callBack)
             loadHtml("mainPage", "partPage")
         },
         //提交审批
@@ -977,7 +978,11 @@ var mixin = {
         //显示临时保存数据
         saveTempData() {
             for (let p of slParam) {
-                if (this[p]) this.saveData(p, this[p])
+                if (this[p]) {
+                    console.log(p)
+                    console.log(this[p])
+                    this.saveData(p, this[p])
+                }
             }
             this.$message({ type: 'success', message: `临时保存成功，下次打开本页面有效` });
         },
@@ -994,7 +999,12 @@ var mixin = {
             var Days = 7;
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+            if (JSON.stringify(value).length > 1500) {
+                setLocalObj(FlowId + "-" + key, value)
+                return
+            }
             document.cookie = FlowId + "-" + key + "=" + JSON.stringify(value) + ";expires=" + exp.toGMTString();
+            
             //document.cookie = FlowId + "-file=" + JSON.stringify(files) + ";expires=" + exp.toGMTString();
             //document.cookie = FlowId + "-purchaseList=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
             //document.cookie = FlowId + "-dataArr=" + JSON.stringify(purchaseList) + ";expires=" + exp.toGMTString();
@@ -2127,7 +2137,7 @@ Vue.component('sam-approver-list', {
 
                             <template v-for="(p,a) in node.NodePeople">
                                 <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
-                                <el-tag :key="a"
+                                <el-tag :key="p"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
