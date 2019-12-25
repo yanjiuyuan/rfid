@@ -477,7 +477,9 @@
                     ApplicationUnit: this.ApplicationUnit,
                     DetailedList: this.DetailedList,
                     ProjectFundingList: this.ProjectFundingList,
-                    ruleForm: Object.assign(this.ruleForm,this.tableForm)
+                    ruleForm: this.ruleForm,
+                    tableForm: this.tableForm,
+                    //ruleForm: Object.assign(this.ruleForm,this.tableForm)
                 }
                 //console.log(JSON.stringify(ReApprovalTempData))
                 for (let m of menu) {
