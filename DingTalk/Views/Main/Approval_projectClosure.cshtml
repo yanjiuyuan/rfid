@@ -27,10 +27,10 @@
             <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="实际开始时间">
-            <el-input v-model="tableForm.StartTime" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ActualCycleStart" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="实际结束时间">
-            <el-input v-model="tableForm.EndTime" style="width:200px;" :disabled="true"></el-input>
+            <el-input v-model="tableForm.ActualCycleEnd" style="width:200px;" :disabled="true"></el-input>
         </el-form-item>
 
 
@@ -109,7 +109,7 @@
                     </el-table>
                 </el-form-item>
             </el-collapse-item>
-            <el-collapse-item :name="3" :key="3" v-if="NodeId != 1 && DetailedList2.length">
+            <el-collapse-item :name="3" :key="3" v-if="(NodeId != 1 && DetailedList2.length) || Index == 2">
                 <template slot="title">
                     <span style="font-size:20px;">受理知识产权清单</span>
                 </template>
@@ -186,7 +186,7 @@
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: ['1'],
+                activeNames: [0],
                 uploadFileConfig: [
                     {
                         label: '立项书或建议书',
