@@ -1387,37 +1387,37 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="ApplyManId">用户名Id</param>
         /// <returns>返回待审批的、我发起的、抄送我的数量</returns>
-        [HttpGet]
-        [Route("GetFlowStateCounts")]
-        public NewErrorModel GetFlowStateCounts(string ApplyManId)
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
-                {
-                    //待审批的
-                    int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == false).Count();
-                    //我发起的
-                    int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true).Count();
-                    //抄送我的
-                    int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost == false).Count();
-                    Dictionary<string, int> dic = new Dictionary<string, int>();
-                    dic.Add("ApproveCount", iApprove);
-                    dic.Add("MyPostCount", iMyPost);
-                    dic.Add("SendMyCount", iSendMy);
+        //[HttpGet]
+        //[Route("GetFlowStateCounts")]
+        //public NewErrorModel GetFlowStateCounts(string ApplyManId)
+        //{
+        //    try
+        //    {
+        //        using (DDContext context = new DDContext())
+        //        {
+        //            //待审批的
+        //            int iApprove = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == false && u.State == 0 && u.IsPost == false).Count();
+        //            //我发起的
+        //            int iMyPost = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId == 0 && u.IsSend == false && u.State == 1 && u.IsPost == true).Count();
+        //            //抄送我的
+        //            int iSendMy = context.Tasks.Where(u => u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.NodeId != 0 && u.IsSend == true && u.State == 0 && u.IsPost == false).Count();
+        //            Dictionary<string, int> dic = new Dictionary<string, int>();
+        //            dic.Add("ApproveCount", iApprove);
+        //            dic.Add("MyPostCount", iMyPost);
+        //            dic.Add("SendMyCount", iSendMy);
 
-                    return new NewErrorModel()
-                    {
-                        data = dic,
-                        error = new Error(0, "读取成功！", "") { },
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //            return new NewErrorModel()
+        //            {
+        //                data = dic,
+        //                error = new Error(0, "读取成功！", "") { },
+        //            };
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         /// <summary>
         /// 获取流程状态(单条)
