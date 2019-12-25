@@ -669,7 +669,7 @@ var mixin = {
                 State: '1', 
                 Title: FlowName,
             }
-            this.tableForm = []
+            this.tableForm = {}
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeList(true, callBack)
             this.getProjects()
@@ -989,11 +989,15 @@ var mixin = {
         loadTempData() {
             for (let p of slParam) {
                 let data = this.loadData(FlowId + '-' + p)
+                if (getLocalObj(FlowId + '-' + p)) {
+                    data = getLocalObj(FlowId + '-' + p)
+                }
                 if (data) {
                     this[p] = data
                     this.saveData(p, null)
                 }
             }
+            localStorage.clear()
         },
         saveData(key,value) {
             var Days = 7;
