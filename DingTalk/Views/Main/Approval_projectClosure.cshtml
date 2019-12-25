@@ -479,10 +479,12 @@
                     ProjectFundingList: this.ProjectFundingList,
                     ruleForm: Object.assign(this.ruleForm,this.tableForm)
                 }
-                console.log(JSON.stringify(ReApprovalTempData))
-                for (let img of imgConfig) {
-                    if (img.flowId == FlowId) {
-                        loadPage(img.url)
+                //console.log(JSON.stringify(ReApprovalTempData))
+                for (let m of menu) {
+                    for (let f of m.flows) {
+                        if (f.FlowId == FlowId) {
+                            loadPage(f.PcUrl)
+                        }
                     }
                 }
             },
