@@ -27,7 +27,7 @@
         <el-form-item label="协作内容" prop="CooperateContent">
             <el-input v-model="tableForm.CooperateContent" style="width:550px;" type="textarea"></el-input>
         </el-form-item>
-        <el-form-item label="协作周期" prop="StartTime" v-if="doneloadTmp">
+        <el-form-item label="协作周期" prop="PlanBeginTime" v-if="doneloadTmp">
             <sam-timerange :value1.sync="tableForm.PlanBeginTime" :value2.sync="tableForm.PlanEndTime"></sam-timerange>
         </el-form-item>
 
