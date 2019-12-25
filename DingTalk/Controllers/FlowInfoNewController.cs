@@ -1479,7 +1479,14 @@ namespace DingTalk.Controllers
                             strWhere = " and ispost = 1 ";
                             break;
                         case 3:
-                            strWhere = " and isenable = 1 and issend = 1 ";
+                            if (OnlyReturnCount)
+                            {
+                                strWhere = " and isenable = 1 and issend = 1 and d.state= 0";
+                            }
+                            else
+                            {
+                                strWhere = " and isenable = 1 and issend = 1 ";
+                            }
                             break;
                         default:
                             break;
@@ -1540,80 +1547,8 @@ namespace DingTalk.Controllers
                             }
                         }
                     }
+                    
 
-
-
-                    //context.Tasks.SqlQuery(strSql).ToList();
-
-                    //List <Flows> flows = context.Flows.ToList();
-                    //List<Tasks> tasks = tasksAll.Where(t => t.ApplyManId == ApplyManId).ToList();
-                    //List<TasksState> tasksStates = context.TasksState.ToList();
-                    ////流程分类
-                    //tasks = TasksSort(Index, tasks);
-                    //foreach (var item in tasks)
-                    //{
-                    //    item.FlowState = tasksStates.Where(ts => ts.TaskId == item.TaskId.ToString()).FirstOrDefault().State;
-                    //    List<Tasks> taskQuery = tasksAll.Where(t => t.TaskId == item.TaskId).ToList();
-
-                    //    Tasks tasksPost = taskQuery.Where(t => t.NodeId == 0).FirstOrDefault();
-                    //    if (tasksPost != null)
-                    //    {
-                    //        item.Title = tasksPost.Title;
-                    //        item.ApplyMan = tasksPost.ApplyMan;
-                    //        item.ApplyTime = tasksPost.ApplyTime;
-                    //    }
-                    //    Tasks tasksCurrentSub = taskQuery.Where(t => t.State == 1 && t.IsEnable == 1 && t.IsSend != true).OrderBy(t => t.NodeId).LastOrDefault();
-                    //    if (tasksCurrentSub != null)
-                    //    {
-                    //        item.CurrentTime = tasksCurrentSub.ApplyTime;
-                    //        if (Index != 0)
-                    //        {
-                    //            if ((tasksPost != null ? (tasksCurrentSub.IsBacked == true) : (false)) || (tasksPost != null ? (tasksPost.IsBacked == true) : (false)))
-                    //            {
-                    //                item.NodeId = 0;
-                    //            }
-                    //            else
-                    //            {
-                    //                item.NodeId = tasksCurrentSub.NodeId + 1;
-                    //            }
-                    //        }
-                    //    }
-                    //    Tasks tasksNowSub = taskQuery.Where(t => t.State == 0 && t.IsEnable == 1 && t.ApplyManId == ApplyManId).FirstOrDefault();
-                    //    if (tasksNowSub != null)
-                    //    {
-                    //        item.NodeId = tasksNowSub.NodeId;
-                    //    }
-                    //    Flows flow = flows.Where(f => f.FlowId.ToString() == item.FlowId.ToString()).FirstOrDefault();
-                    //    if (flow != null)
-                    //    {
-                    //        item.IsSupportMobile = flow.IsSupportMobile;
-                    //        item.FlowName = flow.FlowName;
-                    //    }
-                    //    if (Index == 3)
-                    //    {
-                    //        item.IsRead = item.State == 1 ? true : false;
-                    //    }
-                    //}
-                    ////关键字查询
-                    //if (!string.IsNullOrEmpty(Key))
-                    //{
-                    //    List<Tasks> tasksQuery = new List<Tasks>();
-                    //    foreach (var t in tasks)
-                    //    {
-                    //        if (!string.IsNullOrEmpty(t.TaskId.ToString()))
-                    //        {
-                    //            if (t.TaskId.ToString() == Key
-                    //                || (!string.IsNullOrEmpty(t.ApplyMan) ? t.ApplyMan.Contains(Key) : false)
-                    //                || (!string.IsNullOrEmpty(t.Title) ? t.Title.Contains(Key) : false)
-                    //                || (!string.IsNullOrEmpty(t.FlowName) ? t.FlowName.Contains(Key) : false))
-                    //            {
-                    //                tasksQuery.Add(t);
-                    //            }
-                    //        }
-                    //    }
-                    //    tasks = tasksQuery;
-                    //}
-                    //int count = tasks.Count;
                     return new NewErrorModel()
                     {
                         count = count,
