@@ -1453,13 +1453,14 @@ namespace DingTalk.Controllers
         /// <param name="IsSupportMobile">是否是手机端调用接口(默认 false)</param>
         /// <param name="Key">关键字模糊查询(流水号、标题、申请人、流程类型)</param>
         /// <param name="pageIndex">页码(默认第一页)</param>
+        /// <param name="OnlyReturnCount">仅返回总页数</param>
         /// <param name="pageSize">页容量(默认每页5条)</param>
         /// <returns> State 0 未完成 1 已完成 2 被退回</returns>
         [HttpGet]
         [Route("GetFlowStateDetail")]
         public NewErrorModel GetFlowStateDetail(int Index,
             string ApplyManId, bool IsSupportMobile = false,
-            string Key = "", int pageIndex = 1, int pageSize = 99)
+            string Key = "",bool OnlyReturnCount=false, int pageIndex = 1, int pageSize = 99)
         {
             try
             {
@@ -1487,6 +1488,19 @@ namespace DingTalk.Controllers
 
 
                     string strSqlCount = $" select count(*) from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select d.id, d.taskid, c.FlowName, c.FlowId, c.Title, c.applyman, d.applyManId, c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {strWhere}   and ApplyManId = '{ApplyManId}') newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) ttt";
+
+
+                    int count = context.Database.SqlQuery<int>(strSqlCount).FirstOrDefault();
+
+                    if (OnlyReturnCount)
+                    {
+                        return new NewErrorModel()
+                        {
+                            count = count,
+                            data= count,
+                            error = new Error(0, "读取成功！", "") { },
+                        };
+                    }
                     //string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
 
                     //string strSqlCount = $"select count(*) from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId}'";
@@ -1509,7 +1523,7 @@ namespace DingTalk.Controllers
 
                     List<TasksQueryPro> tasksAll = context.Database.SqlQuery<TasksQueryPro>(strSqlQuery).ToList();
 
-                    int count = context.Database.SqlQuery<int>(strSqlCount).FirstOrDefault();
+                  
 
 
                     foreach (var item in tasksAll)
