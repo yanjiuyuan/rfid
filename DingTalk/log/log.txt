@@ -28,3 +28,8 @@
 2019-12-25 14:19:07,458 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
 2019-12-25 14:43:26,848 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-12-25 14:43:28,654 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-25 15:04:38,722 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-25 15:04:40,528 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-25 15:04:44,173 [14] ERROR DingTalk.MvcApplication - http://localhost:52920/FlowInfoNew/GetFlowStateCounts?ApplyManId=undefined出现异常
+2019-12-25 15:04:49,028 [11] ERROR DingTalk.MvcApplication - http://localhost:52920/FlowInfoNew/GetFlowStateCounts?ApplyManId=manager325出现异常
+2019-12-25 15:04:54,028 [12] ERROR DingTalk.MvcApplication - http://localhost:52920/FlowInfoNew/GetFlowStateCounts?ApplyManId=manager325出现异常
