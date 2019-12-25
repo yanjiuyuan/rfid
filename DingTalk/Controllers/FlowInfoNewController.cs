@@ -1482,7 +1482,7 @@ namespace DingTalk.Controllers
                         default:
                             break;
                     }
-                    string strSqlQuery = $"select id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select top 100 percent  d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc) newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) newtt order by TaskId desc offset {pageIndex}-1 rows fetch next {pageSize} rows only";
+                    string strSqlQuery = $"select id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select top 100 percent  d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc) newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) newtt order by TaskId desc offset {pageSize * (pageIndex - 1)} rows fetch next {pageSize} rows only";
 
 
                     string strSqlCount = $" select count(*) from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select d.id, d.taskid, c.FlowName, c.FlowId, c.Title, c.applyman, d.applyManId, c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {strWhere}   and ApplyManId = '{ApplyManId}') newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) ttt";
@@ -2728,7 +2728,7 @@ namespace DingTalk.Controllers
                         }
                         if (tasksState.State == "被退回")
                         {
-                            tasksState.NodeId = "-1";
+                            tasksState.NodeId = "0";
                             if (tasksPro != null)
                             {
                                 tasksState.CurrentTime = tasksPro.ApplyTime;
@@ -2736,7 +2736,7 @@ namespace DingTalk.Controllers
                         }
                         if (tasksState.State == "已撤回")
                         {
-                            tasksState.NodeId = "-2";
+                            tasksState.NodeId = "0";
                             if (tasksPro != null)
                             {
                                 tasksState.CurrentTime = tasksPro.ApplyTime.ToString();
