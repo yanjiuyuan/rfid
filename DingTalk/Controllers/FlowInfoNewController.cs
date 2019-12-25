@@ -1494,7 +1494,7 @@ namespace DingTalk.Controllers
                         foreach (var item in whereList)
                         {
                             string strSqlCountNew = $" select count(*) from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select d.id, d.taskid, c.FlowName, c.FlowId, c.Title, c.applyman, d.applyManId, c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {item}   and ApplyManId = '{ApplyManId}') newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) ttt";
-                            keyValuePairs.Add(whereList.IndexOf(item)==0?"Approve":"Send", context.Database.SqlQuery<int>(strSqlCountNew).FirstOrDefault());
+                            keyValuePairs.Add(whereList.IndexOf(item)==0? "ApproveCount" : "SendMyCount", context.Database.SqlQuery<int>(strSqlCountNew).FirstOrDefault());
                         }
                         return new NewErrorModel()
                         {
