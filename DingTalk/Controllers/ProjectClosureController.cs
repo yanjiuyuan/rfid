@@ -414,7 +414,6 @@ namespace DingTalk.Controllers
                     Dictionary<string, string> keyValuePairsHead = new Dictionary<string, string>();
                     keyValuePairsHead.Add("项目类别", purchaseTableList.ProjectType);
                     keyValuePairsHead.Add("项目负责人", purchaseTableList.ResponsibleMan);
-                    keyValuePairsHead.Add("项目成员", purchaseTableList.TeamMembers);
                     keyValuePairsHead.Add("小组成员", purchaseTableList.TeamMembers);
                     keyValuePairsHead.Add("项目周期", purchaseTableList.StartTime + "-" + purchaseTableList.EndTime);
                     keyValuePairsHead.Add("项目实际开发周期", purchaseTableList.ActualCycleStart + "-" + purchaseTableList.ActualCycleEnd);

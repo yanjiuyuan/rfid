@@ -1494,7 +1494,7 @@ namespace DingTalk.Controllers
                         foreach (var item in whereList)
                         {
                             string strSqlCountNew = $" select count(*) from (select max(id) as id,taskid,FlowName,FlowId,Title,applyman,applyManId,FlowState,state,ApplyTime,CurrentTime,NodeId from(select d.id, d.taskid, c.FlowName, c.FlowId, c.Title, c.applyman, d.applyManId, c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c on d.taskid = c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}'))  {item}   and ApplyManId = '{ApplyManId}') newTable group by taskid, FlowName, FlowId, Title, applyman, applyManId, FlowState, state, ApplyTime, CurrentTime, NodeId ) ttt";
-                            keyValuePairs.Add(whereList.IndexOf(item)==0? "ApproveCount" : "SendMyCount", context.Database.SqlQuery<int>(strSqlCountNew).FirstOrDefault());
+                            keyValuePairs.Add(whereList.IndexOf(item) == 0 ? "ApproveCount" : "SendMyCount", context.Database.SqlQuery<int>(strSqlCountNew).FirstOrDefault());
                         }
                         return new NewErrorModel()
                         {
@@ -1510,7 +1510,7 @@ namespace DingTalk.Controllers
 
 
                     int count = context.Database.SqlQuery<int>(strSqlCount).FirstOrDefault();
-                    
+
                     //string strSqlQuery = $"select d.id,d.taskid,c.FlowName,c.FlowId,c.Title,c.applyman,d.applyManId,c.State as FlowState,d.state,c.ApplyTime,c.CurrentTime,c.NodeId from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId} ' order by d.taskid desc offset {pageIndex} - 1 rows fetch next {pageSize} rows only ";
 
                     //string strSqlCount = $"select count(*) from tasks d left join  TasksState c  on  d.taskid=c.taskid   where d.taskid in (select distinct(a.TaskId) from tasks a  left join TasksState b on a.TaskId = b.TaskId where (b.ApplyMan like '%{Key}%' or b.FlowName like '%{Key}%'  or b.taskid = '{Key}')) {strWhere}  and ApplyManId = '{ApplyManId}'";
@@ -1831,6 +1831,22 @@ namespace DingTalk.Controllers
                     {
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId).ToList();
+                        //List<SignModel> SignModels = new List<SignModel>();
+
+                        //foreach (var nodeInfo in NodeInfoList)
+                        //{
+                        //    foreach (var tasks in TaskList)
+                        //    {
+                        //        if (nodeInfo.NodeId == tasks.NodeId)
+                        //        {
+                        //            SignModels.Add(new SignModel()
+                        //            {
+                        //                NodeId = (int)nodeInfo.NodeId,
+                        //                ApplyMan = 
+                        //            });
+                        //        }
+                        //    }
+                        //}
 
                         var Quary = from n in NodeInfoList
                                     join t in TaskList
@@ -1840,7 +1856,7 @@ namespace DingTalk.Controllers
                                     orderby n.NodeId
                                     select new
                                     {
-                                        Id = tt == null ? 0 : tt.Id,
+                                        //Id = tt == null ? 0 : tt.Id,
                                         NodeId = n.NodeId,
                                         NodeName = n.NodeName,
                                         IsBack = tt == null ? false : tt.IsBacked,
@@ -1852,7 +1868,7 @@ namespace DingTalk.Controllers
                                         IsMandatory = n.IsMandatory,
                                         IsSelectMore = n.IsSelectMore
                                     };
-                        Quary = Quary.OrderBy(q => q.NodeId).ThenByDescending(h => h.ApplyTime);
+                        Quary = Quary.OrderBy(q => q.NodeId).ThenBy(h => h.ApplyTime);
                         return new NewErrorModel()
                         {
                             data = Quary,
@@ -1948,9 +1964,6 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        //Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend != true).OrderByDescending(t => t.Id).First();
-
-                        //Tasks task = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1).OrderBy(t => t.NodeId).First();
                         Tasks taskOld = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.NodeId == 0).First();
                         List<Tasks> tasksList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId && u.ApplyManId == ApplyManId && u.IsEnable == 1 && u.IsSend != true).OrderByDescending(t => t.Id).ToList();
                         if (tasksList.Count > 0)

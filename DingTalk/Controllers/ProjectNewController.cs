@@ -127,7 +127,7 @@ namespace DingTalk.Controllers
                     }
                 }
 
-                FileModelsList = FileModelsList.OrderByDescending(f => f.createTime).ToList();
+                FileModelsList = FileModelsList.OrderBy(f => f.order).ToList();
                 using (DDContext context = new DDContext())
                 {
                     //项目管理员

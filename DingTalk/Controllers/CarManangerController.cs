@@ -153,15 +153,34 @@ namespace DingTalk.Controllers
         /// 车辆查询
         /// </summary>
         /// <param name="key">车牌号、车名、颜色、</param>
+        /// <param name="applyManId">用户Id</param>
         /// <returns></returns>
         [Route("Quary")]
         [HttpGet]
-        public NewErrorModel Quary(string key)
+        public NewErrorModel Quary(string key,string applyManId)
         {
             try
             {
                 using (DDContext context = new DDContext())
                 {
+                    if (string.IsNullOrEmpty(applyManId))
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "参数applyManId未传！", "") { },
+                        };
+                    }
+                    else
+                    {
+                        //超管和车辆管理员可查询
+                        if (context.Roles.Where(r => r.RoleName == "车辆管理员" || r.RoleName == "超级管理员").ToList().Count == 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "用户没有权限进行操作！", "") { },
+                            };
+                        }
+                    }
                     if (string.IsNullOrEmpty(key))
                     {
                         var Quary = context.Car.ToList();

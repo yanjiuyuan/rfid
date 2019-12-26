@@ -562,6 +562,7 @@
     <Compile Include="Models\ServerModels\SendDingPanModel.cs" />
     <Compile Include="Models\ServerModels\SendOAModel.cs" />
     <Compile Include="Models\ServerModels\SendProgressModel.cs" />
+    <Compile Include="Models\ServerModels\SignModel.cs" />
     <Compile Include="Models\ServerModels\TaskFlowModel.cs" />
     <Compile Include="Models\ServerModels\TextMsgModel.cs" />
     <Compile Include="Models\ServerModels\UploadMediaRequestModel.cs" />
