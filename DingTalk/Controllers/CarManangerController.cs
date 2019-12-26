@@ -339,6 +339,7 @@ namespace DingTalk.Controllers
                                         AllPrice = float.Parse(ct.FactKilometre) * float.Parse(c.UnitPricePerKilometre.ToString()),
                                         //Remark = t.Remark
                                     };
+
                         var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                         if (IsSend && Quary.Count() > 0)  //生成报表推送用户
                         {
