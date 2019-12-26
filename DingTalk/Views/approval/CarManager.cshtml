@@ -74,6 +74,7 @@
     </el-form>
     <!--表格實體-->
     <el-table :data="tableData2" stripe border v-if="searchParam.IsPublic">
+        <el-table-column prop="TaskId" label="流水号"></el-table-column>
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
@@ -85,6 +86,7 @@
         <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
     </el-table>
     <el-table :data="tableData2" stripe border v-else>
+        <el-table-column prop="TaskId" label="流水号"></el-table-column>
         <el-table-column prop="Dept" label="使用部门"></el-table-column>
         <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
         <el-table-column prop="UseTime" label="用车日期"></el-table-column>
