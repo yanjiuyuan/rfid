@@ -124,6 +124,20 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext context = new DDContext();
+
+                ProjectInfo projectInfo = context.ProjectInfo.Where(p => p.ProjectId == projectId).FirstOrDefault();
+                if (projectInfo != null)
+                {
+                    if (projectInfo.ProjectState != "在研")
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "只有在研项目才能发起！", "") { },
+                        };
+                    }
+                }
+
+
                 //立项数据(附件)
                 string FlowId = context.Flows.Where(t => t.FlowName == "立项申请").First().FlowId.ToString();
                 List<Tasks> tasksList = FlowInfoServer.ReturnUnFinishedTaskId(FlowId);
@@ -132,6 +146,14 @@ namespace DingTalk.Controllers
                 if (createProject != null)
                 {
                     Tasks tasks = tasksListQuery.Where(t => t.TaskId.ToString() == createProject.TaskId).FirstOrDefault();
+                    if (tasks == null)
+                    {
+                        return new NewErrorModel()
+                        {
+                            data=null,
+                            error = new Error(1, "该流程没有走过立项申请的数据！", "") { },
+                        };
+                    }
                     FileUrlModel fileUrlModel = new FileUrlModel()
                     {
                         fileName = tasks.OldFileUrl,

@@ -82,23 +82,31 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == ApplyManId).ToList().Count > 0)
+                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == ApplyManId).ToList().Count > 0 || context.Roles.Where(r => r.RoleName.Contains("超级管理员") && r.UserId == ApplyManId).ToList().Count > 0)
                     {
+                        //判断车辆是否用完
+                        string strSql = $"select count(*) from cartable a  left join TasksState b on a.TaskId=b.TaskId where carid={Id} and b.State='未完成'";
+                        int count = context.Database.SqlQuery<int>(strSql).FirstOrDefault();
+                        if (count > 0)
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "该车辆有部分流程未走完，无法删除！", "") { },
+                            };
+                        }
                         Car car = context.Car.Find(Convert.ToInt32(Id));
                         context.Car.Remove(car);
                         context.SaveChanges();
-                        return new ErrorModel()
+                        return new NewErrorModel()
                         {
-                            errorCode = 0,
-                            errorMessage = "删除成功"
+                            error = new Error(0, "删除成功！", "") { },
                         };
                     }
                     else
                     {
-                        return new ErrorModel()
+                        return new NewErrorModel()
                         {
-                            errorCode = 1,
-                            errorMessage = "没有权限"
+                            error = new Error(1, "用户没有权限进行操作！", "") { },
                         };
                     }
                 }
@@ -123,22 +131,20 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == car.ApplyManId).ToList().Count > 0)
+                    if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == car.ApplyManId).ToList().Count > 0 || context.Roles.Where(r => r.RoleName.Contains("超级管理员") && r.UserId == car.ApplyManId).ToList().Count > 0)
                     {
                         context.Entry<Car>(car).State = System.Data.Entity.EntityState.Modified;
                         context.SaveChanges();
-                        return new ErrorModel()
+                        return new NewErrorModel()
                         {
-                            errorCode = 0,
-                            errorMessage = "修改成功"
+                            error = new Error(0, "修改成功！", "") { },
                         };
                     }
                     else
                     {
-                        return new ErrorModel()
+                        return new NewErrorModel()
                         {
-                            errorCode = 1,
-                            errorMessage = "没有权限"
+                            error = new Error(1, "用户没有权限进行操作！", "") { },
                         };
                     }
                 }
@@ -157,7 +163,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Quary")]
         [HttpGet]
-        public NewErrorModel Quary(string key,string applyManId)
+        public NewErrorModel Quary(string key, string applyManId)
         {
             try
             {
@@ -173,7 +179,7 @@ namespace DingTalk.Controllers
                     else
                     {
                         //超管和车辆管理员可查询
-                        if (context.Roles.Where(r => r.RoleName == "车辆管理员" || r.RoleName == "超级管理员").ToList().Count == 0)
+                        if (context.Roles.Where(r => r.RoleName.Contains("车辆管理员") && r.UserId == applyManId).ToList().Count == 0 && context.Roles.Where(r => r.RoleName.Contains("超级管理员") && r.UserId == applyManId).ToList().Count == 0)
                         {
                             return new NewErrorModel()
                             {
@@ -186,7 +192,7 @@ namespace DingTalk.Controllers
                         var Quary = context.Car.ToList();
                         return new NewErrorModel()
                         {
-                            data = Quary,
+                            data = Quary.OrderByDescending(t => t.Id),
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -197,7 +203,7 @@ namespace DingTalk.Controllers
                           || c.Type.Contains(key)).ToList();
                         return new NewErrorModel()
                         {
-                            data = Quary,
+                            data = Quary.OrderByDescending(t => t.Id),
                             error = new Error(0, "读取成功！", "") { },
                         };
                     }
@@ -208,91 +214,6 @@ namespace DingTalk.Controllers
                 throw ex;
             }
         }
-
-
-        /// <summary>
-        /// 车辆查询(返回当前车辆状态)
-        /// </summary>
-        /// <param name="startTime">开始时间(2018-08-07 00:00:00)</param>
-        /// <param name="endTime">结束时间(2018-08-27 00:00:00)</param>
-        //[Route("QuaryByTime")]
-        //[HttpGet]
-        //public NewErrorModel QuaryByTime(string startTime, string endTime)
-        //{
-        //    try
-        //    {
-        //        using (DDContext context = new DDContext())
-        //        {
-        //            List<Car> cars = context.Car.ToList();
-        //            List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
-        //            List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
-        //            List<Car> carsQuery = new List<Car>();//条件过滤集合
-        //            List<Car> carsDic = new List<Car>();
-        //            foreach (var ct in carTables)
-        //            {
-        //                if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
-        //                {
-        //                    if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
-        //                    {
-        //                        Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
-        //                        if (car != null)
-        //                        {
-        //                            car.IsOccupyCar = true;
-        //                            car.OccupyCarId = ct.Id.ToString();
-        //                            car.UseMan = ct.DrivingMan;
-        //                            car.UseTimes = ct.StartTime + "---" + ct.EndTime;
-        //                            carsQuery.Add(car);
-        //                        }
-        //                    }
-        //                }
-        //            }
-
-        //            foreach (var c in cars)
-        //            {
-        //                if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
-        //                {
-        //                    c.OccupyCarId = "";
-        //                    c.IsOccupyCar = false;
-        //                    c.UseTimes = "";
-        //                    carsQuery.Add(c);
-        //                }
-        //            }
-
-        //            Dictionary<string, List<Car>> keyValuePairs = new Dictionary<string, List<Car>>();
-
-        //            foreach (var item in carsQuery)
-        //            {
-        //                if (!keyValuePairs.Keys.Contains(item.Name))
-        //                {
-        //                    keyValuePairs.Add(item.Name, new List<Car>() {
-        //                     item
-        //                  });
-        //                }
-        //                else
-        //                {
-        //                    List<Car> carsNew = new List<Car>();
-        //                    carsNew = keyValuePairs[item.Name];
-        //                    carsNew.Add(item);
-        //                    keyValuePairs[item.Name] = carsNew;
-        //                }
-        //            }
-        //            //2019 09 29 end
-        //            return new NewErrorModel()
-        //            {
-        //                data = keyValuePairs,
-        //                error = new Error(0, "读取成功！", "") { },
-        //            };
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new NewErrorModel()
-        //        {
-        //            error = new Error(1, ex.Message, "") { },
-        //        };
-        //    }
-        //}
-
 
         /// <summary>
         /// 车辆查询(返回当前车辆状态)
@@ -494,7 +415,7 @@ namespace DingTalk.Controllers
                                            MainContent = ct.MainContent,
                                            UseKilometres = ct.UseKilometres,
                                            StartKilometres = ct.StartKilometres == null ? "" : ct.StartKilometres,
-                                           EndKilometres = ct.EndKilometres == null ? "" : ct.EndKilometres,                      
+                                           EndKilometres = ct.EndKilometres == null ? "" : ct.EndKilometres,
                                        };
                         var takeQuaryPri = QuaryPri.Skip((pageIndex - 1) * pageSize).Take(pageSize);
 

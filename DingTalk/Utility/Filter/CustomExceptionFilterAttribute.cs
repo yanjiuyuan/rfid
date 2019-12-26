@@ -31,25 +31,26 @@ namespace DingTalk.Utility.Filters
             string requestUrl = actionExecutedContext.Request.RequestUri.ToString();// 请求路径
             string stackTrace = actionExecutedContext.Exception.StackTrace; //堆栈信息
             string requestIp = "";
-            using (DDContext context = new DDContext())
+            DDContext context = new DDContext();
+
+            ContextError contextError = new ContextError()
             {
-                ContextError contextError = new ContextError() {
-                    ErrorMsg = errorMsg,
-                    RequstResult = requstResult,
-                    Method = method,
-                    RequestIp = requestIp,
-                    RequestUrl = requestUrl,
-                    StackTrace = stackTrace,
-                    CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                };
-                context.ContextError.Add(contextError);
-                context.SaveChanges();
-                this.logger.Error($"在响应 {requestUrl} 时出现异常，信息：{errorMsg}，详见数据库日志Id：{contextError.Id}");
-            }
+                ErrorMsg = errorMsg,
+                RequstResult = requstResult,
+                Method = method,
+                RequestIp = requestIp,
+                RequestUrl = requestUrl,
+                StackTrace = stackTrace,
+                CreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+            context.ContextError.Add(contextError);
+            context.SaveChanges();
+            this.logger.Error($"在响应 {requestUrl} 时出现异常，信息：{errorMsg}，详见数据库日志Id：{contextError.Id}");
+
             actionExecutedContext.Response = actionExecutedContext.Request.CreateResponse(
             System.Net.HttpStatusCode.OK, new NewErrorModel
             {
-                error = new Error(1, "出现异常，请联系管理员!", "") { },
+                error = new Error(1, $"出现异常，请联系管理员! 错误Id：{contextError.Id}", "") { },
             });
 
             //base.OnException(actionExecutedContext);

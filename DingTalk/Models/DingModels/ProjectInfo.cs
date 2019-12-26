@@ -127,5 +127,10 @@ namespace DingTalk.Models.DingModels
         /// </summary>
         public string BusinessDocker { get; set; }
         
+        /// <summary>
+        ///  «∑Òø…“‘±‡º≠
+        /// </summary>
+        [NotMapped]
+        public bool IsEdit { get; set; }
     }
 }

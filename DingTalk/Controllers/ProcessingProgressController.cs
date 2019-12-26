@@ -448,7 +448,7 @@ namespace DingTalk.Controllers
                                     , item.TaskId, item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
                             }
                         }
-                        if (vs.Count == 1 && vs.Contains(0)) //制表人 暂时不通知(添加的时候通知了)
+                        if (vs.Count == 1 && vs.Contains(0) ) //制表人 暂时不通知(添加的时候通知了)
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                         }
@@ -468,7 +468,7 @@ namespace DingTalk.Controllers
                             await dingTalkServersController.SendProcessingProgress(item.HeadOfDepartmentsId, 1, processingProgressModel.applyMan, item.Bom
                                 , item.TaskId, item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
                         }
-                        if (vs.Count == 1 && vs.Contains(3)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
+                        if (/*vs.Count == 1 &&*/ vs.Contains(3)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
                         {
                             context.Entry<ProcessingProgress>(item).State = System.Data.Entity.EntityState.Modified;
                             if (!string.IsNullOrEmpty(item.SpeedOfProgress)) //获取工作进度表状态

@@ -120,6 +120,16 @@ namespace DingTalk.Controllers
 
                 using (DDContext context = new DDContext())
                 {
+                    //判断流水号是否存在
+                    if (context.TasksState.Where(t => t.TaskId == TaskId && t.FlowName.Contains("零部件")).ToList().Count == 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "该流水号不存在或者不是零部件采购流程！", "") { },
+                        };
+                    }
+
+
                     HttpWebResponse httpWebResponse = CreateGetHttpResponse("http://wuliao5222.55555.io:35705/api/Pick/ReadPickInfoSingle", 5000, null, null);
                     StreamReader reader = new StreamReader(httpWebResponse.GetResponseStream(), Encoding.UTF8);
                     string content = reader.ReadToEnd();

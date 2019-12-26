@@ -507,6 +507,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 项目信息关键字查询
         /// </summary>
+        /// <param name="applyManId"></param>
         /// <param name="key"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
@@ -516,16 +517,42 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("QuaryProjectInfo")]
-        public NewErrorModel QuaryProjectInfo(string key = "", string startTime = "", string endTime = "", string projectState = "",
+        public NewErrorModel QuaryProjectInfo(string applyManId, string key = "", string startTime = "", string endTime = "", string projectState = "",
             string projectType = "", string projectSmallType = "")
         {
             try
             {
                 List<ProjectInfo> ProjectInfoList = new List<ProjectInfo>();
                 List<ProjectInfo> ProjectInfoListQuery = new List<ProjectInfo>();
+
                 using (DDContext context = new DDContext())
                 {
+                    bool IsSa = context.Roles.Where(r => r.UserId == applyManId && r.RoleName == "超级管理员").ToList().Count > 0 ? true : false;
+
                     ProjectInfoList = context.ProjectInfo.ToList();
+                    
+                    if (IsSa)
+                    {
+                        foreach (var item in ProjectInfoList)
+                        {
+                            item.IsEdit = true;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in ProjectInfoList)
+                        {
+                            if (item.ResponsibleManId == applyManId)
+                            {
+                                item.IsEdit = true;
+                            }
+                            else
+                            {
+                                item.IsEdit = false;
+                            }
+                        }
+                    }
+
                     if (key != "" && key != null)
                     {
                         ProjectInfoList = ProjectInfoList.Where(p =>
@@ -552,6 +579,8 @@ namespace DingTalk.Controllers
                                 }
                             }
                         }
+
+
                         return new NewErrorModel()
                         {
                             count = ProjectInfoListQuery.Count,
@@ -730,15 +759,15 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
-                    ProjectInfo projectInfoQuery = context.ProjectInfo.AsNoTracking().Where(p=>p.ProjectId== projectInfo.ProjectId).FirstOrDefault();
+                    ProjectInfo projectInfoQuery = context.ProjectInfo.AsNoTracking().Where(p => p.ProjectId == projectInfo.ProjectId).FirstOrDefault();
                     if (projectInfoQuery.ProjectName != projectInfo.ProjectName)
                     {
                         //修改项目路径
-                        projectInfo.FilePath = projectInfo.FilePath.Replace(projectInfoQuery.ProjectName, projectInfo.ProjectName);                     
+                        projectInfo.FilePath = projectInfo.FilePath.Replace(projectInfoQuery.ProjectName, projectInfo.ProjectName);
                         System.IO.Directory.Move(HttpContext.Current.Server.MapPath(projectInfoQuery.FilePath), HttpContext.Current.Server.MapPath(projectInfo.FilePath));
                         //projectInfoQuery = projectInfo;
                     }
-                    
+
                     context.Entry<ProjectInfo>(projectInfo).State = System.Data.Entity.EntityState.Modified;
                     context.SaveChanges();
                 }
