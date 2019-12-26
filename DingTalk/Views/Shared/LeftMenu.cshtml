@@ -22,7 +22,7 @@
                                     发起审批
                                 </el-menu-item>
                                 <el-menu-item index="2-2" onclick="loadPage('/Main/approval_list?Index=0')">
-                                    待我审批<el-badge class="mark" :value="menuStatus.ApproveCount" />
+                                    待我审批<el-badge v-if="menuStatus.ApproveCount>0" class="mark" :value="menuStatus.ApproveCount" />
                                 </el-menu-item>
                                 <el-menu-item index="2-3" onclick="loadPage('/Main/approval_list?Index=1')">
                                     我已审批
@@ -31,7 +31,7 @@
                                     我发起的@*<el-badge class="mark" :value="menuStatus.MyPostCount" />*@
                                 </el-menu-item>
                                 <el-menu-item index="2-5" onclick="loadPage('/Main/approval_list?Index=3')">
-                                    抄送我的<el-badge class="mark" :value="menuStatus.SendMyCount" />
+                                    抄送我的<el-badge v-if="menuStatus.SendMyCount>0" class="mark" :value="menuStatus.SendMyCount" />
                                 </el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
