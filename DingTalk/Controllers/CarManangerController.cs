@@ -316,7 +316,6 @@ namespace DingTalk.Controllers
                             tasks.Add(item);
                         }
                     }
-
                     List<CarTable> carTables = context.CarTable.ToList();
                     if (IsPublic)
                     {
