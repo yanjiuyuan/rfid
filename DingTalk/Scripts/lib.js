@@ -72,7 +72,7 @@ function loadPage(url) {
     $("#tempPage").load(url)
 }
 function goHome() {
-    GetData('/FlowInfoNew/GetFlowStateCounts?ApplyManId=' + DingData.userid, (res) => {
+    GetData('/FlowInfoNew/GetFlowStateCounts?Index=1&OnlyReturnCount=true&ApplyManId=' + DingData.userid, (res) => {
         if (res.ApproveCount) {
             loadPage('/Main/approval')
         } else {
@@ -561,7 +561,7 @@ var mixin = {
                 success: function (res) {
                     if (showLoading) { loading.close() }
                     if (typeof (res) == 'string') res = JSON.parse(res)
-                    if (url.indexOf('GetFlowStateCounts') <= 0) {
+                    if (url.indexOf('GetFlowStateDetail') <= 0) {
                         console.log(url)
                         console.log(res)
                     }
@@ -624,7 +624,7 @@ var mixin = {
         },
         //初始化方法
         initStart(callBack = function () { }) {
-            Index = 0
+            Index = -1
             State = "未完成"
             this.doneloadTmp = false 
             this.DingData = DingData
@@ -742,9 +742,8 @@ var mixin = {
            
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.GetDingList(TaskId)
-            this.getNodeInfo()
+            this.getNodeInfo(this.getNodeList(false, callBack))
             this.getFormData()
-            this.getNodeList(false, callBack)
             loadHtml("mainPage", "partPage")
         },
         //提交审批
@@ -1271,6 +1270,15 @@ var mixin = {
                     }
                 }
                 this.getNodeInfo_done(this.nodeList)
+                //我发起的页面重新判断NodeId
+                if (Index == 1) {
+                    for (let i = this.nodeList.length - 2; i > 0; i--) {
+                        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                            NodeId = this.nodeList[i].NodeId
+                            this.NodeId = this.nodeList[i].NodeId
+                        }
+                    }
+                }
                 //发起页面获取临时保存数据和重新发起数据
                 if (ifStart) {
                     this.loadTempData()
@@ -1302,11 +1310,12 @@ var mixin = {
             })
         },
         //获取審批節點數據
-        getNodeInfo() {
+        getNodeInfo(callBack = function () { }) {
             var url = "/FlowInfoNew/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
             this.GetData(url, (res) => {
                 this.nodeInfo = res[0]
                 NodeId = res[0].NodeId
+                callBack()
             })
         },
         //审批所有流程通过，后续处理
@@ -2135,13 +2144,13 @@ Vue.component('sam-approver-list', {
                     </el-form-item>
                     <el-form-item>
                         <template v-for="(node,index) in nodelist">
-                            <el-tag :key="index" type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
+                            <el-tag :key="node.NodeName" type="warning" class="nodeTitle" style="width:130px;text-align:center;" :id="node.NodeId">
                                 {{node.NodeName}}
                             </el-tag>
 
                             <template v-for="(p,a) in node.NodePeople">
                                 <span v-if="a>0 && node.NodeName!='抄送' && node.ApplyTime" style="margin-left:137px;">&nbsp;</span>
-                                <el-tag :key="p"
+                                <el-tag :key="a"
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"

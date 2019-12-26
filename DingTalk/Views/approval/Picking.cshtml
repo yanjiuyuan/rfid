@@ -55,10 +55,10 @@
         <el-table-column prop="fName" label="物料名称"></el-table-column>
         <el-table-column prop="fQty" label="领料数量" width="100">
             <template slot-scope="scope">
-                <sam-input :value.sync="scope.row.fQty" type="number" :required="true" :max="scope.row.fAmount" min="0"></sam-input>
+                <sam-input :value.sync="scope.row.fQty" type="number" :required="true" :max="scope.row.fQtyInvoice" min="0"></sam-input>
             </template>
         </el-table-column>
-        <el-table-column prop="fAmount" label="库存数量"></el-table-column>
+        <el-table-column prop="fQtyInvoice" label="库存数量"></el-table-column>
         <el-table-column prop="fModel" label="规格型号"></el-table-column>
         <el-table-column prop="unitName" label="单位"></el-table-column>
         <el-table-column prop="fFullName" label="供应商"></el-table-column>
@@ -117,6 +117,7 @@
                 let callBack = function (taskId) {
                     for (let p of that.purchaseList) {
                         p['TaskId'] = taskId
+                        p['fAmount'] = parseInt(p.fQty) * p.fPrice
                     }
                     that.PostData('/Pick/Save', that.purchaseList, function () {
                         that.elementAlert('提示信息', '恭喜提交成功')
@@ -155,7 +156,7 @@
                             if (d.fNumber == p.fNumber) ifBreak = true
                         }
                         if (ifBreak) break
-                        d['fAmount'] = d.fQty
+                        d['fQtyInvoice'] = d.fQty
                         d.fQty = 0
                         that.purchaseList.push(d)
                         that.noList.push(d.fNumber)
@@ -168,7 +169,7 @@
                     if (p.fNumber == good.fNumber) return
                 }
                 let g = _cloneObj(good)
-                g.fAmount = good.fQty
+                g.fQtyInvoice = good.fQty
                 g.fQty = 0
                 this.purchaseList.push(g)
                 this.noList.push(g.fNumber)

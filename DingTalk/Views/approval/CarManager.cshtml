@@ -12,7 +12,7 @@
     <!--检索项目表单-->
     <div>
         <span>关键字</span>
-        <sam-input :value.sync="formInline.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        <sam-input :value.sync="formInline.key" style="width:200px;" placeholder="请输入车牌号、车名、颜色"></sam-input>
         <el-button type="primary" v-on:click="getCar">搜索</el-button>
         <el-button v-on:click="handleAdd" type="primary">添加车辆</el-button>
     </div>
@@ -115,8 +115,9 @@
                 <el-form-item v-for="i in items" v-if="i!='FinnalEndTime' && i!='UnitPricePerKilometre' " :key="i" :label="tableItems[i]" :prop="i">
                     <sam-input :value.sync="ruleForm[i]"></sam-input>
                 </el-form-item>
-                <el-form-item label="每公里单价(元)" prop="UnitPricePerKilometre">
-                    <sam-input :value.sync="ruleForm.UnitPricePerKilometre" type="number" min="0" :required="true"></sam-input>
+                <el-form-item label="每公里单价(元)">
+                    <el-input-number v-model="ruleForm.UnitPricePerKilometre" :precision="1" :step="0.1" :max="100" :min="0.1"></el-input-number>
+                    @*<sam-input :value.sync="ruleForm.UnitPricePerKilometre" type="number" min="0" :required="true"></sam-input>*@
                 <hr />
                 <el-form-item>
                     <el-button v-if="isAdd" type="primary" v-on:click="addCar('ruleForm')" :disabled="disableAdd">添加</el-button>
@@ -197,7 +198,10 @@
             //获取车辆数据getCar
             getCar() {
                 var that = this
-                let url = "/CarMananger/Quary?key=" + this.formInline.key
+                let url = "/CarMananger/Quary" + _formatQueryStr({
+                    key: this.formInline.key,
+                    applyManId: DingData.userid
+                })
                 let handle = function (data) {
                     that.totalRows = data.length
                     for (let d of data) { d.State += ''}

@@ -96,19 +96,6 @@
                 checked: false,
                 ifGoout: false,
                 activeNames: [],
-                tableForm: {
-                    CarId: "",
-                    DrivingMan: DingData.nickName,
-                    PeerNumber: "",
-                    StartTime: "",
-                    EndTime: "",
-                    MainContent: "",
-                    PlantTravelWay: "",
-                    Title: "私车申请",
-                    IsPublicCar: false,
-                    IsChooseOccupyCar: true,
-                    OccupyCarId: ""
-                },
                 rules: {
                     Title: [{ required: true, message: '车牌号不能为空', trigger: 'blur' }, lengthLimit(1, 15)],
                     DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
@@ -186,7 +173,9 @@
         },
         
         created: function () {
-            this.initStart()
+            this.initStart((res) => {
+                this.tableForm['DrivingMan'] = DingData.nickName
+            })
         }
     })
     

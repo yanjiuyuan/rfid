@@ -48,7 +48,7 @@
                 },
                 //菜单数据加载
                 loadMenuData(id) {
-                    this.GetData("FlowInfoNew/GetFlowStateDetail?OnlyReturnCount=true&ApplyManId=" + id, (res) => {
+                    this.GetData("FlowInfoNew/GetFlowStateDetail?Index=1&OnlyReturnCount=true&ApplyManId=" + id, (res) => {
                         this.menuStatus = res
                     })
                 }
