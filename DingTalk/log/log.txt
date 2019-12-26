@@ -189,3 +189,5 @@
 2019-12-26 15:25:24,394 [34] ERROR DingTalk.MvcApplication - http://localhost:52920/FlowInfoNew/GetFlowStateCounts?ApplyManId=manager325出现异常
 2019-12-26 15:33:20,846 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-12-26 15:33:22,661 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 15:38:22,863 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 15:38:24,677 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
