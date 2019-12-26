@@ -255,7 +255,6 @@
                     TaskId: TaskId,
                     OldPath: FilePDFUrl
                 }
-                var that = this
                 let url = "/DrawingUpload/PrintAndSend"
                 $.ajax({
                     url: url,
@@ -304,7 +303,7 @@
                 } 
                 if (FlowId == 6) {
                     this.GetData("/DrawingUploadNew/GetPurchase?TaskId=" + TaskId, (data) => {
-                        for (let a of that.dataArr) {
+                        for (let a of this.dataArr) {
                             for (let d of data) {
                                 if (a.Sorts == d.Sorts) {
                                     a.data.push(d)

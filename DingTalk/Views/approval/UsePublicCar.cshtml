@@ -109,18 +109,6 @@
                 checked: false,
                 ifGoout: false,
                 activeNames: [],
-                tableForm: {
-                    CarId: "",
-                    DrivingMan: DingData.nickName,
-                    PeerNumber: "",
-                    StartTime: "",
-                    EndTime: "",
-                    MainContent: "",
-                    PlantTravelWay: "",
-                    IsPublicCar: true,
-                    IsChooseOccupyCar: true,
-                    OccupyCarId: ""
-                },
                 rules: {
                     DrivingMan: commonInput,
                     PeerNumber: commonInput,
@@ -194,7 +182,9 @@
             },
         },
         created: function () {
-            this.initStart()
+            this.initStart((res) => {
+                this.tableForm['DrivingMan'] = DingData.nickName
+            })
         },
     })
 

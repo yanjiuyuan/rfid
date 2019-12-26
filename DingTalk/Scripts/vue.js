@@ -635,7 +635,8 @@
                 config.warnHandler.call(null, msg, vm, trace);
             } else if (hasConsole && (!config.silent)) {
                 var str = 'Avoid mutating a prop directly since the value will be overwritten whenever the parent component re-renders.'
-                if (msg.indexOf(str) >= 0) {
+                var str2 = 'Duplicate keys detected: '
+                if (msg.indexOf(str) >= 0 || msg.indexOf(str2) >= 0) {
                     return
                 }
                 console.error(("[Vue warn]: " + msg + trace));
