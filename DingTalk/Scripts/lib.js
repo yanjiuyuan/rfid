@@ -1270,15 +1270,15 @@ var mixin = {
                     }
                 }
                 this.getNodeInfo_done(this.nodeList)
-                //我发起的页面重新判断NodeId
-                if (Index == 1) {
-                    for (let i = this.nodeList.length - 2; i > 0; i--) {
-                        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                            NodeId = this.nodeList[i].NodeId
-                            this.NodeId = this.nodeList[i].NodeId
-                        }
-                    }
-                }
+                ////我发起的页面重新判断NodeId
+                //if (Index == 1) {
+                //    for (let i = this.nodeList.length - 2; i > 0; i--) {
+                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                //            NodeId = this.nodeList[i].NodeId
+                //            this.NodeId = this.nodeList[i].NodeId
+                //        }
+                //    }
+                //}
                 //发起页面获取临时保存数据和重新发起数据
                 if (ifStart) {
                     this.loadTempData()
