@@ -195,3 +195,26 @@
 2019-12-26 15:49:52,387 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
 2019-12-26 15:51:06,184 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
 2019-12-26 15:51:07,182 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 16:14:11,909 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 16:14:13,814 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 17:36:49,158 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 17:36:50,982 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 17:39:22,733 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 17:39:23,721 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 17:40:16,003 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetSign?FlowId=32&TaskId=5712 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：483
+2019-12-26 17:42:19,461 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 17:42:21,311 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 17:42:58,307 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetSign?FlowId=32&TaskId=5712 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：484
+2019-12-26 17:43:48,338 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 17:43:50,149 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 17:59:52,255 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 17:59:54,080 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 18:01:56,470 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 18:01:58,358 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 18:13:54,201 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 18:13:56,240 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2019-12-26 18:14:57,515 [12] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetSign?FlowId=32&TaskId=5712 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：485
+2019-12-26 18:15:08,505 [12] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetSign?FlowId=32&TaskId=5712 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：486
+2019-12-26 18:15:37,197 [12] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetSign?FlowId=32&TaskId=5712 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：487
+2019-12-26 18:16:23,401 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2019-12-26 18:16:25,558 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
