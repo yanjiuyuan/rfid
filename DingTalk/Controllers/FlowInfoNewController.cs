@@ -1832,147 +1832,147 @@ namespace DingTalk.Controllers
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId).ToList();
                         List<Tasks> TaskList = context.Tasks.Where(u => u.TaskId.ToString() == TaskId).ToList();
 
-                        List<SignModel> SignModels = new List<SignModel>();
-                        foreach (var nodeInfo in NodeInfoList)
-                        {
-                            List<string> NodePeopleList = new List<string>();
-                            List<string> NodePeopleIdList = new List<string>();
-                            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-                            if (nodeInfo.NodePeople != null && nodeInfo.PeopleId != null)
-                            {
-                                NodePeopleList.AddRange(nodeInfo.NodePeople.Split(','));
-                                NodePeopleIdList.AddRange(nodeInfo.PeopleId.Split(','));
-                            }
-                            if (NodePeopleList.Count > 0)
-                            {
-                                //没配置人员
-                                List<Tasks> tasks = TaskList.Where(t => t.NodeId == nodeInfo.NodeId).ToList();
-                                if (tasks.Count > 0)
-                                {
-                                    foreach (var item in tasks)
-                                    {
-                                        SignModels.Add(new SignModel()
-                                        {
-                                            ApplyMan = item.ApplyMan,
-                                            IsBack = nodeInfo.IsBack,
-                                            IsMandatory = nodeInfo.IsMandatory,
-                                            IsSelectMore = nodeInfo.IsSelectMore,
-                                            IsSend = nodeInfo.IsSend,
-                                            ApplyManId = item.ApplyManId,
-                                            ApplyTime = item.ApplyTime,
-                                            NodeId = nodeInfo.NodeId,
-                                            NodeName = nodeInfo.NodeName,
-                                            Remark = item.Remark
-                                        });
-                                    }
-                                }
-
-                                foreach (var item in NodePeopleIdList)
-                                {
-                                    Tasks tasksNew = TaskList.Where(t => t.ApplyManId == item && t.NodeId == nodeInfo.NodeId).FirstOrDefault();
-                                    if (tasksNew != null)
-                                    {
-                                        SignModels.Add(new SignModel()
-                                        {
-                                            ApplyMan = tasksNew.ApplyMan,
-                                            IsBack = nodeInfo.IsBack,
-                                            IsMandatory = nodeInfo.IsMandatory,
-                                            IsSelectMore = nodeInfo.IsSelectMore,
-                                            IsSend = nodeInfo.IsSend,
-                                            ApplyManId = tasksNew.ApplyManId,
-                                            ApplyTime = tasksNew.ApplyTime,
-                                            NodeId = nodeInfo.NodeId,
-                                            NodeName = nodeInfo.NodeName,
-                                            Remark = tasksNew.Remark
-                                        });
-                                    }
-                                    else
-                                    {
-                                        SignModels.Add(new SignModel()
-                                        {
-                                            IsBack = nodeInfo.IsBack,
-                                            IsMandatory = nodeInfo.IsMandatory,
-                                            IsSelectMore = nodeInfo.IsSelectMore,
-                                            ApplyManId = NodePeopleIdList[NodePeopleIdList.IndexOf(item)],
-                                            IsSend = nodeInfo.IsSend,
-                                            NodeId = nodeInfo.NodeId,
-                                            NodeName = nodeInfo.NodeName,
-                                            ApplyMan= NodePeopleList[NodePeopleIdList.IndexOf(item)]
-                                        });
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //没配置人员
-                                List<Tasks> tasks = TaskList.Where(t => t.NodeId == nodeInfo.NodeId).ToList();
-                                if (tasks.Count > 0)
-                                {
-                                    foreach (var item in tasks)
-                                    {
-                                        SignModels.Add(new SignModel()
-                                        {
-                                            ApplyMan = item.ApplyMan,
-                                            IsBack = nodeInfo.IsBack,
-                                            IsMandatory = nodeInfo.IsMandatory,
-                                            IsSelectMore = nodeInfo.IsSelectMore,
-                                            IsSend = nodeInfo.IsSend,
-                                            ApplyManId = item.ApplyManId,
-                                            ApplyTime = item.ApplyTime,
-                                            NodeId = nodeInfo.NodeId,
-                                            NodeName = nodeInfo.NodeName,
-                                            Remark = item.Remark
-                                        });
-                                    }
-                                }
-                                else
-                                {
-                                    SignModels.Add(new SignModel()
-                                    {
-                                        IsBack = nodeInfo.IsBack,
-                                        IsMandatory = nodeInfo.IsMandatory,
-                                        IsSelectMore = nodeInfo.IsSelectMore,
-                                        ApplyManId = nodeInfo.PeopleId,
-                                        IsSend = nodeInfo.IsSend,
-                                        NodeId = nodeInfo.NodeId,
-                                        NodeName = nodeInfo.NodeName,
-                                    });
-                                }
-                            }
-                        }
-
-                        return new NewErrorModel()
-                        {
-                            data = SignModels.OrderBy(q => q.NodeId).ThenBy(h => h.ApplyTime),
-                            error = new Error(0, "读取成功！", "") { },
-                        };
-
-                        //var Quary = from n in NodeInfoList
-                        //            join t in TaskList
-                        //            on n.NodeId equals t.NodeId
-                        //            into temp
-                        //            from tt in temp.DefaultIfEmpty()
-                        //            orderby n.NodeId
-                        //            select new
+                        //List<SignModel> SignModels = new List<SignModel>();
+                        //foreach (var nodeInfo in NodeInfoList)
+                        //{
+                        //    List<string> NodePeopleList = new List<string>();
+                        //    List<string> NodePeopleIdList = new List<string>();
+                        //    Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                        //    if (nodeInfo.NodePeople != null && nodeInfo.PeopleId != null)
+                        //    {
+                        //        NodePeopleList.AddRange(nodeInfo.NodePeople.Split(','));
+                        //        NodePeopleIdList.AddRange(nodeInfo.PeopleId.Split(','));
+                        //    }
+                        //    if (NodePeopleList.Count > 0)
+                        //    {
+                        //        //没配置人员
+                        //        List<Tasks> tasks = TaskList.Where(t => t.NodeId == nodeInfo.NodeId).ToList();
+                        //        if (tasks.Count > 0)
+                        //        {
+                        //            foreach (var item in tasks)
                         //            {
-                        //                //Id = tt == null ? 0 : tt.Id,
-                        //                NodeId = n.NodeId,
-                        //                NodeName = n.NodeName,
-                        //                IsBack = tt == null ? false : tt.IsBacked,
-                        //                ApplyMan = tt == null ? n.NodePeople : tt.ApplyMan,
-                        //                ApplyTime = tt == null ? "" : tt.ApplyTime,
-                        //                Remark = tt == null ? "" : tt.Remark,
-                        //                IsSend = tt == null ? n.IsSend : tt.IsSend,
-                        //                ApplyManId = tt == null ? "" : tt.ApplyManId,
-                        //                IsMandatory = n.IsMandatory,
-                        //                IsSelectMore = n.IsSelectMore
-                        //            };
-                        //Quary = Quary.OrderBy(q => q.NodeId).ThenBy(h => h.ApplyTime);
+                        //                SignModels.Add(new SignModel()
+                        //                {
+                        //                    ApplyMan = item.ApplyMan,
+                        //                    IsBack = item.IsBacked,
+                        //                    IsMandatory = nodeInfo.IsMandatory,
+                        //                    IsSelectMore = nodeInfo.IsSelectMore,
+                        //                    IsSend = nodeInfo.IsSend,
+                        //                    ApplyManId = item.ApplyManId,
+                        //                    ApplyTime = item.ApplyTime,
+                        //                    NodeId = nodeInfo.NodeId,
+                        //                    NodeName = nodeInfo.NodeName,
+                        //                    Remark = item.Remark
+                        //                });
+                        //            }
+                        //        }
+
+                        //        foreach (var item in NodePeopleIdList)
+                        //        {
+                        //            Tasks tasksNew = TaskList.Where(t => t.ApplyManId == item && t.NodeId == nodeInfo.NodeId).FirstOrDefault();
+                        //            if (tasksNew != null)
+                        //            {
+                        //                SignModels.Add(new SignModel()
+                        //                {
+                        //                    ApplyMan = tasksNew.ApplyMan,
+                        //                    IsBack = false,
+                        //                    IsMandatory = nodeInfo.IsMandatory,
+                        //                    IsSelectMore = nodeInfo.IsSelectMore,
+                        //                    IsSend = nodeInfo.IsSend,
+                        //                    ApplyManId = tasksNew.ApplyManId,
+                        //                    ApplyTime = tasksNew.ApplyTime,
+                        //                    NodeId = nodeInfo.NodeId,
+                        //                    NodeName = nodeInfo.NodeName,
+                        //                    Remark = tasksNew.Remark
+                        //                });
+                        //            }
+                        //            else
+                        //            {
+                        //                SignModels.Add(new SignModel()
+                        //                {
+                        //                    IsBack = false,
+                        //                    IsMandatory = nodeInfo.IsMandatory,
+                        //                    IsSelectMore = nodeInfo.IsSelectMore,
+                        //                    ApplyManId = NodePeopleIdList[NodePeopleIdList.IndexOf(item)],
+                        //                    IsSend = nodeInfo.IsSend,
+                        //                    NodeId = nodeInfo.NodeId,
+                        //                    NodeName = nodeInfo.NodeName,
+                        //                    ApplyMan= NodePeopleList[NodePeopleIdList.IndexOf(item)]
+                        //                });
+                        //            }
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        //没配置人员
+                        //        List<Tasks> tasks = TaskList.Where(t => t.NodeId == nodeInfo.NodeId).ToList();
+                        //        if (tasks.Count > 0)
+                        //        {
+                        //            foreach (var item in tasks)
+                        //            {
+                        //                SignModels.Add(new SignModel()
+                        //                {
+                        //                    ApplyMan = item.ApplyMan,
+                        //                    IsBack = item.IsBacked,
+                        //                    IsMandatory = nodeInfo.IsMandatory,
+                        //                    IsSelectMore = nodeInfo.IsSelectMore,
+                        //                    IsSend = nodeInfo.IsSend,
+                        //                    ApplyManId = item.ApplyManId,
+                        //                    ApplyTime = item.ApplyTime,
+                        //                    NodeId = nodeInfo.NodeId,
+                        //                    NodeName = nodeInfo.NodeName,
+                        //                    Remark = item.Remark
+                        //                });
+                        //            }
+                        //        }
+                        //        else
+                        //        {
+                        //            SignModels.Add(new SignModel()
+                        //            {
+                        //                IsBack = false,
+                        //                IsMandatory = nodeInfo.IsMandatory,
+                        //                IsSelectMore = nodeInfo.IsSelectMore,
+                        //                ApplyManId = nodeInfo.PeopleId,
+                        //                IsSend = nodeInfo.IsSend,
+                        //                NodeId = nodeInfo.NodeId,
+                        //                NodeName = nodeInfo.NodeName,
+                        //            });
+                        //        }
+                        //    }
+                        //}
+
                         //return new NewErrorModel()
                         //{
-                        //    data = Quary,
+                        //    data = SignModels.OrderBy(q => q.NodeId).ThenBy(h => h.ApplyTime),
                         //    error = new Error(0, "读取成功！", "") { },
                         //};
+
+                        var Quary = from n in NodeInfoList
+                                    join t in TaskList
+                                    on n.NodeId equals t.NodeId
+                                    into temp
+                                    from tt in temp.DefaultIfEmpty()
+                                    orderby n.NodeId
+                                    select new
+                                    {
+                                        //Id = tt == null ? 0 : tt.Id,
+                                        NodeId = n.NodeId,
+                                        NodeName = n.NodeName,
+                                        IsBack = tt == null ? false : tt.IsBacked,
+                                        ApplyMan = tt == null ? n.NodePeople : tt.ApplyMan,
+                                        ApplyTime = tt == null ? "" : tt.ApplyTime,
+                                        Remark = tt == null ? "" : tt.Remark,
+                                        IsSend = tt == null ? n.IsSend : tt.IsSend,
+                                        ApplyManId = tt == null ? "" : tt.ApplyManId,
+                                        IsMandatory = n.IsMandatory,
+                                        IsSelectMore = n.IsSelectMore
+                                    };
+                        Quary = Quary.OrderBy(q => q.NodeId).ThenBy(h => h.ApplyTime);
+                        return new NewErrorModel()
+                        {
+                            data = Quary,
+                            error = new Error(0, "读取成功！", "") { },
+                        };
                     }
                 }
             }
