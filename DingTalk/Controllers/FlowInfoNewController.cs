@@ -1843,7 +1843,6 @@ namespace DingTalk.Controllers
                                 NodePeopleList.AddRange(nodeInfo.NodePeople.Split(','));
                                 NodePeopleIdList.AddRange(nodeInfo.PeopleId.Split(','));
                             }
-                            
                             if (NodePeopleList.Count > 0)
                             {
                                 //没配置人员
