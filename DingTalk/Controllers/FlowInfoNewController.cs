@@ -1854,7 +1854,8 @@ namespace DingTalk.Controllers
                         //                SignModels.Add(new SignModel()
                         //                {
                         //                    ApplyMan = item.ApplyMan,
-                        //                    IsBack = nodeInfo.IsBack,
+
+                        //                    IsBack = item.IsBacked,
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
                         //                    IsSend = nodeInfo.IsSend,
@@ -1875,7 +1876,9 @@ namespace DingTalk.Controllers
                         //                SignModels.Add(new SignModel()
                         //                {
                         //                    ApplyMan = tasksNew.ApplyMan,
-                        //                    IsBack = nodeInfo.IsBack,
+
+                        //                    IsBack = false,
+
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
                         //                    IsSend = nodeInfo.IsSend,
@@ -1890,7 +1893,9 @@ namespace DingTalk.Controllers
                         //            {
                         //                SignModels.Add(new SignModel()
                         //                {
-                        //                    IsBack = nodeInfo.IsBack,
+
+                        //                    IsBack = false,
+
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
                         //                    ApplyManId = NodePeopleIdList[NodePeopleIdList.IndexOf(item)],
@@ -1913,7 +1918,8 @@ namespace DingTalk.Controllers
                         //                SignModels.Add(new SignModel()
                         //                {
                         //                    ApplyMan = item.ApplyMan,
-                        //                    IsBack = nodeInfo.IsBack,
+
+                        //                    IsBack = item.IsBacked,
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
                         //                    IsSend = nodeInfo.IsSend,
@@ -1929,7 +1935,8 @@ namespace DingTalk.Controllers
                         //        {
                         //            SignModels.Add(new SignModel()
                         //            {
-                        //                IsBack = nodeInfo.IsBack,
+
+                        //                IsBack = false,
                         //                IsMandatory = nodeInfo.IsMandatory,
                         //                IsSelectMore = nodeInfo.IsSelectMore,
                         //                ApplyManId = nodeInfo.PeopleId,
