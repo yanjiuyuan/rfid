@@ -2049,8 +2049,7 @@ Vue.component('custom-input', {
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input v-model=value :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
-                        :minlength = minlength||0 :maxlength = maxlength||50 v-on:blur="onBlur" :disabled='Index != 0 || disabled'
-                        
+                        :minlength = minlength||0 :maxlength = maxlength||50 v-on:blur="onBlur" :disabled='disabled'
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {
