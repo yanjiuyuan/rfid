@@ -1794,7 +1794,7 @@ namespace DingTalk.Controllers
             {
                 if (string.IsNullOrEmpty(TaskId))  //尚未发起流程
                 {
-                    using (DDContext context = new DDContext())
+                    using ( DDContext context = new DDContext())
                     {
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
 
@@ -1854,6 +1854,7 @@ namespace DingTalk.Controllers
                         //                SignModels.Add(new SignModel()
                         //                {
                         //                    ApplyMan = item.ApplyMan,
+
                         //                    IsBack = item.IsBacked,
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
@@ -1875,7 +1876,9 @@ namespace DingTalk.Controllers
                         //                SignModels.Add(new SignModel()
                         //                {
                         //                    ApplyMan = tasksNew.ApplyMan,
+
                         //                    IsBack = false,
+
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
                         //                    IsSend = nodeInfo.IsSend,
@@ -1890,7 +1893,9 @@ namespace DingTalk.Controllers
                         //            {
                         //                SignModels.Add(new SignModel()
                         //                {
+
                         //                    IsBack = false,
+
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
                         //                    ApplyManId = NodePeopleIdList[NodePeopleIdList.IndexOf(item)],
@@ -1913,6 +1918,7 @@ namespace DingTalk.Controllers
                         //                SignModels.Add(new SignModel()
                         //                {
                         //                    ApplyMan = item.ApplyMan,
+
                         //                    IsBack = item.IsBacked,
                         //                    IsMandatory = nodeInfo.IsMandatory,
                         //                    IsSelectMore = nodeInfo.IsSelectMore,
@@ -1929,6 +1935,7 @@ namespace DingTalk.Controllers
                         //        {
                         //            SignModels.Add(new SignModel()
                         //            {
+
                         //                IsBack = false,
                         //                IsMandatory = nodeInfo.IsMandatory,
                         //                IsSelectMore = nodeInfo.IsSelectMore,
