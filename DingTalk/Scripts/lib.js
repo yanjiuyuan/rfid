@@ -72,7 +72,7 @@ function loadPage(url) {
     $("#tempPage").load(url)
 }
 function goHome() {
-    GetData('/FlowInfoNew/GetFlowStateCounts?Index=1&OnlyReturnCount=true&ApplyManId=' + DingData.userid, (res) => {
+    GetData('/FlowInfoNew/GetFlowStateDetail?Index=1&OnlyReturnCount=true&ApplyManId=' + DingData.userid, (res) => {
         if (res.ApproveCount) {
             loadPage('/Main/approval')
         } else {
@@ -544,7 +544,7 @@ var mixin = {
             }
             return 0
         },
-        GetData(url, succe, showLoading = false) {
+        GetData(url, succe, showLoading = false, errorFunc) {
             const loading = null
             if (showLoading) {
                 loading = this.$loading({
@@ -565,8 +565,9 @@ var mixin = {
                         console.log(url)
                         console.log(res)
                     }
+                    
                     that.disablePage = false
-                    if (that.doWithErrcode(res.error,url)) {
+                    if (that.doWithErrcode(res.error, url, errorFunc)) {
                         return
                     }
                     res.count ? succe(res.data, res.count) : succe(res.data)

@@ -11,10 +11,6 @@
 
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         @RenderPage("~/Views/Shared/endForm.cshtml")
-        <el-form-item label="意见">
-            <el-input v-model="ruleForm.Remark" :disabled="true" style="width:500px;"></el-input>
-        </el-form-item>
-        <br />
 
         <div>
             <el-table :data="data" stripe border>

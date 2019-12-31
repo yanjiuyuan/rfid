@@ -327,19 +327,21 @@
                 let url = "/CarMananger/QuaryPrintExcel"
                 let param = _cloneObj(this.searchParam)
                 param.pageSize = '9999'
-                const loading = this.$loading({
-                    lock: true,
-                    text: 'Loading',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
-                });
-                let handle = function (result) {
-                    that.totalRows2 = result.data.length
-                    that.data2 = result.data
+                //const loading = this.$loading({
+                //    lock: true,
+                //    text: 'Loading',
+                //    spinner: 'el-icon-loading',
+                //    background: 'rgba(0, 0, 0, 0.7)'
+                //});
+                let handle = function (data) {
+                    that.totalRows2 = data.length
+                    that.data2 = data
                     that.getData2()
-                    loading.close()
+                    //loading.close()
                 }
-                this._getData(url, handle, param)
+                this.GetData(url + _formatQueryStr(param), handle )
+                
+                //this._getData(url, handle, param)
             },
             printData: function () {
                 const loading = this.$loading({
