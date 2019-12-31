@@ -583,8 +583,8 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\display.css" />
+    <Content Include="Content\element-bk.css" />
     <Content Include="Content\element.css" />
-    <Content Include="Content\element2.css" />
     <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
     <Content Include="Content\images\EraserTool.gif" />
@@ -676,7 +676,7 @@
     <Content Include="Scripts\echarts-all.js" />
     <Content Include="Scripts\element-ui.common.js" />
     <Content Include="Scripts\element.js" />
-    <Content Include="Scripts\element1.js" />
+    <Content Include="Scripts\element-bk.js" />
     <Content Include="Scripts\elementUi\alert.js" />
     <Content Include="Scripts\elementUi\aside.js" />
     <Content Include="Scripts\elementUi\autocomplete.js" />
