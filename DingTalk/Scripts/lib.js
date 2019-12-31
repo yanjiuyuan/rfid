@@ -13,7 +13,7 @@ var Id = 0 //自增task表的id
 var UserList = [] //所有用户数据
 var menu = []//菜单列表
 var ReApprovalTempData = {} //重新发起审批保存的临时数据
-let slParam = ['ruleForm', 'tableForm', 'imageList', 'pdfList', 'nodeList', 'dataArr', 'purchaseList', 'files']//需要临时保存的字段
+let slParam = ['ruleForm', 'tableForm', 'imageList', 'pdfList', 'nodeList', 'dataArr', 'purchaseList', 'fileList']//需要临时保存的字段
 var imageListOrigin = []
 var fileListOrigin = []
 var pdfListOrigin = []
@@ -753,7 +753,7 @@ var mixin = {
             var that = this
             this.fileListToUrl()
             this.$refs['ruleForm'].validate((valid) => {
-                if (valid) {
+                if (valid && that.ruleForm.Title) {
                     that.disablePage = true
                     for (let r in that.ruleForm) {
                         if (that.ruleForm[r] == '' || that.ruleForm[r] == null) delete that.ruleForm[r]
@@ -1004,6 +1004,7 @@ var mixin = {
             var exp = new Date();
             exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
             if (JSON.stringify(value).length > 1500) {
+                console.warn(FlowId + "-" + key + ' is too large~~~~~~~~~~!!!!!!!!!!')
                 setLocalObj(FlowId + "-" + key, value)
                 return
             }
