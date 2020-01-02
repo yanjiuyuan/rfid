@@ -101,7 +101,7 @@
                     DrivingMan: { required: true, message: '申请人不能为空', trigger: 'blur' },
                     PeerNumber: { required: true, message: '同行人不能为空', trigger: 'blur' },
                     CarNumber: [{ required: true, message: '车牌号不能为空', trigger: 'blur' }, lengthLimit(3, 5)],
-                    MainContent: [{ required: true, message: '用车事由不能为空', trigger: 'blur' }, lengthLimit(1, 15)],
+                    MainContent: [{ required: true, message: '用车事由不能为空', trigger: 'blur' }, lengthLimit(1, 50)],
                     PlantTravelWay: [{ required: true, message: '计划路线不能为空', trigger: 'blur' }, lengthLimit(1, 50)],
                     startAddress: [{ required: true, message: '始发地点不能为空', trigger: 'blur' }, lengthLimit(1, 15)],
                     StartTime: { required: true, message: '用车时间不能为空', trigger: 'blur' },

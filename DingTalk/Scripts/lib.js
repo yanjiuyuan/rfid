@@ -127,6 +127,8 @@ function _mergeObjectArr(arr1, arr2, prop) {
 function _formatQueryStr(obj) {
     var queryStr = '?'
     for (var o in obj) {
+        //if (obj[o] == null || obj[o] == undefined || obj[o] == '')
+        //    continue
         queryStr = queryStr + o + '=' + obj[o] + '&'
     }
     return queryStr.substring(0, queryStr.length - 1)
@@ -181,11 +183,15 @@ function _stringToTime(str) {
     var year = parseInt(dateStrs[0], 10);
     var month = parseInt(dateStrs[1], 10) - 1;
     var day = parseInt(dateStrs[2], 10);
-    var timeStrs = tempStrs[1].split(":");
-    var hour = parseInt(timeStrs[0], 10);
-    var minute = parseInt(timeStrs[1], 10);
-    var second = parseInt(timeStrs[2], 10);
-    var date = new Date(year, month, day, hour, minute, second);
+    if (tempStrs[1]) {
+        var timeStrs = tempStrs[1].split(":");
+        var hour = parseInt(timeStrs[0], 10);
+        var minute = parseInt(timeStrs[1], 10);
+        var second = parseInt(timeStrs[2], 10);
+        var date = new Date(year, month, day, hour, minute, second);
+    } else {
+        var date = new Date(year, month, day);
+    }
     console.log('new date')
     console.log(date)
     return date;
@@ -228,8 +234,20 @@ function _computeDurTime(startTime, endTime, type) {
     var hours = Math.floor(durDate / (3600 * 1000))
     var minutes = Math.floor(durDate / (60 * 1000))
     var seconds = Math.floor(durDate / (1000))
+
+    //去掉周末计算天数
+    let first = startTime.getTime();
+    let last = endTime.getTime();
+    let days2 = 0;
+    for (let i = first; i <= last; i += 24 * 3600 * 1000) {
+        let d = new Date(i);
+        if (d.getDay() >= 1 && d.getDay() <= 5) {
+            days2++;
+        }
+    }
     switch (type) {
         case 'd': return days; break;
+        case 'd2': return days2; break;
         case 'h': return hours; break;
         case 'm': return minutes; break;
         default: return seconds;
@@ -310,7 +328,7 @@ var checkProjectId = (rule, value, callback) => {
         }
     }, 500);
 };
-let commonInput = [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }]
+let commonInput = [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 50, message: '长度在 50 个字符以内', trigger: 'blur' }]
 var mixin = {
     data: {
         user: {},
@@ -916,7 +934,7 @@ var mixin = {
         },
         //退回审批 
         returnBk() {
-            this.$confirm('是否确认退回申请？')
+            this.$confirm('是否确认退回申请？', '提示信息')
                 .then(_ => {
                     let param = {
                         "Id": this.ruleForm.Id,
@@ -1087,6 +1105,7 @@ var mixin = {
             //this.nodeList = ReApprovalTempData.nodeList
             ReApprovalTempData.valid = false
             this['purchaseList'] = ReApprovalTempData.dataArr
+            this.loadReApprovalData_done()
         },
         //翻頁相關事件
         //获取全部方法
@@ -1272,15 +1291,15 @@ var mixin = {
                     }
                 }
                 this.getNodeInfo_done(this.nodeList)
-                ////我发起的页面重新判断NodeId
-                //if (Index == 1) {
-                //    for (let i = this.nodeList.length - 2; i > 0; i--) {
-                //        if (this.nodeList[i].ApplyManId == DingData.userid) {
-                //            NodeId = this.nodeList[i].NodeId
-                //            this.NodeId = this.nodeList[i].NodeId
-                //        }
-                //    }
-                //}
+                ////我已审批页面重新判断NodeId
+                if (Index == 1) {
+                    for (let i = this.nodeList.length - 2; i > 0; i--) {
+                        if (this.nodeList[i].ApplyManId == DingData.userid) {
+                            NodeId = this.nodeList[i].NodeId
+                            this.NodeId = this.nodeList[i].NodeId
+                        }
+                    }
+                }
                 //发起页面获取临时保存数据和重新发起数据
                 if (ifStart) {
                     this.loadTempData()
@@ -1290,6 +1309,9 @@ var mixin = {
                 callBack()
             })
             
+        },
+        loadReApprovalData_done() {
+            //重新发起获取数据后加载
         },
         getNodeInfo_done(nodeList) {
 
@@ -2051,7 +2073,7 @@ Vue.component('custom-input', {
 Vue.component('sam-input', {
     props: ['value', 'required', 'type', 'minlength', 'maxlength', 'callBack', 'max', 'min', 'placeholder','disabled'],
     template: `<el-input v-model=value :value=value show-word-limit  :type="type||'input'" :placeholder = "placeholder || ''"
-                        :minlength = minlength||0 :maxlength = maxlength||50 v-on:blur="onBlur" :disabled='disabled'
+                        :minlength = "minlength||0" :maxlength = "maxlength||50" v-on:blur="onBlur" :disabled='disabled'
                         :class="{ redborder:(value =='' && required)}">
                    </el-input>`,
     data: function () {
@@ -2063,10 +2085,9 @@ Vue.component('sam-input', {
     methods: {
         onBlur(e) {
             let value = e.target.value.replace(/(^\s*)|[\/&]s*|(\s*$)/g, '')
-            console.log(value)
             //return
             if (this.type == 'number') {
-                value = parseInt(value)
+                value = parseFloat(value)
                 let max = parseInt(this.max) || 1000000
                 let min = parseInt(this.min) || 0
                 if (value > max) value = max

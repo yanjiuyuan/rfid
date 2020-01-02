@@ -67,6 +67,7 @@
                 if (NodeId == 3) {
                     this.PostData('/OfficeSupplies/ModifyTable', this.data, (res) => {
                         this.aggreSubmit()
+                        return
                     })
                 }
                 this.aggreSubmit()
@@ -76,8 +77,6 @@
                 var that = this
                 this.GetData("/OfficeSupplies/ReadTable?TaskId=" + TaskId, (data) => {
                     that.data = data
-
-                   
                     that.getData()
                     that.totalRows = that.data.length
                 })
