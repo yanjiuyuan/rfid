@@ -326,6 +326,9 @@
                 var that = this
                 let url = "/CarMananger/QuaryPrintExcel"
                 let param = _cloneObj(this.searchParam)
+                if (!param.key) {
+                    delete param.key
+                }
                 param.pageSize = '9999'
                 //const loading = this.$loading({
                 //    lock: true,

@@ -40,10 +40,6 @@
             </el-form-item>
         </template>
 
-
-        @*<el-form-item label="起始公里数">
-            <el-input v-model="tableForm.StartKilometres" :disabled="true"></el-input>
-        </el-form-item>*@
         <el-form-item label="开始时间">
             <el-input v-model="tableForm.StartTime" :disabled="true"></el-input>
         </el-form-item>
@@ -179,8 +175,10 @@
             }
         },
         created: function () {
+            this.initEnd(() => {
+                this.getUseCarTable()
+            })
             if (NodeId == '3' || NodeId == '4') this.reInput = true
-            this.initEnd(() => { this.getUseCarTable() })
         },
         computed: {
             UseKilometres: function () {

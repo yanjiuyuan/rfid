@@ -153,7 +153,7 @@
                 }
                 for (let p of this.purchaseList) {
                     for (let d of this.allData) {
-                        if (p.GiftNo == d.Id && p.GiftCount > d.Stock) {
+                        if (p.GiftNo == d.Id && parseInt(p.GiftCount) > parseInt(d.Stock)) {
                             this.$message({ type: 'error', message: p.GiftName + `超出库存数！` });
                             return
                         }
