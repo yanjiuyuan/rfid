@@ -397,6 +397,9 @@ var mixin = {
             FileUrl: [
                 { required: true, message: '文件不能为空！', trigger: 'change' }
             ],
+            ProjectType: [
+                { required: true, message: '图纸用途不能为空！', trigger: 'change' }
+            ],
             Type: [
                 { required: true, message: '类别不能为空！', trigger: 'change' }
             ],
