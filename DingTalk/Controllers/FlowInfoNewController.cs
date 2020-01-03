@@ -504,6 +504,22 @@ namespace DingTalk.Controllers
                     };
                 }
 
+                if (tasks.NodeId == 0 && tasksState.State == "被退回")
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, $"当前流程状被退回，无法继续操作。", "") { },
+                    };
+                }
+
+                if (tasks.NodeId != 0 && tasksState.State == "已撤回")
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, $"当前流程状已撤回，无法继续操作。", "") { },
+                    };
+                }
+
                 if (tasks.NodeId == 0)  //撤回
                 {
                     Tasks taskNew = context.Tasks.Find(tasks.Id);
@@ -2271,8 +2287,8 @@ namespace DingTalk.Controllers
                 {
                     strLink = "eapp://page/approve/approve?index=0";
                     return await dingTalkServersController.sendOaMessage(ApplyManId,
-               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId), flows.FlowName,
-               ApplyMan, strLink);
+               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId),flows.FlowName,
+                TaskId, strLink);
                 }
                 else
                 {

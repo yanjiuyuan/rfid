@@ -100,39 +100,22 @@
         /// <summary>
         /// 实际到账
         /// </summary>
-        [StringLength(500)]
         public string ActualMoney { get; set; }
-        [StringLength(500)]
         public string SuggestBook1 { get; set; }
-        [StringLength(500)]
         public string PPT2 { get; set; }
-        [StringLength(500)]
         public string DemandBook3 { get; set; }
-        [StringLength(500)]
         public string Drawing4 { get; set; }
-        [StringLength(500)]
         public string Electrical5 { get; set; }
-        [StringLength(500)]
         public string Bom6 { get; set; }
-        [StringLength(500)]
         public string SourceCode7 { get; set; }
-        [StringLength(500)]
         public string UseBook8 { get; set; }
-        [StringLength(500)]
         public string CooperationAgreement9 { get; set; }
-        [StringLength(500)]
         public string Product10 { get; set; }
-        [StringLength(500)]
         public string Solution11 { get; set; }
-        [StringLength(500)]
         public string AcceptanceData14 { get; set; }
-        [StringLength(500)]
         public string ProcessDocumentation15 { get; set; }
-        [StringLength(500)]
         public string TerminationReport16 { get; set; }
-        [StringLength(500)]
         public string PackingList17 { get; set; }
-        [StringLength(500)]
         public string AcceptanceSlip18 { get; set; }
 
     }
