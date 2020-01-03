@@ -264,12 +264,12 @@
                     TaskId: TaskId,
                     OldPath: FilePDFUrl
                 }, (res) => {
-                    this.elementAlert('alert', "获取成功，请在工作通知中查收")
+                    this.elementAlert('提示信息', "获取成功，请在工作通知中查收")
                 })
             },
             outBom() {
                 this.GetData("/DrawingChange/GetExcelReport" + _formatQueryStr({ taskId: taskId, applyManId: DingData.userid }), (res) => {
-                    this.elementAlert('alert', "获取成功，请在工作通知中查收")
+                    this.elementAlert('提示信息', "获取成功，请在工作通知中查收")
                 })
             },
             downloadAllPdf() {

@@ -255,6 +255,7 @@
                     TaskId: TaskId,
                     OldPath: FilePDFUrl
                 }
+                var that = this
                 let url = "/DrawingUpload/PrintAndSend"
                 $.ajax({
                     url: url,
@@ -264,7 +265,7 @@
                     success: function (data) {
                         console.log(paramObj)
                         console.log(data)
-                        this.$message({ type: 'success', message: `获取成功，请在工作通知中查收` });
+                        that.$message({ type: 'success', message: `获取成功，请在工作通知中查收` });
                     },
                     error: function (err) {
                         console.log(err);
