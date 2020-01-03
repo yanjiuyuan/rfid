@@ -277,11 +277,12 @@ namespace DingTalk.Controllers
             {
                 //获取申请人提交表单信息
                 FlowInfoServer fServer = new FlowInfoServer();
-                Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
+                string taskId = taskList[0].TaskId.ToString();
+                Tasks taskNew = fServer.GetApplyManFormInfo(taskId);
                 Flows flows = fServer.GetFlow(taskNew.FlowId.ToString());
                 DDContext contexts = new DDContext();
                 //判断流程状态
-                TasksState tasksState = contexts.TasksState.Where(t => t.TaskId == taskList[0].TaskId.ToString()).FirstOrDefault();
+                TasksState tasksState = contexts.TasksState.Where(t => t.TaskId == taskId).FirstOrDefault();
 
                 if (tasksState.State != "未完成")
                 {
