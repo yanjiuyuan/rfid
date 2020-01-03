@@ -33,7 +33,7 @@
                 <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="申请发明人" prop="Inventor">
+        <el-form-item label="申请发明人(按贡献度排名)" prop="Inventor">
             <sam-group :names.sync="tableForm.Inventor" :ids.sync="tableForm.InventorId"></sam-group>
         </el-form-item>
     </el-form>
