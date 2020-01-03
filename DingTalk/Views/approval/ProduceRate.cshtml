@@ -145,7 +145,7 @@
                         <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
                                    v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
                         <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
-                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Tabulator}}</p>
+                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Designer}}</p>
                     </template>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
@@ -458,7 +458,7 @@
                     this.$alert('流水号必填', '提示');
                     return
                 }
-                console.log(param)
+                console.log(JSON.stringify(param))
 
                 this.PostData('ProcessingProgress/Save', param, (res) => {
                     this.$alert('保存成功', '提示');
@@ -557,17 +557,17 @@
                     success: function (data) {
                         console.log(url)
                         console.log(data)
-                        for (let d of data) {
-                            if (DingData.userid == d.emplId) {
-                                that.ruleIndex = 1
+                        //for (let d of data) {
+                            //if (DingData.userid == d.emplId) {
+                                //that.ruleIndex = 1
                                 that.inputTable[0].HeadOfDepartmentsId = data[0].emplId
                                 that.inputTable[0].HeadOfDepartments = data[0].name
                                 that.inputTable[0].NoteTakerId = data[0].emplId
                                 that.inputTable[0].NoteTaker = data[0].name
                                 that.inputTable[0]['Tabulator'] = DingData.nickName
                                 that.inputTable[0]['TabulatorId'] = DingData.userid
-                            } 
-                        }
+                            //} 
+                        //}
                     }
                 })
                 var url2 = '/Role/GetRoleInfo?RoleName=生产加工进度发起人'

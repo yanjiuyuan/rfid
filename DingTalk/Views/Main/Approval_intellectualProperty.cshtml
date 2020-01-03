@@ -22,7 +22,7 @@
         </el-form-item>
 
         <hr />
-        <template v-if="NodeId > 5 || (NodeId == 5 && index == 0)">
+        <template v-if="NodeId >= 5">
             <el-form-item label="发明人或设计人" prop="ActualInventor">
                 <el-input v-model="tableForm.ActualInventor" placeholder="按贡献大小排序" style="width:500px;" :disabled="true"></el-input>
                 <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()" v-if="!noEdit">+ 选人</el-button>
@@ -31,15 +31,15 @@
                 <el-input v-model="tableForm.ActualName" style="width:400px;" :disabled="noEdit || State == '已完成'"></el-input>
             </el-form-item>
 
-            <template v-if="NodeId==5">
-                @*<el-form-item label="申报单位" prop="Company">
-                    <el-select v-model="tableForm.Company" style="width:400px;">
+            <template v-if="index == 0">
+                <el-form-item label="申报单位" prop="Company">
+                    <el-select v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'">
                         <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
                     </el-select>
-                </el-form-item>*@
-                <el-form-item label="申报单位" prop="Company">
-                    <el-input v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'"></el-input>
                 </el-form-item>
+                @*<el-form-item label="申报单位" prop="Company">
+                    <el-input v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'"></el-input>
+                </el-form-item>*@
                 <el-form-item label="申报类别" prop="ActualType">
                     <el-select v-model="tableForm.ActualType" style="width:300px;" :disabled="State == '已完成'">
                         <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>

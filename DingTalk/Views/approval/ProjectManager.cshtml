@@ -110,7 +110,7 @@
                  enctype="multipart/form-data">
             <template>
                 <el-form-item label="项目名称" prop="ProjectName">
-                    <el-input v-model="ruleForm.ProjectName"></el-input>
+                    <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="项目编号" prop="ProjectId">
                     <el-input v-model="ruleForm.ProjectId" :disabled="true"></el-input>

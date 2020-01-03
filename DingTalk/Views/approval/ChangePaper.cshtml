@@ -28,7 +28,7 @@
     </div>
     <!--表格實體-->
     <h3>待删除图纸Bom列表</h3>
-    <el-Table :data="data" stripe border>
+    <el-Table :data="deleteData" stripe border>
         <el-Table-column prop="BomId" label="BOM" style="width:250px;">
         </el-Table-column>
         <el-Table-column prop="DrawingNo" label="图纸编号">
@@ -133,6 +133,7 @@
         data: function () {
             return {
                 partData: [],
+                deleteData:[],
                 data: [],
                 fileList: [],
                 bomIndex: 0,
@@ -172,7 +173,7 @@
             onSubmit(formName) {
                 let that = this
                 let deleteItem = []
-                this.data.forEach((item) => {
+                this.deleteData.forEach((item) => {
                     if (item.ChangeType) {
                         deleteItem.push(item)
                     }
@@ -217,12 +218,12 @@
                 this.GetData('/DrawingChange/Query' + _formatQueryStr({
                     ProjectName: this.ruleForm.ProjectName, ProjectType: this.ProjectType
                 }), (result) => {
-                    this.data = result
+                    this.deleteData = result
                     this.totalRows = result.length
                 })
             },
             deleteDevice(index, row) {
-                row['ChangeType'] == 2 ? this.data[index]['ChangeType'] = 0 : this.data[index]['ChangeType'] = 2
+                row['ChangeType'] == 2 ? this.deleteData[index]['ChangeType'] = 0 : this.deleteData[index]['ChangeType'] = 2
             },
             //bom表格翻页
             handleBomPageChange(page, index) {

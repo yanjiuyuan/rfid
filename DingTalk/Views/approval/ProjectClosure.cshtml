@@ -123,6 +123,8 @@
                            :before-remove="beforeRemoveFile"
                            :before-upload="BeforeFileUpload"
                            :on-success="handleSuccess"
+                           :limit="5"
+                           :on-exceed="handleExceed"
                            multiple>
                     <el-button v-on:click="upClick(config.attribute)" size="small" type="primary">点击上传</el-button>
                     <div v-on:click="upClick(config.attribute)" class="el-upload__tip" slot="tip">{{config.point}}</div>
@@ -482,6 +484,9 @@
                 this.purchaseList = ReApprovalTempData.data
             },
             //文件上传处理方法
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 5 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            },
             upClick(attr) {
                 console.log(attr)
                 attribute = attr
