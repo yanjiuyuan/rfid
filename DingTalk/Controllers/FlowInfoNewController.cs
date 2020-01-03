@@ -2221,7 +2221,6 @@ namespace DingTalk.Controllers
         {
             DingTalkServersController dingTalkServersController = new DingTalkServersController();
             ApplyMan = dDContext.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault().ApplyMan;
-
             string strLink = LinkUrl + "?taskid=" + TaskId +
                             "&flowid=" + FlowId +
                             "&nodeid=" + NodeId;
