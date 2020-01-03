@@ -162,6 +162,9 @@
                                 }
                             }
                         }
+                        for (let p of that.purchaseList) {
+                            p.tmpTotalPrice = p.tmpTotalPrice.toFixed(2)
+                        }
                         that.totalRows = data.length
                     }
                 })

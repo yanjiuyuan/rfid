@@ -458,6 +458,8 @@
                     this.$alert('流水号必填', '提示');
                     return
                 }
+                console.log(param)
+
                 this.PostData('ProcessingProgress/Save', param, (res) => {
                     this.$alert('保存成功', '提示');
                     this.getTable()
@@ -487,7 +489,7 @@
                     IsExcelUpload: true,
                     processingProgresses: tmpData
                 }
-                const loading = this.$loading({
+                let loading = this.$loading({
                     lock: true,
                     text: 'Loading',
                     spinner: 'el-icon-loading',

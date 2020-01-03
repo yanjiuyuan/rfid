@@ -322,7 +322,7 @@ var checkProjectId = (rule, value, callback) => {
     setTimeout(() => {
         let reg1 = /^[0-9]{4}[a-zA-Z]{2,3}[0-9]{3}$/
         if (!reg1.test(value)) {
-            callback(new Error('请输入正确格式，例如：1234**567,*为字母'));
+            callback(new Error('请输入正确格式，例：1234**567或者1234***567,*为字母'));
         } else {
             callback();
         }
@@ -382,7 +382,7 @@ var mixin = {
             ],
             ProjectId: [
                 { required: true, validator: checkProjectId, trigger: 'blur' },
-                { required: true, message: '请输入正确格式，例如：1234**567,*为字母。', trigger: 'change' }
+                { required: true, message: '请输入正确格式，例：1234**567或者1234***567,*为字母', trigger: 'change' }
             ],
             Title: [
                 { required: true, message: '标题内容不能为空！', trigger: 'change' },
@@ -425,7 +425,7 @@ var mixin = {
             ],
             inputProjectId: [
                 { required: true, validator: checkProjectId, trigger: 'blur' },
-                { min: 0, max: 30, message: '请输入正确格式，例如：1234**567,*为字母。', trigger: 'blur' }
+                { min: 0, max: 30, message: '请输入正确格式，例：1234**567或者1234***567,*为字母', trigger: 'blur' }
             ],
             inputProjectName: [
                 { required: true, message: '内容不能为空!', trigger: 'change' },
@@ -490,7 +490,7 @@ var mixin = {
             ], 
             MainIdea: [
                 { required: true, message: '主要内容不能为空！', trigger: 'blur' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { min: 0, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
             ], 
             Suggestion: [
                 { required: true, message: '拟办意见不能为空！', trigger: 'blur' },
@@ -598,9 +598,9 @@ var mixin = {
                 }
             })
         },
-        PostData(url, param, succe, errorFunc, showLoading= false) {
+        PostData(url, param, succe, errorFunc, showLoading = false) {
             param = JSON.stringify(param).replace(/null/g, '""')
-            const loading = null
+            let loading = null
             if (showLoading) {
                 loading = this.$loading({
                     lock: true,
@@ -2084,7 +2084,7 @@ Vue.component('sam-input', {
     },
     methods: {
         onBlur(e) {
-            let value = e.target.value.replace(/(^\s*)|[\/&]s*|(\s*$)/g, '')
+            let value = e.target.value//.replace(/(^\s*)|[\/&]s*|(\s*$)/g, '')
             //return
             if (this.type == 'number') {
                 value = parseFloat(value)

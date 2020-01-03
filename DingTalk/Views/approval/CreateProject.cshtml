@@ -77,21 +77,6 @@
                 status: ['在研', '已完成', '终止'],
                 ptypes: [PTypes[0].label, PTypes[0].children[0].label],
                 //CompanyNames: CompanyNames,
-                tableForm: {
-                    ApplyMan: DingData.nickName,
-                    ApplyManId: DingData.userid,
-                    CompanyName: '泉州华中科技大学智能制造研究院',
-                    ProjectName: '',
-                    inputProjectId: '',
-                    DeptName: '',
-                    Customer: '',
-                    ProjectName: '',
-                    TeamMembersId: '',
-                    TeamMembers: '',
-                    ProjectId: null,
-                    StartTime: '',
-                    EndTime: ''
-                },
                 rules: {
                     TeamMembersId: [
                         { required: true, message: '项目组成员不能为空', trigger: 'blur' },
@@ -160,6 +145,22 @@
         },
         created: function () {
             this.initStart(() => {
+                //设置初始值
+                this.tableForm = {
+                    ApplyMan: DingData.nickName,
+                    ApplyManId: DingData.userid,
+                    CompanyName: '泉州华中科技大学智能制造研究院',
+                    ProjectName: '',
+                    inputProjectId: '',
+                    DeptName: '',
+                    Customer: '',
+                    ProjectName: '',
+                    TeamMembersId: '',
+                    TeamMembers: '',
+                    ProjectId: null,
+                    StartTime: '',
+                    EndTime: ''
+                }
                 //重新发起、临时保存数据处理
                 if (this.tableForm.ProjectType) this.ptypes[0] = this.tableForm.ProjectType
                 if (this.tableForm.ProjectSmallType) this.ptypes[1] = this.tableForm.ProjectSmallType

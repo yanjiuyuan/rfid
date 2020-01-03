@@ -27,7 +27,7 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
-        <el-form-item label="上传图片" v-if="NodeId == 3 && index == 0" required="required">
+        <el-form-item label="上传图片" v-if="NodeId == 4 && index == 0" required="required">
             <el-upload action="/drawingupload/Upload"
                        list-type="picture-card"
                        :file-list="imageList"
@@ -41,7 +41,7 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
         </el-form-item>
-        <el-form-item v-if="imageList.length > 0" label="领料图片">
+        <el-form-item v-if="imageList.length > 0 && index!= 0" label="领料图片">
             <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
         </el-form-item>
         <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
@@ -82,7 +82,7 @@
         methods: {
             //提交审批
             onSubmit(formName) {
-                if (NodeId == 3 && this.imageList.length == 0) {
+                if (NodeId == 4 && this.imageList.length == 0) {
                     this.$message({ type: 'error', message: `请先上传图片` });
                     return
                 }

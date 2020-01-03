@@ -64,7 +64,7 @@
                                active-value="1" inactive-value="0"
                                v-on:change="setPdfState">
                     </el-switch>
-                    <span v-if="index != 0 && NodeId > 1 && FlowId == 6">{{f.state == '1'? '通过' : '不通过'}}</span>
+                    <span v-if="index != 0 && NodeId > 2 && FlowId == 6">{{f.state == '1'? '通过' : '不通过'}}</span>
                 </div>
             </el-card>
         </el-form-item>
