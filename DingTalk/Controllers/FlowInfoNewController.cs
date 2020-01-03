@@ -279,6 +279,17 @@ namespace DingTalk.Controllers
                 FlowInfoServer fServer = new FlowInfoServer();
                 Tasks taskNew = fServer.GetApplyManFormInfo(taskList[0].TaskId.ToString());
                 Flows flows = fServer.GetFlow(taskNew.FlowId.ToString());
+                DDContext contexts = new DDContext();
+                //判断流程状态
+                TasksState tasksState = contexts.TasksState.Where(t => t.TaskId == taskList[0].TaskId.ToString()).FirstOrDefault();
+
+                if (tasksState.State != "未完成")
+                {
+                    return new NewErrorModel()
+                    {
+                        error = new Error(1, $"当前流程状态为:{tasksState.State},无法提交。", "") { },
+                    };
+                }
 
 
                 if (taskList.Count > 1)  //如果有选人
@@ -290,50 +301,38 @@ namespace DingTalk.Controllers
                             error = new Error(1, "流程有误请联系管理员！", "") { },
                         };
                     }
-                    using (DDContext contexts = new DDContext())
-                    {
-                        foreach (var task in taskList)
-                        {
-                            //判断流程状态
-                            TasksState tasksState = contexts.TasksState.Where(t => t.TaskId == task.TaskId.ToString()).FirstOrDefault();
 
-                            if (tasksState.State != "未完成")
+                    foreach (var task in taskList)
+                    {
+                        if (taskList.IndexOf(task) > 0)
+                        {
+                            if (task.IsSend == true)
                             {
-                                return new NewErrorModel()
+                                if (taskList.IndexOf(task) == 1)
                                 {
-                                    error = new Error(1, $"当前流程状态为:{tasksState.State},无法提交。", "") { },
-                                };
-                            }
-                            if (taskList.IndexOf(task) > 0)
-                            {
-                                if (task.IsSend == true)
-                                {
-                                    if (taskList.IndexOf(task) == 1)
-                                    {
-                                        await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
-                                    task.TaskId.ToString(), taskNew.ApplyMan,
-                                    task.Remark, contexts, flows.ApproveUrl,
-                                    task.NodeId.ToString(),
-                                    false, true);
-                                        Thread.Sleep(100);
-                                        task.IsEnable = 1;
-                                        task.State = 0;
-                                        task.ApplyTime = null;
-                                    }
-                                    else
-                                    {
-                                        task.IsEnable = 0;
-                                        task.State = 0;
-                                        task.ApplyTime = null;
-                                    }
+                                    await SendOaMsgNew(task.FlowId, task.ApplyManId.ToString(),
+                                task.TaskId.ToString(), taskNew.ApplyMan,
+                                task.Remark, contexts, flows.ApproveUrl,
+                                task.NodeId.ToString(),
+                                false, true);
+                                    Thread.Sleep(100);
+                                    task.IsEnable = 1;
+                                    task.State = 0;
+                                    task.ApplyTime = null;
                                 }
                                 else
                                 {
                                     task.IsEnable = 0;
+                                    task.State = 0;
+                                    task.ApplyTime = null;
                                 }
-                                contexts.Tasks.Add(task);
-                                contexts.SaveChanges();
                             }
+                            else
+                            {
+                                task.IsEnable = 0;
+                            }
+                            contexts.Tasks.Add(task);
+                            contexts.SaveChanges();
                         }
                     }
                 }
@@ -391,9 +390,9 @@ namespace DingTalk.Controllers
                             context.SaveChanges();
 
                             //修改流程状态
-                            TasksState tasksState = context.TasksState.Where(t => t.TaskId == tasksApplyMan.TaskId.ToString()).FirstOrDefault();
-                            tasksState.State = "已完成";
-                            context.Entry<TasksState>(tasksState).State = EntityState.Modified;
+                            TasksState tasksStateNew = context.TasksState.Where(t => t.TaskId == tasksApplyMan.TaskId.ToString()).FirstOrDefault();
+                            tasksStateNew.State = "已完成";
+                            context.Entry<TasksState>(tasksStateNew).State = EntityState.Modified;
                             context.SaveChanges();
 
                             await SendOaMsgNew(taskNew.FlowId, taskNew.ApplyManId.ToString(), tasks.TaskId.ToString(),
@@ -1809,7 +1808,7 @@ namespace DingTalk.Controllers
             {
                 if (string.IsNullOrEmpty(TaskId))  //尚未发起流程
                 {
-                    using ( DDContext context = new DDContext())
+                    using (DDContext context = new DDContext())
                     {
                         List<NodeInfo> NodeInfoList = context.NodeInfo.Where(n => n.FlowId == FlowId).ToList();
 
@@ -2287,7 +2286,7 @@ namespace DingTalk.Controllers
                 {
                     strLink = "eapp://page/approve/approve?index=0";
                     return await dingTalkServersController.sendOaMessage(ApplyManId,
-               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId),flows.FlowName,
+               string.Format("您发起的审批的流程(流水号:{0})，已审批完成请知晓。", TaskId), flows.FlowName,
                 TaskId, strLink);
                 }
                 else
