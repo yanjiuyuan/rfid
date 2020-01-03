@@ -162,8 +162,8 @@ namespace DingTalk.Controllers
                         50,500,100
                     };
 
-                    Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-                    keyValuePairs.Add("用途及使用说明", tasks.Remark);
+                    //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                    //keyValuePairs.Add("用途及使用说明", tasks.Remark);
 
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {
@@ -185,7 +185,7 @@ namespace DingTalk.Controllers
                     string FlowName = context.Flows.Where(f => f.FlowId.ToString() == FlowId).First().FlowName.ToString();
 
                     string path = pdfHelper.GeneratePDF(FlowName, TaskId, tasks.ApplyMan, tasks.Dept, tasks.ApplyTime,
-                    null, null, "2", 300, 650, contentList, contentWithList, dtGiftTables, dtApproveView, keyValuePairs);
+                    null, null, "2", 300, 650, contentList, contentWithList, dtGiftTables, dtApproveView, null);
                     string RelativePath = "~/UploadFile/PDF/" + Path.GetFileName(path);
 
                     List<string> newPaths = new List<string>();
