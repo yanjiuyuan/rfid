@@ -646,7 +646,7 @@ var mixin = {
         },
         //初始化方法
         initStart(callBack = function () { }) {
-            Index = -1
+            Index = ''
             State = "未完成"
             this.doneloadTmp = false 
             this.DingData = DingData
@@ -2164,7 +2164,7 @@ Vue.component('sam-timerange', {
 Vue.component('sam-approver-list', {
     props: ['nodedata', 'nodelist', 'specialRoles', 'sprolenames'],
     template: `<div>
-                    <el-form-item label="审批人" style="margin-bottom:0px;">
+                    <el-form-item :label="'审批人'" style="margin-bottom:0px;">
                         <h5></h5>
                     </el-form-item>
                     <el-form-item>
@@ -2207,7 +2207,7 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成'" >
+                           <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成' && (Index == '0' || !Index)" >
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
@@ -2239,6 +2239,7 @@ Vue.component('sam-approver-list', {
     data: function () {
         return {
             State: State,
+            Index:Index,
             member1: '',
             member2: '',
         }
