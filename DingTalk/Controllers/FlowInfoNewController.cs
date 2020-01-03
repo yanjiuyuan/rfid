@@ -2232,7 +2232,6 @@ namespace DingTalk.Controllers
                 {
                     if (IsBack)
                     {
-
                         //strLink = strLink + "&index=2";
                         strLink = "eapp://page/approve/approve?index=2";
                         return await dingTalkServersController.sendOaMessage(ApplyManId,
