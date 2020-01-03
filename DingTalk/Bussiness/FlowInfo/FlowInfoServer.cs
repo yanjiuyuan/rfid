@@ -25,7 +25,7 @@ namespace DingTalk.Bussiness.FlowInfo
             }
 
             //判断超管权限
-            bool IsSupperLeader = context.Roles.Where(r => r.UserId == userId).ToList().Count > 0 ? true : false;
+            bool IsSupperLeader = context.Roles.Where(r => r.UserId == userId && r.RoleName== "超级管理员").ToList().Count > 0 ? true : false;
 
             if (!string.IsNullOrEmpty(userId) && !IsSupperLeader)
             {

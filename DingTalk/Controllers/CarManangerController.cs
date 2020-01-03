@@ -301,7 +301,6 @@ namespace DingTalk.Controllers
                     List<TasksState> tasksStates = context.TasksState.ToList();
                     List<Tasks> tasks = new List<Tasks>();
                     
-
                     //foreach (var item in tasksNew)
                     //{
                     //    if (flowInfoServer.GetTasksState(item.TaskId.ToString()) == "已完成")

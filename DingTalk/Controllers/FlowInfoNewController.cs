@@ -1488,7 +1488,7 @@ namespace DingTalk.Controllers
                             strWhere = " and isenable = 1 and ispost != 1 and  issend != 1 and d.state= 0 ";
                             break;
                         case 1:
-                            strWhere = " and isenable = 1 and ispost != 1 and  issend != 1 and d.state= 1 ";
+                            strWhere = " and isenable = 1 and ( d.ispost is null  or d.ispost!=1)   and  issend != 1 and d.state= 1 ";
                             break;
                         case 2:
                             strWhere = " and ispost = 1 ";
