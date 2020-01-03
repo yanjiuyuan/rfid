@@ -139,7 +139,7 @@ namespace DingTalk.Controllers
                     {
                         List<ProcessingProgress> ProcessingProgressList = new List<ProcessingProgress>();
 
-                        foreach (var processingProgresse in processingProgressModel.processingProgresses)
+                        foreach (ProcessingProgress processingProgresse in processingProgressModel.processingProgresses)
                         {
                             List<ProcessingProgress> ProcessingProgressListNew = dDContext.ProcessingProgress.Where(p => p.TaskId == processingProgresse.TaskId && p.CompanyId == processingProgressModel.CompanyId.ToString()).ToList();
                             if (ProcessingProgressListNew.Count > 0)

@@ -20,7 +20,7 @@ using System.Web.Http;
 namespace DingTalk.Controllers
 {
     /// <summary>
-    /// 图纸上传
+    /// 图纸审批
     /// </summary>
     [RoutePrefix("DrawingUploadNew")]
     public class DrawingUploadNewController : ApiController
