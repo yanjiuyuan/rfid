@@ -2220,7 +2220,10 @@ namespace DingTalk.Controllers
             bool IsBack = false, bool IsSend = false, bool IsFinnish = false)
         {
             DingTalkServersController dingTalkServersController = new DingTalkServersController();
-            ApplyMan = dDContext.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault().ApplyMan;
+            if (NodeId != "0")
+            {
+                ApplyMan = dDContext.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault().ApplyMan;
+            }
             string strLink = LinkUrl + "?taskid=" + TaskId +
                             "&flowid=" + FlowId +
                             "&nodeid=" + NodeId;
