@@ -49,6 +49,11 @@ namespace DingTalk.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 获取所有部门信息
+        /// </summary>
+        /// <returns></returns>
+
         [Route("GetDepartmentList")]
         public async Task<NewErrorModel> GetDepartmentList()
         {
@@ -584,6 +589,77 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
+        /// 钉钉通用推送消息
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="title">标题</param>
+        /// <param name="keyValuePairs">消息数组</param>
+        /// <param name="linkUrl">应用跳转路径</param>
+        /// <returns></returns>
+        [Route("SendCommomMessage")]
+        [HttpPost]
+        public async Task<object> SendCommomMessage(string userId, string title,
+      Dictionary<string, string> keyValuePairs, string linkUrl)
+        {
+            DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
+            HttpsClient _client = new HttpsClient();
+            form[] forms = new form[] { };
+            List<form> formList = new List<form>();
+            if (keyValuePairs != null)
+            {
+                foreach (var item in keyValuePairs)
+                {
+                    formList.Add(new form()
+                    {
+                        key = item.Key,
+                        value = item.Value
+                    }
+                    );
+                }
+            }
+            forms = formList.ToArray();
+            oa oa = new oa()
+            {
+                message_url = linkUrl,
+                head = new head
+                {
+                    bgcolor = "FFBBBBBB",
+                    text = "头部标题111222"
+                },
+                body = new body
+                {
+                    title = title,
+                    form = forms,
+                }
+            };
+            NewOATestModel newOATestModel = new NewOATestModel()
+            {
+                msgtype = "oa",
+                oa = oa
+            };
+
+            DingTalk.Models.SendOAModel sendOAModel = new SendOAModel()
+            {
+                //E应用agent_id
+                agent_id = long.Parse(DTConfig.AppAgentId),
+                userid_list = userId,
+                to_all_user = false,
+                //dept_id_list = null,
+                msg = newOATestModel
+            };
+
+
+            LoginMobileController loginMobileController = new LoginMobileController();
+            var access_token = await loginMobileController.GetAccessToken();
+            _client.QueryString.Add("access_token", access_token);
+            var url = _addressConfig.GetWorkMsgUrl;
+            var result = await _client.UploadModel(url, sendOAModel);
+            return result;
+        }
+
+
+
+        /// <summary>
         /// 生产加工进度通知推送
         /// </summary>
         /// <param name="userId"></param>
@@ -1054,20 +1130,6 @@ namespace DingTalk.Controllers
 
         #endregion
 
-        /// <summary>
-        /// 获取UnionId
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        public string GetUnionid(string code)
-        {
-            //IDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
-            //OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
-            //req.TmpAuthCode = code;
-            //OapiSnsGetuserinfoBycodeResponse rsp = client.Execute(req, appId, appSecrect);
-            //return rsp.UserInfo.Unionid;
-            return null;
-        }
     }
 
     public class CompanyModel
