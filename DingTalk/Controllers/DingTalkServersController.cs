@@ -591,23 +591,19 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 钉钉通用推送消息
         /// </summary>
-        /// <param name="userId">用户Id</param>
-        /// <param name="title">标题</param>
-        /// <param name="keyValuePairs">消息数组</param>
-        /// <param name="linkUrl">应用跳转路径</param>
+        /// <param name="commomOaSendModel"></param>
         /// <returns></returns>
         [Route("SendCommomMessage")]
         [HttpPost]
-        public async Task<object> SendCommomMessage(string userId, string title,
-      Dictionary<string, string> keyValuePairs, string linkUrl)
+        public async Task<object> SendCommomMessage(CommomOaSendModel commomOaSendModel)
         {
             DingTalkServerAddressConfig _addressConfig = DingTalkServerAddressConfig.GetInstance();
             HttpsClient _client = new HttpsClient();
             form[] forms = new form[] { };
             List<form> formList = new List<form>();
-            if (keyValuePairs != null)
+            if (commomOaSendModel.msg != null)
             {
-                foreach (var item in keyValuePairs)
+                foreach (var item in commomOaSendModel.msg)
                 {
                     formList.Add(new form()
                     {
@@ -620,7 +616,7 @@ namespace DingTalk.Controllers
             forms = formList.ToArray();
             oa oa = new oa()
             {
-                message_url = linkUrl,
+                message_url = commomOaSendModel.linkUrl,
                 head = new head
                 {
                     bgcolor = "FFBBBBBB",
@@ -628,7 +624,7 @@ namespace DingTalk.Controllers
                 },
                 body = new body
                 {
-                    title = title,
+                    title = commomOaSendModel.title,
                     form = forms,
                 }
             };
@@ -637,18 +633,15 @@ namespace DingTalk.Controllers
                 msgtype = "oa",
                 oa = oa
             };
-
             DingTalk.Models.SendOAModel sendOAModel = new SendOAModel()
             {
                 //E应用agent_id
                 agent_id = long.Parse(DTConfig.AppAgentId),
-                userid_list = userId,
+                userid_list = commomOaSendModel.userId,
                 to_all_user = false,
                 //dept_id_list = null,
                 msg = newOATestModel
             };
-
-
             LoginMobileController loginMobileController = new LoginMobileController();
             var access_token = await loginMobileController.GetAccessToken();
             _client.QueryString.Add("access_token", access_token);
@@ -831,7 +824,7 @@ namespace DingTalk.Controllers
             SendProgressModel sendProgressModel = new SendProgressModel()
             {
                 task_id = task_id,
-                agent_id = 192520113
+                agent_id = long.Parse(DTConfig.AppAgentId)
             };
             var result = await _client.UploadModel(url, sendProgressModel);
             return result;
