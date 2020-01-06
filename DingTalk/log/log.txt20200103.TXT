@@ -1,0 +1,31 @@
+2020-01-03 11:51:44,284 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 11:51:46,622 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 14:34:43,749 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 14:34:45,703 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 14:38:48,512 [9] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/SubmitTaskInfo 时出现异常，信息：LINQ to Entities 不识别方法“DingTalk.Models.DingModels.Tasks get_Item(Int32)”，因此该方法无法转换为存储表达式。，详见数据库日志Id：612
+2020-01-03 14:42:02,600 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 14:42:04,332 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 15:04:23,287 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 15:04:25,018 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 15:15:49,228 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 15:15:51,006 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 15:28:41,554 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 15:28:43,691 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 15:43:11,006 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 15:43:12,772 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 15:46:04,321 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 15:46:06,191 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 15:46:16,905 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/GetFlowStateDetail?Index=1&ApplyManId=undefined&pageIndex=1&pageSize=5 时出现异常，信息：关键字 'and' 附近有语法错误。，详见数据库日志Id：619
+2020-01-03 15:47:03,067 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 15:47:04,850 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 16:22:15,741 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 16:22:18,053 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 16:22:24,726 [13] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=manager325 时出现异常，信息：已取消一个任务。，详见数据库日志Id：622
+2020-01-03 16:23:31,637 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 16:23:33,405 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 16:43:07,108 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 16:43:08,915 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 16:45:43,413 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 16:45:45,177 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-03 16:54:02,419 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-03 16:54:04,182 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
