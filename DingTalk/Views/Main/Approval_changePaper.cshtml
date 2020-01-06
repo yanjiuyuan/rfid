@@ -34,6 +34,9 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
+        <el-form-item label="图纸设计人员">
+            <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
+        </el-form-item>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
             <el-button type="primary" v-if="state == '已完成'" v-on:click="downloadAllPdf">下载所有图纸</el-button>

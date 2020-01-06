@@ -18,6 +18,7 @@
             <sam-checkbox :str.sync="tableForm.DeptName" :arr="DeptNames"></sam-checkbox>
         </el-form-item>
         <el-form-item label="项目负责人" prop="ResponsibleMan">
+  
             <el-input v-model="tableForm.ResponsibleMan" style="width:500px;" :disabled="true"></el-input>
             <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
         </el-form-item>
@@ -138,6 +139,8 @@
                                 emplId: d.emplId
                             })
                         }
+                        that.tableForm.ResponsibleMan = names.join(',')
+                        that.tableForm.ResponsibleManId = ids.join(',')
                         for (let i = 0; i < that.nodeList.length; i++) {
                             if (that.nodeList[i].NodeName.indexOf('项目负责人') >= 0) {
                                 that.nodeList[i].AddPeople = []
@@ -146,14 +149,13 @@
                                 $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + addPeoples[0].name.substring(0, 3) + '</span >')
                             }
                         }
-                        that.tableForm.ResponsibleMan = names.join(',')
-                        that.tableForm.ResponsibleManId = ids.join(',')
                     },
                     onFail: function (err) { }
                 });
             },
             //关联项目负责人 的节点
             getNodeInfo_done(nodeList) {
+                if (!this.tableForm.ResponsibleManId) return
                 let names = this.tableForm.ResponsibleMan.split(',')
                 let ids = this.tableForm.ResponsibleManId.split(',')
                 let addPeoples = []
@@ -176,6 +178,10 @@
         },
         created: function () {
             this.initStart(() => {
+                this.tableForm = {
+                    ResponsibleMan: '',
+                    ResponsibleManId: '',
+                }
                 if (this.tableForm.DeptName) {
                     this.tableForm.DeptName = this.tableForm.DeptName
                     console.log(this.tableForm.DeptName)

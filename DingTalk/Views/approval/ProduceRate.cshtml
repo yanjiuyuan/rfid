@@ -423,11 +423,11 @@
                 let changeTableData = []
                 for (let i = 0; i < tmpTableData.length; i++) {
                     if (JSON.stringify(tmpTableData[i]) == JSON.stringify(this.tableData[i])) continue
-                    if (!this.tableData[i].SpeedOfProgress) {
-                        this.$alert('修改部分状态不能为空-' + this.tableData[i].SpeedOfProgress, '提示');
-                        this.tableData[i].IsAlreadyRead = '0'
-                        return
-                    }
+                    //if (!this.tableData[i].SpeedOfProgress) {
+                    //    this.$alert('修改部分状态不能为空-' + this.tableData[i].SpeedOfProgress, '提示');
+                    //    this.tableData[i].IsAlreadyRead = '0'
+                    //    return
+                    //}
                     changeTableData.push(this.tableData[i])
                 }
                 let param = {

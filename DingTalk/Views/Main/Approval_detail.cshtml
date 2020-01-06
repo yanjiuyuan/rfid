@@ -28,7 +28,7 @@
             </el-pagination>
         </div>
     </template>
-    <el-table :data="data" stripe border>
+    <el-table v-else :data="data" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
     </el-table>
@@ -36,11 +36,16 @@
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
-        <el-form-item label="图纸用途">
-            <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="图纸设计人员">
-            <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
+        <template v-if="FlowId == 6">
+            <el-form-item label="图纸用途">
+                <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="图纸设计人员">
+                <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
+            </el-form-item>
+        </template>
+        <el-form-item v-else label="套数">
+            <el-input v-model="ruleForm.counts" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="相关图片">
@@ -58,7 +63,7 @@
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
 
-                    <el-switch v-if="index == 0" v-model="f.state"
+                    <el-switch v-if="index == 0 && FlowId == 6" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
                                active-text="通过" inactive-text="不通过"
                                active-value="1" inactive-value="0"
@@ -282,6 +287,7 @@
             outPutBom() {
                 var that = this
                 let url = '/DrawingUpload/GetExcelReport'
+                if (FlowId == '23') url = '/PurchaseOrder/GetExcelReport'
                 that._getData(url, function (data) {
                     that.$alert('获取成功', '提示信息', {
                         confirmButtonText: '确定',
