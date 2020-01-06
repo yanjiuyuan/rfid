@@ -824,7 +824,7 @@ namespace DingTalk.Controllers
             SendProgressModel sendProgressModel = new SendProgressModel()
             {
                 task_id = task_id,
-                agent_id = 192520113
+                agent_id = long.Parse(DTConfig.AppAgentId)
             };
             var result = await _client.UploadModel(url, sendProgressModel);
             return result;
