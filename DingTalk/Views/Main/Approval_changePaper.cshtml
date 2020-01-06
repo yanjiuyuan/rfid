@@ -327,6 +327,7 @@
             hideFrame() {
                 this.frameShow = false
             },
+
             //PDF文件查看后，点击按钮设置状态
             setPdfState() {
                 var states = []
@@ -385,7 +386,9 @@
             PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
         }
     })
-
+    function getFormData_done(res) {
+        demo.ruleForm['tpName'] = JSON.parse(res.counts).Designer
+    }
 </script>
 
 
