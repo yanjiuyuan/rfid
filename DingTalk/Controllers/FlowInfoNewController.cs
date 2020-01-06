@@ -59,8 +59,8 @@ namespace DingTalk.Controllers
                                 TaskId = TaskId.ToString(),
                                 State = "未完成"
                             });
+                            context.SaveChanges();
                         }
-                        context.SaveChanges();
                         tasks.TaskId = TaskId;
                         if (tasks.IsSend == true)
                         {
