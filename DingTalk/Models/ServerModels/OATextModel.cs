@@ -47,4 +47,27 @@ namespace DingTalk.Models
         public string num { get; set; }
         public string unit { get; set; }
     }
+
+    public class CommomOaSendModel
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public string userId { get; set; }
+
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public string title { get; set; }
+
+        /// <summary>
+        /// 消息数组
+        /// </summary>
+        public Dictionary<string, string> msg { get; set; }
+
+        /// <summary>
+        /// 推送链接
+        /// </summary>
+        public string linkUrl { get; set; }
+    }
 }
