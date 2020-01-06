@@ -61,7 +61,7 @@ namespace DingTalk.Models
         public string title { get; set; }
 
         /// <summary>
-        /// 消息数组
+        /// 消息数组(格式  {"内容":"gogo","内容2":"gogogo"})
         /// </summary>
         public Dictionary<string, string> msg { get; set; }
 

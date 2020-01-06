@@ -633,7 +633,6 @@ namespace DingTalk.Controllers
                 msgtype = "oa",
                 oa = oa
             };
-
             DingTalk.Models.SendOAModel sendOAModel = new SendOAModel()
             {
                 //E应用agent_id
@@ -643,8 +642,6 @@ namespace DingTalk.Controllers
                 //dept_id_list = null,
                 msg = newOATestModel
             };
-
-
             LoginMobileController loginMobileController = new LoginMobileController();
             var access_token = await loginMobileController.GetAccessToken();
             _client.QueryString.Add("access_token", access_token);
