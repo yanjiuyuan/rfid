@@ -587,14 +587,12 @@ var mixin = {
                         console.log(res)
                     }
                     
-                    that.disablePage = false
                     if (that.doWithErrcode(res.error, url, errorFunc)) {
                         return
                     }
                     res.count ? succe(res.data, res.count) : succe(res.data)
                 },
                 error: function (err) {
-                    that.disablePage = false
                     if (showLoading) { loading.close() }
                     console.error(url)
                     console.error(err)
@@ -624,7 +622,6 @@ var mixin = {
                     console.log(url)
                     console.log(JSON.parse(param))
                     console.log(res)
-                    that.disablePage = false
                     if (that.doWithErrcode(res.error, url, errorFunc)) {
                         return
                     }
@@ -637,7 +634,6 @@ var mixin = {
                 },
                 error: function (err) {
                     if (showLoading) { loading.close() }
-                    that.disablePage = false
                     if (errorFunc) errorFunc()
                     console.error(url)
                     console.error(err)
@@ -691,7 +687,7 @@ var mixin = {
                 State: '1', 
                 Title: FlowName,
             }
-            this.tableForm = {}
+            //this.tableForm = {}
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeList(true, callBack)
             this.getProjects()
@@ -1300,6 +1296,7 @@ var mixin = {
                         if (this.nodeList[i].ApplyManId == DingData.userid) {
                             NodeId = this.nodeList[i].NodeId
                             this.NodeId = this.nodeList[i].NodeId
+                            break
                         }
                     }
                 }

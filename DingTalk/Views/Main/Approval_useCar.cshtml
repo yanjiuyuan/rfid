@@ -87,7 +87,6 @@
             return {
                 carList: [],
                 tableForm: {},
-                car: {},
                 reInput: false,
                 ifDisabeleEdit: Index != 0,
                 //图片上传参数
@@ -134,21 +133,11 @@
             },
             getUseCarTable() {
                 var that = this
-                this.GetData("/CarMananger/Quary?Key=&applyManId=" + DingData.userid, function (data) {
-                        that.carList = data
-                        that._getData('/CarTable/TableQuary', function (data2) {
-                            if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
-                            that.tableForm = data2[0]
-                            that.tableForm['Mark'] = ''
-                            for (let car of that.carList) {
-                                if (car.Id == data2[0].CarId) {
-                                    that.tableForm['Name'] = car.Name
-                                    that.car = car
-                                }
-                            }
-                        }
-                    , { TaskId: TaskId })
-                })
+                that._getData('/CarTable/TableQuary', function (data2) {
+                        if (!data2[0].FactTravelWay) data2[0].FactTravelWay = data2[0].PlantTravelWay
+                        that.tableForm = data2[0]
+                    }
+                , { TaskId: TaskId })
             },
             
         },

@@ -177,11 +177,11 @@
             }
         },
         created: function () {
+            this.tableForm = {
+                ResponsibleMan: '',
+                ResponsibleManId: '',
+            }
             this.initStart(() => {
-                this.tableForm = {
-                    ResponsibleMan: '',
-                    ResponsibleManId: '',
-                }
                 if (this.tableForm.DeptName) {
                     this.tableForm.DeptName = this.tableForm.DeptName
                     console.log(this.tableForm.DeptName)
