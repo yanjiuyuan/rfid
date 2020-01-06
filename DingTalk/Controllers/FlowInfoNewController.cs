@@ -50,12 +50,16 @@ namespace DingTalk.Controllers
                 {
                     foreach (var tasks in taskList)
                     {
-                        //修改流程状态
-                        context.TasksState.Add(new TasksState()
+                        if (taskList.IndexOf(tasks) == 0)
                         {
-                            TaskId = TaskId.ToString(),
-                            State = "未完成"
-                        });
+                            //修改流程状态
+                            context.TasksState.Add(new TasksState()
+                            {
+                                ApplyMan= tasks.ApplyMan,
+                                TaskId = TaskId.ToString(),
+                                State = "未完成"
+                            });
+                        }
                         context.SaveChanges();
                         tasks.TaskId = TaskId;
                         if (tasks.IsSend == true)
