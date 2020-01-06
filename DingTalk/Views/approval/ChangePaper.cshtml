@@ -93,6 +93,10 @@
         <el-form-item label="项目名称" prop="ProjectName">
             <el-input v-model="ruleForm.ProjectName" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="图纸设计人员" prop="tpName">
+            <el-input v-model="ruleForm.tpName" style="width:500px;" :disabled="true"></el-input>
+            <el-button class="button-new-tag" size="small" v-on:click="addPeerNumber()">+ 选人</el-button>
+        </el-form-item>
         <el-form-item label="上传PDF图纸" required="required">
             <el-upload class="upload-demo"
                        drag
@@ -224,6 +228,23 @@
             },
             deleteDevice(index, row) {
                 row['ChangeType'] == 2 ? this.deleteData[index]['ChangeType'] = 0 : this.deleteData[index]['ChangeType'] = 2
+            },
+            //添加图纸审计人员
+            addPeerNumber() {
+                var that = this
+                DingTalkPC.biz.contact.choose({
+                    users: [],
+                    multiple: false,
+                    corpId: DingData.CorpId,
+                    max: 10,
+                    onSuccess: function (data) {
+                        console.log(data)
+                        let d = data[0]
+                        that.ruleForm.tpName = d.name
+                        that.ruleForm.counts = JSON.stringify({ Designer: d.name, DesignerId: d.emplId })
+                    },
+                    onFail: function (err) { }
+                });
             },
             //bom表格翻页
             handleBomPageChange(page, index) {
