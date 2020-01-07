@@ -46,7 +46,7 @@
                     <el-button size="mini" type="primary" v-on:click="downloadFile(f.mediaId)" :disabled="disablePage">下载</el-button>
                     <el-button size="mini" type="primary" v-on:click="clickFile(f.url,f.name,f.mediaId)" :disabled="disablePage">预览</el-button>
 
-                    <el-switch v-if="index == 0" v-model="f.state"
+                    <el-switch v-if="index == 0 && NodeId == 1" v-model="f.state"
                                active-color="#13ce66" inactive-color="#ff4949"
                                active-text="通过" inactive-text="不通过"
                                active-value="1" inactive-value="0"

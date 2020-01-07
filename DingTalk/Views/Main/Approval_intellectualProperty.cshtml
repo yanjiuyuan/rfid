@@ -31,7 +31,7 @@
                 <el-input v-model="tableForm.ActualName" style="width:400px;" :disabled="noEdit || State == '已完成'"></el-input>
             </el-form-item>
 
-            <template v-if="index == 0">
+            <template v-if="index == 0 && NodeId == 5">
                 <el-form-item label="申报单位" prop="Company">
                     <el-select v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'">
                         <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>

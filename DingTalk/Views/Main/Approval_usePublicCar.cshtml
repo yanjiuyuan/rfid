@@ -25,7 +25,7 @@
             <el-input v-model="tableForm.PlantTravelWay" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <template v-if="reInput">
+        <template v-if="NodeId > 3">
             <el-form-item label="实际行车路线" prop="FactTravelWay">
                 <sam-input :value.sync="tableForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></sam-input>
             </el-form-item>
@@ -178,7 +178,7 @@
             this.initEnd(() => {
                 this.getUseCarTable()
             })
-            if (NodeId == '3' || NodeId == '4') this.reInput = true
+            if (NodeId > 3) this.reInput = true
         },
         computed: {
             UseKilometres: function () {

@@ -48,19 +48,19 @@
         @*<el-form-item label="所属公司">
                 <el-input v-model="tableForm.CompanyName" style="width:300px;" :disabled="true"></el-input>
             </el-form-item>*@
-        <template v-if="NodeId > 1 || (NodeId == 1 && index == 0)">
+        <template v-if="NodeId > 1 || (NodeId == 1 && (index == 1 || index == 0))">
             <hr />
             <el-form-item label="测试项目名称" prop="ProjectName">
                 <sam-input :value.sync="tableForm.ProjectName" style="width:400px;" :required="true" :disabled="noEdit"></sam-input>
             </el-form-item>
-            <el-form-item v-if="NodeId == 1" label="项目组成员" prop="TeamMembers">
+            <el-form-item v-if="NodeId == 1 && index == 0" label="项目组成员" prop="TeamMembers">
                 <sam-group :names.sync="tableForm.TeamMembers" :ids.sync="tableForm.TeamMembersId"></sam-group>
             </el-form-item>
             <el-form-item v-else label="项目组成员">
                 <el-input v-model="tableForm.TeamMembers" style="width:500px;" :disabled="true"></el-input>
                 <el-input v-model="tableForm.TeamMembersId" style="display:none;"></el-input>
             </el-form-item>
-            <el-form-item v-if="NodeId==1" label="测试项目周期" required="required">
+            <el-form-item v-if="NodeId == 1 && index == 0" label="测试项目周期" required="required">
                 <sam-timerange :value1.sync="tableForm.StartTime" :value2.sync="tableForm.EndTime"></sam-timerange>
             </el-form-item>
             <template v-else>
@@ -77,7 +77,7 @@
                 @*<el-input v-model="tableForm.TechnicalProposal" style="width:550px;" type="textarea" :disabled="noEdit"></el-input>*@
             </el-form-item>
 
-            <template v-if="NodeId==1">
+            <template v-if="NodeId == 1 && index == 0">
                 <el-form-item label="方案文件" required>
                     <el-upload class="upload-demo"
                                drag
