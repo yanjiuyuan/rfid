@@ -1,0 +1,34 @@
+2020-01-06 10:12:07,732 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 10:12:09,798 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 10:15:34,294 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 10:15:36,109 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 10:27:43,731 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 10:27:45,568 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 10:31:07,766 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DingTalkServers/GetSendresult?task_id=65281954949 时出现异常，信息：值不能为 null。
+参数名: address，详见数据库日志Id：646
+2020-01-06 10:42:16,906 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 10:42:18,836 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 10:47:28,980 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 10:47:30,811 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 10:48:48,918 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DingTalkServers/GetSendresult?task_id=65541455716 时出现异常，信息：值不能为 null。
+参数名: address，详见数据库日志Id：647
+2020-01-06 10:50:30,772 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 10:50:32,642 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 10:51:40,008 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DingTalkServers/GetSendresult?task_id=65293334560 时出现异常，信息：值不能为 null。
+参数名: address，详见数据库日志Id：648
+2020-01-06 10:51:49,578 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DingTalkServers/GetSendresult?task_id=65293334560 时出现异常，信息：值不能为 null。
+参数名: address，详见数据库日志Id：649
+2020-01-06 10:52:14,351 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DingTalkServers/GetSendresult?task_id=65293334560 时出现异常，信息：值不能为 null。
+参数名: address，详见数据库日志Id：650
+2020-01-06 11:03:29,024 [27] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 11:03:30,801 [27] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 13:32:51,118 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 13:32:53,188 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 13:47:25,784 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 13:47:27,437 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-06 13:59:11,910 [46] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://192.168.1.77:8888/DingTalkServers/SendCommomMessage 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：651
+2020-01-06 14:03:30,548 [38] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://192.168.1.77:8888/DingTalkServers/SendCommomMessage 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：652
+2020-01-06 14:13:33,644 [23] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://192.168.1.77:8888/DingTalkServers/SendCommomMessage 时出现异常，信息：Processing of the HTTP request resulted in an exception. Please see the HTTP response returned by the 'Response' property of this exception for details.，详见数据库日志Id：656
+2020-01-06 14:15:22,827 [21] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://192.168.1.77:8888/DingTalkServers/SendCommomMessage 时出现异常，信息：Processing of the HTTP request resulted in an exception. Please see the HTTP response returned by the 'Response' property of this exception for details.，详见数据库日志Id：657
+2020-01-06 16:41:53,579 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-06 16:41:55,825 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
