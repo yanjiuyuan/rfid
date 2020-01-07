@@ -138,6 +138,7 @@
                 var that = this
                 let url = '/CarTable/TableSave'
                 var param = _cloneObj(this.tableForm)
+                param['IsPublic'] = true
                 let callBack = function (taskId) {
                     console.log(taskId)
                     param.TaskId = taskId

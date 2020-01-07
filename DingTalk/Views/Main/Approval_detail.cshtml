@@ -28,7 +28,7 @@
             </el-pagination>
         </div>
     </template>
-    <el-table v-else :data="data" stripe border>
+    <el-table v-if="FlowId == 23" :data="data" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
     </el-table>
@@ -86,7 +86,7 @@
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item label="操作">
-            <el-button v-if="State == '已完成'" type="primary" v-on:click="stampAndGet">打印表单</el-button>
+            <el-button v-if="State == '已完成' && FlowId == 6" type="primary" v-on:click="stampAndGet">打印表单</el-button>
             <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         </el-form-item>
     </el-form>
