@@ -38,7 +38,7 @@ namespace DingTalk.Controllers
                     string Base64String = fileModel.Base64String.Replace("data:image/png;base64,", "");
                     byte[] FileContent = Convert.FromBase64String(Base64String);
                     string ImageFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Images\\ChangeImages\\";
-                    string PdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\Flies\\";
+                    string PdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "UploadFile\\PDF\\";
                     string FileName = Path.GetFileName(fileModel.FileName.Substring(0, fileModel.FileName.Length - 4));
                     string Err = "";
                     bool upres = WriteFile(ImageFilePath, FileContent, FileName + ".png", out Err);
