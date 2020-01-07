@@ -590,8 +590,8 @@ function saveItAsPdf() {
         "OldMediaId": pdfMediaId
     }
     console.log(param)
-    var doc = new jsPDF('p', 'mm')
-    doc.addImage(a, 'PNG', 10, 10)
+    //var doc = new jsPDF('p', 'mm')
+    //doc.addImage(a, 'PNG', 10, 10)
 
     //console.log(doc)
     //console.log(doc.save('hello.pdf'))
