@@ -1,0 +1,11 @@
+2020-01-07 14:13:34,983 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-07 14:13:37,485 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-07 14:15:21,180 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-07 14:15:22,239 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-07 14:24:44,770 [3] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/File/PostFile 时出现异常，信息：未能找到文件“E:\Project\DingTalk\DingTalk\UploadFile\Images\ChangeImages\120200107140847.png”。，详见数据库日志Id：672
+2020-01-07 14:30:29,266 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-07 14:30:31,482 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-07 15:43:27,196 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-07 15:43:30,090 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-07 18:16:45,700 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-07 18:16:47,512 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

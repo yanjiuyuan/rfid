@@ -436,6 +436,10 @@ namespace DingTalk.Controllers
                                 await dingTalkServersController.SendProcessingProgress(item.DesignerId, 2, processingProgressModel.applyMan, item.Bom
                                     , item.TaskId, item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
                             }
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "修改成功！", "") { },
+                            };
                         }
 
                         if (vs.Count == 1 && vs.Contains(1)) //  0 生产加工进度发起人 1 生产加工进度分配人 2 没权限(设计人员) 3.实际记录人
