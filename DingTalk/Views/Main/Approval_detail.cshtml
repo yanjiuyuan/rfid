@@ -2,6 +2,13 @@
     Layout = null;
 }
 
+@*<script src="~/Scripts/pdf.js"></script>
+<script src="~/Scripts/pdf.worker.js"></script>
+<script src="~/Scripts/jspdf.min.js"></script>
+
+<script>
+    PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+</script>*@
 
 
 <!--右侧实体内容-->
@@ -28,11 +35,11 @@
             </el-pagination>
         </div>
     </template>
-    <el-table v-else :data="data" stripe border>
+    <el-table v-if="FlowId == 23" :data="data" stripe border>
         <el-table-column v-for="(value,key) in items" :prop="key" :label="value" :key="key">
         </el-table-column>
     </el-table>
-    <br/>
+    <br />
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm"
              id="uploadForm" enctype="multipart/form-data">
         @RenderPage("~/Views/Shared/endForm.cshtml")
@@ -56,7 +63,7 @@
         </div>
         <!--PDF展示-->
         <el-form-item v-if="pdfList.length > 0" label="PDF图纸">
-            <el-button type="primary" v-if="state == '已完成'"  v-on:click="downloadAllPdf">下载所有图纸</el-button>
+            <el-button type="primary" v-if="state == '已完成'" v-on:click="downloadAllPdf">下载所有图纸</el-button>
             <el-card class="box-card">
                 <div v-for="f in pdfList" :key="f.name" class="text item">
                     <span>{{ f.name }}</span>
@@ -86,7 +93,7 @@
         <!--添加审批人-->
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item label="操作">
-            <el-button v-if="State == '已完成'" type="primary" v-on:click="stampAndGet">打印表单</el-button>
+            <el-button v-if="State == '已完成' && FlowId == 6" type="primary" v-on:click="stampAndGet">打印表单</el-button>
             <el-button type="primary" v-on:click="outPutBom">导出Bom表</el-button>
         </el-form-item>
     </el-form>
@@ -193,7 +200,13 @@
 
 
 </el-main>
-
+<script>
+    var pdfUrl = ''
+    var pdfName = ''
+    var pdfMediaId = ''
+    var taskId = 0
+    var stampRole = {}//圖紙審批 可打印并 下載的角色信息
+</script>
 <script>
     $("#mask").hide()
     var items = {}
@@ -243,7 +256,7 @@
                 dataArr: dataArr,
                 imageList: [],
                 frameUrl: '',
-                frameShow: false
+                //frameShow: false
             }
         },
         methods: {
@@ -251,7 +264,7 @@
             onSubmit() {
                 this.aggreSubmit()
             },
-            
+
             //图纸盖章并获取
             stampAndGet() {
                 FilePDFUrl = FilePDFUrl.replace(/\\/g, '\\\\')
@@ -307,7 +320,7 @@
                     this.GetData("/PurchaseOrder/QuaryByTaskId?TaskId=" + TaskId, (data) => {
                         this.data = data
                     })
-                } 
+                }
                 if (FlowId == 6) {
                     this.GetData("/DrawingUploadNew/GetPurchase?TaskId=" + TaskId, (data) => {
                         for (let a of this.dataArr) {
@@ -339,19 +352,18 @@
             //文件点击操作
             clickFile(fileUrl, name, mediaId) {
                 if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
-                    pdfUrl = fileUrl
                     pdfName = name
                     pdfMediaId = mediaId
                     console.log(fileUrl)
                     $("#mask").show()
-                    this.frameShow = true
+                    //this.frameShow = true
                     this.showPdf(fileUrl)
                 }
 
             },
-            hideFrame() {
-                this.frameShow = false
-            },
+            //hideFrame() {
+            //    this.frameShow = false
+            //},
             //PDF文件查看后，点击按钮设置状态
             setPdfState() {
                 var states = []
@@ -381,15 +393,15 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                
+
                 //initui()
                 initUI()
-                
-                PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
+
+                PDFJS.getDocument(url).then((pdf) => {
                     //
                     // 获取第一页数据
                     //
-                    pdf.getPage(1).then(function getPageHelloWorld(page) {
+                    pdf.getPage(1).then((page) => {
                         var scale = 1;
                         var viewport = page.getViewport(scale);
                         var renderContext = {
@@ -399,7 +411,7 @@
                         page.render(renderContext);
                         that.disablePage = false
                         loading.close()
-                        console.log('render pdf')
+                        console.log('render pdf - ' + url)
                     });
                 });
 
@@ -410,10 +422,10 @@
         created: function () {
             this.initEnd(() => { this.getBomInfo() })
             if (Index == '0')
-            for (let s of this.specialRoles) {
-                this.specialRoleNames.push(s.name)
-                this.getSpecialRoleInfo(s.name)
-            }
+                for (let s of this.specialRoles) {
+                    this.specialRoleNames.push(s.name)
+                    this.getSpecialRoleInfo(s.name)
+                }
             PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
         }
     })
