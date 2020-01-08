@@ -406,6 +406,9 @@ var mixin = {
             counts: [
                 { required: true, message: '套数不能为空！', trigger: 'change' }
             ],
+            tpName: [
+                { required: true, message: '图纸设计人员不能为空！', trigger: 'change' }
+            ],
             Name: [
                 { required: true, message: '名称不能为空！', trigger: 'change' },
                 { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }

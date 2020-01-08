@@ -99,7 +99,7 @@
                 if (this.NodeId == 4) {
                     let names = this.tableForm.FactCooperateMan.split(',')
                     let ids = this.tableForm.FactCooperateManId.split(',')
-                    let a = 6
+                    let a = 7
                     this.addPeopleNodes = [a]//额外添加审批人节点数组
                     this.nodeList[a].AddPeople = []
                     for (let i = 0; i < names.length; i++) {
@@ -138,7 +138,7 @@
                         let names = []
                         let ids = []
                         let addPeoples = []
-                        let i = 6
+                        let i = 7
                         for (let d of data) {
                             names.push(d.name)
                             ids.push(d.emplId)
@@ -149,6 +149,7 @@
                             })
                         }
                         that.nodeList[i].AddPeople = addPeoples
+                        $("." + i).remove()
                         for (let app of addPeoples) {
                             $("#" + i).after('<span class="el-tag ' + i + '" style="width: 60px; text-align: center; ">' + app.name.substring(0, 3) + '</span >')
                         }

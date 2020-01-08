@@ -2,13 +2,13 @@
     Layout = null;
 }
 
-@*<script src="~/Scripts/pdf.js"></script>
+<script src="~/Scripts/pdf.js"></script>
 <script src="~/Scripts/pdf.worker.js"></script>
 <script src="~/Scripts/jspdf.min.js"></script>
 
 <script>
     PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
-</script>*@
+</script>
 
 
 <!--右侧实体内容-->
@@ -48,7 +48,7 @@
                 <el-input v-model="ruleForm.ProjectType" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="图纸设计人员">
-                <el-input :value="ruleForm.tpNcountsame" :disabled="true"></el-input>
+                <el-input :value="ruleForm.tpName" :disabled="true"></el-input>
             </el-form-item>
         </template>
         <el-form-item v-else label="套数">
@@ -354,6 +354,7 @@
                 if (fileUrl.substring(fileUrl.length - 3) == 'pdf' || fileUrl.substring(fileUrl.length - 3) == 'PDF') {
                     pdfName = name
                     pdfMediaId = mediaId
+                    pdfUrl = fileUrl
                     console.log(fileUrl)
                     $("#mask").show()
                     //this.frameShow = true
@@ -430,7 +431,7 @@
         }
     })
     function getFormData_done(res) {
-        if (FlowId == '6') {
+        if (FlowId == '6' && res.counts) {
             demo.ruleForm['tpName'] = JSON.parse(res.counts).Designer
         }
     }
