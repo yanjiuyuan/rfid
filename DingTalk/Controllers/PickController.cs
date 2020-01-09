@@ -527,6 +527,9 @@ namespace DingTalk.Controllers
                                             join t in tasksNew on pi.ProjectId equals t.ProjectId
                                             join p in picks on t.TaskId.ToString()
                                             equals p.TaskId
+                                            where
+                                       key != null ?
+                                       (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || p.fName.Contains(key)) : 1 == 1
                                             select new
                                             {
                                                 t.ProjectName,
@@ -590,6 +593,9 @@ namespace DingTalk.Controllers
                                             join t in tasksNew on pi.ProjectId equals t.ProjectId
                                             join p in picks on t.TaskId.ToString()
                                             equals p.TaskId
+                                            where
+                                       key != null ?
+                                       (t.ApplyMan.Contains(key) || t.Dept.Contains(key) || p.fName.Contains(key)) : 1 == 1
                                             select new
                                             {
                                                 t.ProjectName,
