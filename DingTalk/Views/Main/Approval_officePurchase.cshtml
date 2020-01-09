@@ -124,7 +124,7 @@
                     for (let d of data) {
                         for (let l of that.data) {
                             if (d.Dept == l.name) {
-                                d['totalPrice'] = (d.Price * d.Count)
+                                d['totalPrice'] = (d.Price * d.Count).toFixed(2)
                                 l.value.push(d)
                                 l.tmpTotalPrice += (d.Price * d.Count)
                                 l.tmpTotalPrice = parseFloat(l.tmpTotalPrice.toFixed(2))

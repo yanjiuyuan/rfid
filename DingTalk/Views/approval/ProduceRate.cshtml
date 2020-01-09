@@ -32,7 +32,7 @@
         </template>
         <!--表格實體-->
         <h1 style="font-size:20px;">当前加工进度表<span style="color:red;">(背景色:绿-{{greenStates.join(',')}} ; 红-{{redStates.join(',')}} ; 黄-{{yellowStates.join(',')}})</span></h1>
-        <el-button type="primary" v-on:click="save">更新进度表</el-button>
+        <el-button type="primary" :disabled="disablePage" v-on:click="save">更新进度表</el-button>
         <el-table :data="tableData" :row-class-name="tableRowClassName"
                   style="width: 100%">
             @*<el-table-column prop="CodeNo" type="index"></el-table-column>*@
@@ -143,7 +143,7 @@
                 <el-table-column width="150" label="设计员确认收货">
                     <template slot-scope="scope">
                         <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
-                                   v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
+                                   v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != true" size="mini" type="primary">验收</el-button>
                         <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
                         <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Designer}}</p>
                     </template>
@@ -397,7 +397,7 @@
             },
             //设计人点击确认
             changeRead(index, row) {
-                this.tableData[index].IsAlreadyRead = '1'
+                this.tableData[index].IsAlreadyRead = true//'1'
                 this.save()
             },
             //记录人切换状态
@@ -420,6 +420,7 @@
             },
             //保存进度表
             save() {
+                this.disablePage = true
                 let changeTableData = []
                 for (let i = 0; i < tmpTableData.length; i++) {
                     if (JSON.stringify(tmpTableData[i]) == JSON.stringify(this.tableData[i])) continue
@@ -440,6 +441,7 @@
                 console.log(JSON.stringify(param))
                 this.PostData('ProcessingProgress/Modify', param, (res) => {
                     this.$alert('修改成功', '提示');
+                    this.disablePage = false
                     //this.getTable()
                 })
             },
@@ -591,18 +593,3 @@
     })
 
 </script>
-
-
-<style>
-    .el-table .warning-row {
-        background: oldlace;
-    }
-
-    .el-table .error-row {
-        background: #FDE2E2;
-    }
-
-    .el-table .success-row {
-        background: #f0f9eb;
-    }
-</style>

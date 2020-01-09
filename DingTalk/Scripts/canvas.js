@@ -36,8 +36,6 @@ commandCallbacks.add(switchCursorStyle);
 $("#tools_pencil").trigger("click");
 commandCallbacks.fire(command);
 
-//initUI();
-
 
 // command emitter
 $("[name='toolsOption']").change(function () {
@@ -381,7 +379,6 @@ function initUI() {
             width: 980,
             //left: 227,
             close: function () {
-                console.log('33333333')
                 $("#mask").hide()
             },
             load: function () {
@@ -585,13 +582,14 @@ function saveItAsPdf() {
     var a = $("#myCanvas").get(0).toDataURL("image/png")
     var param = {
         "TaskId": taskId,
-        "FileName": pdfUrl,
+        "FileName": pufUrl,
         "Base64String": a,
         "OldMediaId": pdfMediaId
     }
     console.log(param)
-    //var doc = new jsPDF('p', 'mm')
-    //doc.addImage(a, 'PNG', 10, 10)
+    //return
+    var doc = new jsPDF('p', 'mm')
+    doc.addImage(a, 'PNG', 10, 10)
 
     //console.log(doc)
     //console.log(doc.save('hello.pdf'))
@@ -734,5 +732,3 @@ function switchCursorStyle(command) {
     }
 
 }
-
-                //initUI()
