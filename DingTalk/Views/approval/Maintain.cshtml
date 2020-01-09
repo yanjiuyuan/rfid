@@ -70,9 +70,9 @@
                 <sam-input :value.sync="scope.row.MaintainContent" :required="true"></sam-input>
             </template>
         </el-Table-column>
-        <el-Table-column label="需用日期" width="140">
+        <el-Table-column label="需用日期" width="160">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.NeedTime" :class="{ redborder:scope.row.NeedTime ==''}" :ediTable="false"
+                <el-date-picker style="width:100%;" v-model="scope.row.NeedTime" :class="{ redborder:scope.row.NeedTime ==''}" :ediTable="false"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </template>

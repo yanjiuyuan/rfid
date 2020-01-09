@@ -41,7 +41,7 @@
         </el-form-item>
 
         <el-form-item label="拟办意见" prop="Suggestion">
-            <el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1 || Index == 2"></el-input>
+            <el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1 || Index == 2 || Index == 1"></el-input>
         </el-form-item>
         <hr />
         <template v-if="NodeId > 3|| (NodeId == 3 && (index == 1 || index == 0))">

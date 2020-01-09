@@ -72,7 +72,7 @@
         </el-Table-column>
         <el-Table-column label="开始日期" width="160">
             <template slot-scope="scope">
-                <el-date-picker v-model="scope.row.StartTime" :class="{ redborder:scope.row.StartTime ==''}" :ediTable="false"
+                <el-date-picker style="width:100%;" v-model="scope.row.StartTime" :class="{ redborder:scope.row.StartTime ==''}" :ediTable="false"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </template>
