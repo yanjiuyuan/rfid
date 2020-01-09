@@ -66,7 +66,7 @@
                 <sam-input :value.sync="scope.row.Purpose" :required="true"></sam-input>
             </template>
         </el-table-column>
-        <el-table-column prop="UrgentDate" label="需用日期" width="150">
+        <el-table-column prop="UrgentDate" label="需用日期" width="160">
             <template slot-scope="scope">
                 <el-date-picker v-model="scope.row.UrgentDate" style="width:100%;" :class="{ redborder:scope.row.UrgentDate ==''}" class="repadding" :editable="false"
                                 type="date" prefix-icon="el-icon-minus" clear-icon="el-icon-minus" value-format="yyyy-MM-dd">

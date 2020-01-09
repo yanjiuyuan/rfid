@@ -65,7 +65,15 @@
         </el-form-item>
 
         <el-form-item label="使用车辆" v-if="NodeId > 2">
-            <el-input v-model="carName" :disabled="true"></el-input>
+            <el-select v-model="tableForm.CarId" v-on:change="selectCar" filterable v-if="NodeId == 4 && Index == 0">
+                <el-option v-for="item in carList"
+                           :key="item.Id"
+                           :label="item.Name + ' - ' + item.CarNumber"
+                           :value="item.Id">
+                </el-option>
+            </el-select>
+            <span v-if="NodeId == 4 && Index == 0">车名:{{tableForm.Name}}</span>
+            <el-input v-else v-model="carName" :disabled="true"></el-input>
         </el-form-item>
         @RenderPage("~/Views/Shared/endButton.cshtml")
     </el-form>

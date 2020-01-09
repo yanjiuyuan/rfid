@@ -411,15 +411,15 @@ var mixin = {
             ],
             Name: [
                 { required: true, message: '名称不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { min: 0, max: 15, message: '长度在 15 个字符以内', trigger: 'blur' }
             ],
             CarNumber: [
                 { required: true, message: '车牌号不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { min: 0, max: 15, message: '长度在 15 个字符以内', trigger: 'blur' }
             ],
             UnitPricePerKilometre: [
                 { required: true, message: '每公里单价不能为空！', trigger: 'change' },
-                { min: 0, max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
+                { min: 0, max: 15, message: '长度在 15 个字符以内', trigger: 'blur' }
             ],
             Abstract: [
                 { required: true, message: '内容简介不能为空！', trigger: 'change' },
