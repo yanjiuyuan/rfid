@@ -556,6 +556,7 @@ namespace DingTalk.Controllers
                     if (key != "" && key != null)
                     {
                         ProjectInfoList = ProjectInfoList.Where(p =>
+                          (!string.IsNullOrEmpty(p.ProjectName) ? p.ProjectName.Contains(key) : false) ||
                          (!string.IsNullOrEmpty(p.ProjectId) ? p.ProjectId.Contains(key) : false) ||
                          (!string.IsNullOrEmpty(p.DeptName) ? p.DeptName.Contains(key) : false) ||
                          (!string.IsNullOrEmpty(p.ResponsibleMan) ? p.ResponsibleMan.Contains(key) : false) ||
