@@ -76,6 +76,9 @@
             <el-input v-else v-model="carName" :disabled="true"></el-input>
         </el-form-item>
         @RenderPage("~/Views/Shared/endButton.cshtml")
+        <el-form-item>
+            <el-button type="primary" v-on:click="printTable" v-if="state=='已完成'" :disabled="disablePage">打印表单</el-button>
+        </el-form-item>
     </el-form>
 </el-main>
 
@@ -146,17 +149,12 @@
                 this.tableForm.OccupyCarId = car.OccupyCarId
                 this.tableForm.IsOccupyCar = car.IsOccupyCar
             },
-            printPdf() {
-                var that = this
-                this._postData("/CarTable/GetPrintPDF", function (result) {
-                        that.elementAlert('alert', result.errmsg)
-                    },
-                    {
-                        UserId: DingData.userid,
-                        TaskId: TaskId,
-                        IsPublic: true
-                    }
-                )
+            printTable() {
+                this.PostData('CarTableNew/GetPrintPDF', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId,
+                    IsPublic: true
+                }, () => { this.$message({ type: 'success', message: `获取成功，请在工作通知中查收` }); })
             },
             
             getUseCarTable() {

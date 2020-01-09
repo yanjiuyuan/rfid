@@ -55,7 +55,7 @@
             <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
         </el-form-item>
         <!--图片展示-->
-        <el-form-item v-if="imageList.length > 0" label="起始公里數照片">
+        <el-form-item v-if="imageList.length > 0" label="起始公里数照片">
             <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
         </el-form-item>
         <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
@@ -63,6 +63,9 @@
         </div>
 
         @RenderPage("~/Views/Shared/endButton.cshtml")
+        <el-form-item>
+            <el-button type="primary" v-on:click="printTable" v-if="state=='已完成'" :disabled="disablePage">打印表单</el-button>
+        </el-form-item>
     </el-form>
 
     <div class="pre-image" v-if="showPre" v-on:click="showPre = false">
@@ -88,7 +91,7 @@
                 carList: [],
                 tableForm: {},
                 reInput: false,
-                ifDisabeleEdit: Index != 0,
+                ifDisabeleEdit: (Index != 0 || NodeId ==5),
                 //图片上传参数
                 dialogImageUrl: '',
                 dialogVisible: false,
@@ -119,17 +122,12 @@
                     }
                 })
             },
-            printPdf() {
-                var that = this
-                this._postData("/CarTable/GetPrintPDF", function (result) {
-                        that.elementAlert('alert', result.errmsg)
-                },
-                    {
-                        UserId: DingData.userid,
-                        TaskId: TaskId,
-                        IsPublic: false
-                    }
-                )
+            printTable() {
+                this.PostData('CarTableNew/GetPrintPDF', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId,
+                    IsPublic: false
+                }, () => { this.$message({ type: 'success', message: `获取成功，请在工作通知中查收` }); })
             },
             getUseCarTable() {
                 var that = this
@@ -152,7 +150,7 @@
                 this.elementAlert('提示', '该步骤需要拍照上传，请到移动端审批。')
                 this.disablePage = true
             }
-            if (NodeId == '3' || NodeId == '4') this.reInput = true
+            if (NodeId > 2) this.reInput = true
         }
     })
  
