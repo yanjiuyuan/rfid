@@ -436,6 +436,7 @@ namespace DingTalk.Controllers
                                 await dingTalkServersController.SendProcessingProgress(item.DesignerId, 2, processingProgressModel.applyMan, item.Bom
                                     , item.TaskId, item.CompanyName, item.SpeedOfProgress, item.IsAlreadyRead, eappUrl);
                             }
+                            context.SaveChanges();
                             return new NewErrorModel()
                             {
                                 error = new Error(0, "修改成功！", "") { },
