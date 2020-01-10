@@ -230,7 +230,7 @@
                         attribute: 'AcceptanceData14',
                         point: '打包上传',
                         fileList: [],
-                        must: true
+                        must: false
                     },
                     {
                         label: '其他过程文档设计报告、评审报告、项目计划、设计更改报告等',
@@ -258,7 +258,7 @@
                         attribute: 'AcceptanceSlip18',
                         point: '打包上传',
                         fileList: [],
-                        must: true
+                        must: false
                     }],
                 timeRange: [],
                 LongitudinalProjectConfig: {
@@ -480,9 +480,55 @@
                         }
                     }
                 }
-
+                for (var proj of this.projectList) {
+                    if (proj.ProjectId == this.ruleForm.ProjectId) {
+                        delete proj.ApplyMan
+                        delete proj.ApplyManId
+                        //Object.assign(this.ruleForm, proj)
+                        Object.assign(this.tableForm, proj)
+                        this.tableForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
+                        if (proj.ProjectType == '产品类' || proj.ProjectType == '教育类') this.uploadFileConfig[14].must = true
+                        proj.ProjectType == '研发类' && proj.ProjectSmallType == '横向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
+                    }
+                }
                 ReApprovalTempData.valid = false
                 this.purchaseList = ReApprovalTempData.data
+            },
+            //加载临时保存传递的数据
+            loadTempData() {
+                for (let p of slParam) {
+                    let data = this.loadData(FlowId + '-' + p)
+                    if (getLocalObj(FlowId + '-' + p)) {
+                        data = getLocalObj(FlowId + '-' + p)
+                    }
+                    if (data) {
+                        this[p] = data
+                        this.saveData(p, null)
+                    }
+                }
+                localStorage.clear()
+                for (let con of this.uploadFileConfig) {
+                    if (this.tableForm[con.attribute]) {
+                        let urlObj = JSON.parse(this.tableForm[con.attribute])
+                        for (let obj of urlObj) {
+                            con.fileList.push({
+                                name: obj.FileName,
+                                path: obj.FileUrl
+                            })
+                        }
+                    }
+                }
+                for (var proj of this.projectList) {
+                    if (proj.ProjectId == this.ruleForm.ProjectId) {
+                        delete proj.ApplyMan
+                        delete proj.ApplyManId
+                        //Object.assign(this.ruleForm, proj)
+                        Object.assign(this.tableForm, proj)
+                        this.tableForm['ProjectType'] = proj.ProjectType + '(' + proj.ProjectSmallType + ')'
+                        if (proj.ProjectType == '产品类' || proj.ProjectType == '教育类') this.uploadFileConfig[14].must = true
+                        proj.ProjectType == '研发类' && proj.ProjectSmallType == '横向' ? this.uploadFileConfig[15].must = true : this.uploadFileConfig[15].must = false
+                    }
+                }
             },
             //文件上传处理方法
             handleExceed(files, fileList) {

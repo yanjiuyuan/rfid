@@ -144,8 +144,8 @@
                     <template slot-scope="scope">
                         <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
                                    v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != true" size="mini" type="primary">验收</el-button>
-                        <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">{{scope.row.Designer}} (已验收)</p>
-                        <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Designer}}</p>
+                        <p v-else-if="scope.row['IsAlreadyRead'] == '1'" style="color:green;">{{scope.row.Designer}} (已验收)</p>
+                        <p v-else>{{scope.row.Designer}}(未验收)</p>
                     </template>
                 </el-table-column>
                 <el-table-column v-for="con in tableConfig" v-if="con.upLabel == 't43' && con.label == '备注'" :prop="con.param" width="220" :label="con.label">
