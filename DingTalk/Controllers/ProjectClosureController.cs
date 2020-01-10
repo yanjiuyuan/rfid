@@ -890,9 +890,13 @@ namespace DingTalk.Controllers
                     foreach (var url in flieUrlModels)
                     {
                         string filename = System.IO.Path.GetFileName(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl));
-                        FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
-                            System.Web.HttpContext.Current.Server.MapPath("~" + path) + "\\" + filename);
 
+                        //判断文件是否存在
+                        if (File.Exists(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl)))
+                        {
+                            FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
+                                                      System.Web.HttpContext.Current.Server.MapPath("~" + path) + "\\" + filename);
+                        }
                         //File.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
                         //    System.Web.HttpContext.Current.Server.MapPath("~" + path));
                     }
