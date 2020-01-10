@@ -207,6 +207,7 @@
                                 this.dataArr[this.bomIndex].items[c] = data[c]
                             }
                             else if (c.length > 10) {
+                                this.dataArr[this.bomIndex]['BomId'] = c
                                 BomId = c
                             }
                         }
@@ -316,7 +317,35 @@
                 this.specialRoleNames.push(s.name)
                 this.getSpecialRoleInfo(s.name)
             }
-            this.initStart()
+            this.initStart((res) => {
+                upBom = []
+                if (!this.dataArr) return
+                if (this.items) {
+
+                }
+                for (let a of this.dataArr) {
+                    for (let data of a.data) {
+                        upBom.push({
+                            BomId: a.BomId,
+                            DrawingNo: data.Column1,
+                            Name: data.Column2,
+                            Count: data.Column3,
+                            MaterialScience: data.Column4,
+                            Unit: data.Column5,
+                            SingleWeight: data.Column6,
+                            AllWeight: data.Column7,
+                            NeedTime: data.Column8,
+                            Mark: data.Column9,
+                            Sorts: a.Sorts
+                        })
+                    }
+                    let bomArr = _cloneArr(a.data)
+                    a.tableData = a.data.slice(0, 5)
+                    a.totalRows = a.data.length
+                    a.items = this.items
+                    upBom = upBom.concat(bomArr)
+                }
+            })
         }
     })
 
