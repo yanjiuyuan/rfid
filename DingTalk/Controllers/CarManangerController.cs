@@ -259,12 +259,23 @@ namespace DingTalk.Controllers
                             c.OccupyCarId = "";
                             c.IsOccupyCar = false;
                             c.UseTimes = "";
-                            carsQuery.Add(c);
+                            //bool IsTrue = true;
+                            //foreach (var item in carsQuery)
+                            //{
+                            //    if (item.Id == c.Id)
+                            //    {
+                            //        IsTrue = false;
+                            //    }
+                            //}
+                            //if (IsTrue)
+                            //{
+                            //    carsQuery.Add(c);
+                            //}
                         }
                     }
                     return new NewErrorModel()
                     {
-                        data = carsQuery,
+                        data = carsQuery.Distinct(),
                         error = new Error(0, "查询成功！", "") { },
                     };
                 }
