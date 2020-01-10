@@ -763,6 +763,11 @@ namespace DingTalk.Controllers
             else
             {
                 ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
+                string pathTest = Path.GetDirectoryName(copyPath);
+                if (!Directory.Exists(pathTest))
+                {
+                    Directory.CreateDirectory(pathTest);
+                }
                 File.Copy(newPath, copyPath, true);
                 return new NewErrorModel()
                 {
@@ -816,6 +821,11 @@ namespace DingTalk.Controllers
             else
             {
                 ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
+                string pathTest = Path.GetDirectoryName(copyPath);
+                if (!Directory.Exists(pathTest))
+                {
+                    Directory.CreateDirectory(pathTest);
+                }
                 File.Copy(newPath, copyPath, true);
                 return new NewErrorModel()
                 {
@@ -872,6 +882,11 @@ namespace DingTalk.Controllers
             else
             {
                 ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, column, row);
+                string pathTest = Path.GetDirectoryName(copyPath);
+                if (!Directory.Exists(pathTest))
+                {
+                    Directory.CreateDirectory(pathTest);
+                }
                 File.Copy(newPath, copyPath, true);
                 return new NewErrorModel()
                 {
