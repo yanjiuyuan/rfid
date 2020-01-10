@@ -94,7 +94,13 @@ namespace DingTalk.Models.DingModels
 
         [NotMapped]
         public List<CarTable> carTables { get; set; }
-        
+
+        /// <summary>
+        /// Á÷Ë®ºÅ
+        /// </summary>
+        [NotMapped]
+        public string TaskId { get; set; }
+
 
     }
 }

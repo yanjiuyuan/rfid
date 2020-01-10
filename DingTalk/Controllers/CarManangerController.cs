@@ -236,7 +236,7 @@ namespace DingTalk.Controllers
                     foreach (var item in carTables)
                     {
                         TasksState tasksState = tasksStates.Where(t => t.TaskId == item.TaskId).FirstOrDefault();
-                            if (tasksState != null && tasksState.State == "已完成")
+                        if (tasksState != null && tasksState.State == "已完成")
                         {
                             carTablesPro.Add(item);
                         }
@@ -247,9 +247,9 @@ namespace DingTalk.Controllers
                         {
                             if (ct.CarId.ToString() == item.Id.ToString())
                             {
-
                                 if (!((DateTime.Parse(endTime) < ct.StartTime) || (DateTime.Parse(startTime) > ct.EndTime)))
-                                    {
+                                {
+                                    //占用
                                     if (item.carTables != null)
                                     {
                                         item.carTables.Add(ct);
@@ -260,8 +260,34 @@ namespace DingTalk.Controllers
                                             ct
                                         };
                                     }
-                                  
+                                    //旧格式
+                                    if (string.IsNullOrEmpty(item.TaskId))
+                                    {
+                                        item.TaskId = ct.TaskId;
+                                    }
+                                    else
+                                    {
+                                        item.TaskId = item.TaskId + "," + ct.TaskId;
+                                    }
+
+                                    if (string.IsNullOrEmpty(item.UseMan))
+                                    {
+                                        item.UseMan = ct.DrivingMan;
+                                    }
+                                    else
+                                    {
+                                        item.UseMan = item.UseMan + "," + ct.DrivingMan;
+                                    }
+                                    if (string.IsNullOrEmpty(item.UseTimes))
+                                    {
+                                        item.UseTimes = ct.StartTime + "---" + ct.EndTime;
+                                    }
+                                    else
+                                    {
+                                        item.UseTimes = item.UseTimes + "," + ct.StartTime + "---" + ct.EndTime;
+                                    }
                                 }
+
                             }
                         }
                     }
@@ -354,7 +380,7 @@ namespace DingTalk.Controllers
                     List<Tasks> tasksNew = FlowInfoServer.ReturnUnFinishedTaskId(IsPublic == true ? "13" : "14"); //公车任务流13
                     List<TasksState> tasksStates = context.TasksState.ToList();
                     List<Tasks> tasks = new List<Tasks>();
-                    
+
                     //foreach (var item in tasksNew)
                     //{
                     //    if (flowInfoServer.GetTasksState(item.TaskId.ToString()) == "已完成")
@@ -392,7 +418,7 @@ namespace DingTalk.Controllers
                                         AllPrice = float.Parse(ct.FactKilometre) * float.Parse(c.UnitPricePerKilometre.ToString()),
                                         //Remark = t.Remark
                                     };
-                        
+
                         var takeQuary = Quary.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                         if (IsSend && Quary.Count() > 0)  //生成报表推送用户
                         {
