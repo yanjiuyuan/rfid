@@ -144,7 +144,7 @@
                     <template slot-scope="scope">
                         <el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
                                    v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != true" size="mini" type="primary">验收</el-button>
-                        <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
+                        <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">{{scope.row.Designer}} (已验收)</p>
                         <p v-if="scope.row.Power.indexOf(2) < 0">{{scope.row.Designer}}</p>
                     </template>
                 </el-table-column>
@@ -153,6 +153,7 @@
                         <el-input v-if="scope.row.Power.indexOf(2)>=0" v-model="scope.row[con.param]" type="textarea" show-word-limit
                                   :disabled="scope.row['IsAlreadyRead'] == '1' || scope.row['SpeedOfProgress'] != '已完成'">
                         </el-input>
+                        <span v-else>{{scope.row[con.param]}}</span>
                         @*<el-button v-on:click="changeRead(scope.$index,scope.row)" :disabled="scope.row['SpeedOfProgress'] != '已完成'"
                                    v-if="scope.row.Power.indexOf(2)>=0 && scope.row['IsAlreadyRead'] != '1'" size="mini" type="primary">验收</el-button>
                         <p v-if="scope.row.Power.indexOf(2) >=0 &&scope.row['IsAlreadyRead'] == '1'" style="color:green;">已验收</p>
@@ -306,7 +307,7 @@
                 companyId: 0,//公司Id 0 研究院 1 华数
                 companys: [{ value: 0, label: '研究院' }, { value: 1, label: '华数' }],
                 tableData: [],
-                inputTable: [initTable],
+                inputTable: [_cloneObj(initTable)],
                 taskid: '',
                 ruleIndex: -1,//用户权限(返回 0 生产加工进度发起人    1 生产加工进度分配人    2 没权限(设计人员)    3.实际记录人
                 ruleForm: {
@@ -447,7 +448,6 @@
             },
             //添加加工进度
             addGood(index, good) {
-                console.log(good)
                 good.SpeedOfProgress = initTable.SpeedOfProgress
                 let param = {
                     applyManId: DingData.userid,
@@ -460,8 +460,6 @@
                     this.$alert('流水号必填', '提示');
                     return
                 }
-                console.log(JSON.stringify(param))
-
                 this.PostData('ProcessingProgress/Save', param, (res) => {
                     this.$alert('保存成功', '提示');
                     this.getTable()

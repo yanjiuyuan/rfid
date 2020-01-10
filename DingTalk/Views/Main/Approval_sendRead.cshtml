@@ -40,13 +40,14 @@
             </el-card>
         </el-form-item>
 
-        <el-form-item label="拟办意见" prop="Suggestion">
-            <el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1 || Index == 2 || Index == 1"></el-input>
+        <el-form-item v-if="NodeId > 1 || (NodeId == 1 && Index <= 1)" label="拟办意见" prop="Suggestion">
+            <sam-input :value.sync="tableForm.Suggestion" type="textarea" style="width:600px;" :maxlength="200" :disabled="!(NodeId == 1 && Index == 0)"></sam-input>
+            @*<el-input v-model="tableForm.Suggestion" type="textarea" :row="5" style="width:500px;" :disabled="NodeId > 1 || Index == 2 || Index == 1"></el-input>*@
         </el-form-item>
         <hr />
         <template v-if="NodeId > 3|| (NodeId == 3 && (index == 1 || index == 0))">
             <el-form-item label="领导阅示" prop="Leadership">
-                <el-input v-model="tableForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="NodeId>3"></el-input>
+                <el-input v-model="tableForm.Leadership" type="textarea" :row="5" style="width:500px;" :disabled="!(NodeId == 3 && Index == 0)"></el-input>
             </el-form-item>
         </template>
         <!--添加审批人-->
