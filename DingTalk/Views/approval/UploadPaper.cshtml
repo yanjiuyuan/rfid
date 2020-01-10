@@ -172,6 +172,28 @@
                 //this.ruleForm.counts = JSON.stringify({ Designer: DingData.nickName, DesignerId: DingData.userid })
                 this.approvalSubmit(this.bindData)
             },
+            //审批绑定BOM表数据
+            bindData(taskId) {
+                for (let d of upBom) {
+                    d.TaskId = taskId
+                }
+                var that = this
+                $.ajax({
+                    url: "/DrawingUpload/LoadPurchase",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(upBom),
+                    success: function (data) {
+                        console.log("审批绑定BOM表数据ok")
+                        console.log(upBom)
+                        console.log(data)
+                        that.doneSubmit()
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest.status);
+                    }
+                })
+            },
             //添加图纸审计人员
             addPeerNumber() {
                 var that = this
@@ -255,28 +277,7 @@
                 this.getData()
                 this.dataArr[index].tableData = _cloneArr(this.tableData)
             },
-            //审批绑定BOM表数据
-            bindData(taskId) {
-                for (let d of upBom) {
-                    d.TaskId = taskId
-                }
-                var that = this
-                $.ajax({
-                    url: "/DrawingUpload/LoadPurchase",
-                    type: "POST",
-                    dataType: "json",
-                    data: JSON.stringify(upBom),
-                    success: function (data) {
-                        console.log("审批绑定BOM表数据ok")
-                        console.log(upBom)
-                        console.log(data)
-                        that.doneSubmit()
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest.status);
-                    }
-                })
-            },
+            
             //加载重新发起审批传递的数据
             loadReApprovalData() {
                 if (!ReApprovalTempData.valid) return
@@ -309,20 +310,22 @@
                     a.items = this.items
                     upBom = upBom.concat(bomArr)
                 }
-            }
-            
-        },
-        created: function () {
-            for (let s of this.specialRoles) {
-                this.specialRoleNames.push(s.name)
-                this.getSpecialRoleInfo(s.name)
-            }
-            this.initStart((res) => {
-                upBom = []
-                if (!this.dataArr) return
-                if (this.items) {
-
+            },
+            //加载临时保存
+            loadTempData() {
+                for (let p of slParam) {
+                    let data = this.loadData(FlowId + '-' + p)
+                    if (getLocalObj(FlowId + '-' + p)) {
+                        data = getLocalObj(FlowId + '-' + p)
+                    }
+                    if (data) {
+                        this[p] = data
+                        this.saveData(p, null)
+                    }
                 }
+                localStorage.clear()
+                if (!this.dataArr) return
+                upBom = []
                 for (let a of this.dataArr) {
                     for (let data of a.data) {
                         upBom.push({
@@ -339,12 +342,18 @@
                             Sorts: a.Sorts
                         })
                     }
-                    let bomArr = _cloneArr(a.data)
                     a.tableData = a.data.slice(0, 5)
                     a.totalRows = a.data.length
                     a.items = this.items
-                    upBom = upBom.concat(bomArr)
                 }
+            },
+        },
+        created: function () {
+            for (let s of this.specialRoles) {
+                this.specialRoleNames.push(s.name)
+                this.getSpecialRoleInfo(s.name)
+            }
+            this.initStart((res) => {
             })
         }
     })

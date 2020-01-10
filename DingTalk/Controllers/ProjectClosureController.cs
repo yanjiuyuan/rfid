@@ -916,7 +916,8 @@ namespace DingTalk.Controllers
                             {
                                 Directory.CreateDirectory(pathNew);
                             }
-                            FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl), copypath);
+                            File.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl), copypath,true);
+                            //FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl), copypath);
                         }
                         //File.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
                         //    System.Web.HttpContext.Current.Server.MapPath("~" + path));
