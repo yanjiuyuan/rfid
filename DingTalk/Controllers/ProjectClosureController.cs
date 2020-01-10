@@ -910,13 +910,13 @@ namespace DingTalk.Controllers
                         //判断文件是否存在
                         if (File.Exists(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl)))
                         {
-                            string pathNew = Path.GetDirectoryName(System.Web.HttpContext.Current.Server.MapPath("~" + path) + "\\" + filename);
+                            string copypath = System.Web.HttpContext.Current.Server.MapPath("~" + path) + "\\" + filename;
+                            string pathNew = Path.GetDirectoryName(copypath);
                             if (!Directory.Exists(pathNew))
                             {
                                 Directory.CreateDirectory(pathNew);
                             }
-                            FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
-                                                      System.Web.HttpContext.Current.Server.MapPath("~" + path) + "\\" + filename);
+                            FileHelper.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl), copypath);
                         }
                         //File.Copy(System.Web.HttpContext.Current.Server.MapPath(url.FileUrl),
                         //    System.Web.HttpContext.Current.Server.MapPath("~" + path));
