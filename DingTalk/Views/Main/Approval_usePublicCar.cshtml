@@ -58,6 +58,7 @@
             <template v-if="CarObj && CarObj.IsOccupyCar">
                 <span style="color:red;">当前被占用,占用情况如下</span>
                 <p v-for="u in useTimeList">
+                    <span>流水号:{{u.taskid}}</span>
                     <span>驾驶员:{{u.name}}</span>
                     <span>占用时间:{{u.time}}</span>
                 </p>
@@ -136,10 +137,12 @@
                         if (!c.UseMan) break
                         let nameList = c.UseMan.split(',')
                         let timeList = c.UseTimes.split(',')
+                        let idList = c.TaskId.split(',')
                         for (var i = 0; i < nameList.length; i++) {
                             this.useTimeList.push({
                                 name: nameList[i],
-                                time: timeList[i]
+                                time: timeList[i],
+                                taskid: idList[i]
                             })
                         }
                     }

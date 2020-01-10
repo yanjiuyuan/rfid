@@ -2,6 +2,14 @@
     Layout = null;
 }
 
+<script src="~/Scripts/pdf.js"></script>
+<script src="~/Scripts/pdf.worker.js"></script>
+<script src="~/Scripts/jspdf.min.js"></script>
+
+<script>
+    PDFJS.workerSrc = '../Scripts/pdf.worker.js';//加载核心库
+</script>
+
 <!--右侧实体内容-->
 
 <el-main id="partPage" style="position:relative;margin-left:1%;">
@@ -222,7 +230,7 @@
             chooseProject(index, row) {
                 console.log(row)
                 this.purchaseList = row.PurchaseList
-                this.handleUrlData(row,this)
+                this.handleUrlData(row, this)
                 this.ruleForm.FileUrl = row.FileUrl
                 this.ruleForm.Title = row.Title
                 this.ruleForm.ProjectId = row.ProjectId
