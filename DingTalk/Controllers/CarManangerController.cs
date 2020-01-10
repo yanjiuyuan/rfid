@@ -249,6 +249,7 @@ namespace DingTalk.Controllers
                             {
                                 if (!((DateTime.Parse(endTime) < ct.StartTime) || (DateTime.Parse(startTime) > ct.EndTime)))
                                 {
+                                    item.IsOccupyCar = true;
                                     //占用
                                     if (item.carTables != null)
                                     {
