@@ -141,6 +141,7 @@
 
 <script>
     let attribute = ''//切换对应上传文件用
+    let loadingState = {}
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -504,16 +505,47 @@
                         "FileName": file.name
                     })
                 }
+                console.log(param)
                 this.tableForm[attribute] = JSON.stringify(param)
             },
-            handleSuccess(response, file, fileList) {
-                var that = this
-                const loading = this.$loading({
+            BeforeFileUpload(file) {
+                if (file.name.indexOf('.') < 0) {
+                    this.$message.error('文件类型不正确，请重新选择！  ')
+                    return false
+                }
+                if (!file.size) {
+                    this.$message.error('文件大小（以字节为单位）为0!请上传有效文件')
+                    return false
+                }
+                for (let p of this.fileList) {
+                    if (file.name == p.name) {
+                        this.$message.error('已存在相同文件名文件!')
+                        return false
+                    }
+                }
+                file.name = 'helloWorld'
+                isPdf = false
+                const isLt2M = file.size / 1024 / 1024 < 9
+                if (!isLt2M) {
+                    this.$message.error('文件大小不允许超过9M，请重新选择!')
+                    return false
+                }
+                loadingState = this.$loading({
                     lock: true,
                     text: 'Loading',
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
+                return true
+            },
+            handleSuccess(response, file, fileList) {
+                var that = this
+                //const loading = this.$loading({
+                //    lock: true,
+                //    text: 'Loading',
+                //    spinner: 'el-icon-loading',
+                //    background: 'rgba(0, 0, 0, 0.7)'
+                //});
                 var paramObj = {
                     "": file.response.Content
                 }
@@ -541,7 +573,7 @@
                         console.log(param)
                         that.tableForm[attribute] = JSON.stringify(param)
                         console.log(that.tableForm)
-                        loading.close()
+                        loadingState.close()
                     }
                 })
             },

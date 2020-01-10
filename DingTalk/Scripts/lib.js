@@ -690,7 +690,7 @@ var mixin = {
                 State: '1', 
                 Title: FlowName,
             }
-            //this.tableForm = {}
+            this.tableForm = {}
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getNodeList(true, callBack)
             this.getProjects()
@@ -701,7 +701,7 @@ var mixin = {
             if (UrlObj.flowid) {
                 FlowId = UrlObj.flowid
                 FlowName = UrlObj.flowName
-                NodeId = UrlObj.nodeid
+                NodeId = parseInt(UrlObj.nodeid)
                 TaskId = UrlObj.taskid
                 State = UrlObj.state
                 Id = UrlObj.id

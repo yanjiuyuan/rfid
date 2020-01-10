@@ -25,7 +25,7 @@
             <el-input v-model="tableForm.PlantTravelWay" style="width:550px;" :disabled="true"></el-input>
         </el-form-item>
 
-        <template v-if="NodeId > 3">
+        <template v-if="NodeId > 2">
             <el-form-item label="实际行车路线" prop="FactTravelWay">
                 <sam-input :value.sync="tableForm.FactTravelWay" :disabled="ifDisabeleEdit" style="width:550px;"></sam-input>
             </el-form-item>
@@ -65,15 +65,15 @@
         </el-form-item>
 
         <el-form-item label="使用车辆" v-if="NodeId > 2">
-            <el-select v-model="tableForm.CarId" v-on:change="selectCar" filterable v-if="NodeId == 4 && Index == 0">
+            <el-select v-model="carName" v-on:change="selectCar2" filterable v-if="NodeId == 4 && Index == 0">
                 <el-option v-for="item in carList"
                            :key="item.Id"
-                           :label="item.Name + ' - ' + item.CarNumber"
-                           :value="item.Id">
+                           :label="item.carName"
+                           :value="item.carName">
                 </el-option>
             </el-select>
-            <span v-if="NodeId == 4 && Index == 0">车名:{{tableForm.Name}}</span>
             <el-input v-else v-model="carName" :disabled="true"></el-input>
+            @*<el-button type="primary" v-on:click="choose = true" v-if="NodeId == 4 && Index == 0 && !choose">重新选择</el-button>*@
         </el-form-item>
         @RenderPage("~/Views/Shared/endButton.cshtml")
         <el-form-item>
@@ -90,9 +90,9 @@
             return {
                 carList: [],
                 useTimeList: [],
+                choose: false,
                 //钉一下需要的参数
                 carName: '',
-                reInput: false,
                 ifDisabeleEdit: Index != 0,
                 rules: {
                     CarId: { required: true, message: '选派车辆不能为空', trigger: 'blur' },
@@ -149,6 +149,31 @@
                 this.tableForm.OccupyCarId = car.OccupyCarId
                 this.tableForm.IsOccupyCar = car.IsOccupyCar
             },
+            selectCar2(value) {
+                //value = JSON.parse(value)
+                console.log('选车操作')
+                console.log(value)
+                let car = {}
+                this.useTimeList = []
+                for (let c of this.carList) {
+                    if (c.carName == value) {
+                        car = c
+                        if (!c.UseMan) break
+                        let nameList = c.UseMan.split(',')
+                        let timeList = c.UseTimes.split(',')
+                        for (var i = 0; i < nameList.length; i++) {
+                            this.useTimeList.push({
+                                name: nameList[i],
+                                time: timeList[i]
+                            })
+                        }
+                    }
+                }
+                this.tableForm.CarId = car.Id
+                this.tableForm.Name = car.Name
+                this.tableForm.OccupyCarId = car.OccupyCarId
+                this.tableForm.IsOccupyCar = car.IsOccupyCar
+            },
             printTable() {
                 this.PostData('CarTableNew/GetPrintPDF', {
                     UserId: DingData.userid,
@@ -174,6 +199,7 @@
                                 that.carName = d.Name + ' - ' + d.CarNumber
                                 that.tableForm['Name'] = d.Name
                             }
+                            d['carName'] = d.Name + ' - ' + d.CarNumber
                         }
                         that.carList = data
                     })
@@ -184,7 +210,6 @@
             this.initEnd(() => {
                 this.getUseCarTable()
             })
-            if (NodeId > 3) this.reInput = true
         },
         computed: {
             UseKilometres: function () {
