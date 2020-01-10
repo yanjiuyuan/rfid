@@ -90,6 +90,11 @@ namespace DingTalk.Models.DingModels
         /// 接口调用人Id
         /// </summary>
         [NotMapped]
-        public string ApplyManId { get; set; }      
+        public string ApplyManId { get; set; }
+
+        [NotMapped]
+        public List<CarTable> carTables { get; set; }
+        
+
     }
 }

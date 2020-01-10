@@ -231,54 +231,96 @@ namespace DingTalk.Controllers
                 {
                     List<Car> cars = context.Car.ToList();
                     List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
-                    List<Car> carsQuery = new List<Car>();//条件过滤集合
-                    List<Car> carsDic = new List<Car>();
-                    foreach (var ct in carTables)
+                    List<TasksState> tasksStates = context.TasksState.ToList();
+                    List<CarTable> carTablesPro = new List<CarTable>();
+                    foreach (var item in carTables)
                     {
-                        if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
+                        TasksState tasksState = tasksStates.Where(t => t.TaskId == item.TaskId).FirstOrDefault();
+                            if (tasksState != null && tasksState.State == "已完成")
                         {
-                            if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
+                            carTablesPro.Add(item);
+                        }
+                    }
+                    foreach (var item in cars)
+                    {
+                        foreach (var ct in carTablesPro)
+                        {
+                            if (ct.CarId.ToString() == item.Id.ToString())
                             {
-                                Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
-                                if (car != null)
-                                {
-                                    car.IsOccupyCar = true;
-                                    car.OccupyCarId = ct.Id.ToString();
-                                    car.UseMan = ct.DrivingMan;
-                                    car.UseTimes = ct.StartTime + "---" + ct.EndTime;
-                                    carsQuery.Add(car);
+
+                                if (!((DateTime.Parse(endTime) < ct.StartTime) || (DateTime.Parse(startTime) > ct.EndTime)))
+                                    {
+                                    if (item.carTables != null)
+                                    {
+                                        item.carTables.Add(ct);
+                                    }
+                                    else
+                                    {
+                                        item.carTables = new List<CarTable>() {
+                                            ct
+                                        };
+                                    }
+                                  
                                 }
                             }
                         }
                     }
 
-                    foreach (var c in cars)
-                    {
-                        if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
-                        {
-                            c.OccupyCarId = "";
-                            c.IsOccupyCar = false;
-                            c.UseTimes = "";
-                            //bool IsTrue = true;
-                            //foreach (var item in carsQuery)
-                            //{
-                            //    if (item.Id == c.Id)
-                            //    {
-                            //        IsTrue = false;
-                            //    }
-                            //}
-                            //if (IsTrue)
-                            //{
-                            //    carsQuery.Add(c);
-                            //}
-                        }
-                    }
                     return new NewErrorModel()
                     {
-                        data = carsQuery.Distinct(),
+                        data = cars,
                         error = new Error(0, "查询成功！", "") { },
                     };
+                    //List<Car> cars = context.Car.ToList();
+                    //List<CarTable> carTables = context.CarTable.Where(c => c.IsPublicCar == true && !string.IsNullOrEmpty(c.CarId)).ToList();
+                    //List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskId("13"); //过滤审批后的流程
+                    //List<Car> carsQuery = new List<Car>();//条件过滤集合
+                    //List<Car> carsDic = new List<Car>();
+                    //foreach (var ct in carTables)
+                    //{
+                    //    if (tasks.Where(t => t.TaskId.ToString() == ct.TaskId).ToList().Count > 0)
+                    //    {
+                    //        if (!(DateTime.Parse(endTime) < ct.StartTime || ct.EndTime < DateTime.Parse(startTime)))
+                    //        {
+                    //            Car car = cars.Find(c => c.Id.ToString() == ct.CarId);
+                    //            if (car != null)
+                    //            {
+                    //                car.IsOccupyCar = true;
+                    //                car.OccupyCarId = ct.Id.ToString();
+                    //                car.UseMan = ct.DrivingMan;
+                    //                car.UseTimes = ct.StartTime + "---" + ct.EndTime;
+                    //                carsQuery.Add(car);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+                    //foreach (var c in cars)
+                    //{
+                    //    if (carsQuery.Where(cq => cq.Id == c.Id).ToList().Count == 0)
+                    //    {
+                    //        c.OccupyCarId = "";
+                    //        c.IsOccupyCar = false;
+                    //        c.UseTimes = "";
+                    //        //bool IsTrue = true;
+                    //        //foreach (var item in carsQuery)
+                    //        //{
+                    //        //    if (item.Id == c.Id)
+                    //        //    {
+                    //        //        IsTrue = false;
+                    //        //    }
+                    //        //}
+                    //        //if (IsTrue)
+                    //        //{
+                    //        //    carsQuery.Add(c);
+                    //        //}
+                    //    }
+                    //}
+                    //return new NewErrorModel()
+                    //{
+                    //    data = carsQuery.Distinct(),
+                    //    error = new Error(0, "查询成功！", "") { },
+                    //};
                 }
             }
             catch (Exception ex)
