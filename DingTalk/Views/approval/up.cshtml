@@ -1,43 +1,190 @@
 ﻿@{
     Layout = null;
 }
+<style>
+    .el-icon-circle-close {
+        position: absolute;
+        margin-left: 20px;
+        font-size: 20px;
+        color: #f56c6c;
+        z-index: 998;
+    }
 
+    .el-icon-setting {
+        position: absolute;
+        margin-left: 20px;
+        font-size: 20px;
+        color: gray;
+        z-index: 1998;
+    }
+    .clearfloat {
+        clear: both
+    }
+    .el-input.is-disabled .el-input__inner {
+        color: black !important;
+        background-color: white !important;
+        cursor: move !important;
+    }
+    .el-input.is-disabled .el-input__inner :active {
+        cursor: move !important;
+    }
+</style>
 <!--右侧实体内容-->
-<el-main id="partPage" style="position:relative;">
+<el-main id="partPage" style="margin-top:20px;">
+    <!--左侧组件列表-->
+    <div style="float:left;width:20%;border:1px solid #F56C6C;height:500px;text-align:center;">
+        <div style="padding:15px;text-align:center;font-size:20px;border-bottom:4px solid #409EFF;color:#409EFF;">组件库</div>
+        <draggable v-model="components" v-on:end="dragFlowEnd">
+            <el-input v-for="c of components" v-model="c.label" :disabled="true"
+                      style="width:90%;margin:2px auto;"
+                      :suffix-icon="c.icon">
+            </el-input>
+        </draggable>
+    </div>
+
+    <div style="float:left;width:79%;border:1px solid #67C23A;height:500px;margin-left:1px;">
+
+    </div>
+    <div style="float:left;right:0; width:100%;border:1px solid #409EFF;height:150px;margin-left:1px;">
+
+    </div>
+    <div class="clearfloat"></div>
+    <el-collapse v-model="activeNames">
+        <draggable v-model="menu" v-on:end="dragMenuEnd">
+            <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
+                <template slot="title">
+                    <span style="font-size:20px;">{{m.SORT_NAME}}({{m.Sort_ID}})</span>
+                </template>
+
+                <draggable v-model="m.flows" v-on:end="dragFlowEnd">
+                    <div v-for="l in m.flows" class="approval-box" style="cursor:pointer;">
+                        <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
+                        <p>{{l.FlowName}}({{l.FlowId}})</p>
+                    </div>
+                    <div class="approval-box" style="cursor:pointer;">
+                        <div class="approval-box-img" :style="{backgroundPosition:'-540px -180px'}"></div>
+                        <p>添加</p>
+                    </div>
+                </draggable>
+
+            </el-collapse-item>
+        </draggable>
+
+    </el-collapse>
 
 </el-main>
 
 <script>
-    let a = {
-        "研究院PC": ["领料申请", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
-        "研究院E应用": ["领料申请", "", "", "", "", "", "", "", "", "", "", "", ""],
-        "华数PC": ["物料采购", "成品采购", "", "", "", "", "", "", "", "", "", "", "", "", ""],
-        "华数E应用": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
-    }
+    let Flow = {}
+    let Sort = {}
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                good: {
-                    ExpectPrice: '',
-                    Unit: '',
-                    Count: ''
+                activeNames: [1, 2, 3, 4, 5, 6, 7, 8],
+                components: [{
+                    name: 'a',
+                    label: '输入框',
+                    icon: 'el-icon-upload2'
+                }, {
+                        name: 'b',
+                        label: '单选框',
+                        icon: 'el-icon-download'
+                    }, {
+                        name: 'c',
+                        label: '多选框',
+                        icon: 'el-icon-star-off'
+                    }, {
+                        name: 'd',
+                        label: '下拉框',
+                        icon: 'el-icon-goods'
+                    }, {
+                        name: 'e',
+                        label: '日期选择',
+                        icon: 'el-icon-date'
+                    }],
+                name: '',
+                id: '',
+                menu: [],
+                ruleForm: {
+                    Sort_ID: '',
+                    SORT_NAME: '',
+                    CreateTime: _timeToString(new Date()),
+                    IsEnable: 1,
+                    OrderBY: 998,
+                    State: 1,
                 },
-                searchForm: {
-                    name: '',
-                }
+                groupPeople: [],
+                rules: {
+                    Sort_ID: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    SORT_NAME: { required: true, message: '该项不能为空', trigger: 'blur' },
+                },
+                test: null
             }
         },
         methods: {
+            //拖动事件
+            dragMenuEnd: function (evt) {
+                console.log(evt)
+                return
+                let param = _cloneArr(this.menu)
+
+                for (let i = 0; i < param.length; i++) {
+                    delete param[i].flows
+                    console.log(i)
+                    param[i].OrderBY = i + 1
+                }
+                param = {
+                    applyManId: DingData.userid,
+                    FlowSortList: param
+                }
+                console.log(JSON.stringify(param))
+                this.PostData('FlowInfoNew/LoadFlowModify', param, (res) => { })
+            },
+            dragFlowEnd: function (evt) {
+                let flows = []
+                this.test = evt
+                console.log(evt)
+                return
+                let sort = null
+                for (let s of this.menu) {
+                    for (let f of s.flows) {
+                        //OrderBY 重新排序
+                        if (f.FlowName == evt.clone.innerText.replace(/\s/g, '').split('(')[0]) {
+                            sort = s
+                        }
+                        if (sort) {
+                            for (let i = 0; i < sort.flows.length; i++) {
+                                sort.flows[i].OrderBY = i + 1
+                            }
+                            flows = sort.flows
+                            break
+                        }
+                    }
+                }
+                console.log(flows)
+                this.PostData('FlowInfoNew/FlowModify', {
+                    applyManId: DingData.userid,
+                    flowsList: flows
+                }, (res) => { })
+            },
+            //获取数据
+            getMenu: function () {
+                this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=' + DingData.userid, (res) => {
+                    res = JSON.stringify(res).replace(/null/g, '""')
+                    this.menu = JSON.parse(res)
+                })
+            },
+            loadPage: function (url) {
+                $("#tempPage").load(url)
+            },
         },
-        
         created: function () {
-            this.initStart()
+            this.getMenu()
+            loadHtml("mainPage", "partPage")
         }
     })
-    
+
+
 </script>
-
-
-

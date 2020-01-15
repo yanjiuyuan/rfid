@@ -765,7 +765,7 @@
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jspdf.min.js" />
-    <Content Include="Scripts\lib.js" />
+    <Content Include="Scripts\lib2.01.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\pdf.js" />
     <Content Include="Scripts\pdf.min.js" />
