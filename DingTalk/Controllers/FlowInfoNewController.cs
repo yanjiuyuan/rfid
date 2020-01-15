@@ -2650,6 +2650,23 @@ namespace DingTalk.Controllers
                     {
                         nodeInfos = nodeInfos.OrderBy(n => n.NodeId).ToList();
 
+                        //判断是否还有未走完的流程
+                        string flowId = nodeInfos.FirstOrDefault().FlowId;
+                        List<TasksState> tasksStates = context.TasksState.Where(t => t.FlowId == flowId && t.State == "未完成").ToList();
+                        if (tasksStates.Count > 0)
+                        {
+                            List<string> vs = new List<string>();
+                            foreach (var item in tasksStates)
+                            {
+                                vs.Add(item.TaskId.ToString());
+                            }
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, $"还有流程未走完，流水号：{string.Join(",",vs)}！", "") { },
+                            };
+                        }
+
+
                         //校验必填项目
                         //foreach (var item in nodeInfos)
                         //{
