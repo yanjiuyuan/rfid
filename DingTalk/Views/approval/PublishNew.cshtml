@@ -140,6 +140,7 @@
             //添加新闻
             addProject() {
                 var that = this
+                this.fileListToUrl()
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
                         that._postData('/NewsAndCases/Save', function (data) {
