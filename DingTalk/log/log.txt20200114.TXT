@@ -1,0 +1,23 @@
+2020-01-14 08:56:16,790 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 08:56:18,931 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 08:57:14,030 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 08:57:15,896 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 08:58:11,432 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/AsyncData 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：760
+2020-01-14 08:59:43,216 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/AsyncData 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：762
+2020-01-14 09:00:30,259 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 09:00:32,126 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 09:03:47,066 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 09:03:48,108 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 09:04:21,373 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/AsyncData 时出现异常，信息：After parsing a value an unexpected character was encountered: d. Path 'name', line 1, position 16.，详见数据库日志Id：763
+2020-01-14 09:08:51,026 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 09:08:52,889 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 09:09:27,846 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/AsyncData 时出现异常，信息：写入流的字节超出指定的 Content-Length 字节大小。，详见数据库日志Id：764
+2020-01-14 09:11:47,036 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 09:11:48,883 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 09:13:45,461 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 09:13:47,366 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 09:33:51,057 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 09:33:52,983 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 10:41:01,704 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-14 10:41:03,826 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-14 10:45:17,542 [12] ERROR DingTalk.MvcApplication - http://localhost:52920/drawingupload/Upload?IsCopy=true出现异常
