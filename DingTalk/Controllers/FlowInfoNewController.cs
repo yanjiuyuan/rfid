@@ -3028,11 +3028,11 @@ namespace DingTalk.Controllers
                 List<Tasks> tasks = new List<Tasks>();
                 if (taskId == "")
                 {
-                    tasks = dDContext.Tasks.Where(t => t.TaskId.ToString() == taskId).ToList();
+                    tasks = dDContext.Tasks.ToList();
                 }
                 else
                 {
-                    tasks = dDContext.Tasks.ToList();
+                    tasks = dDContext.Tasks.Where(t => t.TaskId.ToString() == taskId).ToList();
                 }
 
                 List<NodeInfo> nodeInfos = dDContext.NodeInfo.ToList();
