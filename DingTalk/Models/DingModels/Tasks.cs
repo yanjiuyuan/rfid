@@ -171,6 +171,7 @@ namespace DingTalk.Models.DingModels
         [NotMapped]
         public string CurrentTime { get; set; }
 
+
         /// <summary>
         /// ¶¢ÅÌÊı¾İ
         /// </summary>

@@ -84,7 +84,7 @@ namespace DingTalk.Controllers
                     string strExtension = "";
                     if (nIndex >= 0)
                     {
-                        strExtension = FileName.Substring(nIndex);
+                        strExtension = FileName.Substring(nIndex).ToLower();
                     }
                     if (string.IsNullOrEmpty(path))
                     {
@@ -191,7 +191,6 @@ namespace DingTalk.Controllers
                             //保存文件
                             files.SaveAs(Path);
                         }
-
                         if (IsCopy == true)
                         {
                             System.IO.File.Copy(Path, YjyWebPath + "\\UploadFile\\Images\\" + newFileName + strExtension);
@@ -218,7 +217,6 @@ namespace DingTalk.Controllers
                             bool IsSuperPower = (context.Roles.Where(r => r.UserId == ApplyManId && r.RoleName == "超级管理员").ToList().Count() >= 1) ? true : false;
                             if (IsComPower || IsSuperPower)
                             {
-
                                 //保存文件
                                 files.SaveAs(Path);
                                 //上传盯盘获取MediaId
@@ -233,7 +231,6 @@ namespace DingTalk.Controllers
                                     FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                                     fileInfos.MediaId = fileSendModel.Media_Id;
                                 }
-
                                 context.FileInfos.Add(fileInfos);
                                 context.SaveChanges();
                             }
