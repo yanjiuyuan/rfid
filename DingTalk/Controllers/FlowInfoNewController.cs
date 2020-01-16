@@ -546,6 +546,7 @@ namespace DingTalk.Controllers
                     context.Entry<TasksState>(tasksState).State = EntityState.Modified;
                     context.SaveChanges();
 
+                    AsyncTasksNodeName(tasks.TaskId.ToString());
 
                     return new NewErrorModel()
                     {
@@ -616,6 +617,7 @@ namespace DingTalk.Controllers
                         }
                     }
                 }
+                AsyncTasksNodeName(tasks.TaskId.ToString());
                 return new NewErrorModel()
                 {
                     data = tasks.TaskId.ToString(),
