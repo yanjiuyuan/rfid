@@ -83,27 +83,73 @@
         data: function () {
             return {
                 activeNames: [1, 2, 3, 4, 5, 6, 7, 8],
-                components: [{
-                    name: 'a',
+                components: [
+                {
+                    type: 'Text',
                     label: '输入框',
                     icon: 'el-icon-upload2'
+                },
+                {
+                    type: 'Textarea',
+                    label: '多行输入框',
+                    icon: 'icon-dingding'
                 }, {
-                        name: 'b',
-                        label: '单选框',
-                        icon: 'el-icon-download'
-                    }, {
-                        name: 'c',
-                        label: '多选框',
-                        icon: 'el-icon-star-off'
-                    }, {
-                        name: 'd',
-                        label: '下拉框',
-                        icon: 'el-icon-goods'
-                    }, {
-                        name: 'e',
-                        label: '日期选择',
-                        icon: 'el-icon-date'
-                    }],
+                    type: 'Number',
+                    label: '数字输入框',
+                    icon: 'el-icon-upload2'
+                }, {
+                    type: 'Radio',
+                    label: '单选框',
+                    icon: 'el-icon-download'
+                }, {
+                    type: 'Checkbox',
+                    label: '多选框',
+                    icon: 'el-icon-star-off'
+                }, {
+                    type: 'Select',
+                    label: '下拉框',
+                    icon: 'el-icon-goods'
+                }, {
+                    type: 'Cascder',
+                    label: '多级下拉框',
+                    icon: 'el-icon-goods'
+                }, {
+                    type: 'Date',
+                    label: '日期',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'DateRange',
+                    label: '日期区间',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'Time',
+                    label: '时间',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'TimeRange',
+                    label: '时间区间',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'Image',
+                    label: '图片',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'UploadFile',
+                    label: '上传附件',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'UploadPdf',
+                    label: '上传PDF',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'ChooseMan',
+                    label: '联系人',
+                    icon: 'el-icon-date'
+                }, {
+                    type: 'DownloadFile',
+                    label: '下载附件',
+                    icon: 'el-icon-date'
+                }],
                 name: '',
                 id: '',
                 menu: [],
