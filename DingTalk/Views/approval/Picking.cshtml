@@ -152,11 +152,11 @@
                         return
                     }
                     for (let d of data) {
-                        let ifBreak = false
+                        let ifContinue = false
                         for (let p of that.purchaseList) {
-                            if (d.fNumber == p.fNumber) ifBreak = true
+                            if (d.fNumber == p.fNumber) ifContinue = true
                         }
-                        if (ifBreak) break
+                        if (ifContinue) continue
                         d['fQtyInvoice'] = d.fQty
                         d.fQty = 0
                         that.purchaseList.push(d)

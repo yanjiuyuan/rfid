@@ -188,9 +188,9 @@
         <el-form-item label="流程名称" prop="FlowName">
             <el-input v-model="ruleForm.FlowName"></el-input>
         </el-form-item>
-        <el-form-item label="流程Id" prop="FlowId">
+        @*<el-form-item label="流程Id" prop="FlowId">
             <el-input v-model="ruleForm.FlowId"></el-input>
-        </el-form-item>
+        </el-form-item>*@
 
         <el-form-item label="PC页面路径" prop="PcUrl">
             <el-input v-model="ruleForm.PcUrl"></el-input>
@@ -230,7 +230,8 @@
         </template>
 
         <el-form-item label="节点配置" v-if="ruleForm.IsFlow">
-            <sam-approver-edit :nodeList.sync="nodeList" :dingdata="DingData" :addable="true" :rolelist="rolelist" :postdata="PostData"></sam-approver-edit>
+            <sam-approver-edit :nodeList.sync="nodeList" :flowid="ruleForm.FlowId"
+                               :dingdata="DingData" :addable="true" :rolelist="rolelist" :postdata="PostData"></sam-approver-edit>
         </el-form-item>
 
         <el-form-item label="图标选择">

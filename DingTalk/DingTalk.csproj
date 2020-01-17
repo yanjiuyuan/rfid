@@ -585,6 +585,11 @@
     <Content Include="Content\display.css" />
     <Content Include="Content\element-bk.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\icon\demo.css" />
+    <Content Include="Content\icon\demo_index.html" />
+    <Content Include="Content\icon\iconfont.css" />
+    <Content Include="Content\icon\iconfont.js" />
+    <Content Include="Content\icon\iconfont.svg" />
     <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
     <Content Include="Content\images\EraserTool.gif" />
@@ -859,6 +864,11 @@
     <Content Include="JqueryUI\colorpicker-master\TODO" />
     <Content Include="CfgFiles\log4net.config" />
     <Content Include="Content\fonts\element-icons.woff" />
+    <Content Include="Content\icon\iconfont.eot" />
+    <Content Include="Content\icon\iconfont.json" />
+    <Content Include="Content\icon\iconfont.ttf" />
+    <Content Include="Content\icon\iconfont.woff" />
+    <Content Include="Content\icon\iconfont.woff2" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Login\LoginTest.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
