@@ -2,9 +2,9 @@
     Layout = null;
 }
 <style>
-    .icon-jine {
+    .icon-cuowu-fangkuang-tianchong {
         position: absolute;
-        top: 0px;
+        top: -10px;
         right: 0;
         font-size: 20px;
         color: #409EFF;
@@ -22,10 +22,12 @@
     .el-form-item{
         border: 1px solid white;
     }
-    .el-form-item:hover {
+    #center .el-form-item:hover {
         border: 1px dashed #409EFF;
     }
-
+    #right .el-form-item__label {
+        color: black;
+    }
     .clearfloat {
         clear: both
     }
@@ -38,25 +40,31 @@
         cursor: move !important;
     }
     .el-input__prefix, .el-input__suffix{color:black;}
+    .moveBg {
+        background: url('../../Content/images/moveBg.png') no-repeat center center;
+    }
 </style>
 <!--右侧实体内容-->
 <el-main id="partPage" style="margin-top:20px;">
     <!--左侧组件列表-->
-    <div style="float:left;width:20%;border:1px solid #F56C6C;height:500px;text-align:center;overflow:scroll;">
+    <div style="float:left;width:20%;height:700px;text-align:center;overflow-y:scroll;">
         <div style="padding:15px;text-align:center;font-size:20px;border-bottom:4px solid #409EFF;color:#409EFF;">组件库</div>
-        <draggable v-model="componentLib" v-on:end="dragFlowEnd">
-            <el-input v-for="c of componentLib" :key="c.type" v-model="c.label" :disabled="true"
-                      style="width:90%;margin:2px auto;" class="iconfont"
-                      :suffix-icon="c.icon">
-            </el-input>
+        <draggable :list="componentLib" :group="{ name: 'component', pull: 'clone', put: false }" :clone="cloneComponent">
+            <div v-for="c of componentLib" :key="c.type">
+                <el-input v-model="c.label" :disabled="true"
+                          style="width:90%;margin:2px auto;" class="iconfont"
+                          :suffix-icon="c.icon">
+                </el-input><span style="display:none;">{{c.type}}</span>
+            </div>
+
         </draggable>
     </div>
 
-    <div style="float:left;width:79%;border:1px solid #67C23A;height:500px;margin-left:1px;overflow:scroll;" class="iconfont">
-        <el-form v-on:submit.native.prevent :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+    <div style="float:left;width:60%;height:700px;overflow-y:scroll;" class="iconfont" :class="{moveBg:componentList.length == 0}">
+        <el-form label-width="100px" class="demo-ruleForm" id="center"
                  enctype="multipart/form-data">
-            <draggable v-model="components" v-on:end="dragMenuEnd">
-                <div v-for="p of components" v-on:mouseenter="switchComponent(p)" v-on:mouseleave="moveinComponent = {}">
+            <draggable :list="componentList" group="component" style="min-height:700px;">
+                <div v-for="(p,i) of componentList" v-on:mouseenter="moveinComponent = p" v-on:mouseleave="moveinComponent = {}">
                     <el-form-item :key="p.name" :label="p.label" style="margin:2%;">
                         <sam-input v-if="p.type == 'Text' || p.type == 'Textarea'" disabled></sam-input>
                         <el-input-number v-else-if="p.type == 'Number'" :precision="1" :step="0.1" :max="100" :min="0.1" disabled></el-input-number>
@@ -71,60 +79,71 @@
                         <el-upload v-else-if="p.type == 'UploadFile' || p.type == 'UploadPdf'" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" drag multiple disabled> <i class="el-icon-upload"></i><div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div></el-upload>
                         <sam-group v-else-if="p.type == 'ChooseMan'" :disable="true"></sam-group>
                         <el-button v-else-if="p.type == 'DownloadFile'" size="mini" type="primary" disabled>下载说明书</el-button>
-                        <i class="iconfont icon-jine" v-if="moveinComponent.name == p.name || true" v-on:click="deleteComponent(p)"></i>
+                        <i class="iconfont icon-cuowu-fangkuang-tianchong" v-if="moveinComponent.name == p.name" v-on:click="deleteComponent(p,i)"></i>
                     </el-form-item>
                 </div>
             </draggable>
         </el-form>
 
     </div>
-    <div style="float:left;right:0; width:100%;border:1px solid #409EFF;height:150px;margin-left:1px;overflow:scroll;">
-
+    <div style="float:left;right:0; width:20%;height:700px;overflow-y:scroll;">
+        <el-form v-on:submit.native.prevent :rules="rules" ref="selectComponent" id="right" size="mini" class="demo-ruleForm" enctype="multipart/form-data">
+            <el-form-item label="标题" style="margin:2%;" prop="label">
+                <sam-input :value.sync="selectComponent.label" :required="true" :maxlength="20"></sam-input>
+            </el-form-item>
+            <el-form-item label="变量名" style="margin:2%;" prop="name">
+                <sam-input :value.sync="selectComponent.name" :required="true" :maxlength="20"></sam-input>
+            </el-form-item>
+            <el-form-item label="最小(值/长度)" style="margin:2%;" prop="min">
+                <el-input-number v-model="selectComponent.min" :precision="1" :step="1" :max="1000" :min="1"></el-input-number>
+            </el-form-item>
+            <el-form-item label="最大(值/长度)" style="margin:2%;" prop="min">
+                <el-input-number v-model="selectComponent.max" :precision="1" :step="1" :max="1000" :min="selectComponent.min"></el-input-number>
+            </el-form-item>
+            <el-form-item label="验证" style="margin:2%;">
+                <el-checkbox v-model="selectComponent.required">必填</el-checkbox>
+            </el-form-item>
+            <el-form-item label="打印" style="margin:2%;">
+                <el-checkbox v-model="selectComponent.print">参与打印</el-checkbox>
+            </el-form-item>
+        </el-form>
     </div>
-
-
     <div class="clearfloat"></div>
-    <el-collapse v-model="activeNames">
-        <draggable v-model="menu" v-on:end="dragMenuEnd">
-            <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
-                <template slot="title">
-                    <span style="font-size:20px;">{{m.SORT_NAME}}({{m.Sort_ID}})</span>
-                </template>
-
-                <draggable v-model="m.flows" v-on:end="dragFlowEnd">
-                    <div v-for="l in m.flows" class="approval-box" style="cursor:pointer;">
-                        <div class="approval-box-img" :style="{backgroundPosition:l.Position}"></div>
-                        <p>{{l.FlowName}}({{l.FlowId}})</p>
-                    </div>
-                    <div class="approval-box" style="cursor:pointer;">
-                        <div class="approval-box-img" :style="{backgroundPosition:'-540px -180px'}"></div>
-                        <p>添加</p>
-                    </div>
-                </draggable>
-
-            </el-collapse-item>
-        </draggable>
-
-    </el-collapse>
-
 </el-main>
 
 <script>
-    let Flow = {}
-    let Sort = {}
+    index.isCollapse = true
+    let cpIndex = 0
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
-                activeNames: [1, 2, 3, 4, 5, 6, 7, 8],
-                moveinComponent: {},
-                selectComponent: {},
-                components: [
+                moveinComponent: {},//鼠标移入的组件，用于显示删除按钮
+                selectComponent: {
+                    type: 'Text',
+                    label: '输入框',
+                    icon: 'iconfont icon-danhangwenben',
+                    name: "Text",
+                    width: '',
+                    required: false,
+                    min: 1,
+                    max: 50,
+                    inputNode: 1,
+                    hideNode: 999,
+
+                    smallType: '',
+                    print: true,
+
+
+                },//鼠标点击的组件，用于显示编辑侧栏
+                componentList:[],//已选组件
+                componentLib: [
                     {
                         type: 'Text',
                         label: '输入框',
-                        name: "Text1",
+                        icon: 'iconfont icon-danhangwenben',
+                        name: "Text",
                         width: '',
                         required: false,
                         min: 1,
@@ -135,7 +154,8 @@
                     {
                         type: 'Textarea',
                         label: '多行输入框',
-                        name: "Textarea1",
+                        icon: 'iconfont icon-duohangwenben',
+                        name: "Textarea",
                         width: '',
                         required: false,
                         min: 1,
@@ -145,7 +165,8 @@
                     }, {
                         type: 'Number',
                         label: '数字输入框',
-                        name: "Number1",
+                        icon: 'iconfont icon-fuhao-shuzishurukuang',
+                        name: "Number",
                         width: '',
                         required: false,
                         min: 1,
@@ -155,7 +176,8 @@
                     }, {
                         type: 'Radio',
                         label: '单选框',
-                        name: "Radio1",
+                        icon: 'iconfont icon-danxuankuang',
+                        name: "Radio",
                         width: '',
                         required: false,
                         min: 1,
@@ -165,7 +187,8 @@
                     }, {
                         type: 'Checkbox',
                         label: '多选框',
-                        name: "Checkbox1",
+                        icon: 'iconfont icon-duoxuankuang',
+                        name: "Checkbox",
                         width: '',
                         required: false,
                         min: 1,
@@ -175,7 +198,8 @@
                     }, {
                         type: 'Select',
                         label: '下拉框',
-                        name: "Select1",
+                        icon: 'iconfont icon-xialakuang',
+                        name: "Select",
                         width: '',
                         required: false,
                         min: 1,
@@ -185,7 +209,8 @@
                     }, {
                         type: 'Cascder',
                         label: '多级下拉框',
-                        name: "Cascder1",
+                        icon: 'iconfont icon-xialakuangbiaodan',
+                        name: "Cascder",
                         width: '',
                         required: false,
                         min: 1,
@@ -195,7 +220,8 @@
                     }, {
                         type: 'Date',
                         label: '日期',
-                        name: "Date1",
+                        icon: 'iconfont icon-riqi',
+                        name: "Date",
                         width: '',
                         required: false,
                         min: 1,
@@ -205,7 +231,8 @@
                     }, {
                         type: 'DateRange',
                         label: '日期区间',
-                        name: "DateRange1",
+                        icon: 'iconfont icon-riqiqujian',
+                        name: "DateRange",
                         width: '',
                         required: false,
                         min: 1,
@@ -215,7 +242,8 @@
                     }, {
                         type: 'Time',
                         label: '时间',
-                        name: "Time1",
+                        icon: 'iconfont icon-shijian',
+                        name: "Time",
                         width: '',
                         required: false,
                         min: 1,
@@ -225,7 +253,8 @@
                     }, {
                         type: 'TimeRange',
                         label: '时间区间',
-                        name: "TimeRange1",
+                        icon: 'iconfont icon-daodashijian',
+                        name: "TimeRange",
                         width: '',
                         required: false,
                         min: 1,
@@ -235,7 +264,8 @@
                     }, {
                         type: 'Image',
                         label: '图片',
-                        name: "Image1",
+                        icon: 'iconfont icon-tupian',
+                        name: "Image",
                         width: '',
                         required: false,
                         min: 1,
@@ -245,7 +275,8 @@
                     }, {
                         type: 'UploadFile',
                         label: '上传附件',
-                        name: "UploadFile1",
+                        icon: 'iconfont icon-fujian',
+                        name: "UploadFile",
                         width: '',
                         required: false,
                         min: 1,
@@ -255,6 +286,7 @@
                     }, {
                         type: 'UploadPdf',
                         label: '上传PDF',
+                        icon: 'iconfont icon-pdf',
                         name: "UploadPdf1",
                         width: '',
                         required: false,
@@ -265,7 +297,8 @@
                     }, {
                         type: 'ChooseMan',
                         label: '联系人',
-                        name: "ChooseMan1",
+                        icon: 'iconfont icon-lianxiren',
+                        name: "ChooseMan",
                         width: '',
                         required: false,
                         min: 1,
@@ -275,121 +308,42 @@
                     }, {
                         type: 'DownloadFile',
                         label: '下载附件',
-                        name: "DownloadFile1",
+                        icon: 'iconfont icon-xiazai',
+                        name: "DownloadFile",
                         width: '',
                         required: false,
                         min: 1,
                         max: 50,
                         inputNode: 1,
                         hideNode: 999
-                    }],
-                componentLib: [
-                {
-                    type: 'Text',
-                    label: '输入框',
-                    icon: 'iconfont icon-danhangwenben'
-                },
-                {
-                    type: 'Textarea',
-                    label: '多行输入框',
-                    icon: 'iconfont icon-duohangwenben'
-                }, {
-                    type: 'Number',
-                    label: '数字输入框',
-                    icon: 'iconfont icon-fuhao-shuzishurukuang'
-                }, {
-                    type: 'Radio',
-                    label: '单选框',
-                    icon: 'iconfont icon-danxuankuang'
-                }, {
-                    type: 'Checkbox',
-                    label: '多选框',
-                    icon: 'iconfont icon-duoxuankuang'
-                }, {
-                    type: 'Select',
-                    label: '下拉框',
-                    icon: 'iconfont icon-xialakuang'
-                }, {
-                    type: 'Cascder',
-                    label: '多级下拉框',
-                    icon: 'iconfont icon-xialakuangbiaodan'
-                }, {
-                    type: 'Date',
-                    label: '日期',
-                    icon: 'iconfont icon-riqi'
-                }, {
-                    type: 'DateRange',
-                    label: '日期区间',
-                    icon: 'iconfont icon-riqiqujian'
-                }, {
-                    type: 'Time',
-                    label: '时间',
-                    icon: 'iconfont icon-shijian'
-                }, {
-                    type: 'TimeRange',
-                    label: '时间区间',
-                    icon: 'iconfont icon-daodashijian'
-                }, {
-                    type: 'Image',
-                    label: '图片',
-                    icon: 'iconfont icon-tupian'
-                }, {
-                    type: 'UploadFile',
-                    label: '上传附件',
-                    icon: 'iconfont icon-fujian'
-                }, {
-                    type: 'UploadPdf',
-                    label: '上传PDF',
-                    icon: 'iconfont icon-pdf'
-                }, {
-                    type: 'ChooseMan',
-                    label: '联系人',
-                    icon: 'iconfont icon-lianxiren'
-                }, {
-                    type: 'DownloadFile',
-                    label: '下载附件',
-                    icon: 'iconfont icon-xiazai'
-                }],
-                name: '',
-                id: '',
-                menu: [],
-                ruleForm: {
-                    Sort_ID: '',
-                    SORT_NAME: '',
-                    CreateTime: _timeToString(new Date()),
-                    IsEnable: 1,
-                    OrderBY: 998,
-                    State: 1,
-                },
-                groupPeople: [],
-                rules: {
-                    Sort_ID: { required: true, message: '该项不能为空', trigger: 'blur' },
-                    SORT_NAME: { required: true, message: '该项不能为空', trigger: 'blur' },
-                },
-                test: null
+                    }],//组件库
+       
             }
         },
         methods: {
-            //拖动事件
-            dragMenuEnd: function (evt) {
-                console.log(evt)
+            //添加组件
+            cloneComponent(e) {
+                console.log(e)
+                cpIndex++ 
+                for (let c of this.componentLib) {
+                    if (c.type == e.type) {
+                        let t = _cloneObj(c)
+                        t.name = t.name + cpIndex
+                        console.log(t)
+                        return t
+                    }
+                }
             },
-            dragFlowEnd: function (evt) {
-                console.log(evt)
-            },
+            
+            
             //删除组件
-            switchComponent(p) {
-                console.log('2333333333333')
-                this.moveinComponent = p
-            },
-            deleteComponent(p) {
-
+            deleteComponent(p, i) {
+                this.componentList.splice(i,1)
             },
             //获取数据
             getMenu: function () {
                 this.GetData('FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=' + DingData.userid, (res) => {
-                    res = JSON.stringify(res).replace(/null/g, '""')
-                    this.menu = JSON.parse(res)
+                   
                 })
             },
         },

@@ -592,6 +592,7 @@
     <Content Include="Content\icon\iconfont.svg" />
     <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
+    <Content Include="Content\images\phone.png" />
     <Content Include="Content\images\EraserTool.gif" />
     <Content Include="Content\images\EraserTool.png" />
     <Content Include="Content\images\EraserToolCursor.gif" />
@@ -624,10 +625,10 @@
     <Content Include="Content\images\ui-colorpicker.png" />
     <Content Include="Content\images\单位LOGO.jpg" />
     <Content Include="Content\images\受控章.png" />
+    <Content Include="Content\Site.2.0.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
