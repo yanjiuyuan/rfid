@@ -118,6 +118,7 @@
             //上传图片
             addProject() {
                 var that = this
+                this.fileListToUrl()
                 this.ruleForm['Path'] = this.ruleForm['ImageUrl']
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {

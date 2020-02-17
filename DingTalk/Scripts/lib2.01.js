@@ -319,6 +319,7 @@ var checkProjectId = (rule, value, callback) => {
     if (!value) {
         return callback(new Error('项目编号不能为空'));
     }
+    if (value == '2015ZL-XN000') callback();
     setTimeout(() => {
         let reg1 = /^[0-9]{4}[a-zA-Z]{2,3}[0-9]{3}$/
         if (!reg1.test(value)) {
@@ -1998,7 +1999,7 @@ Vue.component('sam-checkbox', {
 })
 //选择小组组件
 Vue.component('sam-group', {
-    props: ['names', 'ids' ,'single','onchange'],
+    props: ['names', 'ids', 'single', 'onchange','disable'],
     template: `  <div v-if="names">
                     <el-tag :key="tag" v-for="tag in names.split(',')" closable
                             :disable-transitions="false" v-on:close="handleClose(tag)">
@@ -2011,7 +2012,7 @@ Vue.component('sam-group', {
                             :disable-transitions="false" v-on:close="handleClose(tag)">
                         {{tag}}
                     </el-tag>
-                    <el-button class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
+                    <el-button :disabled='disable' class="button-new-tag" size="small" v-on:click="addGroup">+ 添加</el-button>
                  </div>`,
     data: function () {
         return {
@@ -2208,7 +2209,7 @@ Vue.component('sam-approver-list', {
                                 </el-tag>
                             </template>
 
-                           <template v-if="nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成' && (Index == '0' || !Index)" >
+                           <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成' && (Index == '0' || !Index)" >
                                 <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node)">+ 选人</el-button>
                                 <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[0] && role.name == node.NodeName" v-model="member1"
                                  style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
@@ -2258,7 +2259,7 @@ Vue.component('sam-approver-list', {
                 choosed.push(p.emplId)
             }
             dd.biz.contact.choose({
-                multiple: selectMoreList[choseList.indexOf(nodeId)] == '1'?true:false, //是否多选： true多选 false单选； 默认true
+                multiple: selectMoreList[choseList.indexOf(nodeId + '')] == '1'?true:false, //是否多选： true多选 false单选； 默认true
                 users: choosed, //默认选中的用户列表，员工userid；成功回调中应包含该信息
                 corpId: DingData.CorpId, //企业id
                 max: 10, //人数限制，当multiple为true才生效，可选范围1-1500
@@ -2510,7 +2511,7 @@ Vue.component('sam-addapprover', {
 
 //钉钉审批编辑组件
 Vue.component('sam-approver-edit', {
-    props: ['nodelist', 'dingdata', 'addable','rolelist','postdata'],
+    props: ['nodelist', 'dingdata', 'addable','rolelist','postdata','flowid'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
@@ -2801,10 +2802,19 @@ Vue.component('sam-approver-edit', {
         //保存节点配置
         save() {
             let param = []
-            for (let n of this.nodelist) {
-                let node = _cloneObj(n)
+            //for (let n of this.nodelist) {
+            //    let node = _cloneObj(n)
+            //    if (node.NodePeople) node.NodePeople = node.NodePeople.join(',')
+            //    if (node.PeopleId) node.PeopleId = node.PeopleId.join(',')
+            //    param.push(node)
+            //}
+            for (let i = 0; i < this.nodelist.length; i++) {
+                let node = _cloneObj(this.nodelist[i])
                 if (node.NodePeople) node.NodePeople = node.NodePeople.join(',')
                 if (node.PeopleId) node.PeopleId = node.PeopleId.join(',')
+                node.NodeId = i
+                node.PreNodeId = i + 1 + ''
+                node.FlowId = this.flowid
                 param.push(node)
             }
             console.log(param)

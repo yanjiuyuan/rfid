@@ -585,8 +585,14 @@
     <Content Include="Content\display.css" />
     <Content Include="Content\element-bk.css" />
     <Content Include="Content\element.css" />
+    <Content Include="Content\icon\demo.css" />
+    <Content Include="Content\icon\demo_index.html" />
+    <Content Include="Content\icon\iconfont.css" />
+    <Content Include="Content\icon\iconfont.js" />
+    <Content Include="Content\icon\iconfont.svg" />
     <Content Include="Content\images\404.jpg" />
     <Content Include="Content\images\approveSmall.png" />
+    <Content Include="Content\images\phone.png" />
     <Content Include="Content\images\EraserTool.gif" />
     <Content Include="Content\images\EraserTool.png" />
     <Content Include="Content\images\EraserToolCursor.gif" />
@@ -619,10 +625,10 @@
     <Content Include="Content\images\ui-colorpicker.png" />
     <Content Include="Content\images\单位LOGO.jpg" />
     <Content Include="Content\images\受控章.png" />
+    <Content Include="Content\Site.2.0.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -765,7 +771,7 @@
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jspdf.min.js" />
-    <Content Include="Scripts\lib.js" />
+    <Content Include="Scripts\lib2.01.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\pdf.js" />
     <Content Include="Scripts\pdf.min.js" />
@@ -859,6 +865,11 @@
     <Content Include="JqueryUI\colorpicker-master\TODO" />
     <Content Include="CfgFiles\log4net.config" />
     <Content Include="Content\fonts\element-icons.woff" />
+    <Content Include="Content\icon\iconfont.eot" />
+    <Content Include="Content\icon\iconfont.json" />
+    <Content Include="Content\icon\iconfont.ttf" />
+    <Content Include="Content\icon\iconfont.woff" />
+    <Content Include="Content\icon\iconfont.woff2" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Login\LoginTest.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />

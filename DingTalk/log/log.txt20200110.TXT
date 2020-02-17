@@ -1,0 +1,60 @@
+2020-01-10 13:58:34,354 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 13:58:36,351 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 13:59:04,228 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/ProjectClosure/Modify 时出现异常，信息：未能找到路径“E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile\泉州华中科技大学智能制造研究院\产品类\产品\2020测试下午\14纵向项目申请、中期检查、验收资料\纵向项目基本情况表.xlsx”的一部分。，详见数据库日志Id：721
+2020-01-10 14:00:14,351 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/ProjectClosure/Modify 时出现异常，信息：未能找到路径“E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile\泉州华中科技大学智能制造研究院\产品类\产品\2020测试下午\14纵向项目申请、中期检查、验收资料\纵向项目基本情况表.xlsx”的一部分。，详见数据库日志Id：722
+2020-01-10 14:02:46,362 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/ProjectClosure/Modify 时出现异常，信息：未能找到路径“E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile\泉州华中科技大学智能制造研究院\产品类\产品\2020测试下午\14纵向项目申请、中期检查、验收资料\纵向项目基本情况表.xlsx”的一部分。，详见数据库日志Id：723
+2020-01-10 14:04:30,247 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/ProjectClosure/Modify 时出现异常，信息：未能找到路径“E:\Project\DingTalk\DingTalk\UploadFile\ProjectFile\泉州华中科技大学智能制造研究院\产品类\产品\2020测试下午\14纵向项目申请、中期检查、验收资料\纵向项目基本情况表.xlsx”的一部分。，详见数据库日志Id：724
+2020-01-10 14:08:41,522 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:08:43,311 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 14:11:26,040 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:11:27,820 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 14:22:37,343 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:22:39,094 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 14:28:17,743 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:28:19,673 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 14:33:01,135 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:33:02,858 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 14:36:15,611 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:36:17,362 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 14:58:15,381 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 14:58:17,102 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 16:27:59,154 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 16:28:00,975 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 16:34:28,794 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 16:34:30,702 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 16:39:28,964 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 16:39:30,710 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 16:43:17,173 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 16:43:18,925 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 16:45:19,416 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 16:45:21,200 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 17:11:28,747 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 17:11:30,596 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 17:17:08,344 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 17:17:10,111 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 17:23:20,207 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 17:23:22,115 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 17:50:32,580 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 17:50:34,372 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 17:53:44,185 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 17:53:45,252 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 17:55:50,055 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 17:55:51,031 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:01:01,472 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:01:02,445 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:01:49,115 [6] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=manager325 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：1
+2020-01-10 18:02:18,610 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/LoadFlowSort?DEPT_ID=ALL&userid=manager325 时出现异常，信息：执行命令定义时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：2
+2020-01-10 18:04:45,775 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:04:46,727 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:11:30,165 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:11:31,996 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:21:35,386 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:21:37,249 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:40:59,323 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:41:01,158 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:44:48,711 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:44:49,734 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:56:22,030 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:56:23,843 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-10 18:59:41,595 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-10 18:59:42,599 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~

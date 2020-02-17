@@ -337,6 +337,8 @@ namespace DingTalk.Controllers
                     context.ProcessingProgress.Where(t => t.TabulatorId.Contains(applyManId) ||
                t.DesignerId.Contains(applyManId) || t.HeadOfDepartmentsId.Contains(applyManId)
                || t.NoteTakerId.Contains(applyManId)).ToList();
+
+
                 if (companyId != 3)
                 {
                     processingProgresses = processingProgresses.Where(p => p.CompanyId == companyId.ToString()).ToList();
