@@ -76,6 +76,69 @@ namespace DingTalk.Controllers
             }
         }
 
+
+        /// <summary>
+        /// 数据查询
+        /// </summary>
+        /// <param name="beginTime">开始时间</param>
+        /// <param name="endTime">结束时间</param>
+        /// <param name="IsPrint">是否导出Excel</param>
+        /// <param name="dept">部门</param>
+        /// <returns></returns>
+        [Route("Query")]
+        [HttpGet]
+        public NewErrorModel Query(DateTime beginTime, DateTime endTime, bool IsPrint = false, string dept = "")
+        {
+            try
+            {
+                DDContext dDContext = new DDContext();
+                EFHelper<PickMask> eFHelper = new EFHelper<PickMask>();
+                List<PickMask> pickList = eFHelper.GetList();
+                List<PickMask> pickListNew = new List<PickMask>();
+                List<TasksState> taskStateList = dDContext.TasksState.ToList();
+                foreach (var item in taskStateList)
+                {
+                    foreach (var pick in pickList)
+                    {
+                        if (item.TaskId == pick.TaskId && item.State == "已完成")
+                        {
+                            pickListNew.Add(pick);
+                        }
+                    }
+                }
+
+                pickListNew = pickListNew.Where(p => DateTime.Parse(p.BeginTime) > beginTime && DateTime.Parse(p.EndTime) < endTime).ToList();
+                if (dept != "")
+                {
+                    pickListNew = pickListNew.Where(p=>p.Dept==dept).ToList();
+                }
+                if (IsPrint == false)
+                {
+                    return new NewErrorModel()
+                    {
+                        count = pickListNew.Count,
+                        data = pickListNew,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+                else
+                { 
+                   
+                }
+
+                return new NewErrorModel()
+                {
+                    count = pickList.Count,
+                    data = pickList,
+                    error = new Error(0, "读取成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         /// <summary>
         /// 打印盖章
         /// </summary>
@@ -107,12 +170,12 @@ namespace DingTalk.Controllers
                     PickMask ct = context.PickMask.Where(u => u.TaskId == TaskId).FirstOrDefault();
 
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-
-                    keyValuePairs.Add("使用日期", ct.BeginTime+"-"+ct.EndTime);
+                    keyValuePairs.Add("申请部门",ct.Dept);
+                    keyValuePairs.Add("使用日期", ct.BeginTime + "-" + ct.EndTime);
                     keyValuePairs.Add("领用人数", ct.PickPeopleCount.ToString());
                     keyValuePairs.Add("领用口罩数量", ct.PickCount.ToString());
                     keyValuePairs.Add("备注", ct.Remark);
-                 
+
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
                     {

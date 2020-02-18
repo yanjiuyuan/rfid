@@ -17,6 +17,12 @@
         public string TaskId { get; set; }
 
         /// <summary>
+        //  申请部门
+        /// </summary>
+        [StringLength(100)]
+        public string Dept { get; set; }
+
+        /// <summary>
         /// 开始时间
         /// </summary>
         [StringLength(200)]
