@@ -1,4 +1,5 @@
 ﻿using Common.ClassChange;
+using Common.Excel;
 using Common.Ionic;
 using Common.PDF;
 using DingTalk.EF;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace DingTalk.Controllers
@@ -80,6 +82,7 @@ namespace DingTalk.Controllers
         /// <summary>
         /// 数据查询
         /// </summary>
+        ///  <param name="applyManId">用户Id</param>
         /// <param name="beginTime">开始时间</param>
         /// <param name="endTime">结束时间</param>
         /// <param name="IsPrint">是否导出Excel</param>
@@ -87,7 +90,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Query")]
         [HttpGet]
-        public NewErrorModel Query(DateTime beginTime, DateTime endTime, bool IsPrint = false, string dept = "")
+        public async Task<NewErrorModel> Query(string applyManId, DateTime beginTime, DateTime endTime, bool IsPrint = false, string dept = "")
         {
             try
             {
@@ -110,7 +113,7 @@ namespace DingTalk.Controllers
                 pickListNew = pickListNew.Where(p => DateTime.Parse(p.BeginTime) > beginTime && DateTime.Parse(p.EndTime) < endTime).ToList();
                 if (dept != "")
                 {
-                    pickListNew = pickListNew.Where(p=>p.Dept==dept).ToList();
+                    pickListNew = pickListNew.Where(p => p.Dept == dept).ToList();
                 }
                 if (IsPrint == false)
                 {
@@ -122,16 +125,36 @@ namespace DingTalk.Controllers
                     };
                 }
                 else
-                { 
-                   
-                }
-
-                return new NewErrorModel()
                 {
-                    count = pickList.Count,
-                    data = pickList,
-                    error = new Error(0, "读取成功！", "") { },
-                };
+                    DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(pickListNew);
+
+                    string path = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet/口罩领用导出模板.xlsx");
+                    string time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\口罩领用单" + time + ".xlsx";
+                    File.Copy(path, newPath);
+                    if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 1))
+                    {
+                        DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                        //上盯盘
+                        var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/口罩领用单" + time + ".xlsx");
+                        //推送用户
+                        FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                        fileSendModel.UserId = applyManId;
+                        var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                        File.Delete(newPath);
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, result, "") { },
+                        };
+                    }
+                    else
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "文件有误", "") { },
+                        };
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -170,7 +193,7 @@ namespace DingTalk.Controllers
                     PickMask ct = context.PickMask.Where(u => u.TaskId == TaskId).FirstOrDefault();
 
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-                    keyValuePairs.Add("申请部门",ct.Dept);
+                    keyValuePairs.Add("申请部门", ct.Dept);
                     keyValuePairs.Add("使用日期", ct.BeginTime + "-" + ct.EndTime);
                     keyValuePairs.Add("领用人数", ct.PickPeopleCount.ToString());
                     keyValuePairs.Add("领用口罩数量", ct.PickCount.ToString());
