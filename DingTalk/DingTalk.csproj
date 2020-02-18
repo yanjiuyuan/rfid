@@ -397,6 +397,7 @@
     <Compile Include="Controllers\OfficeSuppliesPurchaseManagerController.cs" />
     <Compile Include="Controllers\OverTimeTableController.cs" />
     <Compile Include="Controllers\PickController.cs" />
+    <Compile Include="Controllers\PickMaskController.cs" />
     <Compile Include="Controllers\PicManagerController.cs" />
     <Compile Include="Controllers\ProcessingProgressController.cs" />
     <Compile Include="Controllers\ProjectClosureController.cs" />
@@ -445,6 +446,7 @@
     <Compile Include="Models\DingModels\ContextError.cs" />
     <Compile Include="Models\DingModels\DetailedList.cs" />
     <Compile Include="Models\DingModels\LongitudinalProject.cs" />
+    <Compile Include="Models\DingModels\PickMask.cs" />
     <Compile Include="Models\DingModels\Pks.cs" />
     <Compile Include="Models\DingModels\ProcessingProgress.cs" />
     <Compile Include="Models\DingModels\ProjectClosure.cs" />

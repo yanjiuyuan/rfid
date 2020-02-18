@@ -230,6 +230,7 @@ namespace DingTalk.Controllers
                     keyValuePairs.Add("结束时间", ct.EndTime);
                     keyValuePairs.Add("外出事由", ct.Content);
                     keyValuePairs.Add("时长", ct.Duration);
+                    keyValuePairs.Add("接触人员", ct.ContactPeople);
 
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)

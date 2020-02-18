@@ -101,6 +101,9 @@ namespace DingTalk.Models.DingModels
         public DbSet<SqlExe> SqlExe { get; set; }
 
         public DbSet<Pks> Pks { get; set; }
-        
+
+        public DbSet<PickMask> PickMask { get; set; }
+
+
     }
 }
