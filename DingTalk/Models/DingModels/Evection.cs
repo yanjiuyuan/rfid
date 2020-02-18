@@ -64,5 +64,12 @@
         [StringLength(500)]
         public string EvectionManId { get; set; }
 
+        /// <summary>
+        /// 接触人员
+        /// </summary>
+        [StringLength(200)]
+        public string ContactPeople { get; set; }
+
+
     }
 }

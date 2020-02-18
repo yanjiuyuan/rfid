@@ -1,51 +1,46 @@
-﻿using DingTalk.EF;
+﻿using Common.ClassChange;
+using Common.Excel;
+using Common.Ionic;
+using Common.PDF;
+using DingTalk.EF;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-
-using Common.PDF;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Data;
-using System.IO;
-using Common.Ionic;
-using Common.ClassChange;
-using DingTalk.Bussiness.FlowInfo;
 using System.Web;
-using Common.Excel;
+using System.Web.Http;
 
 namespace DingTalk.Controllers
 {
     /// <summary>
-    /// 外出
+    /// 口罩领用
     /// </summary>
-    [RoutePrefix("Evection")]
-    public class EvectionController : ApiController
+    [RoutePrefix("PickMask")]
+    public class PickMaskController : ApiController
     {
         /// <summary>
-        /// 出差表单保存
+        /// 领料单批量保存
         /// </summary>
-        /// <param name="evection"></param>
+        /// <param name="pickList"></param>
         /// <returns></returns>
         [Route("Save")]
         [HttpPost]
-        public object Save([FromBody] Evection evection)
+        public NewErrorModel Save([FromBody] List<PickMask> pickList)
         {
             try
             {
-                EFHelper<Evection> eFHelper = new EFHelper<Evection>();
-                if (string.IsNullOrEmpty(evection.EvectionMan))
+                EFHelper<PickMask> eFHelper = new EFHelper<PickMask>();
+                foreach (var pick in pickList)
                 {
-                    evection.EvectionMan = "";
-                    evection.EvectionManId = "";
+                    eFHelper.Add(pick);
                 }
-                eFHelper.Add(evection);
                 return new NewErrorModel()
                 {
                     error = new Error(0, "保存成功！", "") { },
@@ -58,22 +53,22 @@ namespace DingTalk.Controllers
         }
 
         /// <summary>
-        /// 出差表单读取
+        /// 领料单读取
         /// </summary>
-        /// <param name="taskId"></param>
+        /// <param name="taskId">流水号</param>
         /// <returns></returns>
         [Route("Read")]
         [HttpGet]
-        public object Read(string taskId)
+        public NewErrorModel Read(string taskId)
         {
             try
             {
-                EFHelper<Evection> eFHelper = new EFHelper<Evection>();
-                Evection evection = eFHelper.GetListBy(t => t.TaskId == taskId).ToList().First();
-
+                EFHelper<PickMask> eFHelper = new EFHelper<PickMask>();
+                List<PickMask> pickList = eFHelper.GetListBy(t => t.TaskId == taskId).ToList();
                 return new NewErrorModel()
                 {
-                    data = evection,
+                    count = pickList.Count,
+                    data = pickList,
                     error = new Error(0, "读取成功！", "") { },
                 };
             }
@@ -83,104 +78,82 @@ namespace DingTalk.Controllers
             }
         }
 
+
         /// <summary>
-        /// 出差表单修改
+        /// 数据查询
         /// </summary>
-        /// <param name="evection"></param>
+        ///  <param name="applyManId">用户Id</param>
+        /// <param name="beginTime">开始时间</param>
+        /// <param name="endTime">结束时间</param>
+        /// <param name="IsPrint">是否导出Excel</param>
+        /// <param name="dept">部门</param>
         /// <returns></returns>
-        [Route("Modify")]
-        [HttpPost]
-        public object Modify([FromBody] Evection evection)
+        [Route("Query")]
+        [HttpGet]
+        public async Task<NewErrorModel> Query(string applyManId, DateTime beginTime, DateTime endTime, bool IsPrint = false, string dept = "")
         {
             try
             {
-                using (DDContext context = new DDContext())
+                DDContext dDContext = new DDContext();
+                EFHelper<PickMask> eFHelper = new EFHelper<PickMask>();
+                List<PickMask> pickList = eFHelper.GetList();
+                List<PickMask> pickListNew = new List<PickMask>();
+                List<TasksState> taskStateList = dDContext.TasksState.ToList();
+                foreach (var item in taskStateList)
                 {
-                    context.Entry<Evection>(evection).State = EntityState.Modified;
-                    context.SaveChanges();
+                    foreach (var pick in pickList)
+                    {
+                        if (item.TaskId == pick.TaskId && item.State == "已完成")
+                        {
+                            pickListNew.Add(pick);
+                        }
+                    }
                 }
 
-                return new NewErrorModel()
+                pickListNew = pickListNew.Where(p => DateTime.Parse(p.BeginTime) > beginTime && DateTime.Parse(p.EndTime) < endTime).ToList();
+                if (dept != "")
                 {
-                    error = new Error(0, "修改成功！", "") { },
-                };
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// 外出报表导出与查询
-        /// </summary>
-        /// <param name="dateStartTime">开始时间</param>
-        /// <param name="dateEndTime">结束时间</param>
-        /// <param name="userId">用户Id</param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [Route("GetReport")]
-        [HttpPost]
-        public async Task<NewErrorModel> GetReport(DateTime dateStartTime, DateTime dateEndTime, string userId, string key = "")
-        {
-            try
-            {
-                using (DDContext context = new DDContext())
+                    pickListNew = pickListNew.Where(p => p.Dept == dept).ToList();
+                }
+                if (IsPrint == false)
                 {
-
-                    List<Evection> evectionsPro = new List<Evection>();
-                    List<Tasks> tasks = FlowInfoServer.ReturnUnFinishedTaskIdByFlowName("外出申请").Where(t => t.NodeId == 0).ToList() ;
-                    List<Evection> evections = context.Evection.ToList();
-                    List<Evection> evectionPro = new List<Evection> ();
-                    List<Evection> evectionProP = new List<Evection>();
-                    DateTime dateTime = new DateTime();
-                    foreach (var item in evections)
+                    return new NewErrorModel()
                     {
-                        if (DateTime.TryParse(item.BeginTime, out dateTime))
-                        {
-                            if (DateTime.Parse(item.BeginTime) > dateStartTime && DateTime.Parse(item.EndTime) < dateEndTime)
-                            {
-                                evectionPro.Add(item);
-                            }
-                        }
-                    }
-                    foreach (var task in tasks)
-                    {
-                        foreach (var evection in evectionPro)
-                        {
-                            if (task.TaskId.ToString() == evection.TaskId)
-                            {
-                                //借用字段
-                                evection.Duration = task.ApplyMan;
-                                evectionProP.Add(evection);
-                            }
-                        }
-                    }
+                        count = pickListNew.Count,
+                        data = pickListNew,
+                        error = new Error(0, "读取成功！", "") { },
+                    };
+                }
+                else
+                {
+                    DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(pickListNew);
 
-                    DataTable dtpurchaseTables = ClassChangeHelper.ToDataTable(evectionProP, new List<string>() {
-                    "Id","EvectionManId","LocationPlace"
-                      });
-                    string path = HttpContext.Current.Server.MapPath(string.Format("~/UploadFile/Excel/Templet/{0}.xlsx", "外出数据导出模板"));
+                    string path = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet/口罩领用导出模板.xlsx");
                     string time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                    string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\" + "外出数据" + time + ".xlsx";
-                    File.Copy(path, newPath,true);
-
+                    string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\口罩领用单" + time + ".xlsx";
+                    File.Copy(path, newPath);
                     if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dtpurchaseTables, 0, 1))
                     {
                         DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                        //上盯盘 
-                        var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/" + "\\" + "外出数据"+ time + ".xlsx");
+                        //上盯盘
+                        var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/口罩领用单" + time + ".xlsx");
                         //推送用户
                         FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                        fileSendModel.UserId = userId;
+                        fileSendModel.UserId = applyManId;
                         var result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                        //删除文件
                         File.Delete(newPath);
+                        return new NewErrorModel()
+                        {
+                            error = new Error(0, result, "") { },
+                        };
                     }
-                    return new NewErrorModel()
+                    else
                     {
-                        error = new Error(0, "推送成功!", "") { },
-                    };
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, "文件有误", "") { },
+                        };
+                    }
                 }
             }
             catch (Exception ex)
@@ -188,7 +161,6 @@ namespace DingTalk.Controllers
                 throw ex;
             }
         }
-
 
         /// <summary>
         /// 打印盖章
@@ -197,7 +169,7 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("GetPrintPDF")]
         [HttpPost]
-        public async Task<object> GetPrintPDF([FromBody]PrintAndSendModel printAndSendModel)
+        public async Task<NewErrorModel> GetPrintPDF([FromBody]PrintAndSendModel printAndSendModel)
         {
             try
             {
@@ -209,28 +181,23 @@ namespace DingTalk.Controllers
                     //获取表单信息
                     Tasks tasks = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.NodeId == 0).First();
                     string FlowId = tasks.FlowId.ToString();
-                    //判断流程是否已结束
-                    List<Tasks> tasksList = context.Tasks.Where(t => t.TaskId.ToString() == TaskId && t.State == 0 && t.IsSend == false).ToList();
-                    if (tasksList.Count > 0)
-                    {
-                        return JsonConvert.SerializeObject(new NewErrorModel
-                        {
-                            error = new Error(1, "流程尚未结束", "") { },
-                        });
-                    }
 
-                    Evection ct = context.Evection.Where(u => u.TaskId == TaskId).FirstOrDefault();
+                    TasksState tasksState = context.TasksState.Where(t => t.TaskId == TaskId).FirstOrDefault();
+                    if (tasksState.State != "已完成")
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, string.Format("流程{0}！", tasksState.State), "") { },
+                        };
+                    }
+                    PickMask ct = context.PickMask.Where(u => u.TaskId == TaskId).FirstOrDefault();
 
                     Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-
-                   
-                    keyValuePairs.Add("外出人员", tasks.ApplyMan +  (string.IsNullOrEmpty(ct.EvectionMan)?"":","+ ct.EvectionMan));
-                    keyValuePairs.Add("外出地点", ct.Place);
-                    keyValuePairs.Add("开始时间", ct.BeginTime);
-                    keyValuePairs.Add("结束时间", ct.EndTime);
-                    keyValuePairs.Add("外出事由", ct.Content);
-                    keyValuePairs.Add("时长", ct.Duration);
-                    keyValuePairs.Add("接触人员", ct.ContactPeople);
+                    keyValuePairs.Add("申请部门", ct.Dept);
+                    keyValuePairs.Add("使用日期", ct.BeginTime + "-" + ct.EndTime);
+                    keyValuePairs.Add("领用人数", ct.PickPeopleCount.ToString());
+                    keyValuePairs.Add("领用口罩数量", ct.PickCount.ToString());
+                    keyValuePairs.Add("备注", ct.Remark);
 
                     List<NodeInfo> NodeInfoList = context.NodeInfo.Where(u => u.FlowId == FlowId && u.NodeId != 0 && u.IsSend != true && u.NodeName != "结束").ToList();
                     foreach (NodeInfo nodeInfo in NodeInfoList)
@@ -270,9 +237,15 @@ namespace DingTalk.Controllers
                     FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
                     fileSendModel.UserId = UserId;
                     var result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                    return result;
+
+                    return new NewErrorModel()
+                    {
+                        data = result,
+                        error = new Error(0, "打印盖章成功！", "") { },
+                    };
                 }
             }
+
             catch (Exception ex)
             {
                 throw ex;

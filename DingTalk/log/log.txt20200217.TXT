@@ -1,0 +1,12 @@
+2020-01-15 09:37:12,391 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-15 09:37:14,301 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-15 09:39:32,827 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-15 09:39:34,659 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-15 10:57:28,811 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-15 10:57:30,820 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-15 11:23:57,160 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-15 11:23:58,967 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-15 11:27:06,248 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-15 11:27:08,053 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-01-15 14:14:30,982 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-01-15 14:14:33,057 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
