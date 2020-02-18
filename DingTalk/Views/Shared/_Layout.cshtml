@@ -189,6 +189,11 @@
         console.log('dd error: ' + JSON.stringify(err));
     });
 
+    PostData('Role/GetRoleInfoList', {}, (res) => {
+        rolelist = res
+
+    })
+    
 
     //获取部门信息
     GetData('DingTalkServers/GetDepartmentList', (res) => {

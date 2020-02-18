@@ -12,6 +12,7 @@ var QueryObj = {} //获取url参数对象
 var Id = 0 //自增task表的id
 var UserList = [] //所有用户数据
 var menu = []//菜单列表
+let rolelist = []//角色列表
 var ReApprovalTempData = {} //重新发起审批保存的临时数据
 let slParam = ['ruleForm', 'tableForm', 'imageList', 'pdfList', 'nodeList', 'dataArr', 'purchaseList', 'fileList', 'items']//需要临时保存的字段
 var imageListOrigin = []
@@ -372,6 +373,7 @@ var mixin = {
         disablePage: false,
         preUrl: '',//预览图片
         showPre: false,
+        rolelist: rolelist,//角色列表
         rules: {
             name: [
                 { required: true, message: '名称不能为空', trigger: 'blur' },
@@ -694,9 +696,8 @@ var mixin = {
             }
             this.tableForm = {}
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
-            this.getNodeList(true, callBack)
             this.getProjects()
-            this.getNodeInfo()
+            this.getNodeInfo(this.getNodeList(true, callBack))
             loadHtml("mainPage", "partPage")
         },
         initEnd(callBack = function () { }) {
@@ -786,7 +787,7 @@ var mixin = {
                     if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',')
                     if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
                     for (let node of that.nodeList) {
-                        if ((choseList.indexOf(node.NodeId + '') >= 0)
+                        if ((that.nodeInfo.IsNeedChose && choseList.indexOf(node.NodeId + '') >= 0)
                             || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)
                             || (node.NodeName.indexOf('申请人') >= 0 && node.NodeId > 0)) {
                             if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId + '')] == '1') ||
@@ -882,7 +883,7 @@ var mixin = {
             if (that.nodeInfo.IsMandatory) mustList = that.nodeInfo.IsMandatory.split(',') 
             if (that.nodeInfo.ChoseNodeId) choseList = that.nodeInfo.ChoseNodeId.split(',') 
             for (let node of this.nodeList) {
-                if ((choseList.indexOf(node.NodeId + '') >= 0)
+                if ((that.nodeInfo.IsNeedChose && choseList.indexOf(node.NodeId + '') >= 0)
                     || (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0)) {
                     if ((node.AddPeople.length == 0 && mustList[choseList.indexOf(node.NodeId + '')] == '1') ||
                         (node.AddPeople.length == 0 && (that.addPeopleNodes && that.addPeopleNodes.indexOf(node.NodeId) >= 0))) {
@@ -1287,6 +1288,12 @@ var mixin = {
                     }
                 }
                 //设置当前角色正确节点
+                var needChoose = []
+                var chooseType = []
+                var roleName = []
+                if (this.nodeInfo.ChoseNodeId) needChoose = this.nodeInfo.ChoseNodeId.split(',')
+                if (this.nodeInfo.ChoseType) chooseType = this.nodeInfo.ChoseType.split(',')
+                if (this.nodeInfo.RoleNames) roleName = this.nodeInfo.RoleNames.split(',')
                 if (this.index && this.index != '0' && this.index != '2') {
                     for (let i = this.nodeList.length - 1; i >= 0; i--) {
                         if (this.nodeList[i].ApplyManId == DingData.userid) {
@@ -1294,6 +1301,18 @@ var mixin = {
                         }
                     }
                 }
+                //角色选人赋值数据
+                for (let node of this.nodeList) {
+                    let index = needChoose.indexOf(node.NodeId + '')
+                    if (index >= 0 && chooseType[index] == '1' && roleName[index]) {
+                        for (let r in rolelist) {
+                            if (r == roleName[index]) {
+                                node['roles'] = rolelist[r]
+                            }
+                        }
+                    }
+                }
+
                 this.getNodeInfo_done(this.nodeList)
                 ////我已审批页面重新判断NodeId
                 if (Index == 1) {
@@ -2210,23 +2229,14 @@ Vue.component('sam-approver-list', {
                             </template>
 
                            <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成' && (Index == '0' || !Index)" >
-                                <el-button class="button-new-tag" v-if="!specialRoles || specialRoles.length==0" size="small" v-on:click="addMember(node)">+ 选人</el-button>
-                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[0] && role.name == node.NodeName" v-model="member1"
-                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member1,node.NodeId)">
+                                <el-button class="button-new-tag" v-if="!node.roles || mode.roles.length==0" size="small" v-on:click="addMember(node)">+ 选人</el-button>
+                                <el-select placeholder="请选择审批人" v-for="role in node.roles" :key="role.Id" v-model="node.AddPeople"
+                                 style="margin-left:10px;" size="small">
                                     <el-option
                                       v-for="member in role.members"
                                       :key="member.emplId"
                                       :label="member.name"
-                                      :value="JSON.stringify(member)">
-                                    </el-option>
-                                </el-select>
-                                <el-select placeholder="请选择审批人" v-for="role in specialRoles" :key="role.name" v-if="role.name == sprolenames[1] && role.name == node.NodeName"" v-model="member2"
-                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(member2,node.NodeId)">
-                                    <el-option
-                                      v-for="member in role.members"
-                                      :key="member.emplId"
-                                      :label="member.name"
-                                      :value="JSON.stringify(member)">
+                                      :value="[member]">
                                     </el-option>
                                 </el-select>
                             </template>
@@ -2579,10 +2589,10 @@ Vue.component('sam-approver-edit', {
                             <el-form v-on:submit.native.prevent :model="form" :rules="rules" ref="form" label-width="120px" class="demo-ruleForm"
                                      enctype="multipart/form-data">
                                 <template>
-                                    <el-form-item label="节点名称" prop="NodeName">
+                                    <el-form-item v-if="form.NodeName != '申请人发起'" label="节点名称" prop="NodeName">
                                         <el-input v-model="form.NodeName"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="审批人配置" required="required">
+                                    <el-form-item v-if="form.NodeName != '申请人发起'" label="审批人配置" required="required">
                                         <sam-group :names.sync="form.NodePeople" :ids.sync="form.PeopleId" :single="!form.IsSend"></sam-group>
                                     </el-form-item>
                                     <el-form-item label="是否可以退回">
@@ -2685,6 +2695,7 @@ Vue.component('sam-approver-edit', {
         //选人控件添加
         addMember(node) {
             var that = this
+            let nodeId = node.NodeId
             let choosed = []
             for (let p of node.AddPeople) {
                 choosed.push(p.emplId)
@@ -2817,12 +2828,24 @@ Vue.component('sam-approver-edit', {
                 node.FlowId = this.flowid
                 param.push(node)
             }
-            console.log(param)
-            console.log(JSON.stringify(param))
             //return
-            this.postdata('FlowInfoNew/UpdateNodeInfos', param, (res) => {
-                this.$message({ type: 'success', message: `修改成功` });
+            let url = 'FlowInfoNew/UpdateNodeInfos'
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: param,
+                success: function (res) {
+                    if (typeof (res) == 'string') res = JSON.parse(res)
+                    console.log(url)
+                    console.log(param)
+                    console.log(res)
+                    this.$message({ type: 'success', message: `修改成功` });
+                },
             })
+            //postData('FlowInfoNew/UpdateNodeInfos', param, (res) => {
+            //    this.$message({ type: 'success', message: `修改成功` });
+            //})
         },
         //添加节点提交
         dowithForm() {
