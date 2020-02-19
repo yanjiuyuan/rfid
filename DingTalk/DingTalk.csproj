@@ -403,6 +403,7 @@
     <Compile Include="Controllers\ProjectClosureController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\ProjectNewController.cs" />
+    <Compile Include="Controllers\PublicAreaController.cs" />
     <Compile Include="Controllers\PurchaseManageController.cs" />
     <Compile Include="Controllers\PurchaseNewController.cs" />
     <Compile Include="Controllers\PurchaseOrderController.cs" />
@@ -451,6 +452,7 @@
     <Compile Include="Models\DingModels\ProcessingProgress.cs" />
     <Compile Include="Models\DingModels\ProjectClosure.cs" />
     <Compile Include="Models\DingModels\ProjectFunding.cs" />
+    <Compile Include="Models\DingModels\PublicArea.cs" />
     <Compile Include="Models\DingModels\Role.cs" />
     <Compile Include="Models\DingModels\SqlExe.cs" />
     <Compile Include="Models\DingModels\TableInfo.cs" />
