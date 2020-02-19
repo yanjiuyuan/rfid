@@ -23,7 +23,7 @@
             <el-input v-model="ruleForm.FlowId"></el-input>
         </el-form-item>
         <el-form-item label="流程名称" prop="FlowName">
-            <el-input v-model="ruleForm.FlowName"></el-input>
+            <sam-input :value.sync="ruleForm.FlowName" style="width:600px;" :maxlength="6"></sam-input>
         </el-form-item>
         <el-form-item label="创建人">
             <el-input v-model="ruleForm.CreateMan" :disabled="true"></el-input>
@@ -101,7 +101,10 @@
                 rules: {
                     ApproveUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                     FlowId: { required: true, message: '该项不能为空', trigger: 'blur' },
-                    FlowName: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    FlowName: [
+                        { required: true, message: '流程名称不能为空', trigger: 'blur' },
+                        { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
+                    ],
                     PhoneUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                     PcUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                 },
@@ -129,6 +132,7 @@
                 this.y -= 90
             },
             down() {
+                if (this.y >= 360) return
                 this.y = parseInt(this.y)
                 this.y += 90
             },
@@ -138,6 +142,7 @@
                 this.x -= 90
             },
             right() {
+                if (this.x >= 720) return
                 this.x = parseInt(this.x)
                 this.x += 90
             },
