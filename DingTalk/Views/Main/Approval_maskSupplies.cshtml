@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        {{FlowName}}-{{nodeInfo.NodeName}}
+    </div>
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/endForm.cshtml")
+        <el-form-item label="领用人数">
+            <el-input v-model="tableForm.PickPeopleCount" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="领用数量">
+            <el-input v-model="tableForm.PickCount" style="width:550px;" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="开始时间">
+            <el-input v-model="tableForm.BeginTime" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="结束时间">
+            <el-input v-model="tableForm.EndTime" :disabled="true"></el-input>
+        </el-form-item>
+        <!--图片展示-->
+
+        @RenderPage("~/Views/Shared/endButton.cshtml")
+        <el-form-item>
+            <el-button type="primary" v-on:click="printTable" v-if="state=='已完成'" :disabled="disablePage">打印表单</el-button>
+        </el-form-item>
+    </el-form>
+
+
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                this.aggreSubmit()
+            },
+            printTable() {
+                this.PostData('PickMask/GetPrintPDF', {
+                    UserId: DingData.userid,
+                    TaskId: TaskId,
+                    IsPublic: false
+                }, () => { this.$message({ type: 'success', message: `获取成功，请在工作通知中查收` }); })
+            },
+            getTableForm() {
+                this.GetData('PickMask/Read?taskid=' + TaskId, (res) => {
+                    this.tableForm = res[0]
+                })
+            }
+        },
+
+        created: function () {
+            this.initEnd(() => {
+                this.getTableForm()
+            })
+        }
+    })
+
+</script>
+
+
+

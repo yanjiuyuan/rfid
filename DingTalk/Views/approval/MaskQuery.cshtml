@@ -1,0 +1,116 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        口罩领用查询
+    </div>
+
+    <!--检索项目表单-->
+    <el-form v-on:submit.native.prevent :model="searchParam" class="demo-form-inline"
+             size="medium">
+        @*<el-form-item label="关键字">
+            <sam-input :value.sync="searchParam.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+        </el-form-item>*@
+        <el-form-item label="使用时间" required="required">
+            <sam-timerange :value1.sync="searchParam.beginTime" :value2.sync="searchParam.endTime"></sam-timerange>
+        </el-form-item>
+
+        <el-form-item label="部门">
+            <el-select v-model="searchParam.dept" filterable placeholder="请选择">
+                <el-option v-for="(s,i) of DeptNames" :label="s" :value="s" :key="i"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="是否导出Excel">
+            <el-radio-group v-model="searchParam.IsPrint">
+                <el-radio label="true">是</el-radio>
+                <el-radio label="false">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="searchData">搜索</el-button>
+        </el-form-item>
+    </el-form>
+    <!--表格實體-->
+    <el-table :data="tableData" stripe border>
+        <el-table-column prop="TaskId" label="流水号"></el-table-column>
+        <el-table-column prop="Dept" label="使用部门"></el-table-column>
+        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
+        <el-table-column prop="UseTime" label="用车日期"></el-table-column>
+        <el-table-column prop="Name" label="使用车辆"></el-table-column>
+        <el-table-column prop="MainContent" label="用途"></el-table-column>
+        <el-table-column prop="UseKilometres" label="总里程/KM"></el-table-column>
+        <el-table-column prop="FactKilometre" label="实际里程/KM"></el-table-column>
+        <el-table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-table-column>
+        <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
+    </el-table>
+    <!--底部翻頁-->
+    <div style="text-align:right">
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3, 5, 10]"
+                       :page-size="pageSize"
+                       layout="total, prev, pager, next, jumper"
+                       :total="totalRows">
+        </el-pagination>
+    </div>
+
+</div>
+
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                TableData: [],
+                DeptNames: DeptNames,
+                searchParam: {
+                    applyManId: DingData.userid,
+                    beginTime: '',
+                    endTime: '',
+                    dept: '',
+                    IsPrint: false
+                },
+            }
+        },
+        methods: {
+            //用车数据相关
+            searchData: function () {
+                if (!this.searchParam.beginTime) {
+                    this.$message({ type: 'error', message: `请输入时间` });
+                    return
+                }
+                let url = "/pickMask/Query"
+                let param = _cloneObj(this.searchParam)
+                this.GetData(url + _formatQueryStr(param), (res) => {
+                    this.totalRows = res.length
+                    this.data = res
+                    this.getData()
+                    this.$message({ type: 'success', message: `获取成功` });
+                })
+            },
+    
+        },
+        created: function () {
+            loadHtml("mainPage", "partPage")
+        }
+    })
+    document.onkeydown = function (e) { // 回车提交表单
+        // 兼容FF和IE和Opera
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            console.log('click control')
+            return
+        }
+    }
+
+</script>

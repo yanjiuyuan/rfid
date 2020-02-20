@@ -137,5 +137,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult Approval_maskSupplies()
+        {
+            return View();
+        }
     }
 }

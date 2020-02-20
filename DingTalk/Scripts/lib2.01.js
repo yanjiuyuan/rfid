@@ -697,7 +697,7 @@ var mixin = {
             this.tableForm = {}
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.getProjects()
-            this.getNodeInfo(this.getNodeList(true, callBack))
+            this.getNodeInfo(true, callBack)
             loadHtml("mainPage", "partPage")
         },
         initEnd(callBack = function () { }) {
@@ -766,7 +766,7 @@ var mixin = {
            
             if (DingData.dept && DingData.dept[0]) this.ruleForm.Dept = DingData.dept[0]
             this.GetDingList(TaskId)
-            this.getNodeInfo(this.getNodeList(false, callBack))
+            this.getNodeInfo(false, callBack)
             this.getFormData()
             loadHtml("mainPage", "partPage")
         },
@@ -1250,7 +1250,7 @@ var mixin = {
             }
         },
         //获取审批/抄送 相关人员列表
-        getNodeList(ifStart, callBack) {
+        getNodeList(ifStart, callBack = function () { }) {
             var url = "/FlowInfoNew/GetSign?FlowId=" + FlowId + "&TaskId=" + TaskId
             this.GetData(url, (res) => {
                 this.isBack = res[0].IsBack
@@ -1302,12 +1302,22 @@ var mixin = {
                     }
                 }
                 //角色选人赋值数据
+                let i = 1
                 for (let node of this.nodeList) {
                     let index = needChoose.indexOf(node.NodeId + '')
                     if (index >= 0 && chooseType[index] == '1' && roleName[index]) {
                         for (let r in rolelist) {
                             if (r == roleName[index]) {
-                                node['roles'] = rolelist[r]
+                                node['roles'] = []
+                                for (let user of rolelist[r]) {
+                                    node['roles'].push({
+                                        emplId: user.UserId,
+                                        name: user.UserName
+                                    })
+                                }
+                                //node['roles'] = rolelist[r]
+                                node['roleid'] = i
+                                i++
                             }
                         }
                     }
@@ -1358,12 +1368,12 @@ var mixin = {
             })
         },
         //获取審批節點數據
-        getNodeInfo(callBack = function () { }) {
+        getNodeInfo(ifStart,callBack) {
             var url = "/FlowInfoNew/getnodeinfo?FlowId=" + FlowId + "&nodeid=" + NodeId
             this.GetData(url, (res) => {
                 this.nodeInfo = res[0]
                 NodeId = res[0].NodeId
-                callBack()
+                this.getNodeList(ifStart, callBack)
             })
         },
         //审批所有流程通过，后续处理
@@ -2229,16 +2239,25 @@ Vue.component('sam-approver-list', {
                             </template>
 
                            <template v-if="nodedata.IsNeedChose && nodedata.ChoseNodeId && nodedata.ChoseNodeId.indexOf(node.NodeId) >= 0 && State == '未完成' && (Index == '0' || !Index)" >
-                                <el-button class="button-new-tag" v-if="!node.roles || mode.roles.length==0" size="small" v-on:click="addMember(node)">+ 选人</el-button>
-                                <el-select placeholder="请选择审批人" v-for="role in node.roles" :key="role.Id" v-model="node.AddPeople"
-                                 style="margin-left:10px;" size="small">
+                                <el-select placeholder="请选择审批人" v-if="node.roles && node.roles.length > 0 && node.roleid == 1" v-model="member1"
+                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(node,member1)">
                                     <el-option
-                                      v-for="member in role.members"
-                                      :key="member.emplId"
-                                      :label="member.name"
-                                      :value="[member]">
+                                      v-for="role in node.roles"
+                                      :key="role.emplId"
+                                      :label="role.name"
+                                      :value="role.emplId">
                                     </el-option>
                                 </el-select>
+                                <el-select placeholder="请选择审批人" v-else-if="node.roles && node.roles.length > 0 && node.roleid == 2" v-model="member2"
+                                 style="margin-left:10px;" size="small" v-on:change="selectSpecialMember(node,member2)">
+                                    <el-option
+                                      v-for="role in node.roles"
+                                      :key="role.emplId"
+                                      :label="role.name"
+                                      :value="role.emplId">
+                                    </el-option>
+                                </el-select>
+                                <el-button class="button-new-tag" v-else size="small" v-on:click="addMember(node)">+ 选人</el-button>
                             </template>
 
                             <div v-if="index<nodelist.length-1" style="line-height:1px;">
@@ -2314,15 +2333,23 @@ Vue.component('sam-approver-list', {
             });
         },
         //下拉框选人添加
-        selectSpecialMember(userInfo, nodeId) {
-            console.log(userInfo)
-            userInfo = JSON.parse(userInfo)
-            console.log(userInfo)
+        selectSpecialMember(node,userid) {
+            console.log(node)
+            for (let role of node.roles) {
+                if (role.emplId == userid) {
+                    node.AddPeople = [role]
+                }
+            }
+            return
+            console.log(userName)
             console.log(nodeId)
             for (let node of this.nodelist) {
                 if (node.NodeId != nodeId)
                     continue
-                node.AddPeople = [userInfo]
+                node.AddPeople = [{
+                    emplId: userid,
+                    name: userName
+                }]
             }
         },
 

@@ -1,0 +1,109 @@
+﻿@{
+    Layout = null;
+}
+
+<!--右侧实体内容-->
+<el-main id="partPage" style="position:relative;">
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        {{FlowName}}-{{nodeInfo.NodeName}}
+    </div>
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startForm.cshtml")
+    </el-form>
+    <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+             enctype="multipart/form-data">
+        @*<el-form-item label="部门" prop="Dept">
+            <el-select v-model="tableForm.Dept" style="width:300px;">
+                <el-option v-for="(s,i) of DeptNames" :label="s" :value="s" :key="i"></el-option>
+            </el-select>
+        </el-form-item>*@
+        @*<el-form-item label="同行人">
+            <sam-group :names.sync="tableForm.PeerNumber" :ids.sync="tableForm.PeerNumberId"></sam-group>
+        </el-form-item>*@
+        <el-form-item label="领用数量" prop="PickCount">
+            <el-input-number v-model="tableForm.PickCount" :precision="1" :step="1" :max="200" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="领用人数" prop="PickPeopleCount">
+            <el-input-number v-model="tableForm.PickPeopleCount" :precision="1" :step="1" :max="200" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="使用时间" prop="BeginTime" v-if="doneloadTmp">
+            <sam-timerange :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :date="true"></sam-timerange>
+        </el-form-item>
+    </el-form>
+    <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+        @RenderPage("~/Views/Shared/startButton.cshtml")
+    </el-form>
+</el-main>
+
+<script>
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                rules: {
+                    Dept: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }],
+                    BeginTime: { required: true, message: '使用时间不能为空', trigger: 'blur' },
+                },
+                dayPickerOptions: {
+                    shortcuts: [
+                        {
+                            text: '今天',
+                            onClick(picker) {
+                                picker.$emit('pick', new Date());
+                            }
+                        }, {
+                            text: '明天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() + 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        }]
+                }
+            }
+        },
+        methods: {
+            onSubmit(formName) {
+                var that = this
+                let url = '/PickMask/Save'
+                this.tableForm['Dept'] = this.ruleForm.Dept
+                this.tableForm['Remark'] = this.ruleForm.remark
+                var param = [_cloneObj(this.tableForm)]
+                let callBack = function (taskId) {
+                    console.log(taskId)
+                    param[0].TaskId = taskId
+                    console.log(JSON.stringify(param))
+                    that.PostData(url, param, function (data) {
+                        that.$alert('恭喜提交成功', '提示信息', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                goHome()
+                            }
+                        })
+                    })
+                }
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) that.approvalSubmit(callBack)
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
+            },
+        },
+
+        created: function () {
+            this.initStart((res) => {
+                //this.tableForm['Dept'] = DingData.dept[0]
+            })
+        }
+    })
+
+
+</script>
+
+
+
