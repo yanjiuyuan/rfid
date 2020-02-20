@@ -144,7 +144,7 @@ namespace DingTalk.Controllers
                         File.Delete(newPath);
                         return new NewErrorModel()
                         {
-                            error = new Error(0, result, "") { },
+                            error = new Error(0, "导出成功，已推送至工作通知！", "") { },
                         };
                     }
                     else

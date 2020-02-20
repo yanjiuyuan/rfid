@@ -782,6 +782,57 @@ namespace Common.Excel
 
         }
 
+
+        /// <summary>
+        /// 更新Excel表格
+        /// </summary>
+        /// <param name="outputFile">需更新的excel表格路径</param>
+        /// <param name="sheetname">sheet名</param>
+        /// <param name="updateData">需更新的数据</param>
+        /// <param name="coluid">需更新的列号</param>
+        /// <param name="rowid">需更新的开始行号</param>
+        public static void UpdateExcel(string outputFile, string sheetname, List<string> updateData, int coluid, int rowid)
+        {
+            FileStream readfile = new FileStream(outputFile, FileMode.Open, FileAccess.Read);
+
+            HSSFWorkbook hssfworkbook = new HSSFWorkbook(readfile);
+            ISheet sheet1 = hssfworkbook.GetSheet(sheetname);
+            for (int i = 0; i < updateData.Count; i++)
+            {
+                try
+                {
+                    if (sheet1.GetRow(i + rowid) == null)
+                    {
+                        sheet1.CreateRow(i + rowid);
+                    }
+                    if (sheet1.GetRow(i + rowid).GetCell(coluid) == null)
+                    {
+                        sheet1.GetRow(i + rowid).CreateCell(coluid);
+                    }
+
+                    sheet1.GetRow(i + rowid).GetCell(coluid).SetCellValue(updateData[i]);
+                }
+                catch (Exception ex)
+                {
+                    // wl.WriteLogs(ex.ToString());
+                    throw;
+                }
+            }
+            try
+            {
+                readfile.Close();
+                FileStream writefile = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
+                hssfworkbook.Write(writefile);
+                writefile.Close();
+            }
+            catch (Exception ex)
+            {
+                // wl.WriteLogs(ex.ToString());
+            }
+
+        }
+
+
         /// <summary>
         /// 更新Excel表格
         /// </summary>
