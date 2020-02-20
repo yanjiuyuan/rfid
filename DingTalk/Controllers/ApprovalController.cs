@@ -177,5 +177,9 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult PublicAreaManager()
+        {
+            return View();
+        }
     }
 }
