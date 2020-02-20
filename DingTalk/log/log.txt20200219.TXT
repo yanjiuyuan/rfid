@@ -1,0 +1,7 @@
+2020-02-19 18:10:18,573 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-19 18:10:20,208 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-19 18:14:46,811 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-19 18:14:48,204 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-19 18:35:01,773 [8] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/PublicArea/Save 时出现异常，信息：更新条目时出错。有关详细信息，请参阅内部异常。，详见数据库日志Id：894
+2020-02-19 18:38:44,364 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-19 18:38:45,784 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
