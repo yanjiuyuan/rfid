@@ -102,8 +102,9 @@ namespace DingTalk.Models.DingModels
 
         public DbSet<Pks> Pks { get; set; }
 
-        public DbSet<PickMask> PickMask { get; set; }
+        public DbSet<PickMask> PickMask { get; set; } 
 
+       public DbSet<PublicArea> PublicArea { get; set; }
 
     }
 }
