@@ -46,22 +46,6 @@
                     Dept: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }],
                     BeginTime: { required: true, message: '使用时间不能为空', trigger: 'blur' },
                 },
-                dayPickerOptions: {
-                    shortcuts: [
-                        {
-                            text: '今天',
-                            onClick(picker) {
-                                picker.$emit('pick', new Date());
-                            }
-                        }, {
-                            text: '明天',
-                            onClick(picker) {
-                                const date = new Date();
-                                date.setTime(date.getTime() + 3600 * 1000 * 24);
-                                picker.$emit('pick', date);
-                            }
-                        }]
-                }
             }
         },
         methods: {

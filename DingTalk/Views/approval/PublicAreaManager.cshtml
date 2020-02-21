@@ -1,7 +1,263 @@
-﻿
-@{
-    ViewBag.Title = "PublicAreaManager";
+﻿@{
+    Layout = null;
 }
 
-<h2>PublicAreaManager</h2>
+<!--右侧实体内容-->
+<div id="partPage">
+    <!--标题-->
+    <div class="head-fixed" onclick="loadPage('/Main/approval')">
+        <i class="el-icon-arrow-left"></i>
+        公共区域消毒管理
+    </div>
 
+    <!--搜索表单-->
+    <el-form v-on:submit.native.prevent :model="searchParam" class="demo-form-inline"
+             size="medium">
+        @*<el-form-item label="关键字">
+                <sam-input :value.sync="searchParam.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
+            </el-form-item>*@
+        <el-form-item label="使用时间" required="required">
+            <sam-timerange :value1.sync="searchParam.startTime" :value2.sync="searchParam.endTime"></sam-timerange>
+        </el-form-item>
+        <el-form-item label="是否导出Excel">
+            <el-radio-group v-model="searchParam.IsPrint">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="searchData">搜索</el-button>
+        </el-form-item>
+    </el-form>
+    <!--表格實體-->
+    <el-table :data="data" stripe border>
+        <el-table-column prop="Date" label="日期"></el-table-column>
+        <template v-if="Power.power == 0 || Power.power == 6">
+            <el-table-column prop="ControlPeople0" label="十楼监督人"></el-table-column>
+            <el-table-column prop="ClearPeople0" label="十楼保洁员"></el-table-column>
+            <el-table-column prop="Time0" label="完成时间"></el-table-column>
+            <el-table-column prop="State0" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="Power.power == 1 || Power.power == 6">
+            <el-table-column prop="ControlPeople1" label="十一楼监督人"></el-table-column>
+            <el-table-column prop="ClearPeople1" label="十一楼保洁员"></el-table-column>
+            <el-table-column prop="Time1" label="完成时间"></el-table-column>
+            <el-table-column prop="State1" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="Power.power == 2 || Power.power == 6">
+            <el-table-column prop="ControlPeople2" label="十二楼监督人"></el-table-column>
+            <el-table-column prop="ClearPeople2" label="十二楼保洁员"></el-table-column>
+            <el-table-column prop="Time2" label="完成时间"></el-table-column>
+            <el-table-column prop="State2" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="Power.power == 3 || Power.power == 6">
+            <el-table-column prop="ControlPeople3" label="十三楼监督人"></el-table-column>
+            <el-table-column prop="ClearPeople3" label="十三楼保洁员"></el-table-column>
+            <el-table-column prop="Time3" label="完成时间"></el-table-column>
+            <el-table-column prop="State3" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="Power.power == 4 || Power.power == 6">
+            <el-table-column prop="ControlPeople4" label="基地办公楼监督人"></el-table-column>
+            <el-table-column prop="ClearPeople4" label="基地办公楼保洁员"></el-table-column>
+            <el-table-column prop="Time4" label="完成时间"></el-table-column>
+            <el-table-column prop="State4" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="Power.power == 5 || Power.power == 6">
+            <el-table-column prop="ControlPeople5" label="基地宿舍监督人"></el-table-column>
+            <el-table-column prop="ClearPeople5" label="基地宿舍保洁员"></el-table-column>
+            <el-table-column prop="Time5" label="完成时间"></el-table-column>
+            <el-table-column prop="State5" label="是否合格"></el-table-column>
+        </template>
+    </el-table>
+
+    <!--添加数据--> 
+    <hr />
+    <template v-if="Power && Power.name!='消毒管理员'">
+        <h4>消毒记录填写（{{Power.name}}）</h4>
+        <el-form v-on:submit.native.prevent :model="tableForm" :rules="rules" ref="tableForm" label-width="130px" class="demo-ruleForm"
+                 enctype="multipart/form-data">
+            <el-form-item label="监督人">
+                <el-input v-model="tableForm.ControlPeople" style="width:200px;" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="保洁员" prop="ClearPeople">
+                <sam-input :value.sync="tableForm.ClearPeople" style="width:200px;" :required="true"></sam-input>
+            </el-form-item>
+            <el-form-item label="完成时间" prop="time">
+                <el-time-select v-model="tableForm.time" :picker-options="{start: '08:30',step: '00:15', end: '18:30'}" placeholder="选择时间">
+                </el-time-select>
+            </el-form-item>
+            <el-form-item label="是否合格">
+                <el-radio-group v-model="tableForm.State">
+                    <el-radio :label="true">是</el-radio>
+                    <el-radio :label="false">否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="summit">提交</el-button>
+            </el-form-item>
+        </el-form>
+    </template>
+
+</div>
+
+
+<script>
+    let date = _getDate('-')
+    let roleNameList = [
+        {
+            name: '十楼保洁监督员',
+            power: 0
+        },
+        {
+            name: '十一楼保洁监督员',
+            power: 1
+        },
+        {
+            name: '十二楼保洁监督员',
+            power: 2
+        },
+        {
+            name: '十三楼保洁监督员',
+            power: 3
+        },
+        {
+            name: '基地办公室保洁监督员',
+            power: 4
+        },
+        {
+            name: '基地宿舍保洁监督员',
+            power: 5
+        },
+        {
+            name: '消毒管理员',
+            power: 6
+        }]
+    var demo = new Vue({
+        el: "#partPage",
+        mixins: [mixin],
+        data: function () {
+            return {
+                data: [],
+                TableData: [],
+                Power: null,//权限(0,1,2,3,4,5,6)分别代表十楼，十一楼，十二楼，十三楼，基地办公楼，基地宿舍，消毒管理员
+                DeptNames: DeptNames,
+                searchParam: {
+                    applyManId: DingData.userid,
+                    startTime: '',
+                    endTime: '',
+                    IsPrint: false
+                },
+                rules: {
+                    Dept: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }],
+                    BeginTime: { required: true, message: '使用时间不能为空', trigger: 'blur' },
+                    ClearPeople: [{ required: true, message: '保洁员不能为空', trigger: 'blur' }],
+                    time: { required: true, message: '完成时间不能为空', trigger: 'blur' },
+                },
+                tableForm: {
+                    ControlPeopleId: DingData.userid,
+                    ControlPeople: DingData.nickName,
+                    State:true
+                }
+            }
+        },
+        methods: {
+            //提交数据
+            summit() {
+                var that = this
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        let param = _cloneObj(that.tableForm)
+                        param['Date'] = date + ' ' + param.time
+                        param['Power'] = that.Power.power 
+                        console.log(param)
+                        //return
+                        that.PostData('PublicArea/Save', param, (res) => {
+                            this.$message({ type: 'success', message: `保存成功` })
+                        })
+                    } 
+                    else {
+                        that.$alert('表单信息不全或有误', '提示信息', {
+                            confirmButtonText: '确定'
+                        })
+                    }
+                })
+            },
+            //设置角色数据
+            setRuleData() {
+                console.log('')
+                for (let r in rolelist) {
+                    for (let n of roleNameList) {
+                        if (r == n.name) {
+                            if (rolelist[r][0].UserId == DingData.userid) {
+                                this.Power = n
+                                this.getData()
+                                return
+                            }
+                        }
+                    }
+                }
+            },
+            //搜索、获取数据
+            searchData: function () {
+                if (!this.searchParam.startTime) {
+                    this.$message({ type: 'error', message: `请输入时间` });
+                    return
+                }
+                let url = "/PublicArea/Query"
+                this.GetData(url + _formatQueryStr(this.searchParam), (res) => {
+                    this.data = []
+                    for (let r of res) {
+                        let obj = {}
+                        obj.Date = r.Date.split(' ')[0]
+                        for (let a of r.publicAreas) {
+                            obj['ControlPeople' + a.Power] = a.ControlPeople
+                            obj['ClearPeople' + a.Power] = a.ClearPeople
+                            obj['Time' + a.Power] = a.Date.split('T')[1]
+                            obj['State' + a.Power] = a.State ? '合格' : '不合格'
+                        }
+                        this.data.push(obj)
+
+                    }
+                    this.$message({ type: 'success', message: `获取成功` });
+                })
+            },
+            //获取数据
+            getData() {
+                this.GetData('PublicArea/Read', (res) => {
+                    this.data = []
+                    for (let r of res) {
+                        let obj = {}
+                        obj.Date = r.Date.split(' ')[0]
+                        for (let a of r.publicAreas) {
+                            obj['ControlPeople' + a.Power] = a.ControlPeople
+                            obj['ClearPeople' + a.Power] = a.ClearPeople
+                            obj['Time' + a.Power] = a.Date.split('T')[1]
+                            obj['State' + a.Power] = a.State?'合格':'不合格'
+                        }
+                        this.data.push(obj)
+
+                    }
+                })
+            }
+        },
+        created: function () {
+            this.setRuleData()
+            loadHtml("mainPage", "partPage")
+        }
+    })
+
+
+
+
+
+    document.onkeydown = function (e) { // 回车提交表单
+        // 兼容FF和IE和Opera
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            console.log('click control')
+            return
+        }
+    }
+
+</script>
