@@ -1,12 +1,15 @@
 ﻿using Common.Excel;
 using DingTalk.Models;
 using DingTalk.Models.DingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -109,17 +112,18 @@ namespace DingTalk.Controllers
         /// </summary>
         /// <param name="startTime">开始时间</param>
         /// <param name="endTime">结束时间</param>
+        /// <param name="applyManId">用户Id</param>
         /// <param name="IsPrint">是否导出数据</param>
         /// <returns></returns>
         [Route("Query")]
         [HttpGet]
-        public NewErrorModel Query(DateTime startTime, DateTime endTime, bool IsPrint = false)
+        public  async Task<NewErrorModel> Query(DateTime startTime, DateTime endTime,string applyManId, bool IsPrint = false)
         {
             try
             {
                 DDContext dDContext = new DDContext();
                 List<PublicArea> publicAreas = new List<PublicArea>();
-                publicAreas = dDContext.PublicArea.Where(p => p.Date >= startTime && p.Date <= endTime).OrderBy(p => p.Date).ToList();
+                publicAreas = dDContext.PublicArea.Where(p => p.Date >= startTime && p.Date <= endTime).OrderBy(p => p.Date).ThenBy(p=>p.Power).ToList();
 
                 //数据格式转换
                 List<PublicAreaModel> publicAreaModels = new List<PublicAreaModel>();
@@ -151,34 +155,97 @@ namespace DingTalk.Controllers
                 {
                     if (publicAreaModels.Count > 0)
                     {
+                        DataTable dataTable = new DataTable();
+                        dataTable.Columns.Add("Date",typeof(string));
+                        dataTable.Columns.Add("Ten", typeof(string));
+                        dataTable.Columns.Add("Tens", typeof(string));
+                        dataTable.Columns.Add("Tenss", typeof(string));
+                        dataTable.Columns.Add("Ele", typeof(string));
+                        dataTable.Columns.Add("Eles", typeof(string));
+                        dataTable.Columns.Add("Eless", typeof(string));
+                        dataTable.Columns.Add("Two", typeof(string));
+                        dataTable.Columns.Add("Twos", typeof(string));
+                        dataTable.Columns.Add("Twoss", typeof(string));
+                        dataTable.Columns.Add("Th", typeof(string));
+                        dataTable.Columns.Add("Ths", typeof(string));
+                        dataTable.Columns.Add("Thss", typeof(string));
+                        dataTable.Columns.Add("Jdbg", typeof(string));
+                        dataTable.Columns.Add("Jdbgs", typeof(string));
+                        dataTable.Columns.Add("Jdbgss", typeof(string));
+                        dataTable.Columns.Add("Jdss", typeof(string));
+                        dataTable.Columns.Add("Jdsss", typeof(string));
+                        dataTable.Columns.Add("Jdssss", typeof(string));
+
+                        foreach (var publicAreaModel in publicAreaModels)
+                        {
+                            DataRow dataRow = dataTable.NewRow();
+                            foreach (var item in publicAreaModel.publicAreas)
+                            {
+                                dataRow["Date"] = item.Date.ToString("yyyy-HH-dd");
+                                switch (item.Power)
+                                {
+                                    case 0:
+                                        dataRow["Ten"] = item.ClearPeople;
+                                        dataRow["Tens"] = item.ControlPeople;
+                                        dataRow["Tenss"] = item.State==true?"完成":"未完成";
+                                        break;
+                                    case 1:
+                                        dataRow["Ele"] = item.ClearPeople;
+                                        dataRow["Eles"] = item.ControlPeople;
+                                        dataRow["Eless"] = item.State == true ? "完成" : "未完成";
+                                        break;
+                                    case 2:
+                                        dataRow["Two"] = item.ClearPeople;
+                                        dataRow["Twos"] = item.ControlPeople;
+                                        dataRow["Twoss"] = item.State == true ? "完成" : "未完成";
+                                        break;
+                                    case 3:
+                                        dataRow["Th"] = item.ClearPeople;
+                                        dataRow["Ths"] = item.ControlPeople;
+                                        dataRow["Thss"] = item.State == true ? "完成" : "未完成";
+                                        break;
+                                    case 4:
+                                        dataRow["Jdbg"] = item.ClearPeople;
+                                        dataRow["Jdbgs"] = item.ControlPeople;
+                                        dataRow["Jdbgss"] = item.State == true ? "完成" : "未完成";
+                                        break;
+                                    case 5:
+                                        dataRow["Jdss"] = item.ClearPeople;
+                                        dataRow["Jdsss"] = item.ControlPeople;
+                                        dataRow["Jdssss"] = item.State == true ? "完成" : "未完成";
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            dataTable.Rows.Add(dataRow);
+                        }
                         string path = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet/公共区域消毒导出模板.xlsx");
                         string time = DateTime.Now.ToString("yyyyMMddHHmmss");
                         string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\公共区域消毒单" + time + ".xlsx";
                         File.Copy(path, newPath);
-
-                        //转换时间
-                        List<string> timeList = new List<string>();
-                        foreach (var item in publicAreas)
+                        if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dataTable, 0, 1))
                         {
-                            timeList.Add(item.Date.ToString("yyyy-HH-dd"));
+                            DingTalkServersController dingTalkServersController = new DingTalkServersController();
+                            //上盯盘
+                            var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/公共区域消毒单" + time + ".xlsx");
+                            //推送用户
+                            FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
+                            fileSendModel.UserId = applyManId;
+                            var result = await dingTalkServersController.SendFileMessage(fileSendModel);
+                            File.Delete(newPath);
+                            return new NewErrorModel()
+                            {
+                                error = new Error(0, "导出成功，已推送至工作通知！", "") { },
+                            };
                         }
-
-                        ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", timeList, 0, 1);
-
-                        return null;
-
-                            //DingTalkServersController dingTalkServersController = new DingTalkServersController();
-                            ////上盯盘
-                            //var resultUploadMedia = await dingTalkServersController.UploadMedia("~/UploadFile/Excel/Templet/口罩领用单" + time + ".xlsx");
-                            ////推送用户
-                            //FileSendModel fileSendModel = JsonConvert.DeserializeObject<FileSendModel>(resultUploadMedia);
-                            //fileSendModel.UserId = applyManId;
-                            //var result = await dingTalkServersController.SendFileMessage(fileSendModel);
-                            //File.Delete(newPath);
-                            //return new NewErrorModel()
-                            //{
-                            //    error = new Error(0, result, "") { },
-                            //};
+                        else
+                        {
+                            return new NewErrorModel()
+                            {
+                                error = new Error(1, "文件有误", "") { },
+                            };
+                        }
                     }
                     else
                     {

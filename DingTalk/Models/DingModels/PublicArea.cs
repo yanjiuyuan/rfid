@@ -33,7 +33,6 @@
         /// </summary>
         public string ControlPeople { get; set; }
 
-
         /// <summary>
         /// 监督人Id
         /// </summary>
