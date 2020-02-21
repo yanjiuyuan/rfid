@@ -27,8 +27,8 @@
         </el-form-item>
         <el-form-item label="是否导出Excel">
             <el-radio-group v-model="searchParam.IsPrint">
-                <el-radio label="true">是</el-radio>
-                <el-radio label="false">否</el-radio>
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item>
@@ -38,15 +38,10 @@
     <!--表格實體-->
     <el-table :data="tableData" stripe border>
         <el-table-column prop="TaskId" label="流水号"></el-table-column>
-        <el-table-column prop="Dept" label="使用部门"></el-table-column>
-        <el-table-column prop="ApplyMan" label="申请人"></el-table-column>
-        <el-table-column prop="UseTime" label="用车日期"></el-table-column>
-        <el-table-column prop="Name" label="使用车辆"></el-table-column>
-        <el-table-column prop="MainContent" label="用途"></el-table-column>
-        <el-table-column prop="UseKilometres" label="总里程/KM"></el-table-column>
-        <el-table-column prop="FactKilometre" label="实际里程/KM"></el-table-column>
-        <el-table-column prop="UnitPricePerKilometre" label="每公里单价/元"></el-table-column>
-        <el-table-column prop="AllPrice" label="费用估值/元"></el-table-column>
+        <el-table-column prop="Dept" label="申请部门"></el-table-column>
+        <el-table-column prop="PickCount" label="领用数量"></el-table-column>
+        <el-table-column prop="PickPeopleCount" label="领用人数"></el-table-column>
+        <el-table-column prop="Remark" label="备注"></el-table-column>
     </el-table>
     <!--底部翻頁-->
     <div style="text-align:right">
@@ -90,6 +85,10 @@
                 }
                 let url = "/pickMask/Query"
                 let param = _cloneObj(this.searchParam)
+                for (let p in param) {
+                    console.log(p)
+                    if (param[p] == '') delete param[p]
+                }
                 this.GetData(url + _formatQueryStr(param), (res) => {
                     this.totalRows = res.length
                     this.data = res

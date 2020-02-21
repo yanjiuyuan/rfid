@@ -958,6 +958,7 @@
     <Content Include="Views\approval\MaskSupplies.cshtml" />
     <Content Include="Views\Main\Approval_maskSupplies.cshtml" />
     <Content Include="Views\approval\MaskQuery.cshtml" />
+    <Content Include="Views\approval\PublicAreaManager.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
