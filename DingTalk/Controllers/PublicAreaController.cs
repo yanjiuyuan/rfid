@@ -224,7 +224,6 @@ namespace DingTalk.Controllers
                         string time = DateTime.Now.ToString("yyyyMMddHHmmss");
                         string newPath = HttpContext.Current.Server.MapPath("~/UploadFile/Excel/Templet") + "\\公共区域消毒单" + time + ".xlsx";
                         File.Copy(path, newPath);
-
                         if (ExcelHelperByNPOI.UpdateExcel(newPath, "Sheet1", dataTable, 0, 1))
                         {
                             DingTalkServersController dingTalkServersController = new DingTalkServersController();
