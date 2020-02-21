@@ -1,0 +1,11 @@
+2020-02-20 17:22:39,011 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-20 17:22:40,614 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-20 17:42:16,485 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-20 17:42:17,952 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-20 17:45:30,571 [7] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/PublicArea/Query?startTime=2020-02-17&endTime=2020-02-20&IsPrint=true 时出现异常，信息：The supplied data appears to be in the Office 2007+ XML. You are calling the part of POI that deals with OLE2 Office Documents. You need to call a different part of POI to process this data (eg XSSF instead of HSSF)，详见数据库日志Id：902
+2020-02-20 17:46:15,883 [40] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/PublicArea/Query?startTime=2020-02-17&endTime=2020-02-20&IsPrint=true 时出现异常，信息：The supplied data appears to be in the Office 2007+ XML. You are calling the part of POI that deals with OLE2 Office Documents. You need to call a different part of POI to process this data (eg XSSF instead of HSSF)，详见数据库日志Id：903
+2020-02-20 17:55:05,829 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-20 17:55:06,494 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-20 17:57:46,203 [6] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/PublicArea/Query?startTime=2020-02-15&endTime=2020-02-20&IsPrint=true 时出现异常，信息：未能找到文件“D:\Project\DingTalk\DingTalk\UploadFile\Excel\Templet\公共区域消毒导出模板.xlsx”。，详见数据库日志Id：904
+2020-02-20 18:00:03,954 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-20 18:00:05,480 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
