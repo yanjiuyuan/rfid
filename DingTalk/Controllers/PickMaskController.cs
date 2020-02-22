@@ -110,7 +110,7 @@ namespace DingTalk.Controllers
                     }
                 }
 
-                pickListNew = pickListNew.Where(p => DateTime.Parse(p.BeginTime) > beginTime && DateTime.Parse(p.EndTime) < endTime).ToList();
+                pickListNew = pickListNew.Where(p => DateTime.Parse(p.BeginTime) >= beginTime && DateTime.Parse(p.EndTime) <= endTime).ToList();
                 if (dept != "")
                 {
                     pickListNew = pickListNew.Where(p => p.Dept == dept).ToList();
