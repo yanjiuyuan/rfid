@@ -216,13 +216,13 @@ function _getTime() {
     return year + split + month + split + day + ' ' + hour + ':' + minute + ':' + second
 }
 
-function _getDate(split) {
+function _getDate(split,noZero) {
     var d = new Date()
     var year = d.getFullYear()
     var month = d.getMonth() + 1
     var day = d.getDate()
-    if (month < 10) month = '0' + month
-    if (day < 10) day = '0' + day
+    if (month < 10 && !noZero) month = '0' + month
+    if (day < 10 && !noZero) day = '0' + day
     if (split)
         return year + split + month + split + day
     else

@@ -12,19 +12,13 @@
 
     <!--搜索表单-->
     <el-form v-on:submit.native.prevent :model="searchParam" class="demo-form-inline"
-             size="medium">
+             size="medium" v-if="Power && Power.power == 6">
         @*<el-form-item label="关键字">
                 <sam-input :value.sync="searchParam.key" style="width:200px;" placeholder="请输入搜索关键字"></sam-input>
             </el-form-item>*@
         <el-form-item label="使用时间" required="required">
-            <sam-timerange :value1.sync="searchParam.startTime" :value2.sync="searchParam.endTime"></sam-timerange>
+            <sam-timerange :value1.sync="searchParam.startTime" :value2.sync="searchParam.endTime" :date="true"></sam-timerange>
         </el-form-item>
-        @*<el-form-item label="是否导出Excel">
-            <el-radio-group v-model="searchParam.IsPrint">
-                <el-radio :label="true">是</el-radio>
-                <el-radio :label="false">否</el-radio>
-            </el-radio-group>
-        </el-form-item>*@
         <el-form-item>
             <el-button type="primary" v-on:click="searchData(false)">搜索</el-button>
             <el-button type="primary" v-on:click="searchData(true)">打印表单</el-button>
@@ -33,40 +27,40 @@
     <!--表格實體-->
     <el-table :data="data" stripe border>
         <el-table-column prop="Date" label="日期"></el-table-column>
-        <template v-if="Power.power == 0 || Power.power == 6">
+        <template v-if="!Power || (Power && Power.power == 0 || Power.power == 6)">
             <el-table-column prop="ControlPeople0" label="十楼监督人"></el-table-column>
             <el-table-column prop="ClearPeople0" label="十楼保洁员"></el-table-column>
-            <el-table-column prop="Time0" label="完成时间"></el-table-column>
+            @*<el-table-column prop="Time0" label="完成时间"></el-table-column>*@
             <el-table-column prop="State0" label="是否合格"></el-table-column>
         </template>
-        <template v-if="Power.power == 1 || Power.power == 6">
+        <template v-if="!Power || (Power && Power.power == 1 || Power.power == 6)">
             <el-table-column prop="ControlPeople1" label="十一楼监督人"></el-table-column>
             <el-table-column prop="ClearPeople1" label="十一楼保洁员"></el-table-column>
-            <el-table-column prop="Time1" label="完成时间"></el-table-column>
+            @*<el-table-column prop="Time1" label="完成时间"></el-table-column>*@
             <el-table-column prop="State1" label="是否合格"></el-table-column>
         </template>
-        <template v-if="Power.power == 2 || Power.power == 6">
+        <template v-if="!Power || (Power && Power.power == 2 || Power.power == 6)">
             <el-table-column prop="ControlPeople2" label="十二楼监督人"></el-table-column>
             <el-table-column prop="ClearPeople2" label="十二楼保洁员"></el-table-column>
-            <el-table-column prop="Time2" label="完成时间"></el-table-column>
+            @*<el-table-column prop="Time2" label="完成时间"></el-table-column>*@
             <el-table-column prop="State2" label="是否合格"></el-table-column>
         </template>
-        <template v-if="Power.power == 3 || Power.power == 6">
+        <template v-if="!Power || (Power && Power.power == 3 || Power.power == 6)">
             <el-table-column prop="ControlPeople3" label="十三楼监督人"></el-table-column>
             <el-table-column prop="ClearPeople3" label="十三楼保洁员"></el-table-column>
-            <el-table-column prop="Time3" label="完成时间"></el-table-column>
+            @*<el-table-column prop="Time3" label="完成时间"></el-table-column>*@
             <el-table-column prop="State3" label="是否合格"></el-table-column>
         </template>
-        <template v-if="Power.power == 4 || Power.power == 6">
+        <template v-if="!Power || (Power && Power.power == 4 || Power.power == 6)">
             <el-table-column prop="ControlPeople4" label="基地办公楼监督人"></el-table-column>
             <el-table-column prop="ClearPeople4" label="基地办公楼保洁员"></el-table-column>
-            <el-table-column prop="Time4" label="完成时间"></el-table-column>
+            @*<el-table-column prop="Time4" label="完成时间"></el-table-column>*@
             <el-table-column prop="State4" label="是否合格"></el-table-column>
         </template>
-        <template v-if="Power.power == 5 || Power.power == 6">
+        <template v-if="!Power || (Power && Power.power == 5 || Power.power == 6)">
             <el-table-column prop="ControlPeople5" label="基地宿舍监督人"></el-table-column>
             <el-table-column prop="ClearPeople5" label="基地宿舍保洁员"></el-table-column>
-            <el-table-column prop="Time5" label="完成时间"></el-table-column>
+            @*<el-table-column prop="Time5" label="完成时间"></el-table-column>*@
             <el-table-column prop="State5" label="是否合格"></el-table-column>
         </template>
     </el-table>
@@ -83,10 +77,10 @@
             <el-form-item label="保洁员" prop="ClearPeople">
                 <sam-input :value.sync="tableForm.ClearPeople" style="width:200px;" :required="true"></sam-input>
             </el-form-item>
-            <el-form-item label="完成时间" prop="time">
+            @*<el-form-item label="完成时间" prop="time">
                 <el-time-select v-model="tableForm.time" :picker-options="{start: '08:30',step: '00:15', end: '18:30'}" placeholder="选择时间">
                 </el-time-select>
-            </el-form-item>
+            </el-form-item>*@
             <el-form-item label="是否合格">
                 <el-radio-group v-model="tableForm.State">
                     <el-radio :label="true">是</el-radio>
@@ -168,11 +162,18 @@
                 this.$refs['tableForm'].validate((valid) => {
                     if (valid) {
                         let param = _cloneObj(that.tableForm)
-                        param['Date'] = date + ' ' + param.time
+                        param['Date'] = date //+ ' ' + param.time
                         param['Power'] = that.Power.power 
                         console.log(param)
-                        //return
+                        for (let d of this.data) {
+                            if (d.Date == _getDate('/',true) && d.PowerList.indexOf(param.Power)) {
+                                this.$message({ type: 'error', message: `当天已提交记录` });
+                                return
+                            }
+                        }
+                        return
                         that.PostData('PublicArea/Save', param, (res) => {
+                            this.getData()
                             this.$message({ type: 'success', message: `保存成功` })
                         })
                     } 
@@ -197,6 +198,7 @@
                         }
                     }
                 }
+                this.getData()
             },
             //搜索、获取数据
             searchData: function (isPrint) {
@@ -228,21 +230,26 @@
                 })
             },
             //获取数据
+            dowithData() {
+
+            },
             getData() {
                 this.GetData('PublicArea/Read', (res) => {
                     this.data = []
                     for (let r of res) {
-                        let obj = {}
+                        let obj = { PowerList: []}
                         obj.Date = r.Date.split(' ')[0]
                         for (let a of r.publicAreas) {
                             obj['ControlPeople' + a.Power] = a.ControlPeople
                             obj['ClearPeople' + a.Power] = a.ClearPeople
                             obj['Time' + a.Power] = a.Date.split('T')[1]
-                            obj['State' + a.Power] = a.State?'合格':'不合格'
+                            obj['State' + a.Power] = a.State ? '合格' : '不合格'
+                            obj['PowerList'].push(a.Power)
                         }
                         this.data.push(obj)
-
+                        
                     }
+
                 })
             }
         },
