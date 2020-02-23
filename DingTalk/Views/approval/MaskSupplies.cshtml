@@ -23,12 +23,16 @@
         </el-form-item>*@
         <el-form-item label="领用数量" prop="PickCount">
             <el-input-number v-model="tableForm.PickCount" :precision="1" :step="1" :max="200" :min="1"></el-input-number>
+            
         </el-form-item>
         <el-form-item label="领用人数" prop="PickPeopleCount">
             <el-input-number v-model="tableForm.PickPeopleCount" :precision="1" :step="1" :max="200" :min="1"></el-input-number>
         </el-form-item>
         <el-form-item label="使用时间" prop="BeginTime" v-if="doneloadTmp">
-            <sam-timerange :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :date="true"></sam-timerange>
+            <sam-timerange :onchange="selectTime" :value1.sync="tableForm.BeginTime" :value2.sync="tableForm.EndTime" :date="true"></sam-timerange>
+            <h3>1.口罩每人每日限领两个，各部门指派1人按出勤实际人数领用，不得多领。</h3>
+            <h3>2.严格按照《口罩使用说明》正确使用口罩。</h3>
+            <h3>3.因口罩资源短缺，希望员工尽量考虑自行准备医用口罩。</h3>
         </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -42,6 +46,7 @@
         mixins: [mixin],
         data: function () {
             return {
+                duringTime:1,
                 rules: {
                     Dept: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }],
                     BeginTime: { required: true, message: '使用时间不能为空', trigger: 'blur' },
@@ -69,13 +74,27 @@
                     })
                 }
                 this.$refs['tableForm'].validate((valid) => {
-                    if (valid) that.approvalSubmit(callBack)
+                    if (valid) {
+                        console.log(this.tableForm.BeginTime)
+                        console.log(this.tableForm.EndTime)
+                        console.log(this.duringTime)
+                        if (this.tableForm.PickCount > this.duringTime * 2 * this.tableForm.PickPeopleCount) {
+                            this.$message({ type: 'error', message: `超过可领用数量，工作日每人每天限两个` })
+                            return
+                        }
+                        that.approvalSubmit(callBack)
+                    } 
                     else {
                         that.$alert('表单信息不全或有误', '提示信息', {
                             confirmButtonText: '确定'
                         })
                     }
                 })
+            },
+            //选时间操作
+            selectTime(value) {
+                if (!value[0]) return
+                this.duringTime = _computeDurTime(value[0], value[1], 'd2') 
             },
         },
 

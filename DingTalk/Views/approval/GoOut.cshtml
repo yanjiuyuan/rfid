@@ -30,6 +30,9 @@
         <el-form-item label="时长/小时" prop="Duration">
             <el-input v-model="tableForm.Duration" style="width:200px;"></el-input>
         </el-form-item>
+        <el-form-item label="接触人员">
+            <sam-input :value.sync="tableForm.ContactPeople" :maxlength="120"></sam-input>
+        </el-form-item>
     </el-form>
     <el-form v-on:submit.native.prevent :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
         <el-form-item label="上传相关文件">

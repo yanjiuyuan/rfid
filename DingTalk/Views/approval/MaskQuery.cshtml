@@ -20,19 +20,20 @@
             <sam-timerange :value1.sync="searchParam.beginTime" :value2.sync="searchParam.endTime"></sam-timerange>
         </el-form-item>
 
-        <el-form-item label="部门">
+        <el-form-item label="申请部门">
             <el-select v-model="searchParam.dept" filterable placeholder="请选择">
                 <el-option v-for="(s,i) of DeptNames" :label="s" :value="s" :key="i"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="是否导出Excel">
+        @*<el-form-item label="是否导出Excel">
             <el-radio-group v-model="searchParam.IsPrint">
                 <el-radio :label="true">是</el-radio>
                 <el-radio :label="false">否</el-radio>
             </el-radio-group>
-        </el-form-item>
+        </el-form-item>*@
         <el-form-item>
-            <el-button type="primary" v-on:click="searchData">搜索</el-button>
+            <el-button type="primary" v-on:click="searchData(false)">搜索</el-button>
+            <el-button type="primary" v-on:click="searchData(true)">打印表单</el-button>
         </el-form-item>
     </el-form>
     <!--表格實體-->
@@ -41,6 +42,8 @@
         <el-table-column prop="Dept" label="申请部门"></el-table-column>
         <el-table-column prop="PickCount" label="领用数量"></el-table-column>
         <el-table-column prop="PickPeopleCount" label="领用人数"></el-table-column>
+        <el-table-column prop="BeginTime" label="开始时间"></el-table-column>
+        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
         <el-table-column prop="Remark" label="备注"></el-table-column>
     </el-table>
     <!--底部翻頁-->
@@ -78,22 +81,24 @@
         },
         methods: {
             //用车数据相关
-            searchData: function () {
+            searchData: function (isPrint) {
                 if (!this.searchParam.beginTime) {
                     this.$message({ type: 'error', message: `请输入时间` });
                     return
                 }
                 let url = "/pickMask/Query"
                 let param = _cloneObj(this.searchParam)
+                isPrint ? param.IsPrint = true : param.IsPrint = false
                 for (let p in param) {
                     console.log(p)
                     if (param[p] == '') delete param[p]
                 }
                 this.GetData(url + _formatQueryStr(param), (res) => {
+                    this.$message({ type: 'success', message: `获取成功` });
+                    if(!res) return
                     this.totalRows = res.length
                     this.data = res
                     this.getData()
-                    this.$message({ type: 'success', message: `获取成功` });
                 })
             },
     

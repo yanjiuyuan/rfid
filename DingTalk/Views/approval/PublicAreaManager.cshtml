@@ -19,14 +19,15 @@
         <el-form-item label="使用时间" required="required">
             <sam-timerange :value1.sync="searchParam.startTime" :value2.sync="searchParam.endTime"></sam-timerange>
         </el-form-item>
-        <el-form-item label="是否导出Excel">
+        @*<el-form-item label="是否导出Excel">
             <el-radio-group v-model="searchParam.IsPrint">
                 <el-radio :label="true">是</el-radio>
                 <el-radio :label="false">否</el-radio>
             </el-radio-group>
-        </el-form-item>
+        </el-form-item>*@
         <el-form-item>
-            <el-button type="primary" v-on:click="searchData">搜索</el-button>
+            <el-button type="primary" v-on:click="searchData(false)">搜索</el-button>
+            <el-button type="primary" v-on:click="searchData(true)">打印表单</el-button>
         </el-form-item>
     </el-form>
     <!--表格實體-->
@@ -198,13 +199,18 @@
                 }
             },
             //搜索、获取数据
-            searchData: function () {
+            searchData: function (isPrint) {
                 if (!this.searchParam.startTime) {
                     this.$message({ type: 'error', message: `请输入时间` });
                     return
                 }
                 let url = "/PublicArea/Query"
+                isPrint ? this.searchParam.IsPrint = true : this.searchParam.IsPrint = false
                 this.GetData(url + _formatQueryStr(this.searchParam), (res) => {
+                    if (!res) {
+                        this.$message({ type: 'success', message: `获取成功,已推送到钉钉` });
+                        return
+                    }
                     this.data = []
                     for (let r of res) {
                         let obj = {}

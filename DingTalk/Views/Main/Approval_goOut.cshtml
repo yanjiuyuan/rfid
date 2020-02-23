@@ -35,6 +35,9 @@
         <el-form-item label="时长/小时">
             <el-input v-model="tableForm.Duration" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="接触人员">
+            <el-input v-model="tableForm.ContactPeople" :disabled="true"></el-input>
+        </el-form-item>
         <!--图片展示-->
         <el-form-item v-if="imageList.length > 0" label="外出照片">
             <img v-for="img in imageList" v-on:click="handlePictureCardPreview2(img)" :src="img.url" class="imgList" />
