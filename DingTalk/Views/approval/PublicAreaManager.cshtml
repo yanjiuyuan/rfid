@@ -166,12 +166,12 @@
                         param['Power'] = that.Power.power 
                         console.log(param)
                         for (let d of this.data) {
-                            if (d.Date == _getDate('/',true) && d.PowerList.indexOf(param.Power)) {
+                            if (d.Date == _getDate('/',true) && d.PowerList.indexOf(param.Power) >= 0) {
                                 this.$message({ type: 'error', message: `当天已提交记录` });
                                 return
                             }
                         }
-                        return
+                        //return
                         that.PostData('PublicArea/Save', param, (res) => {
                             this.getData()
                             this.$message({ type: 'success', message: `保存成功` })
@@ -246,6 +246,8 @@
                             obj['State' + a.Power] = a.State ? '合格' : '不合格'
                             obj['PowerList'].push(a.Power)
                         }
+                        if (this.Power && this.Power.power != '6' && !obj['ControlPeople' + this.Power.power])
+                            return
                         this.data.push(obj)
                         
                     }
