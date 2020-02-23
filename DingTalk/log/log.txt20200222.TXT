@@ -1,0 +1,10 @@
+2020-02-22 20:25:46,777 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-22 20:25:48,514 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-22 20:27:01,887 [7] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/PublicArea/Save 时出现异常，信息：LINQ to Entities 不识别方法“System.String ToString(System.String)”，因此该方法无法转换为存储表达式。，详见数据库日志Id：919
+2020-02-22 20:29:16,281 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-22 20:29:16,900 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-22 20:33:52,288 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-22 20:33:53,736 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-22 20:34:38,052 [10] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Role/GetRoleInfoList 时出现异常，信息：基础提供程序在 Open 上失败。，详见数据库日志Id：920
+2020-02-22 20:39:07,944 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-22 20:39:09,462 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
