@@ -195,7 +195,7 @@ namespace DingTalk.Controllers
                             DataRow dataRow = dataTable.NewRow();
                             foreach (var item in publicAreaModel.publicAreas)
                             {
-                                dataRow["Date"] = item.Date.ToString("yyyy-HH-dd");
+                                dataRow["Date"] = item.Date.ToString("yyyy-MM-dd");
                                 switch (item.Power)
                                 {
                                     case 0:
