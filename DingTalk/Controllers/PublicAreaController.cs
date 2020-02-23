@@ -36,9 +36,23 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
+                        List<PublicArea> publicAreas = context.PublicArea.Where(p=>p.Power==publicArea.Power).ToList();
+
+                        foreach (var item in publicAreas)
+                        {
+                            if (item.Date.ToString("yyyy-HH-mm") == publicArea.Date.ToString("yyyy-HH-mm"))
+                            {
+                                return new NewErrorModel()
+                                {
+                                    error = new Error(1, "当天已有监督人进行过操作！", "") { },
+                                };
+                            }
+                        }
+
                         context.PublicArea.Add(publicArea);
                         context.SaveChanges();
                     }
+
 
                     return new NewErrorModel()
                     {
@@ -187,32 +201,32 @@ namespace DingTalk.Controllers
                                     case 0:
                                         dataRow["Ten"] = item.ClearPeople;
                                         dataRow["Tens"] = item.ControlPeople;
-                                        dataRow["Tenss"] = item.State==true?"完成":"未完成";
+                                        dataRow["Tenss"] = item.State==true?"合格": "不合格";
                                         break;
                                     case 1:
                                         dataRow["Ele"] = item.ClearPeople;
                                         dataRow["Eles"] = item.ControlPeople;
-                                        dataRow["Eless"] = item.State == true ? "完成" : "未完成";
+                                        dataRow["Eless"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     case 2:
                                         dataRow["Two"] = item.ClearPeople;
                                         dataRow["Twos"] = item.ControlPeople;
-                                        dataRow["Twoss"] = item.State == true ? "完成" : "未完成";
+                                        dataRow["Twoss"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     case 3:
                                         dataRow["Th"] = item.ClearPeople;
                                         dataRow["Ths"] = item.ControlPeople;
-                                        dataRow["Thss"] = item.State == true ? "完成" : "未完成";
+                                        dataRow["Thss"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     case 4:
                                         dataRow["Jdbg"] = item.ClearPeople;
                                         dataRow["Jdbgs"] = item.ControlPeople;
-                                        dataRow["Jdbgss"] = item.State == true ? "完成" : "未完成";
+                                        dataRow["Jdbgss"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     case 5:
                                         dataRow["Jdss"] = item.ClearPeople;
                                         dataRow["Jdsss"] = item.ControlPeople;
-                                        dataRow["Jdssss"] = item.State == true ? "完成" : "未完成";
+                                        dataRow["Jdssss"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     default:
                                         break;
