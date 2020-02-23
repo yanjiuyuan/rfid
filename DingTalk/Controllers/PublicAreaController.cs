@@ -277,6 +277,35 @@ namespace DingTalk.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// 清除所有数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Clear")]
+
+        public NewErrorModel Clear()
+        {
+            try
+            {
+                using (DDContext  context=new DDContext ())
+                {
+                    context.PublicArea.RemoveRange(context.PublicArea.ToList());
+                    context.SaveChanges();
+                }
+
+
+                return new NewErrorModel()
+                {
+                    error = new Error(0, "清除成功！", "") { },
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
     public class PublicAreaModel
