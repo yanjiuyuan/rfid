@@ -1,0 +1,8 @@
+2020-02-23 17:23:44,827 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-23 17:23:46,516 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-23 17:24:46,144 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/Role/GetRoleInfoList 时出现异常，信息：初始化数据库时发生异常。有关详细信息，请参阅 InnerException。，详见数据库日志Id：923
+2020-02-23 17:31:13,975 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-23 17:31:15,540 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-23 17:34:09,808 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-02-23 17:34:10,415 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-02-23 17:34:16,691 [11] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/DingTalkServers/GetDepartmentList 时出现异常，信息：已取消一个任务。，详见数据库日志Id：924
