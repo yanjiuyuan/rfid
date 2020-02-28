@@ -58,10 +58,22 @@
             <el-table-column prop="State4" label="是否合格"></el-table-column>
         </template>
         <template v-if="!Power || (Power && Power.power == 5 || Power.power == 6)">
-            <el-table-column prop="ControlPeople5" label="基地宿舍监督人"></el-table-column>
-            <el-table-column prop="ClearPeople5" label="基地宿舍保洁员"></el-table-column>
+            <el-table-column prop="ControlPeople5" label="基地四楼宿舍监督人"></el-table-column>
+            <el-table-column prop="ClearPeople5" label="基地四楼宿舍保洁员"></el-table-column>
             @*<el-table-column prop="Time5" label="完成时间"></el-table-column>*@
             <el-table-column prop="State5" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="!Power || (Power && Power.power == 7 || Power.power == 6)">
+            <el-table-column prop="ControlPeople7" label="北峰宿舍监督人"></el-table-column>
+            <el-table-column prop="ClearPeople7" label="北峰宿舍保洁员"></el-table-column>
+            @*<el-table-column prop="Time5" label="完成时间"></el-table-column>*@
+            <el-table-column prop="State7" label="是否合格"></el-table-column>
+        </template>
+        <template v-if="!Power || (Power && Power.power == 8 || Power.power == 6)">
+            <el-table-column prop="ControlPeople8" label="基地小楼宿舍监督人"></el-table-column>
+            <el-table-column prop="ClearPeople8" label="基地小楼宿舍保洁员"></el-table-column>
+            @*<el-table-column prop="Time5" label="完成时间"></el-table-column>*@
+            <el-table-column prop="State8" label="是否合格"></el-table-column>
         </template>
     </el-table>
 
@@ -120,13 +132,22 @@
             power: 4
         },
         {
-            name: '基地宿舍保洁监督员',
+            name: '基地四楼宿舍保洁监督员',
             power: 5
         },
         {
             name: '消毒管理员',
             power: 6
-        }]
+        },
+        {
+            name: '北峰宿舍保洁监督员',
+            power: 7
+        },
+        {
+            name: '基地小楼宿舍保洁监督员',
+            power: 8
+        }
+    ]
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
@@ -134,7 +155,7 @@
             return {
                 data: [],
                 TableData: [],
-                Power: null,//权限(0,1,2,3,4,5,6)分别代表十楼，十一楼，十二楼，十三楼，基地办公楼，基地宿舍，消毒管理员
+                Power: null,//权限(0,1,2,3,4,5,6,7，8)分别代表十楼，十一楼，十二楼，十三楼，基地办公楼，基地宿舍，消毒管理员,北峰宿舍，基地宿舍小楼
                 DeptNames: DeptNames,
                 searchParam: {
                     applyManId: DingData.userid,
