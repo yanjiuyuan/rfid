@@ -1844,7 +1844,7 @@ var mixin = {
                     console.log(param)
                     console.log(data)
                     if (data.error && data.error.errorCode != 0) {
-                        that.elementAlert('报错信息', data.error.errorMessage)
+                        that.$message({ type: 'error', message: data.error.errorMessage })
                         return
                     }
                     if (alertStr) {
@@ -1882,7 +1882,7 @@ var mixin = {
                     if (typeof (data) == 'string') data = JSON.parse(data) 
                     console.log(data)
                     if (data.error && data.error.errorCode != 0) {
-                        that.elementAlert('报错信息', data.error.errorMessage)
+                        that.$message({ type: 'error', message: data.error.errorMessage })
                         return
                     }
                     if (alertStr) {
@@ -1944,7 +1944,8 @@ function GetData(url, succe, demo) {
     })
 }
 
-function PostData(url, param, succe, error) {
+function PostData(url, param, succe, demo) {
+    console.warn('from out this')
     $.ajax({
         url: url,
         type: 'POST',
@@ -1955,7 +1956,7 @@ function PostData(url, param, succe, error) {
             console.log(url)
             console.log(param)
             console.log(res)
-            if (doWithErrcode(res.error)) {
+            if (doWithErrcode(res.error, demo)) {
                 return
             }
             succe(res.data)
@@ -2548,7 +2549,7 @@ Vue.component('sam-addapprover', {
 
 //钉钉审批编辑组件
 Vue.component('sam-approver-edit', {
-    props: ['nodelist', 'dingdata', 'addable','rolelist','postdata','flowid'],
+    props: ['nodelist', 'dingdata', 'addable','rolelist','flowid','tpthis'],
     template: `<div>
                     <el-form-item label="审批人" style="margin-bottom:0px;">
                         <h5></h5>
@@ -2573,7 +2574,7 @@ Vue.component('sam-approver-edit', {
                                         :closable="false"
                                         onclick="" v-if="node.NodePeople"
                                         :disable-transitions="false"
-                                        :class="{'el-tag--danger':dingdata.nickName == p}"
+                                        :class="{'el-tag--danger':dingdata.userid == node.PeopleId[a]}"
                                         style="text-align:center;"
                                         >
                                     {{p}}
@@ -2617,7 +2618,7 @@ Vue.component('sam-approver-edit', {
                                      enctype="multipart/form-data">
                                 <template>
                                     <el-form-item v-if="form.NodeName != '申请人发起'" label="节点名称" prop="NodeName">
-                                        <el-input v-model="form.NodeName"></el-input>
+                                        <sam-input :value.sync="form.NodeName" :maxlength="8"></sam-input>
                                     </el-form-item>
                                     <el-form-item v-if="form.NodeName != '申请人发起'" label="审批人配置" required="required">
                                         <sam-group :names.sync="form.NodePeople" :ids.sync="form.PeopleId" :single="!form.IsSend"></sam-group>
@@ -2644,7 +2645,7 @@ Vue.component('sam-approver-edit', {
                                         </el-radio-group>
                                     </el-form-item>
                                     <template v-if="form.IsNeedChose">
-                                        <el-form-item label="需要审批的节点">
+                                        <el-form-item label="需要选择的节点">
                                             <sam-checkbox :str.sync="form.ChoseNodeId" :arr="chooseArr" :onchange="onchange"></sam-checkbox>
                                         </el-form-item>
                                         <el-form-item label="需要多选的节点">
@@ -2855,24 +2856,9 @@ Vue.component('sam-approver-edit', {
                 node.FlowId = this.flowid
                 param.push(node)
             }
-            //return
-            let url = 'FlowInfoNew/UpdateNodeInfos'
-            $.ajax({
-                url: url,
-                type: 'POST',
-                contentType: "application/json; charset=utf-8",
-                data: param,
-                success: function (res) {
-                    if (typeof (res) == 'string') res = JSON.parse(res)
-                    console.log(url)
-                    console.log(param)
-                    console.log(res)
-                    this.$message({ type: 'success', message: `修改成功` });
-                },
+            this.tpthis.PostData('FlowInfoNew/UpdateNodeInfos', param, (res) => {
+                this.$message({ type: 'success', message: `修改成功` }, tpthis);
             })
-            //postData('FlowInfoNew/UpdateNodeInfos', param, (res) => {
-            //    this.$message({ type: 'success', message: `修改成功` });
-            //})
         },
         //添加节点提交
         dowithForm() {

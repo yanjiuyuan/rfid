@@ -20,7 +20,7 @@
         @*<el-button class="button-new-tag" size="small" v-on:click="test">钉盘</el-button>*@
     </template>
     <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i">
+        <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i" v-if="m.flows.length > 0">
             <template slot="title">
                 <span style="font-size:20px;">{{m.SORT_NAME}}</span>
             </template>

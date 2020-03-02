@@ -28,16 +28,19 @@
         <el-form-item label="创建人">
             <el-input v-model="ruleForm.CreateMan" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="PC页面路径" prop="PcUrl">
+            <el-input v-model="ruleForm.PcUrl"></el-input>
+        </el-form-item>
+        <el-form-item label="移动端页面路径">
+            <el-input v-model="ruleForm.PhoneUrl"></el-input>
+        </el-form-item>
         <el-form-item label="是否启用" prop="IsEnable">
             <el-radio-group v-model="ruleForm.IsEnable">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="PC页面路径" prop="PcUrl">
-            <el-input v-model="ruleForm.PcUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="是否支持移动端" prop="IsSupportMobile">
+        <el-form-item label="是否支持移动端推送" prop="IsSupportMobile">
             <el-radio-group v-model="ruleForm.IsSupportMobile">
                 <el-radio :label="true">是</el-radio>
                 <el-radio :label="false">否</el-radio>
@@ -46,9 +49,6 @@
         <template v-if="ruleForm.IsSupportMobile">
             <el-form-item label="移动端通知路径" prop="ApproveUrl">
                 <el-input v-model="ruleForm.ApproveUrl"></el-input>
-            </el-form-item>
-            <el-form-item label="移动端页面路径" prop="PhoneUrl">
-                <el-input v-model="ruleForm.PhoneUrl"></el-input>
             </el-form-item>
         </template>
 
@@ -82,6 +82,7 @@
                 x: 0,
                 y: 0,
                 ruleForm: {
+                    ApplyMan: '',
                     FlowId: '',
                     FlowName: '',
                     CreateMan: DingData.nickName,
@@ -89,6 +90,7 @@
                     IsEnable: 1,
                     SORT_ID: editSort.Sort_ID,
                     IsSupportMobile: true,
+                    IsFlow: false,
                     ApproveUrl: '',
                     OrderBY: 998,
                     PcUrl: '',
@@ -105,7 +107,7 @@
                         { required: true, message: '流程名称不能为空', trigger: 'blur' },
                         { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
                     ],
-                    PhoneUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
+                    //PhoneUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                     PcUrl: { required: true, message: '该项不能为空', trigger: 'blur' },
                 },
             }

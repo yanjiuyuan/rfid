@@ -7,13 +7,14 @@
     <!--标题-->
     <div class="head-fixed" onclick="loadPage('/Main/approval')">
         <i class="el-icon-arrow-left"></i>
-        流程管理
+        离职人员管理
     </div>
     <!--检索项目表单-->
     <div>
         <el-input v-model="name" style="width:200px;" :disabled="true"></el-input>
         <el-button class="button-new-tag" size="small" v-on:click="choosePeople()">+ 选人</el-button>
-        <el-button size="small" v-on:click="save">修改</el-button>
+        <sam-input :value.sync="id" style="width:200px;" placeholder="请输入用户id"></sam-input>
+        <el-button size="small" type="primary" v-on:click="search">搜索</el-button>
     </div>
    
     <el-collapse v-model="activeNames">
@@ -22,7 +23,7 @@
                 <span style="font-size:20px;">{{key}}</span>
             </template>
             <el-form v-on:submit.native.prevent class="demo-ruleForm">
-                <sam-approver-edit :nodeList="value" :dingdata="{nickName:name,userid:id}"></sam-approver-edit>
+                <sam-approver-edit :nodeList="value" :dingdata="{nickName:name,userid:id}" :tpthis="tpthis"></sam-approver-edit>
             </el-form>
         </el-collapse-item>
     </el-collapse>
@@ -36,6 +37,8 @@
         mixins: [mixin],
         data: function () {
             return {
+                tpthis: this,
+                test:'test2333',
                 name: '',
                 id: '',
                 DingData: DingData,
@@ -76,10 +79,12 @@
                 //    this.getFlows()
                 //})
             },
+
             //切换人
             choosePeople(){
                 var that = this
                 DingTalkPC.biz.contact.choose({
+                    multiple: false,
                     users: [], //默认选中的用户列表，员工userid；成功回调中应包含该信息
                     corpId: DingData.CorpId, //企业id
                     onSuccess: function (data) {
@@ -91,13 +96,19 @@
                     onFail: function (err) { }
                 });
             },
+            search() {
+                if (!this.id) {
+                    this.$message({ type: 'error', message: `请输入用户id` });
+                    return
+                }
+                this.getFlows()
+            },
             getFlows() {
+                this.flows = {}
                 this.GetData('FlowInfoNew/GetNodeInfoInfoByApplyManId?applyManId=' + this.id, (res) => {
-                    if (res.length == 0) {
-                        this.$message({ type: 'info', message: `该用户无配置节点信息` });
-                        return
-                    }
+                    let i = 0
                     for (let r in res) {
+                        i++
                         for (let node of res[r]) {
                             node['AddPeople'] = []
                             //审批人分组
@@ -106,6 +117,10 @@
                                 node.PeopleId = node.PeopleId.split(',')
                             }
                         }
+                    }
+                    if (!i) {
+                        this.$message({ type: 'error', message: `该用户无配置节点信息` });
+                        return
                     }
                     this.flows = res
                 })

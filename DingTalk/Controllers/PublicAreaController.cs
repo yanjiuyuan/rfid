@@ -36,7 +36,7 @@ namespace DingTalk.Controllers
                 {
                     using (DDContext context = new DDContext())
                     {
-                        List<PublicArea> publicAreas = context.PublicArea.Where(p=>p.Power==publicArea.Power).ToList();
+                        List<PublicArea> publicAreas = context.PublicArea.Where(p => p.Power == publicArea.Power).ToList();
 
                         foreach (var item in publicAreas)
                         {
@@ -102,9 +102,10 @@ namespace DingTalk.Controllers
                 }
                 foreach (var item in stringDate)
                 {
-                    publicAreaModels.Add(new PublicAreaModel() { 
-                      Date=item,
-                       publicAreas= publicAreas.Where(p=>p.Date.ToString()==item.ToString()).ToList()
+                    publicAreaModels.Add(new PublicAreaModel()
+                    {
+                        Date = item,
+                        publicAreas = publicAreas.Where(p => p.Date.ToString() == item.ToString()).ToList()
                     });
                 }
 
@@ -131,13 +132,13 @@ namespace DingTalk.Controllers
         /// <returns></returns>
         [Route("Query")]
         [HttpGet]
-        public  async Task<NewErrorModel> Query(DateTime startTime, DateTime endTime,string applyManId, bool IsPrint = false)
+        public async Task<NewErrorModel> Query(DateTime startTime, DateTime endTime, string applyManId, bool IsPrint = false)
         {
             try
             {
                 DDContext dDContext = new DDContext();
                 List<PublicArea> publicAreas = new List<PublicArea>();
-                publicAreas = dDContext.PublicArea.Where(p => p.Date >= startTime && p.Date <= endTime).OrderBy(p => p.Date).ThenBy(p=>p.Power).ToList();
+                publicAreas = dDContext.PublicArea.Where(p => p.Date >= startTime && p.Date <= endTime).OrderBy(p => p.Date).ThenBy(p => p.Power).ToList();
 
                 //数据格式转换
                 List<PublicAreaModel> publicAreaModels = new List<PublicAreaModel>();
@@ -170,7 +171,7 @@ namespace DingTalk.Controllers
                     if (publicAreaModels.Count > 0)
                     {
                         DataTable dataTable = new DataTable();
-                        dataTable.Columns.Add("Date",typeof(string));
+                        dataTable.Columns.Add("Date", typeof(string));
                         dataTable.Columns.Add("Ten", typeof(string));
                         dataTable.Columns.Add("Tens", typeof(string));
                         dataTable.Columns.Add("Tenss", typeof(string));
@@ -189,6 +190,12 @@ namespace DingTalk.Controllers
                         dataTable.Columns.Add("Jdss", typeof(string));
                         dataTable.Columns.Add("Jdsss", typeof(string));
                         dataTable.Columns.Add("Jdssss", typeof(string));
+                        dataTable.Columns.Add("Bf", typeof(string));
+                        dataTable.Columns.Add("Bfs", typeof(string));
+                        dataTable.Columns.Add("Bfss", typeof(string));
+                        dataTable.Columns.Add("Jdxx", typeof(string));
+                        dataTable.Columns.Add("Jdxxs", typeof(string));
+                        dataTable.Columns.Add("Jdxxss", typeof(string));
 
                         foreach (var publicAreaModel in publicAreaModels)
                         {
@@ -201,7 +208,7 @@ namespace DingTalk.Controllers
                                     case 0:
                                         dataRow["Ten"] = item.ClearPeople;
                                         dataRow["Tens"] = item.ControlPeople;
-                                        dataRow["Tenss"] = item.State==true?"合格": "不合格";
+                                        dataRow["Tenss"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     case 1:
                                         dataRow["Ele"] = item.ClearPeople;
@@ -223,10 +230,20 @@ namespace DingTalk.Controllers
                                         dataRow["Jdbgs"] = item.ControlPeople;
                                         dataRow["Jdbgss"] = item.State == true ? "合格" : "不合格";
                                         break;
-                                    case 5:
+                                    case 5:  //基地宿舍四楼
                                         dataRow["Jdss"] = item.ClearPeople;
                                         dataRow["Jdsss"] = item.ControlPeople;
                                         dataRow["Jdssss"] = item.State == true ? "合格" : "不合格";
+                                        break;
+                                    case 7:   //北峰宿舍楼
+                                        dataRow["Bf"] = item.ClearPeople;
+                                        dataRow["Bfs"] = item.ControlPeople;
+                                        dataRow["Bfss"] = item.State == true ? "合格" : "不合格";
+                                        break;
+                                    case 8:   //基地宿舍小楼
+                                        dataRow["Jdxx"] = item.ClearPeople;
+                                        dataRow["Jdxxs"] = item.ControlPeople;
+                                        dataRow["Jdxxss"] = item.State == true ? "合格" : "不合格";
                                         break;
                                     default:
                                         break;
@@ -289,7 +306,7 @@ namespace DingTalk.Controllers
         {
             try
             {
-                using (DDContext  context=new DDContext ())
+                using (DDContext context = new DDContext())
                 {
                     context.PublicArea.RemoveRange(context.PublicArea.ToList());
                     context.SaveChanges();
@@ -309,9 +326,9 @@ namespace DingTalk.Controllers
     }
 
     public class PublicAreaModel
-    { 
-      public string Date { get; set; }
+    {
+        public string Date { get; set; }
 
-      public List<PublicArea> publicAreas { get; set; }
+        public List<PublicArea> publicAreas { get; set; }
     }
 }

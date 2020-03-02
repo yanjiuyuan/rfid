@@ -32,14 +32,14 @@
             </el-form-item>
 
             <template v-if="index == 0 && NodeId == 5">
-                <el-form-item label="申报单位" prop="Company">
+                @*<el-form-item label="申报单位" prop="Company">
                     <el-select v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'">
                         <el-option v-for="s of CompanyNames" :label="s" :value="s" key="s"></el-option>
                     </el-select>
-                </el-form-item>
-                @*<el-form-item label="申报单位" prop="Company">
-                    <el-input v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'"></el-input>
                 </el-form-item>*@
+                <el-form-item label="申报单位" prop="Company">
+                    <el-input v-model="tableForm.Company" style="width:400px;" :disabled="State == '已完成'"></el-input>
+                </el-form-item>
                 <el-form-item label="申报类别" prop="ActualType">
                     <el-select v-model="tableForm.ActualType" style="width:300px;" :disabled="State == '已完成'">
                         <el-option v-for="s of ['发明','实用新型','外观','软件著作权']" :label="s" :value="s" key="s"></el-option>
