@@ -12,53 +12,71 @@ namespace DingTalk.Bussiness.FlowInfo
         /// <summary>
         /// 流程大类及小类读取
         /// </summary>
+        /// <param name="IsAll"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        public object GetFlowInfo(string userId)
+        public object GetFlowInfo(bool IsAll, string userId)
         {
             DDContext context = new DDContext();
-            List<Flows> Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(f => f.OrderBY).ToList();
-            List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(u => u.OrderBY).ToList();
 
-            foreach (var flowSort in FlowSort)
+            if (IsAll)
             {
-                flowSort.flows = Flows.Where(f => f.SORT_ID.ToString() == flowSort.Sort_ID.ToString()).ToList();
-            }
+                List<Flows> Flows = context.Flows.Where(u => u.State == 1).OrderBy(f => f.OrderBY).ToList();
+                List<FlowSort> FlowSort = context.FlowSort.Where(u => u.State == 1).OrderBy(u => u.OrderBY).ToList();
 
-            //判断超管权限
-            bool IsSupperLeader = context.Roles.Where(r => r.UserId == userId && r.RoleName== "超级管理员").ToList().Count > 0 ? true : false;
-
-            if (!string.IsNullOrEmpty(userId) && !IsSupperLeader)
-            {
-                foreach (var item in FlowSort)
+                foreach (var flowSort in FlowSort)
                 {
-                    if (item.ApplyManId != null && item.ApplyManId != "")
+                    flowSort.flows = Flows.Where(f => f.SORT_ID.ToString() == flowSort.Sort_ID.ToString()).ToList();
+                }
+                return FlowSort;
+            }
+            else
+            {
+                List<Flows> Flows = context.Flows.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(f => f.OrderBY).ToList();
+                List<FlowSort> FlowSort = context.FlowSort.Where(u => u.IsEnable == 1 && u.State == 1).OrderBy(u => u.OrderBY).ToList();
+
+                foreach (var flowSort in FlowSort)
+                {
+                    flowSort.flows = Flows.Where(f => f.SORT_ID.ToString() == flowSort.Sort_ID.ToString()).ToList();
+                }
+
+                //判断超管权限
+                bool IsSupperLeader = context.Roles.Where(r => r.UserId == userId && r.RoleName == "超级管理员").ToList().Count > 0 ? true : false;
+
+                if (!string.IsNullOrEmpty(userId) && !IsSupperLeader)
+                {
+                    foreach (var item in FlowSort)
                     {
-                        if (!item.ApplyManId.Contains(userId))
+                        if (item.ApplyManId != null && item.ApplyManId != "")
                         {
-                            item.IsEnable = 0;
-                            //FlowSort.Remove(item);
-                        }
-                    }
-                    foreach (var flow in item.flows)
-                    {
-                        if (flow.ApplyManId != null && flow.ApplyManId != "")
-                        {
-                            if (!flow.ApplyManId.Contains(userId))
+                            if (!item.ApplyManId.Contains(userId))
                             {
-                                flow.IsEnable = 0;
+                                item.IsEnable = 0;
+                                //FlowSort.Remove(item);
+                            }
+                        }
+                        foreach (var flow in item.flows)
+                        {
+                            if (flow.ApplyManId != null && flow.ApplyManId != "")
+                            {
+                                if (!flow.ApplyManId.Contains(userId))
+                                {
+                                    flow.IsEnable = 0;
+                                }
                             }
                         }
                     }
+
+                    FlowSort = FlowSort.Where(f => f.IsEnable == 1).ToList();
+                    foreach (var item in FlowSort)
+                    {
+                        item.flows = item.flows.Where(f => f.IsEnable == 1).ToList();
+                    }
                 }
 
-                FlowSort = FlowSort.Where(f => f.IsEnable == 1).ToList();
-                foreach (var item in FlowSort)
-                {
-                    item.flows = item.flows.Where(f => f.IsEnable == 1).ToList();
-                }
+                return FlowSort;
             }
 
-            return FlowSort;
         }
 
         /// <summary>
