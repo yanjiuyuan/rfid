@@ -55,12 +55,12 @@
         <el-form-item label="流程类名" prop="SORT_NAME">
             <el-input v-model="ruleForm.SORT_NAME"></el-input>
         </el-form-item>
-        @*<el-form-item label="是否启用" prop="IsEnable">
+        <el-form-item label="是否启用" prop="IsEnable">
             <el-radio-group v-model="ruleForm.IsEnable">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
             </el-radio-group>
-        </el-form-item>*@
+        </el-form-item>
         <el-form-item>
             <el-button type="primary" v-on:click="onSubmit('ruleForm')" :disabled="disablePage">添加类别</el-button>
         </el-form-item>

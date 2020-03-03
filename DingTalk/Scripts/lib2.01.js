@@ -330,6 +330,19 @@ var checkProjectId = (rule, value, callback) => {
         }
     }, 500);
 };
+var checkWord = (rule, value, callback) => {
+    if (!value) {
+        return callback(new Error('不能为空'));
+    }
+    setTimeout(() => {
+        let reg1 = /^[\w]+$/g
+        if (!reg1.test(value)) {
+            callback(new Error('请输入字母或数字！'));
+        } else {
+            callback();
+        }
+    }, 500);
+};
 let commonInput = [{ required: true, message: '该项不能为空', trigger: 'blur' }, { min: 0, max: 50, message: '长度在 50 个字符以内', trigger: 'blur' }]
 var mixin = {
     data: {

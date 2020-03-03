@@ -73,7 +73,7 @@
                  enctype="multipart/form-data">
             <template>
                 <el-form-item label="表名" prop="TableName">
-                    <el-input v-model="tableForm.TableName | removeC"></el-input>
+                    <el-input v-model="tableForm.TableName"></el-input>
                 </el-form-item>
                 <el-form-item label="是否支持新增(字段)">
                     <el-radio-group v-model="tableForm.IsAdd">
@@ -324,6 +324,10 @@
 
                 groupPeople: groupPeople,
                 rules: {
+                    TableName: [
+                        { required: true, validator: checkWord, trigger: 'blur' },
+                        { required: true, message: '请输入字母或数字', trigger: 'change' }
+                    ],
                     FlowName: [
                         { required: true, message: '流程名称不能为空', trigger: 'blur' },
                         { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }
@@ -353,55 +357,56 @@
             },
             //编辑表格
             editTable() {
-                if (!this.tableForm.TableName) {
-                    this.$message({ type: 'error', message: `表名不能为空，请填写` });
-                    return
-                }
-                if (!this.tableData[this.tableData.length-1].ColumnName) {
+                if (!this.tableData[this.tableData.length - 1].ColumnName) {
                     this.$message({ type: 'error', message: `字段名不能为空，请填写` });
                     return
                 }
-                let arr = []
-                //新增与修改操作
-                for (let t of this.tableData) {
-                    if (!t.ID) {
-                        t['operateType'] = '1'
-                        arr.push(t)
-                        continue
-                    }
-                    for (let o of this.oldData) {
-                        if (t.ID == o.ID) {
-                            if (JSON.stringify(o) != JSON.stringify(t)) {
-                                t['operateType'] = '3'
+                this.$refs['tableForm'].validate((valid) => {
+                    if (valid) {
+                        let arr = []
+                        //新增与修改操作
+                        for (let t of this.tableData) {
+                            if (!t.ID) {
+                                t['operateType'] = '1'
                                 arr.push(t)
+                                continue
                             }
-                            break
+                            for (let o of this.oldData) {
+                                if (t.ID == o.ID) {
+                                    if (JSON.stringify(o) != JSON.stringify(t)) {
+                                        t['operateType'] = '3'
+                                        arr.push(t)
+                                    }
+                                    break
+                                }
+                            }
                         }
-                    }
-                }
-                //删除操作
-                for (let o of this.oldData) {
-                    let ifHave = false
-                    for (let t of this.tableData) {
-                        console.log(t.ID + ' - ' + o.ID)
-                        if (t.ID == o.ID) {
-                            ifHave = true
-                            break
+                        //删除操作
+                        for (let o of this.oldData) {
+                            let ifHave = false
+                            for (let t of this.tableData) {
+                                console.log(t.ID + ' - ' + o.ID)
+                                if (t.ID == o.ID) {
+                                    ifHave = true
+                                    break
+                                }
+                            }
+                            if (!ifHave) {
+                                o['operateType'] = '2'
+                                arr.push(o)
+                            }
                         }
+                        this.tableForm["tableInfos"] = arr
+                        console.log(JSON.stringify(this.tableForm))
+                        //return
+                        this.PostData('TableManager/Mofify', this.tableForm, (rew) => {
+                            this.$message({ type: 'success', message: `操作成功` });
+                            this.getTables()
+                            this.dialogFormVisible = false
+                        })
                     }
-                    if (!ifHave) {
-                        o['operateType'] = '2'
-                        arr.push(o)
-                    }
-                }
-                this.tableForm["tableInfos"] = arr
-                console.log(JSON.stringify(this.tableForm))
-                //return
-                this.PostData('TableManager/Mofify', this.tableForm, (rew) => {
-                    this.$message({ type: 'success', message: `操作成功` });
-                    this.getTables()
-                    this.dialogFormVisible = false
                 })
+                
             },
             //获取表格
             getTables() {
@@ -457,7 +462,6 @@
                             applyManId: DingData.userid,
                             FlowSortList: [editSort]
                         } 
-			console.log(JSON.stringify(param))
                         this.PostData('FlowInfoNew/LoadFlowModify', param, (res) => {
                             this.$alert('修改成功', '提示');
                         })
@@ -531,6 +535,15 @@
                 this.PostData('Role/GetRoleInfoList', {}, (res) => {
                     this.rolelist = res
                 })
+            }
+        },
+        computed: {
+            totalPrice: function () {
+                var totalPrice = 0
+                for (let p of this.purchaseList) {
+                    totalPrice = parseFloat((totalPrice + p.Price * p.Count).toFixed(2))
+                }
+                return totalPrice
             }
         },
         filters: {
