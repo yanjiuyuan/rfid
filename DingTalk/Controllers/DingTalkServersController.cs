@@ -24,7 +24,6 @@ namespace DingTalk.Controllers
 {
     [RoutePrefix("DingTalkServers")]
     //[EnableCors(origins: "*", headers: "*", methods: "*")]
-
     public class DingTalkServersController : ApiController
     {
         List<int> deptIdListQuery = new List<int>();
