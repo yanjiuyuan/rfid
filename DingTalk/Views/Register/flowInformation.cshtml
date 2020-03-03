@@ -73,7 +73,7 @@
                  enctype="multipart/form-data">
             <template>
                 <el-form-item label="表名" prop="TableName">
-                    <el-input v-model="tableForm.TableName"></el-input>
+                    <el-input v-model="tableForm.TableName | removeC"></el-input>
                 </el-form-item>
                 <el-form-item label="是否支持新增(字段)">
                     <el-radio-group v-model="tableForm.IsAdd">
@@ -456,7 +456,8 @@
                         let param = {
                             applyManId: DingData.userid,
                             FlowSortList: [editSort]
-                        }
+                        } 
+			console.log(JSON.stringify(param))
                         this.PostData('FlowInfoNew/LoadFlowModify', param, (res) => {
                             this.$alert('修改成功', '提示');
                         })
@@ -530,6 +531,12 @@
                 this.PostData('Role/GetRoleInfoList', {}, (res) => {
                     this.rolelist = res
                 })
+            }
+        },
+        filters: {
+            removeC: function (value) {
+                value == value.replace(/[\W]/g, '')
+                return value
             }
         },
         created: function () {
