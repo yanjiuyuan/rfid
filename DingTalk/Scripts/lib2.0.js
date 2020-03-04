@@ -2870,7 +2870,7 @@ Vue.component('sam-approver-edit', {
                 param.push(node)
             }
             this.tpthis.PostData('FlowInfoNew/UpdateNodeInfos', param, (res) => {
-                this.$message({ type: 'success', message: `修改成功` }, tpthis);
+                this.$message({ type: 'success', message: `修改成功` });
             })
         },
         //添加节点提交
