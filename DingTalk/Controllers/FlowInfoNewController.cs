@@ -2789,7 +2789,7 @@ namespace DingTalk.Controllers
             try
             {
                 DDContext dDContext = new DDContext();
-                List<DingTalk.Models.ServerModels.UserInfo> userInfos = dDContext.Database.SqlQuery<DingTalk.Models.ServerModels.UserInfo>($"select applyman,applymanid from tasks where applyman like '%{applyMan}%'  group by  applyman,applymanid   ").ToList();
+                List<DingTalk.Models.ServerModels.UserInfo> userInfos = dDContext.Database.SqlQuery<DingTalk.Models.ServerModels.UserInfo>($"select applyman,applymanid from tasks where applyman like '%{applyMan}%'  and applymanid  is not null  group by  applyman,applymanid   ").ToList();
                 return new NewErrorModel()
                 {
                     data = userInfos,
