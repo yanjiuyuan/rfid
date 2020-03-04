@@ -493,9 +493,9 @@ namespace DingTalk.Controllers
                                            ApplyMan = t.ApplyMan,
                                            UseTime = ct.StartTime.ToString() + "---" + ct.EndTime.ToString(),
                                            MainContent = ct.MainContent,
-                                           UseKilometres = ct.UseKilometres,
                                            StartKilometres = ct.StartKilometres == null ? "" : ct.StartKilometres,
                                            EndKilometres = ct.EndKilometres == null ? "" : ct.EndKilometres,
+                                           UseKilometres = ct.UseKilometres,
                                        };
                         var takeQuaryPri = QuaryPri.Skip((pageIndex - 1) * pageSize).Take(pageSize);
 

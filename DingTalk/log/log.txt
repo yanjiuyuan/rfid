@@ -1,4 +1,18 @@
-2020-02-24 14:56:35,922 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
-2020-02-24 14:56:37,570 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
-2020-02-24 15:03:57,933 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
-2020-02-24 15:03:59,499 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 11:28:30,197 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 11:28:32,244 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 11:42:56,141 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 11:42:57,944 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 11:59:40,568 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 11:59:42,388 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 15:11:09,432 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 15:11:11,280 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 15:12:56,913 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 15:12:58,764 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 15:34:19,285 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 15:34:21,157 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 16:25:06,216 [1] INFO  DingTalk.Utility.Logger - 系统初始化Logger模块
+2020-03-03 16:25:08,230 [1] INFO  DingTalk.MvcApplication - ~~~~~~~~~~~~~~~~~~~~~~~网站已启动~~~~~~~~~~~~~~~~~~~~~~~
+2020-03-03 16:25:37,018 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/UpdateNodeInfo 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：965
+2020-03-03 16:26:03,516 [6] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/UpdateNodeInfo 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：966
+2020-03-03 16:26:23,931 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/UpdateNodeInfos 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：967
+2020-03-03 16:27:10,075 [5] ERROR DingTalk.Utility.Filters.CustomExceptionFilterAttribute - 在响应 http://localhost:52920/FlowInfoNew/UpdateNodeInfos 时出现异常，信息：未将对象引用设置到对象的实例。，详见数据库日志Id：968

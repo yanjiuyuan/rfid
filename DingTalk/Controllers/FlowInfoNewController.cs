@@ -2666,6 +2666,16 @@ namespace DingTalk.Controllers
             {
                 using (DDContext context = new DDContext())
                 {
+                    //校验是否还有未走完的流程
+                    string flowId = nodeInfos[0].FlowId;
+                    List<TasksState> tasksStates = context.TasksState.Where(t => t.FlowId == flowId && t.State == "未完成").ToList();
+                    if (tasksStates.Count > 0)
+                    {
+                        return new NewErrorModel()
+                        {
+                            error = new Error(1, $"流水号：{string.Join(",",tasksStates.Select(t=>t.TaskId).ToArray())} 还未走完，请保证所有流程走完后再进行操作！", "") { },
+                        };
+                    }
                     //校验数据
                     if (nodeInfos != null && nodeInfos.Count > 0)
                     {
@@ -2766,6 +2776,32 @@ namespace DingTalk.Controllers
                 return null;
             }
         }
+
+        /// <summary>
+        /// 走过系统流程的用户
+        /// </summary>
+        /// <param name="applyMan">人名模糊查询</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAllUserInfo")]
+        public NewErrorModel GetAllUserInfo(string applyMan)
+        {
+            try
+            {
+                DDContext dDContext = new DDContext();
+                List<DingTalk.Models.ServerModels.UserInfo> userInfos = dDContext.Database.SqlQuery<DingTalk.Models.ServerModels.UserInfo>($"select applyman,applymanid from tasks where applyman like '%{applyMan}%'  group by  applyman,applymanid   ").ToList();
+                return new NewErrorModel()
+                {
+                    data = userInfos,
+                    error = new Error(0, "修改成功！", "") { },
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
         /// <summary>
         /// 旧数据迁移(2019.12.23)

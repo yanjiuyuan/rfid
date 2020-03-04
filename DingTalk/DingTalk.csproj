@@ -572,6 +572,7 @@
     <Compile Include="Models\ServerModels\UploadMediaRequestModel.cs" />
     <Compile Include="Models\ServerModels\UploadMediaType.cs" />
     <Compile Include="Models\ServerModels\UserDetail.cs" />
+    <Compile Include="Models\ServerModels\UserInfo.cs" />
     <Compile Include="Models\ServerModels\VoiceMsgModel.cs" />
     <Compile Include="Models\ServerModels\WorkTimeAndPur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
