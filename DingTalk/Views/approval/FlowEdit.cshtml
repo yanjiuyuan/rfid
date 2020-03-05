@@ -13,8 +13,17 @@
     <div>
         <el-input v-model="name" style="width:200px;" :disabled="true"></el-input>
         <el-button class="button-new-tag" size="small" v-on:click="choosePeople()">+ 选人</el-button>
-        <sam-input :value.sync="id" style="width:200px;" placeholder="请输入用户id"></sam-input>
+        <sam-input :value.sync="searchName" style="width:200px;" placeholder="请输入用户名"></sam-input>
         <el-button size="small" type="primary" v-on:click="search">搜索</el-button>
+        <el-select v-if="users.length>1" v-model="id" style="width:400px;" v-on:change="getFlows" filterable>
+            <el-option v-for="item in users"
+                        :key="item.applyManId"
+                        :label="item.applyMan"
+                        :value="item.applyManId">
+                @*<span style="float: left">{{item.ProjectId}}-{{ item.ProjectName }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px"></span>*@
+            </el-option>
+        </el-select>
     </div>
    
     <el-collapse v-model="activeNames">
@@ -38,9 +47,10 @@
         data: function () {
             return {
                 tpthis: this,
-                test:'test2333',
                 name: '',
+                searchName:'',
                 id: '',
+                users: [],
                 DingData: DingData,
                 activeNames: [1, 2, 3],
                 flows: {},
@@ -97,11 +107,18 @@
                 });
             },
             search() {
-                if (!this.id) {
-                    this.$message({ type: 'error', message: `请输入用户id` });
+                if (!this.searchName) {
+                    this.$message({ type: 'error', message: `请输入用户名` });
                     return
                 }
-                this.getFlows()
+                this.GetData('FlowInfoNew/GetAllUserInfo?applyMan=' + this.searchName, (res) => {
+                    if (res && res.length > 0) {
+                        this.users = res
+                        this.id = res[0].applyManId
+                        this.name = res[0].applyMan
+                        this.getFlows()
+                    }
+                })
             },
             getFlows() {
                 this.flows = {}

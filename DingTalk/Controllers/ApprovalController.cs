@@ -169,6 +169,10 @@ namespace WebZhongZhi.Controllers
         {
             return View();
         }
+        public ActionResult up2()
+        {
+            return View();
+        }
         public ActionResult MaskSupplies()
         {
             return View();
