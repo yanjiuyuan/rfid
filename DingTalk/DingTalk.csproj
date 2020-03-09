@@ -676,7 +676,9 @@
     <Content Include="Content\images\ui-colorpicker.png" />
     <Content Include="Content\images\单位LOGO.jpg" />
     <Content Include="Content\images\受控章.png" />
+    <Content Include="Content\override-element-ui.css" />
     <Content Include="Content\Site.2.0.css" />
+    <Content Include="Content\workflow.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -817,8 +819,8 @@
     <Content Include="Scripts\elementUi\transfer.js" />
     <Content Include="Scripts\elementUi\tree.js" />
     <Content Include="Scripts\elementUi\upload.js" />
+    <Content Include="Scripts\flowEditComponent.js" />
     <Content Include="Scripts\jquery-1.11.0.js" />
-    <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jspdf.min.js" />

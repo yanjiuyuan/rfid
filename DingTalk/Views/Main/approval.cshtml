@@ -19,6 +19,27 @@
         <el-button class="button-new-tag" size="small" v-on:click="addMemberTest()">+ 选人</el-button>
         @*<el-button class="button-new-tag" size="small" v-on:click="test">钉盘</el-button>*@
     </template>
+
+
+    <!--test   -->
+    @*<div class="fd-nav-content" v-if="show">
+        <section class="dingflow-design">
+            <div class="zoom">
+                <div :class="'zoom-out'+ (nowVal==50?' disabled':'')" v-on:click="zoomSize(1)"></div>
+                <span>{{nowVal}}%</span>
+                <div :class="'zoom-in'+ (nowVal==300?' disabled':'')" v-on:click="zoomSize(2)"></div>
+            </div>
+            <div class="box-scale" id="box-scale" :style="'transform: scale('+nowVal/100+'); transform-origin: 50% 0px 0px;'">
+                <nodewrap :nodeconfig.sync="nodeconfig" :flowpermission.sync="flowpermission"
+                          :istried.sync="istried" :directormaxlevel="directormaxlevel" :tableid="tableid"></nodewrap>
+                <div class="end-node">
+                    <div class="end-node-circle"></div>
+                    <div class="end-node-text">流程结束</div>
+                </div>
+            </div>
+        </section>
+    </div>*@
+
     <el-collapse v-model="activeNames">
         <el-collapse-item v-for="(m,i) in menu" :name="i+1" :key="i" v-if="m.flows.length > 0">
             <template slot="title">
@@ -33,11 +54,196 @@
 </el-main>
 
 <script>
+    let jsonData = {
+        "code": "200",
+        "msg": "success",
+        "data": {
+            "tableid": 1,
+            "workFlowVersionId": "",
+            "workFlowDef": {
+                "name": "合同审批",
+                "publicFlag": 1,
+                "sortNo": 5,
+                "duplicateRemovelFlag": 1,
+                "optionTip": "",
+                "optionNotNull": 0,
+                "status": 1
+            },
+            "directormaxlevel": 4,
+            "flowpermission": [],
+            "nodeconfig": {
+                "pkId": "sid-start-node",
+                "nodeName": "发起人",
+                "type": 0,
+                "priorityLevel": "",
+                "settype": "",
+                "selectMode": "",
+                "selectRange": "",
+                "examineRoleId": "",
+                "directorLevel": "",
+                "replaceByUp": "",
+                "examineMode": "",
+                "noHanderAction": "",
+                "examineEndType": "",
+                "examineEndRoleId": "",
+                "examineEndDirectorLevel": "",
+                "ccSelfSelectFlag": "",
+                "conditionList": [],
+                "nodeUserList": [],
+                "childNode": {
+                    "nodeName": "审核人",
+                    "error": false,
+                    "type": 1,
+                    "settype": 2,
+                    "selectMode": 0,
+                    "selectRange": 0,
+                    "directorLevel": 1,
+                    "replaceByUp": 0,
+                    "examineMode": 1,
+                    "noHanderAction": 2,
+                    "examineEndDirectorLevel": 0,
+                    "childNode": {
+                        "nodeName": "路由",
+                        "type": 4,
+                        "priorityLevel": 1,
+                        "settype": 1,
+                        "selectMode": 0,
+                        "selectRange": 0,
+                        "examineRoleId": 0,
+                        "directorLevel": 1,
+                        "replaceByUp": 0,
+                        "examineMode": 1,
+                        "noHanderAction": 2,
+                        "examineEndType": 0,
+                        "examineEndRoleId": 0,
+                        "examineEndDirectorLevel": 1,
+                        "ccSelfSelectFlag": 1,
+                        "conditionList": [],
+                        "nodeUserList": [],
+                        "childNode": {
+                            "nodeName": "抄送人",
+                            "type": 2,
+                            "ccSelfSelectFlag": 1,
+                            "childNode": null,
+                            "nodeUserList": [],
+                            "error": false
+                        },
+                        "conditionNodes": [{
+                            "nodeName": "条件1",
+                            "type": 3,
+                            "priorityLevel": 1,
+                            "settype": 1,
+                            "selectMode": 0,
+                            "selectRange": 0,
+                            "examineRoleId": 0,
+                            "directorLevel": 1,
+                            "replaceByUp": 0,
+                            "examineMode": 1,
+                            "noHanderAction": 2,
+                            "examineEndType": 0,
+                            "examineEndRoleId": 0,
+                            "examineEndDirectorLevel": 1,
+                            "ccSelfSelectFlag": 1,
+                            "conditionList": [{
+                                "columnId": 0,
+                                "type": 1,
+                                "conditionEn": "",
+                                "conditionCn": "",
+                                "optType": "",
+                                "zdy1": "",
+                                "zdy2": "",
+                                "opt1": "",
+                                "opt2": "",
+                                "columnDbname": "",
+                                "columnType": "",
+                                "showType": "",
+                                "showName": "",
+                                "fixedDownBoxValue": ""
+                            }],
+                            "nodeUserList": [{
+                                "targetId": 85,
+                                "type": 1,
+                                "name": "天旭"
+                            }],
+                            "childNode": {
+                                "nodeName": "审核人",
+                                "type": 1,
+                                "priorityLevel": 1,
+                                "settype": 1,
+                                "selectMode": 0,
+                                "selectRange": 0,
+                                "examineRoleId": 0,
+                                "directorLevel": 1,
+                                "replaceByUp": 0,
+                                "examineMode": 1,
+                                "noHanderAction": 2,
+                                "examineEndType": 0,
+                                "examineEndRoleId": 0,
+                                "examineEndDirectorLevel": 1,
+                                "ccSelfSelectFlag": 1,
+                                "conditionList": [],
+                                "nodeUserList": [{
+                                    "targetId": 2515744,
+                                    "type": 1,
+                                    "name": "哈哈哈哈"
+                                }],
+                                "childNode": null,
+                                "conditionNodes": [],
+                                "error": false
+                            },
+                            "conditionNodes": [],
+                            "error": false
+                        }, {
+                            "nodeName": "条件2",
+                            "type": 3,
+                            "priorityLevel": 2,
+                            "settype": 1,
+                            "selectMode": 0,
+                            "selectRange": 0,
+                            "examineRoleId": 0,
+                            "directorLevel": 1,
+                            "replaceByUp": 0,
+                            "examineMode": 1,
+                            "noHanderAction": 2,
+                            "examineEndType": 0,
+                            "examineEndRoleId": 0,
+                            "examineEndDirectorLevel": 1,
+                            "ccSelfSelectFlag": 1,
+                            "conditionList": [],
+                            "nodeUserList": [],
+                            "childNode": null,
+                            "conditionNodes": [],
+                            "error": false
+                        }]
+                    },
+                    "nodeUserList": []
+                },
+                "conditionNodes": []
+            }
+
+
+        }
+    }
     var demo = new Vue({
         el: "#partPage",
         mixins: [mixin],
         data: function () {
             return {
+                show:false,
+                istried: false,
+                tipList: [],
+                tipVisible: false,
+                nowVal: 100,
+                processConfig: {},
+                nodeconfig: {},
+
+                workFlowDef: {},
+                flowpermission: [],
+                directormaxlevel: 0,
+                dialogVisible: true,
+                tableid: "",
+
+
                 activeNames: [1,2,3,7],
                 count: 2,
                 name: '',
@@ -169,9 +375,89 @@
                 this.GetData("FlowInfoNew/GetUserInfo", (res) => {
                     this.userList = res
                 })
+            },
+
+
+
+            toReturn() {
+                //window.location.href = ""
+            },
+            reErr(data) {
+                if (data.childNode) {
+                    if (data.childNode.type == 1) {//审批人
+                        if (data.childNode.error) {
+                            this.tipList.push({ name: data.childNode.nodeName, type: "审核人" })
+                        }
+                        this.reErr(data.childNode)
+                    } else if (data.childNode.type == 2) {
+                        if (data.childNode.error) {
+                            this.tipList.push({ name: data.childNode.nodeName, type: "抄送人" })
+                        }
+                        this.reErr(data.childNode)
+                    } else if (data.childNode.type == 3) {
+                        this.reErr(data.childNode.childNode)
+                    } else if (data.childNode.type == 4) {
+                        this.reErr(data.childNode)
+                        for (var i = 0; i < data.childNode.conditionNodes.length; i++) {
+                            if (data.childNode.conditionNodes[i].error) {
+                                this.tipList.push({ name: data.childNode.conditionNodes[i].nodeName, type: "条件" })
+                            }
+                            this.reErr(data.childNode.conditionNodes[i])
+                        }
+                    }
+                } else {
+                    data.childNode = null
+                }
+            },
+            saveSet() {
+                this.istried = true;
+                this.tipList = [];
+                this.reErr(this.nodeconfig);
+                if (this.tipList.length != 0) {
+                    this.tipVisible = true;
+                    return;
+                }
+                this.processConfig.flowpermission = this.flowpermission
+                console.log(JSON.stringify(this.processConfig))
+                // this.$axios.post("", this.processConfig).then(res => {
+                //     if (res.code == 200) {
+                //         this.$message.success("设置成功");
+                //         setTimeout(function () {
+                //             window.location.href = ""
+                //         }, 200)
+                //     }
+                // })
+            },
+            zoomSize(type) {
+                if (type == 1) {
+                    if (this.nowVal == 50) {
+                        return;
+                    }
+                    this.nowVal -= 10;
+                } else {
+                    if (this.nowVal == 300) {
+                        return;
+                    }
+                    this.nowVal += 10;
+                }
             }
         },
         created: function () {
+            
+            //this.processConfig = jsonData.data;
+            //this.nodeconfig = this.processConfig.nodeconfig;
+            //this.flowpermission = this.processConfig.flowpermission;
+            //this.directormaxlevel = this.processConfig.directormaxlevel;
+            //this.workFlowDef = this.processConfig.workFlowDef
+            //this.tableid = this.processConfig.tableid
+            //this.show = true
+            //console.warn('hello?')
+            //console.log(this.nodeconfig)
+            //console.log(this.flowpermission)
+            //console.log(this.directormaxlevel)
+            //console.log(this.workFlowDef )
+            //console.log(this.tableid)
+
             var that = this
             var node = document.getElementById('content');
             var intval = window.setInterval(function () {
@@ -184,5 +470,4 @@
             loadHtml("mainPage", "partPage")
         }
     })
-
 </script>
